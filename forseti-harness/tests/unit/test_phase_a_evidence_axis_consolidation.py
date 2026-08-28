@@ -61,6 +61,12 @@ from judgment.phase_a_evidence_consumer import (
     EvidenceConsumerError,
     _canonical_json_sha256,
 )
+from judgment.phase_a_decision_state_reconciliation import (
+    DECISION_STATE_ADJUDICATION_VERSION,
+    DECISION_STATE_RECONCILIATION_PLAN_VERSION,
+    finalize_phase_a_decision_state_reconciliation,
+    prepare_phase_a_decision_state_reconciliation,
+)
 from judgment.phase_a_evidence_selection import PARENT_CONTEXT_POLICY
 from runners.run_phase_a_evidence_axis_consolidation import (
     build_axis_pack_run,
@@ -5375,3 +5381,352 @@ def test_historical_spec_cannot_consume_current_row_owned_relation_bindings(
     ) as caught:
         build_axis_consolidated_view(downgraded)
     assert caught.value.boundary == "relation_binding_lineage"
+
+
+def _decision_state_reconciliation_fixture(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> tuple[dict[str, Any], dict[str, Any], Path, Path]:
+    _, prior_spec, _ = _generic_fixture(tmp_path / "prior", monkeypatch)
+    _route_every_point_as_decision_state(prior_spec)
+    prior_spec_path = tmp_path / "prior_spec.json"
+    _write(prior_spec_path, prior_spec)
+
+    _, current_template, _ = _generic_fixture(tmp_path / "current", monkeypatch)
+    _route_every_point_as_decision_state(current_template)
+    _bind_current_direct_outcome_relations(current_template)
+    current_template.pop("direct_outcome_relation_bindings", None)
+    current_template_path = tmp_path / "current_template.json"
+    _write(current_template_path, current_template)
+    current_pack_path = Path(current_template["source_axis_pack_path"])
+    plan = {
+        "schema_version": DECISION_STATE_RECONCILIATION_PLAN_VERSION,
+        "current_axes": [
+            {
+                "axis_pack": {
+                    "path": str(current_pack_path),
+                    "sha256": hash_file(current_pack_path),
+                },
+                "spec_template": {
+                    "path": str(current_template_path),
+                    "sha256": hash_file(current_template_path),
+                },
+            }
+        ],
+        "prior_specs": [
+            {"path": str(prior_spec_path), "sha256": hash_file(prior_spec_path)}
+        ],
+    }
+    return plan, prior_spec, prior_spec_path, current_template_path
+
+
+def test_decision_state_reconciliation_reuses_stable_meaning_not_positional_template(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    plan, prior_spec, _, template_path = _decision_state_reconciliation_fixture(
+        tmp_path, monkeypatch
+    )
+    template = json.loads(template_path.read_text(encoding="utf-8"))
+    template["decision_state_bindings"][0]["rows"][0]["state_assertions"][0][
+        "state_kind"
+    ] = "purchase_intent"
+    _write(template_path, template)
+    plan["current_axes"][0]["spec_template"]["sha256"] = hash_file(template_path)
+
+    manifest = prepare_phase_a_decision_state_reconciliation(plan)
+    assert manifest["counts"]["unresolved_semantic_unit_count"] == 0
+    assert manifest["counts"]["reused_semantic_unit_count"] > 0
+    assert manifest["response_schema"] is None
+
+    output = finalize_phase_a_decision_state_reconciliation(
+        manifest, adjudication=None
+    )["hydration_and_moisture"]
+    output_rows = {
+        (binding["point_id"], row["selected_id"]): row
+        for binding in output["decision_state_bindings"]
+        for row in binding["rows"]
+    }
+    prior_rows = {
+        (binding["point_id"], row["selected_id"]): row
+        for binding in prior_spec["decision_state_bindings"]
+        for row in binding["rows"]
+    }
+    assert {
+        _canonical_json_sha256(assertion)
+        for assertion in output_rows[("point_a", "selected_01")]["state_assertions"]
+    } == {
+        _canonical_json_sha256(assertion)
+        for assertion in prior_rows[("point_a", "selected_01")]["state_assertions"]
+    }
+    assert all(
+        assertion["state_kind"] != "purchase_intent"
+        for binding in output["decision_state_bindings"]
+        for row in binding["rows"]
+        for assertion in row["state_assertions"]
+    )
+    build_axis_consolidated_view(output)
+
+
+def test_decision_state_reconciliation_surfaces_conflicting_history_before_consumer(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    plan, prior_spec, _, _ = _decision_state_reconciliation_fixture(
+        tmp_path, monkeypatch
+    )
+    conflicting = copy.deepcopy(prior_spec)
+    assertion = conflicting["decision_state_bindings"][0]["rows"][0][
+        "state_assertions"
+    ][0]
+    assertion.update(
+        {
+            "state_kind": "preference_judgment",
+            "commercial_direction": "favorable",
+            "decision_object": "different fixture interpretation",
+        }
+    )
+    conflicting_path = tmp_path / "conflicting_prior_spec.json"
+    _write(conflicting_path, conflicting)
+    plan["prior_specs"].append(
+        {"path": str(conflicting_path), "sha256": hash_file(conflicting_path)}
+    )
+
+    manifest = prepare_phase_a_decision_state_reconciliation(plan)
+    unresolved = [
+        item
+        for group in manifest["unresolved_evidence_groups"]
+        for item in group["items"]
+    ]
+    assert unresolved
+    assert any("conflicting_history" in item["causes"] for item in unresolved)
+    assert manifest["response_schema"]["properties"]["schema_version"] == {
+        "type": "string",
+        "const": DECISION_STATE_ADJUDICATION_VERSION,
+    }
+    assert manifest["response_schema"]["properties"][
+        "reconciliation_scope_sha256"
+    ] == {
+        "type": "string",
+        "const": manifest["reconciliation_scope_sha256"],
+    }
+    assert manifest["reconciliation_scope_sha256"] in manifest["prompt"]
+    state_variants = {
+        variant["properties"]["state_kind"].get("const"): variant
+        for variant in manifest["response_schema"]["properties"]["judgments"][
+            "items"
+        ]["anyOf"]
+    }
+    assert state_variants["purchase"]["properties"]["commercial_direction"][
+        "enum"
+    ] == ["neutral"]
+    assert state_variants["wear_event"]["properties"]["commercial_direction"][
+        "enum"
+    ] == ["neutral"]
+    assert state_variants["repurchase_intent"]["properties"][
+        "commercial_direction"
+    ]["enum"] == ["toward_action"]
+    with pytest.raises(
+        EvidenceConsumerError, match="unresolved units require adjudication"
+    ) as caught:
+        finalize_phase_a_decision_state_reconciliation(manifest, adjudication=None)
+    assert caught.value.boundary == "decision_state_reconciliation_adjudication"
+
+
+def test_decision_state_reconciliation_adjudication_closes_exact_coverage(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    plan, prior_spec, _, _ = _decision_state_reconciliation_fixture(
+        tmp_path, monkeypatch
+    )
+    conflicting = copy.deepcopy(prior_spec)
+    conflicting["decision_state_bindings"][0]["rows"][0]["state_assertions"][0].update(
+        {
+            "state_kind": "preference_judgment",
+            "commercial_direction": "favorable",
+            "decision_object": "different fixture interpretation",
+        }
+    )
+    conflicting_path = tmp_path / "conflicting_prior_spec.json"
+    _write(conflicting_path, conflicting)
+    plan["prior_specs"].append(
+        {"path": str(conflicting_path), "sha256": hash_file(conflicting_path)}
+    )
+    manifest = prepare_phase_a_decision_state_reconciliation(plan)
+    item_ids = [
+        item["identity_id"]
+        for group in manifest["unresolved_evidence_groups"]
+        for item in group["items"]
+    ]
+    adjudication = {
+        "schema_version": DECISION_STATE_ADJUDICATION_VERSION,
+        "reconciliation_scope_sha256": manifest["reconciliation_scope_sha256"],
+        "judgments": [
+            {
+                "item_ids": [item_id],
+                "classification": "context_only",
+                "state_kind": None,
+                "commercial_direction": None,
+                "decision_object": None,
+                "quantity": None,
+                "conditions": [],
+            }
+            for item_id in item_ids
+        ],
+    }
+    output = finalize_phase_a_decision_state_reconciliation(
+        manifest, adjudication=adjudication
+    )["hydration_and_moisture"]
+    build_axis_consolidated_view(output)
+
+    omitted = copy.deepcopy(adjudication)
+    omitted["judgments"].pop()
+    with pytest.raises(
+        EvidenceConsumerError, match="does not cover every unresolved unit"
+    ) as caught:
+        finalize_phase_a_decision_state_reconciliation(
+            manifest, adjudication=omitted
+        )
+    assert caught.value.boundary == "decision_state_reconciliation_adjudication"
+
+
+def test_decision_state_reconciliation_runner_materializes_bound_provider_contract(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    plan, prior_spec, _, _ = _decision_state_reconciliation_fixture(
+        tmp_path, monkeypatch
+    )
+    conflicting = copy.deepcopy(prior_spec)
+    conflicting["decision_state_bindings"][0]["rows"][0]["state_assertions"][0][
+        "decision_object"
+    ] = "conflicting fixture object"
+    conflicting_path = tmp_path / "runner_conflicting_spec.json"
+    _write(conflicting_path, conflicting)
+    plan["prior_specs"].append(
+        {"path": str(conflicting_path), "sha256": hash_file(conflicting_path)}
+    )
+    plan_path = tmp_path / "reconciliation_plan.json"
+    _write(plan_path, plan)
+    manifest_path = tmp_path / "reconciliation_manifest.json"
+    prompt_path = tmp_path / "reconciliation_prompt.txt"
+    schema_path = tmp_path / "reconciliation_schema.json"
+
+    result = consolidation_runner.prepare_decision_state_reconciliation_run(
+        plan_path=plan_path,
+        output_path=manifest_path,
+        prompt_output=prompt_path,
+        response_schema_output=schema_path,
+    )
+
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    assert prompt_path.read_text(encoding="utf-8").rstrip("\n") == manifest["prompt"]
+    assert json.loads(schema_path.read_text(encoding="utf-8")) == manifest[
+        "response_schema"
+    ]
+    assert result["manifest_sha256"] == manifest["manifest_sha256"]
+    assert result["prompt_file_sha256"] == hash_file(prompt_path)
+    assert result["response_schema_file_sha256"] == hash_file(schema_path)
+
+    with pytest.raises(ValueError, match="must be supplied together"):
+        consolidation_runner.prepare_decision_state_reconciliation_run(
+            plan_path=plan_path,
+            output_path=tmp_path / "unused_manifest.json",
+            prompt_output=tmp_path / "unused_prompt.txt",
+            response_schema_output=None,
+        )
+
+
+def test_decision_state_reconciliation_treats_changed_content_as_new_judgment(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    plan, _, _, template_path = _decision_state_reconciliation_fixture(
+        tmp_path, monkeypatch
+    )
+    current_pack_path = Path(plan["current_axes"][0]["axis_pack"]["path"])
+    current_pack = json.loads(current_pack_path.read_text(encoding="utf-8"))
+    descriptor = next(
+        point for point in current_pack["points"] if point["point_id"] == "point_b"
+    )
+    artifact_path = Path(descriptor["artifact_path"])
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    selected = next(
+        row
+        for group in artifact["source_groups"]
+        for row in group["rows"]
+        if row["semantic_unit_ref"] == "retailer:sephora:review1::dry"
+    )
+    semantic_ref = selected["semantic_unit_ref"]
+    selected["normalized_meaning"] += " Changed current wording."
+    candidate = next(
+        row
+        for row in artifact["candidate_dispositions"]
+        if row["semantic_unit_ref"] == semantic_ref
+    )
+    candidate["normalized_meaning"] = selected["normalized_meaning"]
+    source_inventory = [
+        {
+            key: value
+            for key, value in row.items()
+            if key not in {"relation", "reason_code", "relation_semantic_unit_refs"}
+        }
+        for row in artifact["candidate_dispositions"]
+    ]
+    inventory_hash = _canonical_json_sha256(source_inventory)
+    artifact["candidate_inventory_sha256"] = inventory_hash
+    selection_path = Path(descriptor["selection_manifest_path"])
+    selection = json.loads(selection_path.read_text(encoding="utf-8"))
+    selection["candidate_inventory_sha256"] = inventory_hash
+    _rehash_manifest(selection)
+    _write(selection_path, selection)
+    quote_path = Path(descriptor["quote_manifest_path"])
+    quote = json.loads(quote_path.read_text(encoding="utf-8"))
+    quote["candidate_inventory_sha256"] = inventory_hash
+    quote["selection_manifest_sha256"] = selection["manifest_sha256"]
+    _rehash_manifest(quote)
+    _write(quote_path, quote)
+    artifact["selection_manifest_sha256"] = selection["manifest_sha256"]
+    artifact["quote_manifest_sha256"] = quote["manifest_sha256"]
+    _write(artifact_path, artifact)
+    descriptor["artifact_sha256"] = hash_file(artifact_path)
+    descriptor["selection_manifest_file_sha256"] = hash_file(selection_path)
+    descriptor["selection_manifest_sha256"] = selection["manifest_sha256"]
+    descriptor["quote_manifest_file_sha256"] = hash_file(quote_path)
+    descriptor["quote_manifest_sha256"] = quote["manifest_sha256"]
+    current_manifest = _manifest(
+        schema_version=AXIS_PACK_MANIFEST_VERSION,
+        axis_id=current_pack["axis_id"],
+        accepted_points=[
+            {
+                key: point[key]
+                for key in (
+                    "point_id",
+                    "bounded_point",
+                    "artifact_path",
+                    "artifact_sha256",
+                    "policy_revision",
+                    "selection_manifest_path",
+                    "selection_manifest_file_sha256",
+                    "selection_manifest_sha256",
+                    "quote_manifest_path",
+                    "quote_manifest_file_sha256",
+                    "quote_manifest_sha256",
+                )
+            }
+            for point in current_pack["points"]
+        ],
+        rejected_points=copy.deepcopy(current_pack["rejected_points"]),
+    )
+    rebuilt_current_pack = build_phase_a_evidence_axis_pack(current_manifest)
+    _write(current_pack_path, rebuilt_current_pack)
+    template = json.loads(template_path.read_text(encoding="utf-8"))
+    template["source_axis_pack_sha256"] = hash_file(current_pack_path)
+    _write(template_path, template)
+    plan["current_axes"][0]["axis_pack"]["sha256"] = hash_file(current_pack_path)
+    plan["current_axes"][0]["spec_template"]["sha256"] = hash_file(template_path)
+
+    reconciliation = prepare_phase_a_decision_state_reconciliation(plan)
+    changed = [
+        item
+        for group in reconciliation["unresolved_evidence_groups"]
+        for item in group["items"]
+        if item["semantic_unit_ref"] == semantic_ref
+    ]
+    assert len(changed) == 1
+    assert changed[0]["causes"] == ["changed_content"]

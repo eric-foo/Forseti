@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v65
-effective_date: 2026-08-27
+version: v67
+effective_date: 2026-08-28
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v65
+# Semantic Evidence Integration Contract v67
 
 ## Purpose
 
@@ -1000,6 +1000,27 @@ remain finalizable under their stamped contracts and never acquire this new
 obligation; one is finalized with no confirmation attachment at all, and
 supplying one fails closed at `unexpected_relation_confirmation`.
 
+Current Decision State consolidation is delta-based when a new point layout
+regroups already judged evidence. `prepare-decision-state-reconciliation` pins
+the current axis packs and templates plus the chosen historical specs. It may
+reuse a Decision State judgment only for an unchanged source-owned semantic
+identity consisting of evidence ID, semantic-unit ref, literal normalized
+statement, axes, conditions, and polarity, and only when every matching prior
+observation carries the same complete judgment bundle. Point ID, selected-row
+ID, row order, axis placement, and relation are not semantic reuse keys. New or
+changed identities, conflicting history, and partial multi-ref state groups are
+the only units sent to the existing bounded judgment boundary.
+`finalize-decision-state-reconciliation` requires exact coverage of those
+unresolved identities, compiles complete current v4 Decision State bindings,
+and validates the ordinary consolidation consumer. Current row-owned relation
+refs remain point-relative and are copied only from the current v3 selection
+artifact. This adds no third provider stage: a run with no unresolved identities
+needs no model call, while a run with deltas judges only those deltas. The
+manifest is a hash-bound run receipt, not a global semantic registry, ontology,
+or independently writable evidence authority. Exact historical agreement proves
+mechanical reuse eligibility, not semantic truth; bounded review retains the
+right to challenge an old judgment.
+
 The confirmation pass still shares the first pass's source role for each row,
 because source-role competence is required input for the judgment rather than
 leaked first-pass state. Creator-authored rows are constrained to `adjacent` by
@@ -1712,6 +1733,31 @@ new frontier.
 
 ## Changelog
 
+- `v67` / 2026-08-28 — replaced positional reuse of historical Decision State
+  rows with run-scoped semantic-identity delta reconciliation. The temporary
+  all-axis proof driver had copied bindings by `point_id` plus `selected_id` and
+  changed only relation refs, which could transfer a plausible state bundle to
+  the wrong meaning after regrouping. Current preparation now reuses only one
+  unambiguous complete historical bundle for an unchanged evidence/ref/content
+  identity; new content, conflicting history, and incomplete grouped states
+  remain explicitly unresolved. Finalization requires exact delta coverage and
+  proves the compiled v4 specs at the ordinary reader consumer. Relation remains
+  point-relative and comes only from the current v3 artifact. This is a
+  per-run compiler rather than a global registry and adds no provider call when
+  all meanings are stable. Deterministic reuse does not prove semantic warrant.
+  Summer Fridays dogfood rebuilt all nine point-bearing packs twice from the 50
+  finalized point artifacts, then reconciled 253 Decision State rows across 25
+  points. Of 739 unique semantic units, 585 reused one unambiguous judgment and
+  154 units affecting 62 rows remained for bounded adjudication (37 conflicting
+  history; 117 new units). Two preparations were byte-identical and took 2.568
+  and 2.559 seconds; one 154-unit provider call finalized all nine current specs
+  through the ordinary consumer. The Hype/trust canary caught and removed three
+  request-contract defects before that run: a provider-invalid untyped `const`,
+  a response hash absent from the prompt, and independently enumerated state
+  kinds/directions that allowed contract-invalid pairs. Those are transport and
+  compilation observations, not proof that the 154 judgments are semantically
+  correct or that reader quality improved. Full-view validation remained the
+  dominant deterministic cost at 489.704 seconds.
 - `v66` / 2026-08-27 — replaced current v9 quote transcription with
   `row_owned_token_span_v1` inside the existing quote call. All-axis completion
   dogfood first observed 13 of 39 long-body point responses fail the exact or

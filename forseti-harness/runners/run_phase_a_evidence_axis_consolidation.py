@@ -12,6 +12,7 @@ from typing import Any
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from harness_utils import hash_file  # noqa: E402
 from judgment.phase_a_evidence_axis_consolidation import (  # noqa: E402
     _axis_reader_point_filename,
     _compile_point_reader_brief_from_validated_facts,
@@ -43,6 +44,10 @@ from judgment.phase_a_evidence_axis_consolidation import (  # noqa: E402
     validate_no_frontier_reader_request,
 )
 from judgment.phase_a_evidence_consumer import EvidenceConsumerError  # noqa: E402
+from judgment.phase_a_decision_state_reconciliation import (  # noqa: E402
+    finalize_phase_a_decision_state_reconciliation,
+    prepare_phase_a_decision_state_reconciliation,
+)
 
 
 def _load_object(path: Path) -> dict[str, Any]:
@@ -193,6 +198,87 @@ def validate_reader_accounting_run(
         "point_count": len(accounting["points"]),
         "model_api_calls": 0,
     }
+
+
+def prepare_decision_state_reconciliation_run(
+    *,
+    plan_path: Path,
+    output_path: Path,
+    prompt_output: Path | None,
+    response_schema_output: Path | None,
+) -> dict[str, Any]:
+    if (prompt_output is None) != (response_schema_output is None):
+        raise ValueError(
+            "--prompt-output and --response-schema-output must be supplied together"
+        )
+    requested_outputs = [output_path]
+    if prompt_output is not None and response_schema_output is not None:
+        requested_outputs.extend([prompt_output, response_schema_output])
+    existing = [path for path in requested_outputs if path.exists()]
+    if existing:
+        raise ValueError(f"refusing to overwrite existing output: {existing[0]}")
+    manifest = prepare_phase_a_decision_state_reconciliation(_load_object(plan_path))
+    if prompt_output is not None:
+        if manifest["prompt"] is None or manifest["response_schema"] is None:
+            raise ValueError("reconciliation has no unresolved adjudication workload")
+        _write_new_bytes(prompt_output, (manifest["prompt"] + "\n").encode("utf-8"))
+        _write_new(response_schema_output, manifest["response_schema"])
+    _write_new(output_path, manifest)
+    return {
+        "status": "complete",
+        "output_path": str(output_path),
+        "manifest_sha256": manifest["manifest_sha256"],
+        "counts": manifest["counts"],
+        "prompt_output": str(prompt_output) if prompt_output else None,
+        "prompt_file_sha256": hash_file(prompt_output) if prompt_output else None,
+        "response_schema_output": (
+            str(response_schema_output) if response_schema_output else None
+        ),
+        "response_schema_file_sha256": (
+            hash_file(response_schema_output) if response_schema_output else None
+        ),
+        "model_api_calls": 0,
+    }
+
+
+def finalize_decision_state_reconciliation_run(
+    *,
+    manifest_path: Path,
+    adjudication_path: Path | None,
+    output_dir: Path,
+    receipt_output: Path,
+) -> dict[str, Any]:
+    manifest = _load_object(manifest_path)
+    adjudication = _load_object(adjudication_path) if adjudication_path else None
+    specs = finalize_phase_a_decision_state_reconciliation(
+        manifest, adjudication=adjudication
+    )
+    written: list[dict[str, Any]] = []
+    for axis_id in sorted(specs):
+        path = output_dir / axis_id / "consolidation_spec.json"
+        _write_new(path, specs[axis_id])
+        written.append(
+            {
+                "axis_id": axis_id,
+                "path": str(path),
+                "sha256": hash_file(path),
+            }
+        )
+    receipt = {
+        "status": "complete",
+        "manifest_path": str(manifest_path),
+        "manifest_file_sha256": hash_file(manifest_path),
+        "manifest_sha256": manifest["manifest_sha256"],
+        "adjudication_path": str(adjudication_path) if adjudication_path else None,
+        "adjudication_file_sha256": (
+            hash_file(adjudication_path) if adjudication_path else None
+        ),
+        "specs": written,
+        "counts": manifest["counts"],
+        "model_api_calls": 0,
+    }
+    _write_new(receipt_output, receipt)
+    return {**receipt, "receipt_output": str(receipt_output)}
 
 
 def prepare_no_frontier_reader_request_run(
@@ -704,6 +790,26 @@ def main() -> int:
     build_pack_parser = subparsers.add_parser("build-axis-pack")
     build_pack_parser.add_argument("--manifest", type=Path, required=True)
     build_pack_parser.add_argument("--output", type=Path, required=True)
+    prepare_reconciliation_parser = subparsers.add_parser(
+        "prepare-decision-state-reconciliation"
+    )
+    prepare_reconciliation_parser.add_argument("--plan", type=Path, required=True)
+    prepare_reconciliation_parser.add_argument("--output", type=Path, required=True)
+    prepare_reconciliation_parser.add_argument("--prompt-output", type=Path)
+    prepare_reconciliation_parser.add_argument("--response-schema-output", type=Path)
+    finalize_reconciliation_parser = subparsers.add_parser(
+        "finalize-decision-state-reconciliation"
+    )
+    finalize_reconciliation_parser.add_argument(
+        "--manifest", type=Path, required=True
+    )
+    finalize_reconciliation_parser.add_argument("--adjudication", type=Path)
+    finalize_reconciliation_parser.add_argument(
+        "--output-dir", type=Path, required=True
+    )
+    finalize_reconciliation_parser.add_argument(
+        "--receipt-output", type=Path, required=True
+    )
     materialize_no_frontier_parser = subparsers.add_parser(
         "materialize-no-frontier-axis-manifest"
     )
@@ -890,6 +996,20 @@ def main() -> int:
     if args.command == "build-axis-pack":
         result = build_axis_pack_run(
             manifest_path=args.manifest, output_path=args.output
+        )
+    elif args.command == "prepare-decision-state-reconciliation":
+        result = prepare_decision_state_reconciliation_run(
+            plan_path=args.plan,
+            output_path=args.output,
+            prompt_output=args.prompt_output,
+            response_schema_output=args.response_schema_output,
+        )
+    elif args.command == "finalize-decision-state-reconciliation":
+        result = finalize_decision_state_reconciliation_run(
+            manifest_path=args.manifest,
+            adjudication_path=args.adjudication,
+            output_dir=args.output_dir,
+            receipt_output=args.receipt_output,
         )
     elif args.command == "materialize-no-frontier-axis-manifest":
         result = materialize_no_frontier_axis_manifest_run(
