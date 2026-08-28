@@ -89,6 +89,22 @@ def _canonical_hash(value: object) -> str:
     ).hexdigest()
 
 
+def test_current_quote_schema_closes_zero_row_item_shape() -> None:
+    schema = evidence_selection._quote_schema(row_token_bindings=[])
+
+    assert schema["properties"]["quotes"] == {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": False,
+        },
+        "minItems": 0,
+        "maxItems": 0,
+    }
+
+
 def _packet_and_bundle(count: int = 14) -> tuple[dict, dict]:
     semantic_columns = [
         "semantic_unit_ref",
