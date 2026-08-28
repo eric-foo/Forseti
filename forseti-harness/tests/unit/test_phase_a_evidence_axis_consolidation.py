@@ -4483,7 +4483,7 @@ def test_point_reader_compiler_closes_decision_state_at_consumer_boundary(
             )
         }
         assert all(
-            representative["point_relative_meaning"]
+            representative["selected_row_meaning"]
             == fact_by_placement[representative["placement_id"]][
                 "point_relative_meaning"
             ]
@@ -4515,6 +4515,9 @@ def test_point_reader_compiler_closes_decision_state_at_consumer_boundary(
     same_quote_facts[1]["point_relative_meaning"]["semantic_unit_ref"] += (
         "::second-meaning"
     )
+    same_quote_facts[1]["point_relative_meaning"][
+        "relation_semantic_unit_refs"
+    ] = [same_quote_facts[1]["point_relative_meaning"]["semantic_unit_ref"]]
     same_quote_facts[1]["point_relative_meaning"]["statement"] = (
         "A different exact meaning retained from the same literal quote."
     )
@@ -4540,6 +4543,39 @@ def test_point_reader_compiler_closes_decision_state_at_consumer_boundary(
         same_quote_representatives[0]["point_relative_meaning"]
         != same_quote_representatives[1]["point_relative_meaning"]
     )
+    companion_only_fact = copy.deepcopy(support_source)
+    companion = companion_only_fact["companion_meanings"][0]
+    companion_only_fact["point_relative_meaning"][
+        "relation_semantic_unit_refs"
+    ] = [companion["semantic_unit_ref"]]
+    companion_facts = [
+        companion_only_fact,
+        next(fact for fact in first_facts if fact["relation"] == "counter"),
+    ]
+    companion_brief = consolidation_judgment._compile_point_reader_brief_from_validated_facts(
+        manifest,
+        point=manifest["points"][0],
+        facts=companion_facts,
+        response={
+            "point_input_sha256": manifest["points"][0]["point_input_sha256"],
+            "point_id": manifest["points"][0]["point_id"],
+            "interpretation": "The relation uses an exact same-evidence companion.",
+            "representative_handles": [
+                {"placement_id": fact["placement_id"]} for fact in companion_facts
+            ],
+        },
+    )
+    companion_representative = companion_brief["representative_evidence"][0]
+    assert companion_representative["point_relative_meaning"][
+        "semantic_unit_ref"
+    ] == companion["semantic_unit_ref"]
+    assert companion_representative["selected_row_meaning"][
+        "semantic_unit_ref"
+    ] == support_source["point_relative_meaning"]["semantic_unit_ref"]
+    assert companion_representative["quote_status"] == "quote_unavailable"
+    assert companion_representative["quote_span_id"] is None
+    assert companion_representative["exact_quote"] is None
+    assert companion_representative["selected_row_quote"] == support_source["quote"]
     support = support_source
     assert any(fact["relation"] == "counter" for fact in first_facts)
     with pytest.raises(EvidenceConsumerError) as caught:
@@ -5508,6 +5544,19 @@ def test_decision_state_reconciliation_surfaces_conflicting_history_before_consu
         "const": manifest["reconciliation_scope_sha256"],
     }
     assert manifest["reconciliation_scope_sha256"] in manifest["prompt"]
+    assert "Decision State describes the actor, not the product outcome" in manifest[
+        "prompt"
+    ]
+    assert "Use expectation_judgment only when" in manifest["prompt"]
+    assert "a plain product attribute or observed outcome is context_only" in manifest[
+        "prompt"
+    ]
+    assert "price and quantity alone do not prove it" in manifest["prompt"]
+    assert "Ownership or carrying does not prove use" in manifest["prompt"]
+    assert "without explicit ownership or use, is context_only" in manifest["prompt"]
+    assert "prefers A over B" in manifest["prompt"]
+    assert "exact midpoint numeric rating as mixed" in manifest["prompt"]
+    assert "return every state separately" in manifest["prompt"]
     state_variants = {
         variant["properties"]["state_kind"].get("const"): variant
         for variant in manifest["response_schema"]["properties"]["judgments"][
@@ -5516,10 +5565,11 @@ def test_decision_state_reconciliation_surfaces_conflicting_history_before_consu
     }
     assert state_variants[None]["properties"]["item_ids"]["maxItems"] == 1
     assert all(
-        variant["properties"]["conditions"]["uniqueItems"] is True
+        "uniqueItems" not in variant["properties"]["conditions"]
         for state_kind, variant in state_variants.items()
         if state_kind is not None
     )
+    assert "List each condition once" in manifest["prompt"]
     assert state_variants["purchase"]["properties"]["commercial_direction"][
         "enum"
     ] == ["neutral"]

@@ -430,6 +430,14 @@ def test_no_frontier_reader_compacts_complete_pool_and_recovers_exact_examples(
     request = build_no_frontier_reader_request(
         pack, source_axis_pack_path=pack_path
     )
+    assert request["response_schema"]["properties"]["axis_pack_sha256"] == {
+        "type": "string",
+        "const": pack["axis_pack_sha256"],
+    }
+    assert request["response_schema"]["properties"]["axis_id"] == {
+        "type": "string",
+        "const": pack["axis_id"],
+    }
     assert len(request["candidate_rows"]) == 8
     assert request["candidate_pool_accounting"]["semantic_row_count"] == 8
     evidence_column = request["candidate_columns"].index("evidence_id")

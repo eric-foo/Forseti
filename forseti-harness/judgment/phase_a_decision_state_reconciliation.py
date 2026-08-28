@@ -558,7 +558,6 @@ def _response_schema(*, reconciliation_scope_sha256: str) -> dict[str, Any]:
                 ),
                 "conditions": {
                     "type": "array",
-                    "uniqueItems": True,
                     "items": {"type": "string", "minLength": 1},
                 },
             }
@@ -607,6 +606,22 @@ def _prompt(
         "Classify only the unresolved atomic semantic units below for Phase A Decision "
         "State projection. This is bounded evidence packing, not Deliver. For each item, "
         "either mark it context_only or bind the explicit actor judgment/action state. "
+        "Decision State describes the actor, not the product outcome by itself. Use "
+        "expectation_judgment only when the statement explicitly compares the result with "
+        "an expectation, hype, skepticism, surprise, disappointment, or being underwhelmed; "
+        "a plain product attribute or observed outcome is context_only. Use "
+        "preference_judgment only for an explicit like, dislike, ranking, approval, "
+        "disapproval, or suitability judgment; otherwise keep the attribute or outcome "
+        "context_only. Purchase or acquisition requires an explicit observed acquisition; "
+        "price and quantity alone do not prove it. Ownership or carrying does not prove "
+        "use, and completed use requires explicit finishing, using up, or going through "
+        "the product. Carrying or keeping a product nearby, without explicit ownership "
+        "or use, is context_only. Evaluate commercial_direction relative to the returned "
+        "decision_object: for an explicit 'prefers A over B' comparison, preserve that "
+        "full comparison as the object and use favorable; treat an exact midpoint numeric "
+        "rating as mixed unless the statement supplies another direction. If one atomic "
+        "statement explicitly carries separable states, return every state separately "
+        "instead of hiding one in conditions or collapsing them into mixed. "
         "Keep intent separate from observed behavior; multiple units are not multiple "
         "repurchases; price concern is not automatically poor value; remorse is not erased "
         "by future intent. Group item_ids only when the statements from the same evidence "
@@ -616,7 +631,8 @@ def _prompt(
         "commercial_direction, decision_object, "
         "and quantity with empty conditions. Return reconciliation_scope_sha256 exactly as "
         f"{reconciliation_scope_sha256}. For state, use the supplied schema vocabulary "
-        "and preserve explicit object, quantity, and conditions. Historical alternatives "
+        "and preserve explicit object, quantity, and conditions. List each condition once. "
+        "Historical alternatives "
         "are allegations to adjudicate, not votes.\n\nUNRESOLVED_EVIDENCE_GROUPS:\n"
         + payload
     )

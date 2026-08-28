@@ -1057,6 +1057,15 @@ covers their own historical artifacts only: a v3 selection artifact routed by a
 v1 or v2 spec is rejected at the relation-binding lineage boundary rather than
 allowed to drop its row-owned references back to the primary reference.
 
+At the current point-reader consumer, the relation-facing meaning is resolved
+from those exact row-owned references. The selected row's primary meaning and
+quote remain explicit lineage, not a substitute for a companion-only relation
+binding. When the relation binds only a same-evidence companion and no quote span
+owned by that exact meaning was captured, the relation-facing quote is
+`quote_unavailable`; the selected-row quote remains separately visible. This is
+mechanical attachment honesty, not a deterministic judgment that the selected
+semantic subset warrants its relation.
+
 When current packs regroup already judged Decision State evidence, use the
 run-scoped Decision State reconciliation commands instead of copying a prior
 row by `point_id`, `selected_id`, order, or any other presentation address.

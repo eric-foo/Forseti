@@ -1932,8 +1932,11 @@ def build_no_frontier_reader_request(
             "representative_handles",
         ],
         "properties": {
-            "axis_pack_sha256": {"const": axis_pack_sha256},
-            "axis_id": {"const": validated["axis_id"]},
+            "axis_pack_sha256": {
+                "type": "string",
+                "const": axis_pack_sha256,
+            },
+            "axis_id": {"type": "string", "const": validated["axis_id"]},
             "interpretation": {"type": "string", "minLength": 1},
             "representative_handles": {
                 "type": "array",
@@ -6254,26 +6257,7 @@ def _compile_point_reader_brief_from_validated_facts(
                 "representative handle is foreign, ambiguous, or cross-point",
             )
         fact = matches[0]
-        representatives.append(
-            {
-                "placement_id": fact["placement_id"],
-                "evidence_id": fact["evidence"]["evidence_id"],
-                "relation": fact["relation"],
-                "quote_span_id": fact["quote"]["quote_span_id"],
-                "quote_status": fact["quote"]["quote_status"],
-                "exact_quote": fact["quote"]["exact_quote"],
-                "source_ref": fact["evidence"]["source_ref"],
-                "source_venue": fact["evidence"]["source_venue"],
-                "source_role": fact["evidence"]["source_role"],
-                "content_surface": fact["evidence"]["content_surface"],
-                "publication_time": fact["evidence"]["publication_time"],
-                "engagement": copy.deepcopy(fact["evidence"]["engagement"]),
-                "origin_group_id": fact["origin"]["origin_group_id"],
-                "point_relative_meaning": copy.deepcopy(
-                    fact["point_relative_meaning"]
-                ),
-            }
-        )
+        representatives.append(_point_reader_representative(fact))
     required_relations = {
         relation
         for relation in ("support", "counter")
@@ -6315,6 +6299,75 @@ def _compile_point_reader_brief_from_validated_facts(
     }
     brief["brief_sha256"] = _canonical_json_sha256(brief)
     return brief
+
+
+def _point_reader_representative(fact: Mapping[str, Any]) -> dict[str, Any]:
+    """Project the relation-bound meaning without presenting a neighboring quote as it."""
+
+    selected_meaning = copy.deepcopy(fact["point_relative_meaning"])
+    relation_refs = list(selected_meaning["relation_semantic_unit_refs"])
+    selected_ref = selected_meaning["semantic_unit_ref"]
+    meaning_by_ref = {
+        selected_ref: selected_meaning,
+        **{
+            meaning["semantic_unit_ref"]: copy.deepcopy(meaning)
+            for meaning in fact["companion_meanings"]
+        },
+    }
+    if not relation_refs or any(ref not in meaning_by_ref for ref in relation_refs):
+        raise EvidenceConsumerError(
+            "point_reader_relation_meaning",
+            "representative relation meaning is missing or unresolved",
+        )
+    relation_meanings: list[dict[str, Any]] = []
+    for ref in relation_refs:
+        resolved = copy.deepcopy(selected_meaning)
+        bound_meaning = copy.deepcopy(meaning_by_ref[ref])
+        resolved.update(bound_meaning)
+        if "statement" not in bound_meaning and isinstance(
+            bound_meaning.get("normalized_meaning"), str
+        ):
+            resolved["statement"] = bound_meaning["normalized_meaning"]
+        resolved.pop("normalized_meaning", None)
+        resolved["relation_semantic_unit_refs"] = copy.deepcopy(relation_refs)
+        relation_meanings.append(resolved)
+
+    selected_quote = copy.deepcopy(fact["quote"])
+    selected_meaning_is_relation_bound = selected_ref in relation_refs
+    relation_quote = (
+        selected_quote
+        if selected_meaning_is_relation_bound
+        else {
+            "quote_span_id": None,
+            "evidence_id": selected_quote["evidence_id"],
+            "quote_status": "quote_unavailable",
+            "exact_quote": None,
+            "quote_unavailable_cause": (
+                "relation-bound same-evidence companion has no captured relation-owned "
+                "quote span"
+            ),
+        }
+    )
+    return {
+        "placement_id": fact["placement_id"],
+        "evidence_id": fact["evidence"]["evidence_id"],
+        "relation": fact["relation"],
+        "quote_span_id": relation_quote["quote_span_id"],
+        "quote_status": relation_quote["quote_status"],
+        "exact_quote": relation_quote["exact_quote"],
+        "quote_unavailable_cause": relation_quote["quote_unavailable_cause"],
+        "source_ref": fact["evidence"]["source_ref"],
+        "source_venue": fact["evidence"]["source_venue"],
+        "source_role": fact["evidence"]["source_role"],
+        "content_surface": fact["evidence"]["content_surface"],
+        "publication_time": fact["evidence"]["publication_time"],
+        "engagement": copy.deepcopy(fact["evidence"]["engagement"]),
+        "origin_group_id": fact["origin"]["origin_group_id"],
+        "point_relative_meaning": copy.deepcopy(relation_meanings[0]),
+        "relation_bound_meanings": relation_meanings,
+        "selected_row_meaning": selected_meaning,
+        "selected_row_quote": selected_quote,
+    }
 
 
 def compile_point_reader_brief(
@@ -6410,22 +6463,7 @@ def _validate_point_reader_brief_from_validated_facts(
             raise EvidenceConsumerError(
                 "point_reader_brief", "compiled representative is foreign"
             )
-        expected = {
-            "placement_id": fact["placement_id"],
-            "evidence_id": fact["evidence"]["evidence_id"],
-            "relation": fact["relation"],
-            "quote_span_id": fact["quote"]["quote_span_id"],
-            "quote_status": fact["quote"]["quote_status"],
-            "exact_quote": fact["quote"]["exact_quote"],
-            "source_ref": fact["evidence"]["source_ref"],
-            "source_venue": fact["evidence"]["source_venue"],
-            "source_role": fact["evidence"]["source_role"],
-            "content_surface": fact["evidence"]["content_surface"],
-            "publication_time": fact["evidence"]["publication_time"],
-            "engagement": fact["evidence"]["engagement"],
-            "origin_group_id": fact["origin"]["origin_group_id"],
-            "point_relative_meaning": fact["point_relative_meaning"],
-        }
+        expected = _point_reader_representative(fact)
         if dict(row) != expected:
             raise EvidenceConsumerError(
                 "point_reader_brief", "compiled representative metadata changed"

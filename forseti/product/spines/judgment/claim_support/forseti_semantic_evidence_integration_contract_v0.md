@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v67
+version: v68
 effective_date: 2026-08-28
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v67
+# Semantic Evidence Integration Contract v68
 
 ## Purpose
 
@@ -1013,7 +1013,19 @@ slot must resolve to a single current identity across every axis in the run; two
 current axes carrying different content for the same slot fail closed rather
 than silently resolving to one of them. New or changed identities, conflicting
 history, and partial multi-ref state groups are the only units sent to the
-existing bounded judgment boundary.
+existing bounded judgment boundary. That boundary describes the actor rather
+than turning every product outcome into a state. Its current prompt uses
+`expectation_judgment` only for explicit expectation, hype, skepticism,
+surprise, disappointment, or underwhelming language; uses
+`preference_judgment` only for an explicit evaluative or suitability judgment;
+keeps other product attributes and observed outcomes as context; does not infer
+acquisition from price or quantity; and does not infer use from ownership or
+carrying. Carrying or keeping a product nearby is context unless ownership or
+use is explicit. Commercial direction is relative to the preserved decision
+object: a preference for A over B keeps the full comparison as a favorable
+object, while an exact midpoint numeric rating is mixed absent another stated
+direction. One atomic statement with separable explicit states emits each state
+rather than hiding a state in conditions or collapsing the bundle into mixed.
 `finalize-decision-state-reconciliation` requires exact coverage of those
 unresolved identities, compiles complete current v4 Decision State bindings,
 and validates the ordinary consolidation consumer. Current row-owned relation
@@ -1024,6 +1036,16 @@ manifest is a hash-bound run receipt, not a global semantic registry, ontology,
 or independently writable evidence authority. Exact historical agreement proves
 mechanical reuse eligibility, not semantic truth; bounded review retains the
 right to challenge an old judgment.
+
+The current point reader projects the exact meanings named by a displayed row's
+`relation_semantic_unit_refs`. A selected row's primary meaning and quote remain
+available as lineage, but they are not presented as the relation-owned meaning
+when the relation binds only a same-evidence companion. In that companion-only
+case the relation-facing quote is explicitly `quote_unavailable` unless a quote
+span owned by that exact meaning was captured. This prevents a neighboring
+selected-row quote from visually impersonating the meaning that supports,
+counters, or sits adjacent to the point; it does not decide whether the chosen
+semantic-reference subset is itself warranted.
 
 The confirmation pass still shares the first pass's source role for each row,
 because source-role competence is required input for the judgment rather than
@@ -1737,6 +1759,30 @@ new frontier.
 
 ## Changelog
 
+- `v68` / 2026-08-28 — completed the bounded Summer Fridays Phase A all-axis
+  consumer proof and corrected only defects observed at the current consumer.
+  The point reader had exposed a selected row's primary quote while its relation
+  was bound only to a same-evidence companion meaning; current projection now
+  shows the exact relation-bound meanings and keeps the selected row and quote as
+  lineage, using explicit relation-facing quote unavailability for a
+  companion-only binding. The no-frontier response schema now types its two
+  provider `const` strings instead of relying on a provider-invalid untyped
+  constant. Bounded relation review corrected three hydration rows without
+  mutating frozen evidence: two support/counter errors and one causal wording
+  exposure rebound to an existing non-causal same-evidence meaning. A value
+  reader sentence was narrowed from `independent` to `separate credited`; source
+  identity never proves independence. The final 12-axis primary/mirror set
+  preserved exactly 50 accepted points, 14 rejected points, and 184 no-frontier
+  candidate rows with zero current critical errors and 22 current wins versus 2
+  historical wins. A required fresh repeat resolved coverage in both positions;
+  packaging remained position-sensitive and is `INCONCLUSIVE`, not forced to a
+  winner. The 154-unit Decision State review changed 43 judgments, but was
+  same-family rather than vendor-independent. Separate prompt canaries disagreed
+  with that reviewed authority on 7 of 83 and then 6 of 83 rows, so repeated
+  provider judgment is not treated as a deterministic semantic oracle. These
+  results prove current transport, attachment, accounting, and consumer quality
+  under that owner-accepted review tradeoff; semantic truth, vendor independence,
+  market prevalence, causal force, and Deliver conclusions remain unproven.
 - `v67` / 2026-08-28 — replaced positional reuse of historical Decision State
   rows with run-scoped semantic-identity delta reconciliation. The temporary
   all-axis proof driver had copied bindings by `point_id` plus `selected_id` and
