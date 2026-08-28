@@ -5414,6 +5414,10 @@ def validate_axis_reader_structured_output(
         ]
         for point_id, fact_bytes in fact_streams.items()
     }
+    relation_quotes_by_point = {
+        point_id: [(fact, _reader_relation_quote(fact)) for fact in facts]
+        for point_id, facts in facts_by_point.items()
+    }
 
     def validated_point_rows(field: str, route_field: str) -> list[Mapping[str, Any]]:
         rows = output.get(field)
@@ -5484,19 +5488,19 @@ def validate_axis_reader_structured_output(
             has_bound_handle = isinstance(quote_span_id, str)
             matching_facts = [
                 fact
-                for fact in facts_by_point[point_id]
+                for fact, quote in relation_quotes_by_point[point_id]
                 if fact["evidence"]["evidence_id"] == evidence_id
                 and fact["relation"] == relation
-                and fact["quote"]["quote_status"] == quote_status
+                and quote["quote_status"] == quote_status
                 and (
                     (
                         has_bound_handle
-                        and fact["quote"]["quote_span_id"] == quote_span_id
-                        and exact_quote in {None, fact["quote"]["exact_quote"]}
+                        and quote["quote_span_id"] == quote_span_id
+                        and exact_quote in {None, quote["exact_quote"]}
                     )
                     or (
                         not has_bound_handle
-                        and fact["quote"]["exact_quote"] == exact_quote
+                        and quote["exact_quote"] == exact_quote
                     )
                 )
             ]
@@ -5507,7 +5511,7 @@ def validate_axis_reader_structured_output(
             ):
                 raise EvidenceConsumerError(
                     "axis_reader_output_verification",
-                    "structured output cited a cross-point, wrong-relation, or missing quote",
+                    "structured output cited a cross-point, wrong-relation, or missing relation-owned quote",
                 )
     return {
         "status": "valid",
@@ -6314,6 +6318,24 @@ _SEMANTIC_UNIT_OWNED_MEANING_FIELDS = (
 )
 
 
+def _reader_relation_quote(fact: Mapping[str, Any]) -> dict[str, Any]:
+    """Share quote ownership across both consumers of validated reader facts."""
+
+    meaning = fact["point_relative_meaning"]
+    if meaning["semantic_unit_ref"] in meaning["relation_semantic_unit_refs"]:
+        return copy.deepcopy(fact["quote"])
+    return {
+        "quote_span_id": None,
+        "evidence_id": fact["quote"]["evidence_id"],
+        "quote_status": "quote_unavailable",
+        "exact_quote": None,
+        "quote_unavailable_cause": (
+            "relation-bound same-evidence companion has no captured relation-owned "
+            "quote span"
+        ),
+    }
+
+
 def _point_reader_representative(fact: Mapping[str, Any]) -> dict[str, Any]:
     """Project the relation-bound meaning without presenting a neighboring quote as it."""
 
@@ -6364,20 +6386,7 @@ def _point_reader_representative(fact: Mapping[str, Any]) -> dict[str, Any]:
     headline_index = (
         relation_refs.index(selected_ref) if selected_meaning_is_relation_bound else 0
     )
-    relation_quote = (
-        selected_quote
-        if selected_meaning_is_relation_bound
-        else {
-            "quote_span_id": None,
-            "evidence_id": selected_quote["evidence_id"],
-            "quote_status": "quote_unavailable",
-            "exact_quote": None,
-            "quote_unavailable_cause": (
-                "relation-bound same-evidence companion has no captured relation-owned "
-                "quote span"
-            ),
-        }
-    )
+    relation_quote = _reader_relation_quote(fact)
     return {
         "placement_id": fact["placement_id"],
         "evidence_id": fact["evidence"]["evidence_id"],

@@ -1396,8 +1396,13 @@ Each structured point brief also copies `displayed_relation_row_counts`,
 `truth_origin_count`, and the exact point-local `candidate_pool_accounting` into
 `reader_accounting`. These are exact displayed-row, full-candidate, and
 origin-group accounting, never people, votes, corroboration, or prevalence.
-Every compiled representative also copies its exact `point_relative_meaning`
-block from the selected placement. A repeated literal quote may therefore
+Every compiled representative resolves `point_relative_meaning` and
+`relation_bound_meanings` from the exact relation-bound semantic references.
+The selected placement's primary meaning and quote remain separate lineage;
+missing companion-owned fields stay null and are named in
+`unbound_meaning_fields`, never borrowed from the primary meaning. The headline
+meaning owns the headline quote even when a companion reference is listed first.
+A repeated literal quote may therefore
 appear more than once when it carries distinct bounded semantic units; the
 quote or relation label alone is not allowed to erase that distinction.
 Before a model emits that shape, bind the base output schema with
@@ -1410,7 +1415,10 @@ When a cold reader emits the structured Phase A brief shape, run
 `validate-reader-output` before using it. This conditional local check rejects
 missing or duplicated accepted points, point ID/meaning/route swaps, broadened
 exact meanings, omitted or changed reader accounting, and representative quotes
-moved across a point or relation, or an unavailable/unbound quote handle. It costs no model call and is not required
+moved across a point or relation, or an unavailable/unbound quote handle. It uses
+the same relation-owned quote projection as the point-reader compiler: a
+companion-only binding accepts honest quote unavailability and rejects its
+neighboring selected-row quote. It costs no model call and is not required
 when no structured reader brief is produced.
 
 This exact validation is the standing cost for every generated reader bundle.

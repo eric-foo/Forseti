@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v68
+version: v69
 effective_date: 2026-08-28
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v68
+# Semantic Evidence Integration Contract v69
 
 ## Purpose
 
@@ -1047,6 +1047,16 @@ selected-row quote from visually impersonating the meaning that supports,
 counters, or sits adjacent to the point; it does not decide whether the chosen
 semantic-reference subset is itself warranted.
 
+Companion-owned semantic fields that the frozen projection does not carry remain
+null and are listed in `unbound_meaning_fields`; they never inherit the selected
+row's product/version, conditions, axes, polarity, statement, or uncertainty.
+When primary and companion meanings are co-bound, the headline meaning is the
+owner of the headline quote regardless of reference order. Both the point-reader
+compiler and structured-reader validator use the same quote-ownership projection.
+The latter accepts honest companion-only quote unavailability and rejects the
+neighboring primary quote; this closes an existing consumer gap, not a new
+semantic judgment stage.
+
 The confirmation pass still shares the first pass's source role for each row,
 because source-role competence is required input for the judgment rather than
 leaked first-pass state. Creator-authored rows are constrained to `adjacent` by
@@ -1759,6 +1769,15 @@ new frontier.
 
 ## Changelog
 
+- `v69` / 2026-08-29 — adjudicated the returned all-axis review: accepted the
+  companion-field and headline quote-owner fixes, and closed the remaining
+  structured-reader quote-ownership gap in the same work unit. Companion fields
+  no longer inherit primary semantic values; both reader consumers share one
+  quote projection. Freshly hash-bound current and v2 fixtures prove that an
+  honest companion-only unavailable quote passes and the neighboring quote
+  fails at the reader-output boundary. The earlier blind comparison remains
+  evidence for its pinned output bytes, not a new quality judgment of the patched
+  displays. No frozen source mutation or additional provider stage is required.
 - `v68` / 2026-08-28 — completed the bounded Summer Fridays Phase A all-axis
   consumer proof and corrected only defects observed at the current consumer.
   The point reader had exposed a selected row's primary quote while its relation

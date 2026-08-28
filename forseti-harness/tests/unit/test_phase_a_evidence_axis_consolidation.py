@@ -1851,6 +1851,79 @@ def test_axis_reader_structured_output_fails_loud_on_model_bookkeeping_errors(
             )
 
 
+@pytest.mark.parametrize("current_authoring", [False, True])
+@pytest.mark.parametrize("quote_mode", ["honest_unavailable", "neighboring_quote"])
+def test_structured_reader_checks_companion_quote_ownership(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    current_authoring: bool,
+    quote_mode: str,
+) -> None:
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    axis_pack = json.loads(Path(spec["source_axis_pack_path"]).read_text(encoding="utf-8"))
+    descriptor = axis_pack["points"][0]
+    point_id = descriptor["point_id"]
+    artifact = json.loads(Path(descriptor["artifact_path"]).read_text(encoding="utf-8"))
+    row = next(
+        row
+        for group in artifact["source_groups"]
+        for row in group["rows"]
+        if row["same_evidence_companion_meanings"]
+    )
+    companion_ref = row["same_evidence_companion_meanings"][0]["semantic_unit_ref"]
+    if current_authoring:
+        _bind_current_direct_outcome_relations(
+            spec, companion_for=(point_id, row["selected_id"])
+        )
+    else:
+        spec["direct_outcome_relation_bindings"] = [{
+            "point_id": point_id,
+            "rows": [{
+                "selected_id": row["selected_id"],
+                "relation_semantic_unit_refs": [companion_ref],
+            }],
+        }]
+    view = build_axis_consolidated_view(spec)
+    view_path = tmp_path / "view.json"
+    _write(view_path, view)
+    facts_dir = tmp_path / "facts"
+    manifest, streams = build_axis_reader_bundle(
+        view, source_view_path=view_path, facts_dir=facts_dir
+    )
+    _write_reader_facts(facts_dir, streams)
+    fact = next(
+        fact for fact in _reader_facts(streams)
+        if fact["point_id"] == point_id and fact["selected_id"] == row["selected_id"]
+    )
+    assert fact["point_relative_meaning"]["relation_semantic_unit_refs"] == [companion_ref]
+    assert fact["quote"]["quote_status"] == "quote_available"
+    output = _structured_reader_output(manifest, streams)
+    point = next(row for row in output["accepted_points"] if row["point_id"] == point_id)
+    point["representative_evidence"] = [{
+        "evidence_id": fact["evidence"]["evidence_id"],
+        "relation": fact["relation"],
+        "quote_span_id": None if quote_mode == "honest_unavailable" else fact["quote"]["quote_span_id"],
+        "quote_status": "quote_unavailable" if quote_mode == "honest_unavailable" else "quote_available",
+        "exact_quote": None if quote_mode == "honest_unavailable" else fact["quote"]["exact_quote"],
+    }]
+    # The view, bundle and all source hashes are freshly built and valid. Only
+    # relation ownership of the presented quote differs; a stale hash cannot pass.
+    if quote_mode == "neighboring_quote":
+        with pytest.raises(EvidenceConsumerError, match="relation-owned quote") as caught:
+            validate_axis_reader_structured_output(
+                manifest, facts_dir=facts_dir,
+                expected_reader_manifest_sha256=manifest["reader_manifest_sha256"],
+                output=output,
+            )
+        assert caught.value.boundary == "axis_reader_output_verification"
+    else:
+        assert validate_axis_reader_structured_output(
+            manifest, facts_dir=facts_dir,
+            expected_reader_manifest_sha256=manifest["reader_manifest_sha256"],
+            output=output,
+        )["status"] == "valid"
+
+
 def test_axis_reader_output_schema_binds_exact_point_pairs_and_accounting(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
