@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v71
+version: v72
 effective_date: 2026-08-29
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v71
+# Semantic Evidence Integration Contract v72
 
 ## Purpose
 
@@ -834,6 +834,14 @@ observations without inferring conflict or refinement from identity alone.
 Different people's opposed preferences do not disprove a particular person's
 private state. Frozen selection spec v1 replay keeps its original scope
 semantics; it is not fresh authoring and gains no default.
+Current scoped specs may carry the completion path's pinned
+`phase_a_relation_adjudication_v1` exception input. It preserves an explicit
+bounded judgment on an unchanged point/source/inventory/policy basis across
+confirmation reruns, retaining the raw answers and all changed labels. The
+semantic finalizer applies only the authored relation/reason to exactly matching
+row-owned ref sets; it does not infer semantic correctness or select refs.
+Missing, duplicate, foreign, or stale corrections fail visibly. The builder
+and readers still only preserve and verify attachments, never settle meaning.
 An external response must label every admitted candidate exactly once as
 support, counter, adjacent, or exclude before presentation selection begins;
 missing, duplicate, foreign, reordered, and wrong-role rows fail closed at
@@ -1785,6 +1793,17 @@ new frontier.
 
 ## Changelog
 
+- `v72` / 2026-08-29 — added a pinned, current-spec-only bounded relation
+  adjudication input at the existing preselection finalization seam. The
+  current-policy ownership refresh at `7888c532` reached seven successful
+  provider calls (580,100 input and 47,470 output tokens) but stopped when two
+  rows selected the same Marshmallow meaning as both support and adjacent.
+  This ambiguity had already been explicitly judged adjacent; wholesale
+  regeneration reopened it. Corrections now bind the exact point, complete
+  source/inventory and judging policy, survive row/batch presentation changes,
+  preserve original responses, and fail on stale or unmatched bindings. No
+  provider stage or semantic classifier was added. This does not prove the
+  chosen judgment true, eliminate fresh-authoring cost, or complete Phase A.
 - `v71` / 2026-08-29 — adjudicated cross-vendor correction to the v70
   scope-reading rule: input source identity is not person identity; read
   origin keys with independence posture and attribution, and check overlap

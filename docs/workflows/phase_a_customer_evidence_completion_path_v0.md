@@ -128,7 +128,7 @@ The frontier is a navigation artifact over a complete, non-truncated
 into one hash-bound bounded-point selection with the normal thirteen-truth-origin
 cap. For a non-value point with an explicit axis, candidate admission is the
 union of every semantic row for the same product and axis plus the proposition's
-literal refs. Every admitted row is newly judged against the exact bounded
+literal refs. Every admitted row is judged against the exact bounded
 point; sharing an axis grants no support or counter relation. Value points keep
 literal-ref admission because their price/value behavior policy is not the
 generic non-value route, and a hand-built value-first spec cannot claim the
@@ -191,6 +191,34 @@ Within a current point, repeated identical source/evidence/ref-set bindings
 must carry the same relation, even when different primary rows carry them.
 The existing authoring and consumer checks reject a conflict; they do not
 choose the right relation. Historical unscoped replay is not reinterpreted.
+
+An explicit bounded adjudication may settle a repeated exact-binding conflict.
+Attach it once to the current point spec as `relation_adjudication`, a
+`{"path": "...", "sha256": "..."}` binding to an immutable
+`phase_a_relation_adjudication_v1` JSON record. The record contains
+`schema_version`, `basis_sha256`, and nonempty `decisions`. Compute the basis
+with `phase_a_evidence_selection.relation_adjudication_basis(manifest,
+candidates)` over the verified current selection and its complete candidate
+inventory. Each authored decision carries `source_id`, `evidence_id`, the
+exact nonempty `relation_semantic_unit_refs`, `relation`, `reason_code`, and a
+source-backed `rationale`. This is an explicit judgment input, not a provider
+answer, self-certifying approval field, or automatic preference for an older
+label. A changed point/spec, source file, candidate inventory, or judging policy
+invalidates the basis and requires renewed judgment; do not merely rehash it.
+Only the correction's own locator is excluded from the basis to avoid a cycle.
+
+Both existing preselection finalizers apply the authored relation and reason
+to every confirmed row with that exact source/evidence/ref-set binding. They
+never choose or change refs. Unmatched or duplicate decisions fail visibly;
+all other rows retain their provider answers and the consistency guard remains
+active. Raw provider responses remain in replay, and the confirmation receipt
+records the pinned correction, every changed candidate and prior label, and
+the mechanically-unproven semantic warrant. The quote consumer revalidates the
+same binding. Historical unscoped specs and pre-confirmation routes cannot
+accept this extension. No default correction, global judgment cache, extra
+provider call, or mandatory review ceremony is introduced. This exception path
+does not remove the existing semantic workload for a genuinely fresh selection.
+
 The scope survives unchanged into the point artifact, consolidated view,
 structured reader, point-reader request, and compiled brief. Missing or changed
 scope fails locally. The point snapshot freezes the scope-reading rule and

@@ -263,6 +263,171 @@ def test_one_origin_may_carry_opposed_relations_across_separate_evidence(tmp_pat
     assert {row["relation"] for row in quote["labeled_inventory"]} == {"support", "counter"}
 
 
+def _adjudication_fixture(tmp_path: Path):
+    spec, sources = _write_source(tmp_path, 2)
+    semantic_rows = sources[0]["packet"]["source_groups"][0]["evidence_rows"][0][10]
+    primary_ref = semantic_rows[0][0]
+    companion = copy.deepcopy(semantic_rows[0])
+    companion[0] = "community_post:0::companion"
+    companion[1] = "A semantically different source-owned meaning."
+    semantic_rows.append(companion)
+    _reseal(sources[0])
+    _, _, original = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    record = {
+        "schema_version": evidence_selection.RELATION_ADJUDICATION_VERSION,
+        "basis_sha256": evidence_selection.relation_adjudication_basis(original, candidates),
+        "decisions": [{"source_id": "full-corpus", "evidence_id": "community_post:0",
+                       "relation_semantic_unit_refs": [primary_ref], "relation": "adjacent",
+                       "reason_code": "bounded_fixture_meaning",
+                       "rationale": "Explicit fixture judgment, not proven semantic truth."}],
+    }
+    path = tmp_path / "adjudication.json"
+    path.write_text(json.dumps(record), encoding="utf-8")
+    spec["relation_adjudication"] = {"path": str(path), "sha256": hash_file(path)}
+    return spec, sources, record, path
+
+
+def _adjudicated_quote(spec, sources):
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    first = _relation_response(candidates)
+    _, _, confirmation = prepare_preselection_relation_confirmation(manifest, sources, first)
+    by_id = {row["candidate_id"]: row for row in candidates}
+    checks = []
+    for row_id, candidate_id in zip(confirmation["confirmation_row_ids"], confirmation["confirmation_candidate_ids"], strict=True):
+        row = by_id[candidate_id]
+        target = row["evidence_id"] == "community_post:0"
+        checks.append({"confirmation_row_id": row_id,
+                       "relation": "adjacent" if row["semantic_unit_ref"].endswith("::companion") else "support",
+                       "reason_code": "original_judgment",
+                       "relation_semantic_unit_refs": ["community_post:0::hydration" if target else row["semantic_unit_ref"]]})
+    response = {"point_scope": "single_point", "point_scope_reason": "Fixture bounded point.", "relation_checks": checks}
+    _, _, quote = finalize_preselection_relation_confirmation_prepare_quotes(manifest, sources, first, confirmation, response)
+    return quote, response
+
+
+def test_adjudication_survives_confirmation_and_quote_replay_without_mutating_provider(tmp_path: Path) -> None:
+    spec, sources, _, _ = _adjudication_fixture(tmp_path)
+    unbound = {key: value for key, value in spec.items() if key != "relation_adjudication"}
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _adjudicated_quote(unbound, sources)
+    assert caught.value.boundary == "point_relation_binding_consistency"
+    quote, original_response = _adjudicated_quote(spec, sources)
+    assert quote["preselection_replay"]["confirmation_response"] == original_response
+    receipt = quote["preselection_relation_confirmation"]["relation_adjudication"]
+    assert receipt["matched_candidate_count"] == 2
+    assert len(receipt["changes"]) == 2  # includes the changed reason on the agreeing row
+    artifact = _finalize_quotes_runtime(quote, sources, _quote_response(quote, sources))
+    target = [row for row in artifact["candidate_dispositions"] if row["evidence_id"] == "community_post:0"]
+    assert len(target) == 2
+    assert {row["relation"] for row in target} == {"adjacent"}
+    assert all(row["relation_semantic_unit_refs"] == ["community_post:0::hydration"] for row in target)
+    assert next(row for row in artifact["candidate_dispositions"] if row["evidence_id"] != "community_post:0")["relation"] == "support"
+    assert _adjudicated_quote(spec, sources)[0] == quote
+
+
+@pytest.mark.parametrize("mutation", ["point", "scope", "source", "meaning", "conditions", "origin", "policy"])
+def test_adjudication_rejects_changed_basis_after_honest_repins(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mutation: str) -> None:
+    spec, sources, _, _ = _adjudication_fixture(tmp_path)
+    if mutation == "point":
+        spec["bounded_claim"] += " but only overnight"
+    elif mutation == "scope":
+        spec["point_actor_scope"] = {"mode": "identified_actor", "source_id": "full-corpus", "independence_key": "origin:0"}
+        spec["admit_semantic_refs"] = [{"source_id": "full-corpus", "semantic_unit_ref": "community_post:0::hydration"}]
+    elif mutation == "policy":
+        monkeypatch.setattr(evidence_selection, "POINT_ACTOR_SCOPE_GUIDANCE", "A genuinely different actor rule.")
+    else:
+        source = sources[0]
+        row = source["packet"]["source_groups"][0]["evidence_rows"][0]
+        if mutation == "source":
+            source["bundle"]["evidence_units"][0]["text"] += " New source context."
+        elif mutation == "meaning":
+            row[10][0][1] += " A changed predicate."
+        elif mutation == "conditions":
+            row[10][0][9] = ["only before use"]
+        else:
+            row[7] = "another_origin"
+        _reseal(source)
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_evidence_selection(spec, sources)
+    assert caught.value.boundary == "relation_adjudication_binding"
+    assert "point, sources, inventory or policy changed" in str(caught.value)
+
+
+@pytest.mark.parametrize("mutation,message", [
+    ("duplicate", "duplicate adjudicated binding"), ("duplicate_ref", "duplicate adjudicated refs"),
+    ("foreign", "foreign row-owned meaning"), ("missing", "decisions missing"),
+    ("wrong_source", "foreign row-owned meaning"), ("wrong_evidence", "foreign row-owned meaning"),
+])
+def test_adjudication_rejects_bad_decisions_after_file_repin(tmp_path: Path, mutation: str, message: str) -> None:
+    spec, sources, record, path = _adjudication_fixture(tmp_path)
+    decision = record["decisions"][0]
+    if mutation == "duplicate": record["decisions"].append(copy.deepcopy(decision))
+    elif mutation == "duplicate_ref": decision["relation_semantic_unit_refs"] *= 2
+    elif mutation == "foreign": decision["relation_semantic_unit_refs"] = ["foreign::ref"]
+    elif mutation == "missing": record["decisions"] = []
+    elif mutation == "wrong_source": decision["source_id"] = "other-source"
+    else: decision["evidence_id"] = "retailer_review:1"
+    path.write_text(json.dumps(record), encoding="utf-8")
+    spec["relation_adjudication"]["sha256"] = hash_file(path)
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_evidence_selection(spec, sources)
+    assert caught.value.boundary == "relation_adjudication_binding"
+    assert message in str(caught.value)
+
+
+def test_adjudication_missing_binding_fails_not_primary_ref_fallback(tmp_path: Path) -> None:
+    spec, sources, record, path = _adjudication_fixture(tmp_path)
+    # Owned but not the exact meaning chosen by the confirmation. This cannot
+    # silently apply to a different ref set, even within the same evidence.
+    record["decisions"][0]["relation_semantic_unit_refs"] = ["community_post:0::companion"]
+    path.write_text(json.dumps(record), encoding="utf-8")
+    spec["relation_adjudication"]["sha256"] = hash_file(path)
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _adjudicated_quote(spec, sources)
+    assert caught.value.boundary == "relation_adjudication_binding"
+    assert "absent from confirmed rows" in str(caught.value)
+
+
+def test_adjudication_file_is_required_again_at_quote_consumer(tmp_path: Path) -> None:
+    spec, sources, record, path = _adjudication_fixture(tmp_path)
+    quote, _ = _adjudicated_quote(spec, sources)
+    record["decisions"][0]["relation"] = "support"
+    path.write_text(json.dumps(record), encoding="utf-8")
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(quote, sources, _quote_response(quote, sources))
+    assert caught.value.boundary == "relation_adjudication_binding"
+    assert "file missing or changed" in str(caught.value)
+
+
+def test_adjudication_cannot_leak_into_historical_or_unconfirmed_routes(tmp_path: Path) -> None:
+    spec, sources, _, _ = _adjudication_fixture(tmp_path)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_relations_prepare_quotes(manifest, sources, _relation_response(_candidate_rows(sources, spec)))
+    assert caught.value.boundary == "relation_adjudication_binding"
+    assert "requires current preselection confirmation" in str(caught.value)
+    spec["schema_version"] = evidence_selection.LEGACY_SELECTION_SPEC_VERSION
+    spec.pop("point_actor_scope")
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_evidence_selection(spec, sources)
+    assert caught.value.boundary == "relation_adjudication_binding"
+
+
+def test_adjudication_does_not_claim_semantic_warrant(tmp_path: Path) -> None:
+    spec, sources, record, path = _adjudication_fixture(tmp_path)
+    # A structurally valid but semantically questionable judgment remains the
+    # author's responsibility. No prose classifier may silently choose a label.
+    record["decisions"][0]["relation"] = "counter"
+    record["decisions"][0]["rationale"] = "Deliberately dubious judgment for this non-claim control."
+    path.write_text(json.dumps(record), encoding="utf-8")
+    spec["relation_adjudication"]["sha256"] = hash_file(path)
+    quote, _ = _adjudicated_quote(spec, sources)
+    assert quote["preselection_relation_confirmation"]["relation_adjudication"]["semantic_warrant"] == "judgment_owned_not_mechanically_proven"
+    assert {row["relation"] for row in quote["labeled_inventory"] if row["evidence_id"] == "community_post:0"} == {"counter"}
+
+
 def _canonical_hash(value: object) -> str:
     import hashlib
 

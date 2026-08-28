@@ -61,6 +61,13 @@ PREVIOUS_PRESELECTION_CONFIRMATION_BATCH_MANIFEST_VERSION = (
     "phase_a_evidence_preselection_confirmation_batch_manifest_v1"
 )
 RELATIONS = ("support", "counter", "adjacent", "exclude")
+RELATION_ADJUDICATION_VERSION = "phase_a_relation_adjudication_v1"
+RELATION_REF_INSTRUCTION = (
+    "For every row, return relation_semantic_unit_refs as the smallest nonempty "
+    "subset of its supplied primary_semantic_unit_ref and "
+    "same_evidence_companion_meanings_with_refs that makes the returned relation "
+    "true. Use only refs owned by that row; do not infer, repair, or import meaning."
+)
 POINT_SCOPE_STATUSES = ("single_point", "broad_axis_or_bundle")
 RELATION_RESPONSE_MODES = ("literal_ids", "positional")
 RELATION_POLICIES = ("auto", "bounded_point")
@@ -1097,6 +1104,127 @@ def _policy_guidance(
     if isinstance(axis_ids, list) and HYPE_TRUST_AXIS_ID in axis_ids:
         guidance.append(HYPE_EXPECTATION_RELATION_GUIDANCE)
     return "\n\n".join(guidance)
+
+
+def relation_adjudication_basis(
+    manifest: Mapping[str, Any], candidates: Sequence[Mapping[str, Any]]
+) -> str:
+    """Exact reuse eligibility, not semantic approval or a cross-corpus cache.
+
+    Exclude only the correction's own locator to avoid a circular hash. Include
+    the whole source/spec/inventory and current judgment policy: even unrelated
+    source changes conservatively require renewed adjudication.
+    """
+    spec = {key: value for key, value in manifest["spec"].items()
+            if key != "relation_adjudication"}
+    return _canonical_json_sha256({
+        "spec": spec,
+        "sources": manifest["sources"],
+        "candidate_inventory_sha256": _canonical_json_sha256(candidates),
+        "parent_context_policy": manifest.get("parent_context_policy"),
+        "policy": [RELATION_PROMPT, BOUNDED_POINT_RELATION_DEFINITIONS,
+                   PRESELECTION_RELATION_CONFIRMATION_PROMPT,
+                   PRESELECTION_CONFIRMATION_BATCH_PROMPT,
+                   RELATION_REF_INSTRUCTION, POINT_ACTOR_SCOPE_GUIDANCE,
+                   _policy_guidance(spec, candidates)],
+    })
+
+
+def _load_relation_adjudication(
+    manifest: Mapping[str, Any], candidates: Sequence[Mapping[str, Any]]
+) -> dict[tuple[str, str, frozenset[str]], Mapping[str, Any]]:
+    binding = manifest["spec"].get("relation_adjudication")
+    if binding is None and "relation_adjudication" not in manifest["spec"]:
+        return {}
+    boundary = "relation_adjudication_binding"
+    if (manifest["spec"].get("schema_version") != SELECTION_SPEC_VERSION
+        or not isinstance(binding, Mapping) or set(binding) != {"path", "sha256"}
+        or not all(isinstance(binding[key], str) and binding[key] for key in binding)):
+        raise EvidenceConsumerError(boundary, "current adjudication requires a pinned file")
+    path = Path(binding["path"])
+    if not path.is_file() or hash_file(path) != binding["sha256"]:
+        raise EvidenceConsumerError(boundary, "adjudication file missing or changed")
+    try:
+        record = json.loads(path.read_text(encoding="utf-8-sig"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise EvidenceConsumerError(boundary, "invalid adjudication JSON") from exc
+    if (not isinstance(record, dict)
+        or set(record) != {"schema_version", "basis_sha256", "decisions"}
+        or record["schema_version"] != RELATION_ADJUDICATION_VERSION):
+        raise EvidenceConsumerError(boundary, "unsupported adjudication shape")
+    if record["basis_sha256"] != relation_adjudication_basis(manifest, candidates):
+        raise EvidenceConsumerError(boundary, "adjudication point, sources, inventory or policy changed")
+    decisions = record["decisions"]
+    if not isinstance(decisions, list) or not decisions:
+        raise EvidenceConsumerError(boundary, "adjudication decisions missing")
+    rows_by_evidence: dict[tuple[str, str], list[Mapping[str, Any]]] = defaultdict(list)
+    for row in candidates:
+        rows_by_evidence[(row["source_id"], row["evidence_id"])].append(row)
+    result = {}
+    value_policy = _uses_value_policy(manifest["spec"], candidates)
+    for decision in decisions:
+        if (not isinstance(decision, dict) or set(decision) != {
+            "source_id", "evidence_id", "relation_semantic_unit_refs",
+            "relation", "reason_code", "rationale",
+        } or not all(isinstance(decision[key], str) and decision[key].strip()
+                     for key in decision if key != "relation_semantic_unit_refs")):
+            raise EvidenceConsumerError(boundary, "invalid adjudication decision")
+        refs = decision["relation_semantic_unit_refs"]
+        if (not isinstance(refs, list) or not refs
+            or not all(isinstance(ref, str) and ref for ref in refs)
+            or len(refs) != len(set(refs))):
+            raise EvidenceConsumerError(boundary, "empty or duplicate adjudicated refs")
+        key = (decision["source_id"], decision["evidence_id"], frozenset(refs))
+        if key in result:
+            raise EvidenceConsumerError(boundary, "duplicate adjudicated binding")
+        owners = rows_by_evidence.get(key[:2], [])
+        if not any(set(refs) <= {row["semantic_unit_ref"], *(
+            item["semantic_unit_ref"] for item in row["same_evidence_companion_meanings"]
+        )} for row in owners):
+            raise EvidenceConsumerError(boundary, "adjudication references a foreign row-owned meaning")
+        relation, reason = decision["relation"], decision["reason_code"]
+        if (relation not in RELATIONS or len(reason) > 80
+            or not REASON_CODE_RE.fullmatch(reason)
+            or INTERNAL_RELATION_LABEL_RE.search(reason.replace("_", " "))
+            or (value_policy and VALUE_REASON_RELATIONS.get(reason) != relation)):
+            raise EvidenceConsumerError(boundary, "invalid adjudicated relation or reason")
+        result[key] = decision
+    return result
+
+
+def _apply_relation_adjudication(
+    manifest: Mapping[str, Any], candidates: Sequence[Mapping[str, Any]],
+    rows: Sequence[dict[str, Any]],
+) -> dict[str, Any] | None:
+    decisions = _load_relation_adjudication(manifest, candidates)
+    if not decisions:
+        return None
+    matched = set()
+    changed = []
+    matched_count = 0
+    for row in rows:
+        key = (row["source_id"], row["evidence_id"],
+               frozenset(row.get("relation_semantic_unit_refs", [])))
+        decision = decisions.get(key)
+        if decision is None:
+            continue
+        matched.add(key)
+        matched_count += 1
+        if row["layer"] == "influence_context" and decision["relation"] in {"support", "counter"}:
+            raise EvidenceConsumerError("creator_customer_laundering", "adjudication cannot promote creator evidence into customer truth")
+        if (row["relation"], row["reason_code"]) != (decision["relation"], decision["reason_code"]):
+            changed.append({"candidate_id": row["candidate_id"],
+                            "prior_relation": row["relation"],
+                            "prior_reason_code": row["reason_code"],
+                            "relation": decision["relation"],
+                            "reason_code": decision["reason_code"]})
+        row["relation"] = decision["relation"]
+        row["reason_code"] = decision["reason_code"]
+    if matched != set(decisions):
+        raise EvidenceConsumerError("relation_adjudication_binding", "adjudicated binding is absent from confirmed rows; renewed judgment required")
+    return {"binding": dict(manifest["spec"]["relation_adjudication"]),
+            "matched_candidate_count": matched_count, "changes": changed,
+            "semantic_warrant": "judgment_owned_not_mechanically_proven"}
 
 
 def _candidate_id(packet_sha256: str, evidence_id: str, semantic_ref: str) -> str:
@@ -2227,6 +2355,7 @@ def prepare_evidence_selection(
         "model_api_calls": 0,
     }
     manifest["manifest_sha256"] = _canonical_json_sha256(manifest)
+    _load_relation_adjudication(manifest, candidates)
     return prompt, schema, manifest
 
 
@@ -2464,6 +2593,7 @@ def _candidate_rows_for_manifest(
         include_parent_context=policy == PARENT_CONTEXT_POLICY,
     )
     _point_actor_scope(manifest["spec"], candidates)
+    _load_relation_adjudication(manifest, candidates)
     return candidates
 
 
@@ -3961,6 +4091,8 @@ def _prepare_quotes_from_labeled(
 def finalize_relations_prepare_quotes(
     manifest: Mapping[str, Any], sources: Sequence[Mapping[str, Any]], response: Mapping[str, Any]
 ) -> tuple[str, dict[str, Any], dict[str, Any]]:
+    if "relation_adjudication" in manifest["spec"]:
+        raise EvidenceConsumerError("relation_adjudication_binding", "adjudication requires current preselection confirmation")
     candidates = _candidate_rows_for_manifest(sources, manifest)
     response_mode = _relation_response_mode(manifest["spec"])
     value_policy = _uses_value_policy(manifest["spec"], candidates)
@@ -4090,15 +4222,9 @@ def prepare_preselection_relation_confirmation(
     _attach_point_parent_context_envelope(envelope, point_context_rows)
     prompt_template = PRESELECTION_RELATION_CONFIRMATION_PROMPT
     if include_relation_refs:
-        binding_instruction = (
-            "For every row, return relation_semantic_unit_refs as the smallest nonempty "
-            "subset of its supplied primary_semantic_unit_ref and "
-            "same_evidence_companion_meanings_with_refs that makes the returned relation "
-            "true. Use only refs owned by that row; do not infer, repair, or import meaning."
-        )
         prompt_template = prompt_template.replace(
             "\n\nThe first-pass relation,",
-            f"\n\n{binding_instruction}\n\nThe first-pass relation,",
+            f"\n\n{RELATION_REF_INSTRUCTION}\n\nThe first-pass relation,",
             1,
         )
     prompt = prompt_template.format(
@@ -4306,6 +4432,9 @@ def _finalize_preselection_relation_confirmation_prepare_quotes(
         row["relation"] = relation
         row["reason_code"] = reason_code
     final_labeled = [by_id[row["candidate_id"]] for row in labeled]
+    if "relation_adjudication" in manifest["spec"] and not include_relation_refs:
+        raise EvidenceConsumerError("relation_adjudication_binding", "adjudication requires current explicit relation refs")
+    adjudication = _apply_relation_adjudication(manifest, candidates, final_labeled)
     confirmation_binding = {
         "status": "passed",
         "confirmation_manifest_sha256": expected_manifest["manifest_sha256"],
@@ -4316,6 +4445,8 @@ def _finalize_preselection_relation_confirmation_prepare_quotes(
     }
     if include_relation_refs:
         confirmation_binding["relation_binding_status"] = "passed"
+    if adjudication is not None:
+        confirmation_binding["relation_adjudication"] = adjudication
     prompt, schema, quote_manifest = _prepare_quotes_from_labeled(
         manifest,
         sources,
@@ -4539,16 +4670,9 @@ def prepare_batched_preselection_relation_confirmations(
         _attach_point_parent_context_envelope(envelope, point_context_rows)
         prompt_template = PRESELECTION_CONFIRMATION_BATCH_PROMPT
         if include_relation_refs:
-            binding_instruction = (
-                "For every row, return relation_semantic_unit_refs as the smallest "
-                "nonempty subset of its supplied primary_semantic_unit_ref and "
-                "same_evidence_companion_meanings_with_refs that makes the returned "
-                "relation true. Use only refs owned by that row; do not infer, repair, "
-                "or import meaning."
-            )
             prompt_template = prompt_template.replace(
                 "\n\nThe first-pass relation,",
-                f"\n\n{binding_instruction}\n\nThe first-pass relation,",
+                f"\n\n{RELATION_REF_INSTRUCTION}\n\nThe first-pass relation,",
                 1,
             )
         prompt = prompt_template.format(
