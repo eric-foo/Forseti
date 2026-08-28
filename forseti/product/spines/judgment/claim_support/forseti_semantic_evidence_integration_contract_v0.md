@@ -1007,9 +1007,13 @@ reuse a Decision State judgment only for an unchanged source-owned semantic
 identity consisting of evidence ID, semantic-unit ref, literal normalized
 statement, axes, conditions, and polarity, and only when every matching prior
 observation carries the same complete judgment bundle. Point ID, selected-row
-ID, row order, axis placement, and relation are not semantic reuse keys. New or
-changed identities, conflicting history, and partial multi-ref state groups are
-the only units sent to the existing bounded judgment boundary.
+ID, row order, axis placement, and relation are not semantic reuse keys. Because
+current v4 rows address meanings by semantic ref, one evidence and semantic-ref
+slot must resolve to a single current identity across every axis in the run; two
+current axes carrying different content for the same slot fail closed rather
+than silently resolving to one of them. New or changed identities, conflicting
+history, and partial multi-ref state groups are the only units sent to the
+existing bounded judgment boundary.
 `finalize-decision-state-reconciliation` requires exact coverage of those
 unresolved identities, compiles complete current v4 Decision State bindings,
 and validates the ordinary consolidation consumer. Current row-owned relation

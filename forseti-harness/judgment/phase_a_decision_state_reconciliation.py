@@ -529,7 +529,7 @@ def _response_schema(*, reconciliation_scope_sha256: str) -> dict[str, Any]:
     def judgment_variant(state_kind: str | None) -> dict[str, Any]:
         if state_kind is None:
             properties: dict[str, Any] = {
-                "item_ids": item_ids_schema,
+                "item_ids": {**item_ids_schema, "maxItems": 1},
                 "classification": {"type": "string", "const": "context_only"},
                 "state_kind": {"type": "null"},
                 "commercial_direction": {"type": "null"},
@@ -558,6 +558,7 @@ def _response_schema(*, reconciliation_scope_sha256: str) -> dict[str, Any]:
                 ),
                 "conditions": {
                     "type": "array",
+                    "uniqueItems": True,
                     "items": {"type": "string", "minLength": 1},
                 },
             }
@@ -762,10 +763,18 @@ def prepare_phase_a_decision_state_reconciliation(
             unresolved_causes[identity_id].add(cause)
 
     # A historical multi-ref assertion is reusable only as one complete cell.
-    current_by_slot = {
-        (unit["evidence_id"], unit["semantic_unit_ref"]): identity_id
-        for identity_id, unit in current_units.items()
-    }
+    # Current v4 rows address meanings by semantic ref, so one evidence/ref slot
+    # must resolve to one current identity across every axis in this run; the
+    # per-pack identity check cannot see a conflict raised by a second pack.
+    current_by_slot: dict[tuple[str, str], str] = {}
+    for identity_id, unit in current_units.items():
+        slot = (unit["evidence_id"], unit["semantic_unit_ref"])
+        if current_by_slot.setdefault(slot, identity_id) != identity_id:
+            raise EvidenceConsumerError(
+                "decision_state_reconciliation_current_identity",
+                f"current semantic identity has conflicting content across axes: "
+                f"{unit['semantic_unit_ref']}",
+            )
     changed = True
     while changed:
         changed = False

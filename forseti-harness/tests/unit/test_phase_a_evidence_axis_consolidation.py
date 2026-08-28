@@ -5514,6 +5514,12 @@ def test_decision_state_reconciliation_surfaces_conflicting_history_before_consu
             "items"
         ]["anyOf"]
     }
+    assert state_variants[None]["properties"]["item_ids"]["maxItems"] == 1
+    assert all(
+        variant["properties"]["conditions"]["uniqueItems"] is True
+        for state_kind, variant in state_variants.items()
+        if state_kind is not None
+    )
     assert state_variants["purchase"]["properties"]["commercial_direction"][
         "enum"
     ] == ["neutral"]
@@ -5633,46 +5639,31 @@ def test_decision_state_reconciliation_runner_materializes_bound_provider_contra
         )
 
 
-def test_decision_state_reconciliation_treats_changed_content_as_new_judgment(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+def _repin_point_chain(
+    descriptor: dict[str, Any],
+    artifact: dict[str, Any],
+    *,
+    selection_axis_ids: list[str] | None = None,
 ) -> None:
-    plan, _, _, template_path = _decision_state_reconciliation_fixture(
-        tmp_path, monkeypatch
-    )
-    current_pack_path = Path(plan["current_axes"][0]["axis_pack"]["path"])
-    current_pack = json.loads(current_pack_path.read_text(encoding="utf-8"))
-    descriptor = next(
-        point for point in current_pack["points"] if point["point_id"] == "point_b"
-    )
+    """Rehash one point's artifact, selection, and quote chain after an edit."""
+
     artifact_path = Path(descriptor["artifact_path"])
-    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
-    selected = next(
-        row
-        for group in artifact["source_groups"]
-        for row in group["rows"]
-        if row["semantic_unit_ref"] == "retailer:sephora:review1::dry"
+    inventory_hash = _canonical_json_sha256(
+        [
+            {
+                key: value
+                for key, value in row.items()
+                if key not in {"relation", "reason_code", "relation_semantic_unit_refs"}
+            }
+            for row in artifact["candidate_dispositions"]
+        ]
     )
-    semantic_ref = selected["semantic_unit_ref"]
-    selected["normalized_meaning"] += " Changed current wording."
-    candidate = next(
-        row
-        for row in artifact["candidate_dispositions"]
-        if row["semantic_unit_ref"] == semantic_ref
-    )
-    candidate["normalized_meaning"] = selected["normalized_meaning"]
-    source_inventory = [
-        {
-            key: value
-            for key, value in row.items()
-            if key not in {"relation", "reason_code", "relation_semantic_unit_refs"}
-        }
-        for row in artifact["candidate_dispositions"]
-    ]
-    inventory_hash = _canonical_json_sha256(source_inventory)
     artifact["candidate_inventory_sha256"] = inventory_hash
     selection_path = Path(descriptor["selection_manifest_path"])
     selection = json.loads(selection_path.read_text(encoding="utf-8"))
     selection["candidate_inventory_sha256"] = inventory_hash
+    if selection_axis_ids is not None:
+        selection["spec"] = {**selection["spec"], "axis_ids": list(selection_axis_ids)}
     _rehash_manifest(selection)
     _write(selection_path, selection)
     quote_path = Path(descriptor["quote_manifest_path"])
@@ -5689,9 +5680,14 @@ def test_decision_state_reconciliation_treats_changed_content_as_new_judgment(
     descriptor["selection_manifest_sha256"] = selection["manifest_sha256"]
     descriptor["quote_manifest_file_sha256"] = hash_file(quote_path)
     descriptor["quote_manifest_sha256"] = quote["manifest_sha256"]
-    current_manifest = _manifest(
+
+
+def _rebuild_axis_pack(
+    pack_path: Path, pack: dict[str, Any], *, axis_id: str
+) -> None:
+    rebuilt_manifest = _manifest(
         schema_version=AXIS_PACK_MANIFEST_VERSION,
-        axis_id=current_pack["axis_id"],
+        axis_id=axis_id,
         accepted_points=[
             {
                 key: point[key]
@@ -5709,12 +5705,68 @@ def test_decision_state_reconciliation_treats_changed_content_as_new_judgment(
                     "quote_manifest_sha256",
                 )
             }
-            for point in current_pack["points"]
+            for point in pack["points"]
         ],
-        rejected_points=copy.deepcopy(current_pack["rejected_points"]),
+        rejected_points=copy.deepcopy(pack["rejected_points"]),
     )
-    rebuilt_current_pack = build_phase_a_evidence_axis_pack(current_manifest)
-    _write(current_pack_path, rebuilt_current_pack)
+    _write(pack_path, build_phase_a_evidence_axis_pack(rebuilt_manifest))
+
+
+def _rebind_axis_pack(pack_path: Path, *, axis_id: str) -> None:
+    """Move a fixture axis pack to another axis without changing any meaning."""
+
+    pack = json.loads(pack_path.read_text(encoding="utf-8"))
+    for descriptor in pack["points"]:
+        artifact = json.loads(
+            Path(descriptor["artifact_path"]).read_text(encoding="utf-8")
+        )
+        _repin_point_chain(descriptor, artifact, selection_axis_ids=[axis_id])
+    _rebuild_axis_pack(pack_path, pack, axis_id=axis_id)
+
+
+def _rewrite_point_meaning(
+    pack_path: Path, *, point_id: str, semantic_unit_ref: str, suffix: str
+) -> None:
+    """Change one point meaning in place and rebuild the owning axis pack."""
+
+    pack = json.loads(pack_path.read_text(encoding="utf-8"))
+    descriptor = next(
+        point for point in pack["points"] if point["point_id"] == point_id
+    )
+    artifact = json.loads(
+        Path(descriptor["artifact_path"]).read_text(encoding="utf-8")
+    )
+    selected = next(
+        row
+        for group in artifact["source_groups"]
+        for row in group["rows"]
+        if row["semantic_unit_ref"] == semantic_unit_ref
+    )
+    selected["normalized_meaning"] += suffix
+    candidate = next(
+        row
+        for row in artifact["candidate_dispositions"]
+        if row["semantic_unit_ref"] == semantic_unit_ref
+    )
+    candidate["normalized_meaning"] = selected["normalized_meaning"]
+    _repin_point_chain(descriptor, artifact)
+    _rebuild_axis_pack(pack_path, pack, axis_id=pack["axis_id"])
+
+
+def test_decision_state_reconciliation_treats_changed_content_as_new_judgment(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    plan, _, _, template_path = _decision_state_reconciliation_fixture(
+        tmp_path, monkeypatch
+    )
+    current_pack_path = Path(plan["current_axes"][0]["axis_pack"]["path"])
+    semantic_ref = "retailer:sephora:review1::dry"
+    _rewrite_point_meaning(
+        current_pack_path,
+        point_id="point_b",
+        semantic_unit_ref=semantic_ref,
+        suffix=" Changed current wording.",
+    )
     template = json.loads(template_path.read_text(encoding="utf-8"))
     template["source_axis_pack_sha256"] = hash_file(current_pack_path)
     _write(template_path, template)
@@ -5730,3 +5782,61 @@ def test_decision_state_reconciliation_treats_changed_content_as_new_judgment(
     ]
     assert len(changed) == 1
     assert changed[0]["causes"] == ["changed_content"]
+
+
+def test_decision_state_reconciliation_rejects_cross_axis_meaning_conflict(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    plan, _, _, _ = _decision_state_reconciliation_fixture(
+        tmp_path / "first", monkeypatch
+    )
+    second_plan, _, _, second_template_path = _decision_state_reconciliation_fixture(
+        tmp_path / "second", monkeypatch
+    )
+    second_pack_path = Path(second_plan["current_axes"][0]["axis_pack"]["path"])
+    _rebind_axis_pack(second_pack_path, axis_id="value_and_quantity")
+
+    def _rebind_plan() -> None:
+        second_template = json.loads(
+            second_template_path.read_text(encoding="utf-8")
+        )
+        second_template["axis_id"] = "value_and_quantity"
+        second_template["source_axis_pack_sha256"] = hash_file(second_pack_path)
+        _write(second_template_path, second_template)
+        binding = {
+            "axis_pack": {
+                "path": str(second_pack_path),
+                "sha256": hash_file(second_pack_path),
+            },
+            "spec_template": {
+                "path": str(second_template_path),
+                "sha256": hash_file(second_template_path),
+            },
+        }
+        plan["current_axes"] = [plan["current_axes"][0], binding]
+
+    _rebind_plan()
+    shared = prepare_phase_a_decision_state_reconciliation(plan)
+    assert [axis["axis_id"] for axis in shared["axes"]] == [
+        "hydration_and_moisture",
+        "value_and_quantity",
+    ]
+    axes_by_identity: dict[str, set[str]] = {}
+    for row in shared["rows"]:
+        for identity_id in row["identity_ids"]:
+            axes_by_identity.setdefault(identity_id, set()).add(row["axis_id"])
+    assert any(len(axes) > 1 for axes in axes_by_identity.values())
+
+    _rewrite_point_meaning(
+        second_pack_path,
+        point_id="point_b",
+        semantic_unit_ref="retailer:sephora:review1::dry",
+        suffix=" Second axis wording.",
+    )
+    _rebind_plan()
+
+    with pytest.raises(
+        EvidenceConsumerError, match="conflicting content across axes"
+    ) as caught:
+        prepare_phase_a_decision_state_reconciliation(plan)
+    assert caught.value.boundary == "decision_state_reconciliation_current_identity"
