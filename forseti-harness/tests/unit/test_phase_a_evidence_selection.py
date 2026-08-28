@@ -100,17 +100,22 @@ def test_actor_scope_and_source_identities_reach_every_relation_batch(tmp_path: 
     for batch, (prompt, _) in zip(manifest["batches"], prompts, strict=True):
         envelope = json.loads(prompt.split("SELECTION_ENVELOPE_JSON:\n")[1])
         assert envelope["point_actor_scope"] == spec["point_actor_scope"]
+        assert envelope["actor_scope_rule"] == evidence_selection.POINT_ACTOR_SCOPE_GUIDANCE
         for values in envelope["candidate_rows"]:
             row = dict(zip(envelope["candidate_columns"], values, strict=True))
+            assert row["source_id"] == by_id[row["candidate_id"]]["source_id"]
             assert row["independence_key"] == by_id[row["candidate_id"]]["independence_key"]
+            assert row["independence_posture"] == by_id[row["candidate_id"]]["independence_posture"]
         start = batch["start_index"]
         responses[batch["batch_id"]] = _batched_positional_relation_response(candidates[start:start + batch["candidate_count"]], batch["batch_id"])
     _, confirmations = prepare_batched_preselection_relation_confirmations(manifest, sources, responses, batch_size=2)
     for prompt, _ in confirmations:
         envelope = json.loads(prompt.split("PRESELECTION_RELATION_CONFIRMATION_BATCH_ENVELOPE_JSON:\n")[1])
         assert envelope["point_actor_scope"] == spec["point_actor_scope"]
+        assert envelope["actor_scope_rule"] == evidence_selection.POINT_ACTOR_SCOPE_GUIDANCE
         assert "source_id" in envelope["candidate_columns"]
         assert "independence_key" in envelope["candidate_columns"]
+        assert "independence_posture" in envelope["candidate_columns"]
 
 
 @pytest.mark.parametrize("identity", ["foreign", "origin:0"])
@@ -213,6 +218,49 @@ def test_identical_meaning_relation_consistency_at_quote_preparation(tmp_path: P
     else:
         _, _, quote = finalize_preselection_relation_confirmation_prepare_quotes(manifest, sources, first, confirmation, response)
         assert len(quote["labeled_inventory"]) == 2
+
+
+def test_one_origin_may_carry_opposed_relations_across_separate_evidence(tmp_path: Path) -> None:
+    """The consistency key is exact-meaning, not per-origin.
+
+    One reporting origin can report different things in two separate evidence
+    items, so opposed relations there must not be rejected as a contradictory
+    binding or semantically reconciled by identity alone. Only the identical
+    source/evidence/ref-set binding conflicts, which the test above pins.
+    """
+    spec, sources = _write_source(tmp_path, 2)
+    packet = sources[0]["packet"]
+    groups = packet["source_groups"]
+    # Column 7 is independence_key; give both evidence items one reporting origin.
+    groups[1]["evidence_rows"][0][7] = groups[0]["evidence_rows"][0][7]
+    packet.pop("packet_sha256")
+    packet["packet_sha256"] = _canonical_hash(packet)
+    sources[0]["packet_path"].write_text(json.dumps(packet), encoding="utf-8")
+    candidates = _candidate_rows(sources, spec)
+    assert len({row["independence_key"] for row in candidates}) == 1
+    assert len({row["evidence_id"] for row in candidates}) == 2
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    first = _relation_response(candidates)
+    _, _, confirmation = prepare_preselection_relation_confirmation(manifest, sources, first)
+    by_candidate = {row["candidate_id"]: row for row in candidates}
+    response = {
+        "point_scope": "single_point",
+        "point_scope_reason": "One explicit fixture point.",
+        "relation_checks": [
+            {
+                "confirmation_row_id": row_id,
+                "relation": "support" if index else "counter",
+                "reason_code": "fixture_relation",
+                "relation_semantic_unit_refs": [by_candidate[candidate_id]["semantic_unit_ref"]],
+            }
+            for index, (row_id, candidate_id) in enumerate(
+                zip(confirmation["confirmation_row_ids"], confirmation["confirmation_candidate_ids"], strict=True)
+            )
+        ],
+    }
+    _, _, quote = finalize_preselection_relation_confirmation_prepare_quotes(manifest, sources, first, confirmation, response)
+    assert quote["point_actor_scope"] == {"mode": "source_local_reports"}
+    assert {row["relation"] for row in quote["labeled_inventory"]} == {"support", "counter"}
 
 
 def _canonical_hash(value: object) -> str:

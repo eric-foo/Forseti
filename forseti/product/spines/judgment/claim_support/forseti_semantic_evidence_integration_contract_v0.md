@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v70
+version: v71
 effective_date: 2026-08-29
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v70
+# Semantic Evidence Integration Contract v71
 
 ## Purpose
 
@@ -825,9 +825,15 @@ beginning `Fresh selections use` owns the operational shape and CLI route.
 Both existing judgment exchanges receive the scope and row origin identity;
 both reader surfaces preserve it unchanged. Deterministic code verifies the
 identity and transfer, not whether the authored scope fits the source meaning.
-Different people's opposed preferences are contrasting reports, not disproof
-of a particular person's private state. Frozen selection spec v1 replay keeps
-its original scope semantics; it is not fresh authoring and gains no default.
+Under source-local reports the input source ID is not a person identifier.
+Read source-bound independence keys with their independence posture and
+source-visible attribution; different keys alone do not prove different
+people. Check origin overlap before describing opposed rows as separate
+authors. One credited origin can appear on both sides; preserve its separate
+observations without inferring conflict or refinement from identity alone.
+Different people's opposed preferences do not disprove a particular person's
+private state. Frozen selection spec v1 replay keeps its original scope
+semantics; it is not fresh authoring and gains no default.
 An external response must label every admitted candidate exactly once as
 support, counter, adjacent, or exclude before presentation selection begins;
 missing, duplicate, foreign, reordered, and wrong-role rows fail closed at
@@ -1779,6 +1785,20 @@ new frontier.
 
 ## Changelog
 
+- `v71` / 2026-08-29 — adjudicated cross-vendor correction to the v70
+  scope-reading rule: input source identity is not person identity; read
+  origin keys with independence posture and attribution, and check overlap
+  before describing opposed rows as separate authors. The shade dogfood has
+  one `full-corpus` source ID across 1,021 candidate rows and 538 distinct
+  origin keys: 497 credited keys across 955 rows, plus 41 unavailable-identity
+  keys across 66 rows, not 538 proven people. One credited account supplies
+  both Vanilla-favorite observations. Joint favorites do not oppose a
+  non-exclusive favorite claim merely by naming another option. The review's
+  unconditional key-to-person and key-to-refinement wording was not retained.
+  Text correction to existing judgment and reader guidance; no new provider
+  stage, consumer boundary, schema, or frozen artifact mutation. Changed
+  guidance invalidates scoped reader cache inputs as designed. Semantic
+  adequacy and improved reader quality remain unproven until observed.
 - `v70` / 2026-08-29 — made actor scope explicit in current selection spec v2
   and carried it through existing judgment calls and both reader consumers.
   Missing scope, unresolved focal identity, foreign-origin focal relations,

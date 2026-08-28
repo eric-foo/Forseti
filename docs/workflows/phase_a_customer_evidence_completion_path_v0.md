@@ -164,16 +164,26 @@ their stamped policy.
 Fresh selections use `phase_a_evidence_selection_spec_v2` and explicitly author
 `point_actor_scope`. This is part of the point's meaning, not a relation label:
 `{"mode":"source_local_reports"}` makes an unqualified author/customer/reviewer
-refer separately to each reporting source; `identified_actor` additionally
+refer separately to each reporting origin; `identified_actor` additionally
 requires `source_id` and `independence_key` resolving to a credited literal
-point anchor. Never choose a focal person from row order or an opaque ref.
+point anchor. `source_id` identifies an input source that may contain many
+actors; it is not a person identifier. Read the source-bound `independence_key`
+together with `independence_posture` and source-visible attribution. Different
+keys alone do not prove different people; unavailable identity and possible
+overlap remain unresolved. Never choose a focal person from row order or an
+opaque ref.
 Do not silently use source-local reporting to broaden an explicitly named
 person's claim. Scope choice and semantic fit remain judgment-owned.
 
 The existing initial and confirmation requests carry that scope and each row's
 source-owned origin identity. For source-local reports, opposing favorite
 choices can be contrasting reports, never proof that another person's private
-favorite is false. Ownership of another option or an incomplete owned-option
+favorite is false. Check origin overlap before calling opposed rows separate
+authors: one credited origin can appear on both sides. Preserve its separate
+observations; conflict, change, or refinement depends on meanings and dates,
+not identity alone. A joint favorite does not oppose a non-exclusive favorite
+claim merely because another option is named; preserve any explicit exclusivity
+criterion. Ownership of another option or an incomplete owned-option
 list does not negate ownership. For an identified actor, a foreign or unknown
 origin cannot receive support/counter for that actor's private state; the
 identity boundary rejects such labels without guessing what prose means.

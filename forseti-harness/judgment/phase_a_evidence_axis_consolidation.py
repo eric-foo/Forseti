@@ -331,8 +331,13 @@ def _decision_state_reader_contract(
 
 SCOPED_POINT_MEANING_RULE = (
     "The admitted point is bounded_point together with point_actor_scope when present. "
-    "Source-local reports refer separately to each reporting source, not an unnamed "
-    "focal person; contrasting reports do not falsify another person's private state. "
+    "Source-local reports refer to each row's reporting origin, not an unnamed focal "
+    "person. source_id is not a person identifier; read the source-bound independence_key "
+    "with independence_posture and attribution. Different keys alone do not prove "
+    "different people. Check origin overlap before calling opposed rows separate authors; "
+    "one credited origin can appear on both sides. Preserve its observations without "
+    "inferring conflict or refinement from identity alone. Contrasting reports do not "
+    "falsify another person's private state. "
     "An identified_actor scope is confined to its bound origin. Placements cannot "
     "widen, merge, or rewrite either the predicate or its actor scope."
 )
