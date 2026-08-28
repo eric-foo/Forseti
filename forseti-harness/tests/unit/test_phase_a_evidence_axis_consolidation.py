@@ -4576,6 +4576,59 @@ def test_point_reader_compiler_closes_decision_state_at_consumer_boundary(
     assert companion_representative["quote_span_id"] is None
     assert companion_representative["exact_quote"] is None
     assert companion_representative["selected_row_quote"] == support_source["quote"]
+    companion_meaning = companion_representative["point_relative_meaning"]
+    selected_row_meaning = companion_representative["selected_row_meaning"]
+    # A companion binding carries only its own semantic fields; the ones it does
+    # not carry must read as unbound rather than as the selected row's values.
+    assert companion_meaning["axis_ids"] is None
+    assert companion_meaning["conditions"] is None
+    assert companion_meaning["product_version_ids"] is None
+    assert companion_meaning["uncertainty_posture"] is None
+    assert companion_meaning["unbound_meaning_fields"] == [
+        "axis_ids",
+        "conditions",
+        "product_version_ids",
+        "uncertainty_posture",
+    ]
+    # Lineage stays the verbatim selected row, without relation-facing markers.
+    assert "unbound_meaning_fields" not in selected_row_meaning
+    assert selected_row_meaning == companion_only_fact["point_relative_meaning"]
+    assert isinstance(selected_row_meaning["axis_ids"], list)
+    assert isinstance(selected_row_meaning["conditions"], list)
+    assert companion_meaning["statement"] == companion["normalized_meaning"]
+    assert companion_meaning["polarity"] == companion["polarity"]
+    assert "normalized_meaning" not in companion_meaning
+
+    # A relation co-bound to the selected row keeps the headline meaning owned by
+    # the same semantic unit as the headline quote, whatever order the refs list.
+    co_bound_fact = copy.deepcopy(support_source)
+    co_bound_fact["point_relative_meaning"]["relation_semantic_unit_refs"] = [
+        companion["semantic_unit_ref"],
+        support_source["point_relative_meaning"]["semantic_unit_ref"],
+    ]
+    co_bound_representative = consolidation_judgment._point_reader_representative(
+        co_bound_fact
+    )
+    assert co_bound_representative["point_relative_meaning"]["semantic_unit_ref"] == (
+        support_source["point_relative_meaning"]["semantic_unit_ref"]
+    )
+    assert co_bound_representative["quote_span_id"] == support_source["quote"][
+        "quote_span_id"
+    ]
+    assert [
+        meaning["semantic_unit_ref"]
+        for meaning in co_bound_representative["relation_bound_meanings"]
+    ] == co_bound_fact["point_relative_meaning"]["relation_semantic_unit_refs"]
+    co_bound_by_ref = {
+        meaning["semantic_unit_ref"]: meaning
+        for meaning in co_bound_representative["relation_bound_meanings"]
+    }
+    assert co_bound_by_ref[
+        support_source["point_relative_meaning"]["semantic_unit_ref"]
+    ]["unbound_meaning_fields"] == []
+    assert co_bound_by_ref[companion["semantic_unit_ref"]][
+        "unbound_meaning_fields"
+    ] == ["axis_ids", "conditions", "product_version_ids", "uncertainty_posture"]
     support = support_source
     assert any(fact["relation"] == "counter" for fact in first_facts)
     with pytest.raises(EvidenceConsumerError) as caught:

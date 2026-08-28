@@ -6301,6 +6301,19 @@ def _compile_point_reader_brief_from_validated_facts(
     return brief
 
 
+# Fields a semantic unit owns for itself.  A same-evidence companion meaning is
+# projected upstream without all of them, so the selected row's values must never
+# stand in for the ones a companion binding does not carry.
+_SEMANTIC_UNIT_OWNED_MEANING_FIELDS = (
+    "axis_ids",
+    "conditions",
+    "polarity",
+    "product_version_ids",
+    "statement",
+    "uncertainty_posture",
+)
+
+
 def _point_reader_representative(fact: Mapping[str, Any]) -> dict[str, Any]:
     """Project the relation-bound meaning without presenting a neighboring quote as it."""
 
@@ -6322,18 +6335,35 @@ def _point_reader_representative(fact: Mapping[str, Any]) -> dict[str, Any]:
     relation_meanings: list[dict[str, Any]] = []
     for ref in relation_refs:
         resolved = copy.deepcopy(selected_meaning)
-        bound_meaning = copy.deepcopy(meaning_by_ref[ref])
-        resolved.update(bound_meaning)
-        if "statement" not in bound_meaning and isinstance(
-            bound_meaning.get("normalized_meaning"), str
-        ):
-            resolved["statement"] = bound_meaning["normalized_meaning"]
-        resolved.pop("normalized_meaning", None)
+        unbound_fields: list[str] = []
+        if ref != selected_ref:
+            bound_meaning = copy.deepcopy(meaning_by_ref[ref])
+            if "statement" not in bound_meaning and isinstance(
+                bound_meaning.get("normalized_meaning"), str
+            ):
+                bound_meaning["statement"] = bound_meaning["normalized_meaning"]
+            bound_meaning.pop("normalized_meaning", None)
+            resolved.update(bound_meaning)
+            # Report what this companion binding does not carry instead of letting
+            # the selected row's value silently impersonate the companion's own.
+            unbound_fields = [
+                field
+                for field in _SEMANTIC_UNIT_OWNED_MEANING_FIELDS
+                if field not in bound_meaning
+            ]
+            for field in unbound_fields:
+                resolved[field] = None
         resolved["relation_semantic_unit_refs"] = copy.deepcopy(relation_refs)
+        resolved["unbound_meaning_fields"] = unbound_fields
         relation_meanings.append(resolved)
 
     selected_quote = copy.deepcopy(fact["quote"])
     selected_meaning_is_relation_bound = selected_ref in relation_refs
+    # The headline meaning must be the one that owns the headline quote, so a
+    # co-bound companion listed first cannot be paired with the selected row's quote.
+    headline_index = (
+        relation_refs.index(selected_ref) if selected_meaning_is_relation_bound else 0
+    )
     relation_quote = (
         selected_quote
         if selected_meaning_is_relation_bound
@@ -6363,7 +6393,7 @@ def _point_reader_representative(fact: Mapping[str, Any]) -> dict[str, Any]:
         "publication_time": fact["evidence"]["publication_time"],
         "engagement": copy.deepcopy(fact["evidence"]["engagement"]),
         "origin_group_id": fact["origin"]["origin_group_id"],
-        "point_relative_meaning": copy.deepcopy(relation_meanings[0]),
+        "point_relative_meaning": copy.deepcopy(relation_meanings[headline_index]),
         "relation_bound_meanings": relation_meanings,
         "selected_row_meaning": selected_meaning,
         "selected_row_quote": selected_quote,
