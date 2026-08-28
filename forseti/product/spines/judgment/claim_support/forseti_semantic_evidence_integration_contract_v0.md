@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v69
-effective_date: 2026-08-28
+version: v70
+effective_date: 2026-08-29
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v69
+# Semantic Evidence Integration Contract v70
 
 ## Purpose
 
@@ -818,6 +818,16 @@ Contract v39 adds an optional no-provider selection-and-quote consumer over
 one or more hash-bound v3 packets. It does not change packet v3 or the
 authoritative semantic view. Admission is deterministic from explicit product
 and axis membership or literal operator-nominated semantic/unresolved refs.
+Current authoring uses selection spec v2 with explicit `point_actor_scope`:
+source-local reports or an identified actor bound to a credited literal point
+anchor by source ID and independence key. The completion path's paragraph
+beginning `Fresh selections use` owns the operational shape and CLI route.
+Both existing judgment exchanges receive the scope and row origin identity;
+both reader surfaces preserve it unchanged. Deterministic code verifies the
+identity and transfer, not whether the authored scope fits the source meaning.
+Different people's opposed preferences are contrasting reports, not disproof
+of a particular person's private state. Frozen selection spec v1 replay keeps
+its original scope semantics; it is not fresh authoring and gains no default.
 An external response must label every admitted candidate exactly once as
 support, counter, adjacent, or exclude before presentation selection begins;
 missing, duplicate, foreign, reordered, and wrong-role rows fail closed at
@@ -1769,6 +1779,16 @@ new frontier.
 
 ## Changelog
 
+- `v70` / 2026-08-29 — made actor scope explicit in current selection spec v2
+  and carried it through existing judgment calls and both reader consumers.
+  Missing scope, unresolved focal identity, foreign-origin focal relations,
+  changed consumer scope, and conflicting relations on identical point-local
+  evidence/ref-set bindings fail visibly; no deterministic prose classifier
+  or additional provider stage was added. The two shade failures originated
+  in unbound actor scope, not the latest relation-facing display projection.
+  Historical v1 selection replay and frozen artifacts retain their bytes.
+  Scope adequacy, semantic truth, full-axis quality, and Phase A completion
+  remain separate claims; previous blind wins do not establish this change.
 - `v69` / 2026-08-29 — adjudicated the returned all-axis review: accepted the
   companion-field and headline quote-owner fixes, and closed the remaining
   structured-reader quote-ownership gap in the same work unit. Companion fields

@@ -61,7 +61,7 @@ from judgment.phase_a_evidence_selection import (
     prepare_batched_preselection_relation_confirmations,
     prepare_preselection_relation_confirmation,
     prepare_selected_relation_confirmation,
-    selection_spec_from_customer_pull_frontier,
+    selection_spec_from_customer_pull_frontier as _selection_spec_from_frontier,
     verify_customer_pull_point_frontier,
 )
 from runners.run_semantic_evidence_integration import (
@@ -72,7 +72,7 @@ from runners.run_semantic_evidence_integration import (
     finalize_evidence_selection_batches_run,
     finalize_evidence_selection_quotes_run,
     finalize_evidence_selection_relations_run,
-    materialize_customer_pull_point_selection_spec_run,
+    materialize_customer_pull_point_selection_spec_run as _materialize_frontier_run,
     prepare_evidence_selection_batches_run,
     prepare_evidence_selection_run,
     prepare_batched_preselection_relation_confirmation_run,
@@ -81,12 +81,154 @@ from runners.run_semantic_evidence_integration import (
 )
 
 
+def test_current_actor_scope_requires_an_authored_choice(tmp_path: Path) -> None:
+    spec, sources = _write_source(tmp_path, 5)
+    del spec["point_actor_scope"]
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_evidence_selection(spec, sources)
+    assert caught.value.boundary == "point_actor_scope"
+    assert "requires explicit" in str(caught.value)
+
+
+def test_actor_scope_and_source_identities_reach_every_relation_batch(tmp_path: Path) -> None:
+    spec, sources = _write_source(tmp_path, 7)
+    spec["relation_response_mode"] = "positional"
+    manifest, prompts = prepare_evidence_selection_batches(spec, sources, batch_size=3)
+    candidates = _candidate_rows(sources, spec)
+    by_id = {row["candidate_id"]: row for row in candidates}
+    responses = {}
+    for batch, (prompt, _) in zip(manifest["batches"], prompts, strict=True):
+        envelope = json.loads(prompt.split("SELECTION_ENVELOPE_JSON:\n")[1])
+        assert envelope["point_actor_scope"] == spec["point_actor_scope"]
+        for values in envelope["candidate_rows"]:
+            row = dict(zip(envelope["candidate_columns"], values, strict=True))
+            assert row["independence_key"] == by_id[row["candidate_id"]]["independence_key"]
+        start = batch["start_index"]
+        responses[batch["batch_id"]] = _batched_positional_relation_response(candidates[start:start + batch["candidate_count"]], batch["batch_id"])
+    _, confirmations = prepare_batched_preselection_relation_confirmations(manifest, sources, responses, batch_size=2)
+    for prompt, _ in confirmations:
+        envelope = json.loads(prompt.split("PRESELECTION_RELATION_CONFIRMATION_BATCH_ENVELOPE_JSON:\n")[1])
+        assert envelope["point_actor_scope"] == spec["point_actor_scope"]
+        assert "source_id" in envelope["candidate_columns"]
+        assert "independence_key" in envelope["candidate_columns"]
+
+
+@pytest.mark.parametrize("identity", ["foreign", "origin:0"])
+def test_focal_actor_must_resolve_to_a_point_anchor(tmp_path: Path, identity: str) -> None:
+    spec, sources = _write_source(tmp_path, 5)
+    spec["point_actor_scope"] = {"mode": "identified_actor", "source_id": "full-corpus", "independence_key": identity}
+    spec["admit_semantic_refs"] = [{"source_id": "full-corpus", "semantic_unit_ref": "community_post:0::hydration"}]
+    if identity == "foreign":
+        with pytest.raises(EvidenceConsumerError) as caught:
+            prepare_evidence_selection(spec, sources)
+        assert caught.value.boundary == "point_actor_scope"
+        return
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    # Valid outer bindings, but a different source is labelled support.
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_relations_prepare_quotes(manifest, sources, _relation_response(_candidate_rows(sources, spec)))
+    assert caught.value.boundary == "point_actor_relation"
+
+
+def test_identified_actor_keeps_its_own_report_without_relabeling_others(tmp_path: Path) -> None:
+    spec, sources = _write_source(tmp_path, 5)
+    spec["point_actor_scope"] = {"mode": "identified_actor", "source_id": "full-corpus", "independence_key": "origin:0"}
+    spec["admit_semantic_refs"] = [{"source_id": "full-corpus", "semantic_unit_ref": "community_post:0::hydration"}]
+    candidates = _candidate_rows(sources, spec)
+    response = _relation_response(candidates)
+    for row in response["results"]:
+        if row["candidate_id"] != next(candidate["candidate_id"] for candidate in candidates if candidate["independence_key"] == "origin:0"):
+            row.update(relation="adjacent", reason_code="related_customer_context")
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote = finalize_relations_prepare_quotes(manifest, sources, response)
+    artifact = finalize_quotes(quote, sources, _quote_response(quote, sources))
+    assert artifact["point_actor_scope"] == spec["point_actor_scope"]
+    assert all(row["independence_key"] == "origin:0" for row in artifact["candidate_dispositions"] if row["relation"] in {"support", "counter"})
+
+
+@pytest.mark.parametrize("batched", [False, True])
+def test_fresh_cli_rejects_legacy_scope_without_blocking_replay(tmp_path: Path, batched: bool) -> None:
+    spec, _ = _write_source(tmp_path, 5)
+    spec["schema_version"] = evidence_selection.LEGACY_SELECTION_SPEC_VERSION
+    del spec["point_actor_scope"]
+    path = tmp_path / "legacy_spec.json"
+    path.write_text(json.dumps(spec), encoding="utf-8")
+    with pytest.raises(EvidenceConsumerError) as caught:
+        if batched:
+            prepare_evidence_selection_batches_run(spec_path=path, batch_size=3, batch_dir=tmp_path/"batches", batch_manifest_out=tmp_path/"manifest.json")
+        else:
+            prepare_evidence_selection_run(spec_path=path, prompt_out=tmp_path/"prompt.txt", response_schema_out=tmp_path/"schema.json", manifest_out=tmp_path/"manifest.json")
+    assert caught.value.boundary == "point_actor_scope"
+    assert "fresh authoring requires" in str(caught.value)
+
+
+def test_source_local_scope_is_not_a_deterministic_semantic_classifier(tmp_path: Path) -> None:
+    spec, sources = _write_source(tmp_path, 5)
+    spec["bounded_claim"] = "An explicitly authored but semantically questionable report."
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote = finalize_relations_prepare_quotes(manifest, sources, _relation_response(_candidate_rows(sources, spec)))
+    assert quote["point_actor_scope"] == {"mode": "source_local_reports"}
+
+
+def test_legacy_actor_scope_replay_is_not_reinterpreted(tmp_path: Path) -> None:
+    spec, sources = _write_source(tmp_path, 5)
+    spec["schema_version"] = evidence_selection.LEGACY_SELECTION_SPEC_VERSION
+    del spec["point_actor_scope"]
+    prompt, _, manifest = prepare_evidence_selection(spec, sources)
+    assert "point_actor_scope" not in prompt
+    _, _, quote = finalize_relations_prepare_quotes(manifest, sources, _relation_response(_candidate_rows(sources, spec)))
+    assert "point_actor_scope" not in quote
+    assert finalize_quotes(quote, sources, _quote_response(quote, sources))
+
+
+@pytest.mark.parametrize("legacy,conflict", [(False, False), (False, True), (True, True)])
+def test_identical_meaning_relation_consistency_at_quote_preparation(tmp_path: Path, legacy: bool, conflict: bool) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    if legacy:
+        spec["schema_version"] = evidence_selection.LEGACY_SELECTION_SPEC_VERSION
+        spec.pop("point_actor_scope")
+    packet = sources[0]["packet"]
+    semantic_rows = packet["source_groups"][0]["evidence_rows"][0][10]
+    primary_ref = semantic_rows[0][0]
+    companion = copy.deepcopy(semantic_rows[0])
+    companion[0] = "community_post:0::companion"
+    companion[1] = "A second row from the same source."
+    semantic_rows.append(companion)
+    packet.pop("packet_sha256")
+    packet["packet_sha256"] = _canonical_hash(packet)
+    sources[0]["packet_path"].write_text(json.dumps(packet), encoding="utf-8")
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    assert len(candidates) == 2
+    first = _relation_response(candidates)
+    _, _, confirmation = prepare_preselection_relation_confirmation(manifest, sources, first)
+    response = {"point_scope": "single_point", "point_scope_reason": "One explicit fixture point.",
+                "relation_checks": [{"confirmation_row_id": row_id, "relation": "adjacent" if conflict and i else "support", "reason_code": "fixture_relation", "relation_semantic_unit_refs": [primary_ref]}
+                                    for i, row_id in enumerate(confirmation["confirmation_row_ids"])]}
+    if conflict and not legacy:
+        with pytest.raises(EvidenceConsumerError) as caught:
+            finalize_preselection_relation_confirmation_prepare_quotes(manifest, sources, first, confirmation, response)
+        assert caught.value.boundary == "point_relation_binding_consistency"
+        assert "identical point-local evidence meaning" in str(caught.value)
+    else:
+        _, _, quote = finalize_preselection_relation_confirmation_prepare_quotes(manifest, sources, first, confirmation, response)
+        assert len(quote["labeled_inventory"]) == 2
+
+
 def _canonical_hash(value: object) -> str:
     import hashlib
 
     return hashlib.sha256(
         json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
     ).hexdigest()
+
+
+def selection_spec_from_customer_pull_frontier(*args, **kwargs):
+    return _selection_spec_from_frontier(*args, point_actor_scope={"mode": "source_local_reports"}, **kwargs)
+
+
+def materialize_customer_pull_point_selection_spec_run(**kwargs):
+    return _materialize_frontier_run(point_actor_scope={"mode": "source_local_reports"}, **kwargs)
 
 
 def test_current_quote_schema_closes_zero_row_item_shape() -> None:
@@ -674,6 +816,7 @@ def _spec(count: int = 14) -> dict:
         protected["costly_behavior"] = ["retailer_review:6"]
     return {
         "schema_version": SELECTION_SPEC_VERSION,
+        "point_actor_scope": {"mode": "source_local_reports"},
         "selection_id": "hydration-pilot",
         "bounded_claim": "The balm provides immediate hydration after use.",
         "axis_ids": ["hydration_and_moisture"],
@@ -1596,6 +1739,8 @@ def test_frontier_relation_rejection_binding_is_tamper_evident() -> None:
     parsed = _parser().parse_args(
         [
             "materialize-customer-pull-point-selection-spec",
+            "--point-actor-scope",
+            '{"mode":"source_local_reports"}',
             "--frontier",
             "frontier.json",
             "--packet",
@@ -2868,6 +3013,9 @@ def test_selected_relation_confirmation_hides_first_pass_labels_and_rejects_flip
         "product_version_ids",
         "source_role",
         "same_evidence_companion_meanings",
+        "source_id",
+        "independence_key",
+        "independence_posture",
     ]
     assert schema["required"] == [
         "point_scope",
@@ -3618,6 +3766,7 @@ def test_batched_frontier_route_confirms_before_cap_and_replays_exactly(
     assert quote_manifest["relation_transport"]["mode"] == "named_positional_batches"
     assert quote_manifest["preselection_relation_confirmation"]["status"] == "passed"
     assert artifact["candidate_count"] == 20
+    assert artifact["point_actor_scope"] == spec["point_actor_scope"]
     assert artifact["timeline"]
     assert artifact["selection_disclosure"]["temporal_presentation_policy"] == (
         "recent_year_coverage_v1"
@@ -4044,7 +4193,8 @@ def test_provider_prompts_are_compact_views_while_manifests_keep_full_facts(
         spec, sources
     )
     assert '"candidate_columns"' in relation_prompt
-    assert '"independence_posture"' not in relation_prompt
+    assert '"independence_posture"' in relation_prompt
+    assert '"point_actor_scope"' in relation_prompt
     assert '"source_ref"' not in relation_prompt
     assert '"engagement_raw_value"' not in relation_prompt
     assert manifest["candidate_inventory_sha256"]

@@ -161,6 +161,44 @@ the balm is expensive supports that objection, rather than being reversed by
 the older positive-good-value box policy. Historical value-box selections keep
 their stamped policy.
 
+Fresh selections use `phase_a_evidence_selection_spec_v2` and explicitly author
+`point_actor_scope`. This is part of the point's meaning, not a relation label:
+`{"mode":"source_local_reports"}` makes an unqualified author/customer/reviewer
+refer separately to each reporting source; `identified_actor` additionally
+requires `source_id` and `independence_key` resolving to a credited literal
+point anchor. Never choose a focal person from row order or an opaque ref.
+Do not silently use source-local reporting to broaden an explicitly named
+person's claim. Scope choice and semantic fit remain judgment-owned.
+
+The existing initial and confirmation requests carry that scope and each row's
+source-owned origin identity. For source-local reports, opposing favorite
+choices can be contrasting reports, never proof that another person's private
+favorite is false. Ownership of another option or an incomplete owned-option
+list does not negate ownership. For an identified actor, a foreign or unknown
+origin cannot receive support/counter for that actor's private state; the
+identity boundary rejects such labels without guessing what prose means.
+Within a current point, repeated identical source/evidence/ref-set bindings
+must carry the same relation, even when different primary rows carry them.
+The existing authoring and consumer checks reject a conflict; they do not
+choose the right relation. Historical unscoped replay is not reinterpreted.
+The scope survives unchanged into the point artifact, consolidated view,
+structured reader, point-reader request, and compiled brief. Missing or changed
+scope fails locally. The point snapshot freezes the scope-reading rule and
+binds its hash into scoped point inputs; changing that rule invalidates only
+those readings, not unscoped historical points. Mixed reader tables show absent
+historical scope as null without assigning it a new meaning.
+`materialize-customer-pull-point-selection-spec` takes the
+authored JSON through `--point-actor-scope`; both fresh preparation commands
+require v2. Frozen v1 selection manifests retain their original finalization
+and reader replay, without a fabricated scope or frozen-byte migration.
+
+This adds one explicit choice to authoring and linear identity checks, not a
+provider stage, per-point whole-axis reread, automatic semantic classifier, or
+proof of semantic truth. The 2026-08-29 shade diagnosis found different people
+grouped under unqualified `the author` wording while confirmation invented a
+same/different focal-actor distinction. Correct attachment alone cannot resolve
+that missing scope; old comparison wins do not clear it.
+
 For a new point pack, relation confirmation occurs before the display cap:
 
 ```text

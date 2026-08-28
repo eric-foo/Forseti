@@ -73,6 +73,7 @@ from judgment.phase_a_evidence_consumer import (  # noqa: E402
     prepare_decision_batch,
 )
 from judgment.phase_a_evidence_selection import (  # noqa: E402
+    SELECTION_SPEC_VERSION,
     SELECTION_BATCH_MANIFEST_VERSION,
     build_customer_pull_point_frontier,
     finalize_batched_preselection_relation_confirmations_prepare_quotes,
@@ -1649,6 +1650,7 @@ def materialize_customer_pull_point_selection_spec_run(
     bundle_path: Path,
     proposition_id: str,
     spec_out: Path,
+    point_actor_scope: Mapping[str, Any],
     rejected_frontier_semantic_refs: Sequence[str] = (),
 ) -> dict[str, Any]:
     frontier = _load_object(frontier_path)
@@ -1658,6 +1660,7 @@ def materialize_customer_pull_point_selection_spec_run(
         frontier,
         packet,
         proposition_id,
+        point_actor_scope=point_actor_scope,
         frontier_relation_rejections=[
             {
                 "source_id": frontier["source_id"],
@@ -1719,6 +1722,8 @@ def prepare_evidence_selection_run(
     manifest_out: Path,
 ) -> dict[str, Any]:
     spec = _load_object(spec_path)
+    if spec.get("schema_version") != SELECTION_SPEC_VERSION:
+        raise EvidenceConsumerError("point_actor_scope", "fresh authoring requires selection spec v2; frozen v1 replay uses finalization")
     sources = _selection_sources_from_spec(spec_path, spec)
     prompt, schema, manifest = prepare_evidence_selection(spec, sources)
     for output in (prompt_out, response_schema_out, manifest_out):
@@ -1744,6 +1749,8 @@ def prepare_evidence_selection_batches_run(
     batch_manifest_out: Path,
 ) -> dict[str, Any]:
     spec = _load_object(spec_path)
+    if spec.get("schema_version") != SELECTION_SPEC_VERSION:
+        raise EvidenceConsumerError("point_actor_scope", "fresh authoring requires selection spec v2; frozen v1 replay uses finalization")
     sources = _selection_sources_from_spec(spec_path, spec)
     batch_manifest, prompts_and_schemas = prepare_evidence_selection_batches(
         spec, sources, batch_size=batch_size
@@ -2425,6 +2432,8 @@ def _parser() -> argparse.ArgumentParser:
     frontier_point.add_argument("--packet", type=Path, required=True)
     frontier_point.add_argument("--bundle", type=Path, required=True)
     frontier_point.add_argument("--proposition-id", required=True)
+    frontier_point.add_argument("--point-actor-scope", type=json.loads, required=True,
+                                help="Authored JSON: source_local_reports mode, or identified_actor mode with source_id and independence_key")
     frontier_point.add_argument(
         "--reject-frontier-relation",
         action="append",
@@ -2916,6 +2925,7 @@ def main(argv: list[str] | None = None) -> int:
                 bundle_path=args.bundle,
                 proposition_id=args.proposition_id,
                 spec_out=args.spec_out,
+                point_actor_scope=args.point_actor_scope,
                 rejected_frontier_semantic_refs=(
                     args.rejected_frontier_semantic_refs
                 ),

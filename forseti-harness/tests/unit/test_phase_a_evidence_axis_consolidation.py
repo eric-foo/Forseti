@@ -504,7 +504,7 @@ def _fixture(
         selection = _manifest(
             schema_version="phase_a_evidence_selection_manifest_v1",
             candidate_inventory_sha256=inventory_hash,
-            spec={"axis_ids": ["hydration_and_moisture"]},
+            spec={"schema_version": "phase_a_evidence_selection_spec_v1", "axis_ids": ["hydration_and_moisture"]},
             sources=[],
         )
         selection_path = tmp_path / point_id / "selection.json"
@@ -654,6 +654,117 @@ def _generic_fixture(
     spec["source_axis_pack_path"] = str(axis_path)
     spec["source_axis_pack_sha256"] = hash_file(axis_path)
     return manifest, spec, paths
+
+
+def _actor_scope_fixture(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, *, current_count: int | None = None):
+    manifest, spec, paths = _generic_fixture(tmp_path, monkeypatch)
+    scope = {"mode": "source_local_reports"}
+    for descriptor in manifest["accepted_points"][:current_count]:
+        selection_path = Path(descriptor["selection_manifest_path"])
+        selection = json.loads(selection_path.read_text(encoding="utf-8"))
+        selection["spec"].update(schema_version="phase_a_evidence_selection_spec_v2", point_actor_scope=scope)
+        _rehash_manifest(selection)
+        _write(selection_path, selection)
+        quote_path = Path(descriptor["quote_manifest_path"])
+        quote = json.loads(quote_path.read_text(encoding="utf-8"))
+        quote.update(point_actor_scope=scope, selection_manifest_sha256=selection["manifest_sha256"])
+        _rehash_manifest(quote)
+        _write(quote_path, quote)
+        artifact_path = Path(descriptor["artifact_path"])
+        artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+        artifact.update(point_actor_scope=scope, selection_manifest_sha256=selection["manifest_sha256"], quote_manifest_sha256=quote["manifest_sha256"])
+        _write(artifact_path, artifact)
+        descriptor.update(artifact_sha256=hash_file(artifact_path), selection_manifest_file_sha256=hash_file(selection_path), selection_manifest_sha256=selection["manifest_sha256"], quote_manifest_file_sha256=hash_file(quote_path), quote_manifest_sha256=quote["manifest_sha256"])
+    _rehash_manifest(manifest)
+    _write(paths["generic_axis"], build_phase_a_evidence_axis_pack(manifest))
+    spec["source_axis_pack_sha256"] = hash_file(paths["generic_axis"])
+    return manifest, spec, paths
+
+
+@pytest.mark.parametrize("mutation", ["omit", "change"])
+def test_actor_scope_wrong_cause_reaches_public_pack_boundary(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mutation: str) -> None:
+    manifest, _, _ = _actor_scope_fixture(tmp_path, monkeypatch)
+    descriptor = manifest["accepted_points"][0]
+    path = Path(descriptor["artifact_path"])
+    artifact = json.loads(path.read_text(encoding="utf-8"))
+    if mutation == "omit":
+        del artifact["point_actor_scope"]
+    else:
+        artifact["point_actor_scope"] = {"mode": "identified_actor", "source_id": "other", "independence_key": "foreign"}
+    _write(path, artifact)
+    descriptor["artifact_sha256"] = hash_file(path)
+    _rehash_manifest(manifest)
+    with pytest.raises(EvidenceConsumerError) as caught:
+        build_phase_a_evidence_axis_pack(manifest)
+    assert caught.value.boundary == "point_actor_scope"
+    assert "between selection and reader" in str(caught.value)
+
+
+@pytest.mark.parametrize("current_count", [1, 2])
+def test_actor_scope_survives_both_public_readers_and_rejects_omission(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, current_count: int) -> None:
+    _, spec, _ = _actor_scope_fixture(tmp_path, monkeypatch, current_count=current_count)
+    _route_fixture_as_current_mixed(spec)
+    view = build_axis_consolidated_view(spec)
+    assert "point_actor_scope" in view["decision_state_reader_surface"]["point_table"]["columns"]
+    path = tmp_path / "view.json"
+    _write(path, view)
+    facts_dir = tmp_path / "facts"
+    manifest, streams = build_axis_reader_bundle(view, source_view_path=path, facts_dir=facts_dir)
+    _write_reader_facts(facts_dir, streams)
+    output = _structured_reader_output(manifest, streams)
+    scope = {"mode": "source_local_reports"}
+    scoped_ids = {row["point_id"] for row in view["point_index"] if "point_actor_scope" in row}
+    assert len(scoped_ids) == current_count
+    for row in output["accepted_points"]:
+        if row["point_id"] in scoped_ids:
+            row["point_actor_scope"] = scope
+    assert validate_axis_reader_structured_output(manifest, facts_dir=facts_dir, expected_reader_manifest_sha256=manifest["reader_manifest_sha256"], output=output)
+    bound = bind_axis_reader_output_schema(manifest, _reader_output_base_schema())
+    assert sum("point_actor_scope" in row.get("required", []) for row in bound["properties"]["accepted_points"]["items"]["anyOf"]) == current_count
+    del next(row for row in output["accepted_points"] if row["point_id"] in scoped_ids)["point_actor_scope"]
+    with pytest.raises(EvidenceConsumerError) as caught:
+        validate_axis_reader_structured_output(manifest, facts_dir=facts_dir, expected_reader_manifest_sha256=manifest["reader_manifest_sha256"], output=output)
+    assert caught.value.boundary == "point_actor_scope"
+    snapshot, payloads = build_axis_point_reader_snapshot(view, source_view_path=path, subject_identity=_point_reader_subject_identity())
+    store = tmp_path / "point_store"
+    _write_point_reader_store(store, snapshot, payloads)
+    point = next(row for row in snapshot["points"] if row["point_id"] in scoped_ids)
+    request = consolidation_runner._point_reader_request(snapshot, point, payloads[point["point_id"]])
+    assert request["point_actor_scope"] == scope
+    brief = compile_point_reader_brief(snapshot, point_store_dir=store, point_id=point["point_id"], response=_point_reader_response(point, payloads[point["point_id"]]))
+    assert brief["point_actor_scope"] == scope
+    validate_point_reader_brief(snapshot, point_store_dir=store, brief=brief)
+    del brief["point_actor_scope"]
+    brief.pop("brief_sha256")
+    brief["brief_sha256"] = _canonical_json_sha256(brief)
+    # A valid outer hash cannot conceal omission of compiler-owned scope.
+    with pytest.raises(EvidenceConsumerError) as caught:
+        validate_point_reader_brief(snapshot, point_store_dir=store, brief=brief)
+    assert caught.value.boundary == "point_reader_brief"
+    assert "compiled point binding changed" in str(caught.value)
+
+
+def test_actor_scope_rule_is_frozen_and_only_invalidates_scoped_point_cache(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    _, spec, _ = _actor_scope_fixture(tmp_path, monkeypatch, current_count=1)
+    view = build_axis_consolidated_view(spec)
+    path = tmp_path / "view.json"
+    _write(path, view)
+    snapshot, payloads = build_axis_point_reader_snapshot(view, source_view_path=path, subject_identity=_point_reader_subject_identity())
+    original_rule = snapshot["method_binding"]["actor_scope_rule"]
+    monkeypatch.setattr(consolidation_judgment, "POINT_ACTOR_SCOPE_GUIDANCE", original_rule + " Changed reading rule.")
+    updated, _ = build_axis_point_reader_snapshot(view, source_view_path=path, subject_identity=_point_reader_subject_identity())
+    for before, after in zip(snapshot["points"], updated["points"], strict=True):
+        assert (before["point_input_sha256"] != after["point_input_sha256"]) == ("point_actor_scope" in before)
+    scoped = next(row for row in snapshot["points"] if "point_actor_scope" in row)
+    request = consolidation_runner._point_reader_request(snapshot, scoped, payloads[scoped["point_id"]])
+    assert request["actor_scope_rule"] == original_rule
+    snapshot["method_binding"]["actor_scope_rule"] += " Tampered rule."
+    snapshot.pop("snapshot_sha256")
+    snapshot["snapshot_sha256"] = _canonical_json_sha256(snapshot)
+    with pytest.raises(EvidenceConsumerError) as caught:
+        consolidation_judgment._validate_point_reader_manifest_shape(snapshot, expected_snapshot_sha256=snapshot["snapshot_sha256"])
+    assert caught.value.boundary == "point_actor_scope"
+    assert "reading rule binding changed" in str(caught.value)
 
 
 def test_axis_pack_resolves_selection_manifest_embedded_in_relation_batch(

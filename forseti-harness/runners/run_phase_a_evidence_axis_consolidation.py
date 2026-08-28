@@ -594,6 +594,9 @@ def _point_reader_request(
         "facts": facts,
         "response_file": point["response_file"],
     }
+    if "point_actor_scope" in point:
+        request["point_actor_scope"] = copy.deepcopy(point["point_actor_scope"])
+        request["actor_scope_rule"] = manifest["method_binding"]["actor_scope_rule"]
     request["request_sha256"] = _canonical_sha256(request)
     return request
 
