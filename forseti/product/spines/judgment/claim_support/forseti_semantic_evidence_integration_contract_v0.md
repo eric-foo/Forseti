@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v72
-effective_date: 2026-08-29
+version: v73
+effective_date: 2026-08-30
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v72
+# Semantic Evidence Integration Contract v73
 
 ## Purpose
 
@@ -1525,7 +1525,11 @@ The customer-corpus census rereads packet-backed Reddit records and verifies
 retailer source-row references before semantic work. A
 `retailer_review_source_manifest_v1` pins every retailer source file by raw-byte
 SHA-256, names its admitted parser family, and binds the source-native review-ID
-set. A review-ID substring elsewhere in a file is never membership proof. Its captured-conversation
+set. Current packet replay accepts both old-Reddit and preserved www-Reddit
+HTML through their existing source-owned parsers. Current retailer replay also
+accepts the Soko Glam/Okendo corpus shape, deriving each stable review identity
+from its source-native product slug and positive ordinal. A review-ID substring
+elsewhere in a file is never membership proof. Its captured-conversation
 union is reconciled against both owning sources: every coded thread family
 member must appear in the union, and every reconciled target that already
 yielded captured material must keep its native packet binding. It counts roots,
@@ -1549,11 +1553,15 @@ Current-route operations are:
    source-native retailer review. Both commands preserve the captured
    denominator, mechanically exclude only exact non-text placeholders, and
    keep repository-owned locators relative to the declared repository root.
-   The retailer builder also verifies the completion receipt, retains every
+   The retailer builder verifies a Revolve completion receipt whenever the
+   source manifest contains Revolve, and requires no unrelated Revolve receipt
+   for a non-Revolve corpus. It retains every
    captured source file, and de-duplicates a repeated native review identity to
    one customer evidence item while preserving every source-pinned product
    listing context carried by its occurrences. A repeated listing occurrence
-   does not become another customer experience. No admitted retailer source
+   does not become another customer experience. A source-native review with no
+   usable text remains a mechanical exclusion and must still appear in the
+   captured denominator; readable uncoded rows still fail closed. No admitted retailer source
    format preserves a capture timestamp, so retailer capture envelopes record
    capture time as unavailable rather than stamping a run-derived date.
 3. `build-serp-source-surface-spec` reads hash-pinned Phase 1 and Phase 2
@@ -1796,6 +1804,17 @@ new frontier.
 
 ## Changelog
 
+- `v73` / 2026-08-30 — made retrospective current-source replay accept the
+  already preserved www-Reddit and Soko Glam/Okendo shapes without rewriting
+  historical collection artifacts. Soko review IDs are rederived from the
+  pinned product slug and ordinal; retailer census and materialization now
+  reparse the complete pinned source set, require exact readable-row coding,
+  and preserve source-native non-text rows as mechanical exclusions. A Revolve
+  completion receipt remains mandatory when Revolve is present but is no
+  longer an unrelated gate on non-Revolve corpora. Post-level community coding
+  now carries its run-local product and axis bindings just as comment-level
+  coding already did. Added no provider stage, semantic inference, collection,
+  frozen-output mutation, Deliver claim, or semantic response-transport change.
 - `v72` / 2026-08-29 — added a pinned, current-spec-only bounded relation
   adjudication input at the existing preselection finalization seam. The
   current-policy ownership refresh at `7888c532` reached seven successful

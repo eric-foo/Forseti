@@ -62,6 +62,42 @@ def _canonical(value: object) -> str:
     return hashlib.sha256(body).hexdigest()
 
 
+def test_reddit_manifest_projection_dispatches_www_reddit_html(
+    tmp_path: Path,
+) -> None:
+    fixture = (
+        Path(__file__).resolve().parents[1]
+        / "fixtures"
+        / "reddit_thread"
+        / "www_sephora_talc_thread.html"
+    )
+    raw = tmp_path / "raw" / "thread.html"
+    raw.parent.mkdir()
+    raw.write_bytes(fixture.read_bytes())
+    manifest = tmp_path / "manifest.json"
+    _write_json(
+        manifest,
+        {
+            "source_locator": {
+                "status": "known",
+                "value": "https://www.reddit.com/r/Sephora/comments/1v87d9j/this_talcfree_trend_is_terrible_for_me/",
+            },
+            "preserved_files": [
+                {
+                    "relative_packet_path": "raw/thread.html",
+                    "sha256": _raw_sha(raw),
+                }
+            ],
+        },
+    )
+
+    record = phase_a_semantic_run._reddit_record_from_manifest(manifest)
+
+    assert record["parser_version"].startswith("www-")
+    assert record["thread"]["thread_id"] == "1v87d9j"
+    assert record["comments"]
+
+
 def _write_json(path: Path, value: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
@@ -480,7 +516,11 @@ def _census_inputs(tmp_path: Path) -> tuple[Path, Path, Path, dict]:
     ).hexdigest()
     retailer_source = tmp_path / "review.json"
     retailer_source.write_text(
-        '{"Results":[{"Id":"r1","ReviewText":"Readable"}]}\n',
+        '{"Results":['
+        '{"Id":"r1","ReviewText":"Readable"},'
+        '{"Id":"rating-1","ReviewText":null,"IsRatingsOnly":true},'
+        '{"Id":"rating-2","ReviewText":null,"IsRatingsOnly":true}'
+        ']}\n',
         encoding="utf-8",
     )
     ledger_path = tmp_path / "ledger.json"
@@ -527,14 +567,14 @@ def _census_inputs(tmp_path: Path) -> tuple[Path, Path, Path, dict]:
         {
             "corpora": [
                 {
-                    "corpus_id": "retailer",
+                    "corpus_id": "sephora_product_group_reviews",
                     "eligible_text_review_count": 1,
                     "excluded_no_usable_text_count": 2,
                 }
             ],
             "rows": [
                 {
-                    "corpus_id": "retailer",
+                    "corpus_id": "sephora_product_group_reviews",
                     "review_id": "r1",
                     "source_row_ref": f"{retailer_source}#review:r1",
                 }
@@ -975,7 +1015,7 @@ def test_retailer_census_rejects_collapsed_or_undeclared_corpus_denominators(
     retailer["corpora"].insert(
         0,
         {
-            "corpus_id": "retailer",
+            "corpus_id": "sephora_product_group_reviews",
             "eligible_text_review_count": 0,
             "excluded_no_usable_text_count": 40,
         },
@@ -1290,6 +1330,22 @@ def test_reddit_source_builder_keeps_titles_as_context_and_excludes_placeholders
     tmp_path: Path,
 ) -> None:
     spec_path = _source_run_spec(tmp_path)
+    authority_path = tmp_path / "product-authority.json"
+    _write_json(authority_path, {"product": "Summer Fridays Lip Butter Balm"})
+    spec = json.loads(spec_path.read_text(encoding="utf-8"))
+    spec["schema_version"] = RUN_SPEC_VERSION_V2
+    spec["product_bindings"] = [
+        {
+            "stable_product_id": "summer-fridays-lip-butter-balm",
+            "display_name": "Summer Fridays Lip Butter Balm",
+            "source_product_ids": ["Lip Butter Balm"],
+            "aliases": ["Lip Butter Balm Alias"],
+            "evidence_refs": [
+                {"locator": str(authority_path), "sha256": _sha(authority_path)}
+            ],
+        }
+    ]
+    _write_json(spec_path, spec)
     packet = tmp_path / "packet"
     raw = packet / "raw"
     raw.mkdir(parents=True)
@@ -1410,8 +1466,14 @@ def test_reddit_source_builder_keeps_titles_as_context_and_excludes_placeholders
         row for row in source["captured_items"] if row["accounting_disposition"] == "assess"
     )
     assert assessed["text"] == "It lasts through lunch."
-    assert assessed["product_context"][0]["text"] == "Summer Fridays wear"
-    assert assessed["product_candidates"] == ["Lip Butter Balm"]
+    assert next(
+        context["text"]
+        for context in assessed["product_context"]
+        if context["context_type"] == "thread_title"
+    ) == "Summer Fridays wear"
+    assert assessed["product_candidates"] == [
+        "summer-fridays-lip-butter-balm"
+    ]
     assert assessed["engagement"]["material_positive"] is True
     assert assessed["publication_time"] == "2026-07-31T14:22:03+0000"
     assert assessed["conversation_depth"] == 0
@@ -1422,7 +1484,55 @@ def test_reddit_source_builder_keeps_titles_as_context_and_excludes_placeholders
         if row["artifact_id"] == "reddit_evidence_ledger"
     ) == "ledger.json"
 
+    content = json.loads(content_path.read_text(encoding="utf-8"))
+    content["post"]["body_text"] = "Instant Angel feels richer than Air Angel."
+    _write_json(content_path, content)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["preserved_files"][0]["sha256"] = _raw_sha(content_path)
+    _write_json(manifest_path, manifest)
+    community = json.loads(community_path.read_text(encoding="utf-8"))
+    community["rows"].extend(
+        [
+            {
+                "thread_id": "abc",
+                "comment_id": "post",
+                "product_context": "Lip Butter Balm",
+                "axis_ids": ["wear"],
+            },
+            {
+                "thread_id": "abc",
+                "comment_id": "post",
+                "product_context": "Lip Butter Balm Alias",
+                "axis_ids": ["wear"],
+            },
+        ]
+    )
+    _write_json(community_path, community)
     ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["artifacts"][0]["sha256"] = _sha(manifest_path)
+    ledger["artifacts"][1]["sha256"] = _sha(community_path)
+    _write_json(ledger_path, ledger)
+
+    source_with_coded_post = build_phase_a_reddit_source_v3(
+        run_spec_path=spec_path,
+        evidence_ledger_path=ledger_path,
+        repo_root=tmp_path,
+    )
+
+    assessed_post = next(
+        row
+        for row in source_with_coded_post["captured_items"]
+        if row["evidence_id"] == "reddit:abc:post"
+    )
+    assert assessed_post["product_candidates"] == [
+        "summer-fridays-lip-butter-balm"
+    ]
+    assert assessed_post["axis_candidates"] == ["wear"]
+    assert any(
+        "run-local identity binding" in context["text"]
+        for context in assessed_post["product_context"]
+    )
+
     ledger["families"]["reddit_forum"]["threads"].append(
         {"thread_id": "missing", "artifact_id": "reddit_manifest_missing"}
     )
@@ -1486,10 +1596,139 @@ def test_retailer_row_parsers_preserve_source_publication_times() -> None:
             ]
         }
     )
+    soko_family, soko = phase_a_semantic_run._retailer_rows(
+        {
+            "retailer": "Soko Glam",
+            "reviews": [
+                {
+                    "product_slug": "instant_angel",
+                    "ordinal": 1,
+                    "body": "Worth it.",
+                    "reviewer": "buyer",
+                    "helpful_yes": 0,
+                    "date_label": "2 months ago",
+                }
+            ],
+        }
+    )
     assert amazon_family == "amazon_aggregate_v1"
     assert amazon["a1"]["publication_time"] == "2026-06-16"
     assert sephora_family == "bazaarvoice_results_v1"
     assert sephora["s1"]["publication_time"] == "2026-07-17T15:55:19.000+00:00"
+    assert soko_family == "soko_glam_okendo_v1"
+    assert soko["soko-instant_angel-001"]["publication_time"] == "2 months ago"
+
+
+def test_retailer_source_builder_accepts_soko_without_revolve_receipt(
+    tmp_path: Path,
+) -> None:
+    spec_path = _source_run_spec(tmp_path)
+    source_path = tmp_path / "soko.json"
+    _write_json(
+        source_path,
+        {
+            "retailer": "Soko Glam",
+            "reviews": [
+                {
+                    "product_slug": "instant_angel",
+                    "ordinal": 1,
+                    "body": "Comfortable and rich.",
+                    "reviewer": "buyer",
+                    "helpful_yes": 0,
+                    "date_label": "2 months ago",
+                }
+            ],
+        },
+    )
+    coding_path = tmp_path / "retailer-coding.json"
+    _write_json(
+        coding_path,
+        {
+            "rows": [
+                {
+                    "corpus_id": "soko_glam_verified_window",
+                    "review_id": "soko-instant_angel-001",
+                    "product_context_id": "instant_angel",
+                    "axis_codes": [{"axis_id": "wear"}],
+                    "source_row_ref": f"{source_path}#review:soko-instant_angel-001",
+                }
+            ]
+        },
+    )
+    manifest_path = tmp_path / "retailer-manifest.json"
+    _write_json(
+        manifest_path,
+        build_retailer_source_manifest(retailer_coding_path=coding_path),
+    )
+
+    source = build_phase_a_retailer_source_v3(
+        run_spec_path=spec_path,
+        retailer_coding_path=coding_path,
+        retailer_source_manifest_path=manifest_path,
+        revolve_completion_receipt_path=None,
+        repo_root=tmp_path,
+    )
+
+    assert len(source["captured_items"]) == 1
+    assert source["captured_items"][0]["evidence_id"] == (
+        "retailer:soko_glam_verified_window:soko-instant_angel-001"
+    )
+    assert all(
+        row["artifact_id"] != "revolve_completion_receipt"
+        for row in source["source_artifacts"]
+    )
+
+
+def test_retailer_source_builder_accounts_for_uncoded_rating_only_rows(
+    tmp_path: Path,
+) -> None:
+    spec_path = _source_run_spec(tmp_path)
+    source_path = tmp_path / "sephora.json"
+    _write_json(
+        source_path,
+        {
+            "Results": [
+                {"Id": "text-1", "ReviewText": "Comfortable and rich."},
+                {"Id": "rating-1", "ReviewText": None, "IsRatingsOnly": True},
+            ]
+        },
+    )
+    coding_path = tmp_path / "retailer-coding.json"
+    _write_json(
+        coding_path,
+        {
+            "rows": [
+                {
+                    "corpus_id": "sephora_product_group_reviews",
+                    "review_id": "text-1",
+                    "product_context_id": "product-1",
+                    "axis_codes": [{"axis_id": "wear"}],
+                    "source_row_ref": f"{source_path}#review:text-1",
+                }
+            ]
+        },
+    )
+    manifest_path = tmp_path / "retailer-manifest.json"
+    _write_json(
+        manifest_path,
+        build_retailer_source_manifest(retailer_coding_path=coding_path),
+    )
+
+    source = build_phase_a_retailer_source_v3(
+        run_spec_path=spec_path,
+        retailer_coding_path=coding_path,
+        retailer_source_manifest_path=manifest_path,
+        revolve_completion_receipt_path=None,
+        repo_root=tmp_path,
+    )
+
+    rating_only = next(
+        row
+        for row in source["captured_items"]
+        if row["evidence_id"].endswith(":rating-1")
+    )
+    assert rating_only["accounting_disposition"] == "mechanically_excluded"
+    assert rating_only["accounting_reason"] == "source-native review has no usable text"
 
 
 def test_retailer_source_builder_enumerates_deduplicates_and_fails_on_uncoded_text(
@@ -1548,6 +1787,17 @@ def test_retailer_source_builder_enumerates_deduplicates_and_fails_on_uncoded_te
         manifest_path,
         build_retailer_source_manifest(retailer_coding_path=coding_path),
     )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="Revolve retailer sources require a completion receipt",
+    ):
+        build_phase_a_retailer_source_v3(
+            run_spec_path=spec_path,
+            retailer_coding_path=coding_path,
+            retailer_source_manifest_path=manifest_path,
+            revolve_completion_receipt_path=None,
+            repo_root=tmp_path,
+        )
     completion_path = tmp_path / "completion.json"
 
     def write_completion() -> None:

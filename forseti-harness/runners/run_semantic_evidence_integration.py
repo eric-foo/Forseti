@@ -695,7 +695,7 @@ def build_phase_a_retailer_source_v3_run(
     run_spec_path: Path,
     retailer_coding_path: Path,
     retailer_source_manifest_path: Path,
-    revolve_completion_receipt_path: Path,
+    revolve_completion_receipt_path: Path | None,
     repo_root: Path,
     source_out: Path,
 ) -> dict[str, Any]:
@@ -2195,7 +2195,7 @@ def _parser() -> argparse.ArgumentParser:
         "--retailer-source-manifest", type=Path, required=True
     )
     retailer_source.add_argument(
-        "--revolve-completion-receipt", type=Path, required=True
+        "--revolve-completion-receipt", type=Path
     )
     retailer_source.add_argument("--repo-root", type=Path, required=True)
     retailer_source.add_argument("--source-out", type=Path, required=True)
