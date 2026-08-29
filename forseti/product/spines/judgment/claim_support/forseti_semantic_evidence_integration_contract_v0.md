@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v75
+version: v76
 effective_date: 2026-08-30
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v75
+# Semantic Evidence Integration Contract v76
 
 ## Purpose
 
@@ -530,6 +530,14 @@ The ordinary validator still rejects the same impossible combination after
 generation; the schema now prevents it before token-consuming output is
 accepted. Historical method v8 / keyed transport v1 schemas and responses
 remain replayable under their original execution identity.
+
+Contract v76 adds `phase_a_semantic_integration_run_v8`,
+`semantic_evidence_integration_method_v10`, and keyed response transport v3.
+They preserve v9 semantics and posture restrictions while requiring at least
+one cataloged `subject_product_id` in every semantic unit at the provider
+schema boundary. This mirrors the longstanding compilation validator and does
+not infer, select, or repair a subject. Historical method v9 / keyed transport
+v2 schemas and responses remain replayable under their original identity.
 
 When one leaf evaluates two alternatives on the same attribute, the relative
 comparison remains evidence even if the observations occupy separate
@@ -1633,7 +1641,7 @@ Current-route operations are:
    denominator mismatches fail closed. Materialization never renders
    provisional prompts; prompt packing belongs only to `prepare-batches`.
 7. `prepare-batches` verifies sources, builds the method-bound bundle, proves
-   the work-unit bijection, and writes byte-bounded prompts. Current run v7 also
+   the work-unit bijection, and writes byte-bounded prompts. Current run v8 also
    writes one exact keyed provider-response schema per work unit. Historical v4
    bundles retain their deterministic three-worker assignment manifest; current
    v5 bundles encode no static worker topology.
@@ -1852,6 +1860,12 @@ new frontier.
 
 ## Changelog
 
+- `v76` / 2026-08-30 — added run v8 / method v10 / keyed transport v3 after
+  Dieux batch-0017 produced a semantic unit with an empty subject-product list.
+  The ordinary validator rejected it; the provider schema had omitted that
+  already-required minimum. Current schemas now require one subject ID per
+  semantic unit. The boundary does not choose or repair product identity, and
+  historical v9/v2 replay remains intact.
 - `v75` / 2026-08-30 — added run v7 / method v9 / keyed transport v2 after two
   identical Dieux batch-0018 attempts labeled one top-level community post
   `personal_agreement` solely from the word `second`; both failed the existing

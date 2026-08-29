@@ -20,6 +20,7 @@ from judgment.semantic_evidence_integration import (
     BATCH_RESPONSE_VERSION_V3,
     BATCH_KEYED_RESPONSE_VERSION,
     BATCH_KEYED_RESPONSE_VERSION_V2,
+    BATCH_KEYED_RESPONSE_VERSION_V3,
     BUNDLE_VERSION,
     BUNDLE_VERSION_V2,
     BUNDLE_VERSION_V3,
@@ -33,6 +34,7 @@ from judgment.semantic_evidence_integration import (
     METHOD_TEXT_V7,
     METHOD_TEXT_V8,
     METHOD_TEXT_V9,
+    METHOD_TEXT_V10,
     METHOD_VERSION,
     METHOD_VERSION_V2,
     METHOD_VERSION_V3,
@@ -42,6 +44,7 @@ from judgment.semantic_evidence_integration import (
     METHOD_VERSION_V7,
     METHOD_VERSION_V8,
     METHOD_VERSION_V9,
+    METHOD_VERSION_V10,
     RECONCILIATION_POLICY_VERSION_V2,
     RELATION_CLOSURE_COMPILATION_VERSION,
     RELATION_CLOSURE_RESPONSE_VERSION,
@@ -2844,6 +2847,12 @@ def _source_v9(*, count: int = 7, catalog: bool = True) -> dict:
     return source
 
 
+def _source_v10(*, count: int = 7, catalog: bool = True) -> dict:
+    source = _source_v9(count=count, catalog=catalog)
+    source["semantic_method_version"] = METHOD_VERSION_V10
+    return source
+
+
 def _bundle_v5(*, count: int = 7, max_prompt_bytes: int = 12_000) -> dict:
     return build_bundle(_source_v5(count=count), max_prompt_bytes=max_prompt_bytes)
 
@@ -2854,6 +2863,10 @@ def _bundle_v8(*, count: int = 7, max_prompt_bytes: int = 12_000) -> dict:
 
 def _bundle_v9(*, count: int = 7, max_prompt_bytes: int = 12_000) -> dict:
     return build_bundle(_source_v9(count=count), max_prompt_bytes=max_prompt_bytes)
+
+
+def _bundle_v10(*, count: int = 7, max_prompt_bytes: int = 12_000) -> dict:
+    return build_bundle(_source_v10(count=count), max_prompt_bytes=max_prompt_bytes)
 
 
 def _claim_row(evidence_id: str) -> dict:
@@ -6604,6 +6617,33 @@ def test_v9_schema_preserves_personal_agreement_when_parent_context_exists() -> 
     ]["enum"]
 
 
+def test_v10_schema_requires_one_subject_without_changing_v9_replay() -> None:
+    historical = _bundle_v9()
+    current = _bundle_v10()
+    historical_schema = build_batch_response_schema(historical, "batch-0001")
+    current_schema = build_batch_response_schema(current, "batch-0001")
+    assert historical_schema is not None
+    assert current_schema is not None
+    assert historical_schema["properties"]["schema_version"]["const"] == (
+        BATCH_KEYED_RESPONSE_VERSION_V2
+    )
+    assert current_schema["properties"]["schema_version"]["const"] == (
+        BATCH_KEYED_RESPONSE_VERSION_V3
+    )
+    assert "minItems" not in historical_schema["$defs"]["semantic_unit"][
+        "properties"
+    ]["subject_product_ids"]
+    assert current_schema["$defs"]["semantic_unit"]["properties"][
+        "subject_product_ids"
+    ]["minItems"] == 1
+    assert current_schema["$defs"]["semantic_unit_no_parent_agreement"][
+        "properties"
+    ]["subject_product_ids"]["minItems"] == 1
+    assert METHOD_TEXT_V10.startswith(
+        METHOD_TEXT_V9.replace("METHOD V9", "METHOD V10", 1)
+    )
+
+
 def test_v8_keyed_response_normalizes_to_existing_compilation() -> None:
     bundle = _bundle_v8()
     compiled = validate_batch_responses(bundle, _keyed_responses(bundle))
@@ -6970,7 +7010,7 @@ def test_v5_rejects_wrong_response_generation_in_both_directions() -> None:
         (
             METHOD_VERSION_V3,
             BUNDLE_VERSION_V5,
-            "bundle v5 requires semantic method v5, v6, v7, v8, or v9",
+            "bundle v5 requires semantic method v5, v6, v7, v8, v9, or v10",
         ),
         (METHOD_VERSION_V5, BUNDLE_VERSION_V3, "method v5 requires bundle v5"),
     ],
