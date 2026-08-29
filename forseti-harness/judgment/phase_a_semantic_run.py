@@ -16,6 +16,7 @@ from judgment.semantic_evidence_integration import (
     METHOD_VERSION_V5,
     METHOD_VERSION_V6,
     METHOD_VERSION_V7,
+    METHOD_VERSION_V8,
     SemanticIntegrationError,
     materialize_source_v3,
     validate_batch_responses,
@@ -33,12 +34,14 @@ RUN_SPEC_VERSION_V2 = "phase_a_semantic_integration_run_v2"
 RUN_SPEC_VERSION_V3 = "phase_a_semantic_integration_run_v3"
 RUN_SPEC_VERSION_V4 = "phase_a_semantic_integration_run_v4"
 RUN_SPEC_VERSION_V5 = "phase_a_semantic_integration_run_v5"
+RUN_SPEC_VERSION_V6 = "phase_a_semantic_integration_run_v6"
 RUN_SPEC_VERSIONS = {
     RUN_SPEC_VERSION,
     RUN_SPEC_VERSION_V2,
     RUN_SPEC_VERSION_V3,
     RUN_SPEC_VERSION_V4,
     RUN_SPEC_VERSION_V5,
+    RUN_SPEC_VERSION_V6,
 }
 # A run spec selects the semantic generation its sources will be built under.
 _RUN_SPEC_METHOD_VERSIONS = {
@@ -46,6 +49,7 @@ _RUN_SPEC_METHOD_VERSIONS = {
     RUN_SPEC_VERSION_V3: METHOD_VERSION_V5,
     RUN_SPEC_VERSION_V4: METHOD_VERSION_V6,
     RUN_SPEC_VERSION_V5: METHOD_VERSION_V7,
+    RUN_SPEC_VERSION_V6: METHOD_VERSION_V8,
 }
 AUDIT_VERSION = "phase_a_semantic_source_audit_v1"
 RUN_RECEIPT_VERSION = "phase_a_semantic_materialization_receipt_v1"
@@ -1567,6 +1571,7 @@ def build_phase_a_product_axis_proof_source(
             METHOD_VERSION_V5,
             METHOD_VERSION_V6,
             METHOD_VERSION_V7,
+            METHOD_VERSION_V8,
         }
         and normalization_source.get("corpus_profile") == "phase_a_final_acquisition"
         and "product_identity_catalog" not in normalization_source
@@ -3119,6 +3124,7 @@ __all__ = [
     "RUN_SPEC_VERSION_V3",
     "RUN_SPEC_VERSION_V4",
     "RUN_SPEC_VERSION_V5",
+    "RUN_SPEC_VERSION_V6",
     "audit_phase_a_source",
     "build_phase_a_product_axis_proof_source",
     "census_phase_a_customer_corpus",

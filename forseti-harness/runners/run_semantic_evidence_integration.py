@@ -18,6 +18,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     apply_row_verification,
     apply_row_repair,
     build_batch_prompts,
+    build_batch_response_schema,
     build_bundle,
     build_prompt_execution_pack,
     build_reconciliation_prompt,
@@ -394,6 +395,11 @@ def prepare_batches(
             prompt_dir / f"{row['batch_id']}.md",
             row["prompt"].encode("utf-8") + b"\n",
         )
+        if "response_schema" in row:
+            _write_json(
+                prompt_dir / "response-schemas" / f"{row['batch_id']}.json",
+                row["response_schema"],
+            )
     # Only the legacy v4 projection carries a static partition. The new
     # generation selects work globally at run time, so writing an assignment
     # manifest here would reintroduce the topology it removed.
@@ -421,6 +427,9 @@ def prepare_batches(
         "bundle_sha256": bundle["bundle_sha256"],
         "corpus_sha256": bundle["corpus_sha256"],
         "batch_count": len(prompts),
+        "response_schema_count": sum(
+            1 for row in prompts if "response_schema" in row
+        ),
         "admitted_evidence_unit_count": bundle["coverage_denominator"]["admitted_evidence_unit_count"],
         "bundle_out": str(bundle_out),
         "prompt_dir": str(prompt_dir),
@@ -463,6 +472,15 @@ def prepare_prompt_execution_pack(
             json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")
             + b"\n",
         )
+    for batch in manifest["batches"]:
+        schema_file = batch.get("response_schema_file")
+        if schema_file is not None:
+            schema = build_batch_response_schema(bundle, batch["batch_id"])
+            if schema is None:
+                raise ValueError(
+                    f"execution manifest unexpectedly names a response schema for {batch['batch_id']}"
+                )
+            _write_json(pack_dir / schema_file, schema)
     _write_json(pack_dir / "manifest.json", manifest)
     verified = verify_prompt_execution_pack(
         bundle_path=bundle_path,
@@ -500,6 +518,11 @@ def verify_prompt_execution_pack(
         Path(expected_manifest["frame_file"]),
         Path("manifest.json"),
         *(Path(row["payload_file"]) for row in expected_manifest["batches"]),
+        *(
+            Path(row["response_schema_file"])
+            for row in expected_manifest["batches"]
+            if "response_schema_file" in row
+        ),
     }
     observed_files = {
         path.relative_to(pack_dir) for path in pack_dir.rglob("*") if path.is_file()
@@ -524,6 +547,16 @@ def verify_prompt_execution_pack(
             raise ValueError(
                 f"stored execution payload {expected['batch_id']} cannot reconstruct"
             ) from exc
+    for batch in expected_manifest["batches"]:
+        schema_file = batch.get("response_schema_file")
+        if schema_file is None:
+            continue
+        expected_schema = build_batch_response_schema(bundle, batch["batch_id"])
+        observed_schema = _load_object(pack_dir / schema_file)
+        if observed_schema != expected_schema:
+            raise ValueError(
+                f"stored response schema {batch['batch_id']} does not match bundle"
+            )
     stored_bytes = sum(
         path.stat().st_size for path in pack_dir.rglob("*") if path.is_file()
     )

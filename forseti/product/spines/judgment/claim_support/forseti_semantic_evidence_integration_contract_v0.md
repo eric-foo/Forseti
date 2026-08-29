@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v73
+version: v74
 effective_date: 2026-08-30
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v73
+# Semantic Evidence Integration Contract v74
 
 ## Purpose
 
@@ -506,6 +506,20 @@ described above. An unverified compilation may still reproduce historical v5
 or v6 behavior, but method v7 reconciliation and finalization fail closed until
 the verification manifest is present and valid.
 
+Contract v74 adds `phase_a_semantic_integration_run_v6` and
+`semantic_evidence_integration_method_v8` for current authoring. Method v8
+keeps method v7 meaning rules, row verification, bundle v5, projection v2,
+compilation v3, reconciliation, views, and packets. It changes only the raw
+batch-response transport: every expected evidence ID is an exact required key
+under `decisions_by_evidence_id`, and the value contains that row's disposition,
+reason, and semantic units without repeating the ID. The per-batch provider
+schema is derived from immutable work-unit membership, written beside the
+prompt or execution pack, hash-bound in the pack manifest, and rejects missing,
+foreign, or repeated identities before semantic compilation. This adds no
+provider call and no semantic rule. Historical run v5 / method v7 artifacts
+retain response v3 grouped replay and are never silently reinterpreted as keyed
+responses.
+
 When one leaf evaluates two alternatives on the same attribute, the relative
 comparison remains evidence even if the observations occupy separate
 sentences. A context-adopting reply keeps a parent's named-shade preference and
@@ -648,8 +662,18 @@ semantic representation may remain expanded, but its lineage proves which
 durable raw grouped responses produced it, and downstream reconciliation
 rejects a compilation v3 that lacks that lineage.
 
+The keyed response transport is the current-authoring replacement for response
+v3 grouping, not a new evidence model. It removes the model-authored task of
+copying identifiers into rows or terminal groups: the provider must fill one
+already named object slot per expected evidence ID. Deterministic normalization
+then produces the same one-row-per-evidence representation consumed by
+compilation v3. Exact membership, source text, context, product binding,
+provenance, and raw-response hashes remain unchanged obligations. Grouped
+response v3 remains supported only when the bound historical method identity
+requires it.
+
 Projection v2 binds semantic execution identity: source, corpus, and catalog
-bindings; the selected method v5, v6, or v7 identity and hash; response-schema
+bindings; the selected method v5, v6, v7, or v8 identity and hash; response-schema
 version; prompt-encoding
 version; exact work-unit membership; evidence and context references; prompt and
 leaf caps; and complete assessable-denominator coverage. It must not encode a
@@ -1594,14 +1618,16 @@ Current-route operations are:
    containers/leaves into one hash-bound v3 source; unsupported families or
    denominator mismatches fail closed. Materialization never renders
    provisional prompts; prompt packing belongs only to `prepare-batches`.
-7. `prepare-batches` verifies sources, builds bundle v4, proves the work-unit
-   bijection, writes byte-bounded prompts, and writes one deterministic
-   three-worker assignment manifest.
+7. `prepare-batches` verifies sources, builds the method-bound bundle, proves
+   the work-unit bijection, and writes byte-bounded prompts. Current run v6 also
+   writes one exact keyed provider-response schema per work unit. Historical v4
+   bundles retain their deterministic three-worker assignment manifest; current
+   v5 bundles encode no static worker topology.
 8. `validate-batch-response` validates one returned batch immediately without
    compiling a partial corpus. `status` reports valid, missing, duplicate, and
    invalid responses so an interrupted run can resume honestly.
 9. `submit-batches` validates all agent responses and exact alias coverage.
-10. For method v7, `prepare-row-verification` renders byte-bounded independent
+10. For method v7 or v8, `prepare-row-verification` renders byte-bounded independent
     checks for every primary claim-bearing row, and
     `submit-row-verification` requires exactly one `accept`, complete-row
     `replace`, or `unresolved` decision per row before writing the sole active
@@ -1812,6 +1838,15 @@ new frontier.
 
 ## Changelog
 
+- `v74` / 2026-08-30 — added run v6 / method v8 keyed batch-response
+  transport for current authoring. Each provider response now fills exact
+  schema-required evidence-ID object keys, which removes the recurring model
+  task of copying long identifiers while keeping all method-v7 semantic rules
+  and downstream compilation unchanged. Prompt and execution-pack preparation
+  persist the exact per-batch provider schema, and execution-pack verification
+  rejects missing, altered, or extra schema files. Historical run v5 / method
+  v7 grouped responses replay under their original identity. Added zero
+  provider stages and changed no evidence meaning.
 - `v73` / 2026-08-30 — made retrospective current-source replay accept the
   already preserved www-Reddit and Soko Glam/Okendo shapes without rewriting
   historical collection artifacts. A www conversation container now carries the

@@ -18,6 +18,7 @@ from judgment.semantic_evidence_integration import (
     BATCH_RESPONSE_VERSION,
     BATCH_RESPONSE_VERSION_V2,
     BATCH_RESPONSE_VERSION_V3,
+    BATCH_KEYED_RESPONSE_VERSION,
     BUNDLE_VERSION,
     BUNDLE_VERSION_V2,
     BUNDLE_VERSION_V3,
@@ -29,6 +30,7 @@ from judgment.semantic_evidence_integration import (
     METHOD_TEXT_V5,
     METHOD_TEXT_V6,
     METHOD_TEXT_V7,
+    METHOD_TEXT_V8,
     METHOD_VERSION,
     METHOD_VERSION_V2,
     METHOD_VERSION_V3,
@@ -36,6 +38,7 @@ from judgment.semantic_evidence_integration import (
     METHOD_VERSION_V5,
     METHOD_VERSION_V6,
     METHOD_VERSION_V7,
+    METHOD_VERSION_V8,
     RECONCILIATION_POLICY_VERSION_V2,
     RELATION_CLOSURE_COMPILATION_VERSION,
     RELATION_CLOSURE_RESPONSE_VERSION,
@@ -65,6 +68,7 @@ from judgment.semantic_evidence_integration import (
     apply_row_verification,
     apply_row_repair,
     build_batch_prompts,
+    build_batch_response_schema,
     build_bundle,
     build_prompt_execution_pack,
     build_reconciliation_prompt,
@@ -2825,8 +2829,18 @@ def _source_v7(*, count: int = 7, catalog: bool = False) -> dict:
     return source
 
 
+def _source_v8(*, count: int = 7, catalog: bool = True) -> dict:
+    source = _source_v7(count=count, catalog=catalog)
+    source["semantic_method_version"] = METHOD_VERSION_V8
+    return source
+
+
 def _bundle_v5(*, count: int = 7, max_prompt_bytes: int = 12_000) -> dict:
     return build_bundle(_source_v5(count=count), max_prompt_bytes=max_prompt_bytes)
+
+
+def _bundle_v8(*, count: int = 7, max_prompt_bytes: int = 12_000) -> dict:
+    return build_bundle(_source_v8(count=count), max_prompt_bytes=max_prompt_bytes)
 
 
 def _claim_row(evidence_id: str) -> dict:
@@ -2882,6 +2896,25 @@ def _v5_responses(
             }
         )
     return responses
+
+
+def _keyed_responses(bundle: dict) -> list[dict]:
+    return [
+        {
+            "schema_version": BATCH_KEYED_RESPONSE_VERSION,
+            "bundle_sha256": bundle["bundle_sha256"],
+            "batch_id": batch["batch_id"],
+            "decisions_by_evidence_id": {
+                evidence_id: {
+                    "disposition": "context_only",
+                    "disposition_reason": "no bounded proposition remains after context",
+                    "semantic_units": [],
+                }
+                for evidence_id in batch["evidence_ids"]
+            },
+        }
+        for batch in bundle["batches"]
+    ]
 
 
 def _row_verification_responses(
@@ -6466,6 +6499,86 @@ def test_v6_reuses_v5_transport_without_changing_frozen_v5_text() -> None:
     assert "V6 MEANING-PRESERVATION CLARIFICATIONS" in prompt
 
 
+def test_v8_uses_exact_keyed_transport_without_changing_v7_replay() -> None:
+    historical = build_bundle(_source_v7(), max_prompt_bytes=12_000)
+    current = _bundle_v8()
+
+    assert historical["semantic_work_unit_projection"]["semantic_execution_identity"][
+        "response_schema_version"
+    ] == BATCH_RESPONSE_VERSION_V3
+    assert validate_batch_responses(historical, _v5_responses(historical))[
+        "schema_version"
+    ] == BATCH_COMPILATION_VERSION_V3
+
+    identity = current["semantic_work_unit_projection"]["semantic_execution_identity"]
+    assert identity["method_version"] == METHOD_VERSION_V8
+    assert identity["response_schema_version"] == BATCH_KEYED_RESPONSE_VERSION
+    prompt_row = build_batch_prompts(current)[0]
+    assert "SEMANTIC EVIDENCE INTEGRATION METHOD V8" in prompt_row["prompt"]
+    assert '"decisions_by_evidence_id"' in prompt_row["prompt"]
+    assert '"terminal_groups"' not in prompt_row["prompt"]
+    assert prompt_row["response_schema"] == build_batch_response_schema(
+        current, prompt_row["batch_id"]
+    )
+    assert METHOD_TEXT_V8.startswith(METHOD_TEXT_V7.replace("METHOD V7", "METHOD V8", 1))
+
+
+def test_v8_keyed_response_schema_pins_every_expected_id() -> None:
+    bundle = _bundle_v8()
+    batch = bundle["batches"][0]
+    schema = build_batch_response_schema(bundle, batch["batch_id"])
+    assert schema is not None
+    decisions = schema["properties"]["decisions_by_evidence_id"]
+    assert list(decisions["properties"]) == batch["evidence_ids"]
+    assert decisions["required"] == batch["evidence_ids"]
+    assert decisions["additionalProperties"] is False
+    assert "evidence_id" not in schema["$defs"]["decision"]["properties"]
+
+
+def test_v8_keyed_response_normalizes_to_existing_compilation() -> None:
+    bundle = _bundle_v8()
+    compiled = validate_batch_responses(bundle, _keyed_responses(bundle))
+    assert compiled["schema_version"] == BATCH_COMPILATION_VERSION_V3
+    assert [row["evidence_id"] for row in compiled["evidence_dispositions"]] == [
+        row["evidence_id"] for row in bundle["evidence_units"]
+    ]
+    assert all(
+        row["disposition"] == "context_only"
+        for row in compiled["evidence_dispositions"]
+    )
+
+
+@pytest.mark.parametrize(
+    ("mutate", "message"),
+    [
+        (
+            lambda response, ids: response["decisions_by_evidence_id"].pop(ids[0]),
+            "does not account for every keyed evidence id exactly once",
+        ),
+        (
+            lambda response, ids: response["decisions_by_evidence_id"].__setitem__(
+                "foreign-evidence-id",
+                response["decisions_by_evidence_id"][ids[0]],
+            ),
+            "reports unexpected evidence id foreign-evidence-id",
+        ),
+        (
+            lambda response, ids: response["decisions_by_evidence_id"][ids[0]].__setitem__(
+                "evidence_id", ids[0]
+            ),
+            "repeats evidence_id",
+        ),
+    ],
+)
+def test_v8_keyed_transport_fails_named_identity_mutations(mutate, message: str) -> None:
+    bundle = _bundle_v8()
+    responses = _keyed_responses(bundle)
+    ids = bundle["batches"][0]["evidence_ids"]
+    mutate(responses[0], ids)
+    with pytest.raises(SemanticIntegrationError, match=message):
+        validate_batch_responses(bundle, responses)
+
+
 def test_v6_amendment_uses_general_meaning_rules_not_new_product_examples() -> None:
     amendment = METHOD_TEXT_V6.split("V6 MEANING-PRESERVATION CLARIFICATIONS", 1)[1]
     normalized = " ".join(amendment.split())
@@ -6788,7 +6901,7 @@ def test_v5_rejects_wrong_response_generation_in_both_directions() -> None:
         (
             METHOD_VERSION_V3,
             BUNDLE_VERSION_V5,
-            "bundle v5 requires semantic method v5, v6, or v7",
+            "bundle v5 requires semantic method v5, v6, v7, or v8",
         ),
         (METHOD_VERSION_V5, BUNDLE_VERSION_V3, "method v5 requires bundle v5"),
     ],
@@ -6892,6 +7005,53 @@ def test_v5_prepare_runner_writes_no_static_worker_assignment(tmp_path: Path) ->
     assert result["model_api_calls"] == 0
     assert not (tmp_path / "prompts" / "worker_assignments.json").exists()
     assert sorted(p.name for p in (tmp_path / "prompts").glob("*")) == ["batch-0001.md"]
+
+
+def test_v8_prepare_runner_writes_exact_keyed_response_schemas(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    repo_root.mkdir()
+    source = _source_v8(count=7)
+    for index in range(7):
+        (repo_root / f"thread-{index + 1}.json").write_bytes(
+            f"thread-{index + 1}\n".encode("utf-8")
+        )
+    source_path = tmp_path / "source.json"
+    source_path.write_text(json.dumps(source), encoding="utf-8")
+    bundle_path = tmp_path / "bundle.json"
+    result = prepare_batches(
+        source_path=source_path,
+        repo_root=repo_root,
+        bundle_out=bundle_path,
+        prompt_dir=tmp_path / "prompts",
+        max_batch_chars=80_000,
+        max_prompt_bytes=12_000,
+    )
+    bundle = json.loads(bundle_path.read_text(encoding="utf-8"))
+    schema_path = tmp_path / "prompts" / "response-schemas" / "batch-0001.json"
+    assert result["response_schema_count"] == len(bundle["batches"])
+    assert json.loads(schema_path.read_text(encoding="utf-8")) == (
+        build_batch_response_schema(bundle, "batch-0001")
+    )
+
+
+def test_v8_execution_pack_verifies_bound_response_schema(tmp_path: Path) -> None:
+    bundle = _bundle_v8(count=40, max_prompt_bytes=12_000)
+    bundle_path = tmp_path / "bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    pack_dir = tmp_path / "execution-pack"
+    result = prepare_prompt_execution_pack(
+        bundle_path=bundle_path,
+        pack_dir=pack_dir,
+    )
+    schema_path = pack_dir / "response-schemas" / "batch-0001.json"
+    assert result["verification_status"] == "SEMANTIC_PROMPT_EXECUTION_PACK_VERIFIED"
+    assert schema_path.is_file()
+
+    tampered = json.loads(schema_path.read_text(encoding="utf-8"))
+    tampered["title"] = "wrong schema"
+    schema_path.write_text(json.dumps(tampered), encoding="utf-8")
+    with pytest.raises(ValueError, match="stored response schema batch-0001"):
+        verify_prompt_execution_pack(bundle_path=bundle_path, pack_dir=pack_dir)
 
 
 def test_v5_execution_pack_reconstructs_every_standalone_prompt_exactly() -> None:
