@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v74
+version: v75
 effective_date: 2026-08-30
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v74
+# Semantic Evidence Integration Contract v75
 
 ## Purpose
 
@@ -520,6 +520,17 @@ provider call and no semantic rule. Historical run v5 / method v7 artifacts
 retain response v3 grouped replay and are never silently reinterpreted as keyed
 responses.
 
+Contract v75 adds `phase_a_semantic_integration_run_v7`,
+`semantic_evidence_integration_method_v9`, and keyed response transport v2.
+They preserve method v8 meaning and keyed identity while moving one already
+deterministic impossibility into the per-row provider schema:
+`personal_agreement` is unavailable when the immutable evidence row carries no
+parent-context reference. Rows with supplied parent context retain the posture.
+The ordinary validator still rejects the same impossible combination after
+generation; the schema now prevents it before token-consuming output is
+accepted. Historical method v8 / keyed transport v1 schemas and responses
+remain replayable under their original execution identity.
+
 When one leaf evaluates two alternatives on the same attribute, the relative
 comparison remains evidence even if the observations occupy separate
 sentences. A context-adopting reply keeps a parent's named-shade preference and
@@ -663,7 +674,10 @@ durable raw grouped responses produced it, and downstream reconciliation
 rejects a compilation v3 that lacks that lineage.
 
 The keyed response transport is the current-authoring replacement for response
-v3 grouping, not a new evidence model. It removes the model-authored task of
+v3 grouping, not a new evidence model. Transport v2 also removes
+`personal_agreement` from a row's allowed posture enum when that row has no
+supplied parent context; it does not choose a replacement posture or infer the
+row's meaning. The keyed transport removes the model-authored task of
 copying identifiers into rows or terminal groups: the provider must fill one
 already named object slot per expected evidence ID. Deterministic normalization
 then produces the same one-row-per-evidence representation consumed by
@@ -1619,7 +1633,7 @@ Current-route operations are:
    denominator mismatches fail closed. Materialization never renders
    provisional prompts; prompt packing belongs only to `prepare-batches`.
 7. `prepare-batches` verifies sources, builds the method-bound bundle, proves
-   the work-unit bijection, and writes byte-bounded prompts. Current run v6 also
+   the work-unit bijection, and writes byte-bounded prompts. Current run v7 also
    writes one exact keyed provider-response schema per work unit. Historical v4
    bundles retain their deterministic three-worker assignment manifest; current
    v5 bundles encode no static worker topology.
@@ -1838,6 +1852,14 @@ new frontier.
 
 ## Changelog
 
+- `v75` / 2026-08-30 — added run v7 / method v9 / keyed transport v2 after two
+  identical Dieux batch-0018 attempts labeled one top-level community post
+  `personal_agreement` solely from the word `second`; both failed the existing
+  no-parent validator. The per-evidence provider schema now excludes that
+  posture only when the immutable row has no parent-context reference, while
+  preserving it for actual replies. This is deterministic prevention of an
+  already invalid combination, not a prose classifier or semantic relabeler.
+  Historical v8/v1 replay remains intact.
 - `v74` / 2026-08-30 — added run v6 / method v8 keyed batch-response
   transport for current authoring. Each provider response now fills exact
   schema-required evidence-ID object keys, which removes the recurring model

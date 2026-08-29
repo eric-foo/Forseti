@@ -19,6 +19,7 @@ from judgment.semantic_evidence_integration import (
     BATCH_RESPONSE_VERSION_V2,
     BATCH_RESPONSE_VERSION_V3,
     BATCH_KEYED_RESPONSE_VERSION,
+    BATCH_KEYED_RESPONSE_VERSION_V2,
     BUNDLE_VERSION,
     BUNDLE_VERSION_V2,
     BUNDLE_VERSION_V3,
@@ -31,6 +32,7 @@ from judgment.semantic_evidence_integration import (
     METHOD_TEXT_V6,
     METHOD_TEXT_V7,
     METHOD_TEXT_V8,
+    METHOD_TEXT_V9,
     METHOD_VERSION,
     METHOD_VERSION_V2,
     METHOD_VERSION_V3,
@@ -39,6 +41,7 @@ from judgment.semantic_evidence_integration import (
     METHOD_VERSION_V6,
     METHOD_VERSION_V7,
     METHOD_VERSION_V8,
+    METHOD_VERSION_V9,
     RECONCILIATION_POLICY_VERSION_V2,
     RELATION_CLOSURE_COMPILATION_VERSION,
     RELATION_CLOSURE_RESPONSE_VERSION,
@@ -2835,12 +2838,22 @@ def _source_v8(*, count: int = 7, catalog: bool = True) -> dict:
     return source
 
 
+def _source_v9(*, count: int = 7, catalog: bool = True) -> dict:
+    source = _source_v8(count=count, catalog=catalog)
+    source["semantic_method_version"] = METHOD_VERSION_V9
+    return source
+
+
 def _bundle_v5(*, count: int = 7, max_prompt_bytes: int = 12_000) -> dict:
     return build_bundle(_source_v5(count=count), max_prompt_bytes=max_prompt_bytes)
 
 
 def _bundle_v8(*, count: int = 7, max_prompt_bytes: int = 12_000) -> dict:
     return build_bundle(_source_v8(count=count), max_prompt_bytes=max_prompt_bytes)
+
+
+def _bundle_v9(*, count: int = 7, max_prompt_bytes: int = 12_000) -> dict:
+    return build_bundle(_source_v9(count=count), max_prompt_bytes=max_prompt_bytes)
 
 
 def _claim_row(evidence_id: str) -> dict:
@@ -2899,9 +2912,12 @@ def _v5_responses(
 
 
 def _keyed_responses(bundle: dict) -> list[dict]:
+    response_version = bundle["semantic_work_unit_projection"][
+        "semantic_execution_identity"
+    ]["response_schema_version"]
     return [
         {
-            "schema_version": BATCH_KEYED_RESPONSE_VERSION,
+            "schema_version": response_version,
             "bundle_sha256": bundle["bundle_sha256"],
             "batch_id": batch["batch_id"],
             "decisions_by_evidence_id": {
@@ -6535,6 +6551,59 @@ def test_v8_keyed_response_schema_pins_every_expected_id() -> None:
     assert "evidence_id" not in schema["$defs"]["decision"]["properties"]
 
 
+def test_v9_schema_forbids_personal_agreement_without_parent_context() -> None:
+    historical = _bundle_v8()
+    current = _bundle_v9()
+    batch = current["batches"][0]
+    evidence_id = batch["evidence_ids"][0]
+    historical_schema = build_batch_response_schema(historical, batch["batch_id"])
+    current_schema = build_batch_response_schema(current, batch["batch_id"])
+    assert historical_schema is not None
+    assert current_schema is not None
+    assert historical_schema["properties"]["schema_version"]["const"] == (
+        BATCH_KEYED_RESPONSE_VERSION
+    )
+    assert current_schema["properties"]["schema_version"]["const"] == (
+        BATCH_KEYED_RESPONSE_VERSION_V2
+    )
+    assert historical_schema["properties"]["decisions_by_evidence_id"][
+        "properties"
+    ][evidence_id]["$ref"] == "#/$defs/decision"
+    assert current_schema["properties"]["decisions_by_evidence_id"][
+        "properties"
+    ][evidence_id]["$ref"] == "#/$defs/decision_no_parent_agreement"
+    postures = current_schema["$defs"]["semantic_unit_no_parent_agreement"][
+        "properties"
+    ]["evidence_posture"]["enum"]
+    assert "personal_agreement" not in postures
+    assert "personal_agreement" in historical_schema["$defs"]["semantic_unit"][
+        "properties"
+    ]["evidence_posture"]["enum"]
+    assert METHOD_TEXT_V9.startswith(METHOD_TEXT_V8.replace("METHOD V8", "METHOD V9", 1))
+
+
+def test_v9_schema_preserves_personal_agreement_when_parent_context_exists() -> None:
+    source = _source_v9(count=1)
+    source["captured_items"][0]["conversation_depth"] = 1
+    source["captured_items"][0]["parent_context"] = [
+        {
+            "source_ref": "https://reddit.test/t1#parent",
+            "text": "Instant Angel is my favorite moisturizer.",
+        }
+    ]
+    bundle = build_bundle(source, max_prompt_bytes=12_000)
+    batch = bundle["batches"][0]
+    evidence_id = batch["evidence_ids"][0]
+    schema = build_batch_response_schema(bundle, batch["batch_id"])
+    assert schema is not None
+    assert schema["properties"]["decisions_by_evidence_id"]["properties"][
+        evidence_id
+    ]["$ref"] == "#/$defs/decision"
+    assert "personal_agreement" in schema["$defs"]["semantic_unit"]["properties"][
+        "evidence_posture"
+    ]["enum"]
+
+
 def test_v8_keyed_response_normalizes_to_existing_compilation() -> None:
     bundle = _bundle_v8()
     compiled = validate_batch_responses(bundle, _keyed_responses(bundle))
@@ -6901,7 +6970,7 @@ def test_v5_rejects_wrong_response_generation_in_both_directions() -> None:
         (
             METHOD_VERSION_V3,
             BUNDLE_VERSION_V5,
-            "bundle v5 requires semantic method v5, v6, v7, or v8",
+            "bundle v5 requires semantic method v5, v6, v7, v8, or v9",
         ),
         (METHOD_VERSION_V5, BUNDLE_VERSION_V3, "method v5 requires bundle v5"),
     ],
