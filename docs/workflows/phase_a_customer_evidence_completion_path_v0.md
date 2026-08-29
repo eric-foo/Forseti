@@ -193,9 +193,8 @@ The existing authoring and consumer checks reject a conflict; they do not
 choose the right relation. Historical unscoped replay is not reinterpreted.
 
 An explicit bounded adjudication may settle a repeated exact-binding conflict.
-Attach it once to the current point spec as `relation_adjudication`, a
-`{"path": "...", "sha256": "..."}` binding to an immutable
-`phase_a_relation_adjudication_v1` JSON record. The record contains
+Attach it once to the current point spec as an inline `relation_adjudication`
+`phase_a_relation_adjudication_v1` record. The record contains
 `schema_version`, `basis_sha256`, and nonempty `decisions`. Compute the basis
 with `phase_a_evidence_selection.relation_adjudication_basis(manifest,
 candidates)` over the verified current selection and its complete candidate
@@ -205,14 +204,17 @@ source-backed `rationale`. This is an explicit judgment input, not a provider
 answer, self-certifying approval field, or automatic preference for an older
 label. A changed point/spec, source file, candidate inventory, or judging policy
 invalidates the basis and requires renewed judgment; do not merely rehash it.
-Only the correction's own locator is excluded from the basis to avoid a cycle.
+Judging policy includes the fields projected to both relation stages; row order
+and batching alone do not invalidate the record. Only the inline correction is
+excluded from the basis to avoid a cycle. Because the record travels inside the
+spec, replay does not depend on an authoring machine's filesystem.
 
 Both existing preselection finalizers apply the authored relation and reason
 to every confirmed row with that exact source/evidence/ref-set binding. They
 never choose or change refs. Unmatched or duplicate decisions fail visibly;
 all other rows retain their provider answers and the consistency guard remains
 active. Raw provider responses remain in replay, and the confirmation receipt
-records the pinned correction, every changed candidate and prior label, and
+records the embedded correction, every changed candidate and prior label, and
 the mechanically-unproven semantic warrant. The quote consumer revalidates the
 same binding. Historical unscoped specs and pre-confirmation routes cannot
 accept this extension. No default correction, global judgment cache, extra

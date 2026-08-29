@@ -263,8 +263,10 @@ def test_one_origin_may_carry_opposed_relations_across_separate_evidence(tmp_pat
     assert {row["relation"] for row in quote["labeled_inventory"]} == {"support", "counter"}
 
 
-def _adjudication_fixture(tmp_path: Path):
+def _adjudication_fixture(tmp_path: Path, response_mode: str | None = None):
     spec, sources = _write_source(tmp_path, 2)
+    if response_mode:
+        spec["relation_response_mode"] = response_mode
     semantic_rows = sources[0]["packet"]["source_groups"][0]["evidence_rows"][0][10]
     primary_ref = semantic_rows[0][0]
     companion = copy.deepcopy(semantic_rows[0])
@@ -282,10 +284,8 @@ def _adjudication_fixture(tmp_path: Path):
                        "reason_code": "bounded_fixture_meaning",
                        "rationale": "Explicit fixture judgment, not proven semantic truth."}],
     }
-    path = tmp_path / "adjudication.json"
-    path.write_text(json.dumps(record), encoding="utf-8")
-    spec["relation_adjudication"] = {"path": str(path), "sha256": hash_file(path)}
-    return spec, sources, record, path
+    spec["relation_adjudication"] = record
+    return spec, sources, record
 
 
 def _adjudicated_quote(spec, sources):
@@ -308,7 +308,7 @@ def _adjudicated_quote(spec, sources):
 
 
 def test_adjudication_survives_confirmation_and_quote_replay_without_mutating_provider(tmp_path: Path) -> None:
-    spec, sources, _, _ = _adjudication_fixture(tmp_path)
+    spec, sources, _ = _adjudication_fixture(tmp_path)
     unbound = {key: value for key, value in spec.items() if key != "relation_adjudication"}
     with pytest.raises(EvidenceConsumerError) as caught:
         _adjudicated_quote(unbound, sources)
@@ -327,9 +327,11 @@ def test_adjudication_survives_confirmation_and_quote_replay_without_mutating_pr
     assert _adjudicated_quote(spec, sources)[0] == quote
 
 
-@pytest.mark.parametrize("mutation", ["point", "scope", "source", "meaning", "conditions", "origin", "policy"])
+@pytest.mark.parametrize("mutation", [
+    "point", "scope", "source", "meaning", "conditions", "origin", "policy",
+])
 def test_adjudication_rejects_changed_basis_after_honest_repins(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mutation: str) -> None:
-    spec, sources, _, _ = _adjudication_fixture(tmp_path)
+    spec, sources, _ = _adjudication_fixture(tmp_path)
     if mutation == "point":
         spec["bounded_claim"] += " but only overnight"
     elif mutation == "scope":
@@ -355,13 +357,35 @@ def test_adjudication_rejects_changed_basis_after_honest_repins(tmp_path: Path, 
     assert "point, sources, inventory or policy changed" in str(caught.value)
 
 
+@pytest.mark.parametrize("projection_name", [
+    "RELATION_PROMPT_COLUMNS",
+    "LEGACY_RELATION_PROMPT_COLUMNS",
+    "CURRENT_RELATION_CONFIRMATION_COLUMNS",
+    "CURRENT_LEGACY_RELATION_CONFIRMATION_COLUMNS",
+    "RELATION_CONFIRMATION_COLUMNS",
+    "LEGACY_RELATION_CONFIRMATION_COLUMNS",
+])
+def test_adjudication_basis_covers_every_judging_projection(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, projection_name: str
+) -> None:
+    spec, sources, _ = _adjudication_fixture(tmp_path)
+    columns = getattr(evidence_selection, projection_name)
+    monkeypatch.setattr(
+        evidence_selection, projection_name, (*columns, "new_visible_field")
+    )
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_evidence_selection(spec, sources)
+    assert caught.value.boundary == "relation_adjudication_binding"
+    assert "point, sources, inventory or policy changed" in str(caught.value)
+
+
 @pytest.mark.parametrize("mutation,message", [
     ("duplicate", "duplicate adjudicated binding"), ("duplicate_ref", "duplicate adjudicated refs"),
     ("foreign", "foreign row-owned meaning"), ("missing", "decisions missing"),
     ("wrong_source", "foreign row-owned meaning"), ("wrong_evidence", "foreign row-owned meaning"),
 ])
-def test_adjudication_rejects_bad_decisions_after_file_repin(tmp_path: Path, mutation: str, message: str) -> None:
-    spec, sources, record, path = _adjudication_fixture(tmp_path)
+def test_adjudication_rejects_bad_inline_decisions(tmp_path: Path, mutation: str, message: str) -> None:
+    spec, sources, record = _adjudication_fixture(tmp_path)
     decision = record["decisions"][0]
     if mutation == "duplicate": record["decisions"].append(copy.deepcopy(decision))
     elif mutation == "duplicate_ref": decision["relation_semantic_unit_refs"] *= 2
@@ -369,8 +393,6 @@ def test_adjudication_rejects_bad_decisions_after_file_repin(tmp_path: Path, mut
     elif mutation == "missing": record["decisions"] = []
     elif mutation == "wrong_source": decision["source_id"] = "other-source"
     else: decision["evidence_id"] = "retailer_review:1"
-    path.write_text(json.dumps(record), encoding="utf-8")
-    spec["relation_adjudication"]["sha256"] = hash_file(path)
     with pytest.raises(EvidenceConsumerError) as caught:
         prepare_evidence_selection(spec, sources)
     assert caught.value.boundary == "relation_adjudication_binding"
@@ -378,31 +400,36 @@ def test_adjudication_rejects_bad_decisions_after_file_repin(tmp_path: Path, mut
 
 
 def test_adjudication_missing_binding_fails_not_primary_ref_fallback(tmp_path: Path) -> None:
-    spec, sources, record, path = _adjudication_fixture(tmp_path)
+    spec, sources, record = _adjudication_fixture(tmp_path)
     # Owned but not the exact meaning chosen by the confirmation. This cannot
     # silently apply to a different ref set, even within the same evidence.
     record["decisions"][0]["relation_semantic_unit_refs"] = ["community_post:0::companion"]
-    path.write_text(json.dumps(record), encoding="utf-8")
-    spec["relation_adjudication"]["sha256"] = hash_file(path)
     with pytest.raises(EvidenceConsumerError) as caught:
         _adjudicated_quote(spec, sources)
     assert caught.value.boundary == "relation_adjudication_binding"
     assert "absent from confirmed rows" in str(caught.value)
 
 
-def test_adjudication_file_is_required_again_at_quote_consumer(tmp_path: Path) -> None:
-    spec, sources, record, path = _adjudication_fixture(tmp_path)
+def test_adjudication_record_is_carried_inline_to_quote_consumer(tmp_path: Path) -> None:
+    spec, sources, record = _adjudication_fixture(tmp_path)
     quote, _ = _adjudicated_quote(spec, sources)
-    record["decisions"][0]["relation"] = "support"
-    path.write_text(json.dumps(record), encoding="utf-8")
+    detached = json.loads(json.dumps(quote))
+    artifact = _finalize_quotes_runtime(detached, sources, _quote_response(detached, sources))
+    target = [row for row in artifact["candidate_dispositions"] if row["evidence_id"] == "community_post:0"]
+    assert {row["relation"] for row in target} == {"adjacent"}
+
+
+def test_adjudication_rejects_the_retired_file_locator(tmp_path: Path) -> None:
+    spec, sources, _ = _adjudication_fixture(tmp_path)
+    spec["relation_adjudication"] = {"path": str(tmp_path / "adjudication.json"), "sha256": "0" * 64}
     with pytest.raises(EvidenceConsumerError) as caught:
-        _finalize_quotes_runtime(quote, sources, _quote_response(quote, sources))
+        prepare_evidence_selection(spec, sources)
     assert caught.value.boundary == "relation_adjudication_binding"
-    assert "file missing or changed" in str(caught.value)
+    assert "requires an inline record" in str(caught.value)
 
 
 def test_adjudication_cannot_leak_into_historical_or_unconfirmed_routes(tmp_path: Path) -> None:
-    spec, sources, _, _ = _adjudication_fixture(tmp_path)
+    spec, sources, _ = _adjudication_fixture(tmp_path)
     _, _, manifest = prepare_evidence_selection(spec, sources)
     with pytest.raises(EvidenceConsumerError) as caught:
         finalize_relations_prepare_quotes(manifest, sources, _relation_response(_candidate_rows(sources, spec)))
@@ -416,16 +443,92 @@ def test_adjudication_cannot_leak_into_historical_or_unconfirmed_routes(tmp_path
 
 
 def test_adjudication_does_not_claim_semantic_warrant(tmp_path: Path) -> None:
-    spec, sources, record, path = _adjudication_fixture(tmp_path)
+    spec, sources, record = _adjudication_fixture(tmp_path)
     # A structurally valid but semantically questionable judgment remains the
     # author's responsibility. No prose classifier may silently choose a label.
     record["decisions"][0]["relation"] = "counter"
     record["decisions"][0]["rationale"] = "Deliberately dubious judgment for this non-claim control."
-    path.write_text(json.dumps(record), encoding="utf-8")
-    spec["relation_adjudication"]["sha256"] = hash_file(path)
     quote, _ = _adjudicated_quote(spec, sources)
     assert quote["preselection_relation_confirmation"]["relation_adjudication"]["semantic_warrant"] == "judgment_owned_not_mechanically_proven"
     assert {row["relation"] for row in quote["labeled_inventory"] if row["evidence_id"] == "community_post:0"} == {"counter"}
+
+
+def test_adjudication_normalizes_non_value_reason_codes_like_confirmation(tmp_path: Path) -> None:
+    spec, sources, record = _adjudication_fixture(tmp_path)
+    record["decisions"][0]["reason_code"] = "fixture_exclude_wording"
+    quote, _ = _adjudicated_quote(spec, sources)
+    target = [
+        row for row in quote["labeled_inventory"]
+        if row["evidence_id"] == "community_post:0"
+    ]
+    assert {row["reason_code"] for row in target} == {"fixture_omits_wording"}
+
+
+def test_adjudication_reaches_the_batched_confirmation_route(tmp_path: Path) -> None:
+    # The stopped real case runs batched, not the canonical single prompt. The
+    # batched finalizer only delegates today; nothing else pins that delegation.
+    spec, sources, _ = _adjudication_fixture(tmp_path, response_mode="positional")
+    candidates = _candidate_rows(sources, spec)
+    batch_manifest, _ = prepare_evidence_selection_batches(spec, sources, batch_size=2)
+    responses = {
+        batch["batch_id"]: _batched_positional_relation_response(
+            candidates[batch["start_index"]:batch["start_index"] + batch["candidate_count"]],
+            batch["batch_id"],
+        )
+        for batch in batch_manifest["batches"]
+    }
+    confirmation_manifest, _ = prepare_batched_preselection_relation_confirmations(
+        batch_manifest, sources, responses, batch_size=2
+    )
+    selection_manifest, first, _ = evidence_selection._assemble_batched_relation_response(
+        batch_manifest, sources, responses
+    )
+    _, _, canonical = prepare_preselection_relation_confirmation(selection_manifest, sources, first)
+    by_row_id = dict(zip(canonical["confirmation_row_ids"], canonical["confirmation_candidate_ids"], strict=True))
+    by_id = {row["candidate_id"]: row for row in candidates}
+    confirmation_responses = {}
+    for batch in confirmation_manifest["batches"]:
+        checks = []
+        for row_id in batch["confirmation_row_ids"]:
+            row = by_id[by_row_id[row_id]]
+            target = row["evidence_id"] == "community_post:0"
+            checks.append({"confirmation_row_id": row_id,
+                           "relation": "adjacent" if row["semantic_unit_ref"].endswith("::companion") else "support",
+                           "reason_code": "original_judgment",
+                           "relation_semantic_unit_refs": ["community_post:0::hydration" if target else row["semantic_unit_ref"]]})
+        confirmation_responses[batch["batch_id"]] = {
+            "batch_id": batch["batch_id"], "point_scope": "single_point",
+            "point_scope_reason": "Fixture bounded point.", "relation_checks": checks}
+    _, _, quote = finalize_batched_preselection_relation_confirmations_prepare_quotes(
+        batch_manifest, sources, responses, confirmation_manifest, confirmation_responses
+    )
+    receipt = quote["preselection_relation_confirmation"]["relation_adjudication"]
+    assert receipt["matched_candidate_count"] == 2
+    assert receipt["semantic_warrant"] == "judgment_owned_not_mechanically_proven"
+    assert {row["relation"] for row in quote["labeled_inventory"] if row["evidence_id"] == "community_post:0"} == {"adjacent"}
+    assert quote["preselection_replay"]["confirmation_batch_responses"] == confirmation_responses
+
+
+def test_adjudication_refuses_the_pre_relation_ref_confirmation_route(tmp_path: Path) -> None:
+    # A current spec may still be finalized at an older confirmed quote version,
+    # where the confirming answer carries no row-owned refs to bind against.
+    spec, sources, _ = _adjudication_fixture(tmp_path)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    first = _relation_response(_candidate_rows(sources, spec))
+    _, _, confirmation = prepare_preselection_relation_confirmation(
+        manifest, sources, first, include_relation_refs=False
+    )
+    response = {"point_scope": "single_point", "point_scope_reason": "Fixture bounded point.",
+                "relation_checks": [{"confirmation_row_id": row_id, "relation": "support",
+                                     "reason_code": "original_judgment"}
+                                    for row_id in confirmation["confirmation_row_ids"]]}
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_preselection_relation_confirmation_prepare_quotes(
+            manifest, sources, first, confirmation, response,
+            quote_manifest_version=PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+        )
+    assert caught.value.boundary == "relation_adjudication_binding"
+    assert "requires current explicit relation refs" in str(caught.value)
 
 
 def _canonical_hash(value: object) -> str:

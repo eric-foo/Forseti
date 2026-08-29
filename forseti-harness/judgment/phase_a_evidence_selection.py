@@ -1127,6 +1127,14 @@ def relation_adjudication_basis(
                    PRESELECTION_CONFIRMATION_BATCH_PROMPT,
                    RELATION_REF_INSTRUCTION, POINT_ACTOR_SCOPE_GUIDANCE,
                    _policy_guidance(spec, candidates)],
+        "judgment_projection_columns": {
+            "relation": RELATION_PROMPT_COLUMNS,
+            "legacy_relation": LEGACY_RELATION_PROMPT_COLUMNS,
+            "current_confirmation": CURRENT_RELATION_CONFIRMATION_COLUMNS,
+            "current_legacy_confirmation": CURRENT_LEGACY_RELATION_CONFIRMATION_COLUMNS,
+            "confirmation": RELATION_CONFIRMATION_COLUMNS,
+            "legacy_confirmation": LEGACY_RELATION_CONFIRMATION_COLUMNS,
+        },
     })
 
 
@@ -1138,20 +1146,11 @@ def _load_relation_adjudication(
         return {}
     boundary = "relation_adjudication_binding"
     if (manifest["spec"].get("schema_version") != SELECTION_SPEC_VERSION
-        or not isinstance(binding, Mapping) or set(binding) != {"path", "sha256"}
-        or not all(isinstance(binding[key], str) and binding[key] for key in binding)):
-        raise EvidenceConsumerError(boundary, "current adjudication requires a pinned file")
-    path = Path(binding["path"])
-    if not path.is_file() or hash_file(path) != binding["sha256"]:
-        raise EvidenceConsumerError(boundary, "adjudication file missing or changed")
-    try:
-        record = json.loads(path.read_text(encoding="utf-8-sig"))
-    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
-        raise EvidenceConsumerError(boundary, "invalid adjudication JSON") from exc
-    if (not isinstance(record, dict)
-        or set(record) != {"schema_version", "basis_sha256", "decisions"}
-        or record["schema_version"] != RELATION_ADJUDICATION_VERSION):
-        raise EvidenceConsumerError(boundary, "unsupported adjudication shape")
+        or not isinstance(binding, Mapping)
+        or set(binding) != {"schema_version", "basis_sha256", "decisions"}
+        or binding.get("schema_version") != RELATION_ADJUDICATION_VERSION):
+        raise EvidenceConsumerError(boundary, "current adjudication requires an inline record")
+    record = binding
     if record["basis_sha256"] != relation_adjudication_basis(manifest, candidates):
         raise EvidenceConsumerError(boundary, "adjudication point, sources, inventory or policy changed")
     decisions = record["decisions"]
@@ -1183,12 +1182,16 @@ def _load_relation_adjudication(
         )} for row in owners):
             raise EvidenceConsumerError(boundary, "adjudication references a foreign row-owned meaning")
         relation, reason = decision["relation"], decision["reason_code"]
+        if not value_policy:
+            reason = _normalize_reason_code(reason)
         if (relation not in RELATIONS or len(reason) > 80
             or not REASON_CODE_RE.fullmatch(reason)
             or INTERNAL_RELATION_LABEL_RE.search(reason.replace("_", " "))
             or (value_policy and VALUE_REASON_RELATIONS.get(reason) != relation)):
             raise EvidenceConsumerError(boundary, "invalid adjudicated relation or reason")
-        result[key] = decision
+        normalized = dict(decision)
+        normalized["reason_code"] = reason
+        result[key] = normalized
     return result
 
 
@@ -1222,7 +1225,10 @@ def _apply_relation_adjudication(
         row["reason_code"] = decision["reason_code"]
     if matched != set(decisions):
         raise EvidenceConsumerError("relation_adjudication_binding", "adjudicated binding is absent from confirmed rows; renewed judgment required")
-    return {"binding": dict(manifest["spec"]["relation_adjudication"]),
+    record = manifest["spec"]["relation_adjudication"]
+    return {"binding": {"schema_version": record["schema_version"],
+                        "basis_sha256": record["basis_sha256"],
+                        "record_sha256": _canonical_json_sha256(record)},
             "matched_candidate_count": matched_count, "changes": changed,
             "semantic_warrant": "judgment_owned_not_mechanically_proven"}
 

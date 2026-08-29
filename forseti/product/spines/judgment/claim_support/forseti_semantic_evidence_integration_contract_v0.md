@@ -834,7 +834,7 @@ observations without inferring conflict or refinement from identity alone.
 Different people's opposed preferences do not disprove a particular person's
 private state. Frozen selection spec v1 replay keeps its original scope
 semantics; it is not fresh authoring and gains no default.
-Current scoped specs may carry the completion path's pinned
+Current scoped specs may carry the completion path's inline
 `phase_a_relation_adjudication_v1` exception input. It preserves an explicit
 bounded judgment on an unchanged point/source/inventory/policy basis across
 confirmation reruns, retaining the raw answers and all changed labels. The
@@ -842,6 +842,9 @@ semantic finalizer applies only the authored relation/reason to exactly matching
 row-owned ref sets; it does not infer semantic correctness or select refs.
 Missing, duplicate, foreign, or stale corrections fail visibly. The builder
 and readers still only preserve and verify attachments, never settle meaning.
+The record travels with the current spec; no machine-local locator or historical
+adapter is part of the current authoring contract. Projection-field changes are
+judging-policy changes and invalidate reuse; row order and batching do not.
 An external response must label every admitted candidate exactly once as
 support, counter, adjacent, or exclude before presentation selection begins;
 missing, duplicate, foreign, reordered, and wrong-role rows fail closed at
