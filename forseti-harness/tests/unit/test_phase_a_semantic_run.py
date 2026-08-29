@@ -98,6 +98,75 @@ def test_reddit_manifest_projection_dispatches_www_reddit_html(
     assert record["comments"]
 
 
+def test_reddit_capture_bounds_report_www_declared_total_and_shortfall() -> None:
+    old_reddit = {"post": {}, "comments": []}
+    assert phase_a_semantic_run._reddit_capture_bounds(
+        old_reddit, captured_comment_count=3
+    ) == (
+        "unavailable",
+        "unavailable",
+        "exact preserved Reddit packet; title is context only",
+    )
+
+    short_www = {
+        "comment_completeness": {
+            "declared_total_comments": 198,
+            "comments_captured": 152,
+            "comments_not_captured": 46,
+            "capture_is_complete": False,
+            "continuation_links_not_followed": 7,
+        }
+    }
+    visible, completeness, boundary = phase_a_semantic_run._reddit_capture_bounds(
+        short_www, captured_comment_count=152
+    )
+    # One root plus the source-declared comment total: the same basis as
+    # `captured_leaf_count`, so the shortfall stays derivable at the container.
+    assert visible == 199
+    assert completeness == "partial"
+    assert "source declares 198 comments and 152 were captured" in boundary
+    assert "7 continuation link(s) not followed" in boundary
+
+    # An exact match is never promoted to `complete`; the source-declared count
+    # is not an independent completeness oracle.
+    matched_www = {
+        "comment_completeness": {
+            "declared_total_comments": 4,
+            "comments_captured": 4,
+            "comments_not_captured": 0,
+            "capture_is_complete": None,
+            "continuation_links_not_followed": 0,
+        }
+    }
+    assert phase_a_semantic_run._reddit_capture_bounds(
+        matched_www, captured_comment_count=4
+    ) == (
+        5,
+        "unavailable",
+        "exact preserved Reddit packet; title is context only; "
+        "source declares 4 comments and 4 were captured",
+    )
+
+    # A source-declared count below the captured count cannot become a
+    # `source_visible_total`, which must never fall under `captured_leaf_count`.
+    over_captured = {
+        "comment_completeness": {
+            "declared_total_comments": 2,
+            "comments_captured": 5,
+            "comments_not_captured": None,
+            "capture_is_complete": False,
+            "continuation_links_not_followed": 0,
+        }
+    }
+    assert phase_a_semantic_run._reddit_capture_bounds(
+        over_captured, captured_comment_count=5
+    ) == (
+        "unavailable",
+        "partial",
+        "exact preserved Reddit packet; title is context only",
+    )
+
+
 def _write_json(path: Path, value: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(

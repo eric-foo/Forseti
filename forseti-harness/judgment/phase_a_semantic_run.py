@@ -1708,6 +1708,44 @@ def _reddit_manifest_record(
     return record, source_path, source_ref, captured_at
 
 
+_REDDIT_CAPTURE_BOUNDARY = "exact preserved Reddit packet; title is context only"
+
+
+def _reddit_capture_bounds(
+    record: Mapping[str, Any], *, captured_comment_count: int
+) -> tuple[Any, str, str]:
+    """Return the container capture bounds the projected record actually states.
+
+    Only the www projection carries `comment_completeness`. Its declared total
+    is the source's own count, never an independent completeness oracle, so an
+    exact match stays `unavailable` rather than becoming `complete`; only a
+    measured shortfall or a deliberately unfollowed continuation link is
+    reported as `partial`.
+    """
+    bounds = record.get("comment_completeness")
+    if not isinstance(bounds, Mapping):
+        return "unavailable", "unavailable", _REDDIT_CAPTURE_BOUNDARY
+    declared = bounds.get("declared_total_comments")
+    visible_total: Any = "unavailable"
+    if (
+        isinstance(declared, int)
+        and not isinstance(declared, bool)
+        and declared >= captured_comment_count
+    ):
+        # Same basis as `captured_leaf_count`: one root plus its comments.
+        visible_total = 1 + declared
+    completeness = "partial" if bounds.get("capture_is_complete") is False else "unavailable"
+    clauses = [_REDDIT_CAPTURE_BOUNDARY]
+    if isinstance(visible_total, int):
+        clauses.append(
+            f"source declares {declared} comments and {captured_comment_count} were captured"
+        )
+    unfollowed = bounds.get("continuation_links_not_followed")
+    if isinstance(unfollowed, int) and not isinstance(unfollowed, bool) and unfollowed > 0:
+        clauses.append(f"{unfollowed} continuation link(s) not followed")
+    return visible_total, completeness, "; ".join(clauses)
+
+
 def _score_value(value: Any) -> int | None:
     if isinstance(value, int) and not isinstance(value, bool):
         return value
@@ -1882,16 +1920,26 @@ def build_phase_a_reddit_source_v3(
         if not _nonempty(title):
             title = source_ref
         container_id = f"reddit_thread_{thread_id}"
+        # Old-Reddit markup states no thread-level comment total, so its
+        # container honestly reports `unavailable`. The www projection does
+        # state the source's own declared total and whether the capture fell
+        # short of it, and it counts the continuation links it deliberately did
+        # not follow. Reporting `unavailable` for such a thread would assert
+        # that a source-visible total does not exist and would hide a measured
+        # capture shortfall from every downstream claim.
+        visible_total, completeness, capture_boundary = _reddit_capture_bounds(
+            record, captured_comment_count=len(comments)
+        )
         containers.append(
             {
                 "container_id": container_id,
                 "container_type": "conversation",
                 "source_artifact_id": raw_artifact_id,
                 "captured_leaf_count": 1 + len(comments),
-                "source_visible_total": "unavailable",
-                "completeness": "unavailable",
+                "source_visible_total": visible_total,
+                "completeness": completeness,
                 "captured_at": captured_at,
-                "capture_boundary": "exact preserved Reddit packet; title is context only",
+                "capture_boundary": capture_boundary,
             }
         )
         post_text = post.get("body_text") if isinstance(post.get("body_text"), str) else ""

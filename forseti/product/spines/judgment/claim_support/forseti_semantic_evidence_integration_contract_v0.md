@@ -1526,7 +1526,15 @@ retailer source-row references before semantic work. A
 `retailer_review_source_manifest_v1` pins every retailer source file by raw-byte
 SHA-256, names its admitted parser family, and binds the source-native review-ID
 set. Current packet replay accepts both old-Reddit and preserved www-Reddit
-HTML through their existing source-owned parsers. Current retailer replay also
+HTML through their existing source-owned parsers. A conversation container
+reports the source-visible total and completeness posture its own projection
+states: old-Reddit markup declares no thread comment total and stays
+`unavailable`, while a www projection supplies the source-declared total, and a
+measured shortfall or a deliberately unfollowed continuation link makes that
+container `partial` with the shortfall named in its capture boundary. An exact
+match between the declared and captured counts is never promoted to `complete`,
+because the source-declared total is not an independent completeness oracle.
+Current retailer replay also
 accepts the Soko Glam/Okendo corpus shape, deriving each stable review identity
 from its source-native product slug and positive ordinal. A review-ID substring
 elsewhere in a file is never membership proof. Its captured-conversation
@@ -1806,7 +1814,11 @@ new frontier.
 
 - `v73` / 2026-08-30 — made retrospective current-source replay accept the
   already preserved www-Reddit and Soko Glam/Okendo shapes without rewriting
-  historical collection artifacts. Soko review IDs are rederived from the
+  historical collection artifacts. A www conversation container now carries the
+  source-declared comment total, a `partial` completeness posture when the
+  capture fell short or left continuation links unfollowed, and the named
+  shortfall in its capture boundary, instead of asserting that no
+  source-visible total exists. Soko review IDs are rederived from the
   pinned product slug and ordinal; retailer census and materialization now
   reparse the complete pinned source set, require exact readable-row coding,
   and preserve source-native non-text rows as mechanical exclusions. A Revolve
