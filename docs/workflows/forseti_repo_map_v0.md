@@ -221,6 +221,7 @@ authorized.
 | `forseti-harness/signal_content/` | Retained compatibility implementation for the deprecated/dormant Signal Content Record. |
 | `forseti-harness/evidence_binding/` | JSG-01-scoped evidence binding and composition. |
 | `forseti-harness/judgment/` | Judgment-stage prompt construction, response validation, and bounded profile assembly. |
+| `forseti-harness/provider_attempts.py` and `forseti-harness/provider_execution.py` | Shared immutable model-attempt storage/publication and deadline-bound live-log execution. Route to "Unattended Model Attempts" in `forseti-harness/README.md`; stage validators retain semantic acceptance. |
 | `forseti-harness/packing/` | Packing Spine model-facing serialization: payload-agnostic columnar packing core plus per-consumer adapters; encoding only, never selection. |
 | `forseti-harness/schemas/` | Shared typed models. |
 | `forseti-harness/scoring/` | Deterministic scoring and calibration helpers. |

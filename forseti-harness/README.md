@@ -26,6 +26,40 @@ records. It does not fetch sources, retrieve archives, automate browsers, call
 APIs, score source quality, validate Data Capture, or authorize downstream ECR,
 Cleaning, or Judgment behavior.
 
+## Unattended Model Attempts
+
+For authorized unattended Codex jobs whose retries, elapsed time, or failure
+history matter, use the shared executor rather than a task-local buffered
+subprocess wrapper. It is usable by any intelligence-cycle stage:
+
+```powershell
+python runners/run_codex_provider_attempt.py --attempt-root <attempts> --attempt-id <new-id> --prompt-file <prompt.md> --output-schema <schema.json> --worktree <repo> --model <model> --reasoning-effort <effort> --timeout-seconds <seconds>
+```
+
+The timeout is one finite, workload-appropriate budget for the entire attempt;
+reconnects and additional client turns do not reset it. Logs go directly to
+`events.jsonl` and `stderr.log`; stderr is also mirrored while the process runs.
+An idle process is not evidence of useful model work. On timeout the executor
+stops its local process tree and preserves the attempt. It cannot prove remote
+cancellation or unreported provider usage.
+
+`execution_started.json` reserves execution and `execution_receipt.json` records
+its terminal outcome. The receipt separates wall time, recognized retry/fallback
+events, and exact completed-turn token fields; useful compute time stays
+`UNOBSERVED`. Reported turn usage does not establish complete hidden-retry cost.
+Do not subtract cached input or add reasoning tokens to output tokens.
+
+Process completion is not semantic acceptance. The stage-specific validator and
+publisher still own acceptance. `provider_attempts.py` refuses publication for
+unfinished or unsuccessful executor attempts and changed executor outputs.
+Historical attempts without an executor-start record retain their existing
+publication behavior. A retry gets a new attempt ID; the executor launches no
+automatic retry and never changes prompts, models, or evidence to obtain a pass.
+
+The shared runtime lives in `provider_execution.py`; immutable storage and
+publication remain in `provider_attempts.py`. This is not a mandatory wrapper
+around interactive conversations, capture tools, or unrelated processes.
+
 ## Screening Reads
 
 Use the screening-read entries when a screen orchestrator needs one bounded

@@ -107,6 +107,17 @@ def publish_provider_attempt(
         raise ValueError("canonical response name must be one JSON filename")
     response_path = attempt_dir / "response.json"
     events_path = attempt_dir / "events.jsonl"
+    if (attempt_dir / "execution_started.json").exists():
+        execution_path = attempt_dir / "execution_receipt.json"
+        if not execution_path.is_file():
+            raise ValueError("provider execution is unfinished; refusing publication")
+        execution = json.loads(execution_path.read_text(encoding="utf-8"))
+        if execution.get("outcome") != "PROCESS_COMPLETED":
+            raise ValueError("provider execution did not complete successfully; refusing publication")
+        for filename, field in (("response.json", "response_sha256"), ("events.jsonl", "events_sha256"), ("stderr.log", "stderr_sha256")):
+            path = attempt_dir / filename
+            if not path.is_file() or execution.get(field) != hash_file(path):
+                raise ValueError(f"provider execution output changed: {filename}")
     if not response_path.is_file() or not events_path.is_file():
         raise ValueError("attempt must contain response.json and events.jsonl")
     usage = codex_usage_from_events(events_path)

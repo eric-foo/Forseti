@@ -306,6 +306,15 @@ attempt storage. Other intelligence-cycle stages may reuse the helper when they
 have the same parallel/retry proof shape; it is not a mandatory wrapper around
 all model activity.
 
+For current unattended Codex jobs, replace task-local buffered launch wrappers
+with `forseti-harness/runners/run_codex_provider_attempt.py`; its execution
+contract and command live in `forseti-harness/README.md` under "Unattended Model
+Attempts". It reserves the attempt itself, preserves logs live, and bounds the
+entire attempt without resetting the clock on reconnects. Use the existing
+stage validator/publisher afterward, not process exit as acceptance. Frozen
+historical wrappers and receipts remain provenance; do not rerun or rewrite them.
+The shared execution boundary adds no model stage or automatic retry.
+
 The confirmation frontier is independent of the first-pass relation. Therefore
 a first-pass `exclude` cannot silently hide a materially engaged or protected
 row. The confirming response may correct the relation and reason code; selection
