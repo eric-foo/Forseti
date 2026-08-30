@@ -5257,6 +5257,7 @@ def _agent_reconciliation_candidate(
     *,
     convergence_mode: bool = False,
     evidence_index: Mapping[str, Any] | None = None,
+    include_source_roles: bool = False,
 ) -> dict[str, Any]:
     """Hide compiler-owned expanded lineage from reconciliation prompts."""
     agent_candidate = {
@@ -5276,6 +5277,20 @@ def _agent_reconciliation_candidate(
     }
     if "evidence_postures" in candidate:
         agent_candidate["evidence_postures"] = candidate["evidence_postures"]
+    if include_source_roles:
+        if evidence_index is None:
+            raise SemanticIntegrationError("reconciliation prompt lacks source roles")
+        agent_candidate["source_roles_by_relation"] = {
+            relation: sorted({
+                evidence_index[_leaf_evidence_id(
+                    leaf["semantic_unit_ref"], evidence_index,
+                    node_key=candidate["candidate_ref"],
+                )]["source_role"]
+                for leaf in candidate["leaf_relations"]
+                if leaf["relation"] == relation
+            })
+            for relation in sorted(RELATIONS)
+        }
     if convergence_mode:
         if evidence_index is None:
             raise SemanticIntegrationError(
@@ -5426,6 +5441,7 @@ def _render_v3_reconciliation_prompt(
     emerging_axis_labels: Sequence[str] | None = None,
     emerging_axis_owner: bool = True,
     agreement_origin_rule: bool = False,
+    preserve_child_scope: bool = False,
     reconciliation_mode: str | None = None,
     evidence_index: Mapping[str, Any] | None = None,
 ) -> str:
@@ -5493,6 +5509,38 @@ def _render_v3_reconciliation_prompt(
         )
     else:
         retention_instruction = ""
+    scope_instruction = (
+        "Copy every child condition verbatim into the node's conditions array as a "
+        "separate string; remove only exact duplicates. Do not paraphrase, combine, "
+        "or replace those strings with a summary. Condition lineage remains tied to "
+        "its original child; do not imply that every condition applies to every author. "
+        "A merged node must express one bounded meaning independently established "
+        "by each supporting child, not a broader bucket containing unlike meanings. "
+        "Do not join different benefits or behaviors with 'or' to manufacture a merge. "
+        "Purchase intent, acquisition, use, and repurchase are different states. "
+        "An unnamed item does not establish a range-wide claim, even when both use "
+        "the same brand ID; generic approval does not establish a particular benefit. "
+        "Keep materially different scope, conditions, intensity, and uncertainty "
+        "separate. In normal mode, retaining separate one-child nodes is correct; "
+        "fewer nodes is not a success target. "
+        if preserve_child_scope
+        else ""
+    )
+    source_role_instruction = (
+        "Choose a terminal claim_kind only when its effective supporting source roles "
+        "are competent in TERMINAL_SOURCE_ROLE_COMPETENCE. Each candidate supplies "
+        "source_roles_by_relation from its original leaves; compose these with the "
+        "chosen child relation, as the validator does. An observable_statement posture "
+        "does not make a community report a directly verified observable_fact. Never "
+        "change a claim's meaning or relabel its kind merely to pass this check. Retain "
+        "non-customer material with no eligible terminal kind in unmerged_children "
+        "with its limitation explicit; unmerged remains retrievable evidence.\n"
+        "TERMINAL_SOURCE_ROLE_COMPETENCE\n"
+        + json.dumps({kind: sorted(_competent_roles(kind)) for kind in sorted(CLAIM_KINDS)}, sort_keys=True)
+        + "\n"
+        if preserve_child_scope
+        else ""
+    )
     return (
         METHOD_TEXT_V3
         + "\nReconcile these candidates into meaning-equivalent semantic nodes. "
@@ -5503,6 +5551,8 @@ def _render_v3_reconciliation_prompt(
         "true only when the node is ready for compiler-owned claim support. "
         + retention_instruction
         + posture_instruction
+        + scope_instruction
+        + source_role_instruction
         + axis_instruction
         + "Return only JSON matching this shape:\n"
         + json.dumps(
@@ -5518,6 +5568,7 @@ def _render_v3_reconciliation_prompt(
                         row,
                         convergence_mode=reconciliation_mode == "convergence",
                         evidence_index=evidence_index,
+                        include_source_roles=preserve_child_scope,
                     )
                     for row in candidates
                 ]
@@ -5678,6 +5729,8 @@ def prepare_reconciliation_stage(
         BUNDLE_VERSION_V5,
     }
     agreement_origin_rule = bundle.get("method_version") in SEMANTIC_METHODS_V7_PLUS
+    # Clarify current authoring without rewriting v11-and-earlier prompt replay.
+    preserve_child_scope = bundle.get("method_version") == METHOD_VERSION_V12
     current_emerging_labels = sorted(
         {
             label
@@ -5712,6 +5765,7 @@ def prepare_reconciliation_stage(
             ),
             emerging_axis_owner=not batches,
             agreement_origin_rule=agreement_origin_rule,
+            preserve_child_scope=preserve_child_scope,
             reconciliation_mode=reconciliation_mode,
             evidence_index=evidence_index,
         )
@@ -5733,6 +5787,7 @@ def prepare_reconciliation_stage(
                 emerging_axis_labels=([] if compact_lineage else None),
                 emerging_axis_owner=False,
                 agreement_origin_rule=agreement_origin_rule,
+                preserve_child_scope=preserve_child_scope,
                 reconciliation_mode=reconciliation_mode,
                 evidence_index=evidence_index,
             )
@@ -5785,6 +5840,7 @@ def prepare_reconciliation_stage(
             ),
             emerging_axis_owner=batch_index == 0,
             agreement_origin_rule=agreement_origin_rule,
+            preserve_child_scope=preserve_child_scope,
             reconciliation_mode=reconciliation_mode,
             evidence_index=evidence_index,
         )

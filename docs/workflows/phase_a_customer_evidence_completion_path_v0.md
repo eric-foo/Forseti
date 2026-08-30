@@ -35,12 +35,24 @@ For new cross-company authoring, use `phase_a_semantic_integration_run_v10`
 (integration method v12, verifier v11). The supplied `CURRENT_AXES` inventory
 owns output IDs; shared examples describe concepts, never another company's
 required IDs. Preserve a supported meaning even when it needs an emerging-axis
-label instead of an existing axis. See the semantic-integration contract v80
+label instead of an existing axis. See the semantic-integration contract v81
 for the owning rule. Historical run v9 / method v11 and earlier artifacts keep
 their original identity and replay; do not edit frozen outputs or relabel old
 responses as a new-method proof. This correction does not establish the cause
 of Dieux's provider timeout. All new model attempts use `high` under the
 operator rule in `docs/decisions/subagent_model_tiering_doctrine_v0.md`.
+
+Current reconciliation preserves child condition strings verbatim and asks
+for one genuinely shared bounded meaning per merge, not a broad bucket of
+different outcomes or behavior states. Shared product IDs alone do not prove
+equivalent scope. Contract v81 owns this clarification; the existing literal
+condition and lineage validators remain unchanged. The model also receives
+the original source roles by relation and the compiler's existing claim-kind
+competence table; an echoed factual statement cannot silently become a
+directly verified fact. A failed reconciliation
+answer remains preserved, and a corrected prompt uses a fresh attempt over
+the same verified compilation without repeating extraction or verification.
+This is not a semantic-truth guarantee or a full-corpus completion claim.
 
 The existing calibration entry point follows the production-owned
 `SEMANTIC_METHODS_V7_PLUS` set, including current method v12, rather than a

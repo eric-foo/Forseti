@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v80
-effective_date: 2026-08-30
+version: v81
+effective_date: 2026-08-31
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v80
+# Semantic Evidence Integration Contract v81
 
 ## Purpose
 
@@ -1482,6 +1482,26 @@ equivalent and how conditions, negation, and uncertainty should be described.
 Structural completeness is therefore proven; perfect open-world semantic
 recall is not.
 
+Current method-v12 reconciliation explicitly copies every child condition
+verbatim into the node's conditions, deduplicating only identical strings, as
+the existing validator requires. The compiler retains each condition's child
+lineage; their union does not assert that every condition holds for every
+author. Each supporting child must establish the same bounded meaning: a
+shared brand ID does not make an unnamed item a range-wide claim, generic
+approval is not a particular benefit, and intent, acquisition, use, and
+repurchase are not interchangeable. Distinct scope, conditions, intensity,
+or uncertainty may require separate nodes. This clarifies the existing merge
+boundary, not a new semantic classifier or a target to minimize node count.
+The prompt also exposes source roles by existing leaf relation and the
+compiler-owned terminal claim-kind competence table. An observable-statement
+posture alone does not make a community report a directly verified fact.
+Material with no semantically appropriate, source-competent terminal kind
+remains retrievable as unmerged evidence rather than being relabeled to pass.
+These are derived prompt facts, not new stored authority or relaxed validation.
+Method v11 and earlier prompt replay is unchanged. Existing saved prompts and
+responses remain historical evidence; a changed current prompt is recorded
+as a fresh attempt, never silently substituted into an old receipt.
+
 Contract v34 adds an opt-in global relation-closure generation after one
 terminal normal-retention frontier. Deterministic block pairs cover every
 unordered frontier-candidate pair exactly once; each pair terminates as
@@ -1911,6 +1931,20 @@ new frontier.
 
 ## Changelog
 
+- `v81` / 2026-08-31 — the corrected 87-row Dieux trial reached reconciliation
+  with 156 meanings. One provider answer produced 98 nodes; 18 changed or
+  omitted literal child conditions, and bounded inspection also found
+  unnamed-item/range-wide and acquisition/use merges. The existing validator
+  rejected the answer before finalization. Current method-v12 reconciliation
+  now states the literal condition requirement and the bounded merge rule at
+  the actual consumer prompt. Validators, extraction, verification, schemas,
+  and provider-stage count are unchanged. The first correction's answer
+  preserved all literal conditions across 141 nodes but failed source-role
+  competence on one community report labeled as an observable fact. The
+  prompt now exposes the existing source-role facts and competence table;
+  it does not invent a new policy or infer claim kind from prose.
+  This is a candidate correction;
+  passing tests do not establish semantic accuracy or Dieux completion.
 - `v80` / 2026-08-30 — fixed public calibration reopening: keyed prompt schema
   metadata was lost by the disk loader, so valid saved v8-v11 prompts disagreed
   with their producer. The regression reached that public boundary before the
