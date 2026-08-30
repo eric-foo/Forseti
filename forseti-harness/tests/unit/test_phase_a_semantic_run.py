@@ -13,6 +13,9 @@ from judgment.phase_a_semantic_run import (
     RUN_SPEC_VERSION_V3,
     RUN_SPEC_VERSION_V4,
     RUN_SPEC_VERSION_V5,
+    RUN_SPEC_VERSION_V6,
+    RUN_SPEC_VERSION_V7,
+    RUN_SPEC_VERSION_V8,
     _product_binding_indexes,
     audit_phase_a_source,
     build_phase_a_reddit_source_v3,
@@ -31,10 +34,16 @@ from judgment.phase_a_semantic_run import (
 )
 from judgment.semantic_evidence_integration import (
     BATCH_RESPONSE_VERSION_V3,
+    BATCH_KEYED_RESPONSE_VERSION,
+    BATCH_KEYED_RESPONSE_VERSION_V2,
+    BATCH_KEYED_RESPONSE_VERSION_V3,
     BUNDLE_VERSION_V5,
     METHOD_VERSION_V5,
     METHOD_VERSION_V6,
     METHOD_VERSION_V7,
+    METHOD_VERSION_V8,
+    METHOD_VERSION_V9,
+    METHOD_VERSION_V10,
     SemanticIntegrationError,
     build_bundle,
     materialize_source_v3,
@@ -60,6 +69,111 @@ def _canonical(value: object) -> str:
         value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
     ).encode("utf-8")
     return hashlib.sha256(body).hexdigest()
+
+
+def test_reddit_manifest_projection_dispatches_www_reddit_html(
+    tmp_path: Path,
+) -> None:
+    fixture = (
+        Path(__file__).resolve().parents[1]
+        / "fixtures"
+        / "reddit_thread"
+        / "www_sephora_talc_thread.html"
+    )
+    raw = tmp_path / "raw" / "thread.html"
+    raw.parent.mkdir()
+    raw.write_bytes(fixture.read_bytes())
+    manifest = tmp_path / "manifest.json"
+    _write_json(
+        manifest,
+        {
+            "source_locator": {
+                "status": "known",
+                "value": "https://www.reddit.com/r/Sephora/comments/1v87d9j/this_talcfree_trend_is_terrible_for_me/",
+            },
+            "preserved_files": [
+                {
+                    "relative_packet_path": "raw/thread.html",
+                    "sha256": _raw_sha(raw),
+                }
+            ],
+        },
+    )
+
+    record = phase_a_semantic_run._reddit_record_from_manifest(manifest)
+
+    assert record["parser_version"].startswith("www-")
+    assert record["thread"]["thread_id"] == "1v87d9j"
+    assert record["comments"]
+
+
+def test_reddit_capture_bounds_report_www_declared_total_and_shortfall() -> None:
+    old_reddit = {"post": {}, "comments": []}
+    assert phase_a_semantic_run._reddit_capture_bounds(
+        old_reddit, captured_comment_count=3
+    ) == (
+        "unavailable",
+        "unavailable",
+        "exact preserved Reddit packet; title is context only",
+    )
+
+    short_www = {
+        "comment_completeness": {
+            "declared_total_comments": 198,
+            "comments_captured": 152,
+            "comments_not_captured": 46,
+            "capture_is_complete": False,
+            "continuation_links_not_followed": 7,
+        }
+    }
+    visible, completeness, boundary = phase_a_semantic_run._reddit_capture_bounds(
+        short_www, captured_comment_count=152
+    )
+    # One root plus the source-declared comment total: the same basis as
+    # `captured_leaf_count`, so the shortfall stays derivable at the container.
+    assert visible == 199
+    assert completeness == "partial"
+    assert "source declares 198 comments and 152 were captured" in boundary
+    assert "7 continuation link(s) not followed" in boundary
+
+    # An exact match is never promoted to `complete`; the source-declared count
+    # is not an independent completeness oracle.
+    matched_www = {
+        "comment_completeness": {
+            "declared_total_comments": 4,
+            "comments_captured": 4,
+            "comments_not_captured": 0,
+            "capture_is_complete": None,
+            "continuation_links_not_followed": 0,
+        }
+    }
+    assert phase_a_semantic_run._reddit_capture_bounds(
+        matched_www, captured_comment_count=4
+    ) == (
+        5,
+        "unavailable",
+        "exact preserved Reddit packet; title is context only; "
+        "source declares 4 comments and 4 were captured",
+    )
+
+    # A source-declared count below the captured count cannot become a
+    # `source_visible_total`, which must never fall under `captured_leaf_count`.
+    over_captured = {
+        "comment_completeness": {
+            "declared_total_comments": 2,
+            "comments_captured": 5,
+            "comments_not_captured": None,
+            "capture_is_complete": False,
+            "continuation_links_not_followed": 0,
+        }
+    }
+    assert phase_a_semantic_run._reddit_capture_bounds(
+        over_captured, captured_comment_count=5
+    ) == (
+        "unavailable",
+        "partial",
+        "exact preserved Reddit packet; title is context only",
+    )
 
 
 def _write_json(path: Path, value: object) -> None:
@@ -480,7 +594,11 @@ def _census_inputs(tmp_path: Path) -> tuple[Path, Path, Path, dict]:
     ).hexdigest()
     retailer_source = tmp_path / "review.json"
     retailer_source.write_text(
-        '{"Results":[{"Id":"r1","ReviewText":"Readable"}]}\n',
+        '{"Results":['
+        '{"Id":"r1","ReviewText":"Readable"},'
+        '{"Id":"rating-1","ReviewText":null,"IsRatingsOnly":true},'
+        '{"Id":"rating-2","ReviewText":null,"IsRatingsOnly":true}'
+        ']}\n',
         encoding="utf-8",
     )
     ledger_path = tmp_path / "ledger.json"
@@ -527,14 +645,14 @@ def _census_inputs(tmp_path: Path) -> tuple[Path, Path, Path, dict]:
         {
             "corpora": [
                 {
-                    "corpus_id": "retailer",
+                    "corpus_id": "sephora_product_group_reviews",
                     "eligible_text_review_count": 1,
                     "excluded_no_usable_text_count": 2,
                 }
             ],
             "rows": [
                 {
-                    "corpus_id": "retailer",
+                    "corpus_id": "sephora_product_group_reviews",
                     "review_id": "r1",
                     "source_row_ref": f"{retailer_source}#review:r1",
                 }
@@ -975,7 +1093,7 @@ def test_retailer_census_rejects_collapsed_or_undeclared_corpus_denominators(
     retailer["corpora"].insert(
         0,
         {
-            "corpus_id": "retailer",
+            "corpus_id": "sephora_product_group_reviews",
             "eligible_text_review_count": 0,
             "excluded_no_usable_text_count": 40,
         },
@@ -1290,6 +1408,22 @@ def test_reddit_source_builder_keeps_titles_as_context_and_excludes_placeholders
     tmp_path: Path,
 ) -> None:
     spec_path = _source_run_spec(tmp_path)
+    authority_path = tmp_path / "product-authority.json"
+    _write_json(authority_path, {"product": "Summer Fridays Lip Butter Balm"})
+    spec = json.loads(spec_path.read_text(encoding="utf-8"))
+    spec["schema_version"] = RUN_SPEC_VERSION_V2
+    spec["product_bindings"] = [
+        {
+            "stable_product_id": "summer-fridays-lip-butter-balm",
+            "display_name": "Summer Fridays Lip Butter Balm",
+            "source_product_ids": ["Lip Butter Balm"],
+            "aliases": ["Lip Butter Balm Alias"],
+            "evidence_refs": [
+                {"locator": str(authority_path), "sha256": _sha(authority_path)}
+            ],
+        }
+    ]
+    _write_json(spec_path, spec)
     packet = tmp_path / "packet"
     raw = packet / "raw"
     raw.mkdir(parents=True)
@@ -1410,8 +1544,14 @@ def test_reddit_source_builder_keeps_titles_as_context_and_excludes_placeholders
         row for row in source["captured_items"] if row["accounting_disposition"] == "assess"
     )
     assert assessed["text"] == "It lasts through lunch."
-    assert assessed["product_context"][0]["text"] == "Summer Fridays wear"
-    assert assessed["product_candidates"] == ["Lip Butter Balm"]
+    assert next(
+        context["text"]
+        for context in assessed["product_context"]
+        if context["context_type"] == "thread_title"
+    ) == "Summer Fridays wear"
+    assert assessed["product_candidates"] == [
+        "summer-fridays-lip-butter-balm"
+    ]
     assert assessed["engagement"]["material_positive"] is True
     assert assessed["publication_time"] == "2026-07-31T14:22:03+0000"
     assert assessed["conversation_depth"] == 0
@@ -1422,7 +1562,55 @@ def test_reddit_source_builder_keeps_titles_as_context_and_excludes_placeholders
         if row["artifact_id"] == "reddit_evidence_ledger"
     ) == "ledger.json"
 
+    content = json.loads(content_path.read_text(encoding="utf-8"))
+    content["post"]["body_text"] = "Instant Angel feels richer than Air Angel."
+    _write_json(content_path, content)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["preserved_files"][0]["sha256"] = _raw_sha(content_path)
+    _write_json(manifest_path, manifest)
+    community = json.loads(community_path.read_text(encoding="utf-8"))
+    community["rows"].extend(
+        [
+            {
+                "thread_id": "abc",
+                "comment_id": "post",
+                "product_context": "Lip Butter Balm",
+                "axis_ids": ["wear"],
+            },
+            {
+                "thread_id": "abc",
+                "comment_id": "post",
+                "product_context": "Lip Butter Balm Alias",
+                "axis_ids": ["wear"],
+            },
+        ]
+    )
+    _write_json(community_path, community)
     ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["artifacts"][0]["sha256"] = _sha(manifest_path)
+    ledger["artifacts"][1]["sha256"] = _sha(community_path)
+    _write_json(ledger_path, ledger)
+
+    source_with_coded_post = build_phase_a_reddit_source_v3(
+        run_spec_path=spec_path,
+        evidence_ledger_path=ledger_path,
+        repo_root=tmp_path,
+    )
+
+    assessed_post = next(
+        row
+        for row in source_with_coded_post["captured_items"]
+        if row["evidence_id"] == "reddit:abc:post"
+    )
+    assert assessed_post["product_candidates"] == [
+        "summer-fridays-lip-butter-balm"
+    ]
+    assert assessed_post["axis_candidates"] == ["wear"]
+    assert any(
+        "run-local identity binding" in context["text"]
+        for context in assessed_post["product_context"]
+    )
+
     ledger["families"]["reddit_forum"]["threads"].append(
         {"thread_id": "missing", "artifact_id": "reddit_manifest_missing"}
     )
@@ -1486,10 +1674,139 @@ def test_retailer_row_parsers_preserve_source_publication_times() -> None:
             ]
         }
     )
+    soko_family, soko = phase_a_semantic_run._retailer_rows(
+        {
+            "retailer": "Soko Glam",
+            "reviews": [
+                {
+                    "product_slug": "instant_angel",
+                    "ordinal": 1,
+                    "body": "Worth it.",
+                    "reviewer": "buyer",
+                    "helpful_yes": 0,
+                    "date_label": "2 months ago",
+                }
+            ],
+        }
+    )
     assert amazon_family == "amazon_aggregate_v1"
     assert amazon["a1"]["publication_time"] == "2026-06-16"
     assert sephora_family == "bazaarvoice_results_v1"
     assert sephora["s1"]["publication_time"] == "2026-07-17T15:55:19.000+00:00"
+    assert soko_family == "soko_glam_okendo_v1"
+    assert soko["soko-instant_angel-001"]["publication_time"] == "2 months ago"
+
+
+def test_retailer_source_builder_accepts_soko_without_revolve_receipt(
+    tmp_path: Path,
+) -> None:
+    spec_path = _source_run_spec(tmp_path)
+    source_path = tmp_path / "soko.json"
+    _write_json(
+        source_path,
+        {
+            "retailer": "Soko Glam",
+            "reviews": [
+                {
+                    "product_slug": "instant_angel",
+                    "ordinal": 1,
+                    "body": "Comfortable and rich.",
+                    "reviewer": "buyer",
+                    "helpful_yes": 0,
+                    "date_label": "2 months ago",
+                }
+            ],
+        },
+    )
+    coding_path = tmp_path / "retailer-coding.json"
+    _write_json(
+        coding_path,
+        {
+            "rows": [
+                {
+                    "corpus_id": "soko_glam_verified_window",
+                    "review_id": "soko-instant_angel-001",
+                    "product_context_id": "instant_angel",
+                    "axis_codes": [{"axis_id": "wear"}],
+                    "source_row_ref": f"{source_path}#review:soko-instant_angel-001",
+                }
+            ]
+        },
+    )
+    manifest_path = tmp_path / "retailer-manifest.json"
+    _write_json(
+        manifest_path,
+        build_retailer_source_manifest(retailer_coding_path=coding_path),
+    )
+
+    source = build_phase_a_retailer_source_v3(
+        run_spec_path=spec_path,
+        retailer_coding_path=coding_path,
+        retailer_source_manifest_path=manifest_path,
+        revolve_completion_receipt_path=None,
+        repo_root=tmp_path,
+    )
+
+    assert len(source["captured_items"]) == 1
+    assert source["captured_items"][0]["evidence_id"] == (
+        "retailer:soko_glam_verified_window:soko-instant_angel-001"
+    )
+    assert all(
+        row["artifact_id"] != "revolve_completion_receipt"
+        for row in source["source_artifacts"]
+    )
+
+
+def test_retailer_source_builder_accounts_for_uncoded_rating_only_rows(
+    tmp_path: Path,
+) -> None:
+    spec_path = _source_run_spec(tmp_path)
+    source_path = tmp_path / "sephora.json"
+    _write_json(
+        source_path,
+        {
+            "Results": [
+                {"Id": "text-1", "ReviewText": "Comfortable and rich."},
+                {"Id": "rating-1", "ReviewText": None, "IsRatingsOnly": True},
+            ]
+        },
+    )
+    coding_path = tmp_path / "retailer-coding.json"
+    _write_json(
+        coding_path,
+        {
+            "rows": [
+                {
+                    "corpus_id": "sephora_product_group_reviews",
+                    "review_id": "text-1",
+                    "product_context_id": "product-1",
+                    "axis_codes": [{"axis_id": "wear"}],
+                    "source_row_ref": f"{source_path}#review:text-1",
+                }
+            ]
+        },
+    )
+    manifest_path = tmp_path / "retailer-manifest.json"
+    _write_json(
+        manifest_path,
+        build_retailer_source_manifest(retailer_coding_path=coding_path),
+    )
+
+    source = build_phase_a_retailer_source_v3(
+        run_spec_path=spec_path,
+        retailer_coding_path=coding_path,
+        retailer_source_manifest_path=manifest_path,
+        revolve_completion_receipt_path=None,
+        repo_root=tmp_path,
+    )
+
+    rating_only = next(
+        row
+        for row in source["captured_items"]
+        if row["evidence_id"].endswith(":rating-1")
+    )
+    assert rating_only["accounting_disposition"] == "mechanically_excluded"
+    assert rating_only["accounting_reason"] == "source-native review has no usable text"
 
 
 def test_retailer_source_builder_enumerates_deduplicates_and_fails_on_uncoded_text(
@@ -1548,6 +1865,17 @@ def test_retailer_source_builder_enumerates_deduplicates_and_fails_on_uncoded_te
         manifest_path,
         build_retailer_source_manifest(retailer_coding_path=coding_path),
     )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="Revolve retailer sources require a completion receipt",
+    ):
+        build_phase_a_retailer_source_v3(
+            run_spec_path=spec_path,
+            retailer_coding_path=coding_path,
+            retailer_source_manifest_path=manifest_path,
+            revolve_completion_receipt_path=None,
+            repo_root=tmp_path,
+        )
     completion_path = tmp_path / "completion.json"
 
     def write_completion() -> None:
@@ -1918,6 +2246,27 @@ def _spec_v5(tmp_path: Path) -> dict:
     return spec
 
 
+def _spec_v6(tmp_path: Path) -> dict:
+    """Select the keyed-response transport for current authoring."""
+    spec = _spec_v5(tmp_path)
+    spec["schema_version"] = RUN_SPEC_VERSION_V6
+    return spec
+
+
+def _spec_v7(tmp_path: Path) -> dict:
+    """Select the structurally constrained keyed-response transport."""
+    spec = _spec_v6(tmp_path)
+    spec["schema_version"] = RUN_SPEC_VERSION_V7
+    return spec
+
+
+def _spec_v8(tmp_path: Path) -> dict:
+    """Select the structurally constrained required-subject transport."""
+    spec = _spec_v7(tmp_path)
+    spec["schema_version"] = RUN_SPEC_VERSION_V8
+    return spec
+
+
 def _v5_bundle(tmp_path: Path) -> dict:
     """Build the new generation from the same controlled run-spec fixture."""
     spec = _spec_v3(tmp_path)
@@ -1983,6 +2332,73 @@ def test_run_spec_v5_selects_verified_method_v7_on_the_existing_transport(
     assert source["semantic_method_version"] == METHOD_VERSION_V7
     assert bundle["schema_version"] == BUNDLE_VERSION_V5
     assert bundle["method_version"] == METHOD_VERSION_V7
+
+
+def test_run_spec_v6_selects_method_v8_keyed_transport(tmp_path: Path) -> None:
+    spec = _spec_v6(tmp_path)
+    source, _ = materialize_phase_a_v3(spec, repo_root=tmp_path)
+    bundle = build_bundle(source, max_prompt_bytes=12_000)
+
+    assert source["semantic_method_version"] == METHOD_VERSION_V8
+    assert bundle["schema_version"] == BUNDLE_VERSION_V5
+    assert bundle["method_version"] == METHOD_VERSION_V8
+    assert bundle["semantic_work_unit_projection"]["semantic_execution_identity"][
+        "response_schema_version"
+    ] == BATCH_KEYED_RESPONSE_VERSION
+
+
+def test_run_spec_v7_selects_method_v9_structural_posture_transport(
+    tmp_path: Path,
+) -> None:
+    spec = _spec_v7(tmp_path)
+    source, _ = materialize_phase_a_v3(spec, repo_root=tmp_path)
+    bundle = build_bundle(source, max_prompt_bytes=12_000)
+
+    assert source["semantic_method_version"] == METHOD_VERSION_V9
+    assert bundle["schema_version"] == BUNDLE_VERSION_V5
+    assert bundle["method_version"] == METHOD_VERSION_V9
+    assert bundle["semantic_work_unit_projection"]["semantic_execution_identity"][
+        "response_schema_version"
+    ] == BATCH_KEYED_RESPONSE_VERSION_V2
+
+
+def test_run_spec_v8_selects_method_v10_required_subject_transport(
+    tmp_path: Path,
+) -> None:
+    spec = _spec_v8(tmp_path)
+    source, _ = materialize_phase_a_v3(spec, repo_root=tmp_path)
+    bundle = build_bundle(source, max_prompt_bytes=12_000)
+
+    assert source["semantic_method_version"] == METHOD_VERSION_V10
+    assert bundle["schema_version"] == BUNDLE_VERSION_V5
+    assert bundle["method_version"] == METHOD_VERSION_V10
+    assert bundle["semantic_work_unit_projection"]["semantic_execution_identity"][
+        "response_schema_version"
+    ] == BATCH_KEYED_RESPONSE_VERSION_V3
+
+
+def test_run_spec_v9_selects_inventory_owned_axes_without_relabeling_v8(tmp_path: Path) -> None:
+    spec = _spec_v8(tmp_path)
+    spec["schema_version"] = "phase_a_semantic_integration_run_v9"
+    source, _ = materialize_phase_a_v3(spec, repo_root=tmp_path)
+    bundle = build_bundle(source, max_prompt_bytes=20_000)
+    assert source["semantic_method_version"] == "semantic_evidence_integration_method_v11"
+    assert bundle["method_version"] == "semantic_evidence_integration_method_v11"
+    assert bundle["semantic_work_unit_projection"]["semantic_execution_identity"][
+        "response_schema_version"
+    ] == BATCH_KEYED_RESPONSE_VERSION_V3
+
+
+def test_run_spec_v10_selects_reconciled_meaning_policy_without_relabeling_v9(tmp_path: Path) -> None:
+    spec = _spec_v8(tmp_path)
+    spec["schema_version"] = "phase_a_semantic_integration_run_v10"
+    source, _ = materialize_phase_a_v3(spec, repo_root=tmp_path)
+    bundle = build_bundle(source, max_prompt_bytes=20_000)
+    assert source["semantic_method_version"] == "semantic_evidence_integration_method_v12"
+    assert bundle["method_version"] == "semantic_evidence_integration_method_v12"
+    assert bundle["semantic_work_unit_projection"]["semantic_execution_identity"][
+        "response_schema_version"
+    ] == BATCH_KEYED_RESPONSE_VERSION_V3
 
 
 def test_new_generation_status_is_global_not_partition_owned(tmp_path: Path) -> None:

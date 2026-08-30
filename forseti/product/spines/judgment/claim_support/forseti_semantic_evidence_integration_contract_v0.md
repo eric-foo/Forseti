@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v65
-effective_date: 2026-08-27
+version: v80
+effective_date: 2026-08-30
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v65
+# Semantic Evidence Integration Contract v80
 
 ## Purpose
 
@@ -78,6 +78,18 @@ Deterministic code owns:
 
 The agent never chooses its own evidence count, independence count, support
 posture, cross-venue credit, or causal strength.
+
+Current authoring uses run v10 / integration method v12 / row-verification
+method v11. `CURRENT_AXES` alone supplies valid output axis IDs. Category names
+in the semantic examples below describe meaning, not fixed identifiers or
+mandatory assignments across companies. The agent selects supplied IDs by the
+unit's meaning and the supplied labels; it never imports Summer Fridays IDs
+into a different inventory. Where no current axis fits, preserve supported
+meaning with empty `axis_ids` and an emerging-axis label where appropriate.
+Code still rejects foreign IDs; it does not translate categories or infer fit.
+Earlier run/method identities and their prompt bytes remain historical replay,
+not current cross-company authoring. No frozen output is rewritten or silently
+promoted into the new generation.
 
 Upstream `product_candidates` are hypotheses, not product truth. For the
 current method, every admitted item also carries source-pinned product context
@@ -506,6 +518,71 @@ described above. An unverified compilation may still reproduce historical v5
 or v6 behavior, but method v7 reconciliation and finalization fail closed until
 the verification manifest is present and valid.
 
+Contract v74 adds `phase_a_semantic_integration_run_v6` and
+`semantic_evidence_integration_method_v8` for current authoring. Method v8
+keeps method v7 meaning rules, row verification, bundle v5, projection v2,
+compilation v3, reconciliation, views, and packets. It changes only the raw
+batch-response transport: every expected evidence ID is an exact required key
+under `decisions_by_evidence_id`, and the value contains that row's disposition,
+reason, and semantic units without repeating the ID. The per-batch provider
+schema is derived from immutable work-unit membership, written beside the
+prompt or execution pack, hash-bound in the pack manifest, and rejects missing,
+foreign, or repeated identities before semantic compilation. This adds no
+provider call and no semantic rule. Historical run v5 / method v7 artifacts
+retain response v3 grouped replay and are never silently reinterpreted as keyed
+responses.
+
+Contract v75 adds `phase_a_semantic_integration_run_v7`,
+`semantic_evidence_integration_method_v9`, and keyed response transport v2.
+They preserve method v8 meaning and keyed identity while moving one already
+deterministic impossibility into the per-row provider schema:
+`personal_agreement` is unavailable when the immutable evidence row carries no
+parent-context reference. Rows with supplied parent context retain the posture.
+The ordinary validator still rejects the same impossible combination after
+generation; the schema now prevents it before token-consuming output is
+accepted. Historical method v8 / keyed transport v1 schemas and responses
+remain replayable under their original execution identity.
+
+Contract v76 adds `phase_a_semantic_integration_run_v8`,
+`semantic_evidence_integration_method_v10`, and keyed response transport v3.
+They preserve v9 semantics and posture restrictions while requiring at least
+one cataloged `subject_product_id` in every semantic unit at the provider
+schema boundary. This mirrors the longstanding compilation validator and does
+not infer, select, or repair a subject. Historical method v9 / keyed transport
+v2 schemas and responses remain replayable under their original identity.
+
+Contract v77 adds `semantic_evidence_row_verification_method_v9` and makes
+response transport stage-local. The keyed `decisions_by_evidence_id` rule is
+rendered only for the initial semantic batch surface that owns that schema; it
+is omitted from row verification, targeted audit, and reconciliation prompts,
+which retain their own response shapes. This removes contradictory response
+instructions without changing semantic policy, adding a provider call, or
+rewriting historical row-verifier v8 text.
+
+Contract v78 adds `phase_a_semantic_integration_run_v9` and integration method
+v11, retaining keyed transport v3, required subjects, and row-owned posture
+restrictions. Method v11 pairs with row-verification method v10; historical
+integration methods keep verifier v9. Current extraction, verification, targeted
+audit, repair, and reconciliation prose names semantic concepts instead of
+hard-coded example axis IDs. This corrects an observed Dieux prompt/inventory
+mismatch; it is not evidence that the mismatch caused the provider timeout or
+that latency or semantic quality improved.
+
+Contract v80 adds run v10 / integration method v12 / verifier v11 without
+changing keyed transport v3 or adding a provider stage. Explicit overall
+evaluations survive as separate axis-free meanings; independently retrievable
+attributes remain separate, qualifications stay attached, and an explicitly
+stated reason remains attached to the behavior it explains. Verification checks
+each unit before accepting the row rather than presuming the proposal correct.
+These are semantic duties, not deterministic guarantees. Current-policy
+readiness still requires the existing calibration and cold-repeat proof.
+Historical integration v5-v11 and verifier v10 prompt bytes remain unchanged.
+
+Calibration reopening retains producer-derived prompt metadata (including a
+keyed response schema) while reading the actual saved prompt bytes. An altered
+saved primary or cold prompt still fails at the prompt-identity boundary. This
+loader repair changes neither the provider answer nor its semantic judgment.
+
 When one leaf evaluates two alternatives on the same attribute, the relative
 comparison remains evidence even if the observations occupy separate
 sentences. A context-adopting reply keeps a parent's named-shade preference and
@@ -520,8 +597,10 @@ an unmet product attribute. A nearby preference supplies no reason, axis, or
 comparison unless the source explicitly connects them.
 
 Explicit contrast wording does not override atomicity. Independently testable
-material sides stay separate, opposite directions are not bundled, and generic
-approval may still be discarded when it carries no bounded evidence.
+material sides stay separate and opposite directions are not bundled. Preserve
+an explicit overall approval as its own axis-free meaning; do not infer a
+specific product benefit from it. Historical prompts that discarded generic
+approval are not the current authoring instruction.
 Qualifications follow the same atomicity rule. This narrows the
 meaning-preservation rule without weakening its causal, explanatory, or
 connected-behavior cases.
@@ -648,8 +727,21 @@ semantic representation may remain expanded, but its lineage proves which
 durable raw grouped responses produced it, and downstream reconciliation
 rejects a compilation v3 that lacks that lineage.
 
+The keyed response transport is the current-authoring replacement for response
+v3 grouping, not a new evidence model. Transport v2 also removes
+`personal_agreement` from a row's allowed posture enum when that row has no
+supplied parent context; it does not choose a replacement posture or infer the
+row's meaning. The keyed transport removes the model-authored task of
+copying identifiers into rows or terminal groups: the provider must fill one
+already named object slot per expected evidence ID. Deterministic normalization
+then produces the same one-row-per-evidence representation consumed by
+compilation v3. Exact membership, source text, context, product binding,
+provenance, and raw-response hashes remain unchanged obligations. Grouped
+response v3 remains supported only when the bound historical method identity
+requires it.
+
 Projection v2 binds semantic execution identity: source, corpus, and catalog
-bindings; the selected method v5, v6, or v7 identity and hash; response-schema
+bindings; the selected method v5, v6, v7, or v8 identity and hash; response-schema
 version; prompt-encoding
 version; exact work-unit membership; evidence and context references; prompt and
 leaf caps; and complete assessable-denominator coverage. It must not encode a
@@ -818,6 +910,33 @@ Contract v39 adds an optional no-provider selection-and-quote consumer over
 one or more hash-bound v3 packets. It does not change packet v3 or the
 authoritative semantic view. Admission is deterministic from explicit product
 and axis membership or literal operator-nominated semantic/unresolved refs.
+Current authoring uses selection spec v2 with explicit `point_actor_scope`:
+source-local reports or an identified actor bound to a credited literal point
+anchor by source ID and independence key. The completion path's paragraph
+beginning `Fresh selections use` owns the operational shape and CLI route.
+Both existing judgment exchanges receive the scope and row origin identity;
+both reader surfaces preserve it unchanged. Deterministic code verifies the
+identity and transfer, not whether the authored scope fits the source meaning.
+Under source-local reports the input source ID is not a person identifier.
+Read source-bound independence keys with their independence posture and
+source-visible attribution; different keys alone do not prove different
+people. Check origin overlap before describing opposed rows as separate
+authors. One credited origin can appear on both sides; preserve its separate
+observations without inferring conflict or refinement from identity alone.
+Different people's opposed preferences do not disprove a particular person's
+private state. Frozen selection spec v1 replay keeps its original scope
+semantics; it is not fresh authoring and gains no default.
+Current scoped specs may carry the completion path's inline
+`phase_a_relation_adjudication_v1` exception input. It preserves an explicit
+bounded judgment on an unchanged point/source/inventory/policy basis across
+confirmation reruns, retaining the raw answers and all changed labels. The
+semantic finalizer applies only the authored relation/reason to exactly matching
+row-owned ref sets; it does not infer semantic correctness or select refs.
+Missing, duplicate, foreign, or stale corrections fail visibly. The builder
+and readers still only preserve and verify attachments, never settle meaning.
+The record travels with the current spec; no machine-local locator or historical
+adapter is part of the current authoring contract. Projection-field changes are
+judging-policy changes and invalidate reuse; row order and batching do not.
 An external response must label every admitted candidate exactly once as
 support, counter, adjacent, or exclude before presentation selection begins;
 missing, duplicate, foreign, reordered, and wrong-role rows fail closed at
@@ -999,6 +1118,63 @@ the quote task clip or omit source context. Historical v1/v3/v4/v5 manifests
 remain finalizable under their stamped contracts and never acquire this new
 obligation; one is finalized with no confirmation attachment at all, and
 supplying one fails closed at `unexpected_relation_confirmation`.
+
+Current Decision State consolidation is delta-based when a new point layout
+regroups already judged evidence. `prepare-decision-state-reconciliation` pins
+the current axis packs and templates plus the chosen historical specs. It may
+reuse a Decision State judgment only for an unchanged source-owned semantic
+identity consisting of evidence ID, semantic-unit ref, literal normalized
+statement, axes, conditions, and polarity, and only when every matching prior
+observation carries the same complete judgment bundle. Point ID, selected-row
+ID, row order, axis placement, and relation are not semantic reuse keys. Because
+current v4 rows address meanings by semantic ref, one evidence and semantic-ref
+slot must resolve to a single current identity across every axis in the run; two
+current axes carrying different content for the same slot fail closed rather
+than silently resolving to one of them. New or changed identities, conflicting
+history, and partial multi-ref state groups are the only units sent to the
+existing bounded judgment boundary. That boundary describes the actor rather
+than turning every product outcome into a state. Its current prompt uses
+`expectation_judgment` only for explicit expectation, hype, skepticism,
+surprise, disappointment, or underwhelming language; uses
+`preference_judgment` only for an explicit evaluative or suitability judgment;
+keeps other product attributes and observed outcomes as context; does not infer
+acquisition from price or quantity; and does not infer use from ownership or
+carrying. Carrying or keeping a product nearby is context unless ownership or
+use is explicit. Commercial direction is relative to the preserved decision
+object: a preference for A over B keeps the full comparison as a favorable
+object, while an exact midpoint numeric rating is mixed absent another stated
+direction. One atomic statement with separable explicit states emits each state
+rather than hiding a state in conditions or collapsing the bundle into mixed.
+`finalize-decision-state-reconciliation` requires exact coverage of those
+unresolved identities, compiles complete current v4 Decision State bindings,
+and validates the ordinary consolidation consumer. Current row-owned relation
+refs remain point-relative and are copied only from the current v3 selection
+artifact. This adds no third provider stage: a run with no unresolved identities
+needs no model call, while a run with deltas judges only those deltas. The
+manifest is a hash-bound run receipt, not a global semantic registry, ontology,
+or independently writable evidence authority. Exact historical agreement proves
+mechanical reuse eligibility, not semantic truth; bounded review retains the
+right to challenge an old judgment.
+
+The current point reader projects the exact meanings named by a displayed row's
+`relation_semantic_unit_refs`. A selected row's primary meaning and quote remain
+available as lineage, but they are not presented as the relation-owned meaning
+when the relation binds only a same-evidence companion. In that companion-only
+case the relation-facing quote is explicitly `quote_unavailable` unless a quote
+span owned by that exact meaning was captured. This prevents a neighboring
+selected-row quote from visually impersonating the meaning that supports,
+counters, or sits adjacent to the point; it does not decide whether the chosen
+semantic-reference subset is itself warranted.
+
+Companion-owned semantic fields that the frozen projection does not carry remain
+null and are listed in `unbound_meaning_fields`; they never inherit the selected
+row's product/version, conditions, axes, polarity, statement, or uncertainty.
+When primary and companion meanings are co-bound, the headline meaning is the
+owner of the headline quote regardless of reference order. Both the point-reader
+compiler and structured-reader validator use the same quote-ownership projection.
+The latter accepts honest companion-only quote unavailability and rejects the
+neighboring primary quote; this closes an existing consumer gap, not a new
+semantic judgment stage.
 
 The confirmation pass still shares the first pass's source role for each row,
 because source-role competence is required input for the judgment rather than
@@ -1441,7 +1617,19 @@ The customer-corpus census rereads packet-backed Reddit records and verifies
 retailer source-row references before semantic work. A
 `retailer_review_source_manifest_v1` pins every retailer source file by raw-byte
 SHA-256, names its admitted parser family, and binds the source-native review-ID
-set. A review-ID substring elsewhere in a file is never membership proof. Its captured-conversation
+set. Current packet replay accepts both old-Reddit and preserved www-Reddit
+HTML through their existing source-owned parsers. A conversation container
+reports the source-visible total and completeness posture its own projection
+states: old-Reddit markup declares no thread comment total and stays
+`unavailable`, while a www projection supplies the source-declared total, and a
+measured shortfall or a deliberately unfollowed continuation link makes that
+container `partial` with the shortfall named in its capture boundary. An exact
+match between the declared and captured counts is never promoted to `complete`,
+because the source-declared total is not an independent completeness oracle.
+Current retailer replay also
+accepts the Soko Glam/Okendo corpus shape, deriving each stable review identity
+from its source-native product slug and positive ordinal. A review-ID substring
+elsewhere in a file is never membership proof. Its captured-conversation
 union is reconciled against both owning sources: every coded thread family
 member must appear in the union, and every reconciled target that already
 yielded captured material must keep its native packet binding. It counts roots,
@@ -1465,11 +1653,15 @@ Current-route operations are:
    source-native retailer review. Both commands preserve the captured
    denominator, mechanically exclude only exact non-text placeholders, and
    keep repository-owned locators relative to the declared repository root.
-   The retailer builder also verifies the completion receipt, retains every
+   The retailer builder verifies a Revolve completion receipt whenever the
+   source manifest contains Revolve, and requires no unrelated Revolve receipt
+   for a non-Revolve corpus. It retains every
    captured source file, and de-duplicates a repeated native review identity to
    one customer evidence item while preserving every source-pinned product
    listing context carried by its occurrences. A repeated listing occurrence
-   does not become another customer experience. No admitted retailer source
+   does not become another customer experience. A source-native review with no
+   usable text remains a mechanical exclusion and must still appear in the
+   captured denominator; readable uncoded rows still fail closed. No admitted retailer source
    format preserves a capture timestamp, so retailer capture envelopes record
    capture time as unavailable rather than stamping a run-derived date.
 3. `build-serp-source-surface-spec` reads hash-pinned Phase 1 and Phase 2
@@ -1494,14 +1686,16 @@ Current-route operations are:
    containers/leaves into one hash-bound v3 source; unsupported families or
    denominator mismatches fail closed. Materialization never renders
    provisional prompts; prompt packing belongs only to `prepare-batches`.
-7. `prepare-batches` verifies sources, builds bundle v4, proves the work-unit
-   bijection, writes byte-bounded prompts, and writes one deterministic
-   three-worker assignment manifest.
+7. `prepare-batches` verifies sources, builds the method-bound bundle, proves
+   the work-unit bijection, and writes byte-bounded prompts. Current run v9 also
+   writes one exact keyed provider-response schema per work unit. Historical v4
+   bundles retain their deterministic three-worker assignment manifest; current
+   v5 bundles encode no static worker topology.
 8. `validate-batch-response` validates one returned batch immediately without
    compiling a partial corpus. `status` reports valid, missing, duplicate, and
    invalid responses so an interrupted run can resume honestly.
 9. `submit-batches` validates all agent responses and exact alias coverage.
-10. For method v7, `prepare-row-verification` renders byte-bounded independent
+10. For method v7 or v8, `prepare-row-verification` renders byte-bounded independent
     checks for every primary claim-bearing row, and
     `submit-row-verification` requires exactly one `accept`, complete-row
     `replace`, or `unresolved` decision per row before writing the sole active
@@ -1526,13 +1720,18 @@ Current-route operations are:
     `finalize-relation-closed` to write view v3. `prepare-row-repair` /
     `submit-row-repair` may correct named source rows first; any repair restarts
     reconciliation from its new verified compilation hash.
-17. `prepare-calibration` reads a hash-pinned method-v5-or-v6 source and blind
+17. `prepare-calibration` reads a hash-pinned source and blind
     owner gold, projects exact bounded slices, and writes route-native sources,
     bundles, fingerprints, and prompts. The calibration spec deliberately
     selects the method being tested and may retarget the same pinned evidence
     from the source's method marker; the route fingerprint binds the selected
     method and exact method hash, so this is explicit method comparison rather
     than fallback. It makes no model call and cannot authorize a corpus run.
+    Supported targets are historical methods v5/v6 and the production-owned
+    `SEMANTIC_METHODS_V7_PLUS` set (currently v7-v11). Every target in that set
+    requires a provenance-bound row-verified compilation for both primary and
+    configured cold-repeat evaluation. A new keyed response transport does not
+    waive verification; historical v5/v6 replay behavior remains unchanged.
 18. `evaluate-calibration` runs the existing response validator, then evaluates
     disposition, unit-count, product/axis/posture, atomic-meaning, cross-source,
     anomaly, and selective cold-repeat obligations. Semantic atom, relation,
@@ -1712,6 +1911,174 @@ new frontier.
 
 ## Changelog
 
+- `v80` / 2026-08-30 — fixed public calibration reopening: keyed prompt schema
+  metadata was lost by the disk loader, so valid saved v8-v11 prompts disagreed
+  with their producer. The regression reached that public boundary before the
+  repair; separate altered-primary and altered-cold controls still fail there.
+  Actual Dieux method-v11 calibration (84 rows, separate six-row repeat) then
+  exposed bundled meanings and a lost explicit repurchase-reason link after
+  row verification. Its reconciliation response also failed the existing
+  customer-proof posture guard. These failures remain failures, not latency
+  diagnoses or a reason to relax validation. Run v10 / method v12 / verifier
+  v11 reconciles the conflicting generic-approval instructions and clarifies
+  existing per-unit checks. It adds no provider stage or prose classifier and
+  does not restamp prior answers. The successor proof separately discloses
+  exposed regression gold, two corrected test-expectation errors, and three
+  fresh source-authored holdouts. No accuracy or completion claim follows from
+  adding the route; real calibration and final consumers remain required.
+- `v79` / 2026-08-30 — repaired calibration's stale v5/v6/v7-only admission
+  and v7-only mandatory-verification checks by consuming the existing
+  production-owned `SEMANTIC_METHODS_V7_PLUS` set at admission, primary
+  evaluation, and cold-repeat evaluation. Reached during Dieux completion:
+  the current method-v11 run could not enter the required readiness check.
+  The fix adds no semantic method, provider call, schema, or new gate; keyed
+  response identity remains bound by the existing route fingerprint. Existing
+  historical replay stays isolated. Passing checker tests or preparing Dieux
+  inputs does not establish semantic accuracy or full-corpus readiness.
+- `v78` / 2026-08-30 — removed foreign example axis IDs from current shared
+  policy prose under run v9 / integration v11 / verifier v10. The supplied
+  inventory owns IDs; semantic judgment owns fit; existing validators reject
+  foreign IDs. Preserved historical method bytes and verifier replay. Added no
+  model stage, axis translator, or claim that this fixes provider latency.
+
+- `v77` / 2026-08-30 — isolated the keyed initial-batch response transport from
+  downstream provider prompts after Dieux row-verification preparation rendered
+  both a keyed-object instruction and the row verifier's required decisions
+  list. Row verification method v9 binds the stage-local transport rule;
+  targeted audit and reconciliation also omit the incompatible batch-only
+  instruction. Initial batch prompt bytes and historical row-verifier v8 text
+  remain intact.
+- `v76` / 2026-08-30 — added run v8 / method v10 / keyed transport v3 after
+  Dieux batch-0017 produced a semantic unit with an empty subject-product list.
+  The ordinary validator rejected it; the provider schema had omitted that
+  already-required minimum. Current schemas now require one subject ID per
+  semantic unit. The boundary does not choose or repair product identity, and
+  historical v9/v2 replay remains intact.
+- `v75` / 2026-08-30 — added run v7 / method v9 / keyed transport v2 after two
+  identical Dieux batch-0018 attempts labeled one top-level community post
+  `personal_agreement` solely from the word `second`; both failed the existing
+  no-parent validator. The per-evidence provider schema now excludes that
+  posture only when the immutable row has no parent-context reference, while
+  preserving it for actual replies. This is deterministic prevention of an
+  already invalid combination, not a prose classifier or semantic relabeler.
+  Historical v8/v1 replay remains intact.
+- `v74` / 2026-08-30 — added run v6 / method v8 keyed batch-response
+  transport for current authoring. Each provider response now fills exact
+  schema-required evidence-ID object keys, which removes the recurring model
+  task of copying long identifiers while keeping all method-v7 semantic rules
+  and downstream compilation unchanged. Prompt and execution-pack preparation
+  persist the exact per-batch provider schema, and execution-pack verification
+  rejects missing, altered, or extra schema files. Historical run v5 / method
+  v7 grouped responses replay under their original identity. Added zero
+  provider stages and changed no evidence meaning.
+- `v73` / 2026-08-30 — made retrospective current-source replay accept the
+  already preserved www-Reddit and Soko Glam/Okendo shapes without rewriting
+  historical collection artifacts. A www conversation container now carries the
+  source-declared comment total, a `partial` completeness posture when the
+  capture fell short or left continuation links unfollowed, and the named
+  shortfall in its capture boundary, instead of asserting that no
+  source-visible total exists. Soko review IDs are rederived from the
+  pinned product slug and ordinal; retailer census and materialization now
+  reparse the complete pinned source set, require exact readable-row coding,
+  and preserve source-native non-text rows as mechanical exclusions. A Revolve
+  completion receipt remains mandatory when Revolve is present but is no
+  longer an unrelated gate on non-Revolve corpora. Post-level community coding
+  now carries its run-local product and axis bindings just as comment-level
+  coding already did. Added no provider stage, semantic inference, collection,
+  frozen-output mutation, Deliver claim, or semantic response-transport change.
+- `v72` / 2026-08-29 — added a pinned, current-spec-only bounded relation
+  adjudication input at the existing preselection finalization seam. The
+  current-policy ownership refresh at `7888c532` reached seven successful
+  provider calls (580,100 input and 47,470 output tokens) but stopped when two
+  rows selected the same Marshmallow meaning as both support and adjacent.
+  This ambiguity had already been explicitly judged adjacent; wholesale
+  regeneration reopened it. Corrections now bind the exact point, complete
+  source/inventory and judging policy, survive row/batch presentation changes,
+  preserve original responses, and fail on stale or unmatched bindings. No
+  provider stage or semantic classifier was added. This does not prove the
+  chosen judgment true, eliminate fresh-authoring cost, or complete Phase A.
+- `v71` / 2026-08-29 — adjudicated cross-vendor correction to the v70
+  scope-reading rule: input source identity is not person identity; read
+  origin keys with independence posture and attribution, and check overlap
+  before describing opposed rows as separate authors. The shade dogfood has
+  one `full-corpus` source ID across 1,021 candidate rows and 538 distinct
+  origin keys: 497 credited keys across 955 rows, plus 41 unavailable-identity
+  keys across 66 rows, not 538 proven people. One credited account supplies
+  both Vanilla-favorite observations. Joint favorites do not oppose a
+  non-exclusive favorite claim merely by naming another option. The review's
+  unconditional key-to-person and key-to-refinement wording was not retained.
+  Text correction to existing judgment and reader guidance; no new provider
+  stage, consumer boundary, schema, or frozen artifact mutation. Changed
+  guidance invalidates scoped reader cache inputs as designed. Semantic
+  adequacy and improved reader quality remain unproven until observed.
+- `v70` / 2026-08-29 — made actor scope explicit in current selection spec v2
+  and carried it through existing judgment calls and both reader consumers.
+  Missing scope, unresolved focal identity, foreign-origin focal relations,
+  changed consumer scope, and conflicting relations on identical point-local
+  evidence/ref-set bindings fail visibly; no deterministic prose classifier
+  or additional provider stage was added. The two shade failures originated
+  in unbound actor scope, not the latest relation-facing display projection.
+  Historical v1 selection replay and frozen artifacts retain their bytes.
+  Scope adequacy, semantic truth, full-axis quality, and Phase A completion
+  remain separate claims; previous blind wins do not establish this change.
+- `v69` / 2026-08-29 — adjudicated the returned all-axis review: accepted the
+  companion-field and headline quote-owner fixes, and closed the remaining
+  structured-reader quote-ownership gap in the same work unit. Companion fields
+  no longer inherit primary semantic values; both reader consumers share one
+  quote projection. Freshly hash-bound current and v2 fixtures prove that an
+  honest companion-only unavailable quote passes and the neighboring quote
+  fails at the reader-output boundary. The earlier blind comparison remains
+  evidence for its pinned output bytes, not a new quality judgment of the patched
+  displays. No frozen source mutation or additional provider stage is required.
+- `v68` / 2026-08-28 — completed the bounded Summer Fridays Phase A all-axis
+  consumer proof and corrected only defects observed at the current consumer.
+  The point reader had exposed a selected row's primary quote while its relation
+  was bound only to a same-evidence companion meaning; current projection now
+  shows the exact relation-bound meanings and keeps the selected row and quote as
+  lineage, using explicit relation-facing quote unavailability for a
+  companion-only binding. The no-frontier response schema now types its two
+  provider `const` strings instead of relying on a provider-invalid untyped
+  constant. Bounded relation review corrected three hydration rows without
+  mutating frozen evidence: two support/counter errors and one causal wording
+  exposure rebound to an existing non-causal same-evidence meaning. A value
+  reader sentence was narrowed from `independent` to `separate credited`; source
+  identity never proves independence. The final 12-axis primary/mirror set
+  preserved exactly 50 accepted points, 14 rejected points, and 184 no-frontier
+  candidate rows with zero current critical errors and 22 current wins versus 2
+  historical wins. A required fresh repeat resolved coverage in both positions;
+  packaging remained position-sensitive and is `INCONCLUSIVE`, not forced to a
+  winner. The 154-unit Decision State review changed 43 judgments, but was
+  same-family rather than vendor-independent. Separate prompt canaries disagreed
+  with that reviewed authority on 7 of 83 and then 6 of 83 rows, so repeated
+  provider judgment is not treated as a deterministic semantic oracle. These
+  results prove current transport, attachment, accounting, and consumer quality
+  under that owner-accepted review tradeoff; semantic truth, vendor independence,
+  market prevalence, causal force, and Deliver conclusions remain unproven.
+- `v67` / 2026-08-28 — replaced positional reuse of historical Decision State
+  rows with run-scoped semantic-identity delta reconciliation. The temporary
+  all-axis proof driver had copied bindings by `point_id` plus `selected_id` and
+  changed only relation refs, which could transfer a plausible state bundle to
+  the wrong meaning after regrouping. Current preparation now reuses only one
+  unambiguous complete historical bundle for an unchanged evidence/ref/content
+  identity; new content, conflicting history, and incomplete grouped states
+  remain explicitly unresolved. Finalization requires exact delta coverage and
+  proves the compiled v4 specs at the ordinary reader consumer. Relation remains
+  point-relative and comes only from the current v3 artifact. This is a
+  per-run compiler rather than a global registry and adds no provider call when
+  all meanings are stable. Deterministic reuse does not prove semantic warrant.
+  Summer Fridays dogfood rebuilt all nine point-bearing packs twice from the 50
+  finalized point artifacts, then reconciled 253 Decision State rows across 25
+  points. Of 739 unique semantic units, 585 reused one unambiguous judgment and
+  154 units affecting 62 rows remained for bounded adjudication (37 conflicting
+  history; 117 new units). Two preparations were byte-identical and took 2.568
+  and 2.559 seconds; one 154-unit provider call finalized all nine current specs
+  through the ordinary consumer. The Hype/trust canary caught and removed three
+  request-contract defects before that run: a provider-invalid untyped `const`,
+  a response hash absent from the prompt, and independently enumerated state
+  kinds/directions that allowed contract-invalid pairs. Those are transport and
+  compilation observations, not proof that the 154 judgments are semantically
+  correct or that reader quality improved. Full-view validation remained the
+  dominant deterministic cost at 489.704 seconds.
 - `v66` / 2026-08-27 — replaced current v9 quote transcription with
   `row_owned_token_span_v1` inside the existing quote call. All-axis completion
   dogfood first observed 13 of 39 long-body point responses fail the exact or

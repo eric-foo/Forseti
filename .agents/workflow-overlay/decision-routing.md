@@ -397,12 +397,13 @@ When delegating to a spawned subagent, choose the model tier per
 owns the session-lane tier defaults for delegated review lanes (its
 "Session-lane tier defaults" section).
 
-For a newly created Codex cold receiving/handoff thread, explicitly set
-`thinking: high` on `create_thread`; do not default the receiving thread to
-`xhigh`. Keep the model omitted unless the owner separately requests a model
-override. Moving an existing thread with `handoff_thread` cannot change its
-reasoning effort because that surface exposes no effort field; preserve the
-existing setting and do not claim otherwise.
+For every new agent, receiving/handoff task, or model-provider attempt, apply
+the owner's high-only launch rule in that doctrine: explicitly select `high`,
+never `xhigh` or a higher effort. Do not inherit an unknown or higher setting.
+If a full-history fork cannot accept the required effort override, use a bounded
+source capsule with explicit `high` instead. Keep model choice separate. Moving
+an existing task does not change its effort; do not resume it without confirming
+or explicitly selecting `high` on a surface that supports that setting.
 
 In Claude Code, default delegable work to the Sonnet `worker` agent type;
 trivial rote to the Haiku `mechanical` type; reserve Opus (`general-purpose`,

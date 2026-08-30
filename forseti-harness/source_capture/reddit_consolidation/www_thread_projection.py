@@ -56,7 +56,7 @@ from source_capture.reddit_consolidation.parser import (
 
 # Bump on ANY behavior change to this projection so records written under the
 # old behavior stay distinguishable from re-projections under the new one.
-WWW_REDDIT_THREAD_PARSER_VERSION = "www-2"
+WWW_REDDIT_THREAD_PARSER_VERSION = "www-3"
 
 _POST_TAG = "shreddit-post"
 _POST_BODY_TAG = "shreddit-post-text-body"
@@ -243,7 +243,7 @@ def build_www_thread_content_record(
 
 def _parse_comment(node: HtmlNode, *, row_index: int) -> ParsedComment:
     body_node = _comment_body_node(node)
-    body = body_node.text_content() if body_node is not None else ""
+    body = body_node.text_content(preserve_blockquotes=True) if body_node is not None else ""
     posture = _comment_posture(node, body_text=body)
     warnings: list[str] = []
     if posture == "present" and body_node is None:
@@ -323,7 +323,7 @@ def _post_body_text(root: HtmlNode, post_node: HtmlNode) -> str:
     body_tag = _first_tag(post_node, _POST_BODY_TAG) or _first_tag(root, _POST_BODY_TAG)
     if body_tag is None:
         return ""
-    return body_tag.text_content()
+    return body_tag.text_content(preserve_blockquotes=True)
 
 
 def _declared_total_comments(tree: HtmlNode | None) -> int | None:

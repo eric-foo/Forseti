@@ -50,11 +50,9 @@ available in the current session:
   inherits the parent model.
 - **Observed Codex override values on 2026-06-16:** `gpt-5.3-codex-spark`,
   `gpt-5.4`, `gpt-5.4-mini`, `gpt-5.5`.
-- **Reasoning/service overrides:** reasoning effort is part of this doctrine only
-  for a newly created cold receiving/handoff thread: set `thinking: high` on
-  `create_thread`. Omit service-tier overrides. Spawned in-session subagents
-  continue to omit reasoning effort unless their current tool surface exposes a
-  supported override and a separate owner decision requires it.
+- **Reasoning/service overrides:** the owner's 2026-08-30 high-only launch rule
+  below governs all new agents and provider attempts, including in-session
+  subagents. Omit service-tier overrides.
 - **Stop condition:** if the tool schema no longer exposes these exact model
   names, do not invent replacements. Omit the model override or stop for an
   owner/tooling decision. The dated list above is a dispatch aid, not a durable
@@ -238,14 +236,15 @@ The same tiering applies to whole delegated session lanes — the worktree lanes
 the operator opens — not only to spawned subagents. Defaults, chosen by the
 operator when opening the lane:
 
-- **Cold receiving/handoff threads → `high` reasoning effort.** When Codex opens
-  a new receiving thread through `create_thread`, explicitly set
-  `thinking: high`, including when the thread starts cold with no forked
-  conversation context. Do not use `xhigh` as the handoff default. Keep `model`
-  omitted unless the owner separately requests a model override, so this effort
-  rule does not silently replace the user's configured model. `handoff_thread`
-  moves an existing thread and exposes no reasoning-effort field; preserve that
-  thread's current setting rather than claiming the move can rewrite it.
+- **All new agents and provider attempts → `high` reasoning effort (owner rule,
+  2026-08-30).** Explicitly select `thinking: high`, `reasoning_effort: high`, or
+  the equivalent supported launch option. Never launch `xhigh` or higher; never
+  inherit an unknown or higher effort. This includes diagnostic calls and cold
+  receiving/handoff tasks. A full-history fork that cannot accept the override
+  uses a bounded source capsule instead. Keep model tier selection separate.
+  If the selected surface cannot establish `high`, stop and report that limit
+  rather than silently substituting another effort. A move alone cannot change
+  an existing task's effort; confirm or select `high` before resuming work.
 
 - **CA / orchestrator threads → judgment tier (Opus).** Adjudication, doctrine
   authoring, cross-lane reconciliation, and anything that decides what is kept.
@@ -281,9 +280,10 @@ runtime enforcement beyond the observed `spawn_agent` payload fields. Dated
 model-name examples are not durable availability claims. It also does not create
 automatic lane-playbook loading for Codex or Claude Code subagents.
 
-The cold-thread `thinking: high` default is enforceable only on creation
-surfaces that expose a reasoning-effort override. It does not retroactively
-change existing threads or imply that `handoff_thread` can change effort.
+The high-only rule does not retroactively change existing tasks or historical
+receipts. The shared Codex provider runner rejects non-high launches before
+attempt reservation; other launch surfaces remain actor-enforced under the
+rule above. No global client configuration or service-tier setting is changed.
 
 ## Direction Change Propagation (2026-07-12: cold handoff effort)
 

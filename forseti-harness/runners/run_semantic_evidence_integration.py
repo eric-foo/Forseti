@@ -18,6 +18,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     apply_row_verification,
     apply_row_repair,
     build_batch_prompts,
+    build_batch_response_schema,
     build_bundle,
     build_prompt_execution_pack,
     build_reconciliation_prompt,
@@ -73,6 +74,7 @@ from judgment.phase_a_evidence_consumer import (  # noqa: E402
     prepare_decision_batch,
 )
 from judgment.phase_a_evidence_selection import (  # noqa: E402
+    SELECTION_SPEC_VERSION,
     SELECTION_BATCH_MANIFEST_VERSION,
     build_customer_pull_point_frontier,
     finalize_batched_preselection_relation_confirmations_prepare_quotes,
@@ -125,7 +127,10 @@ def _load_prepared_prompts(
     slice_dir: Path, bundle: dict[str, Any]
 ) -> list[dict[str, Any]]:
     prompt_dir = slice_dir / "prompts"
-    expected_ids = [row["batch_id"] for row in bundle.get("batches", [])]
+    expected_prompts = {
+        row["batch_id"]: row for row in build_batch_prompts(bundle)
+    }
+    expected_ids = list(expected_prompts)
     observed_paths = {
         path.stem: path for path in prompt_dir.glob("*.md") if path.is_file()
     }
@@ -136,7 +141,9 @@ def _load_prepared_prompts(
         prompt_text = observed_paths[batch_id].read_bytes().decode("utf-8")
         prompts.append(
             {
-                "batch_id": batch_id,
+                # Metadata comes from the bound producer; prompt text must still
+                # come from disk so substitution remains observable to evaluation.
+                **expected_prompts[batch_id],
                 "prompt": prompt_text,
                 "prompt_utf8_bytes": len(prompt_text.encode("utf-8")),
             }
@@ -393,6 +400,11 @@ def prepare_batches(
             prompt_dir / f"{row['batch_id']}.md",
             row["prompt"].encode("utf-8") + b"\n",
         )
+        if "response_schema" in row:
+            _write_json(
+                prompt_dir / "response-schemas" / f"{row['batch_id']}.json",
+                row["response_schema"],
+            )
     # Only the legacy v4 projection carries a static partition. The new
     # generation selects work globally at run time, so writing an assignment
     # manifest here would reintroduce the topology it removed.
@@ -420,6 +432,9 @@ def prepare_batches(
         "bundle_sha256": bundle["bundle_sha256"],
         "corpus_sha256": bundle["corpus_sha256"],
         "batch_count": len(prompts),
+        "response_schema_count": sum(
+            1 for row in prompts if "response_schema" in row
+        ),
         "admitted_evidence_unit_count": bundle["coverage_denominator"]["admitted_evidence_unit_count"],
         "bundle_out": str(bundle_out),
         "prompt_dir": str(prompt_dir),
@@ -462,6 +477,15 @@ def prepare_prompt_execution_pack(
             json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")
             + b"\n",
         )
+    for batch in manifest["batches"]:
+        schema_file = batch.get("response_schema_file")
+        if schema_file is not None:
+            schema = build_batch_response_schema(bundle, batch["batch_id"])
+            if schema is None:
+                raise ValueError(
+                    f"execution manifest unexpectedly names a response schema for {batch['batch_id']}"
+                )
+            _write_json(pack_dir / schema_file, schema)
     _write_json(pack_dir / "manifest.json", manifest)
     verified = verify_prompt_execution_pack(
         bundle_path=bundle_path,
@@ -499,6 +523,11 @@ def verify_prompt_execution_pack(
         Path(expected_manifest["frame_file"]),
         Path("manifest.json"),
         *(Path(row["payload_file"]) for row in expected_manifest["batches"]),
+        *(
+            Path(row["response_schema_file"])
+            for row in expected_manifest["batches"]
+            if "response_schema_file" in row
+        ),
     }
     observed_files = {
         path.relative_to(pack_dir) for path in pack_dir.rglob("*") if path.is_file()
@@ -523,6 +552,16 @@ def verify_prompt_execution_pack(
             raise ValueError(
                 f"stored execution payload {expected['batch_id']} cannot reconstruct"
             ) from exc
+    for batch in expected_manifest["batches"]:
+        schema_file = batch.get("response_schema_file")
+        if schema_file is None:
+            continue
+        expected_schema = build_batch_response_schema(bundle, batch["batch_id"])
+        observed_schema = _load_object(pack_dir / schema_file)
+        if observed_schema != expected_schema:
+            raise ValueError(
+                f"stored response schema {batch['batch_id']} does not match bundle"
+            )
     stored_bytes = sum(
         path.stat().st_size for path in pack_dir.rglob("*") if path.is_file()
     )
@@ -694,7 +733,7 @@ def build_phase_a_retailer_source_v3_run(
     run_spec_path: Path,
     retailer_coding_path: Path,
     retailer_source_manifest_path: Path,
-    revolve_completion_receipt_path: Path,
+    revolve_completion_receipt_path: Path | None,
     repo_root: Path,
     source_out: Path,
 ) -> dict[str, Any]:
@@ -1649,6 +1688,7 @@ def materialize_customer_pull_point_selection_spec_run(
     bundle_path: Path,
     proposition_id: str,
     spec_out: Path,
+    point_actor_scope: Mapping[str, Any],
     rejected_frontier_semantic_refs: Sequence[str] = (),
 ) -> dict[str, Any]:
     frontier = _load_object(frontier_path)
@@ -1658,6 +1698,7 @@ def materialize_customer_pull_point_selection_spec_run(
         frontier,
         packet,
         proposition_id,
+        point_actor_scope=point_actor_scope,
         frontier_relation_rejections=[
             {
                 "source_id": frontier["source_id"],
@@ -1719,6 +1760,8 @@ def prepare_evidence_selection_run(
     manifest_out: Path,
 ) -> dict[str, Any]:
     spec = _load_object(spec_path)
+    if spec.get("schema_version") != SELECTION_SPEC_VERSION:
+        raise EvidenceConsumerError("point_actor_scope", "fresh authoring requires selection spec v2; frozen v1 replay uses finalization")
     sources = _selection_sources_from_spec(spec_path, spec)
     prompt, schema, manifest = prepare_evidence_selection(spec, sources)
     for output in (prompt_out, response_schema_out, manifest_out):
@@ -1744,6 +1787,8 @@ def prepare_evidence_selection_batches_run(
     batch_manifest_out: Path,
 ) -> dict[str, Any]:
     spec = _load_object(spec_path)
+    if spec.get("schema_version") != SELECTION_SPEC_VERSION:
+        raise EvidenceConsumerError("point_actor_scope", "fresh authoring requires selection spec v2; frozen v1 replay uses finalization")
     sources = _selection_sources_from_spec(spec_path, spec)
     batch_manifest, prompts_and_schemas = prepare_evidence_selection_batches(
         spec, sources, batch_size=batch_size
@@ -2188,7 +2233,7 @@ def _parser() -> argparse.ArgumentParser:
         "--retailer-source-manifest", type=Path, required=True
     )
     retailer_source.add_argument(
-        "--revolve-completion-receipt", type=Path, required=True
+        "--revolve-completion-receipt", type=Path
     )
     retailer_source.add_argument("--repo-root", type=Path, required=True)
     retailer_source.add_argument("--source-out", type=Path, required=True)
@@ -2425,6 +2470,8 @@ def _parser() -> argparse.ArgumentParser:
     frontier_point.add_argument("--packet", type=Path, required=True)
     frontier_point.add_argument("--bundle", type=Path, required=True)
     frontier_point.add_argument("--proposition-id", required=True)
+    frontier_point.add_argument("--point-actor-scope", type=json.loads, required=True,
+                                help="Authored JSON: source_local_reports mode, or identified_actor mode with source_id and independence_key")
     frontier_point.add_argument(
         "--reject-frontier-relation",
         action="append",
@@ -2916,6 +2963,7 @@ def main(argv: list[str] | None = None) -> int:
                 bundle_path=args.bundle,
                 proposition_id=args.proposition_id,
                 spec_out=args.spec_out,
+                point_actor_scope=args.point_actor_scope,
                 rejected_frontier_semantic_refs=(
                     args.rejected_frontier_semantic_refs
                 ),

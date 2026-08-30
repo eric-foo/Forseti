@@ -24,9 +24,12 @@ from judgment.phase_a_evidence_consumer import (
     _verify_packet,
 )
 from judgment.phase_a_evidence_selection import (
+    POINT_ACTOR_SCOPE_GUIDANCE,
     PARENT_CONTEXT_POLICY,
     SELECTION_BATCH_MANIFEST_VERSION,
     _candidate_rows,
+    _point_actor_scope,
+    _validate_actor_relations,
     _verify_bundle,
     load_selection_sources,
     verify_customer_pull_point_frontier,
@@ -326,7 +329,21 @@ def _decision_state_reader_contract(
     return reader_contract
 
 
-def _reader_evidence_accounting_contract() -> dict[str, str]:
+SCOPED_POINT_MEANING_RULE = (
+    "The admitted point is bounded_point together with point_actor_scope when present. "
+    "Source-local reports refer to each row's reporting origin, not an unnamed focal "
+    "person. source_id is not a person identifier; read the source-bound independence_key "
+    "with independence_posture and attribution. Different keys alone do not prove "
+    "different people. Check origin overlap before calling opposed rows separate authors; "
+    "one credited origin can appear on both sides. Preserve its observations without "
+    "inferring conflict or refinement from identity alone. Contrasting reports do not "
+    "falsify another person's private state. "
+    "An identified_actor scope is confined to its bound origin. Placements cannot "
+    "widen, merge, or rewrite either the predicate or its actor scope."
+)
+
+
+def _reader_evidence_accounting_contract(*, scoped: bool = False) -> dict[str, str]:
     """Preserve the full accounting rules in compact reader wording."""
 
     reader_contract = {
@@ -359,6 +376,8 @@ def _reader_evidence_accounting_contract() -> dict[str, str]:
             "decision_state_reader_accounting_contract",
             "compact accounting rules do not match authoritative rule identities",
         )
+    if scoped:
+        reader_contract["point_meaning_rule"] = SCOPED_POINT_MEANING_RULE
     return reader_contract
 
 
@@ -749,6 +768,11 @@ def _validate_point_binding(
             )
 
     relation_counts = {"support": 0, "counter": 0, "adjacent": 0}
+    actor_scope = _point_actor_scope(selection_spec, list(candidate_by_id.values()))
+    if artifact.get("point_actor_scope") != actor_scope or quote_manifest.get("point_actor_scope") != actor_scope:
+        raise EvidenceConsumerError("point_actor_scope", "point actor scope changed between selection and reader")
+    if actor_scope is not None:
+        _validate_actor_relations(actor_scope, list(candidate_by_id.values()))
     for row in rows:
         relation = row.get("relation")
         if relation not in relation_counts:
@@ -1932,8 +1956,11 @@ def build_no_frontier_reader_request(
             "representative_handles",
         ],
         "properties": {
-            "axis_pack_sha256": {"const": axis_pack_sha256},
-            "axis_id": {"const": validated["axis_id"]},
+            "axis_pack_sha256": {
+                "type": "string",
+                "const": axis_pack_sha256,
+            },
+            "axis_id": {"type": "string", "const": validated["axis_id"]},
             "interpretation": {"type": "string", "minLength": 1},
             "representative_handles": {
                 "type": "array",
@@ -3591,7 +3618,10 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
         "counts": copy.deepcopy(view["counts"]),
         "navigation_groups": copy.deepcopy(view["navigation_groups"]),
         "projection_routes": copy.deepcopy(view["projection_routes"]),
-        "point_table": _row_table(point_rows, point_columns),
+        "point_table": _row_table(
+            [{"point_actor_scope": None, **row} for row in point_rows],
+            (*point_columns, "point_actor_scope"),
+        ) if any("point_actor_scope" in row for row in point_rows) else _row_table(point_rows, point_columns),
         "evidence_table": _row_table(evidence_rows, evidence_columns),
         "origin_table": _row_table(view["origin_index"], origin_columns),
         "quote_table": _row_table(quote_rows, quote_columns),
@@ -3601,7 +3631,7 @@ def _decision_state_reader_surface(view: Mapping[str, Any]) -> dict[str, Any]:
         "semantic_unit_table": _row_table(
             [semantic_units[key] for key in sorted(semantic_units)], semantic_columns
         ),
-        "evidence_accounting_contract": _reader_evidence_accounting_contract(),
+        "evidence_accounting_contract": _reader_evidence_accounting_contract(scoped=any("point_actor_scope" in row for row in point_rows)),
         "decision_state_contract": _decision_state_reader_contract(
             view["decision_state_contract"]
         ),
@@ -4421,6 +4451,9 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
             }
         if is_routed_v2:
             point_entry["projection_mode"] = point_projections[point_id]
+        if "point_actor_scope" in artifact:
+            point_entry["point_actor_scope"] = copy.deepcopy(artifact["point_actor_scope"])
+        if is_routed_v2:
             point_entry["displayed_relation_row_counts"] = copy.deepcopy(
                 observed_relations
             )
@@ -4576,6 +4609,8 @@ def build_axis_consolidated_view(spec: Mapping[str, Any]) -> dict[str, Any]:
         view["evidence_accounting_contract"] = copy.deepcopy(
             EVIDENCE_ACCOUNTING_CONTRACT
         )
+        if any("point_actor_scope" in point for point in point_index):
+            view["evidence_accounting_contract"]["point_meaning_rule"] = SCOPED_POINT_MEANING_RULE
         view["non_claims"].extend(DIRECT_OUTCOME_BOUNDARIES)
         if is_current_v4:
             view["non_claims"].append(RELATION_SEMANTIC_WARRANT_BOUNDARY)
@@ -5258,6 +5293,8 @@ def build_axis_reader_bundle(
         manifest["decision_state_contract"] = copy.deepcopy(
             validated["decision_state_contract"]
         )
+    if any("point_actor_scope" in point for point in manifest_points):
+        manifest["reader_rule"] += " " + POINT_ACTOR_SCOPE_GUIDANCE
     manifest["reader_manifest_sha256"] = _canonical_json_sha256(manifest)
     return manifest, facts_by_point
 
@@ -5411,6 +5448,10 @@ def validate_axis_reader_structured_output(
         ]
         for point_id, fact_bytes in fact_streams.items()
     }
+    relation_quotes_by_point = {
+        point_id: [(fact, _reader_relation_quote(fact)) for fact in facts]
+        for point_id, facts in facts_by_point.items()
+    }
 
     def validated_point_rows(field: str, route_field: str) -> list[Mapping[str, Any]]:
         rows = output.get(field)
@@ -5444,9 +5485,12 @@ def validate_axis_reader_structured_output(
 
     validated_point_rows("point_accounting", "route")
     accepted_rows = validated_point_rows("accepted_points", "projection_route")
+    actor_scopes = {row["point_id"]: row.get("point_actor_scope") for row in validated["points"]}
     representative_count = 0
     for point_row in accepted_rows:
         point_id = point_row["point_id"]
+        if point_row.get("point_actor_scope") != actor_scopes[point_id]:
+            raise EvidenceConsumerError("point_actor_scope", "structured reader changed or omitted actor scope")
         bounded_point = point_contract[point_id][0]
         if point_row.get("exact_phase_a_meaning") != bounded_point:
             raise EvidenceConsumerError(
@@ -5481,19 +5525,19 @@ def validate_axis_reader_structured_output(
             has_bound_handle = isinstance(quote_span_id, str)
             matching_facts = [
                 fact
-                for fact in facts_by_point[point_id]
+                for fact, quote in relation_quotes_by_point[point_id]
                 if fact["evidence"]["evidence_id"] == evidence_id
                 and fact["relation"] == relation
-                and fact["quote"]["quote_status"] == quote_status
+                and quote["quote_status"] == quote_status
                 and (
                     (
                         has_bound_handle
-                        and fact["quote"]["quote_span_id"] == quote_span_id
-                        and exact_quote in {None, fact["quote"]["exact_quote"]}
+                        and quote["quote_span_id"] == quote_span_id
+                        and exact_quote in {None, quote["exact_quote"]}
                     )
                     or (
                         not has_bound_handle
-                        and fact["quote"]["exact_quote"] == exact_quote
+                        and quote["exact_quote"] == exact_quote
                     )
                 )
             ]
@@ -5504,7 +5548,7 @@ def validate_axis_reader_structured_output(
             ):
                 raise EvidenceConsumerError(
                     "axis_reader_output_verification",
-                    "structured output cited a cross-point, wrong-relation, or missing quote",
+                    "structured output cited a cross-point, wrong-relation, or missing relation-owned quote",
                 )
     return {
         "status": "valid",
@@ -5622,6 +5666,15 @@ def bind_axis_reader_output_schema(
                     f"base schema {field} properties are missing",
                 )
             for key, value in row_constants.items():
+                if key == "point_actor_scope":
+                    item_properties[key] = {
+                        "type": "object",
+                        "properties": {name: {"type": "string", "const": text} for name, text in value.items()},
+                        "required": list(value),
+                        "additionalProperties": False,
+                    }
+                    variant.setdefault("required", []).append(key)
+                    continue
                 if key not in item_properties:
                     raise EvidenceConsumerError(
                         "axis_reader_output_schema_binding",
@@ -5658,6 +5711,7 @@ def bind_axis_reader_output_schema(
                 "bounded_point": point["bounded_point"],
                 "projection_route": point["projection_mode"],
                 "exact_phase_a_meaning": point["bounded_point"],
+                **({"point_actor_scope": copy.deepcopy(point["point_actor_scope"])} if "point_actor_scope" in point else {}),
                 "reader_accounting": {
                     "displayed_relation_row_counts": point[
                         "displayed_relation_row_counts"
@@ -5907,10 +5961,14 @@ def build_axis_point_reader_snapshot(
                 legacy_point["candidate_pool_accounting"]
             ),
         }
+        if "point_actor_scope" in legacy_point:
+            input_contract["point_actor_scope"] = copy.deepcopy(legacy_point["point_actor_scope"])
+            input_contract["actor_scope_rule_sha256"] = hashlib.sha256(POINT_ACTOR_SCOPE_GUIDANCE.encode("utf-8")).hexdigest()
         point_input = point_reader_input_sha256(input_contract)
         point_records.append(
             {
                 "point_id": point_id,
+                **({"point_actor_scope": copy.deepcopy(legacy_point["point_actor_scope"])} if "point_actor_scope" in legacy_point else {}),
                 "bounded_point": legacy_point["bounded_point"],
                 "projection_mode": legacy_point["projection_mode"],
                 "displayed_relation_row_counts": copy.deepcopy(
@@ -5964,6 +6022,13 @@ def build_axis_point_reader_snapshot(
             "portable_identity_excludes": ["absolute paths", "mtimes", "labels alone"],
         },
     }
+    if any("point_actor_scope" in point for point in point_records):
+        manifest["method_binding"].update(
+            actor_scope_rule=POINT_ACTOR_SCOPE_GUIDANCE,
+            actor_scope_rule_sha256=hashlib.sha256(
+                POINT_ACTOR_SCOPE_GUIDANCE.encode("utf-8")
+            ).hexdigest(),
+        )
     manifest["snapshot_sha256"] = _canonical_json_sha256(manifest)
     return manifest, point_payloads
 
@@ -6031,6 +6096,21 @@ def _validate_point_reader_manifest_shape(
             raise EvidenceConsumerError(
                 "point_reader_identity", "point input identity changed"
             )
+        if point.get("point_actor_scope") != contract.get("point_actor_scope"):
+            raise EvidenceConsumerError("point_actor_scope", "snapshot actor scope differs from its input contract")
+        if "point_actor_scope" in point:
+            scope_rule = method.get("actor_scope_rule")
+            if (
+                not isinstance(scope_rule, str)
+                or not scope_rule
+                or method.get("actor_scope_rule_sha256")
+                != hashlib.sha256(scope_rule.encode("utf-8")).hexdigest()
+                or contract.get("actor_scope_rule_sha256")
+                != method.get("actor_scope_rule_sha256")
+            ):
+                raise EvidenceConsumerError(
+                    "point_actor_scope", "actor scope reading rule binding changed"
+                )
         candidate_accounting = point.get("candidate_pool_accounting")
         if (
             not isinstance(candidate_accounting, Mapping)
@@ -6254,26 +6334,7 @@ def _compile_point_reader_brief_from_validated_facts(
                 "representative handle is foreign, ambiguous, or cross-point",
             )
         fact = matches[0]
-        representatives.append(
-            {
-                "placement_id": fact["placement_id"],
-                "evidence_id": fact["evidence"]["evidence_id"],
-                "relation": fact["relation"],
-                "quote_span_id": fact["quote"]["quote_span_id"],
-                "quote_status": fact["quote"]["quote_status"],
-                "exact_quote": fact["quote"]["exact_quote"],
-                "source_ref": fact["evidence"]["source_ref"],
-                "source_venue": fact["evidence"]["source_venue"],
-                "source_role": fact["evidence"]["source_role"],
-                "content_surface": fact["evidence"]["content_surface"],
-                "publication_time": fact["evidence"]["publication_time"],
-                "engagement": copy.deepcopy(fact["evidence"]["engagement"]),
-                "origin_group_id": fact["origin"]["origin_group_id"],
-                "point_relative_meaning": copy.deepcopy(
-                    fact["point_relative_meaning"]
-                ),
-            }
-        )
+        representatives.append(_point_reader_representative(fact))
     required_relations = {
         relation
         for relation in ("support", "counter")
@@ -6288,6 +6349,7 @@ def _compile_point_reader_brief_from_validated_facts(
     ledger = _point_reader_state_ledger(facts)
     brief: dict[str, Any] = {
         "schema_version": POINT_READER_BRIEF_VERSION,
+        **({"point_actor_scope": copy.deepcopy(point["point_actor_scope"])} if "point_actor_scope" in point else {}),
         "point_input_sha256": point["point_input_sha256"],
         "subject_identity": copy.deepcopy(manifest["subject_identity"]),
         "axis_id": manifest["axis_id"],
@@ -6315,6 +6377,110 @@ def _compile_point_reader_brief_from_validated_facts(
     }
     brief["brief_sha256"] = _canonical_json_sha256(brief)
     return brief
+
+
+# Fields a semantic unit owns for itself.  A same-evidence companion meaning is
+# projected upstream without all of them, so the selected row's values must never
+# stand in for the ones a companion binding does not carry.
+_SEMANTIC_UNIT_OWNED_MEANING_FIELDS = (
+    "axis_ids",
+    "conditions",
+    "polarity",
+    "product_version_ids",
+    "statement",
+    "uncertainty_posture",
+)
+
+
+def _reader_relation_quote(fact: Mapping[str, Any]) -> dict[str, Any]:
+    """Share quote ownership across both consumers of validated reader facts."""
+
+    meaning = fact["point_relative_meaning"]
+    if meaning["semantic_unit_ref"] in meaning["relation_semantic_unit_refs"]:
+        return copy.deepcopy(fact["quote"])
+    return {
+        "quote_span_id": None,
+        "evidence_id": fact["quote"]["evidence_id"],
+        "quote_status": "quote_unavailable",
+        "exact_quote": None,
+        "quote_unavailable_cause": (
+            "relation-bound same-evidence companion has no captured relation-owned "
+            "quote span"
+        ),
+    }
+
+
+def _point_reader_representative(fact: Mapping[str, Any]) -> dict[str, Any]:
+    """Project the relation-bound meaning without presenting a neighboring quote as it."""
+
+    selected_meaning = copy.deepcopy(fact["point_relative_meaning"])
+    relation_refs = list(selected_meaning["relation_semantic_unit_refs"])
+    selected_ref = selected_meaning["semantic_unit_ref"]
+    meaning_by_ref = {
+        selected_ref: selected_meaning,
+        **{
+            meaning["semantic_unit_ref"]: copy.deepcopy(meaning)
+            for meaning in fact["companion_meanings"]
+        },
+    }
+    if not relation_refs or any(ref not in meaning_by_ref for ref in relation_refs):
+        raise EvidenceConsumerError(
+            "point_reader_relation_meaning",
+            "representative relation meaning is missing or unresolved",
+        )
+    relation_meanings: list[dict[str, Any]] = []
+    for ref in relation_refs:
+        resolved = copy.deepcopy(selected_meaning)
+        unbound_fields: list[str] = []
+        if ref != selected_ref:
+            bound_meaning = copy.deepcopy(meaning_by_ref[ref])
+            if "statement" not in bound_meaning and isinstance(
+                bound_meaning.get("normalized_meaning"), str
+            ):
+                bound_meaning["statement"] = bound_meaning["normalized_meaning"]
+            bound_meaning.pop("normalized_meaning", None)
+            resolved.update(bound_meaning)
+            # Report what this companion binding does not carry instead of letting
+            # the selected row's value silently impersonate the companion's own.
+            unbound_fields = [
+                field
+                for field in _SEMANTIC_UNIT_OWNED_MEANING_FIELDS
+                if field not in bound_meaning
+            ]
+            for field in unbound_fields:
+                resolved[field] = None
+        resolved["relation_semantic_unit_refs"] = copy.deepcopy(relation_refs)
+        resolved["unbound_meaning_fields"] = unbound_fields
+        relation_meanings.append(resolved)
+
+    selected_quote = copy.deepcopy(fact["quote"])
+    selected_meaning_is_relation_bound = selected_ref in relation_refs
+    # The headline meaning must be the one that owns the headline quote, so a
+    # co-bound companion listed first cannot be paired with the selected row's quote.
+    headline_index = (
+        relation_refs.index(selected_ref) if selected_meaning_is_relation_bound else 0
+    )
+    relation_quote = _reader_relation_quote(fact)
+    return {
+        "placement_id": fact["placement_id"],
+        "evidence_id": fact["evidence"]["evidence_id"],
+        "relation": fact["relation"],
+        "quote_span_id": relation_quote["quote_span_id"],
+        "quote_status": relation_quote["quote_status"],
+        "exact_quote": relation_quote["exact_quote"],
+        "quote_unavailable_cause": relation_quote["quote_unavailable_cause"],
+        "source_ref": fact["evidence"]["source_ref"],
+        "source_venue": fact["evidence"]["source_venue"],
+        "source_role": fact["evidence"]["source_role"],
+        "content_surface": fact["evidence"]["content_surface"],
+        "publication_time": fact["evidence"]["publication_time"],
+        "engagement": copy.deepcopy(fact["evidence"]["engagement"]),
+        "origin_group_id": fact["origin"]["origin_group_id"],
+        "point_relative_meaning": copy.deepcopy(relation_meanings[headline_index]),
+        "relation_bound_meanings": relation_meanings,
+        "selected_row_meaning": selected_meaning,
+        "selected_row_quote": selected_quote,
+    }
 
 
 def compile_point_reader_brief(
@@ -6367,6 +6533,7 @@ def _validate_point_reader_brief_from_validated_facts(
             "compiled brief omitted, altered, or transferred a decision state",
         )
     expected_bindings = {
+        **({"point_actor_scope": point["point_actor_scope"]} if "point_actor_scope" in point else {}),
         "point_input_sha256": point["point_input_sha256"],
         "subject_identity": manifest["subject_identity"],
         "axis_id": manifest["axis_id"],
@@ -6410,22 +6577,7 @@ def _validate_point_reader_brief_from_validated_facts(
             raise EvidenceConsumerError(
                 "point_reader_brief", "compiled representative is foreign"
             )
-        expected = {
-            "placement_id": fact["placement_id"],
-            "evidence_id": fact["evidence"]["evidence_id"],
-            "relation": fact["relation"],
-            "quote_span_id": fact["quote"]["quote_span_id"],
-            "quote_status": fact["quote"]["quote_status"],
-            "exact_quote": fact["quote"]["exact_quote"],
-            "source_ref": fact["evidence"]["source_ref"],
-            "source_venue": fact["evidence"]["source_venue"],
-            "source_role": fact["evidence"]["source_role"],
-            "content_surface": fact["evidence"]["content_surface"],
-            "publication_time": fact["evidence"]["publication_time"],
-            "engagement": fact["evidence"]["engagement"],
-            "origin_group_id": fact["origin"]["origin_group_id"],
-            "point_relative_meaning": fact["point_relative_meaning"],
-        }
+        expected = _point_reader_representative(fact)
         if dict(row) != expected:
             raise EvidenceConsumerError(
                 "point_reader_brief", "compiled representative metadata changed"

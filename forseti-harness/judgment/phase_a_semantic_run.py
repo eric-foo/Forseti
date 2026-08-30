@@ -16,13 +16,21 @@ from judgment.semantic_evidence_integration import (
     METHOD_VERSION_V5,
     METHOD_VERSION_V6,
     METHOD_VERSION_V7,
+    METHOD_VERSION_V8,
+    METHOD_VERSION_V9,
+    METHOD_VERSION_V10,
+    METHOD_VERSION_V11,
+    METHOD_VERSION_V12,
     SemanticIntegrationError,
     materialize_source_v3,
     validate_batch_responses,
     validate_reconciliation_stage,
     verify_bundle_context,
 )
-from source_capture.reddit_consolidation import build_thread_content_record
+from source_capture.reddit_consolidation import (
+    build_thread_content_record,
+    build_www_thread_content_record,
+)
 
 
 RUN_SPEC_VERSION = "phase_a_semantic_integration_run_v1"
@@ -30,12 +38,22 @@ RUN_SPEC_VERSION_V2 = "phase_a_semantic_integration_run_v2"
 RUN_SPEC_VERSION_V3 = "phase_a_semantic_integration_run_v3"
 RUN_SPEC_VERSION_V4 = "phase_a_semantic_integration_run_v4"
 RUN_SPEC_VERSION_V5 = "phase_a_semantic_integration_run_v5"
+RUN_SPEC_VERSION_V6 = "phase_a_semantic_integration_run_v6"
+RUN_SPEC_VERSION_V7 = "phase_a_semantic_integration_run_v7"
+RUN_SPEC_VERSION_V8 = "phase_a_semantic_integration_run_v8"
+RUN_SPEC_VERSION_V9 = "phase_a_semantic_integration_run_v9"
+RUN_SPEC_VERSION_V10 = "phase_a_semantic_integration_run_v10"
 RUN_SPEC_VERSIONS = {
     RUN_SPEC_VERSION,
     RUN_SPEC_VERSION_V2,
     RUN_SPEC_VERSION_V3,
     RUN_SPEC_VERSION_V4,
     RUN_SPEC_VERSION_V5,
+    RUN_SPEC_VERSION_V6,
+    RUN_SPEC_VERSION_V7,
+    RUN_SPEC_VERSION_V8,
+    RUN_SPEC_VERSION_V9,
+    RUN_SPEC_VERSION_V10,
 }
 # A run spec selects the semantic generation its sources will be built under.
 _RUN_SPEC_METHOD_VERSIONS = {
@@ -43,6 +61,11 @@ _RUN_SPEC_METHOD_VERSIONS = {
     RUN_SPEC_VERSION_V3: METHOD_VERSION_V5,
     RUN_SPEC_VERSION_V4: METHOD_VERSION_V6,
     RUN_SPEC_VERSION_V5: METHOD_VERSION_V7,
+    RUN_SPEC_VERSION_V6: METHOD_VERSION_V8,
+    RUN_SPEC_VERSION_V7: METHOD_VERSION_V9,
+    RUN_SPEC_VERSION_V8: METHOD_VERSION_V10,
+    RUN_SPEC_VERSION_V9: METHOD_VERSION_V11,
+    RUN_SPEC_VERSION_V10: METHOD_VERSION_V12,
 }
 AUDIT_VERSION = "phase_a_semantic_source_audit_v1"
 RUN_RECEIPT_VERSION = "phase_a_semantic_materialization_receipt_v1"
@@ -71,6 +94,12 @@ CAPTURED_TERMINAL_STATES = {"used", "captured_excluded"}
 _YAML_FENCE = re.compile(r"```ya?ml\s*\n(.*?)```", re.DOTALL | re.IGNORECASE)
 _TEXT_ARTIFACT_SUFFIXES = {".json", ".md", ".yaml", ".yml"}
 _REDDIT_PLACEHOLDERS = {"[deleted]", "[removed]"}
+_RETAILER_CORPUS_BY_PARSER = {
+    "amazon_aggregate_v1": "amazon_rendered_reviews",
+    "revolve_recent_v1": "revolve_native_reviews",
+    "bazaarvoice_results_v1": "sephora_product_group_reviews",
+    "soko_glam_okendo_v1": "soko_glam_verified_window",
+}
 _REVOLVE_RATING_ONLY_PLACEHOLDER = (
     "This REVOLVE shopper left a rating without a review."
 )
@@ -204,6 +233,10 @@ def _reddit_record_from_manifest(manifest_path: Path) -> dict[str, Any]:
         raise SemanticIntegrationError(f"Reddit manifest lacks source locator: {manifest_path}")
     html = html_candidates[0].read_bytes().decode("utf-8", errors="replace")
     try:
+        if "<shreddit-post" in html.casefold():
+            return build_www_thread_content_record(
+                html_text=html, source_url=source_url
+            )
         return build_thread_content_record(html_text=html, source_url=source_url)
     except ValueError as exc:
         raise SemanticIntegrationError(
@@ -843,7 +876,7 @@ def materialize_serp_source_frontier_review(
 
 
 def _retailer_review_ids(source: Mapping[str, Any]) -> tuple[str, set[str]]:
-    """Return source-native review ids for the three admitted retailer formats."""
+    """Return source-native review ids for the admitted retailer formats."""
     schema = source.get("schema_version")
     if schema == "retail_pdp_amazon_aggregate_content_v1":
         rows = source.get("rows")
@@ -871,6 +904,19 @@ def _retailer_review_ids(source: Mapping[str, Any]) -> tuple[str, set[str]]:
             if isinstance(row, Mapping) and row.get("Id") is not None
         }
         return "bazaarvoice_results_v1", ids
+    reviews = source.get("reviews")
+    if source.get("retailer") == "Soko Glam" and isinstance(reviews, list):
+        ids: list[str] = []
+        for row in reviews:
+            if not isinstance(row, Mapping) or not _nonempty(row.get("product_slug")):
+                raise SemanticIntegrationError("Soko Glam review lacks product slug")
+            ordinal = row.get("ordinal")
+            if not isinstance(ordinal, int) or isinstance(ordinal, bool) or ordinal < 1:
+                raise SemanticIntegrationError("Soko Glam review lacks positive ordinal")
+            ids.append(f"soko-{row['product_slug']}-{ordinal:03d}")
+        if len(ids) != len(set(ids)):
+            raise SemanticIntegrationError("Soko Glam review identities are duplicated")
+        return "soko_glam_okendo_v1", set(ids)
     raise SemanticIntegrationError("retailer source uses an unsupported review structure")
 
 
@@ -1143,8 +1189,12 @@ def census_phase_a_customer_corpus(
         # missing author body. Counting it as a leaf would manufacture 131
         # assessable roots in the Summer Fridays corpus.
         root_text = post.get("body_text") if _nonempty(post.get("body_text")) else ""
+        if root_text.strip() in _REDDIT_PLACEHOLDERS:
+            root_text = ""
         readable_comments = sum(
-            isinstance(row, Mapping) and _nonempty(row.get("body_text"))
+            isinstance(row, Mapping)
+            and _nonempty(row.get("body_text"))
+            and row["body_text"].strip() not in _REDDIT_PLACEHOLDERS
             for row in comments
         )
         captured = 1 + len(comments)
@@ -1214,6 +1264,28 @@ def census_phase_a_customer_corpus(
         source_files.add(source_key)
     if source_files != set(source_manifest):
         raise SemanticIntegrationError("retailer source manifest does not exactly match coding sources")
+    native_review_keys: set[tuple[str, str]] = set()
+    native_no_text_keys: set[tuple[str, str]] = set()
+    for locator in sorted(source_manifest):
+        source_object = _load_json_object(
+            Path(locator), label=f"retailer source {locator}"
+        )
+        parser_family, parsed_rows = _retailer_rows(source_object)
+        corpus_id = _RETAILER_CORPUS_BY_PARSER[parser_family]
+        for review_id, parsed_row in parsed_rows.items():
+            key = (corpus_id, review_id)
+            native_review_keys.add(key)
+            text = parsed_row.get("text")
+            if not _nonempty(text) or text.strip() == _REVOLVE_RATING_ONLY_PLACEHOLDER:
+                native_no_text_keys.add(key)
+    native_readable_keys = native_review_keys - native_no_text_keys
+    if review_keys != native_readable_keys:
+        missing = sorted(native_readable_keys - review_keys)
+        extra = sorted(review_keys - native_readable_keys)
+        raise SemanticIntegrationError(
+            "retailer coding does not exactly match source-native readable reviews: "
+            f"missing={missing[:10]} extra={extra[:10]}"
+        )
     # A skipped, unnamed, or collapsed corpus row would silently delete one
     # corpus's excluded reviews from the captured denominator, so every corpus
     # row must be well formed and uniquely named.
@@ -1248,6 +1320,22 @@ def census_phase_a_customer_corpus(
         for value in excluded_by_corpus.values()
     ):
         raise SemanticIntegrationError("retailer excluded denominator is invalid")
+    derived_eligible_by_corpus = {
+        corpus_id: sum(key[0] == corpus_id for key in native_readable_keys)
+        for corpus_id in sorted({key[0] for key in native_review_keys})
+    }
+    derived_excluded_by_corpus = {
+        corpus_id: sum(key[0] == corpus_id for key in native_no_text_keys)
+        for corpus_id in sorted({key[0] for key in native_review_keys})
+    }
+    if eligible_by_corpus != derived_eligible_by_corpus:
+        raise SemanticIntegrationError(
+            "retailer eligible-text denominator does not match source-native rows"
+        )
+    if excluded_by_corpus != derived_excluded_by_corpus:
+        raise SemanticIntegrationError(
+            "retailer excluded denominator does not match source-native rows"
+        )
     retailer_counts = {
         "captured_review_count": len(rows) + sum(excluded_by_corpus.values()),
         "readable_review_count": len(rows),
@@ -1499,6 +1587,11 @@ def build_phase_a_product_axis_proof_source(
             METHOD_VERSION_V5,
             METHOD_VERSION_V6,
             METHOD_VERSION_V7,
+            METHOD_VERSION_V8,
+            METHOD_VERSION_V9,
+            METHOD_VERSION_V10,
+            METHOD_VERSION_V11,
+            METHOD_VERSION_V12,
         }
         and normalization_source.get("corpus_profile") == "phase_a_final_acquisition"
         and "product_identity_catalog" not in normalization_source
@@ -1638,6 +1731,44 @@ def _reddit_manifest_record(
     if not _nonempty(captured_at):
         captured_at = "capture_time_unavailable_in_packet"
     return record, source_path, source_ref, captured_at
+
+
+_REDDIT_CAPTURE_BOUNDARY = "exact preserved Reddit packet; title is context only"
+
+
+def _reddit_capture_bounds(
+    record: Mapping[str, Any], *, captured_comment_count: int
+) -> tuple[Any, str, str]:
+    """Return the container capture bounds the projected record actually states.
+
+    Only the www projection carries `comment_completeness`. Its declared total
+    is the source's own count, never an independent completeness oracle, so an
+    exact match stays `unavailable` rather than becoming `complete`; only a
+    measured shortfall or a deliberately unfollowed continuation link is
+    reported as `partial`.
+    """
+    bounds = record.get("comment_completeness")
+    if not isinstance(bounds, Mapping):
+        return "unavailable", "unavailable", _REDDIT_CAPTURE_BOUNDARY
+    declared = bounds.get("declared_total_comments")
+    visible_total: Any = "unavailable"
+    if (
+        isinstance(declared, int)
+        and not isinstance(declared, bool)
+        and declared >= captured_comment_count
+    ):
+        # Same basis as `captured_leaf_count`: one root plus its comments.
+        visible_total = 1 + declared
+    completeness = "partial" if bounds.get("capture_is_complete") is False else "unavailable"
+    clauses = [_REDDIT_CAPTURE_BOUNDARY]
+    if isinstance(visible_total, int):
+        clauses.append(
+            f"source declares {declared} comments and {captured_comment_count} were captured"
+        )
+    unfollowed = bounds.get("continuation_links_not_followed")
+    if isinstance(unfollowed, int) and not isinstance(unfollowed, bool) and unfollowed > 0:
+        clauses.append(f"{unfollowed} continuation link(s) not followed")
+    return visible_total, completeness, "; ".join(clauses)
 
 
 def _score_value(value: Any) -> int | None:
@@ -1814,16 +1945,26 @@ def build_phase_a_reddit_source_v3(
         if not _nonempty(title):
             title = source_ref
         container_id = f"reddit_thread_{thread_id}"
+        # Old-Reddit markup states no thread-level comment total, so its
+        # container honestly reports `unavailable`. The www projection does
+        # state the source's own declared total and whether the capture fell
+        # short of it, and it counts the continuation links it deliberately did
+        # not follow. Reporting `unavailable` for such a thread would assert
+        # that a source-visible total does not exist and would hide a measured
+        # capture shortfall from every downstream claim.
+        visible_total, completeness, capture_boundary = _reddit_capture_bounds(
+            record, captured_comment_count=len(comments)
+        )
         containers.append(
             {
                 "container_id": container_id,
                 "container_type": "conversation",
                 "source_artifact_id": raw_artifact_id,
                 "captured_leaf_count": 1 + len(comments),
-                "source_visible_total": "unavailable",
-                "completeness": "unavailable",
+                "source_visible_total": visible_total,
+                "completeness": completeness,
                 "captured_at": captured_at,
-                "capture_boundary": "exact preserved Reddit packet; title is context only",
+                "capture_boundary": capture_boundary,
             }
         )
         post_text = post.get("body_text") if isinstance(post.get("body_text"), str) else ""
@@ -1832,6 +1973,13 @@ def build_phase_a_reddit_source_v3(
             if not post_text.strip() or post_text.strip() in _REDDIT_PLACEHOLDERS
             else "assess"
         )
+        post_coding = coded_by_leaf.get((thread_id, "post"), {})
+        post_product_candidates, post_resolved_bindings = _resolve_product_candidates(
+            sorted(post_coding.get("products", set())), product_index
+        )
+        post_axis_candidates = set(post_coding.get("axes", set()))
+        if not post_axis_candidates:
+            post_axis_candidates.update(target_axes.get(thread_id, []))
         post_ref = source_ref
         posture, key = _identity_fields("reddit", post.get("author_state"))
         post_item: dict[str, Any] = {
@@ -1853,17 +2001,20 @@ def build_phase_a_reddit_source_v3(
                     "source_family": "reddit_community",
                     "source_role": "community_post",
                     "text": post_text.strip(),
-                    "product_candidates": [],
-                    "axis_candidates": sorted(
-                        set(target_axes.get(thread_id, [])) & known_axis_ids
-                    ),
+                    "product_candidates": post_product_candidates,
+                    "axis_candidates": sorted(post_axis_candidates & known_axis_ids),
                     "product_context": [
                         {
                             "context_type": "thread_title",
                             "source_artifact_id": raw_artifact_id,
                             "text": title,
                             "source_ref": source_ref,
-                        }
+                        },
+                        *[
+                            context
+                            for binding in post_resolved_bindings
+                            for context in binding["_evidence_context"]
+                        ],
                     ],
                     "independence_posture": posture,
                     "independence_key": key,
@@ -2021,6 +2172,16 @@ def _retailer_rows(source: Mapping[str, Any]) -> tuple[str, dict[str, dict[str, 
                 "publication_time": row.get("SubmissionTime"),
                 "raw": row,
             }
+    elif parser_family == "soko_glam_okendo_v1":
+        for row in source["reviews"]:
+            review_id = f"soko-{row['product_slug']}-{row['ordinal']:03d}"
+            rows[review_id] = {
+                "text": row.get("body"),
+                "author": row.get("reviewer"),
+                "helpful_positive": row.get("helpful_yes"),
+                "publication_time": row.get("date_label"),
+                "raw": row,
+            }
     else:
         for response in source.get("responses", []):
             if not isinstance(response, Mapping) or not isinstance(response.get("body_text"), str):
@@ -2069,7 +2230,7 @@ def build_phase_a_retailer_source_v3(
     run_spec_path: Path,
     retailer_coding_path: Path,
     retailer_source_manifest_path: Path,
-    revolve_completion_receipt_path: Path,
+    revolve_completion_receipt_path: Path | None,
     repo_root: Path,
 ) -> dict[str, Any]:
     """Build the full deduplicated retailer-review v3 fragment."""
@@ -2088,18 +2249,30 @@ def build_phase_a_retailer_source_v3(
         retailer_coding_path=retailer_coding_path,
         manifest_path=retailer_source_manifest_path,
     )
-    completion = _load_json_object(
-        revolve_completion_receipt_path, label="Revolve completion receipt"
-    )
-    if completion.get("schema_version") != "revolve_review_corpus_completion_run_v1":
-        raise SemanticIntegrationError("Revolve completion receipt has wrong version")
-    outcomes = completion.get("outcomes")
-    if not isinstance(outcomes, list) or not outcomes:
-        raise SemanticIntegrationError("Revolve completion receipt lacks outcomes")
     source_paths: dict[str, dict[str, Any]] = {}
     for locator, row in manifest_sources.items():
         source_paths[locator] = {"parser_family": row["parser_family"]}
     completion_occurrences: list[str] = []
+    has_revolve_source = any(
+        row["parser_family"] == "revolve_recent_v1"
+        for row in manifest_sources.values()
+    )
+    if revolve_completion_receipt_path is None:
+        if has_revolve_source:
+            raise SemanticIntegrationError(
+                "Revolve retailer sources require a completion receipt"
+            )
+        completion = None
+        outcomes: list[Any] = []
+    else:
+        completion = _load_json_object(
+            revolve_completion_receipt_path, label="Revolve completion receipt"
+        )
+        if completion.get("schema_version") != "revolve_review_corpus_completion_run_v1":
+            raise SemanticIntegrationError("Revolve completion receipt has wrong version")
+        outcomes = completion.get("outcomes")
+        if not isinstance(outcomes, list) or not outcomes:
+            raise SemanticIntegrationError("Revolve completion receipt lacks outcomes")
     for outcome in outcomes:
         if (
             not isinstance(outcome, Mapping)
@@ -2122,21 +2295,22 @@ def build_phase_a_retailer_source_v3(
         if not isinstance(ids, list) or len(ids) != outcome.get("captured_review_count"):
             raise SemanticIntegrationError("Revolve outcome count does not match corpus")
         completion_occurrences.extend(str(value) for value in ids)
-    if completion.get("completed_corpus_count") != len(outcomes):
-        raise SemanticIntegrationError("Revolve completion corpus count is stale")
-    if completion.get("captured_review_occurrence_count") != len(completion_occurrences):
-        raise SemanticIntegrationError("Revolve completion occurrence count is stale")
-    unique_revolve = set(completion_occurrences)
-    if completion.get("unique_review_id_count") != len(unique_revolve):
-        raise SemanticIntegrationError("Revolve completion unique-review count is stale")
-    occurrence_counts: dict[str, int] = {}
-    for review_id in completion_occurrences:
-        occurrence_counts[review_id] = occurrence_counts.get(review_id, 0) + 1
-    duplicated_ids = sorted(
-        review_id for review_id, count in occurrence_counts.items() if count > 1
-    )
-    if completion.get("cross_corpus_duplicate_review_ids") != duplicated_ids:
-        raise SemanticIntegrationError("Revolve completion duplicate count is stale")
+    if completion is not None:
+        if completion.get("completed_corpus_count") != len(outcomes):
+            raise SemanticIntegrationError("Revolve completion corpus count is stale")
+        if completion.get("captured_review_occurrence_count") != len(completion_occurrences):
+            raise SemanticIntegrationError("Revolve completion occurrence count is stale")
+        unique_revolve = set(completion_occurrences)
+        if completion.get("unique_review_id_count") != len(unique_revolve):
+            raise SemanticIntegrationError("Revolve completion unique-review count is stale")
+        occurrence_counts: dict[str, int] = {}
+        for review_id in completion_occurrences:
+            occurrence_counts[review_id] = occurrence_counts.get(review_id, 0) + 1
+        duplicated_ids = sorted(
+            review_id for review_id, count in occurrence_counts.items() if count > 1
+        )
+        if completion.get("cross_corpus_duplicate_review_ids") != duplicated_ids:
+            raise SemanticIntegrationError("Revolve completion duplicate count is stale")
 
     artifact_by_path: dict[str, str] = {}
     source_artifacts = [
@@ -2148,13 +2322,16 @@ def build_phase_a_retailer_source_v3(
             retailer_source_manifest_path,
             repo_root=repo_root,
         ),
-        _source_artifact(
-            "revolve_completion_receipt",
-            revolve_completion_receipt_path,
-            repo_root=repo_root,
-        ),
         *product_binding_artifacts,
     ]
+    if revolve_completion_receipt_path is not None:
+        source_artifacts.append(
+            _source_artifact(
+                "revolve_completion_receipt",
+                revolve_completion_receipt_path,
+                repo_root=repo_root,
+            )
+        )
     parsed_by_path: dict[str, tuple[str, dict[str, dict[str, Any]]]] = {}
     revolve_product_ids_by_path: dict[str, list[str]] = {}
     for locator in sorted(source_paths):
@@ -2201,14 +2378,9 @@ def build_phase_a_retailer_source_v3(
             raise SemanticIntegrationError(f"retailer coding duplicates review: {key}")
         coded[key] = row
 
-    corpus_by_parser = {
-        "amazon_aggregate_v1": "amazon_rendered_reviews",
-        "revolve_recent_v1": "revolve_native_reviews",
-        "bazaarvoice_results_v1": "sephora_product_group_reviews",
-    }
     native: dict[tuple[str, str], list[tuple[str, dict[str, Any]]]] = {}
     for locator, (parser_family, rows) in parsed_by_path.items():
-        corpus_id = corpus_by_parser[parser_family]
+        corpus_id = _RETAILER_CORPUS_BY_PARSER[parser_family]
         for review_id, row in rows.items():
             native.setdefault((corpus_id, review_id), []).append((locator, row))
     missing_native = sorted(set(coded) - set(native))
@@ -2223,10 +2395,12 @@ def build_phase_a_retailer_source_v3(
             row.get("text").strip()
             for _, row in occurrences
             if isinstance(row.get("text"), str)
+            and row.get("text").strip()
         }
-        if key[0] == "revolve_native_reviews" and texts == {
-            _REVOLVE_RATING_ONLY_PLACEHOLDER
-        }:
+        if not texts or (
+            key[0] == "revolve_native_reviews"
+            and texts == {_REVOLVE_RATING_ONLY_PLACEHOLDER}
+        ):
             excluded.add(key)
         else:
             uncoded_nonplaceholder.append(key)
@@ -2260,6 +2434,7 @@ def build_phase_a_retailer_source_v3(
         )
         source_ref = f"{owner_locator}#review:{review_id}"
         if (corpus_id, review_id) in excluded:
+            excluded_text = raw.get("text")
             captured_items.append(
                 {
                     "evidence_id": f"retailer:{corpus_id}:{review_id}",
@@ -2267,7 +2442,11 @@ def build_phase_a_retailer_source_v3(
                     "source_artifact_id": artifact_id,
                     "source_ref": source_ref,
                     "accounting_disposition": "mechanically_excluded",
-                    "accounting_reason": "exact source-native Revolve rating-only placeholder",
+                    "accounting_reason": (
+                        "exact source-native Revolve rating-only placeholder"
+                        if excluded_text == _REVOLVE_RATING_ONLY_PLACEHOLDER
+                        else "source-native review has no usable text"
+                    ),
                 }
             )
             continue
@@ -2965,6 +3144,11 @@ __all__ = [
     "RUN_SPEC_VERSION_V3",
     "RUN_SPEC_VERSION_V4",
     "RUN_SPEC_VERSION_V5",
+    "RUN_SPEC_VERSION_V6",
+    "RUN_SPEC_VERSION_V7",
+    "RUN_SPEC_VERSION_V8",
+    "RUN_SPEC_VERSION_V9",
+    "RUN_SPEC_VERSION_V10",
     "audit_phase_a_source",
     "build_phase_a_product_axis_proof_source",
     "census_phase_a_customer_corpus",

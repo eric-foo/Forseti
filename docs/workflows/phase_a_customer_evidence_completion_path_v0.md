@@ -31,6 +31,35 @@ failure. This is a conceptual and completion boundary between acquisition and
 Deliver, not a new globally numbered phase: historical Phase A, Phase B, Turn
 B, Understanding, and Deliver vocabulary is not renumbered or migrated.
 
+For new cross-company authoring, use `phase_a_semantic_integration_run_v10`
+(integration method v12, verifier v11). The supplied `CURRENT_AXES` inventory
+owns output IDs; shared examples describe concepts, never another company's
+required IDs. Preserve a supported meaning even when it needs an emerging-axis
+label instead of an existing axis. See the semantic-integration contract v80
+for the owning rule. Historical run v9 / method v11 and earlier artifacts keep
+their original identity and replay; do not edit frozen outputs or relabel old
+responses as a new-method proof. This correction does not establish the cause
+of Dieux's provider timeout. All new model attempts use `high` under the
+operator rule in `docs/decisions/subagent_model_tiering_doctrine_v0.md`.
+
+The existing calibration entry point follows the production-owned
+`SEMANTIC_METHODS_V7_PLUS` set, including current method v12, rather than a
+separate historical allowlist. Primary and cold-repeat evaluation both require
+their own exact row-verified compilation for those methods. Contract v79 owns
+this compatibility correction; it neither changes semantic prompts nor makes
+a prepared calibration slice a passing readiness proof.
+
+The public saved-prompt loader retains the producer-derived response-schema
+metadata and checks the actual saved prompt text; it does not reconstruct over
+an altered saved prompt. Method v12 removes the inherited instruction to delete
+explicit overall evaluations, which conflicted with whole-row preservation.
+Verifier v11 makes acceptance contingent on checking each meaning, logical
+direction, qualification, and explicit reason-to-behavior link. This reuses the
+existing extraction and verification stages; it adds no model call or semantic
+classifier. The corrected policy still requires source-authored calibration,
+cold-repeat agreement, and final-view evidence. Its availability is not a
+semantic accuracy, reader-quality, or Dieux completion claim.
+
 ## Before changing Phase A evidence machinery
 
 Use these regression anchors before changing the Phase A point-pack, selection,
@@ -72,6 +101,7 @@ Test names below resolve in
 | --- | --- | --- | --- |
 | Every accepted point is explicitly routed once to `direct_outcome` or `decision_state`; one axis may mix both. | An axis name silently forces every point through one reading shape, so a result and an actor's choice state become indistinguishable. | This workflow, paragraph beginning `Projection routing is point-level`; `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py` (`_projection_routes`); axis tests `test_v2_projection_routes_require_exactly_one_known_route_per_point` and `test_mixed_projection_routes_keep_direct_and_decision_points_distinct`. | PR [#1513](https://github.com/eric-foo/forseti/pull/1513); commits `55b57dfb`, `9ec2e865`. |
 | Decision State preserves actor, object, state kind/stage, direction, quantity, conditions, relation-bearing meanings, and same-source companion states; direct results can remain explicit context only. | Purchase intent becomes purchase, four units become four repurchases, or regret and intended repurchase collapse into one positive/negative label. | This workflow, paragraphs beginning `The v2 builder implements both` and `The v2 spec carries these facts`; `DECISION_STATE_CONSUMER_CONTRACT` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_decision_state_projects_typed_companion_states_and_rejected_frontier`, `test_decision_state_wrong_cause_transitions_fail_at_semantic_boundary`, `test_decision_state_bindings_require_exact_row_and_semantic_coverage`, and `test_decision_state_retains_direct_result_row_as_explicit_context_only`. | PR [#1513](https://github.com/eric-foo/forseti/pull/1513); commits `a75de28e`, `e92dfc2f`, `9ec2e865`. |
+| Current Decision State authoring reuses an old judgment only when the evidence ID, semantic-unit ref, literal normalized statement, axes, conditions, and polarity are unchanged and every prior observation gives the same complete state bundle; only new, changed, partial, or conflicting meanings return to bounded judgment. | A rebuild copies states by point or row position, so regrouping the same evidence transfers a correct-looking state to the wrong meaning, or every rebuild pays to re-judge already settled evidence. | This workflow, paragraph beginning `When current packs regroup`; `phase_a_decision_state_reconciliation.py`; runner commands `prepare-decision-state-reconciliation` and `finalize-decision-state-reconciliation`; axis tests beginning `test_decision_state_reconciliation_`. | Semantic-integration contract changelog `v67`. The manifest is run-scoped, not a global registry, and historical agreement proves reuse eligibility rather than semantic truth. |
 | Price concern, value rejection or approval, and source-supported premium quality/positioning remain separate; Phase A does not infer pricing power or a higher-tier recommendation. | "Expensive but worth it" is flattened into poor value, or the word `premium` is invented from price and handed downstream as a recommendation. | This workflow, paragraph beginning `For price-and-value evidence`; `DECISION_STATE_BOUNDARIES` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; `VALUE_RELATION_GUIDANCE`, `_uses_value_policy`, and `_select_value_groups` in `forseti-harness/judgment/phase_a_evidence_selection.py`; axis test `test_decision_state_keeps_price_value_and_premium_meanings_distinct`; selection tests `test_high_spend_buyer_remorse_cannot_be_promoted_to_value_support` and `test_value_policy_does_not_turn_time_to_finish_into_quantity_value`. | Semantic-integration contract changelog `v40`, `v45`, `v46`, and `v48`; commits `5529a646`, `ef791055`; PR [#1513](https://github.com/eric-foo/forseti/pull/1513). |
 | Several matching statements from one origin remain several source observations but add only one independent origin; literal evidence, date, surface, and native engagement stay attached to each observation. | Two statements from one account are reported as two independent people, or the later statement disappears during origin de-duplication. | `forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`, "Independent origins and source observations are different counts"; `EVIDENCE_ACCOUNTING_CONTRACT` and `_same_origin_observation_groups` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_same_origin_repeated_observation_survives_without_adding_origin_credit` and `test_generic_axis_pack_preserves_same_origin_repeated_observation`. | Commit `8442885a`; PR [#1513](https://github.com/eric-foo/forseti/pull/1513). |
 | Every admitted frontier candidate remains accounted; a literal relation rejected for a proved wrong source link stays excluded and cold-resolvable, while counterevidence and the last earning signal cannot be removed. Rejected-only axes require pinned resolution receipts. | A bad literal link is replaced with a nearby quote, or rejected and awkward evidence simply disappears so the axis looks complete. | This workflow, `frontier_relation_rejections` paragraph beginning `That failure removes only`, and rejected-only paragraph beginning `An axis whose entire frontier fails`; `_validate_resolved_frontier_earning` and `_apply_frontier_relation_rejections` in `forseti-harness/judgment/phase_a_evidence_selection.py`; `build_phase_a_evidence_axis_pack` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; selection tests `test_rejected_literal_frontier_relation_stays_accounted_without_forcing_display`, `test_frontier_relation_rejection_cannot_remove_the_last_earning_signal`, and `test_frontier_relation_rejection_cannot_hide_counterevidence`; axis tests `test_rejected_only_axis_requires_and_preserves_cold_resolution_receipt` and `test_decision_state_preserves_mixed_axis_rejected_point_resolution_receipt`. | Commits `9b6dd2ca`, `36a40086`, `3ffe2d4e`; PR [#1515](https://github.com/eric-foo/forseti/pull/1515). |
@@ -127,7 +157,7 @@ The frontier is a navigation artifact over a complete, non-truncated
 into one hash-bound bounded-point selection with the normal thirteen-truth-origin
 cap. For a non-value point with an explicit axis, candidate admission is the
 union of every semantic row for the same product and axis plus the proposition's
-literal refs. Every admitted row is newly judged against the exact bounded
+literal refs. Every admitted row is judged against the exact bounded
 point; sharing an axis grants no support or counter relation. Value points keep
 literal-ref admission because their price/value behavior policy is not the
 generic non-value route, and a hand-built value-first spec cannot claim the
@@ -159,6 +189,84 @@ Frontier specs use the exact bounded point as their direction: evidence that
 the balm is expensive supports that objection, rather than being reversed by
 the older positive-good-value box policy. Historical value-box selections keep
 their stamped policy.
+
+Fresh selections use `phase_a_evidence_selection_spec_v2` and explicitly author
+`point_actor_scope`. This is part of the point's meaning, not a relation label:
+`{"mode":"source_local_reports"}` makes an unqualified author/customer/reviewer
+refer separately to each reporting origin; `identified_actor` additionally
+requires `source_id` and `independence_key` resolving to a credited literal
+point anchor. `source_id` identifies an input source that may contain many
+actors; it is not a person identifier. Read the source-bound `independence_key`
+together with `independence_posture` and source-visible attribution. Different
+keys alone do not prove different people; unavailable identity and possible
+overlap remain unresolved. Never choose a focal person from row order or an
+opaque ref.
+Do not silently use source-local reporting to broaden an explicitly named
+person's claim. Scope choice and semantic fit remain judgment-owned.
+
+The existing initial and confirmation requests carry that scope and each row's
+source-owned origin identity. For source-local reports, opposing favorite
+choices can be contrasting reports, never proof that another person's private
+favorite is false. Check origin overlap before calling opposed rows separate
+authors: one credited origin can appear on both sides. Preserve its separate
+observations; conflict, change, or refinement depends on meanings and dates,
+not identity alone. A joint favorite does not oppose a non-exclusive favorite
+claim merely because another option is named; preserve any explicit exclusivity
+criterion. Ownership of another option or an incomplete owned-option
+list does not negate ownership. For an identified actor, a foreign or unknown
+origin cannot receive support/counter for that actor's private state; the
+identity boundary rejects such labels without guessing what prose means.
+Within a current point, repeated identical source/evidence/ref-set bindings
+must carry the same relation, even when different primary rows carry them.
+The existing authoring and consumer checks reject a conflict; they do not
+choose the right relation. Historical unscoped replay is not reinterpreted.
+
+An explicit bounded adjudication may settle a repeated exact-binding conflict.
+Attach it once to the current point spec as an inline `relation_adjudication`
+`phase_a_relation_adjudication_v1` record. The record contains
+`schema_version`, `basis_sha256`, and nonempty `decisions`. Compute the basis
+with `phase_a_evidence_selection.relation_adjudication_basis(manifest,
+candidates)` over the verified current selection and its complete candidate
+inventory. Each authored decision carries `source_id`, `evidence_id`, the
+exact nonempty `relation_semantic_unit_refs`, `relation`, `reason_code`, and a
+source-backed `rationale`. This is an explicit judgment input, not a provider
+answer, self-certifying approval field, or automatic preference for an older
+label. A changed point/spec, source file, candidate inventory, or judging policy
+invalidates the basis and requires renewed judgment; do not merely rehash it.
+Judging policy includes the fields projected to both relation stages; row order
+and batching alone do not invalidate the record. Only the inline correction is
+excluded from the basis to avoid a cycle. Because the record travels inside the
+spec, replay does not depend on an authoring machine's filesystem.
+
+Both existing preselection finalizers apply the authored relation and reason
+to every confirmed row with that exact source/evidence/ref-set binding. They
+never choose or change refs. Unmatched or duplicate decisions fail visibly;
+all other rows retain their provider answers and the consistency guard remains
+active. Raw provider responses remain in replay, and the confirmation receipt
+records the embedded correction, every changed candidate and prior label, and
+the mechanically-unproven semantic warrant. The quote consumer revalidates the
+same binding. Historical unscoped specs and pre-confirmation routes cannot
+accept this extension. No default correction, global judgment cache, extra
+provider call, or mandatory review ceremony is introduced. This exception path
+does not remove the existing semantic workload for a genuinely fresh selection.
+
+The scope survives unchanged into the point artifact, consolidated view,
+structured reader, point-reader request, and compiled brief. Missing or changed
+scope fails locally. The point snapshot freezes the scope-reading rule and
+binds its hash into scoped point inputs; changing that rule invalidates only
+those readings, not unscoped historical points. Mixed reader tables show absent
+historical scope as null without assigning it a new meaning.
+`materialize-customer-pull-point-selection-spec` takes the
+authored JSON through `--point-actor-scope`; both fresh preparation commands
+require v2. Frozen v1 selection manifests retain their original finalization
+and reader replay, without a fabricated scope or frozen-byte migration.
+
+This adds one explicit choice to authoring and linear identity checks, not a
+provider stage, per-point whole-axis reread, automatic semantic classifier, or
+proof of semantic truth. The 2026-08-29 shade diagnosis found different people
+grouped under unqualified `the author` wording while confirmation invented a
+same/different focal-actor distinction. Correct attachment alone cannot resolve
+that missing scope; old comparison wins do not clear it.
 
 For a new point pack, relation confirmation occurs before the display cap:
 
@@ -226,6 +334,15 @@ they add evidence-selection response validation while reusing the same unique-
 attempt storage. Other intelligence-cycle stages may reuse the helper when they
 have the same parallel/retry proof shape; it is not a mandatory wrapper around
 all model activity.
+
+For current unattended Codex jobs, replace task-local buffered launch wrappers
+with `forseti-harness/runners/run_codex_provider_attempt.py`; its execution
+contract and command live in `forseti-harness/README.md` under "Unattended Model
+Attempts". It reserves the attempt itself, preserves logs live, and bounds the
+entire attempt without resetting the clock on reconnects. Use the existing
+stage validator/publisher afterward, not process exit as acceptance. Frozen
+historical wrappers and receipts remain provenance; do not rerun or rewrite them.
+The shared execution boundary adds no model stage or automatic retry.
 
 The confirmation frontier is independent of the first-pass relation. Therefore
 a first-pass `exclude` cannot silently hide a materially engaged or protected
@@ -1056,6 +1173,33 @@ covers their own historical artifacts only: a v3 selection artifact routed by a
 v1 or v2 spec is rejected at the relation-binding lineage boundary rather than
 allowed to drop its row-owned references back to the primary reference.
 
+At the current point-reader consumer, the relation-facing meaning is resolved
+from those exact row-owned references. The selected row's primary meaning and
+quote remain explicit lineage, not a substitute for a companion-only relation
+binding. When the relation binds only a same-evidence companion and no quote span
+owned by that exact meaning was captured, the relation-facing quote is
+`quote_unavailable`; the selected-row quote remains separately visible. This is
+mechanical attachment honesty, not a deterministic judgment that the selected
+semantic subset warrants its relation.
+
+When current packs regroup already judged Decision State evidence, use the
+run-scoped Decision State reconciliation commands instead of copying a prior
+row by `point_id`, `selected_id`, order, or any other presentation address.
+Preparation pins every current pack/template and prior spec, then keys reuse to
+the unchanged source-owned semantic identity: evidence ID, semantic-unit ref,
+literal normalized statement, axes, conditions, and polarity. One complete
+historical state bundle is reusable only when every matching prior observation
+agrees. New or changed meanings, conflicting history, and incomplete multi-ref
+state groups remain unresolved and are the only units included in the bounded
+adjudication prompt. Finalization requires exact unresolved-unit coverage,
+rebuilds current v4 row bindings, and runs the normal consolidation validator.
+Relation refs remain point-relative and come only from the current v3 selection
+artifact; they are never borrowed from history. This is a per-run delta
+compiler, not a global semantic registry, ontology, or additional provider
+stage. Deterministic agreement proves that the same authored judgment was
+transported to the same unchanged meaning; it does not prove that judgment
+semantically correct.
+
 The retired selected-row v3 review was a rejected experiment, not a standing
 diagnostic. The measured canonical-policy candidate was unstable: two shade
 runs produced 14 and 59 invalid-row flags, while four formula runs produced 6,
@@ -1368,8 +1512,13 @@ Each structured point brief also copies `displayed_relation_row_counts`,
 `truth_origin_count`, and the exact point-local `candidate_pool_accounting` into
 `reader_accounting`. These are exact displayed-row, full-candidate, and
 origin-group accounting, never people, votes, corroboration, or prevalence.
-Every compiled representative also copies its exact `point_relative_meaning`
-block from the selected placement. A repeated literal quote may therefore
+Every compiled representative resolves `point_relative_meaning` and
+`relation_bound_meanings` from the exact relation-bound semantic references.
+The selected placement's primary meaning and quote remain separate lineage;
+missing companion-owned fields stay null and are named in
+`unbound_meaning_fields`, never borrowed from the primary meaning. The headline
+meaning owns the headline quote even when a companion reference is listed first.
+A repeated literal quote may therefore
 appear more than once when it carries distinct bounded semantic units; the
 quote or relation label alone is not allowed to erase that distinction.
 Before a model emits that shape, bind the base output schema with
@@ -1382,7 +1531,10 @@ When a cold reader emits the structured Phase A brief shape, run
 `validate-reader-output` before using it. This conditional local check rejects
 missing or duplicated accepted points, point ID/meaning/route swaps, broadened
 exact meanings, omitted or changed reader accounting, and representative quotes
-moved across a point or relation, or an unavailable/unbound quote handle. It costs no model call and is not required
+moved across a point or relation, or an unavailable/unbound quote handle. It uses
+the same relation-owned quote projection as the point-reader compiler: a
+companion-only binding accepts honest quote unavailability and rejects its
+neighboring selected-row quote. It costs no model call and is not required
 when no structured reader brief is produced.
 
 This exact validation is the standing cost for every generated reader bundle.
