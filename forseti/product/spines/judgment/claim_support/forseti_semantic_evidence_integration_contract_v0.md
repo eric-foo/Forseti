@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v76
+version: v77
 effective_date: 2026-08-30
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v76
+# Semantic Evidence Integration Contract v77
 
 ## Purpose
 
@@ -538,6 +538,14 @@ one cataloged `subject_product_id` in every semantic unit at the provider
 schema boundary. This mirrors the longstanding compilation validator and does
 not infer, select, or repair a subject. Historical method v9 / keyed transport
 v2 schemas and responses remain replayable under their original identity.
+
+Contract v77 adds `semantic_evidence_row_verification_method_v9` and makes
+response transport stage-local. The keyed `decisions_by_evidence_id` rule is
+rendered only for the initial semantic batch surface that owns that schema; it
+is omitted from row verification, targeted audit, and reconciliation prompts,
+which retain their own response shapes. This removes contradictory response
+instructions without changing semantic policy, adding a provider call, or
+rewriting historical row-verifier v8 text.
 
 When one leaf evaluates two alternatives on the same attribute, the relative
 comparison remains evidence even if the observations occupy separate
@@ -1860,6 +1868,13 @@ new frontier.
 
 ## Changelog
 
+- `v77` / 2026-08-30 — isolated the keyed initial-batch response transport from
+  downstream provider prompts after Dieux row-verification preparation rendered
+  both a keyed-object instruction and the row verifier's required decisions
+  list. Row verification method v9 binds the stage-local transport rule;
+  targeted audit and reconciliation also omit the incompatible batch-only
+  instruction. Initial batch prompt bytes and historical row-verifier v8 text
+  remain intact.
 - `v76` / 2026-08-30 — added run v8 / method v10 / keyed transport v3 after
   Dieux batch-0017 produced a semantic unit with an empty subject-product list.
   The ordinary validator rejected it; the provider schema had omitted that

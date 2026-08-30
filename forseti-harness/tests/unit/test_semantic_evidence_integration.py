@@ -55,12 +55,14 @@ from judgment.semantic_evidence_integration import (
     ROW_VERIFICATION_METHOD_TEXT_V5,
     ROW_VERIFICATION_METHOD_TEXT_V6,
     ROW_VERIFICATION_METHOD_TEXT_V7,
+    ROW_VERIFICATION_METHOD_TEXT_V8,
     ROW_VERIFICATION_METHOD_VERSION,
     ROW_VERIFICATION_METHOD_VERSION_V3,
     ROW_VERIFICATION_METHOD_VERSION_V4,
     ROW_VERIFICATION_METHOD_VERSION_V5,
     ROW_VERIFICATION_METHOD_VERSION_V6,
     ROW_VERIFICATION_METHOD_VERSION_V7,
+    ROW_VERIFICATION_METHOD_VERSION_V8,
     ROW_VERIFICATION_RESPONSE_VERSION,
     TARGETED_AUDIT_RESPONSE_VERSION,
     TERMINAL_REPAIR_MIGRATION_COMPILATION_VERSION,
@@ -711,6 +713,8 @@ def test_reconciliation_prompt_contains_every_compiled_meaning() -> None:
 
     for unit in compiled["semantic_units"]:
         assert unit["semantic_unit_ref"] in prompt
+    assert "V8 KEYED RESPONSE TRANSPORT" not in prompt
+    assert "decisions_by_evidence_id" not in prompt
 
 
 def test_uncredited_role_cannot_manufacture_cross_venue_credit() -> None:
@@ -3196,6 +3200,9 @@ def test_row_verification_replaces_the_whole_row_and_keeps_one_active_result() -
     assert stage["coverage_proof"]["bijection_complete"] is True
     assert all(row["prompt_utf8_bytes"] <= stage["max_prompt_bytes"] for row in prompts)
     assert all("ROWS_TO_VERIFY" in row["prompt"] for row in prompts)
+    assert all("V8 KEYED RESPONSE TRANSPORT" not in row["prompt"] for row in prompts)
+    assert all("decisions_by_evidence_id" not in row["prompt"] for row in prompts)
+    assert all('"decisions"' in row["prompt"] for row in prompts)
     assert stage["verification_method_version"] == ROW_VERIFICATION_METHOD_VERSION
     normalized_prompts = [" ".join(row["prompt"].split()) for row in prompts]
     assert all("Before checking fields, privately restate" in row for row in normalized_prompts)
@@ -3722,16 +3729,17 @@ def test_terminal_repair_migration_runner_hash_binds_raw_inputs_and_refuses_over
         )
 
 
-def test_row_verification_v8_installs_general_completeness_and_context_boundaries() -> None:
+def test_row_verification_v9_installs_general_completeness_and_context_boundaries() -> None:
     normalized = " ".join(ROW_VERIFICATION_METHOD_TEXT.split())
     assert ROW_VERIFICATION_METHOD_TEXT.startswith(
-        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V8"
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V9"
     )
     assert "ROW VERIFICATION METHOD V3" not in ROW_VERIFICATION_METHOD_TEXT
     assert "ROW VERIFICATION METHOD V4" not in ROW_VERIFICATION_METHOD_TEXT
     assert "ROW VERIFICATION METHOD V5" not in ROW_VERIFICATION_METHOD_TEXT
     assert "ROW VERIFICATION METHOD V6" not in ROW_VERIFICATION_METHOD_TEXT
     assert "ROW VERIFICATION METHOD V7" not in ROW_VERIFICATION_METHOD_TEXT
+    assert "ROW VERIFICATION METHOD V8" not in ROW_VERIFICATION_METHOD_TEXT
     assert ROW_VERIFICATION_METHOD_TEXT_V4.startswith(
         "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V4"
     )
@@ -3743,6 +3751,9 @@ def test_row_verification_v8_installs_general_completeness_and_context_boundarie
     )
     assert ROW_VERIFICATION_METHOD_TEXT_V7.startswith(
         "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V7"
+    )
+    assert ROW_VERIFICATION_METHOD_TEXT_V8.startswith(
+        "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V8"
     )
     assert _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V6) == (
         "fdf78f437e99275719bec13c32379ed83717f7551f128975d0017760e0e77f0f"
@@ -4097,6 +4108,33 @@ def test_row_verification_manifest_binds_the_active_compilation_content() -> Non
         match="does not bind the current verification method",
     ):
         prepare_reconciliation_stage(bundle, historical_v7)
+
+    historical_v8 = deepcopy(verified)
+    historical_v8["row_verification_manifest"]["verification_method_version"] = (
+        ROW_VERIFICATION_METHOD_VERSION_V8
+    )
+    historical_v8["row_verification_manifest"]["verification_method_sha256"] = (
+        _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V8)
+    )
+    historical_v8["row_verification_manifest"]["manifest_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v8["row_verification_manifest"].items()
+            if key != "manifest_sha256"
+        }
+    )
+    historical_v8["compilation_sha256"] = _canonical_hash(
+        {
+            key: item
+            for key, item in historical_v8.items()
+            if key != "compilation_sha256"
+        }
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="does not bind the current verification method",
+    ):
+        prepare_reconciliation_stage(bundle, historical_v8)
 
     legacy_manifest = deepcopy(verified)
     legacy_manifest["row_verification_manifest"]["schema_version"] = (

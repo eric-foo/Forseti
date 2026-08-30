@@ -51,7 +51,8 @@ ROW_VERIFICATION_METHOD_VERSION_V4 = "semantic_evidence_row_verification_method_
 ROW_VERIFICATION_METHOD_VERSION_V5 = "semantic_evidence_row_verification_method_v5"
 ROW_VERIFICATION_METHOD_VERSION_V6 = "semantic_evidence_row_verification_method_v6"
 ROW_VERIFICATION_METHOD_VERSION_V7 = "semantic_evidence_row_verification_method_v7"
-ROW_VERIFICATION_METHOD_VERSION = "semantic_evidence_row_verification_method_v8"
+ROW_VERIFICATION_METHOD_VERSION_V8 = "semantic_evidence_row_verification_method_v8"
+ROW_VERIFICATION_METHOD_VERSION = "semantic_evidence_row_verification_method_v9"
 # The new generation deliberately keeps the legacy pretty-printed prompt
 # encoding. It is bound by name so a future compact encoding cannot silently
 # reuse a projection that was packed and byte-bounded under this one.
@@ -456,15 +457,7 @@ METHOD_TEXT_V7 = METHOD_TEXT_V6.replace(
     1,
 )
 
-# Method v8 changes only the response transport. Every evidence id becomes one
-# provider-required object key, which removes the repeated-id list bookkeeping
-# that made complete responses fragile. The deterministic compiler still
-# normalizes these decisions into the established compilation v3 rows.
-METHOD_TEXT_V8 = METHOD_TEXT_V7.replace(
-    "SEMANTIC EVIDENCE INTEGRATION METHOD V7",
-    "SEMANTIC EVIDENCE INTEGRATION METHOD V8",
-    1,
-) + """
+KEYED_RESPONSE_TRANSPORT_TEXT = """
 
 V8 KEYED RESPONSE TRANSPORT
 
@@ -473,6 +466,16 @@ evidence-id key required by the response schema. Do not repeat evidence_id
 inside a decision and do not group terminal rows. The keyed object changes only
 transport: use the same dispositions, reasons, and semantic-unit fields.
 """
+
+# Method v8 changes only the response transport. Every evidence id becomes one
+# provider-required object key, which removes the repeated-id list bookkeeping
+# that made complete responses fragile. The deterministic compiler still
+# normalizes these decisions into the established compilation v3 rows.
+METHOD_TEXT_V8 = METHOD_TEXT_V7.replace(
+    "SEMANTIC EVIDENCE INTEGRATION METHOD V7",
+    "SEMANTIC EVIDENCE INTEGRATION METHOD V8",
+    1,
+) + KEYED_RESPONSE_TRANSPORT_TEXT
 
 METHOD_TEXT_V9 = METHOD_TEXT_V8.replace(
     "SEMANTIC EVIDENCE INTEGRATION METHOD V8",
@@ -698,7 +701,7 @@ ROW_VERIFICATION_METHOD_TEXT_V7 = (
     )
 )
 
-ROW_VERIFICATION_METHOD_TEXT = (
+ROW_VERIFICATION_METHOD_TEXT_V8 = (
     ROW_VERIFICATION_METHOD_TEXT_V7.replace(
         "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V7",
         "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V8",
@@ -721,6 +724,16 @@ ROW_VERIFICATION_METHOD_TEXT = (
         1,
     )
 )
+
+ROW_VERIFICATION_METHOD_TEXT = ROW_VERIFICATION_METHOD_TEXT_V8.replace(
+    "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V8",
+    "SEMANTIC EVIDENCE ROW VERIFICATION METHOD V9",
+    1,
+) + """
+
+Response transport is stage-local. Follow only the response shape rendered by
+the active stage; an upstream batch response transport does not apply here.
+"""
 
 TARGETED_AUDIT_METHOD_TEXT = """TARGETED BENCHMARK AUDIT METHOD V1
 
@@ -2754,6 +2767,11 @@ def _method_text(bundle: Mapping[str, Any]) -> str:
     return text
 
 
+def _downstream_method_text(bundle: Mapping[str, Any]) -> str:
+    """Return semantic policy without the initial-batch response transport."""
+    return _method_text(bundle).replace(KEYED_RESPONSE_TRANSPORT_TEXT, "")
+
+
 def build_batch_prompts(bundle: Mapping[str, Any]) -> list[dict[str, Any]]:
     _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
     _validate_projection(bundle)
@@ -3650,7 +3668,7 @@ def _render_row_verification_prompt(
         + json.dumps(catalog, ensure_ascii=False, indent=2)
     )
     return (
-        _method_text(bundle)
+        _downstream_method_text(bundle)
         + "\n\n"
         + ROW_VERIFICATION_METHOD_TEXT
         + "\nFor accept and unresolved, replacement must be null. For replace, "
@@ -4191,7 +4209,7 @@ def prepare_targeted_benchmark_audit(
     stage["stage_sha256"] = _sha256(stage)
 
     shared_frame = (
-        _method_text(bundle)
+        _downstream_method_text(bundle)
         + "\n\n"
         + ROW_VERIFICATION_METHOD_TEXT
         + "\n\n"
@@ -5050,7 +5068,7 @@ def build_reconciliation_prompt(bundle: Mapping[str, Any], compiled: Mapping[str
         ],
     }
     return (
-        _method_text(bundle)
+        _downstream_method_text(bundle)
         + "\nReconcile meaning-equivalent units across batches. Every semantic unit must "
         "appear in at least one proposition relation or exactly once in unmerged_semantic_units. "
         "Do not merge different subjects, comparators, axes, conditions, negations, or versions. "
@@ -9207,12 +9225,14 @@ __all__ = [
     "ROW_VERIFICATION_METHOD_TEXT_V5",
     "ROW_VERIFICATION_METHOD_TEXT_V6",
     "ROW_VERIFICATION_METHOD_TEXT_V7",
+    "ROW_VERIFICATION_METHOD_TEXT_V8",
     "ROW_VERIFICATION_METHOD_VERSION",
     "ROW_VERIFICATION_METHOD_VERSION_V3",
     "ROW_VERIFICATION_METHOD_VERSION_V4",
     "ROW_VERIFICATION_METHOD_VERSION_V5",
     "ROW_VERIFICATION_METHOD_VERSION_V6",
     "ROW_VERIFICATION_METHOD_VERSION_V7",
+    "ROW_VERIFICATION_METHOD_VERSION_V8",
     "ROW_VERIFICATION_RESPONSE_VERSION",
     "ROW_VERIFICATION_STAGE_VERSION",
     "RECONCILIATION_RESPONSE_VERSION",
