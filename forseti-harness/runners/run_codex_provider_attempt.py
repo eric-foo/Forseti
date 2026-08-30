@@ -25,7 +25,8 @@ def main() -> int:
     parser.add_argument("--output-schema", type=Path, required=True)
     parser.add_argument("--worktree", type=Path, required=True)
     parser.add_argument("--model", required=True)
-    parser.add_argument("--reasoning-effort", choices=("none", "minimal", "low", "medium", "high", "xhigh"), required=True)
+    # Owner's standing launch rule; reject before reservation or provider access.
+    parser.add_argument("--reasoning-effort", choices=("high",), default="high")
     parser.add_argument("--timeout-seconds", type=float, required=True)
     args = parser.parse_args()
     if not math.isfinite(args.timeout_seconds) or args.timeout_seconds <= 0:

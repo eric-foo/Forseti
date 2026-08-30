@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from judgment import semantic_evidence_integration as semantic_module
+
 import hashlib
 import json
 import os
@@ -6682,6 +6684,92 @@ def test_v10_schema_requires_one_subject_without_changing_v9_replay() -> None:
     )
 
 
+@pytest.mark.parametrize("axis_id,label", [
+    ("hydration_and_moisture", "Hydration and moisture"),
+    ("hydration_barrier_visible_results", "Hydration, barrier support, and visible results"),
+    ("custom-performance", "Performance under extended use"),
+])
+def test_v11_supplied_axis_vocabulary_reaches_all_current_consumers(axis_id, label) -> None:
+    source = _source_v10(count=1)
+    source["semantic_method_version"] = semantic_module.METHOD_VERSION_V11
+    source["axes"] = [{"axis_id": axis_id, "label": label}]
+    source["captured_items"][0]["axis_candidates"] = [axis_id]
+    bundle = build_bundle(source, max_prompt_bytes=30_000)
+    initial = build_batch_prompts(bundle)
+    schema = build_batch_response_schema(bundle, "batch-0001")
+    assert schema["$defs"]["semantic_unit"]["properties"]["axis_ids"]["items"]["enum"] == [axis_id]
+    assert schema["$defs"]["semantic_unit"]["properties"]["subject_product_ids"]["minItems"] == 1
+    assert "personal_agreement" not in schema["$defs"]["semantic_unit_no_parent_agreement"]["properties"]["evidence_posture"]["enum"]
+    responses = _keyed_responses(bundle)
+    evidence_id = bundle["batches"][0]["evidence_ids"][0]
+    decision = _claim_row(evidence_id)
+    decision.pop("evidence_id")
+    decision["semantic_units"][0]["axis_ids"] = [axis_id]
+    decision["semantic_units"][0]["subject_product_ids"] = ["summer-fridays-lip-butter-balm"]
+    responses[0]["decisions_by_evidence_id"][evidence_id] = decision
+    primary = validate_batch_responses(bundle, responses)
+    stage, verification = prepare_row_verification(bundle, primary)
+    assert stage["verification_method_version"] == semantic_module.ROW_VERIFICATION_METHOD_VERSION_V10
+    verified = apply_row_verification(bundle, primary, stage, _row_verification_responses(stage))
+    _, reconciliation = prepare_reconciliation_stage(bundle, verified)
+    _, repairs = prepare_row_repair(bundle, verified, evidence_ids=[evidence_id])
+    forbidden = ("shade_and_color_fit", "texture_and_skin_finish", "formula_consistency_and_change",
+                 "reaction_and_breakout", "hydration_and_moisture", "value_and_quantity")
+    for rendered in [*initial, *verification, *repairs]:
+        policy = rendered["prompt"].split("\n\nCURRENT_AXES\n", 1)[0]
+        assert "CURRENT_AXES is the sole vocabulary for output axis_ids" in policy
+        assert not any(identifier in policy for identifier in forbidden)
+        assert axis_id in rendered["prompt"]
+    # Reconciliation already uses a generic, ID-free policy and supplied candidates;
+    # do not replace it with the much larger extraction/verifier instruction stack.
+    for rendered in reconciliation:
+        policy = rendered["prompt"].split("\n\nCANDIDATES\n", 1)[0]
+        assert not any(identifier in policy for identifier in forbidden)
+        assert axis_id in rendered["prompt"]
+    assert build_batch_prompts(bundle) == initial
+    # Corrupt the semantic output, not its outer bundle/stage hashes.
+    foreign = deepcopy(responses)
+    foreign[0]["decisions_by_evidence_id"][evidence_id]["semantic_units"][0]["axis_ids"] = ["foreign-axis"]
+    with pytest.raises(SemanticIntegrationError, match="cites unknown axis"):
+        validate_batch_responses(bundle, foreign)
+    unassigned = deepcopy(responses)
+    unassigned_unit = unassigned[0]["decisions_by_evidence_id"][evidence_id]["semantic_units"][0]
+    unassigned_unit["axis_ids"] = []
+    unassigned_unit["emerging_axis_labels"] = ["unmapped bounded meaning"]
+    retained = validate_batch_responses(bundle, unassigned)
+    assert retained["semantic_units"][0]["axis_ids"] == []
+    assert retained["semantic_units"][0]["statement"] == decision["semantic_units"][0]["statement"]
+    # A coherently rehashed historical-method substitution must fail downstream.
+    forged = deepcopy(verified)
+    manifest = forged["row_verification_manifest"]
+    manifest["verification_method_version"] = ROW_VERIFICATION_METHOD_VERSION
+    manifest["verification_method_sha256"] = _canonical_hash(ROW_VERIFICATION_METHOD_TEXT)
+    manifest.pop("manifest_sha256")
+    manifest["manifest_sha256"] = _canonical_hash(manifest)
+    forged.pop("compilation_sha256")
+    forged["compilation_sha256"] = _canonical_hash(forged)
+    with pytest.raises(SemanticIntegrationError, match="does not bind the current verification method"):
+        prepare_reconciliation_stage(bundle, forged)
+
+
+def test_v11_preserves_historical_method_bytes_and_replay() -> None:
+    assert _canonical_hash(METHOD_TEXT_V10) == "59276fffa718e56ed71859f22607cf765cd8ff31dcb797100cda7037e59d1278"
+    assert _canonical_hash(ROW_VERIFICATION_METHOD_TEXT) == "309aa130e366a84c2d4b53ba34b117caf77858239db611574c1bb0ec10c5c5c4"
+    bundle = _bundle_v10(count=1)
+    responses = _keyed_responses(bundle)
+    evidence_id = bundle["batches"][0]["evidence_ids"][0]
+    decision = _claim_row(evidence_id)
+    decision.pop("evidence_id")
+    decision["semantic_units"][0]["subject_product_ids"] = ["summer-fridays-lip-butter-balm"]
+    responses[0]["decisions_by_evidence_id"][evidence_id] = decision
+    primary = validate_batch_responses(bundle, responses)
+    stage, prompts = prepare_row_verification(bundle, primary, max_prompt_bytes=30_000)
+    assert stage["verification_method_version"] == ROW_VERIFICATION_METHOD_VERSION
+    assert ROW_VERIFICATION_METHOD_TEXT in prompts[0]["prompt"]
+    verified = apply_row_verification(bundle, primary, stage, _row_verification_responses(stage))
+    prepare_reconciliation_stage(bundle, verified)
+
+
 def test_v8_keyed_response_normalizes_to_existing_compilation() -> None:
     bundle = _bundle_v8()
     compiled = validate_batch_responses(bundle, _keyed_responses(bundle))
@@ -7048,7 +7136,7 @@ def test_v5_rejects_wrong_response_generation_in_both_directions() -> None:
         (
             METHOD_VERSION_V3,
             BUNDLE_VERSION_V5,
-            "bundle v5 requires semantic method v5, v6, v7, v8, v9, or v10",
+            "bundle v5 requires semantic method v5, v6, v7, v8, v9, v10, or v11",
         ),
         (METHOD_VERSION_V5, BUNDLE_VERSION_V3, "method v5 requires bundle v5"),
     ],

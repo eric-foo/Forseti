@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v77
+version: v78
 effective_date: 2026-08-30
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v77
+# Semantic Evidence Integration Contract v78
 
 ## Purpose
 
@@ -78,6 +78,18 @@ Deterministic code owns:
 
 The agent never chooses its own evidence count, independence count, support
 posture, cross-venue credit, or causal strength.
+
+Current authoring uses run v9 / integration method v11 / row-verification
+method v10. `CURRENT_AXES` alone supplies valid output axis IDs. Category names
+in the semantic examples below describe meaning, not fixed identifiers or
+mandatory assignments across companies. The agent selects supplied IDs by the
+unit's meaning and the supplied labels; it never imports Summer Fridays IDs
+into a different inventory. Where no current axis fits, preserve supported
+meaning with empty `axis_ids` and an emerging-axis label where appropriate.
+Code still rejects foreign IDs; it does not translate categories or infer fit.
+Earlier run/method identities and their prompt bytes remain historical replay,
+not current cross-company authoring. No frozen output is rewritten or silently
+promoted into the new generation.
 
 Upstream `product_candidates` are hypotheses, not product truth. For the
 current method, every admitted item also carries source-pinned product context
@@ -546,6 +558,15 @@ is omitted from row verification, targeted audit, and reconciliation prompts,
 which retain their own response shapes. This removes contradictory response
 instructions without changing semantic policy, adding a provider call, or
 rewriting historical row-verifier v8 text.
+
+Contract v78 adds `phase_a_semantic_integration_run_v9` and integration method
+v11, retaining keyed transport v3, required subjects, and row-owned posture
+restrictions. Method v11 pairs with row-verification method v10; historical
+integration methods keep verifier v9. Current extraction, verification, targeted
+audit, repair, and reconciliation prose names semantic concepts instead of
+hard-coded example axis IDs. This corrects an observed Dieux prompt/inventory
+mismatch; it is not evidence that the mismatch caused the provider timeout or
+that latency or semantic quality improved.
 
 When one leaf evaluates two alternatives on the same attribute, the relative
 comparison remains evidence even if the observations occupy separate
@@ -1649,7 +1670,7 @@ Current-route operations are:
    denominator mismatches fail closed. Materialization never renders
    provisional prompts; prompt packing belongs only to `prepare-batches`.
 7. `prepare-batches` verifies sources, builds the method-bound bundle, proves
-   the work-unit bijection, and writes byte-bounded prompts. Current run v8 also
+   the work-unit bijection, and writes byte-bounded prompts. Current run v9 also
    writes one exact keyed provider-response schema per work unit. Historical v4
    bundles retain their deterministic three-worker assignment manifest; current
    v5 bundles encode no static worker topology.
@@ -1867,6 +1888,12 @@ The semantic-source boundary and complete bounded SERP-row linking enter at
 new frontier.
 
 ## Changelog
+
+- `v78` / 2026-08-30 — removed foreign example axis IDs from current shared
+  policy prose under run v9 / integration v11 / verifier v10. The supplied
+  inventory owns IDs; semantic judgment owns fit; existing validators reject
+  foreign IDs. Preserved historical method bytes and verifier replay. Added no
+  model stage, axis translator, or claim that this fixes provider latency.
 
 - `v77` / 2026-08-30 — isolated the keyed initial-batch response transport from
   downstream provider prompts after Dieux row-verification preparation rendered

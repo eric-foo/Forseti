@@ -151,6 +151,8 @@ invoked or resolver-loaded skills provide task-local mechanics only.
 repo-change isolation, receiver selection, the bounded-change fast path, and
 task-local tool-stall recovery. `.agents/workflow-overlay/prompt-orchestration.md`
 owns every durable prompt, handoff, wrapper, rerun, and patch prompt.
+All agent and provider launches use `high`, never `xhigh` or higher; apply the
+launch/inheritance rule in `docs/decisions/subagent_model_tiering_doctrine_v0.md`.
 Every entry into delegated review-and-patch -- including an explicit request or
 an automatic checkpoint from `success-implement`, `/fused`, implementation, or
 review -- is operator-courier prompt authoring only: immediately return one

@@ -31,6 +31,17 @@ failure. This is a conceptual and completion boundary between acquisition and
 Deliver, not a new globally numbered phase: historical Phase A, Phase B, Turn
 B, Understanding, and Deliver vocabulary is not renumbered or migrated.
 
+For new cross-company authoring, use `phase_a_semantic_integration_run_v9`
+(integration method v11, verifier v10). The supplied `CURRENT_AXES` inventory
+owns output IDs; shared examples describe concepts, never another company's
+required IDs. Preserve a supported meaning even when it needs an emerging-axis
+label instead of an existing axis. See the semantic-integration contract v78
+for the owning rule. Historical run v8 / method v10 and earlier artifacts keep
+their original identity and replay; do not edit frozen outputs or relabel old
+responses as a new-method proof. This correction does not establish the cause
+of Dieux's provider timeout. All new model attempts use `high` under the
+operator rule in `docs/decisions/subagent_model_tiering_doctrine_v0.md`.
+
 ## Before changing Phase A evidence machinery
 
 Use these regression anchors before changing the Phase A point-pack, selection,

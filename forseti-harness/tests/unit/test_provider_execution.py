@@ -12,12 +12,49 @@ from types import SimpleNamespace
 import pytest
 
 import provider_execution
+from runners import run_codex_provider_attempt
 from harness_utils import sha256_bytes
 from provider_attempts import publish_provider_attempt, reserve_provider_attempt
 from provider_execution import execute_provider_attempt
 
 
 USAGE = {"input_tokens": 120, "cached_input_tokens": 40, "output_tokens": 25, "reasoning_output_tokens": 9}
+
+
+@pytest.mark.parametrize("effort", [None, "high", "xhigh", "max", "medium"])
+def test_provider_runner_high_only_before_reservation_or_launch(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture,
+    effort: str | None,
+) -> None:
+    prompt, schema = tmp_path / "prompt.md", tmp_path / "schema.json"
+    prompt.write_text("test")
+    schema.write_text("{}")
+    root = tmp_path / "attempts"
+    argv = ["runner", "--attempt-root", str(root), "--attempt-id", "test-001",
+            "--prompt-file", str(prompt), "--output-schema", str(schema),
+            "--worktree", str(tmp_path), "--model", "test-model", "--timeout-seconds", "5"]
+    if effort is not None:
+        argv += ["--reasoning-effort", effort]
+    monkeypatch.setattr(sys, "argv", argv)
+    monkeypatch.setattr(run_codex_provider_attempt.shutil, "which", lambda _: "test-codex")
+    launches = []
+
+    def capture(**kwargs):
+        launches.append(kwargs["command"])
+        return {"outcome": "PROCESS_COMPLETED"}
+
+    monkeypatch.setattr(run_codex_provider_attempt, "execute_provider_attempt", capture)
+    if effort in (None, "high"):
+        assert run_codex_provider_attempt.main() == 0
+        assert len(launches) == 1
+        assert 'model_reasoning_effort="high"' in launches[0]
+    else:
+        with pytest.raises(SystemExit) as error:
+            run_codex_provider_attempt.main()
+        assert error.value.code == 2
+        assert "--reasoning-effort: invalid choice" in capsys.readouterr().err
+        assert launches == []
+        assert not root.exists()
 
 
 def _setup(tmp_path: Path, name: str = "attempt-001") -> tuple[Path, Path]:
