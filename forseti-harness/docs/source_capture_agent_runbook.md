@@ -630,9 +630,12 @@ evidence replacement, or a claim that byte reduction proves quality.
 Reddit HTML body projection preserves inline text in document order and carries
 source blockquotes as explicit `<blockquote> ... </blockquote>` text boundaries.
 The markers identify quoted material, not its author or an independent source.
+They are in-band text and can collide with customer-typed marker lookalikes.
 Empty quote markup adds no body text. Old-Reddit parser `2` and www parser
 `www-3` distinguish this correction from historical projections; old-Reddit
-titles use the title link rather than adjacent flair/domain text. Raw captures
+titles use the title link rather than adjacent flair/domain text. A post that
+exposes no title link still falls back to the whole `title` element and can
+carry adjacent flair/domain text. Raw captures
 and previously written records remain unchanged. To recover affected inputs,
 reproject the existing raw capture into a new derived output, rebuild its
 source/bundle lineage, and revalidate downstream consumers. Never relabel an old
