@@ -2343,6 +2343,84 @@ def test_method_v7_flat_finalization_uses_credited_public_origins() -> None:
     assert support["support_posture"] == "isolated"
 
 
+@pytest.mark.parametrize("method", [semantic_module.METHOD_VERSION_V11, semantic_module.METHOD_VERSION_V12])
+def test_current_reconciliation_preserves_literal_conditions_and_bounded_scope(method) -> None:
+    source = _source_v10(count=1)
+    source["semantic_method_version"] = method
+    bundle = build_bundle(source, max_prompt_bytes=30_000)
+    responses = _keyed_responses(bundle)
+    evidence_id = bundle["batches"][0]["evidence_ids"][0]
+    decision = _claim_row(evidence_id)
+    decision.pop("evidence_id")
+    decision["semantic_units"][0]["subject_product_ids"] = ["summer-fridays-lip-butter-balm"]
+    decision["semantic_units"][0]["conditions"] = ["Winter and overnight use."]
+    responses[0]["decisions_by_evidence_id"][evidence_id] = decision
+    primary = validate_batch_responses(bundle, responses)
+    verification_stage, _ = prepare_row_verification(bundle, primary)
+    verified = apply_row_verification(bundle, primary, verification_stage, _row_verification_responses(verification_stage))
+    stage, prompts = prepare_reconciliation_stage(bundle, verified, reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2)
+    policy = prompts[0]["prompt"].split("\n\nCANDIDATES\n", 1)[0]
+    current = method == semantic_module.METHOD_VERSION_V12
+    assert ("Copy every child condition verbatim" in policy) is current
+    assert ("unnamed item does not establish a range-wide claim" in policy) is current
+    assert ("Purchase intent, acquisition, use, and repurchase are different states" in policy) is current
+    assert ("generic approval does not establish a particular benefit" in policy) is current
+    assert ("TERMINAL_SOURCE_ROLE_COMPETENCE" in policy) is current
+    assert ("counter leaves under a counter child both count" in policy) is current
+    assert ('"source_roles_by_relation"' in prompts[0]["prompt"]) is current
+    if current:
+        # The prompt states the composition rule instead of asking the model to
+        # rederive it, so keep that sentence pinned to _relation_product itself.
+        assert all(
+            (semantic_module._relation_product(child, leaf) == "support")
+            is (child == leaf and "adjacent" not in {child, leaf})
+            for child in semantic_module.RELATIONS
+            for leaf in semantic_module.RELATIONS
+        )
+        agent_rows = json.loads(prompts[0]["prompt"].split("\n\nCANDIDATES\n", 1)[1])
+        assert agent_rows[0]["source_roles_by_relation"] == {
+            "support": ["community_post"], "counter": [], "adjacent": []}
+        assert "community_post" not in semantic_module._competent_roles("observable_fact")
+        competence = json.loads(policy.split("\nTERMINAL_SOURCE_ROLE_COMPETENCE\n", 1)[1].split("\n", 1)[0])
+        assert competence == {kind: sorted(semantic_module._competent_roles(kind)) for kind in semantic_module.CLAIM_KINDS}
+    assert prompts[0]["prompt_utf8_bytes"] == len(prompts[0]["prompt"].encode("utf-8"))
+    assert prompts[0]["prompt_utf8_bytes"] <= bundle["max_prompt_bytes"]
+    assert prepare_reconciliation_stage(bundle, verified, reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2) == (stage, prompts)
+    correct = _group_level_responses(stage, terminal=True)
+    for field in ("subject_product_ids", "comparator_product_ids", "product_version_ids", "axis_ids", "conditions"):
+        correct[0]["semantic_nodes"][0][field] = list(stage["candidates"][0][field])
+    nodes = validate_reconciliation_stage(bundle, stage, correct)
+    _, next_prompts = prepare_reconciliation_stage(bundle, nodes)
+    assert all(("Copy every child condition verbatim" in row["prompt"]) is current for row in next_prompts)
+    assert all(('"source_roles_by_relation"' in row["prompt"]) is current for row in next_prompts)
+    changed = deepcopy(correct)
+    changed[0]["semantic_nodes"][0]["conditions"] = ["For one author, winter and overnight use."]
+    with pytest.raises(SemanticIntegrationError, match="drops a child condition"):
+        validate_reconciliation_stage(bundle, stage, changed)
+    wrong_kind = deepcopy(correct)
+    wrong_kind[0]["semantic_nodes"][0]["claim_kind"] = "observable_fact"
+    with pytest.raises(SemanticIntegrationError, match="source roles incompetent for observable_fact"):
+        validate_reconciliation_stage(bundle, stage, wrong_kind)
+
+
+def test_current_reconciliation_role_projection_preserves_relation_orientation() -> None:
+    candidate = {
+        "candidate_ref": "node", "statement": "bounded", "subject_product_ids": ["product"],
+        "comparator_product_ids": [], "product_version_ids": [], "axis_ids": [],
+        "emerging_axis_labels": [], "conditions": [], "polarity": "affirmed",
+        "uncertainty_posture": "asserted",
+        "leaf_relations": [{"semantic_unit_ref": "one::u", "relation": "support"},
+                           {"semantic_unit_ref": "two::u", "relation": "counter"}],
+    }
+    index = {"one": {"source_role": "community_post"}, "two": {"source_role": "owned_source"}}
+    projected = semantic_module._agent_reconciliation_candidate(candidate, evidence_index=index, include_source_roles=True)
+    assert projected["source_roles_by_relation"] == {
+        "support": ["community_post"], "counter": ["owned_source"], "adjacent": []}
+    assert "source_roles_by_relation" not in semantic_module._agent_reconciliation_candidate(candidate)
+    with pytest.raises(SemanticIntegrationError, match="prompt lacks source roles"):
+        semantic_module._agent_reconciliation_candidate(candidate, include_source_roles=True)
+
+
 def test_historical_methods_keep_their_frozen_reconciliation_posture_wording() -> None:
     # The agreement/origin sentence states a method-v7 rule. Methods v5 and v6
     # still credit personal_agreement in finalization, so emitting it for them
