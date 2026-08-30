@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v78
+version: v79
 effective_date: 2026-08-30
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v78
+# Semantic Evidence Integration Contract v79
 
 ## Purpose
 
@@ -1703,13 +1703,18 @@ Current-route operations are:
     `finalize-relation-closed` to write view v3. `prepare-row-repair` /
     `submit-row-repair` may correct named source rows first; any repair restarts
     reconciliation from its new verified compilation hash.
-17. `prepare-calibration` reads a hash-pinned method-v5-or-v6 source and blind
+17. `prepare-calibration` reads a hash-pinned source and blind
     owner gold, projects exact bounded slices, and writes route-native sources,
     bundles, fingerprints, and prompts. The calibration spec deliberately
     selects the method being tested and may retarget the same pinned evidence
     from the source's method marker; the route fingerprint binds the selected
     method and exact method hash, so this is explicit method comparison rather
     than fallback. It makes no model call and cannot authorize a corpus run.
+    Supported targets are historical methods v5/v6 and the production-owned
+    `SEMANTIC_METHODS_V7_PLUS` set (currently v7-v11). Every target in that set
+    requires a provenance-bound row-verified compilation for both primary and
+    configured cold-repeat evaluation. A new keyed response transport does not
+    waive verification; historical v5/v6 replay behavior remains unchanged.
 18. `evaluate-calibration` runs the existing response validator, then evaluates
     disposition, unit-count, product/axis/posture, atomic-meaning, cross-source,
     anomaly, and selective cold-repeat obligations. Semantic atom, relation,
@@ -1889,6 +1894,15 @@ new frontier.
 
 ## Changelog
 
+- `v79` / 2026-08-30 — repaired calibration's stale v5/v6/v7-only admission
+  and v7-only mandatory-verification checks by consuming the existing
+  production-owned `SEMANTIC_METHODS_V7_PLUS` set at admission, primary
+  evaluation, and cold-repeat evaluation. Reached during Dieux completion:
+  the current method-v11 run could not enter the required readiness check.
+  The fix adds no semantic method, provider call, schema, or new gate; keyed
+  response identity remains bound by the existing route fingerprint. Existing
+  historical replay stays isolated. Passing checker tests or preparing Dieux
+  inputs does not establish semantic accuracy or full-corpus readiness.
 - `v78` / 2026-08-30 — removed foreign example axis IDs from current shared
   policy prose under run v9 / integration v11 / verifier v10. The supplied
   inventory owns IDs; semantic judgment owns fit; existing validators reject

@@ -42,6 +42,13 @@ responses as a new-method proof. This correction does not establish the cause
 of Dieux's provider timeout. All new model attempts use `high` under the
 operator rule in `docs/decisions/subagent_model_tiering_doctrine_v0.md`.
 
+The existing calibration entry point follows the production-owned
+`SEMANTIC_METHODS_V7_PLUS` set, including current method v11, rather than a
+separate historical allowlist. Primary and cold-repeat evaluation both require
+their own exact row-verified compilation for those methods. Contract v79 owns
+this compatibility correction; it neither changes semantic prompts nor makes
+a prepared calibration slice a passing readiness proof.
+
 ## Before changing Phase A evidence machinery
 
 Use these regression anchors before changing the Phase A point-pack, selection,

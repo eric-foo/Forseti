@@ -18,7 +18,7 @@ from judgment.semantic_evidence_integration import (
     BUNDLE_VERSION_V5,
     METHOD_VERSION_V5,
     METHOD_VERSION_V6,
-    METHOD_VERSION_V7,
+    SEMANTIC_METHODS_V7_PLUS,
     SemanticIntegrationError,
     build_batch_prompts,
     build_bundle,
@@ -372,10 +372,10 @@ def validate_calibration_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
     if spec.get("method_version") not in {
         METHOD_VERSION_V5,
         METHOD_VERSION_V6,
-        METHOD_VERSION_V7,
+        *SEMANTIC_METHODS_V7_PLUS,
     }:
         raise SemanticCalibrationError(
-            "calibration spec must target semantic method v5, v6, or v7"
+            "calibration spec must target semantic method v5, v6, or a supported row-verified method"
         )
     route_contract = spec.get("route_contract")
     required_route_fields = {
@@ -1235,11 +1235,11 @@ def evaluate_semantic_calibration(
             rows, compiled = _response_rows(bundle, responses)
             verified_compilation = verified_compilations.get(slice_id)
             if (
-                bundle.get("method_version") == METHOD_VERSION_V7
+                bundle.get("method_version") in SEMANTIC_METHODS_V7_PLUS
                 and verified_compilation is None
             ):
                 raise SemanticIntegrationError(
-                    "method v7 calibration requires a row-verified compilation"
+                    "row-verified method calibration requires a row-verified compilation"
                 )
             if verified_compilation is not None:
                 validate_row_verified_compilation(
@@ -1638,11 +1638,11 @@ def evaluate_semantic_calibration(
                         )
                         verified_cold = verified_compilations.get("cold-repeat")
                         if (
-                            cold_bundle.get("method_version") == METHOD_VERSION_V7
+                            cold_bundle.get("method_version") in SEMANTIC_METHODS_V7_PLUS
                             and verified_cold is None
                         ):
                             raise SemanticIntegrationError(
-                                "method v7 cold repeat requires a row-verified compilation"
+                                "row-verified method cold repeat requires a row-verified compilation"
                             )
                         if verified_cold is not None:
                             validate_row_verified_compilation(

@@ -5118,8 +5118,12 @@ def _calibration_spec(source: dict, *, forbidden_product: str | None = None) -> 
             "contract_version": "v11-test",
             "method_sha256": route_bundle["method_sha256"],
             "bundle_schema_version": BUNDLE_VERSION_V5,
-            "response_schema_version": BATCH_RESPONSE_VERSION_V3,
-            "prompt_encoding_version": PROMPT_ENCODING_VERSION,
+            "response_schema_version": route_bundle["semantic_work_unit_projection"][
+                "semantic_execution_identity"
+            ]["response_schema_version"],
+            "prompt_encoding_version": route_bundle["semantic_work_unit_projection"][
+                "semantic_execution_identity"
+            ]["prompt_encoding_version"],
             "axes_sha256": _canonical_hash(source["axes"]),
             "product_identity_catalog_sha256": source.get(
                 "product_identity_catalog", {}
@@ -5235,6 +5239,79 @@ def _calibration_adjudication(spec: dict, compilation_sha256: str) -> dict:
     }
     adjudication["adjudication_sha256"] = _canonical_hash(adjudication)
     return adjudication
+
+
+@pytest.mark.parametrize("method", sorted(semantic_module.SEMANTIC_METHODS_V7_PLUS))
+def test_calibration_current_methods_require_verified_primary_and_repeat(method) -> None:
+    source = _source_v7(count=2)
+    source["semantic_method_version"] = method
+    source = materialize_source_v3(source)
+    spec = _calibration_spec(source)
+    spec["cold_repeat_case_ids"] = ["drying-after-week"]
+    spec["cold_repeat"] = {
+        "max_prompt_bytes": 12_000,
+        "max_evidence_per_work_unit": 120,
+        "minimum_largest_prompt_bytes": 1_000,
+    }
+    spec["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in spec.items() if key != "spec_sha256"}
+    )
+    prepared = prepare_semantic_calibration(source, spec)
+    assert prepared == prepare_semantic_calibration(source, spec)
+    responses, verified = {}, {}
+    for name, part in (("semantic-core", prepared["slices"][0]),
+                       ("cold-repeat", prepared["cold_repeat"])):
+        bundle = part["bundle"]
+        assert bundle["method_version"] == method
+        responses[name] = [
+            semantic_module._batch_response_from_rows(
+                bundle, batch["batch_id"], [_claim_row(eid) for eid in batch["evidence_ids"]]
+            ) for batch in bundle["batches"]
+        ]
+        raw = validate_batch_responses(bundle, responses[name])
+        stage, _ = prepare_row_verification(bundle, raw, max_prompt_bytes=30_000)
+        verified[name] = apply_row_verification(
+            bundle, raw, stage, _row_verification_responses(stage)
+        )
+    adjudication = _calibration_adjudication(spec, verified["semantic-core"]["compilation_sha256"])
+    adjudication["cold_repeat_adjudications"] = [{
+        "case_id": "drying-after-week",
+        "primary_compilation_sha256": verified["semantic-core"]["compilation_sha256"],
+        "repeat_compilation_sha256": verified["cold-repeat"]["compilation_sha256"],
+        "outcome": "consistent",
+    }]
+    adjudication["adjudication_sha256"] = _canonical_hash(
+        {key: value for key, value in adjudication.items() if key != "adjudication_sha256"}
+    )
+
+    def evaluate(supplied):
+        return evaluate_semantic_calibration(
+            prepared, spec, {"semantic-core": responses["semantic-core"]}, adjudication,
+            {"cold-repeat": responses["cold-repeat"]}, None, supplied, full_source=source,
+        )
+
+    report = evaluate(verified)
+    assert report["status"] == "SEMANTIC_CALIBRATION_PASS", report
+    for omitted, code in (("semantic-core", "STRUCTURAL_VALIDATION_FAILED"),
+                          ("cold-repeat", "COLD_STRUCTURAL_VALIDATION_FAILED")):
+        report = evaluate({key: value for key, value in verified.items() if key != omitted})
+        assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+        assert any(row["code"] == code and "requires a row-verified compilation" in row["detail"]
+                   for row in report["hard_failures"]), report
+
+    # Hash-valid primary verification cannot stand in for another compilation.
+    report = evaluate({**verified, "cold-repeat": verified["semantic-core"]})
+    assert report["status"] == "SEMANTIC_CALIBRATION_FAIL"
+    assert any(row["code"] == "COLD_STRUCTURAL_VALIDATION_FAILED"
+               and row["detail"] == "row-verified calibration compilation does not match bundle"
+               for row in report["hard_failures"]), report
+    changed = deepcopy(spec)
+    changed["route_contract"]["method_sha256"] = "0" * 64
+    changed["spec_sha256"] = _canonical_hash(
+        {key: value for key, value in changed.items() if key != "spec_sha256"}
+    )
+    with pytest.raises(SemanticCalibrationError, match="route contract mismatch: method_sha256"):
+        prepare_semantic_calibration(source, changed)
 
 
 def test_calibration_spec_rejects_machine_output_leakage() -> None:
