@@ -127,7 +127,10 @@ def _load_prepared_prompts(
     slice_dir: Path, bundle: dict[str, Any]
 ) -> list[dict[str, Any]]:
     prompt_dir = slice_dir / "prompts"
-    expected_ids = [row["batch_id"] for row in bundle.get("batches", [])]
+    expected_prompts = {
+        row["batch_id"]: row for row in build_batch_prompts(bundle)
+    }
+    expected_ids = list(expected_prompts)
     observed_paths = {
         path.stem: path for path in prompt_dir.glob("*.md") if path.is_file()
     }
@@ -138,7 +141,9 @@ def _load_prepared_prompts(
         prompt_text = observed_paths[batch_id].read_bytes().decode("utf-8")
         prompts.append(
             {
-                "batch_id": batch_id,
+                # Metadata comes from the bound producer; prompt text must still
+                # come from disk so substitution remains observable to evaluation.
+                **expected_prompts[batch_id],
                 "prompt": prompt_text,
                 "prompt_utf8_bytes": len(prompt_text.encode("utf-8")),
             }

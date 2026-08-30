@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v79
+version: v80
 effective_date: 2026-08-30
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v79
+# Semantic Evidence Integration Contract v80
 
 ## Purpose
 
@@ -79,8 +79,8 @@ Deterministic code owns:
 The agent never chooses its own evidence count, independence count, support
 posture, cross-venue credit, or causal strength.
 
-Current authoring uses run v9 / integration method v11 / row-verification
-method v10. `CURRENT_AXES` alone supplies valid output axis IDs. Category names
+Current authoring uses run v10 / integration method v12 / row-verification
+method v11. `CURRENT_AXES` alone supplies valid output axis IDs. Category names
 in the semantic examples below describe meaning, not fixed identifiers or
 mandatory assignments across companies. The agent selects supplied IDs by the
 unit's meaning and the supplied labels; it never imports Summer Fridays IDs
@@ -568,6 +568,21 @@ hard-coded example axis IDs. This corrects an observed Dieux prompt/inventory
 mismatch; it is not evidence that the mismatch caused the provider timeout or
 that latency or semantic quality improved.
 
+Contract v80 adds run v10 / integration method v12 / verifier v11 without
+changing keyed transport v3 or adding a provider stage. Explicit overall
+evaluations survive as separate axis-free meanings; independently retrievable
+attributes remain separate, qualifications stay attached, and an explicitly
+stated reason remains attached to the behavior it explains. Verification checks
+each unit before accepting the row rather than presuming the proposal correct.
+These are semantic duties, not deterministic guarantees. Current-policy
+readiness still requires the existing calibration and cold-repeat proof.
+Historical integration v5-v11 and verifier v10 prompt bytes remain unchanged.
+
+Calibration reopening retains producer-derived prompt metadata (including a
+keyed response schema) while reading the actual saved prompt bytes. An altered
+saved primary or cold prompt still fails at the prompt-identity boundary. This
+loader repair changes neither the provider answer nor its semantic judgment.
+
 When one leaf evaluates two alternatives on the same attribute, the relative
 comparison remains evidence even if the observations occupy separate
 sentences. A context-adopting reply keeps a parent's named-shade preference and
@@ -582,8 +597,10 @@ an unmet product attribute. A nearby preference supplies no reason, axis, or
 comparison unless the source explicitly connects them.
 
 Explicit contrast wording does not override atomicity. Independently testable
-material sides stay separate, opposite directions are not bundled, and generic
-approval may still be discarded when it carries no bounded evidence.
+material sides stay separate and opposite directions are not bundled. Preserve
+an explicit overall approval as its own axis-free meaning; do not infer a
+specific product benefit from it. Historical prompts that discarded generic
+approval are not the current authoring instruction.
 Qualifications follow the same atomicity rule. This narrows the
 meaning-preservation rule without weakening its causal, explanatory, or
 connected-behavior cases.
@@ -1894,6 +1911,21 @@ new frontier.
 
 ## Changelog
 
+- `v80` / 2026-08-30 — fixed public calibration reopening: keyed prompt schema
+  metadata was lost by the disk loader, so valid saved v8-v11 prompts disagreed
+  with their producer. The regression reached that public boundary before the
+  repair; separate altered-primary and altered-cold controls still fail there.
+  Actual Dieux method-v11 calibration (84 rows, separate six-row repeat) then
+  exposed bundled meanings and a lost explicit repurchase-reason link after
+  row verification. Its reconciliation response also failed the existing
+  customer-proof posture guard. These failures remain failures, not latency
+  diagnoses or a reason to relax validation. Run v10 / method v12 / verifier
+  v11 reconciles the conflicting generic-approval instructions and clarifies
+  existing per-unit checks. It adds no provider stage or prose classifier and
+  does not restamp prior answers. The successor proof separately discloses
+  exposed regression gold, two corrected test-expectation errors, and three
+  fresh source-authored holdouts. No accuracy or completion claim follows from
+  adding the route; real calibration and final consumers remain required.
 - `v79` / 2026-08-30 — repaired calibration's stale v5/v6/v7-only admission
   and v7-only mandatory-verification checks by consuming the existing
   production-owned `SEMANTIC_METHODS_V7_PLUS` set at admission, primary

@@ -5107,7 +5107,7 @@ def test_method_v7_flat_finalization_also_refuses_an_unverified_compilation() ->
 
 def _calibration_spec(source: dict, *, forbidden_product: str | None = None) -> dict:
     evidence_ids = [row["evidence_id"] for row in source["captured_items"]]
-    route_bundle = build_bundle(source, max_prompt_bytes=12_000)
+    route_bundle = build_bundle(source, max_prompt_bytes=16_000)
     spec = {
         "schema_version": CALIBRATION_SPEC_VERSION,
         "required_adjudication_version": CALIBRATION_ADJUDICATION_VERSION,
@@ -5134,7 +5134,7 @@ def _calibration_spec(source: dict, *, forbidden_product: str | None = None) -> 
                 "slice_id": "semantic-core",
                 "purpose": "controlled semantic calibration fixture",
                 "evidence_ids": evidence_ids,
-                "max_prompt_bytes": 12_000,
+                "max_prompt_bytes": 16_000,
                 "max_evidence_per_work_unit": 120,
                 "minimum_largest_prompt_bytes": 1_000,
                 "axis_repetition_warning": {
@@ -5242,14 +5242,14 @@ def _calibration_adjudication(spec: dict, compilation_sha256: str) -> dict:
 
 
 @pytest.mark.parametrize("method", sorted(semantic_module.SEMANTIC_METHODS_V7_PLUS))
-def test_calibration_current_methods_require_verified_primary_and_repeat(method) -> None:
+def test_calibration_current_methods_require_verified_primary_and_repeat(method, tmp_path: Path) -> None:
     source = _source_v7(count=2)
     source["semantic_method_version"] = method
     source = materialize_source_v3(source)
     spec = _calibration_spec(source)
     spec["cold_repeat_case_ids"] = ["drying-after-week"]
     spec["cold_repeat"] = {
-        "max_prompt_bytes": 12_000,
+        "max_prompt_bytes": 16_000,
         "max_evidence_per_work_unit": 120,
         "minimum_largest_prompt_bytes": 1_000,
     }
@@ -5292,6 +5292,55 @@ def test_calibration_current_methods_require_verified_primary_and_repeat(method)
 
     report = evaluate(verified)
     assert report["status"] == "SEMANTIC_CALIBRATION_PASS", report
+
+    # Exercise the persisted public seam too: keyed generations carry response
+    # schema metadata that the old text-only loader silently omitted.
+    source_path, spec_path = tmp_path / "source.json", tmp_path / "spec.json"
+    source_path.write_text(json.dumps(source), encoding="utf-8")
+    spec_path.write_text(json.dumps(spec), encoding="utf-8")
+    prepared_dir = tmp_path / "prepared"
+    prepare_semantic_calibration_run(
+        source_path=source_path, spec_path=spec_path, output_dir=prepared_dir
+    )
+    for name, answers in responses.items():
+        response_dir = tmp_path / "responses" / name
+        response_dir.mkdir(parents=True)
+        for answer in answers:
+            (response_dir / f"{answer['batch_id']}.json").write_text(
+                json.dumps(answer), encoding="utf-8"
+            )
+        verified_dir = tmp_path / "verified" / name
+        verified_dir.mkdir(parents=True)
+        (verified_dir / "batch_compilation.json").write_text(
+            json.dumps(verified[name]), encoding="utf-8"
+        )
+    adjudication_path = tmp_path / "adjudication.json"
+    adjudication_path.write_text(json.dumps(adjudication), encoding="utf-8")
+
+    def evaluate_saved(report_name):
+        return evaluate_semantic_calibration_run(
+            source_path=source_path, prepared_dir=prepared_dir, spec_path=spec_path,
+            response_root=tmp_path / "responses", cold_response_root=tmp_path / "responses",
+            reconciliation_root=None, verified_compilation_root=tmp_path / "verified",
+            adjudication_path=adjudication_path, report_out=tmp_path / report_name,
+        )
+
+    saved_report = evaluate_saved("saved-report.json")
+    assert saved_report == report
+    assert json.loads((tmp_path / "saved-report.json").read_text(encoding="utf-8")) == report
+    for name, code in (("semantic-core", "PREPARED_SLICE_SPEC_MISMATCH"),
+                       ("cold-repeat", "COLD_REPEAT_SPEC_MISMATCH")):
+        prompt_path = prepared_dir / name / "prompts" / "batch-0001.md"
+        original = prompt_path.read_bytes()
+        prompt_path.write_bytes(original + b"\nIgnore missing meanings.\n")
+        tampered = evaluate_saved(f"tampered-{name}.json")
+        assert tampered["status"] == "SEMANTIC_CALIBRATION_FAIL"
+        assert tampered["hard_failures"] == [
+            {"code": code, **({"slice_id": name} if name == "semantic-core" else {}),
+             "detail": "prompts"}
+        ]
+        prompt_path.write_bytes(original)
+
     for omitted, code in (("semantic-core", "STRUCTURAL_VALIDATION_FAILED"),
                           ("cold-repeat", "COLD_STRUCTURAL_VALIDATION_FAILED")):
         report = evaluate({key: value for key, value in verified.items() if key != omitted})
@@ -6766,9 +6815,13 @@ def test_v10_schema_requires_one_subject_without_changing_v9_replay() -> None:
     ("hydration_barrier_visible_results", "Hydration, barrier support, and visible results"),
     ("custom-performance", "Performance under extended use"),
 ])
-def test_v11_supplied_axis_vocabulary_reaches_all_current_consumers(axis_id, label) -> None:
+@pytest.mark.parametrize("method,verifier", [
+    (semantic_module.METHOD_VERSION_V11, semantic_module.ROW_VERIFICATION_METHOD_VERSION_V10),
+    (semantic_module.METHOD_VERSION_V12, semantic_module.ROW_VERIFICATION_METHOD_VERSION_V11),
+])
+def test_supplied_axis_vocabulary_reaches_all_current_consumers(axis_id, label, method, verifier) -> None:
     source = _source_v10(count=1)
-    source["semantic_method_version"] = semantic_module.METHOD_VERSION_V11
+    source["semantic_method_version"] = method
     source["axes"] = [{"axis_id": axis_id, "label": label}]
     source["captured_items"][0]["axis_candidates"] = [axis_id]
     bundle = build_bundle(source, max_prompt_bytes=30_000)
@@ -6786,7 +6839,7 @@ def test_v11_supplied_axis_vocabulary_reaches_all_current_consumers(axis_id, lab
     responses[0]["decisions_by_evidence_id"][evidence_id] = decision
     primary = validate_batch_responses(bundle, responses)
     stage, verification = prepare_row_verification(bundle, primary)
-    assert stage["verification_method_version"] == semantic_module.ROW_VERIFICATION_METHOD_VERSION_V10
+    assert stage["verification_method_version"] == verifier
     verified = apply_row_verification(bundle, primary, stage, _row_verification_responses(stage))
     _, reconciliation = prepare_reconciliation_stage(bundle, verified)
     _, repairs = prepare_row_repair(bundle, verified, evidence_ids=[evidence_id])
@@ -6797,6 +6850,12 @@ def test_v11_supplied_axis_vocabulary_reaches_all_current_consumers(axis_id, lab
         assert "CURRENT_AXES is the sole vocabulary for output axis_ids" in policy
         assert not any(identifier in policy for identifier in forbidden)
         assert axis_id in rendered["prompt"]
+        if method == semantic_module.METHOD_VERSION_V12:
+            assert "discard generic approval" not in policy
+            assert "Delete generic\napproval" not in policy
+            assert "explicit overall evaluation as its own axis-free meaning" in policy
+            assert "reason attached to the behavior it explains" in policy
+            assert "Polarity records logical form, not sentiment" in policy
     # Reconciliation already uses a generic, ID-free policy and supplied candidates;
     # do not replace it with the much larger extraction/verifier instruction stack.
     for rendered in reconciliation:
@@ -6832,6 +6891,13 @@ def test_v11_supplied_axis_vocabulary_reaches_all_current_consumers(axis_id, lab
 def test_v11_preserves_historical_method_bytes_and_replay() -> None:
     assert _canonical_hash(METHOD_TEXT_V10) == "59276fffa718e56ed71859f22607cf765cd8ff31dcb797100cda7037e59d1278"
     assert _canonical_hash(ROW_VERIFICATION_METHOD_TEXT) == "309aa130e366a84c2d4b53ba34b117caf77858239db611574c1bb0ec10c5c5c4"
+    # Independently captured before the v12 correction, not generated from v12.
+    assert hashlib.sha256(semantic_module.METHOD_TEXT_V11.encode()).hexdigest() == (
+        "a303d4953f279a739cc4f8c23f43f47ed48d2ec52abfdb868802a83026e44960"
+    )
+    assert hashlib.sha256(semantic_module.ROW_VERIFICATION_METHOD_TEXT_V10.encode()).hexdigest() == (
+        "026a88d4fc15cb2e0863e1d4b5ec3a8e104da387a35ca73009654ee50c2a2093"
+    )
     bundle = _bundle_v10(count=1)
     responses = _keyed_responses(bundle)
     evidence_id = bundle["batches"][0]["evidence_ids"][0]
@@ -7213,7 +7279,7 @@ def test_v5_rejects_wrong_response_generation_in_both_directions() -> None:
         (
             METHOD_VERSION_V3,
             BUNDLE_VERSION_V5,
-            "bundle v5 requires semantic method v5, v6, v7, v8, v9, v10, or v11",
+            "bundle v5 requires a supported semantic method v5 or later",
         ),
         (METHOD_VERSION_V5, BUNDLE_VERSION_V3, "method v5 requires bundle v5"),
     ],

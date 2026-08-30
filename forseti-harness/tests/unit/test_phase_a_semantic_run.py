@@ -2389,6 +2389,18 @@ def test_run_spec_v9_selects_inventory_owned_axes_without_relabeling_v8(tmp_path
     ] == BATCH_KEYED_RESPONSE_VERSION_V3
 
 
+def test_run_spec_v10_selects_reconciled_meaning_policy_without_relabeling_v9(tmp_path: Path) -> None:
+    spec = _spec_v8(tmp_path)
+    spec["schema_version"] = "phase_a_semantic_integration_run_v10"
+    source, _ = materialize_phase_a_v3(spec, repo_root=tmp_path)
+    bundle = build_bundle(source, max_prompt_bytes=20_000)
+    assert source["semantic_method_version"] == "semantic_evidence_integration_method_v12"
+    assert bundle["method_version"] == "semantic_evidence_integration_method_v12"
+    assert bundle["semantic_work_unit_projection"]["semantic_execution_identity"][
+        "response_schema_version"
+    ] == BATCH_KEYED_RESPONSE_VERSION_V3
+
+
 def test_new_generation_status_is_global_not_partition_owned(tmp_path: Path) -> None:
     bundle = _v5_bundle(tmp_path)
     interrupted = run_status(bundle=bundle, batch_responses=[])

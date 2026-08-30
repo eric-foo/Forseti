@@ -31,23 +31,34 @@ failure. This is a conceptual and completion boundary between acquisition and
 Deliver, not a new globally numbered phase: historical Phase A, Phase B, Turn
 B, Understanding, and Deliver vocabulary is not renumbered or migrated.
 
-For new cross-company authoring, use `phase_a_semantic_integration_run_v9`
-(integration method v11, verifier v10). The supplied `CURRENT_AXES` inventory
+For new cross-company authoring, use `phase_a_semantic_integration_run_v10`
+(integration method v12, verifier v11). The supplied `CURRENT_AXES` inventory
 owns output IDs; shared examples describe concepts, never another company's
 required IDs. Preserve a supported meaning even when it needs an emerging-axis
-label instead of an existing axis. See the semantic-integration contract v78
-for the owning rule. Historical run v8 / method v10 and earlier artifacts keep
+label instead of an existing axis. See the semantic-integration contract v80
+for the owning rule. Historical run v9 / method v11 and earlier artifacts keep
 their original identity and replay; do not edit frozen outputs or relabel old
 responses as a new-method proof. This correction does not establish the cause
 of Dieux's provider timeout. All new model attempts use `high` under the
 operator rule in `docs/decisions/subagent_model_tiering_doctrine_v0.md`.
 
 The existing calibration entry point follows the production-owned
-`SEMANTIC_METHODS_V7_PLUS` set, including current method v11, rather than a
+`SEMANTIC_METHODS_V7_PLUS` set, including current method v12, rather than a
 separate historical allowlist. Primary and cold-repeat evaluation both require
 their own exact row-verified compilation for those methods. Contract v79 owns
 this compatibility correction; it neither changes semantic prompts nor makes
 a prepared calibration slice a passing readiness proof.
+
+The public saved-prompt loader retains the producer-derived response-schema
+metadata and checks the actual saved prompt text; it does not reconstruct over
+an altered saved prompt. Method v12 removes the inherited instruction to delete
+explicit overall evaluations, which conflicted with whole-row preservation.
+Verifier v11 makes acceptance contingent on checking each meaning, logical
+direction, qualification, and explicit reason-to-behavior link. This reuses the
+existing extraction and verification stages; it adds no model call or semantic
+classifier. The corrected policy still requires source-authored calibration,
+cold-repeat agreement, and final-view evidence. Its availability is not a
+semantic accuracy, reader-quality, or Dieux completion claim.
 
 ## Before changing Phase A evidence machinery
 
