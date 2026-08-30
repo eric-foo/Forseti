@@ -28,6 +28,12 @@ Cleaning, or Judgment behavior.
 
 ## Unattended Model Attempts
 
+Current method-v12 semantic reconciliation preparation writes each prompt's
+`.schema.json` alongside its `.md` file. Use that exact sidecar so child IDs and
+level-owned emerging labels cannot be invented during transport. Native
+reconciliation validation still checks complete participation; a schema pass
+is not semantic proof.
+
 For authorized unattended Codex jobs whose retries, elapsed time, or failure
 history matter, use the shared executor rather than a task-local buffered
 subprocess wrapper. It is usable by any intelligence-cycle stage:
@@ -59,6 +65,9 @@ unfinished or unsuccessful executor attempts and changed executor outputs;
 either executor record is enough to hold an attempt to that boundary.
 Receipt checks, usage accounting, stage validation, and publication use one
 captured response/events snapshot; later writes cannot replace the checked answer.
+After a stage-validator rejection, publication may reuse that completed answer
+without a new model call only if any saved usage receipt matches the exact
+rederived bytes. Conflicting receipts fail; canonical outputs are never replaced.
 Historical attempts with no executor record retain their existing
 publication behavior. A retry gets a new attempt ID; the executor launches no
 automatic retry and never changes prompts, models, or evidence to obtain a pass.

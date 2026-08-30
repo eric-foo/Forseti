@@ -35,6 +35,7 @@ BATCH_COMPILATION_VERSION_V3 = "semantic_evidence_batch_compilation_v3"
 RAW_RESPONSE_MANIFEST_VERSION = "semantic_evidence_raw_response_manifest_v1"
 ROW_VERIFICATION_STAGE_VERSION = "semantic_evidence_row_verification_stage_v1"
 ROW_VERIFICATION_RESPONSE_VERSION = "semantic_evidence_row_verification_response_v1"
+ROW_VERIFICATION_KEYED_RESPONSE_VERSION = "semantic_evidence_row_verification_response_v2"
 ROW_VERIFICATION_MANIFEST_VERSION = "semantic_evidence_row_verification_manifest_v2"
 ROW_REPAIR_STAGE_VERSION = "semantic_evidence_row_repair_stage_v1"
 ROW_REPAIR_MANIFEST_VERSION = "semantic_evidence_row_repair_manifest_v1"
@@ -3749,9 +3750,23 @@ def _proposed_result_from_compilation(
 
 
 def _row_verification_response_shape(
-    stage_sha256: str, batch_id: str
+    stage_sha256: str, batch_id: str,
+    response_version: str = ROW_VERIFICATION_RESPONSE_VERSION,
 ) -> dict[str, Any]:
     replacement = _v5_response_shape("unused", "unused")["evidence"][0]
+    if response_version == ROW_VERIFICATION_KEYED_RESPONSE_VERSION:
+        return {
+            "schema_version": response_version,
+            "stage_sha256": stage_sha256,
+            "batch_id": batch_id,
+            "decisions_by_evidence_id": {
+                "<evidence_id>": {
+                    "decision": "accept|replace|unresolved",
+                    "reason": "required source-grounded reason",
+                    "replacement": replacement,
+                }
+            },
+        }
     return {
         "schema_version": ROW_VERIFICATION_RESPONSE_VERSION,
         "stage_sha256": stage_sha256,
@@ -3773,6 +3788,7 @@ def _render_row_verification_prompt(
     stage_sha256: str,
     batch_id: str,
     rows: Sequence[Mapping[str, Any]],
+    response_version: str = ROW_VERIFICATION_RESPONSE_VERSION,
 ) -> str:
     catalog = bundle.get("product_identity_catalog")
     catalog_section = (
@@ -3789,7 +3805,7 @@ def _render_row_verification_prompt(
         "replacement is the complete corrected evidence row. Return exactly one "
         "decision for every supplied row and no other text.\n\n"
         + json.dumps(
-            _row_verification_response_shape(stage_sha256, batch_id),
+            _row_verification_response_shape(stage_sha256, batch_id, response_version),
             ensure_ascii=False,
             indent=2,
         )
@@ -3801,11 +3817,106 @@ def _render_row_verification_prompt(
     )
 
 
+def _row_review_prompts(
+    bundle: Mapping[str, Any], stage: Mapping[str, Any],
+    response_version: str | None,
+) -> list[dict[str, Any]]:
+    # The immutable stage partitions source work using the historical template.
+    # Transport may change without rebatching or rewriting completed v1 answers.
+    version = response_version or (
+        ROW_VERIFICATION_KEYED_RESPONSE_VERSION
+        if _expected_response_version(bundle) == BATCH_KEYED_RESPONSE_VERSION_V3
+        else ROW_VERIFICATION_RESPONSE_VERSION
+    )
+    if version not in {ROW_VERIFICATION_RESPONSE_VERSION, ROW_VERIFICATION_KEYED_RESPONSE_VERSION}:
+        raise SemanticIntegrationError("unsupported row review response version")
+    definitions = None
+    if version == ROW_VERIFICATION_KEYED_RESPONSE_VERSION and stage["batches"]:
+        schema = build_batch_response_schema(bundle, bundle["batches"][0]["batch_id"])
+        if schema is None:
+            raise SemanticIntegrationError("keyed row review requires a keyed extraction bundle")
+        definitions = schema["$defs"]
+    evidence_index = _unit_index(bundle)
+    row_index = {row["evidence_id"]: row for row in stage["verification_rows"]}
+    prompts = []
+    for batch in stage["batches"]:
+        prompt = _render_row_verification_prompt(
+            bundle, stage_sha256=stage["stage_sha256"], batch_id=batch["batch_id"],
+            rows=[row_index[ref] for ref in batch["evidence_ids"]],
+            response_version=version,
+        )
+        size = len(prompt.encode("utf-8"))
+        if size > stage["max_prompt_bytes"]:
+            raise SemanticIntegrationError(
+                f"row review batch {batch['batch_id']} exceeds rendered prompt byte ceiling"
+            )
+        record = {**batch, "prompt": prompt, "prompt_utf8_bytes": size}
+        if definitions is not None:
+            properties = {}
+            for ref in batch["evidence_ids"]:
+                restrict = _expected_response_version(bundle) in {
+                    BATCH_KEYED_RESPONSE_VERSION_V2, BATCH_KEYED_RESPONSE_VERSION_V3,
+                } and not evidence_index[ref].get("parent_context_refs")
+                replacement = deepcopy(definitions[
+                    "decision_no_parent_agreement" if restrict else "decision"
+                ])
+                replacement["properties"]["evidence_id"] = {"type": "string", "const": ref}
+                replacement["required"].append("evidence_id")
+                properties[ref] = {
+                    "type": "object",
+                    "properties": {
+                        "decision": {"type": "string", "enum": sorted(ROW_VERIFICATION_DECISIONS)},
+                        "reason": {"type": "string"},
+                        "replacement": {"anyOf": [{"type": "null"}, replacement]},
+                    },
+                    "required": ["decision", "reason", "replacement"],
+                    "additionalProperties": False,
+                }
+            record["response_schema"] = {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object", "$defs": definitions,
+                "properties": {
+                    "schema_version": {"type": "string", "const": version},
+                    "stage_sha256": {"type": "string", "const": stage["stage_sha256"]},
+                    "batch_id": {"type": "string", "const": batch["batch_id"]},
+                    "decisions_by_evidence_id": {
+                        "type": "object", "properties": properties,
+                        "required": list(batch["evidence_ids"]), "additionalProperties": False,
+                    },
+                },
+                "required": ["schema_version", "stage_sha256", "batch_id", "decisions_by_evidence_id"],
+                "additionalProperties": False,
+            }
+        prompts.append(record)
+    return prompts
+
+
+def _row_review_decisions(response: Mapping[str, Any], expected_ids: Sequence[str], phase: str) -> list:
+    """Decode transport only; raw responses remain the lineage authority."""
+    if response.get("schema_version") == ROW_VERIFICATION_KEYED_RESPONSE_VERSION:
+        if set(response) != {"schema_version", "stage_sha256", "batch_id", "decisions_by_evidence_id"}:
+            raise SemanticIntegrationError(f"invalid row {phase} keyed response shape")
+        keyed = response.get("decisions_by_evidence_id")
+        if not isinstance(keyed, Mapping) or set(keyed) != set(expected_ids):
+            raise SemanticIntegrationError(f"row {phase} keyed response must decide every assigned row exactly once")
+        rows = []
+        for ref, value in keyed.items():
+            if not isinstance(value, Mapping) or set(value) != {"decision", "reason", "replacement"}:
+                raise SemanticIntegrationError(f"invalid row {phase} keyed decision shape")
+            rows.append({"evidence_id": ref, **value})
+        return rows
+    rows = response.get("decisions")
+    if not isinstance(rows, list):
+        raise SemanticIntegrationError(f"row {phase} response lacks decisions")
+    return rows
+
+
 def prepare_row_verification(
     bundle: Mapping[str, Any],
     compilation: Mapping[str, Any],
     *,
     max_prompt_bytes: int | None = None,
+    response_version: str | None = None,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     """Prepare one independent whole-row check for every claim-bearing result."""
     dispositions, claim_ids = _validate_verification_input_compilation(
@@ -3908,29 +4019,7 @@ def prepare_row_verification(
         },
     }
     stage["stage_sha256"] = _sha256(stage)
-    row_index = {row["evidence_id"]: row for row in verification_rows}
-    prompts = []
-    for batch in batches:
-        prompt = _render_row_verification_prompt(
-            bundle,
-            stage_sha256=stage["stage_sha256"],
-            batch_id=batch["batch_id"],
-            rows=[row_index[evidence_id] for evidence_id in batch["evidence_ids"]],
-        )
-        prompt_bytes = len(prompt.encode("utf-8"))
-        if prompt_bytes > limit:
-            raise SemanticIntegrationError(
-                f"verification batch {batch['batch_id']} exceeds rendered prompt byte ceiling"
-            )
-        prompts.append(
-            {
-                "batch_id": batch["batch_id"],
-                "evidence_ids": batch["evidence_ids"],
-                "prompt": prompt,
-                "prompt_utf8_bytes": prompt_bytes,
-            }
-        )
-    return stage, prompts
+    return stage, _row_review_prompts(bundle, stage, response_version)
 
 
 def apply_row_verification(
@@ -3956,7 +4045,9 @@ def apply_row_verification(
     for response in responses:
         if (
             not isinstance(response, Mapping)
-            or response.get("schema_version") != ROW_VERIFICATION_RESPONSE_VERSION
+            or response.get("schema_version") not in {
+                ROW_VERIFICATION_RESPONSE_VERSION, ROW_VERIFICATION_KEYED_RESPONSE_VERSION,
+            }
             or response.get("stage_sha256") != stage["stage_sha256"]
         ):
             raise SemanticIntegrationError("invalid row verification response")
@@ -3965,12 +4056,8 @@ def apply_row_verification(
             raise SemanticIntegrationError(
                 "unknown or duplicate row verification batch"
             )
-        rows = response.get("decisions")
-        if not isinstance(rows, list):
-            raise SemanticIntegrationError(
-                f"row verification batch {batch_id} lacks decisions"
-            )
         expected_ids = expected_batches[batch_id]["evidence_ids"]
+        rows = _row_review_decisions(response, expected_ids, "verification")
         observed_ids: list[str] = []
         for row in rows:
             if not isinstance(row, Mapping) or set(row) != {
@@ -4001,7 +4088,9 @@ def apply_row_verification(
                 )
             observed_ids.append(evidence_id)
             decisions[evidence_id] = dict(row)
-        if observed_ids != expected_ids:
+        # Evidence IDs own decisions; application below uses source order.
+        # Foreign and duplicate IDs already fail above, independent of position.
+        if set(observed_ids) != set(expected_ids):
             raise SemanticIntegrationError(
                 f"row verification batch {batch_id} does not decide every row exactly once"
             )
@@ -4568,6 +4657,7 @@ def prepare_row_repair(
     *,
     evidence_ids: Sequence[str],
     max_prompt_bytes: int | None = None,
+    response_version: str | None = None,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     """Prepare a bounded whole-row repair without re-reviewing untouched rows."""
     _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
@@ -4676,29 +4766,7 @@ def prepare_row_repair(
         },
     }
     stage["stage_sha256"] = _sha256(stage)
-    row_index = {row["evidence_id"]: row for row in rows}
-    prompts = []
-    for batch in batches:
-        prompt = _render_row_verification_prompt(
-            bundle,
-            stage_sha256=stage["stage_sha256"],
-            batch_id=batch["batch_id"],
-            rows=[row_index[ref] for ref in batch["evidence_ids"]],
-        )
-        size = len(prompt.encode("utf-8"))
-        if size > limit:
-            raise SemanticIntegrationError(
-                f"repair batch {batch['batch_id']} exceeds rendered prompt byte ceiling"
-            )
-        prompts.append(
-            {
-                "batch_id": batch["batch_id"],
-                "evidence_ids": batch["evidence_ids"],
-                "prompt": prompt,
-                "prompt_utf8_bytes": size,
-            }
-        )
-    return stage, prompts
+    return stage, _row_review_prompts(bundle, stage, response_version)
 
 
 def apply_row_repair(
@@ -4723,7 +4791,9 @@ def apply_row_repair(
     for response in responses:
         if (
             not isinstance(response, Mapping)
-            or response.get("schema_version") != ROW_VERIFICATION_RESPONSE_VERSION
+            or response.get("schema_version") not in {
+                ROW_VERIFICATION_RESPONSE_VERSION, ROW_VERIFICATION_KEYED_RESPONSE_VERSION,
+            }
             or response.get("stage_sha256") != stage["stage_sha256"]
         ):
             raise SemanticIntegrationError("invalid row repair response")
@@ -4731,9 +4801,7 @@ def apply_row_repair(
         if batch_id not in expected_batches or batch_id in seen_batches:
             raise SemanticIntegrationError("unknown or duplicate row repair batch")
         expected_ids = expected_batches[batch_id]["evidence_ids"]
-        rows = response.get("decisions")
-        if not isinstance(rows, list):
-            raise SemanticIntegrationError("row repair response lacks decisions")
+        rows = _row_review_decisions(response, expected_ids, "repair")
         observed_ids = []
         for row in rows:
             if not isinstance(row, Mapping) or set(row) != {
@@ -4766,7 +4834,8 @@ def apply_row_repair(
                 )
             decisions[ref] = dict(row)
             observed_ids.append(ref)
-        if observed_ids != expected_ids:
+        # Repair shares verification's ID-bound response shape, not positional ownership.
+        if set(observed_ids) != set(expected_ids):
             raise SemanticIntegrationError(
                 f"row repair batch {batch_id} does not decide every row exactly once"
             )
@@ -5432,6 +5501,62 @@ def _v3_reconciliation_response_shape(
     }
 
 
+def _reconciliation_response_schema(
+    stage: Mapping[str, Any], batch: Mapping[str, Any], labels: Sequence[str]
+) -> dict[str, Any]:
+    """Constrain copied handles, not the model-owned meaning or grouping.
+
+    This is the existing v2 response transport. Cross-group completeness,
+    source competence and semantic warrant are not proven by this schema.
+    """
+    def obj(properties: dict[str, Any]) -> dict[str, Any]:
+        return {"type": "object", "properties": properties,
+                "required": list(properties), "additionalProperties": False}
+
+    def array(items: dict[str, Any]) -> dict[str, Any]:
+        return {"type": "array", "items": items}
+
+    strings = array({"type": "string"})
+    child = {"type": "string", "enum": list(batch["candidate_refs"])}
+    label_array = array({"type": "string", "enum": list(labels)}) if labels else {
+        "type": "array", "items": {"type": "string"}, "maxItems": 0}
+    return obj({
+        "schema_version": {"type": "string", "const": RECONCILIATION_RESPONSE_VERSION_V2},
+        "stage_sha256": {"type": "string", "const": stage["stage_sha256"]},
+        "batch_id": {"type": "string", "const": batch["batch_id"]},
+        "semantic_nodes": array(obj({
+            "semantic_node_key": {"type": "string"},
+            "bounded_meaning": {"type": "string"},
+            "terminal_proposition": {"type": "boolean"},
+            "claim_kind": {"enum": [*sorted(CLAIM_KINDS), None]},
+            "subject_product_ids": strings,
+            "comparator_product_ids": strings,
+            "product_version_ids": strings,
+            "axis_ids": strings,
+            "emerging_axis_labels": strings,
+            "conditions": strings,
+            "polarity": {"type": "string", "enum": sorted(POLARITIES),
+                "description": "Preserve the child labels: their common polarity if all are equal, otherwise mixed. Do not reclassify from the node wording."},
+            "uncertainty_posture": {"type": "string", "enum": sorted(UNCERTAINTY_POSTURES)},
+            "child_relations": array(obj({
+                "child_ref": child, "relation": {"type": "string", "enum": sorted(RELATIONS)}})),
+            "opposition_checked": {"type": ["boolean", "null"]},
+            "causal_ceiling": {"enum": [*sorted(CAUSAL_CEILINGS), None]},
+        })),
+        "unmerged_children": array(obj({"child_ref": child, "reason": {"type": "string"}})),
+        "emerging_axis_consolidations": {
+            **array(obj({
+                "candidate_key": {"type": "string"},
+                "canonical_label": {"type": "string"},
+                "original_labels": label_array,
+                "disposition": {"type": "string", "enum": sorted(EMERGING_AXIS_DISPOSITIONS)},
+                "reason": {"type": "string"},
+            })),
+            **({"maxItems": 0} if not labels else {}),
+        },
+    })
+
+
 def _render_v3_reconciliation_prompt(
     *,
     stage_sha256: str,
@@ -5859,6 +5984,10 @@ def prepare_reconciliation_stage(
                 "prompt_utf8_bytes": prompt_bytes,
             }
         )
+        if preserve_child_scope:
+            prompts[-1]["response_schema"] = _reconciliation_response_schema(
+                stage, batch, current_emerging_labels if batch_index == 0 else []
+            )
     return stage, prompts
 
 
@@ -9415,6 +9544,7 @@ __all__ = [
     "ROW_VERIFICATION_METHOD_VERSION_V7",
     "ROW_VERIFICATION_METHOD_VERSION_V8",
     "ROW_VERIFICATION_RESPONSE_VERSION",
+    "ROW_VERIFICATION_KEYED_RESPONSE_VERSION",
     "ROW_VERIFICATION_STAGE_VERSION",
     "RECONCILIATION_RESPONSE_VERSION",
     "RECONCILIATION_RESPONSE_VERSION_V2",

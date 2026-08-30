@@ -54,6 +54,13 @@ answer remains preserved, and a corrected prompt uses a fresh attempt over
 the same verified compilation without repeating extraction or verification.
 This is not a semantic-truth guarantee or a full-corpus completion claim.
 
+Whole-row verification and selective repair attach each decision by its explicit
+evidence ID, not response-list position. Every assigned row must occur exactly
+once; missing, duplicate, foreign, and mismatched replacement identities fail.
+Application preserves source order and raw response hashes preserve the actual
+answer order. Contract v82 owns this boundary; it changes no semantic prompt or
+stage identity and does not make a structurally valid answer semantically right.
+
 The existing calibration entry point follows the production-owned
 `SEMANTIC_METHODS_V7_PLUS` set, including current method v12, rather than a
 separate historical allowlist. Primary and cold-repeat evaluation both require
@@ -339,6 +346,29 @@ relation batch also supply `--batch-manifest` and `--batch-id`; publication then
 validates the batch-bound response, extracts and preserves the exact completed-
 turn usage, and atomically hard-links the response without replacement. Keep
 every attempt directory after publication or failure.
+
+Current method-v12/keyed-v3 whole-row verification and repair preparation emits
+response v2 with one required answer slot per assigned evidence ID. Use the
+public preparation runner's accompanying `.schema.json` as the provider output
+schema, not an array-length-only substitute. Native consumers still enforce
+exact coverage and replacement ownership. Explicit v1 prompt replay and stored
+v1 responses remain supported; the source-work stage is unchanged, so accepted
+answers are not regenerated merely to adopt keyed transport. Correct row
+participation does not establish correct interpretation.
+
+Current method-v12 reconciliation preparation likewise persists a response
+schema beside every prompt. The schema restricts copied child references to
+that batch and copied emerging labels to the level-owned inventory. The native
+consumer still enforces whole-inventory accounting, polarity composition and
+source competence; semantic warrant remains judgment-owned. An enum-valid
+answer can still group the wrong meanings. Historical method-v11-and-earlier
+prompts and preparation outputs do not acquire this current-authoring sidecar.
+
+If response validation failed after usage was saved, publication may be retried
+without a new model call. The existing usage receipt must equal the bytes
+rederived from the same response, event stream, and caller schema; changed
+receipts or executor outputs fail. This never overwrites an existing canonical
+response and never promotes a timed-out or unfinished execution.
 
 The filesystem behavior lives in `forseti-harness/provider_attempts.py` and
 performs no model call. The Phase A commands above are compatibility adapters:

@@ -2361,6 +2361,7 @@ def test_current_reconciliation_preserves_literal_conditions_and_bounded_scope(m
     stage, prompts = prepare_reconciliation_stage(bundle, verified, reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2)
     policy = prompts[0]["prompt"].split("\n\nCANDIDATES\n", 1)[0]
     current = method == semantic_module.METHOD_VERSION_V12
+    assert ("response_schema" in prompts[0]) is current
     assert ("Copy every child condition verbatim" in policy) is current
     assert ("unnamed item does not establish a range-wide claim" in policy) is current
     assert ("Purchase intent, acquisition, use, and repurchase are different states" in policy) is current
@@ -2390,6 +2391,12 @@ def test_current_reconciliation_preserves_literal_conditions_and_bounded_scope(m
     for field in ("subject_product_ids", "comparator_product_ids", "product_version_ids", "axis_ids", "conditions"):
         correct[0]["semantic_nodes"][0][field] = list(stage["candidates"][0][field])
     nodes = validate_reconciliation_stage(bundle, stage, correct)
+    if current:
+        schema = prompts[0]["response_schema"]
+        child_schema = schema["properties"]["semantic_nodes"]["items"]["properties"]["child_relations"]["items"]["properties"]["child_ref"]
+        assert child_schema["enum"] == stage["batches"][0]["candidate_refs"]
+        assert schema["properties"]["unmerged_children"]["items"]["properties"]["child_ref"] == child_schema
+        assert schema["properties"]["emerging_axis_consolidations"]["maxItems"] == 0
     _, next_prompts = prepare_reconciliation_stage(bundle, nodes)
     assert all(("Copy every child condition verbatim" in row["prompt"]) is current for row in next_prompts)
     assert all(('"source_roles_by_relation"' in row["prompt"]) is current for row in next_prompts)
@@ -2401,6 +2408,47 @@ def test_current_reconciliation_preserves_literal_conditions_and_bounded_scope(m
     wrong_kind[0]["semantic_nodes"][0]["claim_kind"] = "observable_fact"
     with pytest.raises(SemanticIntegrationError, match="source roles incompetent for observable_fact"):
         validate_reconciliation_stage(bundle, stage, wrong_kind)
+
+
+def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: Path) -> None:
+    from runners.run_semantic_evidence_integration import prepare_reconciliation_level
+
+    source = _source_v10(count=1)
+    source["semantic_method_version"] = semantic_module.METHOD_VERSION_V12
+    bundle = build_bundle(source, max_prompt_bytes=30_000)
+    responses = _keyed_responses(bundle)
+    evidence_id = bundle["batches"][0]["evidence_ids"][0]
+    row = _claim_row(evidence_id)
+    row.pop("evidence_id")
+    row["semantic_units"][0]["subject_product_ids"] = ["summer-fridays-lip-butter-balm"]
+    row["semantic_units"][0]["emerging_axis_labels"] = ["texture_detail"]
+    responses[0]["decisions_by_evidence_id"][evidence_id] = row
+    raw = validate_batch_responses(bundle, responses)
+    verification, _ = prepare_row_verification(bundle, raw)
+    verified = apply_row_verification(bundle, raw, verification, _row_verification_responses(verification))
+    stage, prompts = prepare_reconciliation_stage(bundle, verified)
+    bp, cp = tmp_path / "bundle.json", tmp_path / "compiled.json"
+    bp.write_text(json.dumps(bundle), encoding="utf-8")
+    cp.write_text(json.dumps(verified), encoding="utf-8")
+    prepare_reconciliation_level(bundle_path=bp, compilation_path=cp,
+        stage_out=tmp_path / "stage.json", prompt_dir=tmp_path / "prompts")
+    assert json.loads((tmp_path / "stage.json").read_text()) == stage
+    for prompt in prompts:
+        path = tmp_path / "prompts" / prompt["batch_id"]
+        assert path.with_suffix(".md").read_bytes() == (prompt["prompt"] + "\n").encode("utf-8")
+        assert json.loads(path.with_suffix(".schema.json").read_text()) == prompt["response_schema"]
+    labels = prompts[0]["response_schema"]["properties"]["emerging_axis_consolidations"]["items"]["properties"]["original_labels"]
+    assert labels["items"]["enum"] == ["texture_detail"]
+    # Correct outer hashes: omissions must reach the existing coverage boundary.
+    response = _singleton_reconciliation_responses(stage)
+    with pytest.raises(SemanticIntegrationError, match="does not account for every emerging label"):
+        validate_reconciliation_stage(bundle, stage, response)
+    response[0]["emerging_axis_consolidations"] = [{"candidate_key": "texture", "canonical_label": "texture detail",
+        "original_labels": ["texture_detail"], "disposition": "accepted", "reason": "Distinct source detail."}]
+    validate_reconciliation_stage(bundle, stage, response)
+    response[0]["semantic_nodes"][0]["child_relations"][0]["child_ref"] = "foreign::meaning"
+    with pytest.raises(SemanticIntegrationError, match="unknown, duplicate, or invalid child"):
+        validate_reconciliation_stage(bundle, stage, response)
 
 
 def test_current_reconciliation_role_projection_preserves_relation_orientation() -> None:
@@ -3943,6 +3991,212 @@ def test_row_verification_is_deterministic_and_fails_on_missing_decision() -> No
         match="does not decide every row exactly once",
     ):
         apply_row_verification(bundle, compiled, stage_one, missing)
+
+
+def _identity_bound_row_stage(phase: str) -> tuple[dict, dict, dict, list[dict]]:
+    source = _source_v10(count=4)
+    source["semantic_method_version"] = semantic_module.METHOD_VERSION_V12
+    bundle = build_bundle(source, max_prompt_bytes=60_000)
+    raw = _keyed_responses(bundle)
+    for response in raw:
+        for evidence_id in response["decisions_by_evidence_id"]:
+            row = _claim_row(evidence_id)
+            row["semantic_units"][0]["subject_product_ids"] = [
+                bundle["product_identity_catalog"]["products"][0]["stable_product_id"]
+            ]
+            row.pop("evidence_id")
+            response["decisions_by_evidence_id"][evidence_id] = row
+    compiled = validate_batch_responses(bundle, raw)
+    stage, _ = prepare_row_verification(bundle, compiled, max_prompt_bytes=60_000)
+    if phase == "repair":
+        compiled = apply_row_verification(
+            bundle, compiled, stage, _row_verification_responses(stage)
+        )
+        stage, _ = prepare_row_repair(
+            bundle, compiled,
+            evidence_ids=[row["evidence_id"] for row in compiled["evidence_dispositions"][:3]],
+            max_prompt_bytes=60_000,
+        )
+    assert len(stage["batches"]) == 1
+    ids = stage["batches"][0]["evidence_ids"]
+    replacement = deepcopy(next(row["proposed_result"] for row in stage["verification_rows"]
+                                if row["evidence_id"] == ids[1]))
+    replacement["semantic_units"][0]["statement"] = "The balm became noticeably drying after one week of use."
+    responses = _row_verification_responses(stage, {
+        ids[1]: {"decision": "replace", "reason": "restore the qualified intensity", "replacement": replacement},
+        ids[2]: {"decision": "unresolved", "reason": "ambiguous source meaning", "replacement": None},
+    })
+    return bundle, compiled, stage, responses
+
+
+@pytest.mark.parametrize("phase", ["verification", "repair"])
+def test_row_decisions_bind_identity_not_list_position(phase: str) -> None:
+    bundle, compiled, stage, responses = _identity_bound_row_stage(phase)
+    apply = apply_row_verification if phase == "verification" else apply_row_repair
+    expected = apply(bundle, compiled, stage, responses)
+    permuted = deepcopy(responses)
+    permuted[0]["decisions"].reverse()
+    observed = apply(bundle, compiled, stage, permuted)
+    assert observed["semantic_units"] == expected["semantic_units"]
+    assert observed["evidence_dispositions"] == expected["evidence_dispositions"]
+    assert observed["raw_response_manifest"] == compiled["raw_response_manifest"]
+    # Raw answer order remains provenance, not a rewritten answer or row owner.
+    assert observed["compilation_sha256"] != expected["compilation_sha256"]
+    if phase == "verification":
+        validate_row_verified_compilation(bundle, compiled, observed)
+    reconciliation, _ = prepare_reconciliation_stage(bundle, observed)
+    assert reconciliation["batch_compilation_sha256"] == observed["compilation_sha256"]
+    ids = stage["batches"][0]["evidence_ids"]
+    assert next(row for row in observed["semantic_units"] if row["evidence_id"] == ids[1])["statement"] == (
+        "The balm became noticeably drying after one week of use."
+    )
+    assert not any(row["evidence_id"] == ids[2] for row in observed["semantic_units"])
+
+
+@pytest.mark.parametrize("phase", ["verification", "repair"])
+@pytest.mark.parametrize("violation", ["missing", "duplicate", "foreign", "replacement_identity"])
+def test_unordered_row_decisions_still_reject_wrong_identity(phase: str, violation: str) -> None:
+    bundle, compiled, stage, responses = _identity_bound_row_stage(phase)
+    apply = apply_row_verification if phase == "verification" else apply_row_repair
+    rows = responses[0]["decisions"]
+    if violation == "missing":
+        rows.pop()
+        message = "does not decide every row exactly once"
+    elif violation == "duplicate":
+        rows[-1] = deepcopy(rows[0])
+        message = f"invalid row {phase} decision"
+    elif violation == "foreign":
+        rows[0]["evidence_id"] = "foreign-evidence-id"
+        message = f"invalid row {phase} decision"
+    else:
+        rows[1]["replacement"]["evidence_id"] = rows[0]["evidence_id"]
+        message = "changes (evidence )?identity"
+    # Stage and source hashes stay correct: the named identity boundary must fail.
+    rows.reverse()
+    with pytest.raises(SemanticIntegrationError, match=message):
+        apply(bundle, compiled, stage, responses)
+
+
+def _keyed_row_review_response(response: dict) -> dict:
+    return {
+        "schema_version": semantic_module.ROW_VERIFICATION_KEYED_RESPONSE_VERSION,
+        "stage_sha256": response["stage_sha256"], "batch_id": response["batch_id"],
+        "decisions_by_evidence_id": {
+            row["evidence_id"]: {key: value for key, value in row.items() if key != "evidence_id"}
+            for row in response["decisions"]
+        },
+    }
+
+
+@pytest.mark.parametrize("phase", ["verification", "repair"])
+def test_keyed_row_review_preserves_stage_replay_and_semantic_consumer(phase: str) -> None:
+    bundle, compiled, stage, responses = _identity_bound_row_stage(phase)
+    prepare = prepare_row_verification if phase == "verification" else prepare_row_repair
+    apply = apply_row_verification if phase == "verification" else apply_row_repair
+    kwargs = {"evidence_ids": stage["selected_evidence_ids"]} if phase == "repair" else {}
+    current_stage, prompts = prepare(bundle, compiled, max_prompt_bytes=60_000, **kwargs)
+    replay_stage, replay = prepare(bundle, compiled, max_prompt_bytes=60_000,
+        response_version=semantic_module.ROW_VERIFICATION_RESPONSE_VERSION, **kwargs)
+    assert current_stage == replay_stage == stage
+    for current, historical in zip(prompts, replay, strict=True):
+        assert "response_schema" not in historical
+        rows = [row for row in stage["verification_rows"] if row["evidence_id"] in historical["evidence_ids"]]
+        assert historical["prompt"] == semantic_module._render_row_verification_prompt(
+            bundle, stage_sha256=stage["stage_sha256"], batch_id=historical["batch_id"], rows=rows)
+        assert current["prompt_utf8_bytes"] <= historical["prompt_utf8_bytes"]
+        schema = current["response_schema"]
+        keyed = schema["properties"]["decisions_by_evidence_id"]
+        assert keyed["required"] == current["evidence_ids"]
+        assert set(keyed["properties"]) == set(current["evidence_ids"])
+        assert keyed["additionalProperties"] is False
+        for ref, value in keyed["properties"].items():
+            replacement = value["properties"]["replacement"]["anyOf"][1]
+            assert replacement["properties"]["evidence_id"] == {"type": "string", "const": ref}
+            assert "evidence_id" in replacement["required"]
+    original = deepcopy(responses)
+    keyed_responses = [_keyed_row_review_response(row) for row in responses]
+    observed = apply(bundle, compiled, stage, keyed_responses)
+    expected = apply(bundle, compiled, stage, responses)
+    assert observed["semantic_units"] == expected["semantic_units"]
+    assert observed["evidence_dispositions"] == expected["evidence_dispositions"]
+    assert observed["compilation_sha256"] != expected["compilation_sha256"]
+    assert responses == original
+    reconciliation, _ = prepare_reconciliation_stage(bundle, observed)
+    assert reconciliation["batch_compilation_sha256"] == observed["compilation_sha256"]
+
+
+@pytest.mark.parametrize("phase", ["verification", "repair"])
+@pytest.mark.parametrize("violation", ["missing", "foreign", "misbound", "body_identity", "extra_envelope"])
+def test_keyed_row_review_rejects_wrong_cause_at_identity_boundary(phase: str, violation: str) -> None:
+    bundle, compiled, stage, responses = _identity_bound_row_stage(phase)
+    keyed = _keyed_row_review_response(responses[0])
+    values = keyed["decisions_by_evidence_id"]
+    ids = list(values)
+    message = "keyed response must decide every assigned row exactly once"
+    if violation == "missing":
+        values.pop(ids[0])
+    elif violation == "foreign":
+        values["foreign-id"] = values.pop(ids[0])
+    elif violation == "misbound":
+        values[ids[1]]["replacement"]["evidence_id"] = ids[0]
+        message = "changes (evidence )?identity"
+    elif violation == "body_identity":
+        values[ids[0]]["evidence_id"] = ids[1]
+        message = "keyed decision shape"
+    else:
+        keyed["decisions"] = responses[0]["decisions"]
+        message = "keyed response shape"
+    apply = apply_row_verification if phase == "verification" else apply_row_repair
+    # Valid stage/hash/batch reach the intended transport/ownership boundary.
+    with pytest.raises(SemanticIntegrationError, match=message):
+        apply(bundle, compiled, stage, [keyed])
+
+
+@pytest.mark.parametrize("phase", ["verification", "repair"])
+def test_current_row_review_runner_persists_required_answer_schema(tmp_path: Path, phase: str) -> None:
+    bundle, compiled, stage, _ = _identity_bound_row_stage(phase)
+    bundle_path, compiled_path = tmp_path / "bundle.json", tmp_path / "compiled.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+    compiled_path.write_text(json.dumps(compiled), encoding="utf-8")
+    kwargs = dict(bundle_path=bundle_path, stage_out=tmp_path / "stage.json",
+        prompt_dir=tmp_path / "prompts", max_prompt_bytes=60_000)
+    if phase == "verification":
+        prepare_row_verification_run(compiled_path=compiled_path, **kwargs)
+        _, expected = prepare_row_verification(bundle, compiled, max_prompt_bytes=60_000)
+    else:
+        prepare_row_repair_run(verified_path=compiled_path, evidence_ids=stage["selected_evidence_ids"], **kwargs)
+        _, expected = prepare_row_repair(bundle, compiled, evidence_ids=stage["selected_evidence_ids"], max_prompt_bytes=60_000)
+    assert json.loads((tmp_path / "stage.json").read_text()) == stage
+    for row in expected:
+        assert json.loads((tmp_path / "prompts" / f"{row['batch_id']}.schema.json").read_text()) == row["response_schema"]
+        assert (tmp_path / "prompts" / f"{row['batch_id']}.md").read_bytes() == (row["prompt"] + "\n").encode("utf-8")
+
+
+def test_row_review_mixes_saved_v1_and_current_v2_without_rewriting_answers() -> None:
+    source = _source_v10(count=4)
+    source["semantic_method_version"] = semantic_module.METHOD_VERSION_V12
+    bundle = build_bundle(source, max_prompt_bytes=60_000, max_evidence_per_work_unit=2)
+    raw = _keyed_responses(bundle)
+    for response in raw:
+        for ref in response["decisions_by_evidence_id"]:
+            row = _claim_row(ref)
+            row["semantic_units"][0]["subject_product_ids"] = [
+                bundle["product_identity_catalog"]["products"][0]["stable_product_id"]]
+            row.pop("evidence_id")
+            response["decisions_by_evidence_id"][ref] = row
+    compiled = validate_batch_responses(bundle, raw)
+    stage, _ = prepare_row_verification(bundle, compiled)
+    assert len(stage["batches"]) == 2
+    historical = _row_verification_responses(stage)
+    mixed = [deepcopy(historical[0]), _keyed_row_review_response(historical[1])]
+    raw_pins = [semantic_module._sha256(row) for row in mixed]
+    result = apply_row_verification(bundle, compiled, stage, mixed)
+    expected = apply_row_verification(bundle, compiled, stage, historical)
+    assert result["semantic_units"] == expected["semantic_units"]
+    assert result["evidence_dispositions"] == expected["evidence_dispositions"]
+    assert raw_pins == [semantic_module._sha256(row) for row in mixed]
+    assert result["compilation_sha256"] != expected["compilation_sha256"]
+    validate_row_verified_compilation(bundle, compiled, result)
 
 
 def test_row_verification_rejects_a_patched_accept_and_invalid_replacement() -> None:

@@ -1044,6 +1044,8 @@ def prepare_row_verification_run(
             prompt_dir / f"{row['batch_id']}.md",
             row["prompt"].encode("utf-8") + b"\n",
         )
+        if "response_schema" in row:
+            _write_json(prompt_dir / f"{row['batch_id']}.schema.json", row["response_schema"])
     return {
         "status": "SEMANTIC_ROW_VERIFICATION_REQUIRED",
         "stage_sha256": stage["stage_sha256"],
@@ -1233,6 +1235,8 @@ def prepare_row_repair_run(
             prompt_dir / f"{row['batch_id']}.md",
             row["prompt"].encode("utf-8") + b"\n",
         )
+        if "response_schema" in row:
+            _write_json(prompt_dir / f"{row['batch_id']}.schema.json", row["response_schema"])
     return {
         "status": "SEMANTIC_ROW_REPAIR_REQUIRED",
         "stage_sha256": stage["stage_sha256"],
@@ -1334,6 +1338,10 @@ def prepare_reconciliation_level(
             prompt_dir / f"{row['batch_id']}.md",
             row["prompt"].encode("utf-8") + b"\n",
         )
+        if "response_schema" in row:
+            _write_json(
+                prompt_dir / f"{row['batch_id']}.schema.json", row["response_schema"]
+            )
     return {
         "status": "SEMANTIC_RECONCILIATION_LEVEL_JUDGMENT_REQUIRED",
         "stage_sha256": stage["stage_sha256"],

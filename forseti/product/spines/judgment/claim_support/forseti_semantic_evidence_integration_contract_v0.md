@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v81
+version: v83
 effective_date: 2026-08-31
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v81
+# Semantic Evidence Integration Contract v83
 
 ## Purpose
 
@@ -142,6 +142,22 @@ sale timing or price is expressly a condition of an intended or hypothetical
 purchase, it also carries `value_and_quantity`; an incidental past sale mention
 does not create that judgment.
 Non-claim rows pass through unchanged.
+Whole-row verification and selective repair bind decisions by explicit evidence
+ID, not response-list position. Every assigned ID must occur exactly once;
+missing, duplicate, foreign, and mismatched replacement identities fail.
+Application follows source order, while the actual response order remains in
+raw-response hash lineage. Order tolerance alone does not prove the chosen
+meaning correct or change method or stage identity.
+Current method-v12/keyed-v3 authoring emits row-review response v2 for both
+verification and selective repair: one required object key per assigned evidence
+ID, with replacements constrained to that same ID. The public preparation
+runners persist each prompt's `.schema.json`; provider execution must use it.
+Native application independently rejects missing/foreign keys and misbound
+replacements. Row ownership is mechanical; correct interpretation is not.
+The source-work stage and its historical partition remain unchanged. Explicit
+response-v1 preparation reproduces historical prompts, and v1 responses remain
+replayable alongside v2 responses without rewriting their raw lineage. This adds
+no provider stage, automatic repair, or semantic classification rule.
 Method v5 and v6 remain historical one-pass routes and acquire no retroactive
 verification obligation.
 
@@ -1933,6 +1949,66 @@ new frontier.
 
 ## Changelog
 
+- `v84` / 2026-08-31 — Dieux full-corpus reconciliation exposed three
+  cause-visible first-level failures: one answer invented a child identifier;
+  the emerging-axis owner omitted five exact labels and invented one; and one
+  node reinterpreted mixed child polarity from agreeable wording. Current
+  method-v12 reconciliation preparation now carries its existing response-v2
+  transport as a schema sidecar whose child references and level-owned original
+  labels are constrained to the assigned inventories. The public preparer
+  persists that sidecar. Native validation still enforces exact cross-group
+  label coverage, polarity composition and source competence; semantic adequacy
+  remains judgment-owned. This adds no provider stage. Historical prompt bytes
+  and method-v11-and-earlier preparation remain unchanged. This machinery
+  result does not by itself complete Dieux consolidation or prove unattended
+  semantic accuracy.
+  The constrained corrective run completed three calls and accepted none:
+  one assigned `price transparency` to two emerging-label groups, one unmerged
+  an admitted first-hand formula-interest finding in normal-retention mode,
+  and one omitted the adjacent child's `when it warms up` condition. All were
+  rejected by their intended native boundary with current hashes; no later
+  batch was launched. Across the first-level run, seven calls covered four of
+  54 batches, with one structurally accepted batch and 50 unattempted batches.
+  Bounded inspection of that accepted batch also left a `visible results`
+  wording allegation open. Current enumeration constraints therefore remove
+  invented handles, not the wider preservation/repeatability problem. Evidence:
+  `C:\tmp\forseti-phase-a-dieux-full-corpus-20260831-v1\reconciliation-constrained\proof.json`,
+  `reconciliation-constrained/corrective-result.json`, and
+  `accounting-consolidation-paused.json`. Full Phase A remains incomplete.
+- `v83` / 2026-08-31 — Dieux verify-0036 returned 25 decisions but duplicated
+  one ID and omitted another; a corrective retry repeated that ID five times
+  and omitted four others. Array length was not exact row participation.
+  Current verification/repair producers now emit evidence-ID-keyed response v2
+  with exact required slots and same-ID replacements; both public runners
+  persist the constrained schema. Native application accepts explicit v1/v2
+  transports while retaining the original source-work stage and raw response
+  hashes. Completed answers need no regeneration. This prevents structural
+  omission/substitution, not incorrect meanings inside valid slots; semantic
+  repair and Dieux completion remain separate obligations.
+  The full-corpus run subsequently completed all 111 verification batches:
+  38 accepted v1 responses were retained and 73 keyed v2 responses were accepted,
+  including the formerly failing batch. Four selective-repair batches and four
+  corrective attempts also passed row participation. Source inspection still
+  required six explicit controller-authored row corrections, including a false
+  Air Angel agreement inferred from a Prequel comment and an Aestura-only
+  statement attached to Skin Mercy. These are reviewer-assisted semantic
+  judgments, not evidence of unattended accuracy or a new runtime classifier.
+  The repaired 6,908-row ledger retains 141 unresolved rows and 8,416 meanings;
+  its native replay is byte-identical. The bounded evidence is under
+  `C:\tmp\forseti-phase-a-dieux-full-corpus-20260831-v1` in
+  `repair-adjudicated/adjudication.json` and `repair-dogfood.json`.
+  Consolidation and final axis-reader completion remain unclaimed at this
+  checkpoint; structural acceptance does not clear semantic truth.
+- `v82` / 2026-08-31 — full-corpus Dieux verification returned all 27 assigned
+  decisions exactly once, but in a different order. Verification and selective
+  repair now bind decisions by evidence ID rather than list position. Missing,
+  duplicate, foreign, and mismatched replacement identities still fail; source
+  order controls application and raw response order remains hash-bound lineage.
+  Prompt, schema, method, and stage identities are unchanged. Publication can
+  recover a completed response after callback rejection only when the existing
+  usage receipt equals the exact rederived bytes; it neither restamps usage nor
+  replaces a canonical response. This removes unnecessary provider repetition,
+  not semantic review: row-meaning issues and full-corpus completion remain open.
 - `v81` / 2026-08-31 — the corrected 87-row Dieux trial reached reconciliation
   with 156 meanings. One provider answer produced 98 nodes; 18 changed or
   omitted literal child conditions, and bounded inspection also found

@@ -101,7 +101,7 @@ def publish_provider_attempt(
     usage_schema_version: str,
     validate_response: ResponseValidator | None = None,
 ) -> dict[str, Any]:
-    """Preserve usage and publish validated response bytes once without replace."""
+    """Preserve bound usage and publish validated response bytes without replace."""
 
     if (
         not canonical_response_name
@@ -145,13 +145,17 @@ def publish_provider_attempt(
         "events_sha256": events_hash,
         "usage": usage,
     }
-    _write_new(
-        attempt_dir / "usage.json",
-        json.dumps(
-            usage_receipt, ensure_ascii=False, indent=2, sort_keys=True
-        ).encode("utf-8")
-        + b"\n",
-    )
+    usage_path = attempt_dir / "usage.json"
+    usage_bytes = json.dumps(
+        usage_receipt, ensure_ascii=False, indent=2, sort_keys=True
+    ).encode("utf-8") + b"\n"
+    # Validation may have failed after usage was preserved. Reuse only its
+    # exact rederived bytes; never restamp a receipt or bypass canonical no-replace.
+    if usage_path.exists():
+        if usage_path.read_bytes() != usage_bytes:
+            raise ValueError("existing usage receipt does not match this attempt")
+    else:
+        _write_new(usage_path, usage_bytes)
     response = json.loads(response_bytes.decode("utf-8-sig"))
     if not isinstance(response, dict):
         raise ValueError("provider response must be one JSON object")
