@@ -8,7 +8,7 @@ from source_capture.reddit_consolidation.html_dom import HtmlNode, parse_html_do
 # Bump on ANY behavior change to this parser so content packets written under
 # the old behavior stay distinguishable from re-projections under the new one
 # (qualification compares records only within one version).
-OLD_REDDIT_THREAD_PARSER_VERSION = "1"
+OLD_REDDIT_THREAD_PARSER_VERSION = "2"
 
 COMMENT_POSTURES = {
     "present",
@@ -90,7 +90,10 @@ def parse_old_reddit_html(html: str) -> ParsedThread:
     return ParsedThread(
         thread_id=_normalize_reddit_id(post_node.attrs.get("data-fullname") or post_node.attrs.get("id")),
         subreddit=_first_text_attr(post_node, "data-subreddit"),
-        title=_text_or_none(post_node.first_descendant(class_name="title")),
+        title=_text_or_none(
+            post_node.first_descendant(tag="a", class_name="title")
+            or post_node.first_descendant(class_name="title")
+        ),
         permalink=_first_text_attr(post_node, "data-permalink") or _first_permalink(post_node),
         author_state=_author_state(post_node),
         timestamp_state=_timestamp_state(post_node),
@@ -223,7 +226,7 @@ def _body_node(node: HtmlNode) -> HtmlNode | None:
 def _body_text_from_node(body_node: HtmlNode | None) -> str:
     if body_node is None:
         return ""
-    return body_node.text_content()
+    return body_node.text_content(preserve_blockquotes=True)
 
 
 def _own_text_contains(node: HtmlNode, needle: str) -> bool:

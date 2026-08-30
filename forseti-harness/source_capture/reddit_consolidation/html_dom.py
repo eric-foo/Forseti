@@ -5,13 +5,29 @@ from html.parser import HTMLParser
 from typing import Iterable
 
 
+_TEXT_BREAK_TAGS = {
+    "address", "article", "aside", "blockquote", "br", "dd", "div", "dl", "dt",
+    "figcaption", "figure", "footer", "h1", "h2", "h3", "h4", "h5", "h6", "header",
+    "hr", "li", "main", "nav", "ol", "p", "pre", "section", "table", "td", "th",
+    "tr", "ul",
+}
+
+
 @dataclass
 class HtmlNode:
     tag: str
     attrs: dict[str, str] = field(default_factory=dict)
-    children: list["HtmlNode"] = field(default_factory=list)
-    text_parts: list[str] = field(default_factory=list)
+    # One ordered stream: separate text/child lists lose every inline boundary.
+    content: list["HtmlNode | str"] = field(default_factory=list)
     parent: "HtmlNode | None" = None
+
+    @property
+    def children(self) -> list["HtmlNode"]:
+        return [part for part in self.content if isinstance(part, HtmlNode)]
+
+    @property
+    def text_parts(self) -> list[str]:
+        return [part for part in self.content if isinstance(part, str)]
 
     def classes(self) -> set[str]:
         return {item for item in self.attrs.get("class", "").split() if item}
@@ -19,10 +35,10 @@ class HtmlNode:
     def has_class(self, class_name: str) -> bool:
         return class_name in self.classes()
 
-    def text_content(self) -> str:
+    def text_content(self, *, preserve_blockquotes: bool = False) -> str:
         parts: list[str] = []
-        self._collect_text(parts)
-        return " ".join(" ".join(parts).split())
+        self._collect_text(parts, preserve_blockquotes=preserve_blockquotes)
+        return " ".join("".join(parts).split())
 
     def descendants(self) -> Iterable["HtmlNode"]:
         for child in self.children:
@@ -38,10 +54,30 @@ class HtmlNode:
             return node
         return None
 
-    def _collect_text(self, parts: list[str]) -> None:
-        parts.extend(part.strip() for part in self.text_parts if part.strip())
-        for child in self.children:
-            child._collect_text(parts)
+    def _collect_text(self, parts: list[str], *, preserve_blockquotes: bool) -> bool:
+        start = len(parts)
+        quoted = preserve_blockquotes and self.tag == "blockquote"
+        if quoted:
+            parts.append(" <blockquote> ")
+        elif self.tag in _TEXT_BREAK_TAGS:
+            parts.append(" ")
+        has_text = False
+        for part in self.content:
+            if isinstance(part, str):
+                parts.append(part)
+                has_text = bool(part.strip()) or has_text
+            else:
+                has_text = part._collect_text(
+                    parts, preserve_blockquotes=preserve_blockquotes
+                ) or has_text
+        if quoted:
+            if has_text:
+                parts.append(" </blockquote> ")
+            else:
+                del parts[start:]  # Empty markup must not become customer text.
+        elif self.tag in _TEXT_BREAK_TAGS:
+            parts.append(" ")
+        return has_text
 
 
 class _DomBuilder(HTMLParser):
@@ -56,7 +92,7 @@ class _DomBuilder(HTMLParser):
             attrs={key.lower(): value or "" for key, value in attrs},
             parent=self._stack[-1],
         )
-        self._stack[-1].children.append(node)
+        self._stack[-1].content.append(node)
         if tag.lower() not in {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param"}:
             self._stack.append(node)
 
@@ -69,7 +105,7 @@ class _DomBuilder(HTMLParser):
 
     def handle_data(self, data: str) -> None:
         if data:
-            self._stack[-1].text_parts.append(data)
+            self._stack[-1].content.append(data)
 
 
 def parse_html_document(html: str) -> HtmlNode:
