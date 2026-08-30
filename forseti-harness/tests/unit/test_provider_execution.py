@@ -2,13 +2,17 @@ from __future__ import annotations
 
 import io
 import json
+import subprocess
 import sys
 import threading
 import time
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
+import provider_execution
+from harness_utils import sha256_bytes
 from provider_attempts import publish_provider_attempt, reserve_provider_attempt
 from provider_execution import execute_provider_attempt
 
@@ -197,6 +201,194 @@ def test_changed_output_cannot_publish(tmp_path: Path) -> None:
     )
     (attempt / "response.json").write_text('{"answer":43}')
     with pytest.raises(ValueError, match="execution output changed: response.json"):
+        _publish(attempt, tmp_path)
+
+
+def test_publication_reuses_the_receipt_checked_snapshot(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    prompt, attempt = _setup(tmp_path)
+    execute_provider_attempt(
+        command=[sys.executable, "-c", _response_script(attempt)], prompt_path=prompt,
+        attempt_dir=attempt, timeout_seconds=5, stderr_echo=io.BytesIO(),
+    )
+    response_path, events_path = attempt / "response.json", attempt / "events.jsonl"
+    response_bytes, event_bytes = response_path.read_bytes(), events_path.read_bytes()
+    read_bytes = Path.read_bytes
+
+    def read_then_change(path: Path) -> bytes:
+        captured = read_bytes(path)
+        if path == response_path:
+            path.write_text('{"answer":43}', encoding="utf-8")
+        elif path == events_path:
+            path.write_text(json.dumps({"type": "turn.completed", "usage": {**USAGE, "input_tokens": 999}}), encoding="utf-8")
+        return captured
+
+    # Deterministically change each source immediately after its first read,
+    # rather than relying on a subprocess scheduling race.
+    monkeypatch.setattr(Path, "read_bytes", read_then_change)
+
+    def validate(response: dict) -> dict:
+        assert response == {"answer": 42}
+        return {"validated_answer": 42}
+
+    published = publish_provider_attempt(
+        attempt_dir=attempt, response_dir=tmp_path / "canonical",
+        canonical_response_name="answer.json", usage_schema_version="test_usage_v1",
+        validate_response=validate,
+    )
+    assert read_bytes(Path(published["response_path"])) == response_bytes
+    usage = json.loads((attempt / "usage.json").read_text())
+    assert usage["response_sha256"] == sha256_bytes(response_bytes)
+    assert usage["events_sha256"] == sha256_bytes(event_bytes)
+    assert usage["usage"] == USAGE
+    assert published["usage"] == USAGE
+
+
+def test_publication_does_not_reread_response_after_validation(tmp_path: Path) -> None:
+    prompt, attempt = _setup(tmp_path)
+    execute_provider_attempt(
+        command=[sys.executable, "-c", _response_script(attempt)], prompt_path=prompt,
+        attempt_dir=attempt, timeout_seconds=5, stderr_echo=io.BytesIO(),
+    )
+    response_path = attempt / "response.json"
+    expected = response_path.read_bytes()
+
+    def validate(response: dict) -> dict:
+        assert response == {"answer": 42}
+        response_path.write_text('{"answer":43}', encoding="utf-8")
+        return {}
+
+    published = publish_provider_attempt(
+        attempt_dir=attempt, response_dir=tmp_path / "canonical",
+        canonical_response_name="answer.json", usage_schema_version="test_usage_v1",
+        validate_response=validate,
+    )
+    assert Path(published["response_path"]).read_bytes() == expected
+
+
+class _BrokenEcho(io.BytesIO):
+    """A console stream that has gone away mid-attempt."""
+
+    def write(self, data: object) -> int:  # type: ignore[override]
+        raise ValueError("I/O operation on closed file")
+
+
+@pytest.mark.parametrize("finish_before_poll", [False, True])
+def test_broken_stderr_echo_preserves_the_attempt_its_receipt_and_the_log(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, finish_before_poll: bool,
+) -> None:
+    if finish_before_poll:
+        launch = provider_execution.subprocess.Popen
+
+        def finished_process(*args: object, **kwargs: object) -> subprocess.Popen:
+            process = launch(*args, **kwargs)
+            process.wait(timeout=5)
+            return process
+
+        # Skip the polling loop deterministically: the echo fails in finally.
+        monkeypatch.setattr(provider_execution.subprocess, "Popen", finished_process)
+    prompt, attempt = _setup(tmp_path)
+    script = _response_script(attempt) + "print('retrying sampling request (1/5)',file=sys.stderr,flush=True)"
+    result = execute_provider_attempt(
+        command=[sys.executable, "-c", script], prompt_path=prompt,
+        attempt_dir=attempt, timeout_seconds=5, stderr_echo=_BrokenEcho(),
+    )
+    # A dead console is not a failed model attempt, and the log stays authoritative.
+    assert result["outcome"] == "PROCESS_COMPLETED"
+    assert result["stderr_echo_status"] == "FAILED"
+    assert "ValueError" in result["stderr_echo_error"]
+    assert b"retrying sampling request" in (attempt / "stderr.log").read_bytes()
+    durable = json.loads((attempt / "execution_receipt.json").read_text())
+    assert durable["outcome"] == "PROCESS_COMPLETED"
+    assert durable["observed_retry_events"] == 1
+    assert _publish(attempt, tmp_path)["validated_answer"] == 42
+
+
+def test_absent_console_stream_does_not_block_execution(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    prompt, attempt = _setup(tmp_path)
+    monkeypatch.setattr(provider_execution.sys, "stderr", None)
+    result = execute_provider_attempt(
+        command=[sys.executable, "-c", _response_script(attempt)],
+        prompt_path=prompt, attempt_dir=attempt, timeout_seconds=5,
+    )
+    assert result["outcome"] == "PROCESS_COMPLETED"
+    assert result["stderr_echo_status"] == "UNAVAILABLE"
+    assert result["stderr_echo_error"] is None
+
+
+def test_stop_process_tree_reports_faults_instead_of_raising(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(provider_execution.subprocess, "run", lambda *a, **k: None)
+    # killpg is POSIX-only; the stub must exist without asserting the platform.
+    monkeypatch.setattr(provider_execution.os, "killpg", lambda *a, **k: None, raising=False)
+
+    class Stuck:
+        pid, returncode = 999_999_999, None
+
+        def wait(self, timeout: float | None = None) -> int:
+            raise subprocess.TimeoutExpired(cmd="child", timeout=timeout or 0)
+
+        def kill(self) -> None:
+            raise PermissionError("kill denied")
+
+        def poll(self) -> int | None:
+            return None
+
+    failure = provider_execution._stop_process_tree(Stuck())
+    assert failure is not None
+    assert "PermissionError" in failure
+    assert "process tree may still be running" in failure
+
+
+def test_cleanup_failure_does_not_relabel_a_timeout(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    prompt, attempt = _setup(tmp_path)
+    stop = provider_execution._stop_process_tree
+    monkeypatch.setattr(
+        provider_execution, "_stop_process_tree",
+        lambda process: (stop(process), "taskkill timed out")[1],
+    )
+    result = execute_provider_attempt(
+        command=[sys.executable, "-c", "import time; time.sleep(30)"], prompt_path=prompt,
+        attempt_dir=attempt, timeout_seconds=0.5, stderr_echo=io.BytesIO(),
+    )
+    # The deadline breach is the terminal fact; a cleanup fault is recorded, not substituted.
+    assert result["outcome"] == "TIMED_OUT"
+    assert result["error"] == "cleanup failed: taskkill timed out"
+    with pytest.raises(ValueError, match="execution did not complete successfully"):
+        _publish(attempt, tmp_path)
+
+
+def test_failed_windows_tree_stop_is_reported_even_if_parent_exits(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(provider_execution, "os", SimpleNamespace(name="nt"))
+
+    def failed_taskkill(command: list[str], **kwargs: object) -> subprocess.CompletedProcess:
+        result = subprocess.CompletedProcess(command, returncode=1)
+        if kwargs.get("check"):
+            result.check_returncode()
+        return result
+
+    monkeypatch.setattr(provider_execution.subprocess, "run", failed_taskkill)
+    process = SimpleNamespace(pid=999_999_999, wait=lambda **kw: 0, poll=lambda: 0)
+    failure = provider_execution._stop_process_tree(process)
+    assert failure is not None
+    assert "CalledProcessError" in failure
+
+
+def test_failed_execution_without_a_start_record_cannot_publish(tmp_path: Path) -> None:
+    _, attempt = _setup(tmp_path)
+    (attempt / "response.json").write_text('{"answer":42}')
+    (attempt / "events.jsonl").write_text(json.dumps({"type": "turn.completed", "usage": USAGE}))
+    (attempt / "execution_receipt.json").write_text(json.dumps({"outcome": "TIMED_OUT"}))
+    with pytest.raises(ValueError, match="execution did not complete successfully"):
+        _publish(attempt, tmp_path)
+    assert not (tmp_path / "canonical").exists()
+
+
+def test_unusable_execution_receipt_cannot_publish(tmp_path: Path) -> None:
+    _, attempt = _setup(tmp_path)
+    (attempt / "execution_started.json").write_text("{}")
+    (attempt / "response.json").write_text('{"answer":42}')
+    (attempt / "events.jsonl").write_text(json.dumps({"type": "turn.completed", "usage": USAGE}))
+    (attempt / "execution_receipt.json").write_text("[]")
+    with pytest.raises(ValueError, match="receipt is unusable"):
         _publish(attempt, tmp_path)
 
 

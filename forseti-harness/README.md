@@ -39,8 +39,12 @@ python runners/run_codex_provider_attempt.py --attempt-root <attempts> --attempt
 The timeout is one finite, workload-appropriate budget for the entire attempt;
 reconnects and additional client turns do not reset it. Logs go directly to
 `events.jsonl` and `stderr.log`; stderr is also mirrored while the process runs.
+The mirror is best effort over an authoritative on-disk log: a console that is
+absent or breaks mid-attempt is recorded in `stderr_echo_status` and never ends
+the attempt or suppresses its receipt.
 An idle process is not evidence of useful model work. On timeout the executor
-stops its local process tree and preserves the attempt. It cannot prove remote
+stops its local process tree and preserves the attempt; a stop that fails is
+recorded in `error` and does not relabel the timeout. It cannot prove remote
 cancellation or unreported provider usage.
 
 `execution_started.json` reserves execution and `execution_receipt.json` records
@@ -51,8 +55,11 @@ Do not subtract cached input or add reasoning tokens to output tokens.
 
 Process completion is not semantic acceptance. The stage-specific validator and
 publisher still own acceptance. `provider_attempts.py` refuses publication for
-unfinished or unsuccessful executor attempts and changed executor outputs.
-Historical attempts without an executor-start record retain their existing
+unfinished or unsuccessful executor attempts and changed executor outputs;
+either executor record is enough to hold an attempt to that boundary.
+Receipt checks, usage accounting, stage validation, and publication use one
+captured response/events snapshot; later writes cannot replace the checked answer.
+Historical attempts with no executor record retain their existing
 publication behavior. A retry gets a new attempt ID; the executor launches no
 automatic retry and never changes prompts, models, or evidence to obtain a pass.
 

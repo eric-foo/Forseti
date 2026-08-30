@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 from typing import Any, Callable, Mapping
 
-from harness_utils import hash_file
+from harness_utils import hash_file, sha256_bytes
 
 
 ResponseValidator = Callable[[dict[str, Any]], Mapping[str, Any]]
@@ -55,8 +55,12 @@ def reserve_provider_attempt(*, attempt_root: Path, attempt_id: str) -> dict[str
 def codex_usage_from_events(events_path: Path) -> dict[str, int]:
     """Recover exact completed-turn token fields from one Codex JSONL stream."""
 
+    return _codex_usage_from_event_bytes(events_path.read_bytes())
+
+
+def _codex_usage_from_event_bytes(events: bytes) -> dict[str, int]:
     completed: list[Mapping[str, Any]] = []
-    for line in events_path.read_text(encoding="utf-8-sig").splitlines():
+    for line in events.decode("utf-8-sig").splitlines():
         try:
             event = json.loads(line)
         except json.JSONDecodeError:
@@ -107,24 +111,38 @@ def publish_provider_attempt(
         raise ValueError("canonical response name must be one JSON filename")
     response_path = attempt_dir / "response.json"
     events_path = attempt_dir / "events.jsonl"
-    if (attempt_dir / "execution_started.json").exists():
-        execution_path = attempt_dir / "execution_receipt.json"
+    execution_path = attempt_dir / "execution_receipt.json"
+    execution = None
+    # Either executor record alone proves the attempt was executor-run, so losing
+    # one marker cannot demote a failed attempt back to the historical path.
+    if (attempt_dir / "execution_started.json").exists() or execution_path.exists():
         if not execution_path.is_file():
             raise ValueError("provider execution is unfinished; refusing publication")
         execution = json.loads(execution_path.read_text(encoding="utf-8"))
+        if not isinstance(execution, dict):
+            raise ValueError("provider execution receipt is unusable; refusing publication")
         if execution.get("outcome") != "PROCESS_COMPLETED":
             raise ValueError("provider execution did not complete successfully; refusing publication")
-        for filename, field in (("response.json", "response_sha256"), ("events.jsonl", "events_sha256"), ("stderr.log", "stderr_sha256")):
-            path = attempt_dir / filename
-            if not path.is_file() or execution.get(field) != hash_file(path):
-                raise ValueError(f"provider execution output changed: {filename}")
     if not response_path.is_file() or not events_path.is_file():
         raise ValueError("attempt must contain response.json and events.jsonl")
-    usage = codex_usage_from_events(events_path)
+    # Bind receipt checks, accounting, validation, and publication to the same
+    # bytes. A later source-file write must never substitute unvalidated output.
+    response_bytes, events_bytes = response_path.read_bytes(), events_path.read_bytes()
+    response_hash, events_hash = sha256_bytes(response_bytes), sha256_bytes(events_bytes)
+    if execution is not None:
+        stderr_path = attempt_dir / "stderr.log"
+        for filename, field, actual in (
+            ("response.json", "response_sha256", response_hash),
+            ("events.jsonl", "events_sha256", events_hash),
+            ("stderr.log", "stderr_sha256", hash_file(stderr_path) if stderr_path.is_file() else None),
+        ):
+            if actual is None or execution.get(field) != actual:
+                raise ValueError(f"provider execution output changed: {filename}")
+    usage = _codex_usage_from_event_bytes(events_bytes)
     usage_receipt = {
         "schema_version": usage_schema_version,
-        "response_sha256": hash_file(response_path),
-        "events_sha256": hash_file(events_path),
+        "response_sha256": response_hash,
+        "events_sha256": events_hash,
         "usage": usage,
     }
     _write_new(
@@ -134,7 +152,7 @@ def publish_provider_attempt(
         ).encode("utf-8")
         + b"\n",
     )
-    response = json.loads(response_path.read_text(encoding="utf-8-sig"))
+    response = json.loads(response_bytes.decode("utf-8-sig"))
     if not isinstance(response, dict):
         raise ValueError("provider response must be one JSON object")
     validation = dict(validate_response(response)) if validate_response else {}
@@ -142,9 +160,9 @@ def publish_provider_attempt(
     response_dir.mkdir(parents=True, exist_ok=True)
     target = response_dir / canonical_response_name
     staged = response_dir / (
-        f".{canonical_response_name}.{hash_file(response_path)}.json.tmp"
+        f".{canonical_response_name}.{response_hash}.json.tmp"
     )
-    _write_new(staged, response_path.read_bytes())
+    _write_new(staged, response_bytes)
     try:
         # The canonical hard link points at a disposable sibling copy, not at
         # the preserved attempt file, so later attempt inspection cannot mutate it.

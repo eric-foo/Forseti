@@ -21,24 +21,41 @@ def _write_new_json(path: Path, value: dict[str, Any]) -> None:
         handle.write("\n")
 
 
-def _stop_process_tree(process: subprocess.Popen[bytes]) -> None:
-    if os.name == "nt":
-        # Target only the process this invocation launched, including its children.
-        subprocess.run(
-            ["taskkill", "/PID", str(process.pid), "/T", "/F"],
-            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-            check=False, timeout=5,
-        )
-    else:
-        try:
-            os.killpg(process.pid, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
+def _stop_process_tree(process: subprocess.Popen[bytes]) -> str | None:
+    """Stop the launched tree; report cleanup faults instead of raising them.
+
+    A stuck kill must not overwrite the attempt's own terminal outcome, so every
+    fault is returned for the receipt, including a tree that survived the stop.
+    """
+    failures: list[str] = []
+    try:
+        if os.name == "nt":
+            # Target only the process this invocation launched, including its children.
+            subprocess.run(
+                ["taskkill", "/PID", str(process.pid), "/T", "/F"],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                check=True, timeout=5,
+            )
+        else:
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+    except Exception as exc:
+        failures.append(f"{type(exc).__name__}: {exc}")
     try:
         process.wait(timeout=5)
     except subprocess.TimeoutExpired:
-        process.kill()
-        process.wait(timeout=5)
+        try:
+            process.kill()
+            process.wait(timeout=5)
+        except Exception as exc:
+            failures.append(f"{type(exc).__name__}: {exc}")
+    except Exception as exc:
+        failures.append(f"{type(exc).__name__}: {exc}")
+    if process.poll() is None:
+        failures.append("process tree may still be running")
+    return "; ".join(failures) or None
 
 
 def execute_provider_attempt(
@@ -81,7 +98,8 @@ def execute_provider_attempt(
     _write_new_json(paths["execution_started.json"], start)
     started = time.monotonic()
     deadline = started + timeout_seconds
-    echo = stderr_echo if stderr_echo is not None else sys.stderr.buffer
+    echo = stderr_echo if stderr_echo is not None else getattr(sys.stderr, "buffer", None)
+    echo_status, echo_error = ("MIRRORED" if echo is not None else "UNAVAILABLE"), None
     creation = {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == "nt" else {"start_new_session": True}
     outcome, exit_code, error = "LAUNCH_FAILED", None, None
     process: subprocess.Popen[bytes] | None = None
@@ -91,10 +109,19 @@ def execute_provider_attempt(
           paths["stderr.log"].open("xb") as stderr,
           paths["stderr.log"].open("rb") as live_stderr):
         def mirror() -> None:
-            chunk = live_stderr.read()
-            if chunk:
-                echo.write(chunk)
-                echo.flush()
+            # The console echo is a convenience over the authoritative on-disk log:
+            # a detached or closed stream must not kill the attempt or the receipt.
+            nonlocal echo, echo_status, echo_error
+            if echo is None:
+                return
+            try:
+                chunk = live_stderr.read()
+                if chunk:
+                    echo.write(chunk)
+                    echo.flush()
+            except (OSError, ValueError) as exc:
+                echo, echo_status = None, "FAILED"
+                echo_error = f"{type(exc).__name__}: {exc}"
 
         try:
             process = subprocess.Popen(list(command), stdin=prompt, stdout=stdout, stderr=stderr, **creation)
@@ -103,7 +130,9 @@ def execute_provider_attempt(
                 remaining = deadline - time.monotonic()
                 if remaining <= 0:
                     outcome = "TIMED_OUT"
-                    _stop_process_tree(process)
+                    cleanup = _stop_process_tree(process)
+                    if cleanup is not None:
+                        error = f"cleanup failed: {cleanup}"
                     break
                 try:
                     process.wait(timeout=min(0.1, remaining))
@@ -116,11 +145,10 @@ def execute_provider_attempt(
             error = f"{type(exc).__name__}: {exc}"
             outcome = "EXECUTION_ERROR" if process is not None else "LAUNCH_FAILED"
             if process is not None:
-                try:
-                    _stop_process_tree(process)
-                    exit_code = process.returncode
-                except Exception as cleanup_error:
-                    error += f"; cleanup failed: {cleanup_error}"
+                cleanup = _stop_process_tree(process)
+                exit_code = process.returncode
+                if cleanup is not None:
+                    error += f"; cleanup failed: {cleanup}"
             if not isinstance(exc, Exception):
                 interrupted = exc
         finally:
@@ -147,6 +175,7 @@ def execute_provider_attempt(
         "retry_observation_scope": "recognized Codex stderr messages; not provider request accounting",
         "usage": usage, "usage_status": usage_status, "usage_error": usage_error,
         "usage_scope": "reported completed-turn fields; hidden retry usage is not independently observed",
+        "stderr_echo_status": echo_status, "stderr_echo_error": echo_error,
         "events_sha256": hash_file(paths["events.jsonl"]),
         "stderr_sha256": hash_file(paths["stderr.log"]),
         "response_sha256": hash_file(paths["response.json"]) if paths["response.json"].is_file() else None,
