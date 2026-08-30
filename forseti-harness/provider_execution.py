@@ -8,16 +8,11 @@ import signal
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, BinaryIO, Sequence
 
-from harness_utils import hash_file
+from harness_utils import hash_file, utc_now_z_microseconds
 from provider_attempts import codex_usage_from_events
-
-
-def _utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 def _write_new_json(path: Path, value: dict[str, Any]) -> None:
@@ -75,7 +70,7 @@ def execute_provider_attempt(
             raise ValueError(f"refusing to overwrite existing output: {target}")
     start = {
         "schema_version": "forseti_provider_execution_started_v1",
-        "command": list(command), "started_at": _utc_now(),
+        "command": list(command), "started_at": utc_now_z_microseconds(),
         "timeout_seconds": timeout_seconds,
         "prompt_path": str(prompt_path), "prompt_sha256": hash_file(prompt_path),
         "prompt_bytes": prompt_path.stat().st_size,
@@ -144,7 +139,7 @@ def execute_provider_attempt(
         outcome = "INPUT_CHANGED"
     receipt = {
         **start, "schema_version": "forseti_provider_execution_receipt_v1",
-        "outcome": outcome, "completed_at": _utc_now(), "exit_code": exit_code,
+        "outcome": outcome, "completed_at": utc_now_z_microseconds(), "exit_code": exit_code,
         "error": error, "wall_seconds": wall_seconds,
         "useful_compute_seconds": None, "useful_compute_seconds_status": "UNOBSERVED",
         "observed_retry_events": stderr_text.count("retrying sampling request"),
