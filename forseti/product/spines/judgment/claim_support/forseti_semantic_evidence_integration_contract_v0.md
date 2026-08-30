@@ -1492,8 +1492,10 @@ approval is not a particular benefit, and intent, acquisition, use, and
 repurchase are not interchangeable. Distinct scope, conditions, intensity,
 or uncertainty may require separate nodes. This clarifies the existing merge
 boundary, not a new semantic classifier or a target to minimize node count.
-The prompt also exposes source roles by existing leaf relation and the
-compiler-owned terminal claim-kind competence table. An observable-statement
+The prompt also exposes source roles by existing leaf relation, the
+compiler-owned terminal claim-kind competence table, and the compiler's
+existing rule for composing a leaf relation with the chosen child relation, so
+effective support is stated rather than guessed. An observable-statement
 posture alone does not make a community report a directly verified fact.
 Material with no semantically appropriate, source-competent terminal kind
 remains retrievable as unmerged evidence rather than being relabeled to pass.
@@ -1943,8 +1945,19 @@ new frontier.
   competence on one community report labeled as an observable fact. The
   prompt now exposes the existing source-role facts and competence table;
   it does not invent a new policy or infer claim kind from prose.
-  This is a candidate correction;
-  passing tests do not establish semantic accuracy or Dieux completion.
+  Cross-vendor review found the prompt also needed the existing relation
+  composition rule, including counter-under-counter becoming effective
+  support; the accepted patch states that rule and tests all nine relation
+  combinations. The third provider attempt retained all 156 meanings in a
+  valid packet. Home adjudication accepted its qualified redness common core
+  but conservatively split one moisturizing/hydrating disjunction into three
+  source-exact groups. The new controller-authored successor has 130 nodes,
+  17 unchanged unmerged meanings, and 127 unchanged prior nodes; it is not a
+  fresh provider answer or a repeat-stability result. Replacement nodes do
+  not inherit opposition clearance. Original attempts and frozen inputs remain
+  unchanged. PR #1529 records the adjudication and proof pointers; no new
+  provider stage or standing review ceremony was added. Full Dieux completion,
+  full-corpus cost, and final-prompt repeat stability remain unproven.
 - `v80` / 2026-08-30 — fixed public calibration reopening: keyed prompt schema
   metadata was lost by the disk loader, so valid saved v8-v11 prompts disagreed
   with their producer. The regression reached that public boundary before the

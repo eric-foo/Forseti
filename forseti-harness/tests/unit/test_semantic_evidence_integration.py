@@ -2366,8 +2366,17 @@ def test_current_reconciliation_preserves_literal_conditions_and_bounded_scope(m
     assert ("Purchase intent, acquisition, use, and repurchase are different states" in policy) is current
     assert ("generic approval does not establish a particular benefit" in policy) is current
     assert ("TERMINAL_SOURCE_ROLE_COMPETENCE" in policy) is current
+    assert ("counter leaves under a counter child both count" in policy) is current
     assert ('"source_roles_by_relation"' in prompts[0]["prompt"]) is current
     if current:
+        # The prompt states the composition rule instead of asking the model to
+        # rederive it, so keep that sentence pinned to _relation_product itself.
+        assert all(
+            (semantic_module._relation_product(child, leaf) == "support")
+            is (child == leaf and "adjacent" not in {child, leaf})
+            for child in semantic_module.RELATIONS
+            for leaf in semantic_module.RELATIONS
+        )
         agent_rows = json.loads(prompts[0]["prompt"].split("\n\nCANDIDATES\n", 1)[1])
         assert agent_rows[0]["source_roles_by_relation"] == {
             "support": ["community_post"], "counter": [], "adjacent": []}

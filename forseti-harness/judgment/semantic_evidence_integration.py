@@ -5529,8 +5529,11 @@ def _render_v3_reconciliation_prompt(
     source_role_instruction = (
         "Choose a terminal claim_kind only when its effective supporting source roles "
         "are competent in TERMINAL_SOURCE_ROLE_COMPETENCE. Each candidate supplies "
-        "source_roles_by_relation from its original leaves; compose these with the "
-        "chosen child relation, as the validator does. An observable_statement posture "
+        "source_roles_by_relation from its original leaves. A leaf's roles are "
+        "effective support only when its relation equals the child relation you choose "
+        "and neither is adjacent, so support leaves under a support child and counter "
+        "leaves under a counter child both count while any adjacent involvement never "
+        "does. An observable_statement posture "
         "does not make a community report a directly verified observable_fact. Never "
         "change a claim's meaning or relabel its kind merely to pass this check. Retain "
         "non-customer material with no eligible terminal kind in unmerged_children "
