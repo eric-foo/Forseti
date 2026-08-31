@@ -13,6 +13,9 @@ if __package__ in {None, ""}:
 
 from judgment.semantic_evidence_integration import (  # noqa: E402
     BUNDLE_VERSION_V4,
+    METHOD_VERSION_V12,
+    RECONCILIATION_AUTHORING_LEGACY,
+    RECONCILIATION_AUTHORING_IDENTITY_V1,
     RECONCILIATION_POLICY_VERSION_V2,
     SemanticIntegrationError,
     apply_row_verification,
@@ -1335,13 +1338,22 @@ def prepare_reconciliation_level(
     reconciliation_policy_version: str | None = None,
     response_version: str | None = None,
     existing_stage_path: Path | None = None,
+    authoring_revision: str | None = None,
 ) -> dict[str, Any]:
     bundle = _load_object(bundle_path)
     compilation = _load_object(compilation_path)
+    if authoring_revision is None:
+        authoring_revision = (
+            RECONCILIATION_AUTHORING_IDENTITY_V1
+            if bundle.get("method_version") == METHOD_VERSION_V12
+            and response_version != RECONCILIATION_RESPONSE_VERSION_V2
+            else RECONCILIATION_AUTHORING_LEGACY
+        )
     if existing_stage_path is None:
         stage, prompts = prepare_reconciliation_stage(
             bundle, compilation, reconciliation_policy_version=reconciliation_policy_version,
             response_version=response_version,
+            authoring_revision=authoring_revision,
         )
     else:
         stage = _load_object(existing_stage_path)
@@ -1352,7 +1364,8 @@ def prepare_reconciliation_level(
             raise ValueError("existing reconciliation stage has stale input compilation")
         if reconciliation_policy_version is not None and stage.get("reconciliation_policy_version") != reconciliation_policy_version:
             raise ValueError("existing reconciliation stage has different policy")
-        prompts = prepare_reconciliation_prompts(bundle, stage, response_version=response_version)
+        prompts = prepare_reconciliation_prompts(bundle, stage, response_version=response_version,
+                                                authoring_revision=authoring_revision)
     if prompt_dir.exists():
         raise ValueError(f"refusing to write into existing prompt directory: {prompt_dir}")
     _write_json(stage_out, stage)
@@ -1368,6 +1381,7 @@ def prepare_reconciliation_level(
             )
     return {
         "status": "SEMANTIC_RECONCILIATION_LEVEL_JUDGMENT_REQUIRED",
+        "authoring_revision": authoring_revision,
         "stage_sha256": stage["stage_sha256"],
         "level": stage["level"],
         "batch_count": len(prompts),
@@ -2513,6 +2527,9 @@ def _parser() -> argparse.ArgumentParser:
     reconcile_level.add_argument("--response-version",
         choices=[RECONCILIATION_RESPONSE_VERSION_V2, RECONCILIATION_RESPONSE_VERSION_V3],
         help="Defaults to decision-only v3 for method v12; explicit v2 is historical replay.")
+    reconcile_level.add_argument("--authoring-revision",
+        choices=[RECONCILIATION_AUTHORING_LEGACY, RECONCILIATION_AUTHORING_IDENTITY_V1],
+        help="Normal requests only: defaults to exact identity namespaces for method-v12 response-v3; legacy reproduces historical requests.")
     reconcile_level.add_argument(
         "--reconciliation-policy",
         choices=[RECONCILIATION_POLICY_VERSION_V2],
@@ -3021,6 +3038,7 @@ def main(argv: list[str] | None = None) -> int:
                 reconciliation_policy_version=args.reconciliation_policy,
                 response_version=args.response_version,
                 existing_stage_path=args.existing_stage,
+                authoring_revision=args.authoring_revision,
             )
         elif args.command == "prepare-reconciliation-definitions":
             result = prepare_reconciliation_definitions(bundle_path=args.bundle,

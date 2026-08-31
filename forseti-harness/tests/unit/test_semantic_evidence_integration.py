@@ -2425,7 +2425,8 @@ def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: 
     raw = validate_batch_responses(bundle, responses)
     verification, _ = prepare_row_verification(bundle, raw)
     verified = apply_row_verification(bundle, raw, verification, _row_verification_responses(verification))
-    stage, prompts = prepare_reconciliation_stage(bundle, verified)
+    stage, prompts = prepare_reconciliation_stage(bundle, verified,
+        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1)
     bp, cp = tmp_path / "bundle.json", tmp_path / "compiled.json"
     bp.write_text(json.dumps(bundle), encoding="utf-8")
     cp.write_text(json.dumps(verified), encoding="utf-8")
@@ -2497,7 +2498,8 @@ def test_decision_reconciliation_public_consumers_preserve_owned_facts_and_resum
     for path, value in [(bp, bundle), (cp, verified), (sp, stage), (rp, response)]:
         path.write_text(json.dumps(value), encoding="utf-8")
     prepare_reconciliation_level(bundle_path=bp, compilation_path=cp, existing_stage_path=sp,
-        stage_out=tmp_path / "resumed.json", prompt_dir=tmp_path / "prompts")
+        stage_out=tmp_path / "resumed.json", prompt_dir=tmp_path / "prompts",
+        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_LEGACY)
     assert json.loads((tmp_path / "resumed.json").read_text()) == stage
     schema = json.loads((tmp_path / "prompts" / (response["batch_id"] + ".schema.json")).read_text())
     assert schema == prompts[0]["response_schema"]
@@ -2570,6 +2572,115 @@ def test_decision_reconciliation_wrong_cause(mutation, error):
         response["stage_sha256"] = stage["stage_sha256"]
     with pytest.raises(SemanticIntegrationError, match=error):
         validate_reconciliation_stage(bundle, stage, [response])
+
+
+@pytest.mark.parametrize("field", ["subject_product_ids", "comparator_product_ids", "product_version_ids"])
+@pytest.mark.parametrize("relation", sorted(semantic_module.RELATIONS))
+def test_normal_identity_namespaces_bind_all_roles_and_relations(field, relation):
+    import re
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    stage["candidates"][1][field] = ["different-identity"]
+    stage["stage_sha256"] = semantic_module._sha256({k: v for k, v in stage.items() if k != "stage_sha256"})
+    response["stage_sha256"] = stage["stage_sha256"]
+    record = semantic_module.prepare_reconciliation_prompts(bundle, stage,
+        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1)[0]
+    schema = record["response_schema"]
+    decisions = response["decisions_by_candidate_ref"]
+    patterns = []
+    for ref in decisions:
+        slot = schema["properties"]["decisions_by_candidate_ref"]["properties"][ref]
+        shape = schema["$defs"][slot["$ref"].rsplit("/", 1)[1]]
+        patterns.append(shape["properties"]["attachments"]["items"]["properties"]["semantic_node_key"]["pattern"])
+        decisions[ref]["attachments"][0]["relation"] = relation
+    assert patterns[0] != patterns[1]
+    # A coherent illegal merge passes no stale-hash guard: fail specifically
+    # on identity in native compilation and on the other candidate's pattern.
+    key = patterns[0][1:] + "arbitrary_" * 200
+    response["semantic_nodes"][0]["semantic_node_key"] = key
+    for decision in decisions.values():
+        decision["attachments"][0]["semantic_node_key"] = key
+    assert re.match(patterns[0], key) and not re.match(patterns[1], key)
+    with pytest.raises(SemanticIntegrationError, match="crosses product, comparator, or version bindings"):
+        validate_reconciliation_stage(bundle, stage, [response])
+    second = deepcopy(response["semantic_nodes"][0])
+    second["semantic_node_key"] = patterns[1][1:] + "model_authored"
+    response["semantic_nodes"].append(second)
+    list(decisions.values())[1]["attachments"][0]["semantic_node_key"] = second["semantic_node_key"]
+    assert len(validate_reconciliation_stage(bundle, stage, [response])["semantic_nodes"]) == 2
+
+
+def test_normal_identity_class_sets_preserve_roles_and_unbounded_key_space():
+    rows = [dict(candidate_ref=str(n), subject_product_ids=subject,
+                 comparator_product_ids=comparator, product_version_ids=version)
+            for n, (subject, comparator, version) in enumerate([
+                (["a", "b"], ["c"], []), (["b", "a", "a"], ["c"], []),
+                (["c"], ["a", "b"], []), (["a", "b"], [], ["c"]),
+                ([], [], []), (["a"], ["b", "c"], [])])]
+    prefixes = semantic_module._reconciliation_identity_prefixes(rows)
+    assert prefixes["0"] == prefixes["1"]
+    assert len(set(prefixes.values())) == 5
+    assert prefixes == semantic_module._reconciliation_identity_prefixes(list(reversed(rows)))
+
+
+def test_public_normal_authoring_default_and_legacy_replay_are_separate(tmp_path):
+    from runners.run_semantic_evidence_integration import prepare_reconciliation_level
+    bundle, compiled, stage, legacy, _ = _decision_reconciliation_fixture(count=40)
+    for name, value in [("bundle", bundle), ("compiled", compiled), ("stage", stage)]:
+        (tmp_path / f"{name}.json").write_text(json.dumps(value), encoding="utf-8")
+    for revision in [None, semantic_module.RECONCILIATION_AUTHORING_LEGACY]:
+        directory = tmp_path / (revision or "current")
+        result = prepare_reconciliation_level(bundle_path=tmp_path/"bundle.json",
+            compilation_path=tmp_path/"compiled.json", existing_stage_path=tmp_path/"stage.json",
+            stage_out=directory/"stage.json", prompt_dir=directory/"prompts", authoring_revision=revision)
+        expected = semantic_module.prepare_reconciliation_prompts(bundle, stage,
+            authoring_revision=revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1)
+        assert json.loads((directory/"stage.json").read_text()) == stage
+        for row in expected:
+            assert (directory/"prompts"/f"{row['batch_id']}.md").read_bytes() == (row["prompt"] + "\n").encode()
+            assert json.loads((directory/"prompts"/f"{row['batch_id']}.schema.json").read_text()) == row["response_schema"]
+        assert result["authoring_revision"] == (revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1)
+    assert semantic_module.prepare_reconciliation_prompts(bundle, stage,
+        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_LEGACY) == legacy
+    new_stage, new_prompts = prepare_reconciliation_stage(bundle, compiled,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1)
+    assert len(new_prompts) > 1
+    assert all(row["prompt_utf8_bytes"] <= bundle["max_prompt_bytes"] for row in new_prompts)
+    assert sorted(ref for batch in new_stage["batches"] for ref in batch["candidate_refs"]) == sorted(row["candidate_ref"] for row in new_stage["candidates"])
+
+
+@pytest.mark.parametrize("revision,version", [("unknown", None),
+    (semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1, semantic_module.RECONCILIATION_RESPONSE_VERSION_V2)])
+def test_normal_authoring_wrong_revision_fails_before_rendering(revision, version):
+    bundle, _, stage, _, _ = _decision_reconciliation_fixture()
+    with pytest.raises(SemanticIntegrationError, match="unsupported reconciliation normal-authoring revision"):
+        semantic_module.prepare_reconciliation_prompts(bundle, stage,
+            authoring_revision=revision, response_version=version)
+
+
+def test_identity_authoring_preserves_shared_multiple_nodes_and_later_levels():
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    record = semantic_module.prepare_reconciliation_prompts(bundle, stage,
+        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1)[0]
+    assert len(record["response_schema"]["$defs"]) == 1  # shared identity, not per-candidate slots
+    response["semantic_nodes"][0]["semantic_node_key"] = "k000_shared"
+    extra = deepcopy(response["semantic_nodes"][0])
+    extra.update(semantic_node_key="k000_another_unbounded_key", bounded_meaning="A semantically dubious assertion, not mechanically adjudicated.")
+    response["semantic_nodes"].append(extra)
+    for decision in response["decisions_by_candidate_ref"].values():
+        decision["attachments"][0]["semantic_node_key"] = "k000_shared"
+        decision["attachments"].append({"semantic_node_key": extra["semantic_node_key"], "relation": "support"})
+    nodes = validate_reconciliation_stage(bundle, stage, [response])
+    assert len(nodes["semantic_nodes"]) == 2
+    next_stage, next_prompts = prepare_reconciliation_stage(bundle, nodes,
+        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1)
+    assert next_stage["level"] == 2
+    assert next_stage["reconciliation_mode"] == "convergence"
+    assert all(row["authoring_revision"] == semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1 for row in next_prompts)
+    assert all("NORMAL_AUTHORING_REVISION" in row["prompt"] for row in next_prompts)
+    # A separately selected historical request remains free of normal-only constraints.
+    assert all("NORMAL_AUTHORING_REVISION" not in row["prompt"] for row in
+        semantic_module.prepare_reconciliation_prompts(bundle, next_stage))
 
 
 def test_decision_reconciliation_does_not_infer_semantic_truth():

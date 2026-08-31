@@ -38,6 +38,14 @@ a schema pass is not semantic proof. `prepare-reconciliation-level
 --existing-stage <stage.json>` resumes unchanged stage membership. Explicit
 `--response-version semantic_evidence_reconciliation_response_v2` preserves
 historical preparation, and stored v2 responses remain consumable unchanged.
+Normal method-v12 response-v3 requests default to
+`--authoring-revision exact_identity_namespaces_v1`: opaque node-key prefixes
+separate exact subject/comparator/version identity classes without choosing
+meanings. `--authoring-revision legacy` replays historical normal v3 requests.
+Low-level Python preparation retains legacy defaults; current callers select
+`RECONCILIATION_AUTHORING_IDENTITY_V1` explicitly. Definition recovery and local
+repair keep their historical requests and existing keys. The semantic-integration
+contract v92 owns this boundary; no extra provider stage is added.
 
 For authorized unattended Codex jobs whose retries, elapsed time, or failure
 history matter, use the shared executor rather than a task-local buffered

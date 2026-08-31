@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v91
+version: v92
 effective_date: 2026-08-31
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v91
+# Semantic Evidence Integration Contract v92
 
 ## Purpose
 
@@ -1627,6 +1627,35 @@ responses share the existing validator and downstream node-compilation-v2
 shape, without replacing raw provider artifacts. No normal-path semantic provider
 stage is added. Mechanical assembly does not prove that chosen meanings belong together.
 
+Normal method-v12 response-v3 preparation now selects
+`exact_identity_namespaces_v1` at the public `prepare-reconciliation-level`
+entrypoint. The separately selected `authoring_revision` is not a response or
+stage schema revision. Each exact tuple of subject, comparator and version
+**sets, with their roles preserved**, gets a code-derived opaque prefix. Every
+candidate's attachment keys must use that prefix; node definitions may use the
+batch's prefixes. Any number of model-authored keys, shared claims and multiple
+attachments remain possible within a class. No identity vocabulary is copied
+into these handles. Matching prefixes establish compatibility, not semantic
+warrant, actual product identity truth, or useful consolidation.
+
+This normal-request-only constraint applies at every reconciliation level and
+mode. New stage packing includes the instruction bytes; immutable resumed
+stages retain their membership and fail visibly if whitespace compaction cannot
+fit the complete prompt. Native identity checks remain unchanged for all
+relations. The restriction removes an incidental signal previously carried by
+attempted incompatible merges; equal upstream-discrepancy discovery sensitivity
+is not claimed. It adds request bytes, not a provider call or a new review stage.
+
+Use `--authoring-revision legacy` to reproduce historical normal requests.
+The low-level Python preparation APIs retain their historical default for replay;
+current callers explicitly select `RECONCILIATION_AUTHORING_IDENTITY_V1`.
+Explicit response-v2 and older methods retain historical public defaults.
+Missing-definition and local-repair requests use the unchanged historical
+renderer/schema and can preserve existing opaque keys. Accepted work keeps its
+actual original prompt, schema, attempt and correction receipts; newly rendered
+unused requests are never substituted as its provenance. Neither namespace
+compliance nor native acceptance proves source-supported meaning preservation.
+
 Current response-v3 generation requires a nonempty node list when any assigned
 candidate must remain a finding under the existing retention rule. This prevents
 an empty answer, not partial definition omissions. The native consumer reports
@@ -2084,6 +2113,25 @@ The semantic-source boundary and complete bounded SERP-row linking enter at
 new frontier.
 
 ## Changelog
+
+- `v92` / 2026-09-01 — selected separately versioned, normal-request-only exact
+  identity namespaces after the bounded AO-2 feasibility and recovery work.
+  Public current preparation selects the restriction; explicit legacy selection
+  and shared correction defaults preserve replay. No new decoder, identity
+  authority, semantic provider stage or forced singleton is added. Finite
+  feasibility observations are under
+  `C:\tmp\forseti-phase-a-namespace-feasibility-20260901-v1`: one constrained
+  raw batch had zero incompatible groups but omitted one definition; both it
+  and the baseline had source-meaning errors. Candidate raw logical tokens were
+  64,422 versus 59,125 baseline (n=1 each), not a savings or quality-win claim.
+  Existing definition recovery and four-candidate local correction produced a
+  valid 152-decision successor under
+  `C:\tmp\forseti-phase-a-namespace-recovery-20260901-v1`, adding 40,737 logical
+  tokens in two calls. Four corrected nodes retain `opposition_checked=false`.
+  Current implementation/replay and continuation evidence is under
+  `C:\tmp\forseti-phase-a-namespace-current-20260901-v1`; progress there is not
+  Phase A completion. Semantic preservation, global reliability, unknown
+  formula compatibility and equal identity-discrepancy discovery remain unproven.
 
 - `v91` / 2026-08-31 — moved the existing exact-identity check into failure-only
   repair preparation as well as compilation. Separate saved Dieux batches 16,

@@ -68,6 +68,8 @@ PACK_BATCH_ID_PREFIX = "batch-"
 RECONCILIATION_RESPONSE_VERSION = "semantic_evidence_reconciliation_response_v1"
 RECONCILIATION_RESPONSE_VERSION_V2 = "semantic_evidence_reconciliation_response_v2"
 RECONCILIATION_RESPONSE_VERSION_V3 = "semantic_evidence_reconciliation_response_v3"
+RECONCILIATION_AUTHORING_LEGACY = "legacy"
+RECONCILIATION_AUTHORING_IDENTITY_V1 = "exact_identity_namespaces_v1"
 RELATION_CLOSURE_STAGE_VERSION = "semantic_evidence_relation_closure_stage_v1"
 RELATION_CLOSURE_RESPONSE_VERSION = "semantic_evidence_relation_closure_response_v1"
 RELATION_CLOSURE_COMPILATION_VERSION = "semantic_evidence_relation_closure_compilation_v1"
@@ -6017,12 +6019,69 @@ def _render_v3_reconciliation_prompt(
     return result
 
 
+def _reconciliation_identity_prefixes(candidates):
+    # Preserve the three roles, not just their union. These handles constrain
+    # structural compatibility; they make no claim about source identity truth.
+    def identity(row):
+        return tuple(tuple(sorted(set(row[field]))) for field in (
+            "subject_product_ids", "comparator_product_ids", "product_version_ids"))
+
+    classes = {key: f"k{index:03d}_" for index, key in enumerate(
+        sorted({identity(row) for row in candidates}))}
+    return {row["candidate_ref"]: classes[identity(row)] for row in candidates}
+
+
+def _identity_reconciliation_schema(schema, candidates):
+    schema = deepcopy(schema)
+    prefixes = _reconciliation_identity_prefixes(candidates)
+    templates = schema["$defs"]
+    schema["$defs"] = {}
+    for ref, slot in schema["properties"]["decisions_by_candidate_ref"]["properties"].items():
+        template = slot["$ref"].rsplit("/", 1)[1]
+        name = prefixes[ref] + template
+        slot["$ref"] = "#/$defs/" + name
+        if name not in schema["$defs"]:
+            node = deepcopy(templates[template])
+            for variant in node.get("anyOf", [node]):
+                variant["properties"]["attachments"]["items"]["properties"]["semantic_node_key"]["pattern"] = "^" + prefixes[ref]
+            schema["$defs"][name] = node
+    schema["properties"]["semantic_nodes"]["items"]["properties"]["semantic_node_key"]["pattern"] = (
+        "^(" + "|".join(sorted(set(prefixes.values()))) + ")")
+    return schema
+
+
+def _identity_authoring_enabled(decision_only, authoring_revision):
+    if authoring_revision in (None, RECONCILIATION_AUTHORING_LEGACY):
+        return False
+    if authoring_revision == RECONCILIATION_AUTHORING_IDENTITY_V1 and decision_only:
+        return True
+    raise SemanticIntegrationError("unsupported reconciliation normal-authoring revision for response version")
+
+
+def _render_normal_reconciliation_prompt(*, identity_namespaces=False, **kwargs):
+    # Normal authoring only: shared repair/definition renderers retain their
+    # historical defaults and may legitimately carry older opaque keys.
+    prompt = _render_v3_reconciliation_prompt(**kwargs)
+    if not identity_namespaces:
+        return prompt
+    return prompt + "\n\nNORMAL_AUTHORING_REVISION: " + RECONCILIATION_AUTHORING_IDENTITY_V1 + "\n" + (
+        "Each candidate may use only node keys beginning with its assigned opaque prefix below. "
+        "Invent any number of keys inside a prefix; compatible candidates may share a key when meaning warrants it. "
+        "Prefixes encode existing exact subject/comparator/version sets; they add no semantic truth. "
+        "Do not force singletons, omit useful shared meaning, change identity, or merge meanings just because a prefix matches. "
+        "Keep all source-supported distinctions and opposition. All existing semantic rules remain. "
+        "Do not infer product names from these opaque handles.\n"
+    ) + json.dumps(_reconciliation_identity_prefixes(kwargs["candidates"]),
+                   ensure_ascii=False, separators=(",", ":")) + "\n"
+
+
 def prepare_reconciliation_stage(
     bundle: Mapping[str, Any],
     compilation: Mapping[str, Any],
     *,
     reconciliation_policy_version: str | None = None,
     response_version: str | None = None,
+    authoring_revision: str | None = None,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     """Prepare one prompt-bounded Route 1.6 reconciliation level."""
     _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
@@ -6168,6 +6227,7 @@ def prepare_reconciliation_stage(
     # Clarify current authoring without rewriting v11-and-earlier prompt replay.
     preserve_child_scope = bundle.get("method_version") == METHOD_VERSION_V12
     decision_only = _reconciliation_decision_only(bundle, response_version)
+    identity_namespaces = _identity_authoring_enabled(decision_only, authoring_revision)
     current_emerging_labels = sorted(
         {
             label
@@ -6186,7 +6246,8 @@ def prepare_reconciliation_stage(
     for candidate in candidates:
         proposed = [*current, candidate]
         batch_id = f"reconcile-{level:04d}-{len(batches) + 1:04d}"
-        prompt = _render_v3_reconciliation_prompt(
+        prompt = _render_normal_reconciliation_prompt(
+            identity_namespaces=identity_namespaces,
             stage_sha256=placeholder_hash,
             batch_id=batch_id,
             candidates=proposed,
@@ -6217,7 +6278,8 @@ def prepare_reconciliation_stage(
             )
             current = [candidate]
             next_id = f"reconcile-{level:04d}-{len(batches) + 1:04d}"
-            single = _render_v3_reconciliation_prompt(
+            single = _render_normal_reconciliation_prompt(
+                identity_namespaces=identity_namespaces,
                 stage_sha256=placeholder_hash,
                 batch_id=next_id,
                 candidates=current,
@@ -6263,7 +6325,8 @@ def prepare_reconciliation_stage(
         stage["reconciliation_policy_version"] = reconciliation_policy
         stage["reconciliation_mode"] = reconciliation_mode
     stage["stage_sha256"] = _sha256(stage)
-    return stage, prepare_reconciliation_prompts(bundle, stage, response_version=response_version)
+    return stage, prepare_reconciliation_prompts(bundle, stage, response_version=response_version,
+                                                authoring_revision=authoring_revision)
 
 
 def _reconciliation_decision_only(bundle, response_version):
@@ -6276,7 +6339,7 @@ def _reconciliation_decision_only(bundle, response_version):
     raise SemanticIntegrationError("unsupported reconciliation authoring response version")
 
 
-def prepare_reconciliation_prompts(bundle, stage, *, response_version=None):
+def prepare_reconciliation_prompts(bundle, stage, *, response_version=None, authoring_revision=None):
     """Render versioned requests for an immutable, possibly partly completed stage.
 
     Stage membership and accepted response identities do not change on resume.
@@ -6284,6 +6347,7 @@ def prepare_reconciliation_prompts(bundle, stage, *, response_version=None):
     """
     validate_reconciliation_stage(bundle, stage, [], require_all=False)
     decision_only = _reconciliation_decision_only(bundle, response_version)
+    identity_namespaces = _identity_authoring_enabled(decision_only, authoring_revision)
     candidate_index = {row["candidate_ref"]: row for row in stage["candidates"]}
     batches = stage["batches"]
     evidence_index = _unit_index(bundle)
@@ -6311,10 +6375,10 @@ def prepare_reconciliation_prompts(bundle, stage, *, response_version=None):
             evidence_index=evidence_index,
             decision_only=decision_only,
         )
-        prompt = _render_v3_reconciliation_prompt(**render_args)
+        prompt = _render_normal_reconciliation_prompt(**render_args, identity_namespaces=identity_namespaces)
         if decision_only and len(prompt.encode("utf-8")) > stage["max_prompt_bytes"]:
             # Resume preserves membership. Whitespace may shrink, never content.
-            prompt = _render_v3_reconciliation_prompt(**render_args, compact_json=True)
+            prompt = _render_normal_reconciliation_prompt(**render_args, identity_namespaces=identity_namespaces, compact_json=True)
         prompt_bytes = len(prompt.encode("utf-8"))
         if prompt_bytes > stage["max_prompt_bytes"]:
             raise SemanticIntegrationError(
@@ -6333,6 +6397,10 @@ def prepare_reconciliation_prompts(bundle, stage, *, response_version=None):
                 _decision_reconciliation_schema(stage, batch, labels, candidate_index, evidence_index)
                 if decision_only else _reconciliation_response_schema(stage, batch, labels)
             )
+            if identity_namespaces:
+                prompts[-1]["response_schema"] = _identity_reconciliation_schema(
+                    prompts[-1]["response_schema"], selected)
+                prompts[-1]["authoring_revision"] = authoring_revision
     return prompts
 
 
