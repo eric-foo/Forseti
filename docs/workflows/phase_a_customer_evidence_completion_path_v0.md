@@ -449,6 +449,14 @@ or semantic defects can still remain, so this is not a complete error census.
 Current optional retention schemas disallow simultaneous attachments and an
 unmerged reason before submission, while native guards remain unchanged.
 
+Oversized local repairs try the lossless `PACKED_REPAIR_CONTEXT_V1` table layout
+inside the same preparation command. Shared fields and column headings remove
+repetition, not evidence: every source, candidate, context and attachment stays
+in the connected scope. Previously fitting repair requests replay unchanged.
+The same byte limit applies after packing; no truncation, larger limit, extra
+provider call or automatic semantic repair is introduced. The consumer binds
+the full original context and rederives the exact rendered request.
+
 After one bounded corrective attempt through the existing provider/usage route,
 submit with `submit-reconciliation-repair --bundle ... --stage ...
 --failed-response ... --request <request.json> --patch <response.json>
@@ -456,7 +464,7 @@ submit with `submit-reconciliation-repair --bundle ... --stage ...
 in the continuing selection. Refusal, foreign scope, unsupported grouping,
 missing context, over-limit context or another native failure remains blocking.
 Never clear a problem by automatic relabeling or discarding counterevidence.
-The semantic-integration contract v91's **Local reconciliation correction**
+The semantic-integration contract v93's **Local reconciliation correction**
 section owns this failure/review-only route and its semantic non-claims; it adds
 no standing provider stage and does not replace source-aware judgment.
 

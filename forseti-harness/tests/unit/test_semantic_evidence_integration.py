@@ -2837,6 +2837,82 @@ def _local_repair_fixture():
     return bundle, stage, response, request, patch
 
 
+def test_local_repair_table_encoding_preserves_typed_values_and_missing_fields():
+    rows = [dict(ref=f"row-{i}", same=["a", None], typed=value, text="not safe; 皮肤")
+            for i, value in enumerate([True, 1, 1.0, False, 0, None] * 5)]
+    context = {"candidates": rows, "evidence": [], "contexts": [{"a": None}, {}],
+               "semantic_nodes": [], "decisions_by_candidate_ref": {"columns": "literal"}}
+    original = deepcopy(context)
+    packed = semantic_module._pack_reconciliation_repair_context(context)
+    table = packed["candidates"]
+    assert "typed" in table["columns"] and "typed" not in table["shared_fields"]
+    restored = [{**table["shared_fields"], **dict(zip(table["columns"], cells, strict=True))}
+                for cells in table["rows"]]
+    assert json.dumps(restored, sort_keys=True) == json.dumps(rows, sort_keys=True)
+    assert packed["contexts"] == context["contexts"]  # Missing is not null.
+    assert packed["decisions_by_candidate_ref"] == context["decisions_by_candidate_ref"]
+    assert context == original
+
+
+def _oversize_local_repair_fixture():
+    bundle, stage, response, _, _ = _local_repair_fixture()
+    response["semantic_nodes"] = response["semantic_nodes"][:1]
+    for decision in response["decisions_by_candidate_ref"].values():
+        decision["attachments"] = [{"semantic_node_key": "affected", "relation": "support"}]
+    nomination = dict(node_keys=["affected"], reason="Preserve every original source and binding.")
+    original = semantic_module.prepare_reconciliation_repair(bundle, stage, response, **nomination)
+    stage["max_prompt_bytes"] = original["prompt_utf8_bytes"] - 1
+    stage["stage_sha256"] = semantic_module._sha256({k: v for k, v in stage.items() if k != "stage_sha256"})
+    response["stage_sha256"] = stage["stage_sha256"]
+    return bundle, stage, response, nomination, original
+
+
+def test_local_repair_oversize_tables_reach_public_consumer_without_changing_scope(tmp_path):
+    from runners.run_semantic_evidence_integration import (
+        prepare_reconciliation_local_repair, submit_reconciliation_local_repair, _write_json, _load_object)
+    bundle, stage, response, nomination, original = _oversize_local_repair_fixture()
+    paths = [tmp_path / n for n in ("bundle.json", "stage.json", "response.json", "nomination.json")]
+    for p, value in zip(paths, (bundle, stage, response, nomination), strict=True):
+        _write_json(p, value)
+    args = dict(bundle_path=paths[0], stage_path=paths[1], failed_response_path=paths[2])
+    prepare_reconciliation_local_repair(**args, nomination_path=paths[3], output_dir=tmp_path / "request")
+    request = _load_object(tmp_path / "request/request.json")["request"]
+    assert "PACKED_REPAIR_CONTEXT_V1" in request["prompt"]
+    assert request["prompt_utf8_bytes"] <= stage["max_prompt_bytes"] < original["prompt_utf8_bytes"]
+    context = json.loads(original["prompt"].split("\n\nLOCAL_REPAIR_CONTEXT\n")[1])
+    packed = json.loads(request["prompt"].split("\n\nLOCAL_REPAIR_CONTEXT\n")[1])
+    for key in ("candidates", "evidence", "contexts", "semantic_nodes"):
+        table = packed[key]
+        if isinstance(table, dict):
+            packed[key] = [{**table["shared_fields"], **dict(zip(table["columns"], row, strict=True))}
+                           for row in table["rows"]]
+    assert json.dumps(packed, sort_keys=True) == json.dumps(context, sort_keys=True)
+    patch = dict(request_sha256=request["request_sha256"], correction=dict(cannot_repair_reason=None,
+        replacement=dict(decisions_by_candidate_ref=deepcopy(response["decisions_by_candidate_ref"]),
+            semantic_nodes=[{k: v for k, v in n.items() if k != "opposition_checked"} for n in response["semantic_nodes"]])))
+    _write_json(tmp_path / "patch.json", patch)
+    submitted = dict(**args, request_path=tmp_path / "request/request.json", patch_path=tmp_path / "patch.json",
+                     output_dir=tmp_path / "successor")
+    receipt = submit_reconciliation_local_repair(**submitted)
+    assert submit_reconciliation_local_repair(**submitted) == receipt
+    assert _load_object(tmp_path / "successor/response.json") == response
+    for error, changed in (("authorized candidate scope", deepcopy(patch)), ("crosses replacement scope", deepcopy(patch))):
+        decisions = changed["correction"]["replacement"]["decisions_by_candidate_ref"]
+        ref = next(iter(decisions))
+        if error == "authorized candidate scope":
+            del decisions[ref]
+        else:
+            decisions[ref]["attachments"][0]["semantic_node_key"] = "foreign"
+        with pytest.raises(SemanticIntegrationError, match=error):
+            semantic_module.apply_reconciliation_repair(bundle, stage, response, request, changed)
+    tampered = deepcopy(request)
+    tampered["prompt"] += "\nChanged source context."
+    identity = {k: v for k, v in tampered.items() if k not in {"request_sha256", "response_schema"}}
+    tampered["request_sha256"] = semantic_module._sha256(identity)
+    with pytest.raises(SemanticIntegrationError, match="request differs from bound inputs"):
+        semantic_module.apply_reconciliation_repair(bundle, stage, response, tampered, patch)
+
+
 def test_local_repair_public_consumer_is_exact_bounded_and_repeatable(tmp_path):
     from runners.run_semantic_evidence_integration import (
         prepare_reconciliation_local_repair, submit_reconciliation_local_repair, _write_json, _load_object)

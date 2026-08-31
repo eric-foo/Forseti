@@ -44,8 +44,11 @@ separate exact subject/comparator/version identity classes without choosing
 meanings. `--authoring-revision legacy` replays historical normal v3 requests.
 Low-level Python preparation retains legacy defaults; current callers select
 `RECONCILIATION_AUTHORING_IDENTITY_V1` explicitly. Definition recovery and local
-repair keep their historical requests and existing keys. The semantic-integration
-contract v92 owns this boundary; no extra provider stage is added.
+repair keep their previously fitting historical requests and existing keys.
+Oversized local repairs try a lossless table layout before enforcing the same
+byte limit; all sources and connected attachments remain present, and the
+response schema is unchanged. This packing adds no provider stage or semantic
+clearance. The semantic-integration contract v93 owns this boundary.
 
 For authorized unattended Codex jobs whose retries, elapsed time, or failure
 history matter, use the shared executor rather than a task-local buffered

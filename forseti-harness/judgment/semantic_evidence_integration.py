@@ -5919,6 +5919,16 @@ def _render_v3_reconciliation_prompt(
     if local_repair is not None:
         if not decision_only or definition_recovery is not None:
             raise SemanticIntegrationError("local repair requires decision-only response v3")
+        packing_instruction = ""
+        if compact_json:
+            local_repair = _pack_reconciliation_repair_context(local_repair)
+            packing_instruction = (
+                "PACKED_REPAIR_CONTEXT_V1: A table replaces a list of records. "
+                "shared_fields applies identically to every row; columns names each ordered row cell. "
+                "Reconstruct each record from shared_fields plus its cells. Unpacked lists keep their "
+                "original meaning. All IDs, source text, types and distinctions are unchanged; "
+                "these are exact records, not summaries. Return the original supplied response schema. "
+            )
         return (
             "Output mode: file-write through the designated response artifact. "
             "Edit permission: read-only evidence analysis; return JSON only matching the supplied schema.\n"
@@ -5933,7 +5943,7 @@ def _render_v3_reconciliation_prompt(
             "Distinct comments or meaning units from one credited identity are not extra people or events. "
             "The existing compiler still owns final claim-specific accounting. "
             "Do not emit opposition_checked; code invalidates prior clearance when meaning or attachments change. "
-            + posture_instruction + scope_instruction + source_role_instruction
+            + posture_instruction + scope_instruction + source_role_instruction + packing_instruction
             + "\n\nLOCAL_REPAIR_CONTEXT\n" + json.dumps(local_repair, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
         )
     if definition_recovery is not None:
@@ -6495,6 +6505,30 @@ def apply_reconciliation_definition_recovery(bundle, stage, failed_response, req
     return successor, validation
 
 
+def _pack_reconciliation_repair_context(context):
+    """Lossless table layout for oversized repairs, not semantic projection."""
+    def encode(value):
+        return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+    packed = dict(context)
+    for field in ("candidates", "evidence", "contexts", "semantic_nodes"):
+        rows = context[field]
+        if not rows or not all(set(row) == set(rows[0]) for row in rows):
+            continue  # Do not confuse missing fields with null or invent defaults.
+        columns = sorted(rows[0])
+        shared = {}
+        for key in columns:
+            value = encode(rows[0][key])
+            if all(encode(row[key]) == value for row in rows[1:]):
+                shared[key] = rows[0][key]  # JSON equality distinguishes true, 1 and 1.0.
+        columns = [key for key in columns if key not in shared]
+        table = {"shared_fields": shared, "columns": columns,
+                 "rows": [[row[key] for key in columns] for row in rows]}
+        if len(encode(table).encode("utf-8")) < len(encode(rows).encode("utf-8")):
+            packed[field] = table
+    return packed
+
+
 def prepare_reconciliation_repair(bundle, stage, response, *, node_keys=(), candidate_refs=(), reason):
     """Pack an explicitly nominated connected component; never detect meaning errors.
 
@@ -6577,9 +6611,13 @@ def prepare_reconciliation_repair(bundle, stage, response, *, node_keys=(), cand
         "source_inventory_not_claim_support": {"evidence_row_count": len(evidence_ids),
             "credited_origin_count": len({key for eid in evidence_ids if (key := _credited_origin_key(evidence[eid])) is not None}),
             "uncredited_evidence_ids": [eid for eid in evidence_ids if _credited_origin_key(evidence[eid]) is None]}}
-    prompt = _render_v3_reconciliation_prompt(stage_sha256=stage["stage_sha256"], batch_id=batch["batch_id"],
+    render_args = dict(stage_sha256=stage["stage_sha256"], batch_id=batch["batch_id"],
         candidates=chosen, evidence_index=evidence, preserve_child_scope=True, agreement_origin_rule=True,
         reconciliation_mode=stage.get("reconciliation_mode"), decision_only=True, local_repair=context)
+    prompt = _render_v3_reconciliation_prompt(**render_args)
+    if len(prompt.encode("utf-8")) > stage["max_prompt_bytes"]:
+        # Preserve every previously valid request exactly; compact only rejected transport.
+        prompt = _render_v3_reconciliation_prompt(**render_args, compact_json=True)
     if len(prompt.encode("utf-8")) > stage["max_prompt_bytes"]:
         raise SemanticIntegrationError("local repair exceeds rendered prompt byte ceiling; no truncation allowed")
     identity = {"schema_version": "semantic_reconciliation_repair_request_v1", "bundle_sha256": bundle["bundle_sha256"],

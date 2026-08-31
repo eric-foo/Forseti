@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v92
-effective_date: 2026-08-31
+version: v93
+effective_date: 2026-09-01
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v92
+# Semantic Evidence Integration Contract v93
 
 ## Purpose
 
@@ -145,6 +145,19 @@ whose unchanged identity conflict already guarantees rejection. It does not
 detect prose errors or promise that no other native defect remains. Previously
 valid repair requests and successors retain exact replay; an incomplete request
 that could never yield a valid successor is now rejected before the call.
+
+If the existing repair prompt exceeds the stage's byte limit, preparation tries
+`PACKED_REPAIR_CONTEXT_V1` before rejecting it. This is a lossless layout of the
+same connected component, not a smaller evidence selection: uniform records
+may share identical fields and ordered column headings, with every row retained.
+JSON types, missing-versus-null distinctions, literal text, source identity,
+conditions and ownership remain unchanged. Heterogeneous record shapes remain
+lists. The full uncompressed context still binds the request; the consumer
+rederives both context and prompt before applying any patch. Previously fitting
+requests, response schemas, correction authority and normal authoring remain
+unchanged. A still-oversized packet fails before any provider call. Packing
+adds no semantic judgment, source retrieval or standing provider stage; model
+understanding and correction quality require source-aware assessment.
 
 Use the existing isolated provider route for at most one corrective attempt.
 This is failure/review-only work, never a required extra normal-path stage.
@@ -2114,6 +2127,33 @@ new frontier.
 
 ## Changelog
 
+- `v93` / 2026-09-01 — added an oversize-only lossless table layout to the
+  existing local reconciliation repair request. The old renderer still runs
+  first; previously fitting requests and the response schema stay unchanged.
+  Common fields are carried once and remaining values retain named columns,
+  exact JSON types, source text and row order. Heterogeneous key sets remain
+  lists; no absent field becomes null. The canonical full context remains the
+  identity input, and a packet that still exceeds its bound fails visibly.
+  Two formerly blocked Dieux components fit the unchanged 120,000-byte limit:
+  156,535 -> 112,453 bytes and 122,613 -> 87,988 bytes. Both contexts reconstruct
+  exactly; five saved repair requests replay unchanged and a 23,658-byte small
+  control is identical. Focused validation: 355 tests passed; coupling: 18.
+  Two `high` provider attempts (one per case) reached the existing repair
+  consumer and repeated without new calls. Source assessment is deliberately
+  mixed: batch 32 correctly separated stated need from achieved benefit and
+  another reviewer's experience; batch 30 repaired opaque product wording but
+  expanded a continued-use definition to unsupported repeat purchase. That
+  successor remains held; native acceptance is not semantic clearance, and
+  this single attempt does not establish packing as the cause. Outside the
+  nominated components, 166 decisions and 92 definitions remain unchanged.
+  Evidence/accounting: `C:\tmp\forseti-phase-a-repair-packing-20260901-v1\assessment.json`;
+  SHA-256 `02e9f38ea3206c0a119c91fb6733c06138f00c2d9c68bf2d5599eb02b278138d`.
+  Reported trial usage: 96,012 input (2,816 cached included), 12,074 output
+  (1,032 reasoning included), 108,086 logical tokens; zero observed retries or
+  process failures. Historical provider-token/latency deltas are
+  `NOT_COMPARABLE` because the old oversized requests never reached a provider.
+  No corpus selection changed, no provider stage was added, and no whole-batch
+  semantic clearance, long-run reliability or Phase A completion is claimed.
 - `v92` / 2026-09-01 — selected separately versioned, normal-request-only exact
   identity namespaces after the bounded AO-2 feasibility and recovery work.
   Public current preparation selects the restriction; explicit legacy selection
