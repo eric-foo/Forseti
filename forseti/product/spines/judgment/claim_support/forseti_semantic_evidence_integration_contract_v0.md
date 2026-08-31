@@ -2130,7 +2130,16 @@ new frontier.
   tokens in two calls. Four corrected nodes retain `opposition_checked=false`.
   Current implementation/replay and continuation evidence is under
   `C:\tmp\forseti-phase-a-namespace-current-20260901-v1`; progress there is not
-  Phase A completion. Semantic preservation, global reliability, unknown
+  Phase A completion. Three normal calls covering 474 decisions produced zero
+  incompatible-identity groups; one failed on an orphan definition. Source
+  inspection found behavior/intent and single-source plural-wording errors.
+  Three existing local corrections (12/4/12 candidates) recovered the batches,
+  preserving 446 outside decisions and 242 outside definitions. Dieux reached
+  26/54 structurally accepted first-level batches; 28 and downstream work remain.
+  Six calls used 275,365 logical tokens, with no process failure or observed
+  transport retry; 353 focused tests and exact-head CI at `3c5b8aa1` passed
+  (6,037 tests, 25 skipped). This is bounded correction, not autonomous accuracy
+  or a current-versus-historical quality win. Semantic preservation, global reliability, unknown
   formula compatibility and equal identity-discrepancy discovery remain unproven.
 
 - `v91` / 2026-08-31 — moved the existing exact-identity check into failure-only
