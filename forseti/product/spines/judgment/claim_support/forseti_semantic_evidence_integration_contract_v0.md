@@ -2127,6 +2127,31 @@ new frontier.
 
 ## Changelog
 
+- `v94` / 2026-09-01 — rejected, and did not promote, the bounded-edit
+  row-verifier experiment nominated by the checker value audit. The prototype
+  made the consumer preserve every unnamed field/unit and allowed only explicit
+  disposition, field, removal and addition operations. A fresh outcome-independent
+  held-out set covered 212 rows in 11 complete batches (110 community, 102
+  retailer) with zero overlap against the prior 96-row audit. All 212 candidate
+  decisions reached a test-only native-valid consumer successor, but the opaque-
+  label same-vendor quality assessment found 80 material-error rows for bounded
+  edits versus 71 for the existing whole-row checker (original extraction: 94).
+  Candidate-only clean rows were 33; whole-row-only clean rows were 42. Both
+  checker variants had one different serious assessed error. Containing output
+  shape therefore did not prevent an intentionally wrong targeted edit and did
+  not beat current machinery. Experimental runtime, runner, tests and normative
+  wording were removed rather than installing a dormant adapter or recurring
+  ceremony. Historical/current behavior remains verifier v11 response v1/v2.
+  Candidate generation observed 807,878 input and 42,233 output tokens across 11
+  successful `gpt-5.5`/high attempts; historical deltas are `NOT_COMPARABLE`
+  because batch/prompt definitions differ. Thirty-three preceding attempts
+  failed with zero reported usage while exposing local-config and structured-
+  output schema incompatibilities. Same-vendor assessment is descriptive, not
+  independent truth or population inference. Durable report:
+  `C:\tmp\forseti-phase-a-dieux-bounded-edit-dogfood-20260901-v3\final-report.md`,
+  SHA-256 `3cb0c4cb20a42204fd2d0e370f961f32bd49a3c63920c3ac8258e2901d772492`;
+  output manifest SHA-256
+  `1da23435b9abf0669d37e3504aaddb13e143f1b9a9817a96fc67cf9dc7da496c`.
 - `v93` / 2026-09-01 — added an oversize-only lossless table layout to the
   existing local reconciliation repair request. The old renderer still runs
   first; previously fitting requests and the response schema stay unchanged.
