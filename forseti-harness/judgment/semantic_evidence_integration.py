@@ -5645,6 +5645,17 @@ def _decision_reconciliation_schema(stage, batch, labels, candidate_index, evide
     return schema
 
 
+def _reconciliation_product_bindings(children, key):
+    """Carry exact identities only; shared by compilation and repair preflight."""
+    bindings = {}
+    for field in ("subject_product_ids", "comparator_product_ids", "product_version_ids"):
+        identity = set(children[0].get(field, []))
+        if any(set(child.get(field, [])) != identity for child in children):
+            raise SemanticIntegrationError(f"semantic node {key} crosses product, comparator, or version bindings")
+        bindings[field] = sorted(identity)
+    return bindings
+
+
 def _assemble_decision_reconciliation(response, stage, batch, labels, candidate_index, evidence_index):
     """Compile declared v3 decisions, never repair a failed v2 response.
 
@@ -5703,11 +5714,7 @@ def _assemble_decision_reconciliation(response, stage, batch, labels, candidate_
         children = [candidate_index[item["child_ref"]] for item in row["child_relations"]]
         if not children:
             raise SemanticIntegrationError(f"decision reconciliation orphan node {key}")
-        for field in ("subject_product_ids", "comparator_product_ids", "product_version_ids"):
-            identity = set(children[0].get(field, []))
-            if any(set(child.get(field, [])) != identity for child in children):
-                raise SemanticIntegrationError(f"semantic node {key} crosses product, comparator, or version bindings")
-            row[field] = sorted(identity)
+        row.update(_reconciliation_product_bindings(children, key))
         # Historical nodes may also carry qualified conditions beyond the leaf
         # strings. Keep those at their existing node scope, never invent leaf ownership.
         row["conditions"] = sorted({condition for child in children for condition in child["conditions"]}
@@ -6473,6 +6480,19 @@ def prepare_reconciliation_repair(bundle, stage, response, *, node_keys=(), cand
         adjacent = refs_by_key[value] if is_key else keys_by_ref[value]
         queue.extend((not is_key, item) for item in adjacent)
     index, evidence = {c["candidate_ref"]: c for c in stage["candidates"]}, _unit_index(bundle)
+    # Do not spend a corrective call while another already-detectable identity
+    # conflict is outside its scope. Report every omission; never expand the
+    # nomination or choose the replacement meaning on the operator's behalf.
+    omitted = []
+    for key, refs in refs_by_key.items():
+        if key in selected_keys:
+            continue
+        try:
+            _reconciliation_product_bindings([index[ref] for ref in refs], key)
+        except SemanticIntegrationError:
+            omitted.append(key)
+    if omitted:
+        raise SemanticIntegrationError("local repair nomination omits incompatible nodes: " + ", ".join(sorted(omitted)))
     chosen = [index[ref] for ref in batch["candidate_refs"] if ref in selected_refs]
     evidence_ids = sorted({_leaf_evidence_id(leaf["semantic_unit_ref"], evidence, node_key=candidate["candidate_ref"])
                            for candidate in chosen for leaf in candidate["leaf_relations"]})

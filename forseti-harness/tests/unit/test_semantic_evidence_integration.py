@@ -2450,8 +2450,8 @@ def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: 
         validate_reconciliation_stage(bundle, stage, response)
 
 
-def _decision_reconciliation_fixture():
-    source = _source_v10(count=2)
+def _decision_reconciliation_fixture(count=2):
+    source = _source_v10(count=count)
     source["semantic_method_version"] = semantic_module.METHOD_VERSION_V12
     bundle = build_bundle(source, max_prompt_bytes=30_000)
     responses = _keyed_responses(bundle)
@@ -2843,6 +2843,70 @@ def test_local_repair_missing_node_orphan_and_noop():
             next(iter(replacement["decisions_by_candidate_ref"].values()))["attachments"][0]["relation"] = "adjacent"
         edited, _ = semantic_module.apply_reconciliation_repair(bundle, stage, repaired, request, changed)
         assert next(n for n in edited["semantic_nodes"] if n["semantic_node_key"] == "affected")["opposition_checked"] is False
+
+
+@pytest.mark.parametrize("field", ["subject_product_ids", "comparator_product_ids", "product_version_ids"])
+def test_local_repair_requires_all_known_identity_conflicts_before_public_preparation(tmp_path, field):
+    from runners.run_semantic_evidence_integration import (
+        prepare_reconciliation_local_repair, submit_reconciliation_local_repair, _write_json, _load_object)
+    bundle, _, stage, _, response = _decision_reconciliation_fixture(count=5)
+    refs = stage["batches"][0]["candidate_refs"]
+    assert len(refs) == 5
+    index = {c["candidate_ref"]: c for c in stage["candidates"]}
+    # Two disjoint violations in already-admitted candidates, plus valid work.
+    for ref in (refs[1], refs[3]):
+        index[ref][field] = ["summer-fridays-second-balm"] if field == "subject_product_ids" else ["summer-fridays-lip-butter-balm"]
+    stage["stage_sha256"] = semantic_module._sha256({k:v for k,v in stage.items() if k != "stage_sha256"})
+    response["stage_sha256"] = stage["stage_sha256"]
+    template = response["semantic_nodes"][0]
+    keys = ["first", "second", "untouched"]
+    response["semantic_nodes"] = [{**deepcopy(template), "semantic_node_key": key} for key in keys]
+    for ref, key in zip(refs, ("first", "first", "second", "second", "untouched"), strict=True):
+        response["decisions_by_candidate_ref"][ref] = {
+            "attachments": [{"semantic_node_key": key, "relation": "support"}], "unmerged_reason": None}
+    # The original consumer reaches the identity guard, not a stale outer hash.
+    with pytest.raises(SemanticIntegrationError, match="semantic node first crosses product"):
+        validate_reconciliation_stage(bundle, stage, [response], require_all=False)
+    paths = [tmp_path / name for name in ("bundle.json", "stage.json", "response.json", "nomination.json")]
+    nomination = {"node_keys": ["first"], "reason": "Correct the identified identity grouping."}
+    for path, value in zip(paths, (bundle, stage, response, nomination), strict=True):
+        _write_json(path, value)
+    args = dict(bundle_path=paths[0], stage_path=paths[1], failed_response_path=paths[2], nomination_path=paths[3])
+    with pytest.raises(SemanticIntegrationError, match="local repair nomination omits incompatible nodes: second"):
+        prepare_reconciliation_local_repair(**args, output_dir=tmp_path / "incomplete")
+    assert not (tmp_path / "incomplete").exists()  # No launchable request or output.
+    # An unrelated nomination reports BOTH known conflicts in one preparation.
+    with pytest.raises(SemanticIntegrationError, match="omits incompatible nodes: first, second"):
+        semantic_module.prepare_reconciliation_repair(bundle, stage, response,
+            node_keys=["untouched"], reason="Review this separate wording.")
+    # Explicit complete scope, not automatic expansion or semantic relabeling.
+    nomination["node_keys"].append("second")
+    args["nomination_path"] = tmp_path / "complete-nomination.json"
+    _write_json(args["nomination_path"], nomination)
+    prepared = prepare_reconciliation_local_repair(**args, output_dir=tmp_path / "complete")
+    request = _load_object(tmp_path / "complete/request.json")["request"]
+    assert prepared["candidate_count"] == 4 and prepared["model_api_calls"] == 0
+    assert request["node_keys"] == ["first", "second"]
+    assert request["candidate_refs"] == sorted(refs[:4]) and refs[4] not in request["prompt"]
+    replacement = {"semantic_nodes": [], "decisions_by_candidate_ref": {}}
+    for i, ref in enumerate(refs[:4]):
+        key = f"separate_{i}"
+        replacement["semantic_nodes"].append({**{k:v for k,v in template.items() if k != "opposition_checked"},
+            "semantic_node_key": key})
+        replacement["decisions_by_candidate_ref"][ref] = {
+            "attachments": [{"semantic_node_key": key, "relation": "support"}], "unmerged_reason": None}
+    patch = {"request_sha256": request["request_sha256"],
+        "correction": {"replacement": replacement, "cannot_repair_reason": None}}
+    patch_path = tmp_path / "patch.json"
+    _write_json(patch_path, patch)
+    submitted = dict(bundle_path=paths[0], stage_path=paths[1], failed_response_path=paths[2],
+        request_path=tmp_path / "complete/request.json", patch_path=patch_path, output_dir=tmp_path / "successor")
+    receipt = submit_reconciliation_local_repair(**submitted)
+    assert submit_reconciliation_local_repair(**submitted) == receipt
+    durable = _load_object(tmp_path / "successor/response.json")
+    assert next(n for n in durable["semantic_nodes"] if n["semantic_node_key"] == "untouched") == response["semantic_nodes"][-1]
+    assert durable["decisions_by_candidate_ref"][refs[4]] == response["decisions_by_candidate_ref"][refs[4]]
+    assert _load_object(paths[2]) == response
 
 
 def test_current_reconciliation_teaches_claim_relative_abstraction_not_literal_equivalence():

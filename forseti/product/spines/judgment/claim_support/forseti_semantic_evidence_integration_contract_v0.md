@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v90
+version: v91
 effective_date: 2026-08-31
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v90
+# Semantic Evidence Integration Contract v91
 
 ## Purpose
 
@@ -134,6 +134,17 @@ exact leaf text, parent/product context, and compiler-derived source inventory.
 Inventory is not claim support: one shared identity remains one credited origin,
 but only the established finalizer determines which sources support a claim.
 An allegation is not a verdict; review may retain the original choices.
+
+Before emitting a repair request, preparation reuses the compiler's exact
+product/comparator/version compatibility check across the original response's
+attached groups. If a known incompatible group remains outside the nominated
+connected components, preparation fails and lists every omitted group. The
+operator must nominate a complete scope explicitly; code does not expand it
+silently or choose replacement meanings. This prevents paying for a correction
+whose unchanged identity conflict already guarantees rejection. It does not
+detect prose errors or promise that no other native defect remains. Previously
+valid repair requests and successors retain exact replay; an incomplete request
+that could never yield a valid successor is now rejected before the call.
 
 Use the existing isolated provider route for at most one corrective attempt.
 This is failure/review-only work, never a required extra normal-path stage.
@@ -2073,6 +2084,23 @@ The semantic-source boundary and complete bounded SERP-row linking enter at
 new frontier.
 
 ## Changelog
+
+- `v91` / 2026-08-31 — moved the existing exact-identity check into failure-only
+  repair preparation as well as compilation. Separate saved Dieux batches 16,
+  17 and 21 reproduced incompatible product/comparator/version groups. In batch
+  21, correcting the initially nominated groups still left another incompatible
+  refund group untouched, so the full successor failed. Preparation now lists
+  all such omitted groups before a corrective provider call; nomination remains
+  explicit and semantic rewriting remains judgment-owned. No normal-path call,
+  schema, historical adapter, automatic scope expansion or prose classifier is
+  added. The regression tests reach the intended public boundary with honestly
+  repinned product, comparator and version fixtures. All 339 integration tests
+  passed; 21 accepted batches, ten valid repairs and 35 pending requests replayed
+  unchanged. One fresh eight-candidate correction passed the public consumer
+  and bounded source inspection, preserving 149 decisions and 97 definitions;
+  Dieux reached 22/54 structurally accepted batches, not Phase A completion or
+  proven future semantic reliability. Exact accounting and bounded dogfood are under
+  `C:\tmp\forseti-phase-a-dieux-repair-scope-20260831-v1`.
 
 - `v90` / 2026-08-31 — made optional current-generation retention choices
   exclusive and added source-bound connected-component correction at the public

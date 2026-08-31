@@ -424,6 +424,11 @@ found by source-aware review despite structural acceptance), use
 either list may be empty but not both. The producer expands to the connected
 component, supplying source-owned meaning, exact evidence/contexts and separate
 source inventory. It does not detect prose errors or award claim support.
+Before writing the request, preparation rejects and names every incompatible
+product/comparator/version group left outside that scope. Explicitly include
+those groups in the nomination before spending the corrective call; code never
+silently broadens the scope or chooses their replacement meanings. Other native
+or semantic defects can still remain, so this is not a complete error census.
 Current optional retention schemas disallow simultaneous attachments and an
 unmerged reason before submission, while native guards remain unchanged.
 
@@ -434,7 +439,7 @@ submit with `submit-reconciliation-repair --bundle ... --stage ...
 in the continuing selection. Refusal, foreign scope, unsupported grouping,
 missing context, over-limit context or another native failure remains blocking.
 Never clear a problem by automatic relabeling or discarding counterevidence.
-The semantic-integration contract v90's **Local reconciliation correction**
+The semantic-integration contract v91's **Local reconciliation correction**
 section owns this failure/review-only route and its semantic non-claims; it adds
 no standing provider stage and does not replace source-aware judgment.
 
