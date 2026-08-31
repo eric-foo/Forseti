@@ -5870,6 +5870,14 @@ def _render_v3_reconciliation_prompt(
             "Condition lineage remains child-owned, not a claim that every condition "
             "applies to every author. Aim for useful supported compression, not the "
             "fewest nodes or the most singletons. "
+            "Write bounded_meaning without inferring an author headcount: use "
+            "count-neutral reported wording, because several statements or comments "
+            "may come from one person. Code supplies origin and source-observation "
+            "counts; this candidate view does not expose complete author identities. "
+            "Keep source-attributed statements about other people explicitly attributed. "
+            "Inverse comparisons can express the same fact, but one node requires "
+            "one exact stored subject/comparator orientation. Keep opposite orientations "
+            "in separate nodes without relabeling their source-owned identities. "
         )
         axis_instruction = (
             "Assign every required original-label key exactly once to a declared "

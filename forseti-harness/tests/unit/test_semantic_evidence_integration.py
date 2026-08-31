@@ -2705,6 +2705,25 @@ def test_current_reconciliation_teaches_claim_relative_abstraction_not_literal_e
     assert "Do not join different benefits or behaviors with 'or'" in legacy
 
 
+def test_current_reconciliation_and_definition_recovery_leave_headcounts_to_compiler():
+    bundle, _, stage, prompts, _ = _decision_reconciliation_fixture()
+    _, _, _, _, request, _ = _missing_definition_fixture()
+    for prompt in (prompts[0]["prompt"], request["prompt"]):
+        policy = prompt.split("\n\nCANDIDATES\n", 1)[0]
+        assert "Write bounded_meaning without inferring an author headcount" in policy
+        assert "several statements or comments may come from one person" in policy
+        assert "Code supplies origin and source-observation counts" in policy
+        assert "Keep source-attributed statements about other people explicitly attributed" in policy
+        assert "Inverse comparisons can express the same fact" in policy
+        assert "one exact stored subject/comparator orientation" in policy
+        candidates = json.loads(prompt.split("\n\nCANDIDATES\n", 1)[1].split(
+            "\n\nEMERGING_AXIS_LABELS_TO_CONSOLIDATE\n", 1)[0])
+        assert all("independence_key" not in row for row in candidates)
+    legacy = semantic_module.prepare_reconciliation_prompts(bundle, stage,
+        response_version=semantic_module.RECONCILIATION_RESPONSE_VERSION_V2)[0]["prompt"]
+    assert "Write bounded_meaning without inferring an author headcount" not in legacy
+
+
 def test_shared_interest_reaches_final_view_without_completed_behavior_credit():
     # Synthetic consumer fixture, not proof that a provider interprets sources.
     source = _source_v10(count=2)

@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v88
+version: v89
 effective_date: 2026-08-31
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v88
+# Semantic Evidence Integration Contract v89
 
 ## Purpose
 
@@ -87,6 +87,17 @@ Deterministic code owns:
 
 The agent never chooses its own evidence count, independence count, support
 posture, cross-venue credit, or causal strength.
+
+This ownership also applies to `bounded_meaning` prose. Current response-v3
+normal and missing-definition authoring use count-neutral reported wording,
+not a headcount inferred from attached statements or comments: the compact
+candidate view does not expose complete author identities. Keep actual
+source-attributed claims about other people attributed; do not delete them or
+promote them into verified counts. Code still supplies origin/observation
+accounting. Inverse comparisons may express the same fact, but the current node
+shape requires one exact stored subject/comparator orientation; retain opposite
+orientations separately without relabeling child identity. This is a transport
+constraint, not a claim that the meanings differ or represent separate events.
 
 Current authoring uses run v10 / integration method v12 / row-verification
 method v11. `CURRENT_AXES` alone supplies valid output axis IDs. Category names
@@ -2019,6 +2030,21 @@ new frontier.
 
 ## Changelog
 
+- `v89` / 2026-08-31 — corrected recurring Dieux comparison and attribution
+  outputs through source-bound adjudication, preserving frozen predecessors.
+  The first 13 returned batches contained three incompatible comparison groups
+  and ten plural-author overstatements; continuation exposed another inverse
+  orientation group and further plural wording. Current response-v3 guidance
+  now carries the existing compiler-owned-count boundary into bounded prose
+  and makes the exact-orientation constraint explicit, in both normal authoring
+  and missing-definition recovery. No new identity payload, provider stage,
+  prose classifier, changed counting logic or relaxed validator. Historical v2
+  prompt replay remains isolated. Prompt delivery is testable; future model
+  adherence and full Dieux completion remain separate observations. Run-local
+  repair, failure and continuation evidence stays under
+  `C:\tmp\forseti-phase-a-dieux-full-corpus-20260831-v1` in
+  `reconciliation-comparison-recovery-20260831-v1`,
+  `reconciliation-attribution-current-20260831-v1` and their recorded successor.
 - `v88` / 2026-08-31 — added failure-only missing-definition recovery at the
   current reconciliation consumer, plus a conditional nonempty generation guard.
   Dieux's three saved completed responses omitted 1, 88 and 96 referenced

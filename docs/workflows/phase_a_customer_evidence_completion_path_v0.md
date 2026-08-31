@@ -377,6 +377,13 @@ identical detail. Keep source-specific detail, conditions and uncertainty with
 their evidence. Shared interest is not completed behavior, and a shared axis is
 not automatically corroboration. The same rule governs review; no growing list
 of phrase-specific owner exemptions or additional provider pass is required.
+The semantic-integration contract's compiler-owned-count boundary also governs
+bounded wording: normal response-v3 and missing-definition prompts request
+count-neutral reported propositions, not inferred author headcounts. Preserve
+source-attributed statements about others as attributed. Oppositely oriented
+comparisons remain separate under the existing exact-identity node shape even
+when they express the same fact; separation does not create extra observations
+or people. These instructions do not make semantic prose mechanically verified.
 
 Use `prepare-reconciliation-level --existing-stage <stage.json>` to render new
 requests for an unchanged partially completed stage. Oversized resumed current
