@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v87
+version: v88
 effective_date: 2026-08-31
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v87
+# Semantic Evidence Integration Contract v88
 
 ## Purpose
 
@@ -1518,7 +1518,7 @@ required keyed decision per candidate names one or more node attachments or an
 allowed unmerged reason, never both. One required keyed assignment per original
 emerging label names a declared label group. Missing, foreign, duplicate,
 orphan and prohibited decisions fail visibly; the compiler never chooses a
-group, inserts a singleton, repairs a response or infers prose meaning.
+group, inserts a singleton, invents a missing definition or infers prose meaning.
 Normal-mode admitted customer findings must remain nodes; they may remain
 nonterminal when terminal warrant is uncertain. Convergence retention remains
 under the existing source-row rule.
@@ -1558,8 +1558,37 @@ Explicit response-v2 preparation remains available for replay. A partially
 completed immutable stage may receive new v3 requests without repartitioning;
 only JSON whitespace may be compacted to retain byte fit. Stored v2 and new v3
 responses share the existing validator and downstream node-compilation-v2
-shape, without replacing raw provider artifacts. No semantic provider stage is
-added. Mechanical assembly does not prove that chosen meanings belong together.
+shape, without replacing raw provider artifacts. No normal-path semantic provider
+stage is added. Mechanical assembly does not prove that chosen meanings belong together.
+
+Current response-v3 generation requires a nonempty node list when any assigned
+candidate must remain a finding under the existing retention rule. This prevents
+an empty answer, not partial definition omissions. The native consumer reports
+undefined node keys separately as `MissingReconciliationDefinitions`, with their
+exact child/relation assignments. Other malformed assignments still fail; the
+diagnostic does not certify that an undefined key denotes a legitimate claim.
+
+After this failure only, `prepare-reconciliation-definitions` binds the original
+failed response and prepares one corrective judgment request containing only the
+affected candidate groups. One required keyed slot supplies either a complete
+model-authored definition or an explicit cannot-define reason. Keys are opaque
+handles, never evidence of meaning. An unsupported fixed grouping or insufficient
+context remains a visible semantic-judgment blocker; code never selects a meaning,
+redirects an attachment or changes existing definitions. Large missing sets may
+still require substantial provider work; an oversized recovery fails visibly
+without truncation. No automatic repartitioning or unbounded retry is introduced.
+
+`submit-reconciliation-definitions` appends only the missing model-authored nodes
+to a fresh successor, then applies the unchanged native reconciliation consumer.
+An unresolved answer publishes no successor. Original, corrective and successor
+bytes and hashes remain separate; the original failed attempt is not relabeled
+successful. Matching durable successors can be revalidated without another call;
+changed inputs or outputs fail rather than overwrite. The provider execution and
+usage-accounting route is unchanged. Use at most one corrective attempt for a
+failed batch before returning unresolved work to judgment. Successful batches owe
+no corrective call. Historical v2 replay and immutable stage membership stay intact.
+Completeness and unchanged assignments are mechanical claims; semantic warrant
+and improved provider reliability are not proven by successful composition.
 
 Contract v34 adds an opt-in global relation-closure generation after one
 terminal normal-retention frontier. Deterministic block pairs cover every
@@ -1990,6 +2019,25 @@ new frontier.
 
 ## Changelog
 
+- `v88` / 2026-08-31 — added failure-only missing-definition recovery at the
+  current reconciliation consumer, plus a conditional nonempty generation guard.
+  Dieux's three saved completed responses omitted 1, 88 and 96 referenced
+  definitions while passing their supplied schemas. An earlier full-answer retry
+  reduced 102 omissions to one, still failing native validation. This motivated
+  exact missing-piece recovery rather than more prompt emphasis or a standing
+  second review. Existing grouping and definitions are immutable; unsupported
+  groups remain unresolved, not mechanically repaired. No new ontology, normal-
+  path provider stage, semantic classifier or historical response mutation.
+  Focused public-consumer tests cover partial omissions, wrong keys, changed
+  assignments/definitions, unresolved groups, byte-bound lineage, durable repeat
+  and consumer rejection. The first bounded dogfood recovered all three saved
+  failures in one corrective attempt each: 185 definitions appended, no prior
+  decisions/definitions changed, and 11 of 54 batches structurally accepted
+  (1,149 nodes, 215 unmerged units). Exact repeat submission used no new provider
+  call. This n=3 observation is not a general reliability rate or semantic review.
+  Run-specific provider outcomes and subsequent continuation live at
+  `C:\tmp\forseti-phase-a-dieux-full-corpus-20260831-v1\reconciliation-definitions-20260831-v1`;
+  their existence or structural success does not establish Phase A completion.
 - `v87` / 2026-08-31 — generalized the owner's skin-change clarification into
   claim-relative interpretation and useful abstraction in the cycle-wide
   claim-support authority and current response-v3 reconciliation prompt.

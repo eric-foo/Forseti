@@ -907,6 +907,15 @@ class SemanticIntegrationError(ValueError):
     """Raised when semantic output cannot be compiled without inventing truth."""
 
 
+class MissingReconciliationDefinitions(SemanticIntegrationError):
+    """Exact undefined references, not evidence that their grouping is sound."""
+
+    def __init__(self, bindings):
+        self.bindings = dict(sorted(bindings.items()))
+        super().__init__("decision reconciliation missing semantic node definitions: "
+                         + ", ".join(self.bindings))
+
+
 def _json_bytes(value: Any) -> bytes:
     return json.dumps(
         value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
@@ -5621,6 +5630,8 @@ def _decision_reconciliation_schema(stage, batch, labels, candidate_index, evide
         required = _must_retain_reconciliation_candidate(
             candidate_index[ref], stage.get("reconciliation_mode"), evidence_index)
         decisions[ref] = {"$ref": "#/$defs/retained_decision" if required else "#/$defs/decision"}
+        if required:
+            props["semantic_nodes"]["minItems"] = 1
     props["decisions_by_candidate_ref"] = obj(decisions)
     props["assignments_by_original_label"] = obj({label: {"type": "string"} for label in labels})
     schema["required"] = list(props)
@@ -5655,6 +5666,7 @@ def _assemble_decision_reconciliation(response, stage, batch, labels, candidate_
             raise SemanticIntegrationError("decision reconciliation duplicate or empty node key")
         by_key[key] = {**row, "child_relations": []}
     unmerged = []
+    missing = defaultdict(list)
     for ref in batch["candidate_refs"]:
         decision = decisions[ref]
         exact(decision, {"attachments", "unmerged_reason"}, "candidate decision")
@@ -5673,9 +5685,12 @@ def _assemble_decision_reconciliation(response, stage, batch, labels, candidate_
         for attachment in attachments:
             exact(attachment, {"semantic_node_key", "relation"}, "attachment")
             key, relation = attachment["semantic_node_key"], attachment["relation"]
-            if not isinstance(key, str) or key not in by_key or key in seen or not isinstance(relation, str) or relation not in RELATIONS:
+            if not _nonempty(key) or key in seen or not isinstance(relation, str) or relation not in RELATIONS:
                 raise SemanticIntegrationError("decision reconciliation foreign, duplicate or invalid attachment")
             seen.add(key)
+            if key not in by_key:
+                missing[key].append({"child_ref": ref, "relation": relation})
+                continue
             by_key[key]["child_relations"].append({"child_ref": ref, "relation": relation})
     for key, row in by_key.items():
         children = [candidate_index[item["child_ref"]] for item in row["child_relations"]]
@@ -5708,6 +5723,8 @@ def _assemble_decision_reconciliation(response, stage, batch, labels, candidate_
         by_group[key]["original_labels"].append(label)
     if any(not row["original_labels"] for row in by_group.values()):
         raise SemanticIntegrationError("decision reconciliation unused label group")
+    if missing:
+        raise MissingReconciliationDefinitions(missing)
     # Ephemeral shared-validator input, not a substituted raw provider artifact.
     return {"schema_version": RECONCILIATION_RESPONSE_VERSION_V2,
             "stage_sha256": response["stage_sha256"], "batch_id": response["batch_id"],
@@ -5729,6 +5746,7 @@ def _render_v3_reconciliation_prompt(
     evidence_index: Mapping[str, Any] | None = None,
     decision_only: bool = False,
     compact_json: bool = False,
+    definition_recovery: Mapping[str, Any] | None = None,
 ) -> str:
     posture_instruction = (
         "For candidates carrying evidence_postures, customer_experience and "
@@ -5872,6 +5890,30 @@ def _render_v3_reconciliation_prompt(
             "claims when that meaning remains explicit. reported_behavior would credit "
             "behavior_evidence_refs: reserve it for behavior actually reported, not "
             "a desired or future act. "
+        )
+    if definition_recovery is not None:
+        if not decision_only:
+            raise SemanticIntegrationError("definition recovery requires decision-only response v3")
+        return (
+            "Output mode: file-write through the designated response artifact. "
+            "Edit permission: read-only evidence analysis; return JSON only matching the supplied schema.\n"
+            "A completed reconciliation response referenced the following undefined nodes. "
+            "Author ONLY these missing definitions from the attached source candidates. "
+            "Existing assignments, relations and definitions are frozen. Node keys are opaque handles, "
+            "not evidence of meaning. Do not infer a claim from a key's name. "
+            "For every required key return either a complete node with that exact key and "
+            "cannot_define_reason=null, or node=null and a nonempty cannot_define_reason. "
+            "Use the latter when the fixed grouping/relations cannot honestly support a bounded "
+            "definition or the supplied context is insufficient; never manufacture a claim to pass. "
+            "Do not fix grouping, omit a key, add a key, or relabel an existing decision. "
+            "A structurally complete answer does not prove semantic truth. "
+            + posture_instruction + scope_instruction + source_role_instruction
+            + "\n\nMISSING_NODE_BINDINGS\n" + json.dumps(definition_recovery, ensure_ascii=False)
+            + "\n\nCANDIDATES\n" + json.dumps([
+                _agent_reconciliation_candidate(row,
+                    convergence_mode=reconciliation_mode == "convergence",
+                    evidence_index=evidence_index, include_source_roles=True)
+                for row in candidates], ensure_ascii=False, separators=(",", ":"))
         )
     result = (
         METHOD_TEXT_V3
@@ -6249,6 +6291,97 @@ def prepare_reconciliation_prompts(bundle, stage, *, response_version=None):
                 if decision_only else _reconciliation_response_schema(stage, batch, labels)
             )
     return prompts
+
+
+def prepare_reconciliation_definition_recovery(bundle, stage, failed_response):
+    """Prepare one failure-only judgment request; never fill definitions in code.
+
+    Other defects may become visible after missing definitions are supplied.
+    Preparation is not acceptance of the original response's semantic decisions.
+    """
+    try:
+        validate_reconciliation_stage(bundle, stage, [failed_response], require_all=False)
+    except MissingReconciliationDefinitions as exc:
+        bindings = exc.bindings
+    else:
+        raise SemanticIntegrationError("definition recovery requires a missing-definition failure")
+    candidate_index = {row["candidate_ref"]: row for row in stage["candidates"]}
+    batch = next(row for row in stage["batches"] if row["batch_id"] == failed_response["batch_id"])
+    evidence_index = _unit_index(bundle)
+    refs = {item["child_ref"] for rows in bindings.values() for item in rows}
+    candidates = [candidate_index[ref] for ref in batch["candidate_refs"] if ref in refs]
+    prompt = _render_v3_reconciliation_prompt(
+        stage_sha256=stage["stage_sha256"], batch_id=batch["batch_id"], candidates=candidates,
+        compact_lineage=True, emerging_axis_labels=[], emerging_axis_owner=False,
+        agreement_origin_rule=True, preserve_child_scope=True,
+        reconciliation_mode=stage.get("reconciliation_mode"), evidence_index=evidence_index,
+        decision_only=True, definition_recovery=bindings)
+    if len(prompt.encode("utf-8")) > stage["max_prompt_bytes"]:
+        raise SemanticIntegrationError("definition recovery exceeds rendered prompt byte ceiling; no truncation allowed")
+
+    def obj(properties):
+        return {"type": "object", "properties": properties,
+                "required": list(properties), "additionalProperties": False}
+
+    identity = {
+        "schema_version": "semantic_reconciliation_definition_response_v1",
+        "stage_sha256": stage["stage_sha256"], "batch_id": batch["batch_id"],
+        "failed_response_sha256": _sha256(failed_response),
+    }
+    schema = obj({**{key: {"type": "string", "const": value} for key, value in identity.items()},
+        "definitions_by_key": obj({key: {"$ref": "#/$defs/definition"} for key in bindings})})
+    node = _decision_reconciliation_schema(stage, batch, [], candidate_index, evidence_index)["properties"]["semantic_nodes"]["items"]
+    schema["$defs"] = {"node": node, "definition": obj({
+        "node": {"anyOf": [{"$ref": "#/$defs/node"}, {"type": "null"}]},
+        "cannot_define_reason": {"type": ["string", "null"]},
+    })}
+    return {
+        "schema_version": "semantic_reconciliation_definition_request_v1",
+        "bundle_sha256": bundle["bundle_sha256"], **{k: v for k, v in identity.items() if k != "schema_version"},
+        "missing_bindings": bindings, "candidate_count": len(candidates),
+        "prompt": prompt, "prompt_utf8_bytes": len(prompt.encode("utf-8")),
+        "response_schema": schema,
+    }
+
+
+def apply_reconciliation_definition_recovery(bundle, stage, failed_response, request, patch):
+    """Append model-authored missing nodes, then require the unchanged consumer.
+
+    Returns a new response and its validation. Raw attempts remain immutable;
+    callers persist the original/patch/successor lineage separately.
+    """
+    expected = prepare_reconciliation_definition_recovery(bundle, stage, failed_response)
+    if request != expected:
+        raise SemanticIntegrationError("definition recovery request differs from bound inputs")
+    properties = request["response_schema"]["properties"]
+    if not isinstance(patch, Mapping) or set(patch) != set(properties):
+        raise SemanticIntegrationError("definition recovery response has missing or foreign fields")
+    for key, value in properties.items():
+        if key != "definitions_by_key" and patch[key] != value["const"]:
+            raise SemanticIntegrationError(f"definition recovery changed {key}")
+    definitions = patch["definitions_by_key"]
+    if not isinstance(definitions, Mapping) or set(definitions) != set(request["missing_bindings"]):
+        raise SemanticIntegrationError("definition recovery must answer exactly the missing keys")
+    nodes, unresolved = [], []
+    for key in request["missing_bindings"]:
+        item = definitions[key]
+        if not isinstance(item, Mapping) or set(item) != {"node", "cannot_define_reason"}:
+            raise SemanticIntegrationError("definition recovery invalid definition slot")
+        node, reason = item["node"], item["cannot_define_reason"]
+        if node is None and _nonempty(reason):
+            unresolved.append(key)
+        elif isinstance(node, Mapping) and reason is None:
+            if node.get("semantic_node_key") != key:
+                raise SemanticIntegrationError("definition recovery node key differs from assigned key")
+            nodes.append(deepcopy(dict(node)))
+        else:
+            raise SemanticIntegrationError("definition recovery requires node xor cannot-define reason")
+    if unresolved:
+        raise SemanticIntegrationError("definition recovery requires semantic judgment: " + ", ".join(unresolved))
+    successor = deepcopy(failed_response)
+    successor["semantic_nodes"].extend(nodes)
+    validation = validate_reconciliation_stage(bundle, stage, [successor], require_all=False)
+    return successor, validation
 
 
 def _validate_emerging_axis_consolidations(

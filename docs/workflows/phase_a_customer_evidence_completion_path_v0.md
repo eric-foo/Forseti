@@ -364,8 +364,9 @@ customer findings cannot be unmerged: an uncertain finding may remain a
 nonterminal singleton. The model owns grouping, relations, bounded wording,
 axes and claim/uncertainty metadata. Code carries exact compatible product,
 comparator and version identities, literal child-owned conditions, original
-emerging labels, polarity composition and lineage. It never supplies a missing
-decision or repairs a failed answer. Native consumers reject missing, foreign,
+emerging labels, polarity composition and lineage. It never authors a missing
+decision or definition; explicit model-authored completion is separate below.
+Native consumers reject missing, foreign,
 duplicate, orphan or prohibited assignments, and incompatible identities.
 Structural exactness does not establish semantic warrant.
 Current response-v3 authoring and review apply the intelligence claim-support
@@ -383,8 +384,30 @@ prompts may compact JSON whitespace without losing content or repartitioning.
 Accepted responses are not regenerated merely to change transport. Explicit
 `--response-version semantic_evidence_reconciliation_response_v2` retains old
 prompt replay; stored v2 responses can coexist with v3 responses at submission.
-The downstream node-compilation shape and semantic provider-stage count stay
-unchanged. Historical method-v11-and-earlier preparation remains unchanged.
+The downstream node-compilation shape and normal-path semantic provider-stage
+count stay unchanged. Historical method-v11-and-earlier preparation remains unchanged.
+
+If the current consumer raises `MissingReconciliationDefinitions`, use the shared
+failure-only `prepare-reconciliation-definitions --bundle ... --stage ...
+--failed-response ... --output-dir <fresh-request-directory>` command. It binds
+the failed bytes and requires a definition or explicit cannot-define answer for
+every missing key, using only the affected candidate groups. Run that request
+through the existing isolated provider/usage route, at `high`, keeping each
+attempt immutable. Allow at most one corrective attempt before returning a
+remaining failure to judgment. Successful batches need no extra call.
+
+Submit with `submit-reconciliation-definitions --bundle ... --stage ...
+--failed-response ... --request <request.json> --patch <corrective-response.json>
+--output-dir <fresh-successor-directory>`. It preserves existing decisions and
+definitions, adds only model-authored missing nodes, and validates the complete
+successor at the normal consumer. Use that successor explicitly at level
+submission; never overwrite the failed response or treat its receipt as a success.
+An unsupported grouping, incomplete patch or other newly exposed defect blocks
+publication. Reuse a matching validated successor without a new provider call.
+The generation schema also forbids an empty definition list when retention
+requires findings; it cannot guarantee every referenced definition exists.
+Exact bindings and completeness do not prove semantic warrant. The semantic-
+integration contract's v88 recovery boundary owns these rules.
 
 If response validation failed after usage was saved, publication may be retried
 without a new model call. The existing usage receipt must equal the bytes

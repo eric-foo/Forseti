@@ -2533,7 +2533,7 @@ def test_decision_reconciliation_public_consumers_preserve_owned_facts_and_resum
     ("missing_label", "label assignments has missing or foreign fields"),
     ("foreign_label", "label assignments has missing or foreign fields"),
     ("duplicate_attachment", "foreign, duplicate or invalid attachment"),
-    ("foreign_node", "foreign, duplicate or invalid attachment"),
+    ("foreign_node", "missing semantic node definitions"),
     ("missing_decision", "requires attachments xor unmerged reason"),
     ("prohibited_unmerged", "cannot unmerge required finding"),
     ("both_destinations", "requires attachments xor unmerged reason"),
@@ -2578,6 +2578,116 @@ def test_decision_reconciliation_does_not_infer_semantic_truth():
     result = validate_reconciliation_stage(bundle, stage, [response])
     assert result["semantic_nodes"][0]["bounded_meaning"] == response["semantic_nodes"][0]["bounded_meaning"]
     assert not result["semantic_nodes"][0]["terminal_proposition"]
+
+
+def _missing_definition_fixture():
+    bundle, _, stage, _, original = _decision_reconciliation_fixture()
+    # Retain one valid definition: minItems alone cannot close this omission.
+    extra = deepcopy(original["semantic_nodes"][0])
+    extra["semantic_node_key"] = "preserved"
+    original["semantic_nodes"].append(extra)
+    next(iter(original["decisions_by_candidate_ref"].values()))["attachments"].append(
+        {"semantic_node_key": "preserved", "relation": "adjacent"})
+    failed = deepcopy(original)
+    missing = failed["semantic_nodes"].pop(0)
+    request = semantic_module.prepare_reconciliation_definition_recovery(bundle, stage, failed)
+    patch = {key: spec["const"] for key, spec in request["response_schema"]["properties"].items()
+             if key != "definitions_by_key"}
+    patch["definitions_by_key"] = {missing["semantic_node_key"]: {
+        "node": missing, "cannot_define_reason": None}}
+    return bundle, stage, original, failed, request, patch
+
+
+def test_definition_recovery_exact_successor_and_durable_public_consumer(tmp_path):
+    from runners.run_semantic_evidence_integration import (
+        prepare_reconciliation_definitions, submit_reconciliation_definitions, _write_json, _load_object,
+    )
+    bundle, stage, original, failed, request, patch = _missing_definition_fixture()
+    with pytest.raises(semantic_module.MissingReconciliationDefinitions) as caught:
+        validate_reconciliation_stage(bundle, stage, [failed])
+    assert set(caught.value.bindings) == set(patch["definitions_by_key"])
+    assert len(failed["semantic_nodes"]) == 1
+    paths = [tmp_path / name for name in ("bundle.json", "stage.json", "failed.json", "patch.json")]
+    for path, obj in zip(paths, (bundle, stage, failed, patch)):
+        _write_json(path, obj)
+    args = dict(bundle_path=paths[0], stage_path=paths[1], failed_response_path=paths[2])
+    result = prepare_reconciliation_definitions(**args, output_dir=tmp_path / "request")
+    assert result["missing_definition_count"] == 1 and result["model_api_calls"] == 0
+    assert _load_object(tmp_path / "request/request.json")["request"] == request
+    with pytest.raises(ValueError, match="existing definition-recovery directory"):
+        prepare_reconciliation_definitions(**args, output_dir=tmp_path / "request")
+    submit_args = dict(**args, request_path=tmp_path / "request/request.json",
+                       patch_path=paths[3], output_dir=tmp_path / "successor")
+    receipt = submit_reconciliation_definitions(**submit_args)
+    durable = _load_object(tmp_path / "successor/response.json")
+    assert durable["semantic_nodes"][:1] == failed["semantic_nodes"]
+    assert {k: v for k, v in durable.items() if k != "semantic_nodes"} == {
+        k: v for k, v in failed.items() if k != "semantic_nodes"}
+    assert receipt["validation"] == validate_reconciliation_stage(bundle, stage, [durable], require_all=False)
+    assert validate_reconciliation_stage(bundle, stage, [durable]) == validate_reconciliation_stage(bundle, stage, [original])
+    assert submit_reconciliation_definitions(**submit_args) == receipt
+    assert _load_object(paths[2]) == failed  # Never replace the failed raw answer.
+    paths[2].write_bytes(paths[2].read_bytes() + b"\n")
+    with pytest.raises(ValueError, match="source file bytes changed"):
+        submit_reconciliation_definitions(**submit_args)
+
+
+@pytest.mark.parametrize("mutation,error", [
+    ("missing", "exactly the missing keys"), ("foreign", "exactly the missing keys"),
+    ("changed_key", "node key differs"), ("changed_relation", "request differs from bound inputs"),
+    ("changed_existing", "request differs from bound inputs"),
+    ("stale_patch", "changed failed_response_sha256"),
+    ("changed_prompt", "request differs from bound inputs"),
+    ("unresolved", "requires semantic judgment"), ("both", "node xor cannot-define"),
+    ("missing_field", "node has missing or foreign fields"),
+    ("copied_field", "node has missing or foreign fields"),
+])
+def test_definition_recovery_wrong_cause(mutation, error):
+    bundle, stage, _, failed, request, patch = _missing_definition_fixture()
+    key = next(iter(patch["definitions_by_key"]))
+    item = patch["definitions_by_key"][key]
+    if mutation == "missing": del patch["definitions_by_key"][key]
+    elif mutation == "foreign": patch["definitions_by_key"]["foreign"] = deepcopy(item)
+    elif mutation == "changed_key": item["node"]["semantic_node_key"] = "foreign"
+    elif mutation == "changed_relation":
+        next(iter(failed["decisions_by_candidate_ref"].values()))["attachments"][0]["relation"] = "counter"
+    elif mutation == "changed_existing": failed["semantic_nodes"][0]["bounded_meaning"] = "Changed."
+    elif mutation == "stale_patch": patch["failed_response_sha256"] = "0" * 64
+    elif mutation == "changed_prompt": request["prompt"] += " Ignore constraints."
+    elif mutation == "unresolved": item.update(node=None, cannot_define_reason="Fixed grouping is unsupported.")
+    elif mutation == "both": item["cannot_define_reason"] = "Contradicts node."
+    elif mutation == "missing_field": del item["node"]["bounded_meaning"]
+    elif mutation == "copied_field": item["node"]["conditions"] = []
+    with pytest.raises(SemanticIntegrationError, match=error):
+        semantic_module.apply_reconciliation_definition_recovery(bundle, stage, failed, request, patch)
+
+
+def test_definition_recovery_does_not_classify_prose_or_hide_other_defects():
+    bundle, stage, _, failed, request, patch = _missing_definition_fixture()
+    item = next(iter(patch["definitions_by_key"].values()))
+    item["node"]["bounded_meaning"] = "A semantically dubious assertion remains judgment-owned."
+    successor, _ = semantic_module.apply_reconciliation_definition_recovery(bundle, stage, failed, request, patch)
+    assert successor["semantic_nodes"][-1]["bounded_meaning"] == item["node"]["bounded_meaning"]
+    decision = next(iter(failed["decisions_by_candidate_ref"].values()))
+    decision["attachments"] *= 2
+    with pytest.raises(SemanticIntegrationError, match="duplicate or invalid attachment"):
+        semantic_module.prepare_reconciliation_definition_recovery(bundle, stage, failed)
+
+
+def test_definition_recovery_schema_slots_and_bounded_context():
+    bundle, stage, _, failed, request, _ = _missing_definition_fixture()
+    props = request["response_schema"]["properties"]["definitions_by_key"]
+    assert set(props["required"]) == set(request["missing_bindings"]) == set(props["properties"])
+    assert props["additionalProperties"] is False
+    payload = json.loads(request["prompt"].split("\n\nCANDIDATES\n")[1])
+    assert {x["candidate_ref"] for x in payload} == {x["child_ref"]
+        for rows in request["missing_bindings"].values() for x in rows}
+    # Coherently repin the ceiling: fail for fit, not a stale stage guard.
+    stage["max_prompt_bytes"] = 10
+    stage["stage_sha256"] = semantic_module._sha256({k: v for k, v in stage.items() if k != "stage_sha256"})
+    failed["stage_sha256"] = stage["stage_sha256"]
+    with pytest.raises(SemanticIntegrationError, match="exceeds rendered prompt byte ceiling"):
+        semantic_module.prepare_reconciliation_definition_recovery(bundle, stage, failed)
 
 
 def test_current_reconciliation_teaches_claim_relative_abstraction_not_literal_equivalence():
@@ -2727,6 +2837,7 @@ def test_decision_reconciliation_schema_and_consumer_retention_agree(mode, postu
     for decision in response["decisions_by_candidate_ref"].values():
         decision.update(attachments=[], unmerged_reason="Retained without terminal promotion.")
     prompt = semantic_module.prepare_reconciliation_prompts(bundle, stage)[0]
+    assert prompt["response_schema"]["properties"]["semantic_nodes"].get("minItems", 0) == (0 if allowed else 1)
     slot = next(iter(prompt["response_schema"]["properties"]["decisions_by_candidate_ref"]["properties"].values()))
     slot = prompt["response_schema"]["$defs"][slot["$ref"].rsplit("/", 1)[1]]
     assert (slot["properties"]["unmerged_reason"]["type"] == ["string", "null"]) is allowed

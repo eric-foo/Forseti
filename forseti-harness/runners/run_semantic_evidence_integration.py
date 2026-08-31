@@ -34,6 +34,8 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     prepare_targeted_benchmark_audit,
     prepare_reconciliation_stage,
     prepare_reconciliation_prompts,
+    prepare_reconciliation_definition_recovery,
+    apply_reconciliation_definition_recovery,
     RECONCILIATION_RESPONSE_VERSION_V2,
     RECONCILIATION_RESPONSE_VERSION_V3,
     _verify_stored_hash,
@@ -1379,6 +1381,62 @@ def prepare_reconciliation_level(
     }
 
 
+def prepare_reconciliation_definitions(
+    *, bundle_path: Path, stage_path: Path, failed_response_path: Path, output_dir: Path,
+) -> dict[str, Any]:
+    request = prepare_reconciliation_definition_recovery(
+        _load_object(bundle_path), _load_object(stage_path), _load_object(failed_response_path))
+    if output_dir.exists():
+        raise ValueError(f"refusing to write into existing definition-recovery directory: {output_dir}")
+    record = {"request": request, "input_sha256": {
+        "bundle": hash_file(bundle_path), "stage": hash_file(stage_path),
+        "failed_response": hash_file(failed_response_path)}}
+    _write_json(output_dir / "request.json", record)
+    _write_new(output_dir / "prompt.md", request["prompt"].encode("utf-8") + b"\n")
+    _write_json(output_dir / "response.schema.json", request["response_schema"])
+    return {"status": "MISSING_DEFINITIONS_JUDGMENT_REQUIRED",
+            "missing_definition_count": len(request["missing_bindings"]),
+            "candidate_count": request["candidate_count"],
+            "prompt_utf8_bytes": request["prompt_utf8_bytes"],
+            "output_dir": str(output_dir), "model_api_calls": 0}
+
+
+def submit_reconciliation_definitions(
+    *, bundle_path: Path, stage_path: Path, failed_response_path: Path,
+    request_path: Path, patch_path: Path, output_dir: Path,
+) -> dict[str, Any]:
+    record = _load_object(request_path)
+    inputs = {"bundle": hash_file(bundle_path), "stage": hash_file(stage_path),
+              "failed_response": hash_file(failed_response_path)}
+    if set(record) != {"request", "input_sha256"} or record["input_sha256"] != inputs:
+        raise ValueError("definition recovery source file bytes changed")
+    successor, validation = apply_reconciliation_definition_recovery(
+        _load_object(bundle_path), _load_object(stage_path), _load_object(failed_response_path),
+        record["request"], _load_object(patch_path))
+    data = json.dumps(successor, ensure_ascii=False, indent=2, sort_keys=True).encode("utf-8") + b"\n"
+    # Same serializer as _write_json. Bind bytes as well as semantic identities.
+    import hashlib
+    receipt = {"status": "MISSING_DEFINITIONS_RECOVERED_NOT_SEMANTIC_TRUTH_PROVEN",
+        "input_sha256": inputs, "request_sha256": hash_file(request_path),
+        "patch_sha256": hash_file(patch_path), "successor_sha256": hashlib.sha256(data).hexdigest(),
+        "added_definition_count": len(record["request"]["missing_bindings"]),
+        "unchanged_existing_decisions_and_definitions": True,
+        "validation": validation, "model_api_calls": 0}
+    response_path, receipt_path = output_dir / "response.json", output_dir / "receipt.json"
+    if output_dir.exists():
+        if (not response_path.is_file() or not receipt_path.is_file()
+                or response_path.read_bytes() != data or _load_object(receipt_path) != receipt):
+            raise ValueError("definition recovery existing successor differs or is incomplete")
+    else:
+        _write_new(response_path, data)
+        _write_json(receipt_path, receipt)
+    # Verify the durable consumer target, including on idempotent reuse.
+    if validate_reconciliation_stage(_load_object(bundle_path), _load_object(stage_path),
+            [_load_object(response_path)], require_all=False) != validation:
+        raise ValueError("definition recovery durable successor validation differs")
+    return receipt
+
+
 def submit_reconciliation_level(
     *,
     bundle_path: Path,
@@ -2413,6 +2471,16 @@ def _parser() -> argparse.ArgumentParser:
     submit_level.add_argument("--response", type=Path, action="append", required=True)
     submit_level.add_argument("--compilation-out", type=Path, required=True)
 
+    for command in ("prepare-reconciliation-definitions", "submit-reconciliation-definitions"):
+        definitions = sub.add_parser(command)
+        definitions.add_argument("--bundle", type=Path, required=True)
+        definitions.add_argument("--stage", type=Path, required=True)
+        definitions.add_argument("--failed-response", type=Path, required=True)
+        definitions.add_argument("--output-dir", type=Path, required=True)
+        if command == "submit-reconciliation-definitions":
+            definitions.add_argument("--request", type=Path, required=True)
+            definitions.add_argument("--patch", type=Path, required=True)
+
     validate_reconciliation = sub.add_parser("validate-reconciliation-response")
     validate_reconciliation.add_argument("--bundle", type=Path, required=True)
     validate_reconciliation.add_argument("--stage", type=Path, required=True)
@@ -2898,6 +2966,13 @@ def main(argv: list[str] | None = None) -> int:
                 response_version=args.response_version,
                 existing_stage_path=args.existing_stage,
             )
+        elif args.command == "prepare-reconciliation-definitions":
+            result = prepare_reconciliation_definitions(bundle_path=args.bundle,
+                stage_path=args.stage, failed_response_path=args.failed_response, output_dir=args.output_dir)
+        elif args.command == "submit-reconciliation-definitions":
+            result = submit_reconciliation_definitions(bundle_path=args.bundle,
+                stage_path=args.stage, failed_response_path=args.failed_response,
+                request_path=args.request, patch_path=args.patch, output_dir=args.output_dir)
         elif args.command == "submit-reconciliation-level":
             result = submit_reconciliation_level(
                 bundle_path=args.bundle,
