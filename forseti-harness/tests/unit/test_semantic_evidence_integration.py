@@ -2822,11 +2822,27 @@ def test_local_repair_missing_node_orphan_and_noop():
     patch = {"request_sha256": request["request_sha256"], "correction": {"replacement": {"semantic_nodes": [], "decisions_by_candidate_ref": {}}, "cannot_repair_reason": None}}
     repaired, _ = semantic_module.apply_reconciliation_repair(bundle, stage, successor, request, patch)
     assert repaired["semantic_nodes"] == successor["semantic_nodes"][:-1]
+    # A truthy prior clearance separates exact-no-op retention from blanket
+    # invalidation; an already-false flag cannot tell those two rules apart.
+    next(n for n in repaired["semantic_nodes"] if n["semantic_node_key"] == "affected")["opposition_checked"] = True
     request = semantic_module.prepare_reconciliation_repair(bundle, stage, repaired, node_keys=["affected"], reason="An allegation may be wrong.")
     patch["request_sha256"] = request["request_sha256"]
     patch["correction"]["replacement"] = {"semantic_nodes": [{k:v for k,v in n.items() if k!="opposition_checked"} for n in repaired["semantic_nodes"] if n["semantic_node_key"] == "affected"],
         "decisions_by_candidate_ref": {r: repaired["decisions_by_candidate_ref"][r] for r in request["candidate_refs"]}}
-    assert semantic_module.apply_reconciliation_repair(bundle, stage, repaired, request, patch)[0] == repaired
+    noop, _ = semantic_module.apply_reconciliation_repair(bundle, stage, repaired, request, patch)
+    assert noop == repaired
+    assert next(n for n in noop["semantic_nodes"] if n["semantic_node_key"] == "affected")["opposition_checked"] is True
+    # Either changed meaning OR changed attachments invalidates true clearance.
+    # The relation-only case keeps the node body exact, exposing an ignored link.
+    for change in ("meaning", "attachment"):
+        changed = deepcopy(patch)
+        replacement = changed["correction"]["replacement"]
+        if change == "meaning":
+            replacement["semantic_nodes"][0]["bounded_meaning"] = "A revised bounded assertion."
+        else:
+            next(iter(replacement["decisions_by_candidate_ref"].values()))["attachments"][0]["relation"] = "adjacent"
+        edited, _ = semantic_module.apply_reconciliation_repair(bundle, stage, repaired, request, changed)
+        assert next(n for n in edited["semantic_nodes"] if n["semantic_node_key"] == "affected")["opposition_checked"] is False
 
 
 def test_current_reconciliation_teaches_claim_relative_abstraction_not_literal_equivalence():
