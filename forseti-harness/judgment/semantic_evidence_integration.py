@@ -5832,22 +5832,46 @@ def _render_v3_reconciliation_prompt(
     shape = _v3_reconciliation_response_shape(stage_sha256, batch_id)
     if decision_only:
         shape = _decision_reconciliation_shape(stage_sha256, batch_id)
-        scope_instruction = scope_instruction.replace(
-            "Copy every child condition verbatim into the node's conditions array as a "
-            "separate string; remove only exact duplicates. Do not paraphrase, combine, "
-            "or replace those strings with a summary. ", ""
+        scope_instruction = (
+            "Use ordinary context-supported interpretation, not literal word matching. "
+            "Useful common claims need not repeat every child's wording or detail: "
+            "choose an informative shared assertion each support establishes on its own. "
+            "For example, buy or try can support expressed interest, but not completed "
+            "purchase or use; non-sticky and not tacky can support a non-sticky finish. "
+            "A positive 'changed my skin' report may support a reported skin improvement "
+            "in context, without naming a particular benefit or proving a measured effect. "
+            "Preserve more specific meanings and intensity in child lineage; do not "
+            "attribute every child's detail to every author. Split when a distinction "
+            "changes the proposed claim, not merely because wording differs. Neither "
+            "'or' nor a broader common meaning is an automatic error; an arbitrary "
+            "bucket of unrelated benefits is not a shared claim. Critique the unsupported "
+            "change in meaning, not missing literal words. Purchase intent, acquisition, "
+            "use, and repurchase are different states. An unnamed item does not establish "
+            "a range-wide claim; generic approval does not establish a particular benefit. "
+            "Preserve counterevidence, conditions, uncertainty and identity limits. "
+            "Condition lineage remains child-owned, not a claim that every condition "
+            "applies to every author. Aim for useful supported compression, not the "
+            "fewest nodes or the most singletons. "
         )
         axis_instruction = (
             "Assign every required original-label key exactly once to a declared "
             "emerging-axis group. Do not return original_labels arrays; code derives "
             "them from assignments_by_original_label. Only the owner batch has label "
-            "slots; other batches return empty groups and assignments. "
+            "slots; other batches return empty groups and assignments. Group synonymous "
+            "labels by their shared evidence dimension, not literal wording. A shared "
+            "axis label does not make its separate claims corroborating. "
         )
         retention_instruction = retention_instruction.replace(
             "unmerged_children", "an unmerged_reason decision"
         )
         source_role_instruction = source_role_instruction.replace(
             "unmerged_children", "an unmerged_reason decision"
+        )
+        source_role_instruction += (
+            "First-hand preferences and stated intentions may be customer_experience "
+            "claims when that meaning remains explicit. reported_behavior would credit "
+            "behavior_evidence_refs: reserve it for behavior actually reported, not "
+            "a desired or future act. "
         )
     result = (
         METHOD_TEXT_V3
@@ -5890,6 +5914,10 @@ def _render_v3_reconciliation_prompt(
         + axis_payload
     )
     if decision_only:
+        result = result.replace(
+            "Reconcile these candidates into meaning-equivalent semantic nodes. ",
+            "Reconcile these candidates into source-supported semantic nodes at a useful common level. ",
+        )
         result = result.replace(
             "Every child must appear in at least one node or exactly once in "
             "unmerged_children. Preserve exact subject/comparator/version orientation. ",

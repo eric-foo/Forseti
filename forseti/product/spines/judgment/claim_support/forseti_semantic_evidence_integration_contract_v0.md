@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v86
+version: v87
 effective_date: 2026-08-31
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v86
+# Semantic Evidence Integration Contract v87
 
 ## Purpose
 
@@ -64,6 +64,15 @@ The semantic agent owns only meaning:
 - preserve negation, uncertainty, product/version identity, and conditions;
 - relate a semantic unit as support, opposition, or adjacent context; and
 - nominate an emerging axis when no existing axis fits honestly.
+
+The intelligence claim-support contract's **Meaning-preserving interpretation
+and useful abstraction** rule governs authoring and review here. Consolidation
+may express a useful common claim without requiring lexically identical or
+equally detailed sources. First-hand preferences and stated intentions may be
+`customer_experience` claims when their meaning stays explicit; `reported_behavior`
+credits `behavior_evidence_refs` and requires the behavior actually reported,
+not a desired or future act. Source-role competence alone does not choose that
+meaning. Do not create a new schema kind or silently relabel a frozen answer.
 
 Deterministic code owns:
 
@@ -1522,12 +1531,17 @@ child_relations are absent from the model-authored node shape, not optional
 copies whose conflicts can be ignored. The compiler retains each condition's child
 lineage; their union does not assert that every condition holds for every
 author. At later levels, retain prior-node qualifications as node conditions
-without inventing original-leaf ownership for them. Each supporting child must establish the same bounded meaning: a
-shared brand ID does not make an unnamed item a range-wide claim, generic
-approval is not a particular benefit, and intent, acquisition, use, and
-repurchase are not interchangeable. Distinct scope, conditions, intensity,
-or uncertainty may require separate nodes. This clarifies the existing merge
-boundary, not a new semantic classifier or a target to minimize node count.
+without inventing original-leaf ownership for them. Each supporting child must
+establish the chosen common claim, not every other child's more specific detail.
+Use ordinary context-supported interpretation and informative abstraction under
+the owning claim-support rule. A shared brand ID does not make an unnamed item
+a range-wide claim; generic approval is not a particular benefit. Intent,
+acquisition, use, and repurchase are not interchangeable. Differences in scope,
+conditions, intensity or uncertainty require separate nodes when they change
+the proposed assertion, not by default. Current response-v3 prompts teach both
+valid compression and overstatement limits; historical response-v2 prompt replay
+keeps its original wording. No lexical rule or deterministic semantic classifier
+is added, and neither the fewest nodes nor the most singletons is a success target.
 The prompt also exposes source roles by existing leaf relation, the
 compiler-owned terminal claim-kind competence table, and the compiler's
 existing rule for composing a leaf relation with the chosen child relation, so
@@ -1976,6 +1990,34 @@ new frontier.
 
 ## Changelog
 
+- `v87` / 2026-08-31 — generalized the owner's skin-change clarification into
+  claim-relative interpretation and useful abstraction in the cycle-wide
+  claim-support authority and current response-v3 reconciliation prompt.
+  Narrow scope is not literal-word equivalence. Sources with different detail
+  may support a genuine common assertion while preserving their leaf-owned
+  distinctions. This supersedes v86's forced-split adjudication for buy/try:
+  expressed product interest is a legitimate shared claim, without credit for
+  a completed action. No phrase whitelist, new provider stage, consensus loop,
+  ontology or relaxed identity/coverage validator was introduced. Historical
+  response-v2 preparation remains unchanged. The prompt-delivery test failed
+  before this correction; the final-view fixture already admitted shared
+  interest without behavior credit, locating the defect in guidance and review,
+  not a missing compiler capability. These tests do not prove provider accuracy.
+  The bounded Dieux adjudication inspected 139 behavior-labeled nodes and checked
+  49 selected nodes against their underlying candidate meanings. It changed
+  only those claim kinds and four broken assignments to already-declared label
+  groups. All wording, relations and original files remain unchanged; the
+  buy/try group stays intact. Four batches (457 nodes, 108 unmerged units) now
+  pass structural validation with explicit controller assistance; 50 of 54
+  remain unattempted at that checkpoint, and the full-stage completeness guard
+  still rejects the partial set. All 54 historical prompts replay exactly;
+  current prompts rebuild identically within the existing ceiling. Evidence:
+  `C:\tmp\forseti-phase-a-dieux-full-corpus-20260831-v1\reconciliation-meaning-adjudicated\proof.json`
+  (SHA-256 `c19552174f6855997df5883ab932fd2f1f27a2efcd259fa7afb03a5b10bf12af`).
+  Subsequent productive provider attempts are recorded separately under that
+  run, not folded into this assisted or deterministic proof. No full-corpus
+  semantic clearance, repeated provider reliability or Phase A completion is
+  claimed.
 - `v86` / 2026-08-31 — adjudicated the different-vendor PR #1530 review of
   `17b4bb218eae8a9bc788c44898a170ffbf7653a4`. F1 export-list cleanup and F2's
   unreachable owner branch need no patch. F3's duplicate-key gap is live, not
@@ -1989,7 +2031,9 @@ new frontier.
   attempt-only and external artifacts were outside that scan. F4 corrects the
   row-review default's actual v10/v11/v12 gate; reconciliation's v12 gate and
   explicit historical replay stay unchanged.
-  F5 requires preserving the separate buy and try intentions rather than
+  The F5 forced-split disposition below is superseded by v87's general
+  claim-relative abstraction rule; the historical adjudication had required
+  preserving the separate buy and try intentions rather than
   counting their disjunctive union as repeated support for one narrow action.
   Both remain valid first-hand statements of intent, not completed purchase
   or use. The current terminal `reported_behavior` kind would populate

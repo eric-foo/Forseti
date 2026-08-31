@@ -2580,6 +2580,63 @@ def test_decision_reconciliation_does_not_infer_semantic_truth():
     assert not result["semantic_nodes"][0]["terminal_proposition"]
 
 
+def test_current_reconciliation_teaches_claim_relative_abstraction_not_literal_equivalence():
+    bundle, _, stage, prompts, _ = _decision_reconciliation_fixture()
+    policy = prompts[0]["prompt"].split("\n\nCANDIDATES\n", 1)[0]
+    assert "Useful common claims need not repeat every child's wording or detail" in policy
+    assert "Critique the unsupported change in meaning, not missing literal words" in policy
+    assert "buy or try can support expressed interest" in policy
+    assert "reported_behavior would credit behavior_evidence_refs" in policy
+    assert "Do not join different benefits or behaviors with 'or'" not in policy
+    assert "meaning-equivalent semantic nodes" not in policy
+    legacy = semantic_module.prepare_reconciliation_prompts(bundle, stage,
+        response_version=semantic_module.RECONCILIATION_RESPONSE_VERSION_V2)[0]["prompt"]
+    assert "Useful common claims need not" not in legacy
+    assert "Do not join different benefits or behaviors with 'or'" in legacy
+
+
+def test_shared_interest_reaches_final_view_without_completed_behavior_credit():
+    # Synthetic consumer fixture, not proof that a provider interprets sources.
+    source = _source_v10(count=2)
+    source["semantic_method_version"] = semantic_module.METHOD_VERSION_V12
+    bundle = build_bundle(source, max_prompt_bytes=30_000)
+    responses = _keyed_responses(bundle)
+    statements = iter(["I want to buy this balm.", "I strongly want to try this balm."])
+    for response in responses:
+        for eid in response["decisions_by_evidence_id"]:
+            row = _claim_row(eid)
+            row.pop("evidence_id")
+            row["semantic_units"][0].update(statement=next(statements), conditions=[],
+                axis_ids=[], subject_product_ids=["summer-fridays-lip-butter-balm"])
+            response["decisions_by_evidence_id"][eid] = row
+    compiled = validate_batch_responses(bundle, responses)
+    verification, _ = prepare_row_verification(bundle, compiled)
+    verified = apply_row_verification(bundle, compiled, verification, _row_verification_responses(verification))
+    stage, _ = prepare_reconciliation_stage(bundle, verified)
+    old = _group_level_responses(stage, terminal=True)[0]
+    node = old["semantic_nodes"][0]
+    node.update(bounded_meaning="Expressed interest in this balm.", axis_ids=[],
+        subject_product_ids=["summer-fridays-lip-butter-balm"])
+    carried = {"subject_product_ids", "comparator_product_ids", "product_version_ids",
+        "conditions", "polarity", "emerging_axis_labels", "child_relations"}
+    response = dict(schema_version=semantic_module.RECONCILIATION_RESPONSE_VERSION_V3,
+        stage_sha256=stage["stage_sha256"], batch_id=old["batch_id"],
+        semantic_nodes=[{k: v for k, v in node.items() if k not in carried}],
+        decisions_by_candidate_ref={ref: {"attachments": [{"semantic_node_key":node["semantic_node_key"],
+            "relation":"support"}], "unmerged_reason":None} for ref in stage["batches"][0]["candidate_refs"]},
+        assignments_by_original_label={}, emerging_axis_consolidations=[])
+    nodes = validate_reconciliation_stage(bundle, stage, [response])
+    view = finalize_v3_view(bundle, verified, nodes)
+    proposition = view["propositions"][0]
+    assert proposition["bounded_proposition"] == "Expressed interest in this balm."
+    assert proposition["claim_kind"] == "customer_experience"
+    assert len(proposition["claim_support"]["evidence_refs"]) == 2
+    assert proposition["claim_support"]["behavior_evidence_refs"] == []
+    assert set(proposition["semantic_relations"]["support"]) == set(response["decisions_by_candidate_ref"])
+    assert [row["statement"] for row in verified["semantic_units"]] == [
+        "I want to buy this balm.", "I strongly want to try this balm."]
+
+
 def test_decision_reconciliation_resume_compacts_only_whitespace():
     bundle, _, stage, prompts, _ = _decision_reconciliation_fixture()
     stage["max_prompt_bytes"] = prompts[0]["prompt_utf8_bytes"] - 1

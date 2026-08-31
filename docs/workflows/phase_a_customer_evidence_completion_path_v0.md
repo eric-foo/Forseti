@@ -368,6 +368,14 @@ emerging labels, polarity composition and lineage. It never supplies a missing
 decision or repairs a failed answer. Native consumers reject missing, foreign,
 duplicate, orphan or prohibited assignments, and incompatible identities.
 Structural exactness does not establish semantic warrant.
+Current response-v3 authoring and review apply the intelligence claim-support
+contract's **Meaning-preserving interpretation and useful abstraction** rule.
+Interpret ordinary language in context and consolidate a useful common claim
+when each supporting child establishes it; do not demand the same words or
+identical detail. Keep source-specific detail, conditions and uncertainty with
+their evidence. Shared interest is not completed behavior, and a shared axis is
+not automatically corroboration. The same rule governs review; no growing list
+of phrase-specific owner exemptions or additional provider pass is required.
 
 Use `prepare-reconciliation-level --existing-stage <stage.json>` to render new
 requests for an unchanged partially completed stage. Oversized resumed current

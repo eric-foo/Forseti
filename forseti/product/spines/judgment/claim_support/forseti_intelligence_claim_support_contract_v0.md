@@ -59,6 +59,31 @@ corroborate a customer's private purchase motivation.
 When version, period, actor identity, or another load-bearing scope fact is
 unknown, preserve `unknown`; never silently merge it into a known scope.
 
+### Meaning-preserving interpretation and useful abstraction
+
+Bound the claim, not its vocabulary. Ordinary context-supported interpretation,
+paraphrases, and useful common abstractions are legitimate; source authors need
+not use the analyst's exact words or supply identical detail. Choose an
+informative shared assertion that each supporting source establishes on its
+own. More specific details remain recoverable in their source-owned evidence;
+they are not thereby repeated by every other source. A difference requires
+separation when it changes the proposed assertion, not merely its phrasing.
+
+For example, wanting to buy and wanting to try the same product can support
+expressed interest in it. They do not establish completed purchase, use, or
+repurchase. A positive skin-change report may support a reported skin
+improvement in context without naming a particular benefit or establishing a
+measured effect. Generic approval alone does not establish hydration. These
+illustrate a general judgment rule, not phrase-specific exemptions.
+
+Neither a broader shared meaning nor the word `or` is an automatic defect.
+An arbitrary collection of unlike benefits is not a shared claim, however,
+and abstraction must not erase opposition, material scope, conditions,
+uncertainty, or intent-versus-action distinctions. Criticism must identify the
+unsupported change in meaning, not just absent literal words. This governs
+authoring and review throughout the intelligence cycle; it changes no source
+identity, independent-origin count, quote literalness, or causal ceiling.
+
 ## Independent origins and source observations are different counts
 
 Keep these two accounting units separate whenever one origin states the same
