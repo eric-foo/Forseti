@@ -33,6 +33,10 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     project_evidence_packet_v2,
     prepare_targeted_benchmark_audit,
     prepare_reconciliation_stage,
+    prepare_reconciliation_prompts,
+    RECONCILIATION_RESPONSE_VERSION_V2,
+    RECONCILIATION_RESPONSE_VERSION_V3,
+    _verify_stored_hash,
     prepare_relation_closure_stage,
     prepare_row_repair,
     prepare_row_verification,
@@ -100,7 +104,14 @@ from provider_attempts import (  # noqa: E402
 
 
 def _load_object(path: Path) -> dict[str, Any]:
-    value = json.loads(path.read_text(encoding="utf-8-sig"))
+    def unique_pairs(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError(f"duplicate JSON object key {key!r}: {path}")
+            result[key] = value
+        return result
+    value = json.loads(path.read_text(encoding="utf-8-sig"), object_pairs_hook=unique_pairs)
     if not isinstance(value, dict):
         raise ValueError(f"expected JSON object: {path}")
     return value
@@ -1321,14 +1332,26 @@ def prepare_reconciliation_level(
     stage_out: Path,
     prompt_dir: Path,
     reconciliation_policy_version: str | None = None,
+    response_version: str | None = None,
+    existing_stage_path: Path | None = None,
 ) -> dict[str, Any]:
     bundle = _load_object(bundle_path)
     compilation = _load_object(compilation_path)
-    stage, prompts = prepare_reconciliation_stage(
-        bundle,
-        compilation,
-        reconciliation_policy_version=reconciliation_policy_version,
-    )
+    if existing_stage_path is None:
+        stage, prompts = prepare_reconciliation_stage(
+            bundle, compilation, reconciliation_policy_version=reconciliation_policy_version,
+            response_version=response_version,
+        )
+    else:
+        stage = _load_object(existing_stage_path)
+        compilation_hash = compilation.get("node_compilation_sha256", compilation.get("compilation_sha256"))
+        hash_field = "node_compilation_sha256" if "node_compilation_sha256" in compilation else "compilation_sha256"
+        _verify_stored_hash(compilation, field=hash_field, label="reconciliation input")
+        if stage["input_compilation_sha256"] != compilation_hash:
+            raise ValueError("existing reconciliation stage has stale input compilation")
+        if reconciliation_policy_version is not None and stage.get("reconciliation_policy_version") != reconciliation_policy_version:
+            raise ValueError("existing reconciliation stage has different policy")
+        prompts = prepare_reconciliation_prompts(bundle, stage, response_version=response_version)
     if prompt_dir.exists():
         raise ValueError(f"refusing to write into existing prompt directory: {prompt_dir}")
     _write_json(stage_out, stage)
@@ -2377,6 +2400,11 @@ def _parser() -> argparse.ArgumentParser:
     reconcile_level.add_argument("--compilation", type=Path, required=True)
     reconcile_level.add_argument("--stage-out", type=Path, required=True)
     reconcile_level.add_argument("--prompt-dir", type=Path, required=True)
+    reconcile_level.add_argument("--existing-stage", type=Path,
+        help="Render requests for an immutable partially completed stage without repartitioning.")
+    reconcile_level.add_argument("--response-version",
+        choices=[RECONCILIATION_RESPONSE_VERSION_V2, RECONCILIATION_RESPONSE_VERSION_V3],
+        help="Defaults to decision-only v3 for method v12; explicit v2 is historical replay.")
     reconcile_level.add_argument(
         "--reconciliation-policy",
         choices=[RECONCILIATION_POLICY_VERSION_V2],
@@ -2870,6 +2898,8 @@ def main(argv: list[str] | None = None) -> int:
                 stage_out=args.stage_out,
                 prompt_dir=args.prompt_dir,
                 reconciliation_policy_version=args.reconciliation_policy,
+                response_version=args.response_version,
+                existing_stage_path=args.existing_stage,
             )
         elif args.command == "submit-reconciliation-level":
             result = submit_reconciliation_level(

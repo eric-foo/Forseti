@@ -356,13 +356,27 @@ v1 responses remain supported; the source-work stage is unchanged, so accepted
 answers are not regenerated merely to adopt keyed transport. Correct row
 participation does not establish correct interpretation.
 
-Current method-v12 reconciliation preparation likewise persists a response
-schema beside every prompt. The schema restricts copied child references to
-that batch and copied emerging labels to the level-owned inventory. The native
-consumer still enforces whole-inventory accounting, polarity composition and
-source competence; semantic warrant remains judgment-owned. An enum-valid
-answer can still group the wrong meanings. Historical method-v11-and-earlier
-prompts and preparation outputs do not acquire this current-authoring sidecar.
+Current method-v12 reconciliation preparation persists decision-only response
+v3's schema beside every prompt. Every candidate has one required decision slot
+(one or more node attachments, or an allowed unmerged reason); every original
+emerging label has one required group-assignment slot. Normal-mode admitted
+customer findings cannot be unmerged: an uncertain finding may remain a
+nonterminal singleton. The model owns grouping, relations, bounded wording,
+axes and claim/uncertainty metadata. Code carries exact compatible product,
+comparator and version identities, literal child-owned conditions, original
+emerging labels, polarity composition and lineage. It never supplies a missing
+decision or repairs a failed answer. Native consumers reject missing, foreign,
+duplicate, orphan or prohibited assignments, and incompatible identities.
+Structural exactness does not establish semantic warrant.
+
+Use `prepare-reconciliation-level --existing-stage <stage.json>` to render new
+requests for an unchanged partially completed stage. Oversized resumed current
+prompts may compact JSON whitespace without losing content or repartitioning.
+Accepted responses are not regenerated merely to change transport. Explicit
+`--response-version semantic_evidence_reconciliation_response_v2` retains old
+prompt replay; stored v2 responses can coexist with v3 responses at submission.
+The downstream node-compilation shape and semantic provider-stage count stay
+unchanged. Historical method-v11-and-earlier preparation remains unchanged.
 
 If response validation failed after usage was saved, publication may be retried
 without a new model call. The existing usage receipt must equal the bytes

@@ -2362,7 +2362,7 @@ def test_current_reconciliation_preserves_literal_conditions_and_bounded_scope(m
     policy = prompts[0]["prompt"].split("\n\nCANDIDATES\n", 1)[0]
     current = method == semantic_module.METHOD_VERSION_V12
     assert ("response_schema" in prompts[0]) is current
-    assert ("Copy every child condition verbatim" in policy) is current
+    assert "Copy every child condition verbatim" not in policy
     assert ("unnamed item does not establish a range-wide claim" in policy) is current
     assert ("Purchase intent, acquisition, use, and repurchase are different states" in policy) is current
     assert ("generic approval does not establish a particular benefit" in policy) is current
@@ -2393,12 +2393,11 @@ def test_current_reconciliation_preserves_literal_conditions_and_bounded_scope(m
     nodes = validate_reconciliation_stage(bundle, stage, correct)
     if current:
         schema = prompts[0]["response_schema"]
-        child_schema = schema["properties"]["semantic_nodes"]["items"]["properties"]["child_relations"]["items"]["properties"]["child_ref"]
-        assert child_schema["enum"] == stage["batches"][0]["candidate_refs"]
-        assert schema["properties"]["unmerged_children"]["items"]["properties"]["child_ref"] == child_schema
+        assert schema["properties"]["decisions_by_candidate_ref"]["required"] == stage["batches"][0]["candidate_refs"]
+        assert "child_relations" not in schema["properties"]["semantic_nodes"]["items"]["properties"]
         assert schema["properties"]["emerging_axis_consolidations"]["maxItems"] == 0
     _, next_prompts = prepare_reconciliation_stage(bundle, nodes)
-    assert all(("Copy every child condition verbatim" in row["prompt"]) is current for row in next_prompts)
+    assert all("Copy every child condition verbatim" not in row["prompt"] for row in next_prompts)
     assert all(('"source_roles_by_relation"' in row["prompt"]) is current for row in next_prompts)
     changed = deepcopy(correct)
     changed[0]["semantic_nodes"][0]["conditions"] = ["For one author, winter and overnight use."]
@@ -2437,8 +2436,8 @@ def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: 
         path = tmp_path / "prompts" / prompt["batch_id"]
         assert path.with_suffix(".md").read_bytes() == (prompt["prompt"] + "\n").encode("utf-8")
         assert json.loads(path.with_suffix(".schema.json").read_text()) == prompt["response_schema"]
-    labels = prompts[0]["response_schema"]["properties"]["emerging_axis_consolidations"]["items"]["properties"]["original_labels"]
-    assert labels["items"]["enum"] == ["texture_detail"]
+    labels = prompts[0]["response_schema"]["properties"]["assignments_by_original_label"]
+    assert labels["required"] == ["texture_detail"]
     # Correct outer hashes: omissions must reach the existing coverage boundary.
     response = _singleton_reconciliation_responses(stage)
     with pytest.raises(SemanticIntegrationError, match="does not account for every emerging label"):
@@ -2449,6 +2448,236 @@ def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: 
     response[0]["semantic_nodes"][0]["child_relations"][0]["child_ref"] = "foreign::meaning"
     with pytest.raises(SemanticIntegrationError, match="unknown, duplicate, or invalid child"):
         validate_reconciliation_stage(bundle, stage, response)
+
+
+def _decision_reconciliation_fixture():
+    source = _source_v10(count=2)
+    source["semantic_method_version"] = semantic_module.METHOD_VERSION_V12
+    bundle = build_bundle(source, max_prompt_bytes=30_000)
+    responses = _keyed_responses(bundle)
+    n = 0
+    for response in responses:
+        for eid in response["decisions_by_evidence_id"]:
+            row = _claim_row(eid)
+            row.pop("evidence_id")
+            unit = row["semantic_units"][0]
+            unit["subject_product_ids"] = ["summer-fridays-lip-butter-balm"]
+            unit["conditions"] = ["when it warms up"] if n == 0 else []
+            unit["polarity"] = "affirmed" if n == 0 else "negated"
+            unit["emerging_axis_labels"] = ["price transparency", "formula interest"]
+            response["decisions_by_evidence_id"][eid] = row
+            n += 1
+    compiled = validate_batch_responses(bundle, responses)
+    verification, _ = prepare_row_verification(bundle, compiled)
+    verified = apply_row_verification(bundle, compiled, verification, _row_verification_responses(verification))
+    stage, prompts = prepare_reconciliation_stage(bundle, verified,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2)
+    old = _singleton_reconciliation_responses(stage)[0]
+    node = old["semantic_nodes"][0]
+    source_fields = {"subject_product_ids", "comparator_product_ids", "product_version_ids",
+        "conditions", "polarity", "emerging_axis_labels", "child_relations"}
+    response = {
+        "schema_version": semantic_module.RECONCILIATION_RESPONSE_VERSION_V3,
+        "stage_sha256": stage["stage_sha256"], "batch_id": stage["batches"][0]["batch_id"],
+        "semantic_nodes": [{k: v for k, v in node.items() if k not in source_fields}],
+        "decisions_by_candidate_ref": {ref: {"attachments": [{
+            "semantic_node_key": node["semantic_node_key"], "relation": "adjacent" if i == 0 else "support"}],
+            "unmerged_reason": None} for i, ref in enumerate(stage["batches"][0]["candidate_refs"])},
+        "emerging_axis_consolidations": [{"candidate_key": "group", "canonical_label": "bounded label group",
+            "disposition": "accepted", "reason": "Test grouping; semantic warrant not mechanically proven."}],
+        "assignments_by_original_label": {label: "group" for label in ["price transparency", "formula interest"]},
+    }
+    return bundle, verified, stage, prompts, response
+
+
+def test_decision_reconciliation_public_consumers_preserve_owned_facts_and_resume(tmp_path):
+    from runners.run_semantic_evidence_integration import prepare_reconciliation_level, submit_reconciliation_level
+    bundle, verified, stage, prompts, response = _decision_reconciliation_fixture()
+    bp, cp, sp, rp = [tmp_path / name for name in ("bundle.json", "compiled.json", "stage.json", "response.json")]
+    for path, value in [(bp, bundle), (cp, verified), (sp, stage), (rp, response)]:
+        path.write_text(json.dumps(value), encoding="utf-8")
+    prepare_reconciliation_level(bundle_path=bp, compilation_path=cp, existing_stage_path=sp,
+        stage_out=tmp_path / "resumed.json", prompt_dir=tmp_path / "prompts")
+    assert json.loads((tmp_path / "resumed.json").read_text()) == stage
+    schema = json.loads((tmp_path / "prompts" / (response["batch_id"] + ".schema.json")).read_text())
+    assert schema == prompts[0]["response_schema"]
+    assert schema["properties"]["schema_version"]["const"] == semantic_module.RECONCILIATION_RESPONSE_VERSION_V3
+    for slot in schema["properties"]["decisions_by_candidate_ref"]["properties"].values():
+        slot = schema["$defs"][slot["$ref"].rsplit("/", 1)[1]]
+        assert slot["properties"]["attachments"]["minItems"] == 1
+        assert slot["properties"]["unmerged_reason"] == {"type": "null"}
+    submit_reconciliation_level(bundle_path=bp, stage_path=sp, response_paths=[rp], compilation_out=tmp_path / "nodes.json")
+    result = json.loads((tmp_path / "nodes.json").read_text())
+    assert result == validate_reconciliation_stage(bundle, stage, [response])
+    assert result == validate_reconciliation_stage(bundle, stage, [deepcopy(response)])
+    node = result["semantic_nodes"][0]
+    assert node["conditions"] == ["when it warms up"]
+    assert node["polarity"] == "mixed"
+    assert node["emerging_axis_labels"] == ["formula interest", "price transparency"]
+    assert node["subject_product_ids"] == ["summer-fridays-lip-butter-balm"]
+    assert node["condition_lineage"] == sorted([lineage for child in stage["candidates"]
+        for lineage in child["condition_lineage"]], key=lambda row: row["semantic_unit_ref"])
+    assert node["child_relations"] == [{"child_ref": ref, "relation": decision["attachments"][0]["relation"]}
+        for ref, decision in response["decisions_by_candidate_ref"].items()]
+    # A single candidate may support multiple independently worded nodes.
+    extra = deepcopy(response["semantic_nodes"][0]); extra["semantic_node_key"] = "another"
+    response["semantic_nodes"].append(extra)
+    next(iter(response["decisions_by_candidate_ref"].values()))["attachments"].append(
+        {"semantic_node_key": "another", "relation": "support"})
+    assert len(validate_reconciliation_stage(bundle, stage, [response])["semantic_nodes"]) == 2
+
+
+@pytest.mark.parametrize("mutation,error", [
+    ("missing_candidate", "candidate decisions has missing or foreign fields"),
+    ("foreign_candidate", "candidate decisions has missing or foreign fields"),
+    ("missing_label", "label assignments has missing or foreign fields"),
+    ("foreign_label", "label assignments has missing or foreign fields"),
+    ("duplicate_attachment", "foreign, duplicate or invalid attachment"),
+    ("foreign_node", "foreign, duplicate or invalid attachment"),
+    ("missing_decision", "requires attachments xor unmerged reason"),
+    ("prohibited_unmerged", "cannot unmerge required finding"),
+    ("both_destinations", "requires attachments xor unmerged reason"),
+    ("foreign_group", "foreign label group assignment"),
+    ("duplicate_group", "duplicate or empty label group"),
+    ("duplicate_node", "duplicate or empty node key"),
+    ("orphan_node", "orphan node"),
+    ("unused_group", "unused label group"),
+    ("model_owned_copy", "node has missing or foreign fields"),
+    ("wrong_identity", "crosses product, comparator, or version bindings"),
+])
+def test_decision_reconciliation_wrong_cause(mutation, error):
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    decisions = response["decisions_by_candidate_ref"]
+    first = next(iter(decisions)); decision = decisions[first]
+    if mutation == "missing_candidate": del decisions[first]
+    elif mutation == "foreign_candidate": decisions["foreign::unit"] = decisions.pop(first)
+    elif mutation == "missing_label": del response["assignments_by_original_label"]["price transparency"]
+    elif mutation == "foreign_label": response["assignments_by_original_label"]["foreign"] = "group"
+    elif mutation == "duplicate_attachment": decision["attachments"] *= 2
+    elif mutation == "foreign_node": decision["attachments"][0]["semantic_node_key"] = "foreign"
+    elif mutation == "missing_decision": decision["attachments"] = []
+    elif mutation == "prohibited_unmerged": decision.update(attachments=[], unmerged_reason="Only formula interest.")
+    elif mutation == "both_destinations": decision["unmerged_reason"] = "Also unmerged."
+    elif mutation == "foreign_group": response["assignments_by_original_label"]["price transparency"] = "foreign"
+    elif mutation == "duplicate_group": response["emerging_axis_consolidations"] *= 2
+    elif mutation == "duplicate_node": response["semantic_nodes"] *= 2
+    elif mutation == "orphan_node": response["semantic_nodes"].append({**response["semantic_nodes"][0], "semantic_node_key": "orphan"})
+    elif mutation == "unused_group": response["emerging_axis_consolidations"].append({**response["emerging_axis_consolidations"][0], "candidate_key": "unused"})
+    elif mutation == "model_owned_copy": response["semantic_nodes"][0]["conditions"] = []
+    elif mutation == "wrong_identity":
+        stage["candidates"][1]["subject_product_ids"] = ["different-product"]
+        stage["stage_sha256"] = semantic_module._sha256({k: v for k, v in stage.items() if k != "stage_sha256"})
+        response["stage_sha256"] = stage["stage_sha256"]
+    with pytest.raises(SemanticIntegrationError, match=error):
+        validate_reconciliation_stage(bundle, stage, [response])
+
+
+def test_decision_reconciliation_does_not_infer_semantic_truth():
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    response["semantic_nodes"][0]["bounded_meaning"] = "A semantically dubious interpretation remains review-owned."
+    result = validate_reconciliation_stage(bundle, stage, [response])
+    assert result["semantic_nodes"][0]["bounded_meaning"] == response["semantic_nodes"][0]["bounded_meaning"]
+    assert not result["semantic_nodes"][0]["terminal_proposition"]
+
+
+def test_decision_reconciliation_resume_compacts_only_whitespace():
+    bundle, _, stage, prompts, _ = _decision_reconciliation_fixture()
+    stage["max_prompt_bytes"] = prompts[0]["prompt_utf8_bytes"] - 1
+    stage["stage_sha256"] = semantic_module._sha256({k: v for k, v in stage.items() if k != "stage_sha256"})
+    compact = semantic_module.prepare_reconciliation_prompts(bundle, stage)[0]
+    assert compact["prompt_utf8_bytes"] <= stage["max_prompt_bytes"]
+    marker = "\n\nCANDIDATES\n"
+    labels = "\n\nEMERGING_AXIS_LABELS_TO_CONSOLIDATE\n"
+    assert json.loads(compact["prompt"].split(marker)[1].split(labels)[0]) == json.loads(
+        prompts[0]["prompt"].split(marker)[1].split(labels)[0])
+    assert compact["response_schema"]["properties"]["decisions_by_candidate_ref"] == prompts[0]["response_schema"]["properties"]["decisions_by_candidate_ref"]
+
+
+def test_decision_reconciliation_carries_historical_node_conditions_to_next_level():
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    index = {row["candidate_ref"]: row for row in stage["candidates"]}
+    historical = semantic_module._assemble_decision_reconciliation(response, stage, stage["batches"][0],
+        set(response["assignments_by_original_label"]), index, semantic_module._unit_index(bundle))
+    # v2 allowed qualified node conditions in addition to literal leaf conditions.
+    historical["semantic_nodes"][0]["conditions"].append("A retained prior-node qualification.")
+    old_nodes = validate_reconciliation_stage(bundle, stage, [historical])
+    next_stage, _ = prepare_reconciliation_stage(bundle, old_nodes)
+    response["stage_sha256"] = next_stage["stage_sha256"]
+    response["batch_id"] = next_stage["batches"][0]["batch_id"]
+    response["decisions_by_candidate_ref"] = {next_stage["candidates"][0]["candidate_ref"]:
+        {"attachments": [{"semantic_node_key": response["semantic_nodes"][0]["semantic_node_key"], "relation": "support"}], "unmerged_reason": None}}
+    response["emerging_axis_consolidations"] = []
+    response["assignments_by_original_label"] = {}
+    compiled = validate_reconciliation_stage(bundle, next_stage, [response])
+    assert set(compiled["semantic_nodes"][0]["conditions"]) == set(old_nodes["semantic_nodes"][0]["conditions"])
+    assert compiled["semantic_nodes"][0]["condition_lineage"] == old_nodes["semantic_nodes"][0]["condition_lineage"]
+
+
+def test_decision_reconciliation_public_loader_rejects_duplicate_keys(tmp_path):
+    from runners.run_semantic_evidence_integration import _load_object
+    path = tmp_path / "duplicate.json"
+    path.write_text('{"assignments_by_original_label":{"price transparency":"one","price transparency":"two"}}')
+    with pytest.raises(ValueError, match="duplicate JSON object key 'price transparency'"):
+        _load_object(path)
+
+
+def test_decision_reconciliation_v2_replay_and_mixed_transport():
+    bundle, verified, stage, _, response = _decision_reconciliation_fixture()
+    old_stage, old_prompts = prepare_reconciliation_stage(bundle, verified,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+        response_version=semantic_module.RECONCILIATION_RESPONSE_VERSION_V2)
+    assert old_prompts == semantic_module.prepare_reconciliation_prompts(bundle, old_stage,
+        response_version=semantic_module.RECONCILIATION_RESPONSE_VERSION_V2)
+    assert "Copy every child condition verbatim" in old_prompts[0]["prompt"]
+    index = {row["candidate_ref"]: row for row in stage["candidates"]}
+    old = semantic_module._assemble_decision_reconciliation(response, stage, stage["batches"][0],
+        set(response["assignments_by_original_label"]), index, semantic_module._unit_index(bundle))
+    assert validate_reconciliation_stage(bundle, stage, [old]) == validate_reconciliation_stage(bundle, stage, [response])
+
+    # A real split stage consumes one frozen v2 answer and one v3 answer together.
+    refs = stage["batches"][0]["candidate_refs"]
+    first_id = response["batch_id"]
+    second_id = "reconcile-0001-0002"
+    stage["batches"] = [{"batch_id": first_id, "candidate_refs": [refs[0]]},
+                        {"batch_id": second_id, "candidate_refs": [refs[1]]}]
+    stage["stage_sha256"] = semantic_module._sha256({k: v for k, v in stage.items() if k != "stage_sha256"})
+    old["stage_sha256"] = response["stage_sha256"] = stage["stage_sha256"]
+    old["semantic_nodes"][0]["child_relations"] = [{"child_ref": refs[0], "relation": "adjacent"}]
+    old["semantic_nodes"][0]["polarity"] = stage["candidates"][0]["polarity"]
+    response["batch_id"] = second_id
+    del response["decisions_by_candidate_ref"][refs[0]]
+    response["assignments_by_original_label"] = {}
+    response["emerging_axis_consolidations"] = []
+    mixed = validate_reconciliation_stage(bundle, stage, [old, response])
+    assert len(mixed["semantic_nodes"]) == 2
+    assert len(mixed["emerging_axis_consolidations"]) == 1
+    assert {leaf["semantic_unit_ref"] for node in mixed["semantic_nodes"] for leaf in node["leaf_relations"]} == set(refs)
+
+
+@pytest.mark.parametrize("mode,postures,allowed", [
+    ("normal", ["first_hand"], False),
+    ("normal", ["attribution_or_echo"], True),
+    ("convergence", ["first_hand"], True),
+])
+def test_decision_reconciliation_schema_and_consumer_retention_agree(mode, postures, allowed):
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    stage["reconciliation_mode"] = mode
+    for candidate in stage["candidates"]:
+        candidate["evidence_postures"] = postures
+    stage["stage_sha256"] = semantic_module._sha256({k: v for k, v in stage.items() if k != "stage_sha256"})
+    response["stage_sha256"] = stage["stage_sha256"]
+    response["semantic_nodes"] = []
+    for decision in response["decisions_by_candidate_ref"].values():
+        decision.update(attachments=[], unmerged_reason="Retained without terminal promotion.")
+    prompt = semantic_module.prepare_reconciliation_prompts(bundle, stage)[0]
+    slot = next(iter(prompt["response_schema"]["properties"]["decisions_by_candidate_ref"]["properties"].values()))
+    slot = prompt["response_schema"]["$defs"][slot["$ref"].rsplit("/", 1)[1]]
+    assert (slot["properties"]["unmerged_reason"]["type"] == ["string", "null"]) is allowed
+    if allowed:
+        assert len(validate_reconciliation_stage(bundle, stage, [response])["unmerged_semantic_units"]) == 2
+    else:
+        with pytest.raises(SemanticIntegrationError, match="cannot unmerge required finding"):
+            validate_reconciliation_stage(bundle, stage, [response])
 
 
 def test_current_reconciliation_role_projection_preserves_relation_orientation() -> None:

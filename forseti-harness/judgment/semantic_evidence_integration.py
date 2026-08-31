@@ -67,6 +67,7 @@ PROMPT_FRAME_BATCH_ID_TOKEN = "__FORSETI_BATCH_ID__"
 PACK_BATCH_ID_PREFIX = "batch-"
 RECONCILIATION_RESPONSE_VERSION = "semantic_evidence_reconciliation_response_v1"
 RECONCILIATION_RESPONSE_VERSION_V2 = "semantic_evidence_reconciliation_response_v2"
+RECONCILIATION_RESPONSE_VERSION_V3 = "semantic_evidence_reconciliation_response_v3"
 RELATION_CLOSURE_STAGE_VERSION = "semantic_evidence_relation_closure_stage_v1"
 RELATION_CLOSURE_RESPONSE_VERSION = "semantic_evidence_relation_closure_response_v1"
 RELATION_CLOSURE_COMPILATION_VERSION = "semantic_evidence_relation_closure_compilation_v1"
@@ -5557,6 +5558,163 @@ def _reconciliation_response_schema(
     })
 
 
+def _decision_reconciliation_shape(stage_sha256: str, batch_id: str) -> dict[str, Any]:
+    shape = _v3_reconciliation_response_shape(stage_sha256, batch_id)
+    shape["schema_version"] = RECONCILIATION_RESPONSE_VERSION_V3
+    for field in ("subject_product_ids", "comparator_product_ids", "product_version_ids",
+                  "conditions", "polarity", "emerging_axis_labels", "child_relations"):
+        del shape["semantic_nodes"][0][field]
+    del shape["unmerged_children"]
+    del shape["emerging_axis_consolidations"][0]["original_labels"]
+    shape["decisions_by_candidate_ref"] = {
+        "each exact required candidate_ref": {
+            "attachments": [{"semantic_node_key": "declared node key", "relation": "support|counter|adjacent"}],
+            "unmerged_reason": None,
+        }
+    }
+    shape["assignments_by_original_label"] = {"each exact required original label": "declared candidate_key"}
+    return shape
+
+
+def _must_retain_reconciliation_candidate(candidate, mode, evidence_index) -> bool:
+    if not _is_customer_finding_candidate(candidate):
+        return False
+    if mode == "normal":
+        return True
+    return mode == "convergence" and len({
+        _leaf_evidence_id(leaf["semantic_unit_ref"], evidence_index, node_key=candidate["candidate_ref"])
+        for leaf in candidate["leaf_relations"] if leaf["relation"] == "support"
+    }) > 1
+
+
+def _decision_reconciliation_schema(stage, batch, labels, candidate_index, evidence_index):
+    # Reuse the established semantic fields; remove model copies of owned facts.
+    schema = _reconciliation_response_schema(stage, batch, labels)
+    props = schema["properties"]
+    props["schema_version"]["const"] = RECONCILIATION_RESPONSE_VERSION_V3
+    node = props["semantic_nodes"]["items"]
+    for field in ("subject_product_ids", "comparator_product_ids", "product_version_ids",
+                  "conditions", "polarity", "emerging_axis_labels", "child_relations"):
+        del node["properties"][field]
+    node["required"] = list(node["properties"])
+    del props["unmerged_children"]
+    group = props["emerging_axis_consolidations"]["items"]
+    del group["properties"]["original_labels"]
+    group["required"] = list(group["properties"])
+
+    def obj(properties):
+        return {"type": "object", "properties": properties,
+                "required": list(properties), "additionalProperties": False}
+
+    definitions = {}
+    for required in (False, True):
+        definitions["retained_decision" if required else "decision"] = obj({
+            "attachments": {"type": "array", "items": obj({
+                "semantic_node_key": {"type": "string"},
+                "relation": {"type": "string", "enum": sorted(RELATIONS)},
+            }), **({"minItems": 1} if required else {})},
+            "unmerged_reason": {"type": "null"} if required else {"type": ["string", "null"]},
+        })
+    schema["$defs"] = definitions
+    decisions = {}
+    for ref in batch["candidate_refs"]:
+        required = _must_retain_reconciliation_candidate(
+            candidate_index[ref], stage.get("reconciliation_mode"), evidence_index)
+        decisions[ref] = {"$ref": "#/$defs/retained_decision" if required else "#/$defs/decision"}
+    props["decisions_by_candidate_ref"] = obj(decisions)
+    props["assignments_by_original_label"] = obj({label: {"type": "string"} for label in labels})
+    schema["required"] = list(props)
+    return schema
+
+
+def _assemble_decision_reconciliation(response, stage, batch, labels, candidate_index, evidence_index):
+    """Compile declared v3 decisions, never repair a failed v2 response.
+
+    Only mechanical source facts are derived. The shared validator below still
+    judges structure/competence, not whether the chosen meanings warrant a merge.
+    """
+    def exact(value, fields, label):
+        if not isinstance(value, Mapping) or set(value) != set(fields):
+            raise SemanticIntegrationError(f"decision reconciliation {label} has missing or foreign fields")
+
+    shape = _decision_reconciliation_shape(stage["stage_sha256"], batch["batch_id"])
+    exact(response, shape, "response")
+    decisions = response["decisions_by_candidate_ref"]
+    exact(decisions, batch["candidate_refs"], "candidate decisions")
+    assignments = response["assignments_by_original_label"]
+    exact(assignments, labels, "label assignments")
+    nodes = response["semantic_nodes"]
+    groups = response["emerging_axis_consolidations"]
+    if not isinstance(nodes, list) or not isinstance(groups, list):
+        raise SemanticIntegrationError("decision reconciliation nodes and groups must be lists")
+    by_key = {}
+    for row in nodes:
+        exact(row, shape["semantic_nodes"][0], "node")
+        key = row["semantic_node_key"]
+        if not _nonempty(key) or key in by_key:
+            raise SemanticIntegrationError("decision reconciliation duplicate or empty node key")
+        by_key[key] = {**row, "child_relations": []}
+    unmerged = []
+    for ref in batch["candidate_refs"]:
+        decision = decisions[ref]
+        exact(decision, {"attachments", "unmerged_reason"}, "candidate decision")
+        attachments, reason = decision["attachments"], decision["unmerged_reason"]
+        if not isinstance(attachments, list) or (
+            (bool(attachments) and reason is not None) or (not attachments and not _nonempty(reason))
+        ):
+            raise SemanticIntegrationError("decision reconciliation requires attachments xor unmerged reason")
+        if not attachments:
+            if _must_retain_reconciliation_candidate(
+                candidate_index[ref], stage.get("reconciliation_mode"), evidence_index
+            ):
+                raise SemanticIntegrationError(f"decision reconciliation cannot unmerge required finding {ref}")
+            unmerged.append({"child_ref": ref, "reason": reason})
+        seen = set()
+        for attachment in attachments:
+            exact(attachment, {"semantic_node_key", "relation"}, "attachment")
+            key, relation = attachment["semantic_node_key"], attachment["relation"]
+            if not isinstance(key, str) or key not in by_key or key in seen or not isinstance(relation, str) or relation not in RELATIONS:
+                raise SemanticIntegrationError("decision reconciliation foreign, duplicate or invalid attachment")
+            seen.add(key)
+            by_key[key]["child_relations"].append({"child_ref": ref, "relation": relation})
+    for key, row in by_key.items():
+        children = [candidate_index[item["child_ref"]] for item in row["child_relations"]]
+        if not children:
+            raise SemanticIntegrationError(f"decision reconciliation orphan node {key}")
+        for field in ("subject_product_ids", "comparator_product_ids", "product_version_ids"):
+            identity = set(children[0].get(field, []))
+            if any(set(child.get(field, [])) != identity for child in children):
+                raise SemanticIntegrationError(f"semantic node {key} crosses product, comparator, or version bindings")
+            row[field] = sorted(identity)
+        # Historical nodes may also carry qualified conditions beyond the leaf
+        # strings. Keep those at their existing node scope, never invent leaf ownership.
+        row["conditions"] = sorted({condition for child in children for condition in child["conditions"]}
+            | {condition for child in children for lineage in child["condition_lineage"]
+               for condition in lineage["conditions"]})
+        row["emerging_axis_labels"] = sorted({label for child in children for label in child["emerging_axis_labels"]})
+        polarities = {child["polarity"] for child in children}
+        row["polarity"] = next(iter(polarities)) if len(polarities) == 1 else "mixed"
+    by_group = {}
+    for row in groups:
+        exact(row, shape["emerging_axis_consolidations"][0], "label group")
+        key = row["candidate_key"]
+        if not _nonempty(key) or key in by_group:
+            raise SemanticIntegrationError("decision reconciliation duplicate or empty label group")
+        by_group[key] = {**row, "original_labels": []}
+    for label in sorted(labels):
+        key = assignments[label]
+        if not isinstance(key, str) or key not in by_group:
+            raise SemanticIntegrationError("decision reconciliation foreign label group assignment")
+        by_group[key]["original_labels"].append(label)
+    if any(not row["original_labels"] for row in by_group.values()):
+        raise SemanticIntegrationError("decision reconciliation unused label group")
+    # Ephemeral shared-validator input, not a substituted raw provider artifact.
+    return {"schema_version": RECONCILIATION_RESPONSE_VERSION_V2,
+            "stage_sha256": response["stage_sha256"], "batch_id": response["batch_id"],
+            "semantic_nodes": list(by_key.values()), "unmerged_children": unmerged,
+            "emerging_axis_consolidations": list(by_group.values())}
+
+
 def _render_v3_reconciliation_prompt(
     *,
     stage_sha256: str,
@@ -5569,6 +5727,8 @@ def _render_v3_reconciliation_prompt(
     preserve_child_scope: bool = False,
     reconciliation_mode: str | None = None,
     evidence_index: Mapping[str, Any] | None = None,
+    decision_only: bool = False,
+    compact_json: bool = False,
 ) -> str:
     posture_instruction = (
         "For candidates carrying evidence_postures, customer_experience and "
@@ -5669,7 +5829,27 @@ def _render_v3_reconciliation_prompt(
         if preserve_child_scope
         else ""
     )
-    return (
+    shape = _v3_reconciliation_response_shape(stage_sha256, batch_id)
+    if decision_only:
+        shape = _decision_reconciliation_shape(stage_sha256, batch_id)
+        scope_instruction = scope_instruction.replace(
+            "Copy every child condition verbatim into the node's conditions array as a "
+            "separate string; remove only exact duplicates. Do not paraphrase, combine, "
+            "or replace those strings with a summary. ", ""
+        )
+        axis_instruction = (
+            "Assign every required original-label key exactly once to a declared "
+            "emerging-axis group. Do not return original_labels arrays; code derives "
+            "them from assignments_by_original_label. Only the owner batch has label "
+            "slots; other batches return empty groups and assignments. "
+        )
+        retention_instruction = retention_instruction.replace(
+            "unmerged_children", "an unmerged_reason decision"
+        )
+        source_role_instruction = source_role_instruction.replace(
+            "unmerged_children", "an unmerged_reason decision"
+        )
+    result = (
         METHOD_TEXT_V3
         + "\nReconcile these candidates into meaning-equivalent semantic nodes. "
         "Every child must appear in at least one node or exactly once in "
@@ -5684,7 +5864,7 @@ def _render_v3_reconciliation_prompt(
         + axis_instruction
         + "Return only JSON matching this shape:\n"
         + json.dumps(
-            _v3_reconciliation_response_shape(stage_sha256, batch_id),
+            shape,
             ensure_ascii=False,
             indent=2,
         )
@@ -5704,10 +5884,24 @@ def _render_v3_reconciliation_prompt(
                 else candidates
             ),
             ensure_ascii=False,
-            indent=2,
+            indent=None if compact_json else 2,
+            separators=(",", ":") if compact_json else None,
         )
         + axis_payload
     )
+    if decision_only:
+        result = result.replace(
+            "Every child must appear in at least one node or exactly once in "
+            "unmerged_children. Preserve exact subject/comparator/version orientation. ",
+            "Fill every decisions_by_candidate_ref slot. Use one or more attachments "
+            "to declared semantic_node_key values, or an allowed unmerged_reason, "
+            "never both. A required finding can remain a nonterminal singleton; "
+            "retention does not force a terminal claim. Code carries exact product "
+            "identities (all attached children must match), original emerging labels, "
+            "literal conditions with child ownership, polarity composition and lineage. "
+            "Do not emit those source-owned fields or child_relations on nodes. "
+        )
+    return result
 
 
 def prepare_reconciliation_stage(
@@ -5715,6 +5909,7 @@ def prepare_reconciliation_stage(
     compilation: Mapping[str, Any],
     *,
     reconciliation_policy_version: str | None = None,
+    response_version: str | None = None,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     """Prepare one prompt-bounded Route 1.6 reconciliation level."""
     _verify_stored_hash(bundle, field="bundle_sha256", label="bundle")
@@ -5859,6 +6054,7 @@ def prepare_reconciliation_stage(
     agreement_origin_rule = bundle.get("method_version") in SEMANTIC_METHODS_V7_PLUS
     # Clarify current authoring without rewriting v11-and-earlier prompt replay.
     preserve_child_scope = bundle.get("method_version") == METHOD_VERSION_V12
+    decision_only = _reconciliation_decision_only(bundle, response_version)
     current_emerging_labels = sorted(
         {
             label
@@ -5894,6 +6090,7 @@ def prepare_reconciliation_stage(
             emerging_axis_owner=not batches,
             agreement_origin_rule=agreement_origin_rule,
             preserve_child_scope=preserve_child_scope,
+            decision_only=decision_only,
             reconciliation_mode=reconciliation_mode,
             evidence_index=evidence_index,
         )
@@ -5916,6 +6113,7 @@ def prepare_reconciliation_stage(
                 emerging_axis_owner=False,
                 agreement_origin_rule=agreement_origin_rule,
                 preserve_child_scope=preserve_child_scope,
+                decision_only=decision_only,
                 reconciliation_mode=reconciliation_mode,
                 evidence_index=evidence_index,
             )
@@ -5952,11 +6150,38 @@ def prepare_reconciliation_stage(
         stage["reconciliation_policy_version"] = reconciliation_policy
         stage["reconciliation_mode"] = reconciliation_mode
     stage["stage_sha256"] = _sha256(stage)
-    candidate_index = {row["candidate_ref"]: row for row in candidates}
+    return stage, prepare_reconciliation_prompts(bundle, stage, response_version=response_version)
+
+
+def _reconciliation_decision_only(bundle, response_version):
+    if response_version is None:
+        return bundle.get("method_version") == METHOD_VERSION_V12
+    if response_version == RECONCILIATION_RESPONSE_VERSION_V2:
+        return False
+    if response_version == RECONCILIATION_RESPONSE_VERSION_V3 and bundle.get("method_version") == METHOD_VERSION_V12:
+        return True
+    raise SemanticIntegrationError("unsupported reconciliation authoring response version")
+
+
+def prepare_reconciliation_prompts(bundle, stage, *, response_version=None):
+    """Render versioned requests for an immutable, possibly partly completed stage.
+
+    Stage membership and accepted response identities do not change on resume.
+    This function never translates or repairs a stored response.
+    """
+    validate_reconciliation_stage(bundle, stage, [], require_all=False)
+    decision_only = _reconciliation_decision_only(bundle, response_version)
+    candidate_index = {row["candidate_ref"]: row for row in stage["candidates"]}
+    batches = stage["batches"]
+    evidence_index = _unit_index(bundle)
+    compact_lineage = bundle.get("schema_version") in {BUNDLE_VERSION_V4, BUNDLE_VERSION_V5}
+    preserve_child_scope = bundle.get("method_version") == METHOD_VERSION_V12
+    current_emerging_labels = sorted({label for row in stage["candidates"] for label in row["emerging_axis_labels"]}
+        - {label for row in stage["carried_emerging_axis_consolidations"] for label in row["original_labels"]})
     prompts: list[dict[str, Any]] = []
     for batch_index, batch in enumerate(batches):
         selected = [candidate_index[ref] for ref in batch["candidate_refs"]]
-        prompt = _render_v3_reconciliation_prompt(
+        render_args = dict(
             stage_sha256=stage["stage_sha256"],
             batch_id=batch["batch_id"],
             candidates=selected,
@@ -5967,13 +6192,18 @@ def prepare_reconciliation_stage(
                 else ([] if compact_lineage else None)
             ),
             emerging_axis_owner=batch_index == 0,
-            agreement_origin_rule=agreement_origin_rule,
+            agreement_origin_rule=bundle.get("method_version") in SEMANTIC_METHODS_V7_PLUS,
             preserve_child_scope=preserve_child_scope,
-            reconciliation_mode=reconciliation_mode,
+            reconciliation_mode=stage.get("reconciliation_mode"),
             evidence_index=evidence_index,
+            decision_only=decision_only,
         )
+        prompt = _render_v3_reconciliation_prompt(**render_args)
+        if decision_only and len(prompt.encode("utf-8")) > stage["max_prompt_bytes"]:
+            # Resume preserves membership. Whitespace may shrink, never content.
+            prompt = _render_v3_reconciliation_prompt(**render_args, compact_json=True)
         prompt_bytes = len(prompt.encode("utf-8"))
-        if prompt_bytes > max_bytes:
+        if prompt_bytes > stage["max_prompt_bytes"]:
             raise SemanticIntegrationError(
                 f"reconciliation batch {batch['batch_id']} exceeds rendered prompt byte ceiling"
             )
@@ -5985,10 +6215,12 @@ def prepare_reconciliation_stage(
             }
         )
         if preserve_child_scope:
-            prompts[-1]["response_schema"] = _reconciliation_response_schema(
-                stage, batch, current_emerging_labels if batch_index == 0 else []
+            labels = current_emerging_labels if batch_index == 0 else []
+            prompts[-1]["response_schema"] = (
+                _decision_reconciliation_schema(stage, batch, labels, candidate_index, evidence_index)
+                if decision_only else _reconciliation_response_schema(stage, batch, labels)
             )
-    return stage, prompts
+    return prompts
 
 
 def _validate_emerging_axis_consolidations(
@@ -6097,7 +6329,7 @@ def validate_reconciliation_stage(
     for response in responses:
         if not isinstance(response, Mapping):
             raise SemanticIntegrationError("reconciliation response must be an object")
-        if response.get("schema_version") != RECONCILIATION_RESPONSE_VERSION_V2:
+        if response.get("schema_version") not in {RECONCILIATION_RESPONSE_VERSION_V2, RECONCILIATION_RESPONSE_VERSION_V3}:
             raise SemanticIntegrationError("invalid reconciliation response version")
         if response.get("stage_sha256") != stage["stage_sha256"]:
             raise SemanticIntegrationError("reconciliation response has stale stage hash")
@@ -6105,6 +6337,12 @@ def validate_reconciliation_stage(
         if batch_id not in expected_batches or batch_id in seen_batches:
             raise SemanticIntegrationError("unknown or duplicate reconciliation batch")
         allowed = set(expected_batches[batch_id]["candidate_refs"])
+        if response["schema_version"] == RECONCILIATION_RESPONSE_VERSION_V3:
+            if bundle.get("method_version") != METHOD_VERSION_V12:
+                raise SemanticIntegrationError("decision reconciliation requires current method v12")
+            original_labels = level_emerging_labels if batch_id == emerging_axis_owner_batch_id else set()
+            response = _assemble_decision_reconciliation(
+                response, stage, expected_batches[batch_id], original_labels, candidate_index, evidence_index)
         batch_used: set[str] = set()
         batch_unmerged: set[str] = set()
         batch_node_keys: set[str] = set()

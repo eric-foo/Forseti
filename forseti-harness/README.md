@@ -29,10 +29,15 @@ Cleaning, or Judgment behavior.
 ## Unattended Model Attempts
 
 Current method-v12 semantic reconciliation preparation writes each prompt's
-`.schema.json` alongside its `.md` file. Use that exact sidecar so child IDs and
-level-owned emerging labels cannot be invented during transport. Native
-reconciliation validation still checks complete participation; a schema pass
-is not semantic proof.
+`.schema.json` alongside its `.md` file. Current response v3 requires keyed
+candidate decisions and original-label assignments. The model chooses nodes,
+relations and wording; code carries child-owned identities, literal conditions,
+emerging labels, polarity composition and lineage. Use that exact sidecar.
+Native validation rejects missing, foreign, duplicate or prohibited decisions;
+a schema pass is not semantic proof. `prepare-reconciliation-level
+--existing-stage <stage.json>` resumes unchanged stage membership. Explicit
+`--response-version semantic_evidence_reconciliation_response_v2` preserves
+historical preparation, and stored v2 responses remain consumable unchanged.
 
 For authorized unattended Codex jobs whose retries, elapsed time, or failure
 history matter, use the shared executor rather than a task-local buffered

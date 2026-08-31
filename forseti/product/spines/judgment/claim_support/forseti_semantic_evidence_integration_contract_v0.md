@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v83
+version: v85
 effective_date: 2026-08-31
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v83
+# Semantic Evidence Integration Contract v85
 
 ## Purpose
 
@@ -1498,11 +1498,26 @@ equivalent and how conditions, negation, and uncertainty should be described.
 Structural completeness is therefore proven; perfect open-world semantic
 recall is not.
 
-Current method-v12 reconciliation explicitly copies every child condition
-verbatim into the node's conditions, deduplicating only identical strings, as
-the existing validator requires. The compiler retains each condition's child
+Current method-v12 reconciliation uses decision-only response v3. The model
+authors bounded nodes, relations, axes, uncertainty and terminal metadata. One
+required keyed decision per candidate names one or more node attachments or an
+allowed unmerged reason, never both. One required keyed assignment per original
+emerging label names a declared label group. Missing, foreign, duplicate,
+orphan and prohibited decisions fail visibly; the compiler never chooses a
+group, inserts a singleton, repairs a response or infers prose meaning.
+Normal-mode admitted customer findings must remain nodes; they may remain
+nonterminal when terminal warrant is uncertain. Convergence retention remains
+under the existing source-row rule.
+
+Code carries compatible subject/comparator/version identities (every selected
+child must match; unlike identities are never unioned), exact emerging-label
+unions and polarity composition. Code also carries every literal child
+condition, deduplicating only identical strings. These source-owned fields and
+child_relations are absent from the model-authored node shape, not optional
+copies whose conflicts can be ignored. The compiler retains each condition's child
 lineage; their union does not assert that every condition holds for every
-author. Each supporting child must establish the same bounded meaning: a
+author. At later levels, retain prior-node qualifications as node conditions
+without inventing original-leaf ownership for them. Each supporting child must establish the same bounded meaning: a
 shared brand ID does not make an unnamed item a range-wide claim, generic
 approval is not a particular benefit, and intent, acquisition, use, and
 repurchase are not interchangeable. Distinct scope, conditions, intensity,
@@ -1514,11 +1529,18 @@ existing rule for composing a leaf relation with the chosen child relation, so
 effective support is stated rather than guessed. An observable-statement
 posture alone does not make a community report a directly verified fact.
 Material with no semantically appropriate, source-competent terminal kind
-remains retrievable as unmerged evidence rather than being relabeled to pass.
+remains nonterminal or, where retention permits, retrievable as unmerged
+evidence rather than being relabeled to pass.
 These are derived prompt facts, not new stored authority or relaxed validation.
 Method v11 and earlier prompt replay is unchanged. Existing saved prompts and
 responses remain historical evidence; a changed current prompt is recorded
 as a fresh attempt, never silently substituted into an old receipt.
+Explicit response-v2 preparation remains available for replay. A partially
+completed immutable stage may receive new v3 requests without repartitioning;
+only JSON whitespace may be compacted to retain byte fit. Stored v2 and new v3
+responses share the existing validator and downstream node-compilation-v2
+shape, without replacing raw provider artifacts. No semantic provider stage is
+added. Mechanical assembly does not prove that chosen meanings belong together.
 
 Contract v34 adds an opt-in global relation-closure generation after one
 terminal normal-retention frontier. Deterministic block pairs cover every
@@ -1949,6 +1971,34 @@ new frontier.
 
 ## Changelog
 
+- `v85` / 2026-08-31 — replaced current reconciliation's redundant source-fact
+  copying with explicit decision-only response v3 and deterministic assembly.
+  Required candidate and original-label slots address the observed omissions,
+  duplicate group membership and prohibited unmerging; child facts retain their
+  original ownership. Historical v2 transport and downstream compilation remain
+  supported. No provider stage, auto-repair or semantic classifier was added.
+  The owner accepted the earlier `changed my skin` / `visible results` wording
+  in context; that allegation is no longer a blocker, and this is owner
+  adjudication rather than mechanical semantic proof. Real-data dogfood and
+  completion status are recorded under
+  `C:\tmp\forseti-phase-a-dieux-full-corpus-20260831-v1\reconciliation-decisions`;
+  structural acceptance alone does not complete Dieux Phase A.
+  The first wave made four provider attempts for three batches: two responses
+  passed structural validation; the label owner timed out once, then returned
+  four assignments to undeclared groups and failed the intended boundary.
+  No later batch launched. Inspection of the two accepted batches' multi-child
+  groups left a buy-versus-try merge finding for adjudication; this is not an
+  allegation of observed purchase. A next-level fixture exposed and then
+  verified preservation of historical node qualifications alongside leaf
+  conditions. A run-local display error after durable acceptance was corrected
+  without another provider call. Shared schema definitions then reduced the
+  54 sidecars from 9,977,865 to 1,933,635 bytes with exact expanded-constraint
+  equality; those final sidecars were not re-sent to the provider, so no token
+  savings or latency improvement is claimed. The timed-out attempt has no
+  complete usage measurement; aggregate historical token delta is
+  `NOT_COMPARABLE`. Evidence: `assessment.json`, `shared-schema-proof.json`,
+  `condition-carry-replay.json`, and `accounting-decision-consolidation.json`
+  (the accounting file is at the parent run root).
 - `v84` / 2026-08-31 — Dieux full-corpus reconciliation exposed three
   cause-visible first-level failures: one answer invented a child identifier;
   the emerging-axis owner omitted five exact labels and invented one; and one
