@@ -80,11 +80,11 @@ def test_provider_attempt_storage_is_stage_neutral_and_no_replace(tmp_path: Path
     assert (retry_dir / "usage.json").is_file()
 
 
-def _failed_publication(tmp_path: Path) -> tuple[dict, dict[str, bytes]]:
+def _completed_attempt(tmp_path: Path, response: bytes) -> dict:
     reserved = reserve_provider_attempt(attempt_root=tmp_path / "attempts", attempt_id="finished-answer")
     folder = Path(reserved["attempt_dir"])
     payloads = {
-        "response.json": b'{"evidence_id":"row-a","decision":"accept"}',
+        "response.json": response,
         "events.jsonl": _events({"input_tokens": 120, "cached_input_tokens": 40,
             "output_tokens": 25, "reasoning_output_tokens": 9}).encode(),
         "stderr.log": b"",
@@ -99,12 +99,67 @@ def _failed_publication(tmp_path: Path) -> tuple[dict, dict[str, bytes]]:
         (folder / name).write_bytes(value)
     kwargs = dict(attempt_dir=folder, response_dir=tmp_path / "responses",
         canonical_response_name="answer.json", usage_schema_version="test_usage_v1")
+    return kwargs
+
+
+def _failed_publication(tmp_path: Path) -> tuple[dict, dict[str, bytes]]:
+    kwargs = _completed_attempt(tmp_path, b'{"evidence_id":"row-a","decision":"accept"}')
+    folder = kwargs["attempt_dir"]
     def reject(_value: dict) -> dict:
         raise ValueError("seeded validation failure")
     with pytest.raises(ValueError, match="seeded validation failure"):
         publish_provider_attempt(**kwargs, validate_response=reject)
     assert not (tmp_path / "responses/answer.json").exists()
     return kwargs, {path.name: path.read_bytes() for path in folder.iterdir()}
+
+
+@pytest.mark.parametrize("response, duplicate_key", [
+    (b'{"batch_id":"wrong","batch_id":"expected"}', "batch_id"),
+    (b'{"decisions_by_evidence_id":{"row-a":{"decision":"replace"},'
+     b'"row-a":{"decision":"accept"}}}', "row-a"),
+    (b'{"decisions_by_candidate_ref":{"unit-a":{},"unit-a":{}}}', "unit-a"),
+    (b'{"semantic_nodes":[{"semantic_node_key":"n1","semantic_node_key":"n2"}]}',
+     "semantic_node_key"),
+    (b'{"assignments_by_original_label":{"scent":"g1","sc\\u0065nt":"g2"}}', "scent"),
+])
+def test_publication_rejects_duplicate_keys_before_callback(
+    tmp_path: Path, response: bytes, duplicate_key: str,
+) -> None:
+    # Executor hashes are honestly bound to the malformed bytes: rejection must
+    # be at decoding, not a stale receipt, schema, or downstream identity check.
+    kwargs = _completed_attempt(tmp_path, response)
+    folder = kwargs["attempt_dir"]
+    before = {path.name: path.read_bytes() for path in folder.iterdir()}
+    called = []
+    def accept(value: dict) -> dict:
+        called.append(value)
+        return {"accepted": True}
+    first_usage_bytes = None
+    for validator in (accept, None):
+        with pytest.raises(ValueError, match=f"duplicate JSON object key '{duplicate_key}'"):
+            publish_provider_attempt(**kwargs, validate_response=validator)
+        assert not called
+        assert not (tmp_path / "responses/answer.json").exists()
+        assert all((folder / name).read_bytes() == value for name, value in before.items())
+        usage_bytes = (folder / "usage.json").read_bytes()
+        assert json.loads(usage_bytes)["response_sha256"] == hashlib.sha256(response).hexdigest()
+        if first_usage_bytes is None:
+            first_usage_bytes = usage_bytes
+        assert usage_bytes == first_usage_bytes
+
+
+def test_publication_preserves_valid_keyed_response_bytes(tmp_path: Path) -> None:
+    # Repeated field names in DIFFERENT objects are legal; source order, BOM,
+    # and whitespace must survive publication unchanged.
+    response = b'\xef\xbb\xbf{ "decisions_by_evidence_id": {"row-b": {"decision": "accept"}, "row-a": {"decision": "accept"}} }\n'
+    kwargs = _completed_attempt(tmp_path, response)
+    def check(value: dict) -> dict:
+        assert list(value["decisions_by_evidence_id"]) == ["row-b", "row-a"]
+        return {"validated_evidence_count": 2}
+    published = publish_provider_attempt(**kwargs, validate_response=check)
+    assert published["validated_evidence_count"] == 2
+    assert Path(published["response_path"]).read_bytes() == response
+    assert (kwargs["attempt_dir"] / "response.json").read_bytes() == response
 
 
 def test_publication_recovers_unchanged_usage_after_validation_failure(tmp_path: Path) -> None:

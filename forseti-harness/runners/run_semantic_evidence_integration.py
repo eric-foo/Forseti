@@ -100,18 +100,15 @@ from harness_utils import hash_file  # noqa: E402
 from provider_attempts import (  # noqa: E402
     publish_provider_attempt,
     reserve_provider_attempt,
+    unique_json_object,
 )
 
 
 def _load_object(path: Path) -> dict[str, Any]:
-    def unique_pairs(pairs):
-        result = {}
-        for key, value in pairs:
-            if key in result:
-                raise ValueError(f"duplicate JSON object key {key!r}: {path}")
-            result[key] = value
-        return result
-    value = json.loads(path.read_text(encoding="utf-8-sig"), object_pairs_hook=unique_pairs)
+    try:
+        value = json.loads(path.read_text(encoding="utf-8-sig"), object_pairs_hook=unique_json_object)
+    except ValueError as exc:
+        raise ValueError(f"{exc}: {path}") from exc
     if not isinstance(value, dict):
         raise ValueError(f"expected JSON object: {path}")
     return value

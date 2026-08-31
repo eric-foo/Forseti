@@ -70,11 +70,16 @@ unfinished or unsuccessful executor attempts and changed executor outputs;
 either executor record is enough to hold an attempt to that boundary.
 Receipt checks, usage accounting, stage validation, and publication use one
 captured response/events snapshot; later writes cannot replace the checked answer.
+Publication rejects duplicate JSON object keys at any depth before the caller's
+validator runs, using the same decoder hook as the semantic runner. Raw outputs
+and exact usage remain preserved on rejection; no earlier decision is silently
+replaced by a later key.
 After a stage-validator rejection, publication may reuse that completed answer
 without a new model call only if any saved usage receipt matches the exact
 rederived bytes. Conflicting receipts fail; canonical outputs are never replaced.
 Historical attempts with no executor record retain their existing
-publication behavior. A retry gets a new attempt ID; the executor launches no
+execution-record exemption, not an exemption from duplicate-key rejection.
+A retry gets a new attempt ID; the executor launches no
 automatic retry and never changes prompts, models, or evidence to obtain a pass.
 
 The shared runtime lives in `provider_execution.py`; immutable storage and

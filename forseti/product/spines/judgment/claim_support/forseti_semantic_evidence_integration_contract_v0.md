@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v85
+version: v86
 effective_date: 2026-08-31
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v85
+# Semantic Evidence Integration Contract v86
 
 ## Purpose
 
@@ -148,16 +148,21 @@ missing, duplicate, foreign, and mismatched replacement identities fail.
 Application follows source order, while the actual response order remains in
 raw-response hash lineage. Order tolerance alone does not prove the chosen
 meaning correct or change method or stage identity.
-Current method-v12/keyed-v3 authoring emits row-review response v2 for both
+Current keyed-v3 methods v10, v11 and v12 emit row-review response v2 for both
 verification and selective repair: one required object key per assigned evidence
 ID, with replacements constrained to that same ID. The public preparation
 runners persist each prompt's `.schema.json`; provider execution must use it.
 Native application independently rejects missing/foreign keys and misbound
 replacements. Row ownership is mechanical; correct interpretation is not.
 The source-work stage and its historical partition remain unchanged. Explicit
-response-v1 preparation reproduces historical prompts, and v1 responses remain
-replayable alongside v2 responses without rewriting their raw lineage. This adds
+library-level response-v1 preparation reproduces historical prompts, and v1
+responses remain replayable alongside v2 responses without rewriting their raw lineage. This adds
 no provider stage, automatic repair, or semantic classification rule.
+Publication and public-runner loading reject duplicate JSON object keys before
+stage validation, including nested keyed decisions. The publisher preserves
+raw response bytes and exact usage on failure; a parsed last-key-wins object
+cannot establish exact participation. This decoder check proves no semantic
+meaning, and valid historical responses remain unchanged.
 Method v5 and v6 remain historical one-pass routes and acquire no retroactive
 verification obligation.
 
@@ -1971,6 +1976,35 @@ new frontier.
 
 ## Changelog
 
+- `v86` / 2026-08-31 — adjudicated the different-vendor PR #1530 review of
+  `17b4bb218eae8a9bc788c44898a170ffbf7653a4`. F1 export-list cleanup and F2's
+  unreachable owner branch need no patch. F3's duplicate-key gap is live, not
+  hypothetical: the Dieux controller already publishes keyed row reviews
+  through the shared helper. Five hash-correct malformed fixtures were accepted
+  before the closure and now fail before callback/publication. One shared
+  decoder hook closes the gap; raw answers and usage survive rejection.
+  A bounded scan of all 225 top-level phase response files (8,959,150 bytes)
+  under `C:\tmp\forseti-phase-a-dieux-full-corpus-20260831-v1` found no duplicate
+  keys. This is preventive closure, not a finding of corrupted saved answers;
+  attempt-only and external artifacts were outside that scan. F4 corrects the
+  row-review default's actual v10/v11/v12 gate; reconciliation's v12 gate and
+  explicit historical replay stay unchanged.
+  F5 requires preserving the separate buy and try intentions rather than
+  counting their disjunctive union as repeated support for one narrow action.
+  Both remain valid first-hand statements of intent, not completed purchase
+  or use. The current terminal `reported_behavior` kind would populate
+  `behavior_evidence_refs`; these statements do not establish that behavior.
+  Correct the affected semantic answer through the existing judgment route,
+  preserving both intentions without inventing observed action; no keyword
+  rule, general ban on intent, or frozen-answer rewrite was added. The owner's
+  accepted `changed my skin` / `visible results` reading remains closed.
+  Progress is three structurally accepted batches, one rejected label-owner
+  batch and 50 unattempted out of 54, not 51 unattempted. Semantic correction
+  remains open; neither this review nor its mechanical closure completes Dieux.
+  Review return SHA-256:
+  `5e4af7ba79c64e2dadd87b528b334ff2bf5610807a716686579fe327b5d8d6dc`;
+  local test receipts: `reconciliation-decisions/review-publication-red.xml`
+  and `reconciliation-decisions/review-publication-final.xml` under that run root.
 - `v85` / 2026-08-31 — replaced current reconciliation's redundant source-fact
   copying with explicit decision-only response v3 and deterministic assembly.
   Required candidate and original-label slots address the observed omissions,

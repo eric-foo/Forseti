@@ -17,6 +17,16 @@ from harness_utils import hash_file, sha256_bytes
 ResponseValidator = Callable[[dict[str, Any]], Mapping[str, Any]]
 
 
+def unique_json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    """Decode one JSON object without silently replacing an earlier decision."""
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate JSON object key {key!r}")
+        result[key] = value
+    return result
+
+
 def _write_new(path: Path, data: bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     try:
@@ -156,7 +166,9 @@ def publish_provider_attempt(
             raise ValueError("existing usage receipt does not match this attempt")
     else:
         _write_new(usage_path, usage_bytes)
-    response = json.loads(response_bytes.decode("utf-8-sig"))
+    response = json.loads(
+        response_bytes.decode("utf-8-sig"), object_pairs_hook=unique_json_object
+    )
     if not isinstance(response, dict):
         raise ValueError("provider response must be one JSON object")
     validation = dict(validate_response(response)) if validate_response else {}

@@ -347,12 +347,12 @@ validates the batch-bound response, extracts and preserves the exact completed-
 turn usage, and atomically hard-links the response without replacement. Keep
 every attempt directory after publication or failure.
 
-Current method-v12/keyed-v3 whole-row verification and repair preparation emits
-response v2 with one required answer slot per assigned evidence ID. Use the
+Whole-row verification and repair preparation for current keyed-v3 methods v10,
+v11 and v12 emits response v2 with one required answer slot per assigned evidence ID. Use the
 public preparation runner's accompanying `.schema.json` as the provider output
 schema, not an array-length-only substitute. Native consumers still enforce
-exact coverage and replacement ownership. Explicit v1 prompt replay and stored
-v1 responses remain supported; the source-work stage is unchanged, so accepted
+exact coverage and replacement ownership. Explicit library-level v1 prompt
+replay and stored v1 responses remain supported; the source-work stage is unchanged, so accepted
 answers are not regenerated merely to adopt keyed transport. Correct row
 participation does not establish correct interpretation.
 
@@ -383,6 +383,10 @@ without a new model call. The existing usage receipt must equal the bytes
 rederived from the same response, event stream, and caller schema; changed
 receipts or executor outputs fail. This never overwrites an existing canonical
 response and never promotes a timed-out or unfinished execution.
+Before invoking the caller's validator, publication rejects duplicate JSON
+object keys at every depth using the same decoder hook as the public semantic
+runner. Rejection preserves the raw answer and exact usage; parsed last-key-wins
+objects are not valid evidence of exact decision coverage.
 
 The filesystem behavior lives in `forseti-harness/provider_attempts.py` and
 performs no model call. The Phase A commands above are compatibility adapters:
