@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v89
+version: v90
 effective_date: 2026-08-31
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v89
+# Semantic Evidence Integration Contract v90
 
 ## Purpose
 
@@ -118,6 +118,50 @@ source scope. The agent may bind an exact product only from the evidence text
 together with that context. Context establishes what the item is about; it
 does not donate unstated claims to the item's author. If the binding remains
 unclear, the item stays `unresolved` or `out_of_scope`.
+
+### Local reconciliation correction
+
+Current response-v3 generation expresses optional retention as mutually exclusive
+attached/nonempty-unmerged alternatives. Native validation retains the same
+rejection boundary; frozen v1/v2 replay and already valid v3 responses are not
+rewritten. Generation-schema compliance is not a semantic verdict.
+
+When validation or source-aware review identifies a specific reconciliation
+problem, `prepare_reconciliation_repair` binds an explicit nomination (node keys
+and/or candidate refs plus reason) to the exact original response and stage.
+It includes the connected component of all affected candidate/node attachments,
+exact leaf text, parent/product context, and compiler-derived source inventory.
+Inventory is not claim support: one shared identity remains one credited origin,
+but only the established finalizer determines which sources support a claim.
+An allegation is not a verdict; review may retain the original choices.
+
+Use the existing isolated provider route for at most one corrective attempt.
+This is failure/review-only work, never a required extra normal-path stage.
+The response replaces only that component or explicitly refuses. Code never
+infers meaning, chooses a relation, edits upstream facts, or silently supplies
+a definition. The full native consumer must accept the successor; other defects
+may still block it. The repair model cannot emit `opposition_checked`: code
+preserves it only for an exactly unchanged definition and its attachment
+decisions, otherwise invalidates it to false. This withdraws prior clearance;
+it never awards a new check or semantic approval. Changed or regrouped nodes
+therefore remain unchecked for the established relation-closure boundary.
+Unaffected definitions, decisions,
+label assignments, source identities and original bytes remain preserved.
+
+The public runner's `prepare-reconciliation-repair` and
+`submit-reconciliation-repair` commands bind raw input bytes, rederive the
+request, reject scope escape, and verify the durable successor on first write
+and repeat reuse. A context component that exceeds the existing prompt limit
+fails without truncation. Missing definitions alone retain the narrower existing
+definition-recovery route. No standing census, retry loop, prose classifier,
+additional count renderer, or independent review ceremony is installed.
+
+This is a reusable correction boundary, not prevention of every semantic error.
+The v89 prompt-only dogfood (three fresh batches) still had five headcount
+overstatements and zero initial native accepts. Neither structural acceptance
+nor a locally corrected output establishes unobserved reader quality or
+unattended reliability. Source-aware judgment must assess the new wording itself,
+not assume that a prior source-row review validated a later summary.
 
 ## Admitted evidence and completeness
 
@@ -2029,6 +2073,21 @@ The semantic-source boundary and complete bounded SERP-row linking enter at
 new frontier.
 
 ## Changelog
+
+- `v90` / 2026-08-31 — made optional current-generation retention choices
+  exclusive and added source-bound connected-component correction at the public
+  reconciliation consumer. Reuses immutable attempts and existing final
+  accounting; it does not create a second evidence-count authority. Preserves
+  unrelated work and requires explicit judgment/refusal plus full native
+  validation. Changed meaning or attachments invalidate prior opposition
+  clearance in code; the repair model cannot assert that clearance. The v89
+  adherence failure remains evidence, not a closed issue. Ten saved corrections
+  replayed; one fresh final-version repair passed the public consumer and bounded
+  source inspection. Two earlier candidate attempts failed (provider root-schema
+  rejection; model-carried stale clearance), and are preserved. This is n=1 for
+  the final version, not repeat reliability or autonomous semantic detection.
+  Validation, exact attempt accounting and saved Dieux repair dogfood are under
+  `C:\tmp\forseti-phase-a-dieux-local-repair-20260831-v1`.
 
 - `v89` / 2026-08-31 — corrected recurring Dieux comparison and attribution
   outputs through source-bound adjudication, preserving frozen predecessors.

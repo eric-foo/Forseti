@@ -416,6 +416,28 @@ requires findings; it cannot guarantee every referenced definition exists.
 Exact bindings and completeness do not prove semantic warrant. The semantic-
 integration contract's v88 recovery boundary owns these rules.
 
+For a named grouping, wording, status or attachment defect (including an issue
+found by source-aware review despite structural acceptance), use
+`prepare-reconciliation-repair --bundle ... --stage ... --failed-response ...
+--nomination <json> --output-dir <fresh-request-directory>`. The nomination is
+`{"node_keys": ["..."], "candidate_refs": [], "reason": "source-backed issue"}`;
+either list may be empty but not both. The producer expands to the connected
+component, supplying source-owned meaning, exact evidence/contexts and separate
+source inventory. It does not detect prose errors or award claim support.
+Current optional retention schemas disallow simultaneous attachments and an
+unmerged reason before submission, while native guards remain unchanged.
+
+After one bounded corrective attempt through the existing provider/usage route,
+submit with `submit-reconciliation-repair --bundle ... --stage ...
+--failed-response ... --request <request.json> --patch <response.json>
+--output-dir <fresh-successor-directory>`. Use the verified successor explicitly
+in the continuing selection. Refusal, foreign scope, unsupported grouping,
+missing context, over-limit context or another native failure remains blocking.
+Never clear a problem by automatic relabeling or discarding counterevidence.
+The semantic-integration contract v90's **Local reconciliation correction**
+section owns this failure/review-only route and its semantic non-claims; it adds
+no standing provider stage and does not replace source-aware judgment.
+
 If response validation failed after usage was saved, publication may be retried
 without a new model call. The existing usage receipt must equal the bytes
 rederived from the same response, event stream, and caller schema; changed

@@ -5625,6 +5625,13 @@ def _decision_reconciliation_schema(stage, batch, labels, candidate_index, evide
             "unmerged_reason": {"type": "null"} if required else {"type": ["string", "null"]},
         })
     schema["$defs"] = definitions
+    # Optional retention is one choice, not two independently writable states.
+    attached = deepcopy(definitions["retained_decision"])
+    unmerged = obj({
+        "attachments": {"type": "array", "items": deepcopy(attached["properties"]["attachments"]["items"]), "maxItems": 0},
+        "unmerged_reason": {"type": "string", "minLength": 1},
+    })
+    definitions["decision"] = {"anyOf": [attached, unmerged]}
     decisions = {}
     for ref in batch["candidate_refs"]:
         required = _must_retain_reconciliation_candidate(
@@ -5747,6 +5754,7 @@ def _render_v3_reconciliation_prompt(
     decision_only: bool = False,
     compact_json: bool = False,
     definition_recovery: Mapping[str, Any] | None = None,
+    local_repair: Mapping[str, Any] | None = None,
 ) -> str:
     posture_instruction = (
         "For candidates carrying evidence_postures, customer_experience and "
@@ -5898,6 +5906,26 @@ def _render_v3_reconciliation_prompt(
             "claims when that meaning remains explicit. reported_behavior would credit "
             "behavior_evidence_refs: reserve it for behavior actually reported, not "
             "a desired or future act. "
+        )
+    if local_repair is not None:
+        if not decision_only or definition_recovery is not None:
+            raise SemanticIntegrationError("local repair requires decision-only response v3")
+        return (
+            "Output mode: file-write through the designated response artifact. "
+            "Edit permission: read-only evidence analysis; return JSON only matching the supplied schema.\n"
+            "Correct only this nominated connected reconciliation component. The allegation is not a verdict. "
+            "Return a complete replacement for the supplied candidate decisions and component definitions, "
+            "or replacement=null with a nonempty cannot_repair_reason. Never rewrite upstream candidates "
+            "or use unrelated nodes. Keep every required candidate, conditions, opposing evidence and "
+            "attribution. Splitting is permitted when source identities or meanings require it. "
+            "Do not fabricate a positive claim just to supply a counter target. A corrected component "
+            "may retain its original choices when the allegation is unsupported. This is not semantic clearance. "
+            "Inventory counts below describe the supplied sources, not support for every claim. "
+            "Distinct comments or meaning units from one credited identity are not extra people or events. "
+            "The existing compiler still owns final claim-specific accounting. "
+            "Do not emit opposition_checked; code invalidates prior clearance when meaning or attachments change. "
+            + posture_instruction + scope_instruction + source_role_instruction
+            + "\n\nLOCAL_REPAIR_CONTEXT\n" + json.dumps(local_repair, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
         )
     if definition_recovery is not None:
         if not decision_only:
@@ -6388,6 +6416,166 @@ def apply_reconciliation_definition_recovery(bundle, stage, failed_response, req
         raise SemanticIntegrationError("definition recovery requires semantic judgment: " + ", ".join(unresolved))
     successor = deepcopy(failed_response)
     successor["semantic_nodes"].extend(nodes)
+    validation = validate_reconciliation_stage(bundle, stage, [successor], require_all=False)
+    return successor, validation
+
+
+def prepare_reconciliation_repair(bundle, stage, response, *, node_keys=(), candidate_refs=(), reason):
+    """Pack an explicitly nominated connected component; never detect meaning errors.
+
+    This failure/review-only route includes exact source context. It adds no
+    normal-path provider stage and never mutates the original response.
+    """
+    validate_reconciliation_stage(bundle, stage, [], require_all=False)
+    if (bundle.get("method_version") != METHOD_VERSION_V12
+            or response.get("schema_version") != RECONCILIATION_RESPONSE_VERSION_V3
+            or response.get("stage_sha256") != stage["stage_sha256"]):
+        raise SemanticIntegrationError("local repair requires bound current response v3")
+    batch = next((b for b in stage["batches"] if b["batch_id"] == response.get("batch_id")), None)
+    if batch is None or set(response) != set(_decision_reconciliation_shape(stage["stage_sha256"], batch["batch_id"])):
+        raise SemanticIntegrationError("local repair invalid response envelope")
+    decisions, nodes = response["decisions_by_candidate_ref"], response["semantic_nodes"]
+    if not isinstance(decisions, Mapping) or set(decisions) != set(batch["candidate_refs"]) or not isinstance(nodes, list):
+        raise SemanticIntegrationError("local repair requires exact candidate coverage")
+    by_key = {}
+    for node in nodes:
+        if not isinstance(node, Mapping) or not _nonempty(node.get("semantic_node_key")) or node["semantic_node_key"] in by_key:
+            raise SemanticIntegrationError("local repair duplicate or invalid definition")
+        by_key[node["semantic_node_key"]] = node
+    refs_by_key, keys_by_ref = defaultdict(set), {}
+    for ref, decision in decisions.items():
+        if not isinstance(decision, Mapping) or set(decision) != {"attachments", "unmerged_reason"} or not isinstance(decision["attachments"], list):
+            raise SemanticIntegrationError("local repair malformed candidate decision")
+        keys_by_ref[ref] = set()
+        for attachment in decision["attachments"]:
+            if (not isinstance(attachment, Mapping) or set(attachment) != {"semantic_node_key", "relation"}
+                    or not _nonempty(attachment.get("semantic_node_key")) or attachment["relation"] not in RELATIONS):
+                raise SemanticIntegrationError("local repair malformed attachment")
+            key = attachment["semantic_node_key"]
+            refs_by_key[key].add(ref)
+            keys_by_ref[ref].add(key)
+    seeds = {"node_keys": _string_list(list(node_keys), field="repair.node_keys"),
+             "candidate_refs": _string_list(list(candidate_refs), field="repair.candidate_refs"), "reason": reason}
+    if (not _nonempty(reason) or not (node_keys or candidate_refs)
+            or len(set(node_keys)) != len(node_keys) or len(set(candidate_refs)) != len(candidate_refs)
+            or set(node_keys) - (set(by_key) | set(refs_by_key)) or set(candidate_refs) - set(decisions)):
+        raise SemanticIntegrationError("local repair requires nonempty known nominations and reason")
+    # Bipartite reachability, linear in component edges. Including every owner
+    # prevents a local edit from silently changing another candidate's meaning.
+    selected_keys, selected_refs = set(), set()
+    queue = [(True, key) for key in seeds["node_keys"]] + [(False, ref) for ref in seeds["candidate_refs"]]
+    while queue:
+        is_key, value = queue.pop()
+        selected = selected_keys if is_key else selected_refs
+        if value in selected:
+            continue
+        selected.add(value)
+        adjacent = refs_by_key[value] if is_key else keys_by_ref[value]
+        queue.extend((not is_key, item) for item in adjacent)
+    index, evidence = {c["candidate_ref"]: c for c in stage["candidates"]}, _unit_index(bundle)
+    chosen = [index[ref] for ref in batch["candidate_refs"] if ref in selected_refs]
+    evidence_ids = sorted({_leaf_evidence_id(leaf["semantic_unit_ref"], evidence, node_key=candidate["candidate_ref"])
+                           for candidate in chosen for leaf in candidate["leaf_relations"]})
+    context_ids = {ref for eid in evidence_ids for field in ("parent_context_refs", "product_context_refs")
+                   for ref in evidence[eid].get(field, [])}
+    contexts = _context_index(bundle)
+    if context_ids - set(contexts):
+        raise SemanticIntegrationError("local repair source context is unavailable")
+    context = {"nomination": seeds,
+        "semantic_nodes": [node for node in nodes if node["semantic_node_key"] in selected_keys],
+        "decisions_by_candidate_ref": {ref: decisions[ref] for ref in sorted(selected_refs)},
+        "candidates": chosen, "evidence": [evidence[eid] for eid in evidence_ids],
+        "contexts": [contexts[ref] for ref in sorted(context_ids)],
+        "source_inventory_not_claim_support": {"evidence_row_count": len(evidence_ids),
+            "credited_origin_count": len({key for eid in evidence_ids if (key := _credited_origin_key(evidence[eid])) is not None}),
+            "uncredited_evidence_ids": [eid for eid in evidence_ids if _credited_origin_key(evidence[eid]) is None]}}
+    prompt = _render_v3_reconciliation_prompt(stage_sha256=stage["stage_sha256"], batch_id=batch["batch_id"],
+        candidates=chosen, evidence_index=evidence, preserve_child_scope=True, agreement_origin_rule=True,
+        reconciliation_mode=stage.get("reconciliation_mode"), decision_only=True, local_repair=context)
+    if len(prompt.encode("utf-8")) > stage["max_prompt_bytes"]:
+        raise SemanticIntegrationError("local repair exceeds rendered prompt byte ceiling; no truncation allowed")
+    identity = {"schema_version": "semantic_reconciliation_repair_request_v1", "bundle_sha256": bundle["bundle_sha256"],
+        "stage_sha256": stage["stage_sha256"], "response_sha256": _sha256(response), "batch_id": batch["batch_id"],
+        "nomination": seeds, "node_keys": sorted(selected_keys), "candidate_refs": sorted(selected_refs),
+        "context_sha256": _sha256(context), "prompt": prompt, "prompt_utf8_bytes": len(prompt.encode("utf-8"))}
+    def obj(properties):
+        return {"type": "object", "properties": properties, "required": list(properties), "additionalProperties": False}
+    generated = _decision_reconciliation_schema(stage, {**batch, "candidate_refs": sorted(selected_refs)}, [], index, evidence)
+    repair_node = generated["properties"]["semantic_nodes"]["items"]
+    del repair_node["properties"]["opposition_checked"]
+    repair_node["required"].remove("opposition_checked")
+    replacement = obj({"semantic_nodes": generated["properties"]["semantic_nodes"],
+        "decisions_by_candidate_ref": generated["properties"]["decisions_by_candidate_ref"]})
+    # A removed orphan may have no candidate; no fabricated node is required.
+    digest = _sha256(identity)
+    # The provider requires a plain object root. Put the exclusive choice at a
+    # property, as for optional candidate decisions, not a root-level anyOf.
+    schema = obj({"request_sha256": {"type": "string", "const": digest}, "correction": {"anyOf": [
+        obj({"replacement": replacement, "cannot_repair_reason": {"type": "null"}}),
+        obj({"replacement": {"type": "null"}, "cannot_repair_reason": {"type": "string", "minLength": 1}})]}})
+    schema["$defs"] = generated["$defs"]
+    return {**identity, "request_sha256": digest, "response_schema": schema}
+
+
+def apply_reconciliation_repair(bundle, stage, response, request, patch):
+    """Apply one explicitly authored component; enforce scope before validation."""
+    expected = prepare_reconciliation_repair(bundle, stage, response, **request["nomination"])
+    if request != expected:
+        raise SemanticIntegrationError("local repair request differs from bound inputs")
+    if not isinstance(patch, Mapping) or set(patch) != {"request_sha256", "correction"}:
+        raise SemanticIntegrationError("local repair invalid patch envelope")
+    if patch["request_sha256"] != request["request_sha256"]:
+        raise SemanticIntegrationError("local repair changed request identity")
+    correction = patch["correction"]
+    if not isinstance(correction, Mapping) or set(correction) != {"replacement", "cannot_repair_reason"}:
+        raise SemanticIntegrationError("local repair invalid correction choice")
+    replacement, reason = correction["replacement"], correction["cannot_repair_reason"]
+    if replacement is None and _nonempty(reason):
+        raise SemanticIntegrationError("local repair requires semantic judgment: " + reason)
+    if not isinstance(replacement, Mapping) or reason is not None or set(replacement) != {"semantic_nodes", "decisions_by_candidate_ref"}:
+        raise SemanticIntegrationError("local repair requires replacement xor cannot-repair reason")
+    decisions, nodes = replacement["decisions_by_candidate_ref"], replacement["semantic_nodes"]
+    if not isinstance(decisions, Mapping) or set(decisions) != set(request["candidate_refs"]) or not isinstance(nodes, list):
+        raise SemanticIntegrationError("local repair replacement differs from authorized candidate scope")
+    preserved = [n for n in response["semantic_nodes"] if n["semantic_node_key"] not in request["node_keys"]]
+    old_nodes = {n["semantic_node_key"]: n for n in response["semantic_nodes"]}
+    preserved_keys, new_keys = {n["semantic_node_key"] for n in preserved}, set()
+    old_links_by_key, new_links_by_key = defaultdict(dict), defaultdict(dict)
+    for ref, decision in response["decisions_by_candidate_ref"].items():
+        for attachment in decision["attachments"]:
+            old_links_by_key[attachment["semantic_node_key"]][ref] = decision
+    for ref, decision in decisions.items():
+        if not isinstance(decision, Mapping) or not isinstance(decision.get("attachments"), list):
+            raise SemanticIntegrationError("local repair malformed replacement decision")
+        for attachment in decision["attachments"]:
+            if not isinstance(attachment, Mapping) or not _nonempty(attachment.get("semantic_node_key")):
+                raise SemanticIntegrationError("local repair malformed replacement attachment")
+            new_links_by_key[attachment["semantic_node_key"]][ref] = decision
+    compiled_nodes = []
+    for node in nodes:
+        if not isinstance(node, Mapping) or not _nonempty(node.get("semantic_node_key")):
+            raise SemanticIntegrationError("local repair invalid replacement node")
+        if "opposition_checked" in node:
+            raise SemanticIntegrationError("local repair forbids model-authored opposition clearance")
+        key = node["semantic_node_key"]
+        if key in preserved_keys or key in new_keys:
+            raise SemanticIntegrationError("local repair replacement changes foreign or duplicate node")
+        new_keys.add(key)
+        prior = old_nodes.get(key, {})
+        unchanged = (node == {k: v for k, v in prior.items() if k != "opposition_checked"}
+                     and old_links_by_key[key] == new_links_by_key[key])
+        compiled_nodes.append({**deepcopy(node), "opposition_checked": prior.get("opposition_checked") if unchanged else False})
+    for decision in decisions.values():
+        if (not isinstance(decision, Mapping) or not isinstance(decision.get("attachments"), list)
+                or any(not isinstance(a, Mapping) or a.get("semantic_node_key") not in new_keys for a in decision["attachments"])):
+            raise SemanticIntegrationError("local repair attachment crosses replacement scope")
+    successor = deepcopy(response)
+    # Preserve all unaffected node order; changed definitions retain their slot.
+    replacements = {n["semantic_node_key"]: n for n in compiled_nodes}
+    successor["semantic_nodes"] = [deepcopy(n) if n["semantic_node_key"] in preserved_keys else replacements.pop(n["semantic_node_key"])
+        for n in response["semantic_nodes"] if n["semantic_node_key"] in preserved_keys or n["semantic_node_key"] in replacements]
+    successor["semantic_nodes"].extend(replacements.values())
+    successor["decisions_by_candidate_ref"].update(deepcopy(decisions))
     validation = validate_reconciliation_stage(bundle, stage, [successor], require_all=False)
     return successor, validation
 

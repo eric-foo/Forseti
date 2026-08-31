@@ -36,6 +36,8 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     prepare_reconciliation_prompts,
     prepare_reconciliation_definition_recovery,
     apply_reconciliation_definition_recovery,
+    prepare_reconciliation_repair,
+    apply_reconciliation_repair,
     RECONCILIATION_RESPONSE_VERSION_V2,
     RECONCILIATION_RESPONSE_VERSION_V3,
     _verify_stored_hash,
@@ -1437,6 +1439,57 @@ def submit_reconciliation_definitions(
     return receipt
 
 
+def prepare_reconciliation_local_repair(
+    *, bundle_path: Path, stage_path: Path, failed_response_path: Path,
+    nomination_path: Path, output_dir: Path,
+) -> dict[str, Any]:
+    request = prepare_reconciliation_repair(_load_object(bundle_path), _load_object(stage_path),
+        _load_object(failed_response_path), **_load_object(nomination_path))
+    if output_dir.exists():
+        raise ValueError(f"refusing to write into existing local-repair directory: {output_dir}")
+    record = {"request": request, "input_sha256": {
+        "bundle": hash_file(bundle_path), "stage": hash_file(stage_path),
+        "failed_response": hash_file(failed_response_path)}}
+    _write_json(output_dir / "request.json", record)
+    _write_new(output_dir / "prompt.md", request["prompt"].encode("utf-8") + b"\n")
+    _write_json(output_dir / "response.schema.json", request["response_schema"])
+    return {"status": "LOCAL_REPAIR_JUDGMENT_REQUIRED", "candidate_count": len(request["candidate_refs"]),
+            "node_count": len(request["node_keys"]), "prompt_utf8_bytes": request["prompt_utf8_bytes"],
+            "output_dir": str(output_dir), "model_api_calls": 0}
+
+
+def submit_reconciliation_local_repair(
+    *, bundle_path: Path, stage_path: Path, failed_response_path: Path,
+    request_path: Path, patch_path: Path, output_dir: Path,
+) -> dict[str, Any]:
+    record = _load_object(request_path)
+    inputs = {"bundle": hash_file(bundle_path), "stage": hash_file(stage_path),
+              "failed_response": hash_file(failed_response_path)}
+    if set(record) != {"request", "input_sha256"} or record["input_sha256"] != inputs:
+        raise ValueError("local repair source file bytes changed")
+    successor, validation = apply_reconciliation_repair(
+        _load_object(bundle_path), _load_object(stage_path), _load_object(failed_response_path),
+        record["request"], _load_object(patch_path))
+    data = json.dumps(successor, ensure_ascii=False, indent=2, sort_keys=True).encode("utf-8") + b"\n"
+    import hashlib
+    receipt = {"status": "LOCAL_REPAIR_APPLIED_NOT_SEMANTIC_TRUTH_PROVEN", "input_sha256": inputs,
+        "request_sha256": hash_file(request_path), "patch_sha256": hash_file(patch_path),
+        "successor_sha256": hashlib.sha256(data).hexdigest(), "node_keys": record["request"]["node_keys"],
+        "candidate_refs": record["request"]["candidate_refs"], "validation": validation, "model_api_calls": 0}
+    response_path, receipt_path = output_dir / "response.json", output_dir / "receipt.json"
+    if output_dir.exists():
+        if (not response_path.is_file() or not receipt_path.is_file() or response_path.read_bytes() != data
+                or _load_object(receipt_path) != receipt):
+            raise ValueError("local repair existing successor differs or is incomplete")
+    else:
+        _write_new(response_path, data)
+        _write_json(receipt_path, receipt)
+    if validate_reconciliation_stage(_load_object(bundle_path), _load_object(stage_path),
+            [_load_object(response_path)], require_all=False) != validation:
+        raise ValueError("local repair durable successor validation differs")
+    return receipt
+
+
 def submit_reconciliation_level(
     *,
     bundle_path: Path,
@@ -2471,15 +2524,18 @@ def _parser() -> argparse.ArgumentParser:
     submit_level.add_argument("--response", type=Path, action="append", required=True)
     submit_level.add_argument("--compilation-out", type=Path, required=True)
 
-    for command in ("prepare-reconciliation-definitions", "submit-reconciliation-definitions"):
+    for command in ("prepare-reconciliation-definitions", "submit-reconciliation-definitions",
+                    "prepare-reconciliation-repair", "submit-reconciliation-repair"):
         definitions = sub.add_parser(command)
         definitions.add_argument("--bundle", type=Path, required=True)
         definitions.add_argument("--stage", type=Path, required=True)
         definitions.add_argument("--failed-response", type=Path, required=True)
         definitions.add_argument("--output-dir", type=Path, required=True)
-        if command == "submit-reconciliation-definitions":
+        if command.startswith("submit-"):
             definitions.add_argument("--request", type=Path, required=True)
             definitions.add_argument("--patch", type=Path, required=True)
+        if command == "prepare-reconciliation-repair":
+            definitions.add_argument("--nomination", type=Path, required=True)
 
     validate_reconciliation = sub.add_parser("validate-reconciliation-response")
     validate_reconciliation.add_argument("--bundle", type=Path, required=True)
@@ -2973,6 +3029,12 @@ def main(argv: list[str] | None = None) -> int:
             result = submit_reconciliation_definitions(bundle_path=args.bundle,
                 stage_path=args.stage, failed_response_path=args.failed_response,
                 request_path=args.request, patch_path=args.patch, output_dir=args.output_dir)
+        elif args.command == "prepare-reconciliation-repair":
+            result = prepare_reconciliation_local_repair(bundle_path=args.bundle, stage_path=args.stage,
+                failed_response_path=args.failed_response, nomination_path=args.nomination, output_dir=args.output_dir)
+        elif args.command == "submit-reconciliation-repair":
+            result = submit_reconciliation_local_repair(bundle_path=args.bundle, stage_path=args.stage,
+                failed_response_path=args.failed_response, request_path=args.request, patch_path=args.patch, output_dir=args.output_dir)
         elif args.command == "submit-reconciliation-level":
             result = submit_reconciliation_level(
                 bundle_path=args.bundle,
