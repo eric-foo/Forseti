@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v103
+version: v104
 effective_date: 2026-09-02
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v103
+# Semantic Evidence Integration Contract v104
 
 ## Purpose
 
@@ -1691,7 +1691,7 @@ shape, without replacing raw provider artifacts. No normal-path semantic provide
 stage is added. Mechanical assembly does not prove that chosen meanings belong together.
 
 Normal method-v12 response-v3 preparation now selects
-`exact_identity_namespaces_v1` at the public `prepare-reconciliation-level`
+`exact_identity_namespaces_v2` at the public `prepare-reconciliation-level`
 entrypoint. The separately selected `authoring_revision` is not a response or
 stage schema revision. Each exact tuple of subject, comparator and version
 **sets, with their roles preserved**, gets a code-derived opaque prefix. Every
@@ -1702,16 +1702,23 @@ into these handles. Matching prefixes establish compatibility, not semantic
 warrant, actual product identity truth, or useful consolidation.
 
 This normal-request-only constraint applies at every reconciliation level and
-mode. New stage packing includes the instruction bytes; immutable resumed
+mode. V2 also states the existing native repeated-leaf rule before generation:
+one original semantic leaf may enter a node through only one attached child.
+Fresh V2 stages cap a batch at 96 candidates as well as the existing prompt-byte
+limit. The cap bounds output and connected-repair scope; it does not choose a
+meaning, truncate context, weaken the native consumer, or promise provider
+success. New stage packing includes the instruction bytes; immutable resumed
 stages retain their membership and fail visibly if whitespace compaction cannot
 fit the complete prompt. Native identity checks remain unchanged for all
 relations. The restriction removes an incidental signal previously carried by
 attempted incompatible merges; equal upstream-discrepancy discovery sensitivity
 is not claimed. It adds request bytes, not a provider call or a new review stage.
 
-Use `--authoring-revision legacy` to reproduce historical normal requests.
+Use `--authoring-revision exact_identity_namespaces_v1` to reproduce the prior
+namespaced normal requests, or `--authoring-revision legacy` to reproduce the
+older unrestricted normal requests.
 The low-level Python preparation APIs retain their historical default for replay;
-current callers explicitly select `RECONCILIATION_AUTHORING_IDENTITY_V1`.
+current callers explicitly select `RECONCILIATION_AUTHORING_IDENTITY_V2`.
 Explicit response-v2 and older methods retain historical public defaults.
 Missing-definition and local-repair requests use the unchanged historical
 renderer/schema and can preserve existing opaque keys. Accepted work keeps its
@@ -2177,6 +2184,22 @@ new frontier.
 
 ## Changelog
 
+- `v104` / 2026-09-02 — versioned current normal reconciliation authoring to
+  `exact_identity_namespaces_v2`. It states the unchanged native rule that one
+  original semantic leaf may enter a node through only one attached child, and
+  caps fresh current batches at 96 candidates in addition to the existing
+  prompt-byte ceiling. Frozen Dieux level 4 packed 25 of 26 batches at 140–145
+  candidates: 10 were initially accepted, 11 returned structurally invalid
+  responses, and 5 timed out. Repeated-leaf defects appeared in seven initial
+  batches and again after layered recovery; four exact connected repairs then
+  exceeded the unchanged 120,000-byte ceiling, while two full batches timed out
+  twice. The sole 95-candidate tail batch was accepted; this observation binds
+  the containment-oriented cap but does not prove semantic quality or provider
+  reliability. The native consumer remains unchanged and fail-closed. Explicit
+  v1 and legacy selection preserve old packing and prompt bytes; accepted
+  artifacts keep their original prompt and receipt provenance. No automatic
+  deduplication, truncation, provider call, retry loop, semantic classifier, or
+  Deliver conclusion is added.
 - `v103` / 2026-09-02 — added a read-only current-response-v3 reconciliation
   diagnostic so one failed answer can expose all independently observable
   mechanical defects before the operator commissions a bounded repair. The

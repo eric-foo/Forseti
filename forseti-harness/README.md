@@ -39,11 +39,14 @@ a schema pass is not semantic proof. `prepare-reconciliation-level
 `--response-version semantic_evidence_reconciliation_response_v2` preserves
 historical preparation, and stored v2 responses remain consumable unchanged.
 Normal method-v12 response-v3 requests default to
-`--authoring-revision exact_identity_namespaces_v1`: opaque node-key prefixes
+`--authoring-revision exact_identity_namespaces_v2`: opaque node-key prefixes
 separate exact subject/comparator/version identity classes without choosing
-meanings. `--authoring-revision legacy` replays historical normal v3 requests.
+meanings, the existing repeated-leaf rule is stated before generation, and fresh
+current stages cap each batch at 96 candidates as well as the prompt-byte limit.
+Use `--authoring-revision exact_identity_namespaces_v1` for prior namespaced
+packing or `--authoring-revision legacy` for older normal v3 replay.
 Low-level Python preparation retains legacy defaults; current callers select
-`RECONCILIATION_AUTHORING_IDENTITY_V1` explicitly. Definition recovery and local
+`RECONCILIATION_AUTHORING_IDENTITY_V2` explicitly. Definition recovery and local
 repair keep their previously fitting historical requests and existing keys.
 Oversized local repairs try a lossless table layout before enforcing the same
 byte limit; all sources and connected attachments remain present, and the

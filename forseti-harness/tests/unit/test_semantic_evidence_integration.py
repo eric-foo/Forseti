@@ -2442,7 +2442,7 @@ def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: 
     verification, _ = prepare_row_verification(bundle, raw)
     verified = apply_row_verification(bundle, raw, verification, _row_verification_responses(verification))
     stage, prompts = prepare_reconciliation_stage(bundle, verified,
-        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1)
+        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V2)
     bp, cp = tmp_path / "bundle.json", tmp_path / "compiled.json"
     bp.write_text(json.dumps(bundle), encoding="utf-8")
     cp.write_text(json.dumps(verified), encoding="utf-8")
@@ -2790,12 +2790,12 @@ def test_public_normal_authoring_default_and_legacy_replay_are_separate(tmp_path
             compilation_path=tmp_path/"compiled.json", existing_stage_path=tmp_path/"stage.json",
             stage_out=directory/"stage.json", prompt_dir=directory/"prompts", authoring_revision=revision)
         expected = semantic_module.prepare_reconciliation_prompts(bundle, stage,
-            authoring_revision=revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1)
+            authoring_revision=revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V2)
         assert json.loads((directory/"stage.json").read_text()) == stage
         for row in expected:
             assert (directory/"prompts"/f"{row['batch_id']}.md").read_bytes() == (row["prompt"] + "\n").encode()
             assert json.loads((directory/"prompts"/f"{row['batch_id']}.schema.json").read_text()) == row["response_schema"]
-        assert result["authoring_revision"] == (revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1)
+        assert result["authoring_revision"] == (revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V2)
     assert semantic_module.prepare_reconciliation_prompts(bundle, stage,
         authoring_revision=semantic_module.RECONCILIATION_AUTHORING_LEGACY) == legacy
     new_stage, new_prompts = prepare_reconciliation_stage(bundle, compiled,
@@ -2804,6 +2804,53 @@ def test_public_normal_authoring_default_and_legacy_replay_are_separate(tmp_path
     assert len(new_prompts) > 1
     assert all(row["prompt_utf8_bytes"] <= bundle["max_prompt_bytes"] for row in new_prompts)
     assert sorted(ref for batch in new_stage["batches"] for ref in batch["candidate_refs"]) == sorted(row["candidate_ref"] for row in new_stage["candidates"])
+
+
+def test_identity_v2_caps_current_batches_and_states_leaf_path_invariant(monkeypatch):
+    bundle, verified, _, _, _ = _decision_reconciliation_fixture()
+    monkeypatch.setattr(
+        semantic_module, "RECONCILIATION_IDENTITY_V2_MAX_BATCH_CANDIDATES", 1
+    )
+    v1_stage, v1_prompts = prepare_reconciliation_stage(
+        bundle,
+        verified,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1,
+    )
+    v2_stage, v2_prompts = prepare_reconciliation_stage(
+        bundle,
+        verified,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V2,
+    )
+    assert len(v1_stage["batches"]) == 1
+    assert [len(row["candidate_refs"]) for row in v2_stage["batches"]] == [1, 1]
+    assert sorted(
+        ref for batch in v2_stage["batches"] for ref in batch["candidate_refs"]
+    ) == sorted(row["candidate_ref"] for row in v2_stage["candidates"])
+    assert all(
+        "The same original leaf may enter one node through only one attached child"
+        in row["prompt"]
+        for row in v2_prompts
+    )
+    assert all(
+        "The same original leaf may enter one node through only one attached child"
+        not in row["prompt"]
+        for row in v1_prompts
+    )
+
+
+def test_duplicate_leaf_seed_still_fails_at_native_consumer():
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    stage["candidates"][1]["leaf_relations"] = deepcopy(
+        stage["candidates"][0]["leaf_relations"]
+    )
+    stage["stage_sha256"] = semantic_module._sha256(
+        {key: value for key, value in stage.items() if key != "stage_sha256"}
+    )
+    response["stage_sha256"] = stage["stage_sha256"]
+    with pytest.raises(SemanticIntegrationError, match="duplicates one leaf"):
+        validate_reconciliation_stage(bundle, stage, [response])
 
 
 @pytest.mark.parametrize("revision,version", [("unknown", None),

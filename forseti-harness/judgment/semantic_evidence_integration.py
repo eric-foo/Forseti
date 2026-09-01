@@ -72,6 +72,8 @@ RECONCILIATION_RESPONSE_VERSION_V3 = "semantic_evidence_reconciliation_response_
 RECONCILIATION_DIAGNOSTIC_VERSION = "semantic_evidence_reconciliation_diagnostic_v1"
 RECONCILIATION_AUTHORING_LEGACY = "legacy"
 RECONCILIATION_AUTHORING_IDENTITY_V1 = "exact_identity_namespaces_v1"
+RECONCILIATION_AUTHORING_IDENTITY_V2 = "exact_identity_namespaces_v2"
+RECONCILIATION_IDENTITY_V2_MAX_BATCH_CANDIDATES = 96
 RELATION_CLOSURE_STAGE_VERSION = "semantic_evidence_relation_closure_stage_v1"
 RELATION_CLOSURE_RESPONSE_VERSION = "semantic_evidence_relation_closure_response_v1"
 RELATION_CLOSURE_COMPILATION_VERSION = "semantic_evidence_relation_closure_compilation_v1"
@@ -6118,26 +6120,42 @@ def _identity_reconciliation_schema(schema, candidates):
 def _identity_authoring_enabled(decision_only, authoring_revision):
     if authoring_revision in (None, RECONCILIATION_AUTHORING_LEGACY):
         return False
-    if authoring_revision == RECONCILIATION_AUTHORING_IDENTITY_V1 and decision_only:
+    if authoring_revision in {
+        RECONCILIATION_AUTHORING_IDENTITY_V1,
+        RECONCILIATION_AUTHORING_IDENTITY_V2,
+    } and decision_only:
         return True
     raise SemanticIntegrationError("unsupported reconciliation normal-authoring revision for response version")
 
 
-def _render_normal_reconciliation_prompt(*, identity_namespaces=False, **kwargs):
+def _render_normal_reconciliation_prompt(
+    *, identity_namespaces=False, authoring_revision=None, **kwargs
+):
     # Normal authoring only: shared repair/definition renderers retain their
     # historical defaults and may legitimately carry older opaque keys.
     prompt = _render_v3_reconciliation_prompt(**kwargs)
     if not identity_namespaces:
         return prompt
-    return prompt + "\n\nNORMAL_AUTHORING_REVISION: " + RECONCILIATION_AUTHORING_IDENTITY_V1 + "\n" + (
+    revision = authoring_revision or RECONCILIATION_AUTHORING_IDENTITY_V1
+    instruction = (
         "Each candidate may use only node keys beginning with its assigned opaque prefix below. "
         "Invent any number of keys inside a prefix; compatible candidates may share a key when meaning warrants it. "
         "Prefixes encode existing exact subject/comparator/version sets; they add no semantic truth. "
         "Do not force singletons, omit useful shared meaning, change identity, or merge meanings just because a prefix matches. "
         "Keep all source-supported distinctions and opposition. All existing semantic rules remain. "
         "Do not infer product names from these opaque handles.\n"
-    ) + json.dumps(_reconciliation_identity_prefixes(kwargs["candidates"]),
-                   ensure_ascii=False, separators=(",", ":")) + "\n"
+    )
+    if revision == RECONCILIATION_AUTHORING_IDENTITY_V2:
+        instruction += (
+            "Before returning a node, trace its attached candidates to their original leaf semantic_unit_ref values. "
+            "The same original leaf may enter one node through only one attached child. If two children share a leaf, "
+            "keep them out of the same node or split the node without dropping either candidate.\n"
+        )
+    return prompt + "\n\nNORMAL_AUTHORING_REVISION: " + revision + "\n" + instruction + json.dumps(
+        _reconciliation_identity_prefixes(kwargs["candidates"]),
+        ensure_ascii=False,
+        separators=(",", ":"),
+    ) + "\n"
 
 
 def prepare_reconciliation_stage(
@@ -6293,6 +6311,11 @@ def prepare_reconciliation_stage(
     preserve_child_scope = bundle.get("method_version") == METHOD_VERSION_V12
     decision_only = _reconciliation_decision_only(bundle, response_version)
     identity_namespaces = _identity_authoring_enabled(decision_only, authoring_revision)
+    max_batch_candidates = (
+        RECONCILIATION_IDENTITY_V2_MAX_BATCH_CANDIDATES
+        if authoring_revision == RECONCILIATION_AUTHORING_IDENTITY_V2
+        else None
+    )
     current_emerging_labels = sorted(
         {
             label
@@ -6310,9 +6333,23 @@ def prepare_reconciliation_stage(
     placeholder_hash = "0" * 64
     for candidate in candidates:
         proposed = [*current, candidate]
+        if (
+            max_batch_candidates is not None
+            and current
+            and len(proposed) > max_batch_candidates
+        ):
+            batches.append(
+                {
+                    "batch_id": f"reconcile-{level:04d}-{len(batches) + 1:04d}",
+                    "candidate_refs": [row["candidate_ref"] for row in current],
+                }
+            )
+            current = []
+            proposed = [candidate]
         batch_id = f"reconcile-{level:04d}-{len(batches) + 1:04d}"
         prompt = _render_normal_reconciliation_prompt(
             identity_namespaces=identity_namespaces,
+            authoring_revision=authoring_revision,
             stage_sha256=placeholder_hash,
             batch_id=batch_id,
             candidates=proposed,
@@ -6345,6 +6382,7 @@ def prepare_reconciliation_stage(
             next_id = f"reconcile-{level:04d}-{len(batches) + 1:04d}"
             single = _render_normal_reconciliation_prompt(
                 identity_namespaces=identity_namespaces,
+                authoring_revision=authoring_revision,
                 stage_sha256=placeholder_hash,
                 batch_id=next_id,
                 candidates=current,
@@ -6440,10 +6478,19 @@ def prepare_reconciliation_prompts(bundle, stage, *, response_version=None, auth
             evidence_index=evidence_index,
             decision_only=decision_only,
         )
-        prompt = _render_normal_reconciliation_prompt(**render_args, identity_namespaces=identity_namespaces)
+        prompt = _render_normal_reconciliation_prompt(
+            **render_args,
+            identity_namespaces=identity_namespaces,
+            authoring_revision=authoring_revision,
+        )
         if decision_only and len(prompt.encode("utf-8")) > stage["max_prompt_bytes"]:
             # Resume preserves membership. Whitespace may shrink, never content.
-            prompt = _render_normal_reconciliation_prompt(**render_args, identity_namespaces=identity_namespaces, compact_json=True)
+            prompt = _render_normal_reconciliation_prompt(
+                **render_args,
+                identity_namespaces=identity_namespaces,
+                authoring_revision=authoring_revision,
+                compact_json=True,
+            )
         prompt_bytes = len(prompt.encode("utf-8"))
         if prompt_bytes > stage["max_prompt_bytes"]:
             raise SemanticIntegrationError(

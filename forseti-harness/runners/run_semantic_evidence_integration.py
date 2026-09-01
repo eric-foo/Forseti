@@ -16,6 +16,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     METHOD_VERSION_V12,
     RECONCILIATION_AUTHORING_LEGACY,
     RECONCILIATION_AUTHORING_IDENTITY_V1,
+    RECONCILIATION_AUTHORING_IDENTITY_V2,
     RECONCILIATION_POLICY_VERSION_V2,
     SemanticIntegrationError,
     apply_row_verification,
@@ -1379,7 +1380,7 @@ def prepare_reconciliation_level(
     compilation = _load_object(compilation_path)
     if authoring_revision is None:
         authoring_revision = (
-            RECONCILIATION_AUTHORING_IDENTITY_V1
+            RECONCILIATION_AUTHORING_IDENTITY_V2
             if bundle.get("method_version") == METHOD_VERSION_V12
             and response_version != RECONCILIATION_RESPONSE_VERSION_V2
             else RECONCILIATION_AUTHORING_LEGACY
@@ -2648,7 +2649,11 @@ def _parser() -> argparse.ArgumentParser:
         choices=[RECONCILIATION_RESPONSE_VERSION_V2, RECONCILIATION_RESPONSE_VERSION_V3],
         help="Defaults to decision-only v3 for method v12; explicit v2 is historical replay.")
     reconcile_level.add_argument("--authoring-revision",
-        choices=[RECONCILIATION_AUTHORING_LEGACY, RECONCILIATION_AUTHORING_IDENTITY_V1],
+        choices=[
+            RECONCILIATION_AUTHORING_LEGACY,
+            RECONCILIATION_AUTHORING_IDENTITY_V1,
+            RECONCILIATION_AUTHORING_IDENTITY_V2,
+        ],
         help="Normal requests only: defaults to exact identity namespaces for method-v12 response-v3; legacy reproduces historical requests.")
     reconcile_level.add_argument(
         "--reconciliation-policy",

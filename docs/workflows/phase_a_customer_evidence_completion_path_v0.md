@@ -370,20 +370,24 @@ Native consumers reject missing, foreign,
 duplicate, orphan or prohibited assignments, and incompatible identities.
 Structural exactness does not establish semantic warrant.
 Normal method-v12 response-v3 requests at `prepare-reconciliation-level` select
-`exact_identity_namespaces_v1`: each exact subject/comparator/version set tuple
+`exact_identity_namespaces_v2`: each exact subject/comparator/version set tuple
 gets an opaque prefix and each candidate may attach only to keys in its own
 class. Compatible evidence may share any number of model-authored keys; matching
 identity does not justify merging meanings. The same rule applies at later
-levels and in convergence. It adds request bytes, not another provider stage.
+levels and in convergence. V2 also states the native one-leaf/one-child-path
+rule and caps fresh current batches at 96 candidates so output and connected
+repair scope remain bounded without truncation. It adds request bytes, not
+another provider stage.
 New packing includes those bytes; resumed stages keep their frozen membership
 and fail without truncation when they cannot fit.
-Use `--authoring-revision legacy` for historical normal prompt/schema replay;
-low-level Python callers select `RECONCILIATION_AUTHORING_IDENTITY_V1` explicitly
+Use `--authoring-revision exact_identity_namespaces_v1` for prior namespaced
+replay and `--authoring-revision legacy` for older normal prompt/schema replay;
+low-level Python callers select `RECONCILIATION_AUTHORING_IDENTITY_V2` explicitly
 for current generation. Explicit response-v2 and older-method public defaults,
 missing-definition requests and local repairs keep their historical behavior.
 Preserve each accepted response's actual attempt and correction provenance;
 never rebind it to a newly rendered unused request. The semantic-integration
-contract v92 owns this normal-authoring boundary. Semantic preservation and
+contract v104 owns this normal-authoring boundary. Semantic preservation and
 upstream identity truth remain judgment-owned; preventing incompatible attempts
 also removes their incidental discrepancy signal, with no equal-discovery claim.
 Current response-v3 authoring and review apply the intelligence claim-support
