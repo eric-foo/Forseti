@@ -441,6 +441,15 @@ native consumer has always rejected; it does not judge whether the claim itself
 is true or whether opposition was adequately reviewed. Historical v2 schemas
 replay unchanged.
 
+Current decision-only authoring also requires one relation per exact
+candidate-and-node pair. A candidate may attach to multiple distinct bounded
+meanings, but it must not attach to the same node once as support and again as
+counterevidence. The unchanged native consumer rejects that ambiguous duplicate;
+the prompt states the invariant before generation without weakening the
+consumer check. Dieux level-3 dogfood still produced this invalid shape, so the
+consumer remains the reliable enforcement and prompt-level prevention is not
+proven.
+
 For a named grouping, wording, status or attachment defect (including an issue
 found by source-aware review despite structural acceptance), use
 `prepare-reconciliation-repair --bundle ... --stage ... --failed-response ...

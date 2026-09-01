@@ -2366,6 +2366,8 @@ def test_current_reconciliation_preserves_literal_conditions_and_bounded_scope(m
     assert ("unnamed item does not establish a range-wide claim" in policy) is current
     assert ("Purchase intent, acquisition, use, and repurchase are different states" in policy) is current
     assert ("generic approval does not establish a particular benefit" in policy) is current
+    assert ("use each semantic_node_key at most once" in policy) is current
+    assert ("never attach the same key as both support and counter" in policy) is current
     assert ("TERMINAL_SOURCE_ROLE_COMPETENCE" in policy) is current
     assert ("counter leaves under a counter child both count" in policy) is current
     assert ('"source_roles_by_relation"' in prompts[0]["prompt"]) is current
@@ -2931,6 +2933,8 @@ def test_local_repair_oversize_tables_reach_public_consumer_without_changing_sco
     prepare_reconciliation_local_repair(**args, nomination_path=paths[3], output_dir=tmp_path / "request")
     request = _load_object(tmp_path / "request/request.json")["request"]
     assert "PACKED_REPAIR_CONTEXT_V1" in request["prompt"]
+    assert "use each semantic_node_key at most once" in request["prompt"]
+    assert "never attach the same key as both support and counter" in request["prompt"]
     assert request["prompt_utf8_bytes"] <= stage["max_prompt_bytes"] < original["prompt_utf8_bytes"]
     context = json.loads(original["prompt"].split("\n\nLOCAL_REPAIR_CONTEXT\n")[1])
     packed = json.loads(request["prompt"].split("\n\nLOCAL_REPAIR_CONTEXT\n")[1])

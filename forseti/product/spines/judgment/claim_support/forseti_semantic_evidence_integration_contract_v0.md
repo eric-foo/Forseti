@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v101
+version: v102
 effective_date: 2026-09-01
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v101
+# Semantic Evidence Integration Contract v102
 
 ## Purpose
 
@@ -200,6 +200,13 @@ existing admitted values and requires `opposition_checked` to be a boolean.
 This is structural compatibility, not proof that opposition was adequately
 reviewed. The unchanged native consumer remains authoritative. Historical v2
 response schemas and replay are unchanged.
+
+Current decision-only prompts require a single relation for each exact
+candidate-and-node pair. A candidate may attach to multiple distinct bounded
+meanings, but it must not attach to the same node once as support and again as
+counterevidence. The native consumer continues to reject duplicate attachment
+keys regardless of relation. This prompt constraint does not mechanically prove
+that the selected relation is semantically correct.
 
 An invalid response that reused one node key for multiple definitions may enter
 the same failure-only local-repair format only when that duplicate key is inside
@@ -2156,6 +2163,15 @@ new frontier.
 
 ## Changelog
 
+- `v102` / 2026-09-01 — required one relation per exact candidate-and-node
+  pair in current decision-only prompts. Dieux level-2 authoring repeatedly
+  emitted the same node key as both support and counter for one candidate,
+  including inside bounded repairs; the unchanged consumer correctly rejected
+  every occurrence. The prompt now states the already-enforced invariant so the
+  provider is warned before generation. Dieux level-3 dogfood still emitted the
+  invalid shape, so prevention is not proven and the consumer remains the
+  reliable enforcement. No schema or consumer is weakened, no call is added,
+  and historical rendering remains unchanged.
 - `v101` / 2026-09-01 — made the current decision-only terminal schema require
   a boolean `opposition_checked`, matching the unchanged native invariant.
   Dieux level-2 definition recovery had produced a terminal node with valid
