@@ -2705,6 +2705,32 @@ def test_reconciliation_diagnostic_skips_claim_checks_after_identity_crossing():
     )
 
 
+def test_reconciliation_diagnostic_never_guesses_definition_or_orphan_from_malformed_rows():
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    refs = list(response["decisions_by_candidate_ref"])
+    attached = deepcopy(response["semantic_nodes"][0])
+    attached["semantic_node_key"] = "attached-through-malformed-attachment"
+    response["semantic_nodes"].append(attached)
+    response["decisions_by_candidate_ref"][refs[1]]["attachments"].append(
+        {"semantic_node_key": attached["semantic_node_key"], "relation": "bogus"}
+    )
+    # A defined-but-malformed node is not an undefined node, and a node whose
+    # only attachment is malformed is not an unattached node.
+    response["semantic_nodes"][0]["foreign_field"] = 1
+
+    diagnostic = semantic_module.diagnose_reconciliation_response(bundle, stage, response)
+    codes = {row["code"] for row in diagnostic["issues"]}
+    assert "missing_node_definition" not in codes and "orphan_node" not in codes
+    reasons = {row["reason"] for row in diagnostic["skipped_dependent_checks"]}
+    assert "exact nonempty node definition is required" in reasons
+    assert "malformed attachment cannot enter graph checks" in reasons
+    assert (
+        "malformed decisions or attachments cannot show whether a node is unattached"
+        in reasons
+    )
+    assert diagnostic["valid"] is False and diagnostic["primary_error_covered"] is False
+
+
 @pytest.mark.parametrize("field", ["subject_product_ids", "comparator_product_ids", "product_version_ids"])
 @pytest.mark.parametrize("relation", sorted(semantic_module.RELATIONS))
 def test_normal_identity_namespaces_bind_all_roles_and_relations(field, relation):

@@ -7322,12 +7322,22 @@ def diagnose_reconciliation_response(
     else:
         expected_node_fields = set(shape["semantic_nodes"][0])
         rows_by_key: dict[str, list[Mapping[str, Any]]] = defaultdict(list)
+        # A malformed row still declares its key when that key is readable. Only
+        # an unreadable row leaves the declared key set itself unknown.
+        declared_keys: set[str] = set()
+        unreadable_definitions = False
         for index, node in enumerate(nodes):
             if (
                 not isinstance(node, Mapping)
                 or set(node) != expected_node_fields
                 or not _nonempty(node.get("semantic_node_key"))
             ):
+                if isinstance(node, Mapping) and _nonempty(
+                    node.get("semantic_node_key")
+                ):
+                    declared_keys.add(node["semantic_node_key"])
+                else:
+                    unreadable_definitions = True
                 skipped.append(
                     {
                         "scope": "node",
@@ -7341,6 +7351,7 @@ def diagnose_reconciliation_response(
                 )
                 continue
             rows_by_key[node["semantic_node_key"]].append(node)
+        declared_keys |= set(rows_by_key)
 
         duplicate_keys = {
             key for key, definitions in rows_by_key.items() if len(definitions) > 1
@@ -7366,6 +7377,10 @@ def diagnose_reconciliation_response(
 
         owners_by_key: dict[str, list[dict[str, str]]] = defaultdict(list)
         missing: dict[str, list[dict[str, str]]] = defaultdict(list)
+        # Ownership a malformed decision or attachment may have carried is
+        # unobserved, never absent.
+        ambiguous_owner_keys: set[str] = set()
+        unreadable_owners = False
         for ref in batch["candidate_refs"]:
             decision = decisions[ref]
             if (
@@ -7373,6 +7388,7 @@ def diagnose_reconciliation_response(
                 or set(decision) != {"attachments", "unmerged_reason"}
                 or not isinstance(decision.get("attachments"), list)
             ):
+                unreadable_owners = True
                 skipped.append(
                     {
                         "scope": "candidate",
@@ -7389,6 +7405,12 @@ def diagnose_reconciliation_response(
                     or not _nonempty(attachment.get("semantic_node_key"))
                     or attachment.get("relation") not in RELATIONS
                 ):
+                    if isinstance(attachment, Mapping) and _nonempty(
+                        attachment.get("semantic_node_key")
+                    ):
+                        ambiguous_owner_keys.add(attachment["semantic_node_key"])
+                    else:
+                        unreadable_owners = True
                     skipped.append(
                         {
                             "scope": "candidate",
@@ -7408,10 +7430,22 @@ def diagnose_reconciliation_response(
                     continue
                 seen_keys.add(key)
                 binding = {"child_ref": ref, "relation": attachment["relation"]}
-                if key not in rows_by_key:
+                if key in rows_by_key:
+                    if key not in duplicate_keys:
+                        owners_by_key[key].append(binding)
+                elif key in declared_keys:
+                    # Defined but unusable: its node-scope skip already stands.
+                    continue
+                elif unreadable_definitions:
+                    skipped.append(
+                        {
+                            "scope": "candidate",
+                            "key": ref,
+                            "reason": "unreadable node definitions cannot show whether a key is undefined",
+                        }
+                    )
+                else:
                     missing[key].append(binding)
-                elif key not in duplicate_keys:
-                    owners_by_key[key].append(binding)
 
         if missing:
             missing_keys = sorted(missing)
@@ -7427,12 +7461,22 @@ def diagnose_reconciliation_response(
                 node_keys=missing_keys,
             )
         for key in sorted(unique_nodes):
-            if not owners_by_key.get(key):
-                add(
-                    "orphan_node",
-                    f"decision reconciliation orphan node {key}",
-                    node_keys=[key],
+            if owners_by_key.get(key):
+                continue
+            if unreadable_owners or key in ambiguous_owner_keys:
+                skipped.append(
+                    {
+                        "scope": "node",
+                        "key": key,
+                        "reason": "malformed decisions or attachments cannot show whether a node is unattached",
+                    }
                 )
+                continue
+            add(
+                "orphan_node",
+                f"decision reconciliation orphan node {key}",
+                node_keys=[key],
+            )
 
         for key in sorted(unique_nodes):
             relations = owners_by_key.get(key, [])
