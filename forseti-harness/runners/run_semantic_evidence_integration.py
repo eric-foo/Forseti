@@ -38,8 +38,11 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     prepare_reconciliation_stage,
     prepare_reconciliation_prompts,
     prepare_reconciliation_definition_recovery,
+    prepare_reconciliation_definition_recovery_after_repair,
+    compose_reconciliation_definition_recovery_intermediate,
     apply_reconciliation_definition_recovery,
     prepare_reconciliation_repair,
+    compose_reconciliation_repair_intermediate,
     apply_reconciliation_repair,
     RECONCILIATION_RESPONSE_VERSION_V2,
     RECONCILIATION_RESPONSE_VERSION_V3,
@@ -1453,6 +1456,31 @@ def submit_reconciliation_definitions(
     return receipt
 
 
+def compose_reconciliation_definitions(
+    *, bundle_path: Path, stage_path: Path, failed_response_path: Path,
+    request_path: Path, patch_path: Path, output_dir: Path,
+) -> dict[str, Any]:
+    """Persist scope-checked definitions as an explicitly unaccepted intermediate."""
+    record = _load_object(request_path)
+    inputs = {"bundle": hash_file(bundle_path), "stage": hash_file(stage_path),
+              "failed_response": hash_file(failed_response_path)}
+    if set(record) != {"request", "input_sha256"} or record["input_sha256"] != inputs:
+        raise ValueError("definition recovery source file bytes changed")
+    intermediate = compose_reconciliation_definition_recovery_intermediate(
+        _load_object(bundle_path), _load_object(stage_path), _load_object(failed_response_path),
+        record["request"], _load_object(patch_path))
+    if output_dir.exists():
+        raise ValueError(f"refusing to write into existing composed-definition directory: {output_dir}")
+    response_path = output_dir / "intermediate-response.json"
+    _write_json(response_path, intermediate)
+    receipt = {"status": "DEFINITIONS_COMPOSED_NOT_ACCEPTED", "accepted": False,
+        "input_sha256": inputs, "request_sha256": hash_file(request_path),
+        "patch_sha256": hash_file(patch_path),
+        "intermediate_response_sha256": hash_file(response_path), "model_api_calls": 0}
+    _write_json(output_dir / "receipt.json", receipt)
+    return {**receipt, "output_dir": str(output_dir)}
+
+
 def prepare_reconciliation_local_repair(
     *, bundle_path: Path, stage_path: Path, failed_response_path: Path,
     nomination_path: Path, output_dir: Path,
@@ -1469,6 +1497,66 @@ def prepare_reconciliation_local_repair(
     _write_json(output_dir / "response.schema.json", request["response_schema"])
     return {"status": "LOCAL_REPAIR_JUDGMENT_REQUIRED", "candidate_count": len(request["candidate_refs"]),
             "node_count": len(request["node_keys"]), "prompt_utf8_bytes": request["prompt_utf8_bytes"],
+            "output_dir": str(output_dir), "model_api_calls": 0}
+
+
+def compose_reconciliation_local_repair(
+    *, bundle_path: Path, stage_path: Path, failed_response_path: Path,
+    repair_request_path: Path, repair_patch_path: Path, output_dir: Path,
+) -> dict[str, Any]:
+    """Persist one scope-checked repair as an explicitly unaccepted intermediate."""
+    record = _load_object(repair_request_path)
+    inputs = {"bundle": hash_file(bundle_path), "stage": hash_file(stage_path),
+              "failed_response": hash_file(failed_response_path)}
+    if set(record) != {"request", "input_sha256"} or record["input_sha256"] != inputs:
+        raise ValueError("local repair source file bytes changed")
+    intermediate = compose_reconciliation_repair_intermediate(
+        _load_object(bundle_path), _load_object(stage_path), _load_object(failed_response_path),
+        record["request"], _load_object(repair_patch_path))
+    if output_dir.exists():
+        raise ValueError(f"refusing to write into existing composed-repair directory: {output_dir}")
+    response_path = output_dir / "intermediate-response.json"
+    _write_json(response_path, intermediate)
+    receipt = {"status": "LOCAL_REPAIR_COMPOSED_NOT_ACCEPTED", "accepted": False,
+        "input_sha256": inputs, "repair_request_sha256": hash_file(repair_request_path),
+        "repair_patch_sha256": hash_file(repair_patch_path),
+        "intermediate_response_sha256": hash_file(response_path), "model_api_calls": 0}
+    _write_json(output_dir / "receipt.json", receipt)
+    return {**receipt, "output_dir": str(output_dir)}
+
+
+def prepare_reconciliation_definitions_after_local_repair(
+    *, bundle_path: Path, stage_path: Path, failed_response_path: Path,
+    repair_request_path: Path, repair_patch_path: Path, output_dir: Path,
+) -> dict[str, Any]:
+    """Prepare the existing definition recovery from one exact local repair."""
+    record = _load_object(repair_request_path)
+    inputs = {"bundle": hash_file(bundle_path), "stage": hash_file(stage_path),
+              "failed_response": hash_file(failed_response_path)}
+    if set(record) != {"request", "input_sha256"} or record["input_sha256"] != inputs:
+        raise ValueError("local repair source file bytes changed")
+    successor, request = prepare_reconciliation_definition_recovery_after_repair(
+        _load_object(bundle_path), _load_object(stage_path), _load_object(failed_response_path),
+        record["request"], _load_object(repair_patch_path))
+    if output_dir.exists():
+        raise ValueError(f"refusing to write into existing chained-recovery directory: {output_dir}")
+    intermediate_path = output_dir / "intermediate-response.json"
+    _write_json(intermediate_path, successor)
+    definition_inputs = {"bundle": inputs["bundle"], "stage": inputs["stage"],
+                         "failed_response": hash_file(intermediate_path)}
+    _write_json(output_dir / "request.json", {"request": request, "input_sha256": definition_inputs})
+    chain_receipt = {"original_input_sha256": inputs,
+                     "repair_request_sha256": hash_file(repair_request_path),
+                     "repair_patch_sha256": hash_file(repair_patch_path),
+                     "intermediate_response_sha256": definition_inputs["failed_response"]}
+    _write_json(output_dir / "chain-receipt.json", chain_receipt)
+    _write_new(output_dir / "prompt.md", request["prompt"].encode("utf-8") + b"\n")
+    _write_json(output_dir / "response.schema.json", request["response_schema"])
+    return {"status": "LOCAL_REPAIR_COMPOSED_MISSING_DEFINITIONS_JUDGMENT_REQUIRED",
+            "missing_definition_count": len(request["missing_bindings"]),
+            "candidate_count": request["candidate_count"],
+            "prompt_utf8_bytes": request["prompt_utf8_bytes"],
+            "intermediate_accepted": False, "chain_receipt": chain_receipt,
             "output_dir": str(output_dir), "model_api_calls": 0}
 
 
@@ -2542,13 +2630,15 @@ def _parser() -> argparse.ArgumentParser:
     submit_level.add_argument("--compilation-out", type=Path, required=True)
 
     for command in ("prepare-reconciliation-definitions", "submit-reconciliation-definitions",
-                    "prepare-reconciliation-repair", "submit-reconciliation-repair"):
+                    "compose-reconciliation-definitions", "prepare-reconciliation-repair",
+                    "submit-reconciliation-repair", "compose-reconciliation-repair",
+                    "prepare-reconciliation-definitions-after-repair"):
         definitions = sub.add_parser(command)
         definitions.add_argument("--bundle", type=Path, required=True)
         definitions.add_argument("--stage", type=Path, required=True)
         definitions.add_argument("--failed-response", type=Path, required=True)
         definitions.add_argument("--output-dir", type=Path, required=True)
-        if command.startswith("submit-"):
+        if command.startswith(("submit-", "compose-")) or command.endswith("-after-repair"):
             definitions.add_argument("--request", type=Path, required=True)
             definitions.add_argument("--patch", type=Path, required=True)
         if command == "prepare-reconciliation-repair":
@@ -3053,6 +3143,18 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "submit-reconciliation-repair":
             result = submit_reconciliation_local_repair(bundle_path=args.bundle, stage_path=args.stage,
                 failed_response_path=args.failed_response, request_path=args.request, patch_path=args.patch, output_dir=args.output_dir)
+        elif args.command == "compose-reconciliation-definitions":
+            result = compose_reconciliation_definitions(bundle_path=args.bundle, stage_path=args.stage,
+                failed_response_path=args.failed_response, request_path=args.request,
+                patch_path=args.patch, output_dir=args.output_dir)
+        elif args.command == "compose-reconciliation-repair":
+            result = compose_reconciliation_local_repair(bundle_path=args.bundle, stage_path=args.stage,
+                failed_response_path=args.failed_response, repair_request_path=args.request,
+                repair_patch_path=args.patch, output_dir=args.output_dir)
+        elif args.command == "prepare-reconciliation-definitions-after-repair":
+            result = prepare_reconciliation_definitions_after_local_repair(bundle_path=args.bundle,
+                stage_path=args.stage, failed_response_path=args.failed_response,
+                repair_request_path=args.request, repair_patch_path=args.patch, output_dir=args.output_dir)
         elif args.command == "submit-reconciliation-level":
             result = submit_reconciliation_level(
                 bundle_path=args.bundle,

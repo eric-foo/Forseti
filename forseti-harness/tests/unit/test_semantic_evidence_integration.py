@@ -2394,7 +2394,11 @@ def test_current_reconciliation_preserves_literal_conditions_and_bounded_scope(m
     if current:
         schema = prompts[0]["response_schema"]
         assert schema["properties"]["decisions_by_candidate_ref"]["required"] == stage["batches"][0]["candidate_refs"]
-        assert "child_relations" not in schema["properties"]["semantic_nodes"]["items"]["properties"]
+        node_items = schema["properties"]["semantic_nodes"]["items"]
+        assert all(
+            "child_relations" not in choice["properties"]
+            for choice in node_items.get("anyOf", [node_items])
+        )
         assert schema["properties"]["emerging_axis_consolidations"]["maxItems"] == 0
     _, next_prompts = prepare_reconciliation_stage(bundle, nodes)
     assert all("Copy every child condition verbatim" not in row["prompt"] for row in next_prompts)
@@ -2711,7 +2715,8 @@ def _missing_definition_fixture():
 
 def test_definition_recovery_exact_successor_and_durable_public_consumer(tmp_path):
     from runners.run_semantic_evidence_integration import (
-        prepare_reconciliation_definitions, submit_reconciliation_definitions, _write_json, _load_object,
+        compose_reconciliation_definitions, prepare_reconciliation_definitions,
+        submit_reconciliation_definitions, _write_json, _load_object,
     )
     bundle, stage, original, failed, request, patch = _missing_definition_fixture()
     with pytest.raises(semantic_module.MissingReconciliationDefinitions) as caught:
@@ -2727,6 +2732,33 @@ def test_definition_recovery_exact_successor_and_durable_public_consumer(tmp_pat
     assert _load_object(tmp_path / "request/request.json")["request"] == request
     with pytest.raises(ValueError, match="existing definition-recovery directory"):
         prepare_reconciliation_definitions(**args, output_dir=tmp_path / "request")
+    composed = compose_reconciliation_definitions(
+        **args,
+        request_path=tmp_path / "request/request.json",
+        patch_path=paths[3],
+        output_dir=tmp_path / "composed",
+    )
+    assert composed["status"] == "DEFINITIONS_COMPOSED_NOT_ACCEPTED"
+    assert composed["accepted"] is False
+    expected_intermediate = semantic_module.compose_reconciliation_definition_recovery_intermediate(
+        bundle, stage, failed, request, patch
+    )
+    assert _load_object(tmp_path / "composed/intermediate-response.json") == expected_intermediate
+    assert _load_object(tmp_path / "composed/receipt.json")[
+        "intermediate_response_sha256"
+    ] == composed["intermediate_response_sha256"]
+    # The documented operator route must exist on the public runner CLI.
+    from runners.run_semantic_evidence_integration import main
+
+    assert main(["compose-reconciliation-definitions",
+                 "--bundle", str(paths[0]), "--stage", str(paths[1]),
+                 "--failed-response", str(paths[2]),
+                 "--request", str(tmp_path / "request/request.json"),
+                 "--patch", str(paths[3]),
+                 "--output-dir", str(tmp_path / "cli-composed")]) == 0
+    assert _load_object(tmp_path / "cli-composed/intermediate-response.json") == expected_intermediate
+    assert _load_object(tmp_path / "cli-composed/receipt.json") == _load_object(
+        tmp_path / "composed/receipt.json")
     submit_args = dict(**args, request_path=tmp_path / "request/request.json",
                        patch_path=paths[3], output_dir=tmp_path / "successor")
     receipt = submit_reconciliation_definitions(**submit_args)
@@ -2927,6 +2959,18 @@ def test_local_repair_public_consumer_is_exact_bounded_and_repeatable(tmp_path):
     schema = request["response_schema"]
     assert schema["type"] == "object" and "anyOf" not in schema
     assert schema["additionalProperties"] is False
+    node_choices = schema["properties"]["correction"]["anyOf"][0]["properties"][
+        "replacement"
+    ]["properties"]["semantic_nodes"]["items"]["anyOf"]
+    by_terminal = {
+        choice["properties"]["terminal_proposition"]["const"]: choice
+        for choice in node_choices
+    }
+    assert all(choice["additionalProperties"] is False for choice in node_choices)
+    assert by_terminal[False]["properties"]["claim_kind"] == {"type": "null"}
+    assert by_terminal[False]["properties"]["causal_ceiling"] == {"type": "null"}
+    assert None not in by_terminal[True]["properties"]["claim_kind"]["enum"]
+    assert None not in by_terminal[True]["properties"]["causal_ceiling"]["enum"]
     assert len(schema["properties"]["correction"]["anyOf"]) == 2
     submitted = dict(**args, request_path=tmp_path / "request/request.json", patch_path=paths[4], output_dir=tmp_path / "successor")
     receipt = submit_reconciliation_local_repair(**submitted)
@@ -2941,6 +2985,121 @@ def test_local_repair_public_consumer_is_exact_bounded_and_repeatable(tmp_path):
     paths[2].write_bytes(paths[2].read_bytes() + b"\n")
     with pytest.raises(ValueError, match="source file bytes changed"):
         submit_reconciliation_local_repair(**submitted)
+
+
+def test_local_repair_can_prepare_exact_chained_missing_definitions(tmp_path):
+    from runners.run_semantic_evidence_integration import (
+        _load_object,
+        _write_json,
+        compose_reconciliation_local_repair,
+        prepare_reconciliation_definitions_after_local_repair,
+        prepare_reconciliation_local_repair,
+    )
+
+    bundle, stage, response, request, patch = _local_repair_fixture()
+    refs = list(response["decisions_by_candidate_ref"])
+    response["decisions_by_candidate_ref"][refs[1]]["attachments"].append(
+        {"semantic_node_key": "missing", "relation": "support"}
+    )
+    request = semantic_module.prepare_reconciliation_repair(
+        bundle,
+        stage,
+        response,
+        node_keys=["affected"],
+        reason="Correct only the nominated component.",
+    )
+    patch["request_sha256"] = request["request_sha256"]
+    patch["correction"]["replacement"]["decisions_by_candidate_ref"] = {
+        refs[0]: deepcopy(response["decisions_by_candidate_ref"][refs[0]])
+    }
+    with pytest.raises(semantic_module.MissingReconciliationDefinitions):
+        semantic_module.apply_reconciliation_repair(
+            bundle, stage, response, request, patch
+        )
+
+    intermediate, definition_request = (
+        semantic_module.prepare_reconciliation_definition_recovery_after_repair(
+            bundle, stage, response, request, patch
+        )
+    )
+    assert set(definition_request["missing_bindings"]) == {"missing"}
+    assert intermediate["semantic_nodes"][1] == response["semantic_nodes"][1]
+    assert intermediate["decisions_by_candidate_ref"][refs[1]] == response[
+        "decisions_by_candidate_ref"
+    ][refs[1]]
+
+    paths = {
+        name: tmp_path / f"{name}.json"
+        for name in ("bundle", "stage", "response", "nomination", "patch")
+    }
+    for name, value in (
+        ("bundle", bundle),
+        ("stage", stage),
+        ("response", response),
+        ("nomination", request["nomination"]),
+        ("patch", patch),
+    ):
+        _write_json(paths[name], value)
+    prepare_reconciliation_local_repair(
+        bundle_path=paths["bundle"],
+        stage_path=paths["stage"],
+        failed_response_path=paths["response"],
+        nomination_path=paths["nomination"],
+        output_dir=tmp_path / "local-request",
+    )
+    composed = compose_reconciliation_local_repair(
+        bundle_path=paths["bundle"],
+        stage_path=paths["stage"],
+        failed_response_path=paths["response"],
+        repair_request_path=tmp_path / "local-request/request.json",
+        repair_patch_path=paths["patch"],
+        output_dir=tmp_path / "composed",
+    )
+    assert composed["accepted"] is False
+    assert composed["status"] == "LOCAL_REPAIR_COMPOSED_NOT_ACCEPTED"
+    assert _load_object(tmp_path / "composed/intermediate-response.json") == intermediate
+    assert _load_object(tmp_path / "composed/receipt.json")[
+        "intermediate_response_sha256"
+    ] == composed["intermediate_response_sha256"]
+    result = prepare_reconciliation_definitions_after_local_repair(
+        bundle_path=paths["bundle"],
+        stage_path=paths["stage"],
+        failed_response_path=paths["response"],
+        repair_request_path=tmp_path / "local-request/request.json",
+        repair_patch_path=paths["patch"],
+        output_dir=tmp_path / "definition-request",
+    )
+    durable = _load_object(tmp_path / "definition-request/intermediate-response.json")
+    durable_request = _load_object(tmp_path / "definition-request/request.json")
+    chain_receipt = _load_object(tmp_path / "definition-request/chain-receipt.json")
+    assert result["intermediate_accepted"] is False
+    assert durable == intermediate
+    assert durable_request["request"] == definition_request
+    assert durable_request["input_sha256"]["failed_response"] == chain_receipt[
+        "intermediate_response_sha256"
+    ]
+    assert result["chain_receipt"] == chain_receipt
+    assert chain_receipt["repair_patch_sha256"]
+
+    # The documented operator route must exist on the public runner CLI.
+    from runners.run_semantic_evidence_integration import main
+
+    bound = ["--bundle", str(paths["bundle"]), "--stage", str(paths["stage"]),
+             "--failed-response", str(paths["response"]),
+             "--request", str(tmp_path / "local-request/request.json"),
+             "--patch", str(paths["patch"])]
+    assert main(["compose-reconciliation-repair", *bound,
+                 "--output-dir", str(tmp_path / "cli-composed")]) == 0
+    assert _load_object(tmp_path / "cli-composed/intermediate-response.json") == intermediate
+    assert _load_object(tmp_path / "cli-composed/receipt.json") == _load_object(
+        tmp_path / "composed/receipt.json")
+    assert main(["prepare-reconciliation-definitions-after-repair", *bound,
+                 "--output-dir", str(tmp_path / "cli-definition-request")]) == 0
+    assert _load_object(tmp_path / "cli-definition-request/request.json") == durable_request
+    assert _load_object(tmp_path / "cli-definition-request/chain-receipt.json") == chain_receipt
+    # Refuse a second write into the same durable directory through the CLI too.
+    assert main(["compose-reconciliation-repair", *bound,
+                 "--output-dir", str(tmp_path / "cli-composed")]) == 2
 
 
 @pytest.mark.parametrize("mutation,error", [
@@ -3030,6 +3189,43 @@ def test_local_repair_missing_node_orphan_and_noop():
             next(iter(replacement["decisions_by_candidate_ref"].values()))["attachments"][0]["relation"] = "adjacent"
         edited, _ = semantic_module.apply_reconciliation_repair(bundle, stage, repaired, request, changed)
         assert next(n for n in edited["semantic_nodes"] if n["semantic_node_key"] == "affected")["opposition_checked"] is False
+
+
+def test_local_repair_explicit_duplicate_key_replaces_every_duplicate_and_owner():
+    bundle, stage, response, _, patch = _local_repair_fixture()
+    duplicate = deepcopy(response["semantic_nodes"][0])
+    duplicate["bounded_meaning"] = "A second meaning incorrectly reused the same key."
+    response["semantic_nodes"].insert(1, duplicate)
+    with pytest.raises(SemanticIntegrationError, match="omits duplicate nodes: affected"):
+        semantic_module.prepare_reconciliation_repair(
+            bundle,
+            stage,
+            response,
+            node_keys=["untouched"],
+            reason="An unrelated issue cannot hide a duplicate key.",
+        )
+    request = semantic_module.prepare_reconciliation_repair(
+        bundle,
+        stage,
+        response,
+        node_keys=["affected"],
+        reason="Separate or consolidate the duplicate meanings using their exact sources.",
+    )
+    context = json.loads(request["prompt"].split("\n\nLOCAL_REPAIR_CONTEXT\n")[1])
+    assert [node["semantic_node_key"] for node in context["semantic_nodes"]].count(
+        "affected"
+    ) == 2
+    patch["request_sha256"] = request["request_sha256"]
+    successor, _ = semantic_module.apply_reconciliation_repair(
+        bundle, stage, response, request, patch
+    )
+    assert [node["semantic_node_key"] for node in successor["semantic_nodes"]].count(
+        "affected"
+    ) == 1
+    repaired = next(
+        node for node in successor["semantic_nodes"] if node["semantic_node_key"] == "affected"
+    )
+    assert repaired["opposition_checked"] is False
 
 
 @pytest.mark.parametrize("field", ["subject_product_ids", "comparator_product_ids", "product_version_ids"])
@@ -4022,7 +4218,19 @@ def test_targeted_benchmark_audit_binds_exact_groups_and_balances_workers() -> N
     assert [row["batch_id"] for row in prompts] == [
         row["batch_id"] for row in bundle["batches"]
     ]
-    assert "TARGETED BENCHMARK AUDIT METHOD V1" in frame
+    assert stage["audit_method_version"] == "targeted_benchmark_audit_method_v2"
+    assert stage["audit_method_sha256"] == semantic_module._sha256(
+        semantic_module.TARGETED_AUDIT_METHOD_TEXT
+    )
+    assert "TARGETED BENCHMARK AUDIT METHOD V2" in frame
+    assert "decision-relevant finding required by this audit" in frame
+    assert "vocabulary mismatch itself is not a repair reason" in frame
+    assert "existence or completion state of an event or action" in frame
+    assert "Descriptive-channel detail is not load-bearing unless" in frame
+    assert "looks supple" not in semantic_module.TARGETED_AUDIT_METHOD_TEXT
+    assert "feels supple" not in semantic_module.TARGETED_AUDIT_METHOD_TEXT
+    assert "decided to try" not in semantic_module.TARGETED_AUDIT_METHOD_TEXT
+    assert "bought" not in semantic_module.TARGETED_AUDIT_METHOD_TEXT
     assert prompt_manifest["stage_sha256"] == stage["stage_sha256"]
     assigned = [
         prompt["batch_id"]

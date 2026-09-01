@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v93
+version: v100
 effective_date: 2026-09-01
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v93
+# Semantic Evidence Integration Contract v100
 
 ## Purpose
 
@@ -179,6 +179,33 @@ and repeat reuse. A context component that exceeds the existing prompt limit
 fails without truncation. Missing definitions alone retain the narrower existing
 definition-recovery route. No standing census, retry loop, prose classifier,
 additional count renderer, or independent review ceremony is installed.
+
+If a scope-correct repair exposes another independent native failure, the
+failure-only composer may persist that exact repair as
+`LOCAL_REPAIR_COMPOSED_NOT_ACCEPTED`. The intermediate remains explicitly
+unaccepted and cannot enter a selection. Its source response, repair request,
+repair patch and intermediate bytes are hash-bound. An operator may pass it to
+the already-existing definition or local-repair preparer for the newly visible
+error; each new semantic edit still requires its own bounded judgment. Code does
+not infer, clear or auto-chain a correction, and the normal path gains no call.
+The same explicitly unaccepted composition is available when a scope-correct
+missing-definition patch reveals a different native defect. Its failed
+response, request, patch and intermediate bytes are likewise hash-bound before
+the next existing bounded repair is prepared.
+
+Current decision-only authoring also constrains terminal status and its claim
+metadata as one schema choice. A nonterminal node requires both `claim_kind`
+and `causal_ceiling` to be null; a terminal node requires both to use their
+existing admitted values. The unchanged native consumer remains authoritative.
+Historical v2 response schemas and replay are unchanged.
+
+An invalid response that reused one node key for multiple definitions may enter
+the same failure-only local-repair format only when that duplicate key is inside
+the explicit connected nomination. The request carries every duplicate
+definition and every attached candidate/source. The patch must return unique,
+scope-valid replacements; code never chooses a rename or guesses which child
+owned which meaning. Any duplicate outside the connected nomination blocks
+preparation by name.
 
 This is a reusable correction boundary, not prevention of every semantic error.
 The v89 prompt-only dogfood (three fresh batches) still had five headcount
@@ -2127,6 +2154,59 @@ new frontier.
 
 ## Changelog
 
+- `v100` / 2026-09-01 — added the symmetric explicitly unaccepted intermediate
+  for a scope-correct missing-definition patch that reveals another native
+  defect. The next existing bounded repair consumes the hash-bound intermediate;
+  no partial response is selected and no automatic repair is introduced.
+- `v99` / 2026-09-01 — allowed the existing failure-only local repair to carry
+  an explicitly nominated duplicate node key, including every duplicate
+  definition and connected owner. Unnominated duplicates still block by name;
+  code does not rename, reattach or infer meaning automatically.
+- `v98` / 2026-09-01 — made current decision-only response schemas reject
+  nonterminal nodes carrying terminal claim metadata, and terminal nodes with
+  either claim field absent. This moves an existing native invariant into the
+  provider-visible schema without changing historical v2 replay or adding a
+  call.
+- `v97` / 2026-09-01 — added an explicitly unaccepted, hash-bound local-repair
+  intermediate so one bounded correction can be preserved when native
+  validation reveals a second independent defect. Existing definition and
+  local-repair preparers consume that intermediate; no response is selected
+  until the unchanged full validator passes. This adds no normal-path call,
+  automatic semantic edit, retry loop or accepted partial-success path.
+- `v96` / 2026-09-01 — versioned the existing targeted benchmark audit method
+  from v1 to v2 so current audits judge source-to-result fidelity at the
+  decision-relevant bounded-finding level rather than by literal vocabulary.
+  The prompt names the consequential boundaries that may change downstream use
+  and treats descriptive-channel detail as non-load-bearing unless the current
+  commission makes it a decision dimension. It contains no word-pair exception,
+  adjacency dictionary, mandatory mirror, repeat-review gate, or change to
+  production consolidation. Historical v1 text remains available and frozen
+  artifacts remain unchanged. The wording was tested uncued on the same 48-row
+  Dieux diagnostic sample: after the response was frozen, the controller-hidden
+  harmless-adjacency and intended-action/completed-action controls both passed.
+  That one-call same-model calibration is behavioral evidence, not semantic
+  truth or a population estimate. Durable report:
+  `C:\tmp\forseti-phase-a-dieux-uncued-bounded-meaning-calibration-20260901-v1\final-report.md`,
+  SHA-256 `4ea934883d5eeb794a907e3feee79025fd1f313c9689de243890a69d8eee5f50`.
+- `v95` / 2026-09-01 — kept the v94 bounded-edit rejection unchanged after a
+  controlled audit-calibration experiment on 48 purposively selected frozen
+  Dieux rows. The candidate rubric applied the existing bounded-proposition
+  rule without a word-pair dictionary: both mirrored positions treated the
+  `looks supple` / `feels supple` difference as harmless for this broad Phase A
+  use and retained the `decided to try` / `bought` action-boundary error.
+  Those exact examples and their intended boundary were stated in the
+  experiment prompt, so the result proves consistent application under an
+  explicit rule, not uncued model generalization. Critical classifications
+  still changed with presentation order for seven unique rows under the prior
+  rubric and eleven under the candidate rubric. The owner accepts that ordering
+  sensitivity as a visible model residual rather than a standing engineering
+  target: no word-pair exception, adjacency dictionary, mandatory mirror,
+  repeat-review gate, or new production/audit machinery is added. A later
+  task may account for finer visual-versus-tactile meaning when that distinction
+  is actually decision-relevant; it does not burden the present broad Phase A
+  consolidation. Durable report:
+  `C:\tmp\forseti-phase-a-dieux-bounded-finding-calibration-20260901-v2\final-report.md`,
+  SHA-256 `f900ea9c78ae532e34e893d2b0744e58d362f60dd04800f46ff5dc830bc2fb79`.
 - `v94` / 2026-09-01 — rejected, and did not promote, the bounded-edit
   row-verifier experiment nominated by the checker value audit. The prototype
   made the consumer preserve every unnamed field/unit and allowed only explicit

@@ -433,6 +433,12 @@ requires findings; it cannot guarantee every referenced definition exists.
 Exact bindings and completeness do not prove semantic warrant. The semantic-
 integration contract's v88 recovery boundary owns these rules.
 
+For current decision-only requests, the response schema couples terminal status
+to its two claim fields: both are null for a nonterminal node and both are
+populated for a terminal node. This prevents a provider-visible structural
+combination the native consumer has always rejected; it does not judge whether
+the claim itself is true. Historical v2 schemas replay unchanged.
+
 For a named grouping, wording, status or attachment defect (including an issue
 found by source-aware review despite structural acceptance), use
 `prepare-reconciliation-repair --bundle ... --stage ... --failed-response ...
@@ -448,6 +454,12 @@ silently broadens the scope or chooses their replacement meanings. Other native
 or semantic defects can still remain, so this is not a complete error census.
 Current optional retention schemas disallow simultaneous attachments and an
 unmerged reason before submission, while native guards remain unchanged.
+
+If the native failure is a reused node key, explicitly nominate that key. The
+repair request includes every definition sharing it and every connected
+candidate/source, and the provider must return unique bounded replacements.
+Never rename or redistribute duplicate meanings in code. A duplicate outside
+the connected nomination blocks preparation by name.
 
 Oversized local repairs try the lossless `PACKED_REPAIR_CONTEXT_V1` table layout
 inside the same preparation command. Shared fields and column headings remove
@@ -467,6 +479,26 @@ Never clear a problem by automatic relabeling or discarding counterevidence.
 The semantic-integration contract v93's **Local reconciliation correction**
 section owns this failure/review-only route and its semantic non-claims; it adds
 no standing provider stage and does not replace source-aware judgment.
+
+When that exact patch is scope-valid but full validation reveals a different
+independent defect, compose it as an explicitly unaccepted intermediate before
+preparing the next existing bounded repair: `compose-reconciliation-repair
+--bundle ... --stage ... --failed-response ... --request <request.json> --patch
+<response.json> --output-dir <fresh-composed-directory>`. Bind the source
+response, request, patch and intermediate hashes. Never place the intermediate
+in the selection or treat composition as validation. This preserves the first
+edit without a whole-batch rerun; it does not authorize automatic repair, an
+unbounded retry loop or another normal-path stage. When the newly visible error
+is a missing definition, `prepare-reconciliation-definitions-after-repair` takes
+the same bound inputs and writes that intermediate plus the existing definition
+request and its chain receipt. Apply the same rule when a missing-definition
+patch reveals the next independent native error: compose its exact unaccepted
+intermediate with `compose-reconciliation-definitions`, then use the existing
+bounded preparer for that error. Both composers report
+`..._COMPOSED_NOT_ACCEPTED` with `accepted: false`, and the chained preparer
+reports `intermediate_accepted: false`; all three make no model call and refuse
+to write into an existing directory. The semantic-integration contract v100 owns
+this layered-failure boundary.
 
 If response validation failed after usage was saved, publication may be retried
 without a new model call. The existing usage receipt must equal the bytes
