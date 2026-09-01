@@ -25,6 +25,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     build_bundle,
     build_prompt_execution_pack,
     build_reconciliation_prompt,
+    diagnose_reconciliation_response,
     finalize_v3_view,
     finalize_relation_closed_view,
     finalize_view,
@@ -999,6 +1000,37 @@ def validate_reconciliation_response_file(
         "status": "SEMANTIC_RECONCILIATION_RESPONSE_VALID",
         **receipt,
         "receipt_out": str(receipt_out) if receipt_out is not None else None,
+        "model_api_calls": 0,
+    }
+
+
+def diagnose_reconciliation_response_file(
+    *,
+    bundle_path: Path,
+    stage_path: Path,
+    response_path: Path,
+    diagnostic_out: Path,
+) -> dict[str, Any]:
+    diagnostic = diagnose_reconciliation_response(
+        _load_object(bundle_path),
+        _load_object(stage_path),
+        _load_object(response_path),
+    )
+    _write_json(diagnostic_out, diagnostic)
+    return {
+        "status": (
+            "SEMANTIC_RECONCILIATION_RESPONSE_VALID"
+            if diagnostic["valid"]
+            else "SEMANTIC_RECONCILIATION_RESPONSE_INVALID_DIAGNOSED"
+        ),
+        "valid": diagnostic["valid"],
+        "accepted": diagnostic["accepted"],
+        "batch_id": diagnostic["batch_id"],
+        "issue_count": diagnostic["issue_count"],
+        "primary_validation_error": diagnostic["primary_validation_error"],
+        "primary_error_covered": diagnostic["primary_error_covered"],
+        "diagnostic_sha256": diagnostic["diagnostic_sha256"],
+        "diagnostic_out": str(diagnostic_out),
         "model_api_calls": 0,
     }
 
@@ -2650,6 +2682,12 @@ def _parser() -> argparse.ArgumentParser:
     validate_reconciliation.add_argument("--response", type=Path, required=True)
     validate_reconciliation.add_argument("--receipt-out", type=Path)
 
+    diagnose_reconciliation = sub.add_parser("diagnose-reconciliation-response")
+    diagnose_reconciliation.add_argument("--bundle", type=Path, required=True)
+    diagnose_reconciliation.add_argument("--stage", type=Path, required=True)
+    diagnose_reconciliation.add_argument("--response", type=Path, required=True)
+    diagnose_reconciliation.add_argument("--diagnostic-out", type=Path, required=True)
+
     prepare_closure = sub.add_parser("prepare-relation-closure")
     prepare_closure.add_argument("--bundle", type=Path, required=True)
     prepare_closure.add_argument("--node-compilation", type=Path, required=True)
@@ -3168,6 +3206,13 @@ def main(argv: list[str] | None = None) -> int:
                 stage_path=args.stage,
                 response_path=args.response,
                 receipt_out=args.receipt_out,
+            )
+        elif args.command == "diagnose-reconciliation-response":
+            result = diagnose_reconciliation_response_file(
+                bundle_path=args.bundle,
+                stage_path=args.stage,
+                response_path=args.response,
+                diagnostic_out=args.diagnostic_out,
             )
         elif args.command == "prepare-relation-closure":
             result = prepare_relation_closure_run(

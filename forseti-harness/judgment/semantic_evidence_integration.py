@@ -69,6 +69,7 @@ PACK_BATCH_ID_PREFIX = "batch-"
 RECONCILIATION_RESPONSE_VERSION = "semantic_evidence_reconciliation_response_v1"
 RECONCILIATION_RESPONSE_VERSION_V2 = "semantic_evidence_reconciliation_response_v2"
 RECONCILIATION_RESPONSE_VERSION_V3 = "semantic_evidence_reconciliation_response_v3"
+RECONCILIATION_DIAGNOSTIC_VERSION = "semantic_evidence_reconciliation_diagnostic_v1"
 RECONCILIATION_AUTHORING_LEGACY = "legacy"
 RECONCILIATION_AUTHORING_IDENTITY_V1 = "exact_identity_namespaces_v1"
 RELATION_CLOSURE_STAGE_VERSION = "semantic_evidence_relation_closure_stage_v1"
@@ -7248,6 +7249,282 @@ def validate_reconciliation_stage(
         result["reconciliation_mode"] = reconciliation_mode
         result["input_candidate_count"] = len(stage["candidates"])
     result["node_compilation_sha256"] = _sha256(result)
+    return result
+
+
+def diagnose_reconciliation_response(
+    bundle: Mapping[str, Any],
+    stage: Mapping[str, Any],
+    response: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Inventory repair-relevant graph defects without accepting or repairing."""
+
+    validate_reconciliation_stage(bundle, stage, [], require_all=False)
+    if not isinstance(response, Mapping):
+        raise SemanticIntegrationError("reconciliation diagnostic requires a response object")
+    if response.get("schema_version") != RECONCILIATION_RESPONSE_VERSION_V3:
+        raise SemanticIntegrationError("reconciliation diagnostic requires current response v3")
+    if bundle.get("method_version") != METHOD_VERSION_V12:
+        raise SemanticIntegrationError("reconciliation diagnostic requires current method v12")
+    if response.get("stage_sha256") != stage.get("stage_sha256"):
+        raise SemanticIntegrationError("reconciliation response has stale stage hash")
+    expected_batches = {row["batch_id"]: row for row in stage["batches"]}
+    batch_id = response.get("batch_id")
+    if batch_id not in expected_batches:
+        raise SemanticIntegrationError("unknown reconciliation batch")
+    batch = expected_batches[batch_id]
+    candidate_index = {row["candidate_ref"]: row for row in stage["candidates"]}
+    evidence_index = _unit_index(bundle)
+
+    try:
+        validation = validate_reconciliation_stage(
+            bundle, stage, [response], require_all=False
+        )
+    except SemanticIntegrationError as exc:
+        validation = None
+        primary_error = str(exc)
+    else:
+        primary_error = None
+
+    issues: list[dict[str, Any]] = []
+    skipped: list[dict[str, str]] = []
+
+    def add(
+        code: str,
+        message: str,
+        *,
+        candidate_refs: Sequence[str] = (),
+        node_keys: Sequence[str] = (),
+    ) -> None:
+        row: dict[str, Any] = {"code": code, "message": message}
+        if candidate_refs:
+            row["candidate_refs"] = sorted(set(candidate_refs))
+        if node_keys:
+            row["semantic_node_keys"] = sorted(set(node_keys))
+        issues.append(row)
+
+    shape = _decision_reconciliation_shape(stage["stage_sha256"], batch_id)
+    decisions = response.get("decisions_by_candidate_ref")
+    nodes = response.get("semantic_nodes")
+    if (
+        set(response) != set(shape)
+        or not isinstance(decisions, Mapping)
+        or set(decisions) != set(batch["candidate_refs"])
+        or not isinstance(nodes, list)
+    ):
+        skipped.append(
+            {
+                "scope": "response_graph",
+                "key": str(batch_id),
+                "reason": "exact current envelope, candidate coverage, and node list are required",
+            }
+        )
+    else:
+        expected_node_fields = set(shape["semantic_nodes"][0])
+        rows_by_key: dict[str, list[Mapping[str, Any]]] = defaultdict(list)
+        for index, node in enumerate(nodes):
+            if (
+                not isinstance(node, Mapping)
+                or set(node) != expected_node_fields
+                or not _nonempty(node.get("semantic_node_key"))
+            ):
+                skipped.append(
+                    {
+                        "scope": "node",
+                        "key": str(
+                            node.get("semantic_node_key", index)
+                            if isinstance(node, Mapping)
+                            else index
+                        ),
+                        "reason": "exact nonempty node definition is required",
+                    }
+                )
+                continue
+            rows_by_key[node["semantic_node_key"]].append(node)
+
+        duplicate_keys = {
+            key for key, definitions in rows_by_key.items() if len(definitions) > 1
+        }
+        for key in sorted(duplicate_keys):
+            add(
+                "duplicate_node_key",
+                "decision reconciliation duplicate or empty node key",
+                node_keys=[key],
+            )
+            skipped.append(
+                {
+                    "scope": "node",
+                    "key": key,
+                    "reason": "duplicate definitions make node-local checks ambiguous",
+                }
+            )
+        unique_nodes = {
+            key: definitions[0]
+            for key, definitions in rows_by_key.items()
+            if len(definitions) == 1
+        }
+
+        owners_by_key: dict[str, list[dict[str, str]]] = defaultdict(list)
+        missing: dict[str, list[dict[str, str]]] = defaultdict(list)
+        for ref in batch["candidate_refs"]:
+            decision = decisions[ref]
+            if (
+                not isinstance(decision, Mapping)
+                or set(decision) != {"attachments", "unmerged_reason"}
+                or not isinstance(decision.get("attachments"), list)
+            ):
+                skipped.append(
+                    {
+                        "scope": "candidate",
+                        "key": ref,
+                        "reason": "exact attachment list is required",
+                    }
+                )
+                continue
+            seen_keys: set[str] = set()
+            for attachment in decision["attachments"]:
+                if (
+                    not isinstance(attachment, Mapping)
+                    or set(attachment) != {"semantic_node_key", "relation"}
+                    or not _nonempty(attachment.get("semantic_node_key"))
+                    or attachment.get("relation") not in RELATIONS
+                ):
+                    skipped.append(
+                        {
+                            "scope": "candidate",
+                            "key": ref,
+                            "reason": "malformed attachment cannot enter graph checks",
+                        }
+                    )
+                    continue
+                key = attachment["semantic_node_key"]
+                if key in seen_keys:
+                    add(
+                        "duplicate_or_invalid_attachment",
+                        "decision reconciliation foreign, duplicate or invalid attachment",
+                        candidate_refs=[ref],
+                        node_keys=[key],
+                    )
+                    continue
+                seen_keys.add(key)
+                binding = {"child_ref": ref, "relation": attachment["relation"]}
+                if key not in rows_by_key:
+                    missing[key].append(binding)
+                elif key not in duplicate_keys:
+                    owners_by_key[key].append(binding)
+
+        if missing:
+            missing_keys = sorted(missing)
+            add(
+                "missing_node_definition",
+                "decision reconciliation missing semantic node definitions: "
+                + ", ".join(missing_keys),
+                candidate_refs=[
+                    binding["child_ref"]
+                    for key in missing_keys
+                    for binding in missing[key]
+                ],
+                node_keys=missing_keys,
+            )
+        for key in sorted(unique_nodes):
+            if not owners_by_key.get(key):
+                add(
+                    "orphan_node",
+                    f"decision reconciliation orphan node {key}",
+                    node_keys=[key],
+                )
+
+        for key in sorted(unique_nodes):
+            relations = owners_by_key.get(key, [])
+            if not relations:
+                continue
+            children = [candidate_index[row["child_ref"]] for row in relations]
+            try:
+                _reconciliation_product_bindings(children, key)
+            except SemanticIntegrationError as exc:
+                add(
+                    "identity_crossing",
+                    str(exc),
+                    candidate_refs=[row["child_ref"] for row in relations],
+                    node_keys=[key],
+                )
+                skipped.append(
+                    {
+                        "scope": "node",
+                        "key": key,
+                        "reason": "crossed identity makes downstream graph checks unsafe",
+                    }
+                )
+                continue
+
+            leaf_relations: dict[str, str] = {}
+            duplicate_leaf = False
+            for relation in relations:
+                child = candidate_index[relation["child_ref"]]
+                for leaf in child["leaf_relations"]:
+                    ref = leaf["semantic_unit_ref"]
+                    if ref in leaf_relations:
+                        duplicate_leaf = True
+                    else:
+                        leaf_relations[ref] = _relation_product(
+                            relation["relation"], leaf["relation"]
+                        )
+            if duplicate_leaf:
+                add(
+                    "duplicate_leaf",
+                    f"semantic node {key} duplicates one leaf through multiple children",
+                    candidate_refs=[row["child_ref"] for row in relations],
+                    node_keys=[key],
+                )
+            if unique_nodes[key].get("terminal_proposition") is True:
+                support_evidence = {
+                    _leaf_evidence_id(ref, evidence_index, node_key=key)
+                    for ref, stance in leaf_relations.items()
+                    if stance == "support"
+                }
+                if not support_evidence:
+                    add(
+                        "terminal_lacks_support",
+                        f"terminal semantic node {key} lacks support",
+                        candidate_refs=[row["child_ref"] for row in relations],
+                        node_keys=[key],
+                    )
+
+    unique_issues: list[dict[str, Any]] = []
+    seen_issue_ids: set[str] = set()
+    for issue in issues:
+        identity = json.dumps(
+            issue, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+        )
+        if identity not in seen_issue_ids:
+            seen_issue_ids.add(identity)
+            unique_issues.append(issue)
+    covered_primary = primary_error is None or any(
+        issue["message"] == primary_error for issue in unique_issues
+    )
+    result = {
+        "schema_version": RECONCILIATION_DIAGNOSTIC_VERSION,
+        "bundle_sha256": bundle["bundle_sha256"],
+        "stage_sha256": stage["stage_sha256"],
+        "batch_id": batch_id,
+        "valid": validation is not None,
+        "accepted": validation is not None,
+        "primary_validation_error": primary_error,
+        "primary_error_covered": covered_primary,
+        "issue_count": len(unique_issues),
+        "issues": unique_issues,
+        "skipped_dependent_checks": skipped,
+        "diagnostic_scope": [
+            "duplicate_attachments",
+            "missing_or_orphan_definitions",
+            "identity_compatibility",
+            "repeated_leaf_ownership",
+            "terminal_effective_support",
+        ],
+        "semantic_warrant_proven": False,
+        "model_api_calls": 0,
+    }
+    result["diagnostic_sha256"] = _sha256(result)
     return result
 
 

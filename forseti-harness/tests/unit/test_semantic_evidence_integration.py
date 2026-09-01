@@ -2590,6 +2590,121 @@ def test_decision_reconciliation_wrong_cause(mutation, error):
         validate_reconciliation_stage(bundle, stage, [response])
 
 
+def test_reconciliation_diagnostic_lists_independent_existing_defects_without_accepting():
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    decisions = response["decisions_by_candidate_ref"]
+    refs = list(decisions)
+    main = response["semantic_nodes"][0]
+
+    # Four independent faults coexist in one original response.  The ordinary
+    # consumer must still stop at its unchanged first error.
+    decisions[refs[0]]["attachments"].append(deepcopy(decisions[refs[0]]["attachments"][0]))
+    decisions[refs[1]]["attachments"][0]["semantic_node_key"] = "missing"
+    orphan = deepcopy(main)
+    orphan["semantic_node_key"] = "orphan"
+    counter_only = deepcopy(main)
+    counter_only["semantic_node_key"] = "counter-only"
+    counter_only.update(
+        terminal_proposition=True,
+        claim_kind="customer_experience",
+        causal_ceiling="causal_not_established",
+        opposition_checked=True,
+    )
+    response["semantic_nodes"].extend([orphan, counter_only])
+    decisions[refs[0]]["attachments"].append(
+        {"semantic_node_key": "counter-only", "relation": "counter"}
+    )
+
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="decision reconciliation foreign, duplicate or invalid attachment",
+    ):
+        validate_reconciliation_stage(bundle, stage, [response])
+
+    original = deepcopy(response)
+    diagnostic = semantic_module.diagnose_reconciliation_response(bundle, stage, response)
+    assert response == original
+    assert diagnostic == semantic_module.diagnose_reconciliation_response(
+        bundle, stage, deepcopy(response)
+    )
+    assert diagnostic["valid"] is False and diagnostic["accepted"] is False
+    assert diagnostic["primary_validation_error"] == (
+        "decision reconciliation foreign, duplicate or invalid attachment"
+    )
+    assert diagnostic["primary_error_covered"] is True
+    codes = {row["code"] for row in diagnostic["issues"]}
+    assert {
+        "duplicate_or_invalid_attachment",
+        "missing_node_definition",
+        "orphan_node",
+        "terminal_lacks_support",
+    } <= codes
+    assert diagnostic["semantic_warrant_proven"] is False
+    assert diagnostic["model_api_calls"] == 0
+
+
+def test_reconciliation_diagnostic_keeps_valid_response_clean_and_public_output_write_once(tmp_path):
+    from runners.run_semantic_evidence_integration import (
+        _load_object,
+        _write_json,
+        diagnose_reconciliation_response_file,
+    )
+
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    diagnostic = semantic_module.diagnose_reconciliation_response(bundle, stage, response)
+    assert diagnostic["valid"] is True and diagnostic["accepted"] is True
+    assert diagnostic["issue_count"] == 0 and diagnostic["issues"] == []
+    assert diagnostic["primary_validation_error"] is None
+    assert diagnostic["primary_error_covered"] is True
+
+    bundle_path, stage_path, response_path = [
+        tmp_path / name for name in ("bundle.json", "stage.json", "response.json")
+    ]
+    for path, value in (
+        (bundle_path, bundle),
+        (stage_path, stage),
+        (response_path, response),
+    ):
+        _write_json(path, value)
+    output = tmp_path / "diagnostic.json"
+    result = diagnose_reconciliation_response_file(
+        bundle_path=bundle_path,
+        stage_path=stage_path,
+        response_path=response_path,
+        diagnostic_out=output,
+    )
+    assert result["status"] == "SEMANTIC_RECONCILIATION_RESPONSE_VALID"
+    assert _load_object(output) == diagnostic
+    with pytest.raises(ValueError, match="refusing to overwrite"):
+        diagnose_reconciliation_response_file(
+            bundle_path=bundle_path,
+            stage_path=stage_path,
+            response_path=response_path,
+            diagnostic_out=output,
+        )
+
+
+def test_reconciliation_diagnostic_skips_claim_checks_after_identity_crossing():
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    stage["candidates"][1]["subject_product_ids"] = ["different-product"]
+    stage["stage_sha256"] = semantic_module._sha256(
+        {key: value for key, value in stage.items() if key != "stage_sha256"}
+    )
+    response["stage_sha256"] = stage["stage_sha256"]
+    for decision in response["decisions_by_candidate_ref"].values():
+        decision["attachments"][0]["relation"] = "counter"
+
+    diagnostic = semantic_module.diagnose_reconciliation_response(bundle, stage, response)
+    codes = {row["code"] for row in diagnostic["issues"]}
+    assert "identity_crossing" in codes
+    assert "terminal_lacks_support" not in codes
+    assert any(
+        row["scope"] == "node"
+        and "crossed identity" in row["reason"]
+        for row in diagnostic["skipped_dependent_checks"]
+    )
+
+
 @pytest.mark.parametrize("field", ["subject_product_ids", "comparator_product_ids", "product_version_ids"])
 @pytest.mark.parametrize("relation", sorted(semantic_module.RELATIONS))
 def test_normal_identity_namespaces_bind_all_roles_and_relations(field, relation):

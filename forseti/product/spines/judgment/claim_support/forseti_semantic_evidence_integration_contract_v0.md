@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v102
-effective_date: 2026-09-01
+version: v103
+effective_date: 2026-09-02
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v102
+# Semantic Evidence Integration Contract v103
 
 ## Purpose
 
@@ -179,6 +179,20 @@ and repeat reuse. A context component that exceeds the existing prompt limit
 fails without truncation. Missing definitions alone retain the narrower existing
 definition-recovery route. No standing census, retry loop, prose classifier,
 additional count renderer, or independent review ceremony is installed.
+
+After a current response-v3 validation failure, the read-only
+`diagnose-reconciliation-response` command may inventory every independently
+observable defect in its declared mechanical scope before a repair is nominated.
+The unchanged validator still supplies `primary_validation_error` and remains
+the sole acceptance boundary. The diagnostic reports exact affected candidate
+and node handles for the recurring repair-relevant graph defects: duplicate
+attachments, missing or orphaned definitions, identity incompatibility,
+repeated leaves, and missing effective terminal support. When a malformed
+prerequisite makes a downstream check ambiguous, it records that check as
+skipped instead of guessing another failure. The report is write-once,
+deterministic, current-v3-only, and makes no provider call. It neither selects a
+repair scope nor proves semantic warrant; source-aware judgment and the existing
+bounded repair routes remain unchanged.
 
 If a scope-correct repair exposes another independent native failure, the
 failure-only composer may persist that exact repair as
@@ -2163,6 +2177,21 @@ new frontier.
 
 ## Changelog
 
+- `v103` / 2026-09-02 — added a read-only current-response-v3 reconciliation
+  diagnostic so one failed answer can expose all independently observable
+  mechanical defects before the operator commissions a bounded repair. The
+  unchanged validator remains fail-first and authoritative; the diagnostic
+  reports its exact primary error, affected opaque handles, and any dependent
+  checks skipped because their prerequisites are malformed. It never repairs,
+  infers meaning, selects scope, accepts a response, or calls a provider.
+  Frozen Dieux level-3 dogfood over all 28 original completed responses reported
+  3 valid and 25 invalid responses, covered every authoritative primary error,
+  and exposed 79 issue records: 38 duplicate attachments, 40 missing node keys
+  across 17 response-level records, 9 orphan nodes, 7 repeated-leaf nodes, and
+  8 terminal nodes without effective support. All 13 currently selected accepted
+  responses remained clean, and a second 28-response run was byte-identical.
+  These are structural findings, not semantic verdicts or repair authorization;
+  no response, stage, provider attempt, or historical artifact was changed.
 - `v102` / 2026-09-01 — required one relation per exact candidate-and-node
   pair in current decision-only prompts. Dieux level-2 authoring repeatedly
   emitted the same node key as both support and counter for one candidate,

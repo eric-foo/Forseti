@@ -420,6 +420,17 @@ through the existing isolated provider/usage route, at `high`, keeping each
 attempt immutable. Allow at most one corrective attempt before returning a
 remaining failure to judgment. Successful batches need no extra call.
 
+Before choosing any current response-v3 repair scope, run the no-provider
+`diagnose-reconciliation-response --bundle ... --stage ... --response ...
+--diagnostic-out <fresh-json>` command once on the failed response. It preserves
+the validator's exact first failure while listing the other independently
+observable bookkeeping defects and the candidate/node handles they affect.
+Checks made unknowable by malformed prerequisites are listed as skipped rather
+than guessed. The result is a repair-planning aid only: `valid: false` remains
+unaccepted, the command never edits the response or chooses a correction, and
+structural findings do not prove that any wording or relation is semantically
+wrong. Contract v103 owns this boundary.
+
 Submit with `submit-reconciliation-definitions --bundle ... --stage ...
 --failed-response ... --request <request.json> --patch <corrective-response.json>
 --output-dir <fresh-successor-directory>`. It preserves existing decisions and
