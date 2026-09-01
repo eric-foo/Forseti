@@ -2195,7 +2195,18 @@ new frontier.
   exceeded the unchanged 120,000-byte ceiling, while two full batches timed out
   twice. The sole 95-candidate tail batch was accepted; this observation binds
   the containment-oriented cap but does not prove semantic quality or provider
-  reliability. The native consumer remains unchanged and fail-closed. Explicit
+  reliability. Fresh v2 Dieux level-4 dogfood then accounted all 3,665 candidates
+  exactly once in 39 deterministic batches, each at most 96 candidates; two
+  rebuilds were byte-identical and the largest prompt was 86,060 bytes. The
+  unchanged consumer initially accepted 30, rejected 4 structurally, and saw 5
+  provider failures. All four initial recovery requests fit at 15,927–67,572
+  prompt bytes; none required truncation. Bounded recovery and one explicit
+  retry per failed call raised acceptance to 36 of 39. The three unresolved
+  batches remain visible: one normal batch timed out twice, one repeated-leaf
+  component persisted through three changed repair responses, and one layered
+  orphan/definition response ended in an explicit cannot-define judgment for a
+  fixed key. The explicit repeated-leaf instruction therefore does not prove
+  prevention; the native consumer remains unchanged and fail-closed. Explicit
   v1 and legacy selection preserve old packing and prompt bytes; accepted
   artifacts keep their original prompt and receipt provenance. No automatic
   deduplication, truncation, provider call, retry loop, semantic classifier, or
