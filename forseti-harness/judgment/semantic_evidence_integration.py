@@ -5648,6 +5648,9 @@ def _decision_reconciliation_schema(stage, batch, labels, candidate_index, evide
         choice["properties"]["causal_ceiling"] = (
             {"enum": sorted(CAUSAL_CEILINGS)} if terminal else {"type": "null"}
         )
+        choice["properties"]["opposition_checked"] = (
+            {"type": "boolean"} if terminal else {"type": ["boolean", "null"]}
+        )
         node_choices.append(choice)
     props["semantic_nodes"]["items"] = {"anyOf": node_choices}
     del props["unmerged_children"]

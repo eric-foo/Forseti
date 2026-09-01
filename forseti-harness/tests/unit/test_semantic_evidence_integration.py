@@ -2395,6 +2395,16 @@ def test_current_reconciliation_preserves_literal_conditions_and_bounded_scope(m
         schema = prompts[0]["response_schema"]
         assert schema["properties"]["decisions_by_candidate_ref"]["required"] == stage["batches"][0]["candidate_refs"]
         node_items = schema["properties"]["semantic_nodes"]["items"]
+        by_terminal = {
+            choice["properties"]["terminal_proposition"]["const"]: choice
+            for choice in node_items["anyOf"]
+        }
+        assert by_terminal[False]["properties"]["opposition_checked"] == {
+            "type": ["boolean", "null"]
+        }
+        assert by_terminal[True]["properties"]["opposition_checked"] == {
+            "type": "boolean"
+        }
         assert all(
             "child_relations" not in choice["properties"]
             for choice in node_items.get("anyOf", [node_items])
@@ -2730,6 +2740,17 @@ def test_definition_recovery_exact_successor_and_durable_public_consumer(tmp_pat
     result = prepare_reconciliation_definitions(**args, output_dir=tmp_path / "request")
     assert result["missing_definition_count"] == 1 and result["model_api_calls"] == 0
     assert _load_object(tmp_path / "request/request.json")["request"] == request
+    node_choices = request["response_schema"]["$defs"]["node"]["anyOf"]
+    by_terminal = {
+        choice["properties"]["terminal_proposition"]["const"]: choice
+        for choice in node_choices
+    }
+    assert by_terminal[False]["properties"]["opposition_checked"] == {
+        "type": ["boolean", "null"]
+    }
+    assert by_terminal[True]["properties"]["opposition_checked"] == {
+        "type": "boolean"
+    }
     with pytest.raises(ValueError, match="existing definition-recovery directory"):
         prepare_reconciliation_definitions(**args, output_dir=tmp_path / "request")
     composed = compose_reconciliation_definitions(

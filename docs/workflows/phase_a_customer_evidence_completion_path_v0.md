@@ -434,10 +434,12 @@ Exact bindings and completeness do not prove semantic warrant. The semantic-
 integration contract's v88 recovery boundary owns these rules.
 
 For current decision-only requests, the response schema couples terminal status
-to its two claim fields: both are null for a nonterminal node and both are
-populated for a terminal node. This prevents a provider-visible structural
-combination the native consumer has always rejected; it does not judge whether
-the claim itself is true. Historical v2 schemas replay unchanged.
+to its claim metadata: claim kind and causal ceiling are null for a nonterminal
+node and populated for a terminal node, while a terminal opposition-check flag
+must be a boolean. This prevents provider-visible structural combinations the
+native consumer has always rejected; it does not judge whether the claim itself
+is true or whether opposition was adequately reviewed. Historical v2 schemas
+replay unchanged.
 
 For a named grouping, wording, status or attachment defect (including an issue
 found by source-aware review despite structural acceptance), use

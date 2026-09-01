@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v100
+version: v101
 effective_date: 2026-09-01
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v100
+# Semantic Evidence Integration Contract v101
 
 ## Purpose
 
@@ -196,8 +196,10 @@ the next existing bounded repair is prepared.
 Current decision-only authoring also constrains terminal status and its claim
 metadata as one schema choice. A nonterminal node requires both `claim_kind`
 and `causal_ceiling` to be null; a terminal node requires both to use their
-existing admitted values. The unchanged native consumer remains authoritative.
-Historical v2 response schemas and replay are unchanged.
+existing admitted values and requires `opposition_checked` to be a boolean.
+This is structural compatibility, not proof that opposition was adequately
+reviewed. The unchanged native consumer remains authoritative. Historical v2
+response schemas and replay are unchanged.
 
 An invalid response that reused one node key for multiple definitions may enter
 the same failure-only local-repair format only when that duplicate key is inside
@@ -2154,6 +2156,13 @@ new frontier.
 
 ## Changelog
 
+- `v101` / 2026-09-01 — made the current decision-only terminal schema require
+  a boolean `opposition_checked`, matching the unchanged native invariant.
+  Dieux level-2 definition recovery had produced a terminal node with valid
+  claim kind and causal ceiling but null opposition status; the provider schema
+  admitted it and the consumer rejected it. Nonterminal and historical v2
+  behavior remain unchanged, no call is added, and the boolean does not prove
+  that opposition was adequately reviewed.
 - `v100` / 2026-09-01 — added the symmetric explicitly unaccepted intermediate
   for a scope-correct missing-definition patch that reveals another native
   defect. The next existing bounded repair consumes the hash-bound intermediate;
