@@ -2856,6 +2856,166 @@ def test_duplicate_leaf_seed_still_fails_at_native_consumer():
         validate_reconciliation_stage(bundle, stage, [response])
 
 
+def test_duplicate_leaf_diagnostic_and_repair_name_every_leaf_path():
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    refs = list(response["decisions_by_candidate_ref"])
+    left_leaf = deepcopy(stage["candidates"][0]["leaf_relations"][0])
+    right_leaf = deepcopy(stage["candidates"][1]["leaf_relations"][0])
+    stage["candidates"][0]["leaf_relations"] = [
+        {**left_leaf, "relation": "support"},
+        {**right_leaf, "relation": "counter"},
+    ]
+    stage["candidates"][1]["leaf_relations"] = [
+        {**right_leaf, "relation": "support"},
+        {**left_leaf, "relation": "counter"},
+    ]
+    response["decisions_by_candidate_ref"][refs[0]]["attachments"][0][
+        "relation"
+    ] = "support"
+    response["decisions_by_candidate_ref"][refs[1]]["attachments"][0][
+        "relation"
+    ] = "adjacent"
+    stage["stage_sha256"] = semantic_module._sha256(
+        {key: value for key, value in stage.items() if key != "stage_sha256"}
+    )
+    response["stage_sha256"] = stage["stage_sha256"]
+
+    with pytest.raises(SemanticIntegrationError, match="duplicates one leaf"):
+        validate_reconciliation_stage(bundle, stage, [response])
+
+    expected_paths = [
+        {
+            "semantic_unit_ref": leaf_ref,
+            "child_paths": [
+                {
+                    "child_ref": refs[0],
+                    "child_relation": "support",
+                    "leaf_relation": left_relation,
+                    "effective_relation": left_relation,
+                },
+                {
+                    "child_ref": refs[1],
+                    "child_relation": "adjacent",
+                    "leaf_relation": right_relation,
+                    "effective_relation": "adjacent",
+                },
+            ],
+        }
+        for leaf_ref, left_relation, right_relation in sorted(
+            [
+                (left_leaf["semantic_unit_ref"], "support", "counter"),
+                (right_leaf["semantic_unit_ref"], "counter", "support"),
+            ]
+        )
+    ]
+    diagnostic = semantic_module.diagnose_reconciliation_response(
+        bundle, stage, response
+    )
+    issue = next(row for row in diagnostic["issues"] if row["code"] == "duplicate_leaf")
+    assert issue["duplicated_semantic_unit_refs"] == [
+        row["semantic_unit_ref"] for row in expected_paths
+    ]
+    assert issue["child_paths_by_semantic_unit_ref"] == expected_paths
+    assert diagnostic == semantic_module.diagnose_reconciliation_response(
+        bundle, stage, deepcopy(response)
+    )
+
+    request = semantic_module.prepare_reconciliation_repair(
+        bundle,
+        stage,
+        response,
+        node_keys=[response["semantic_nodes"][0]["semantic_node_key"]],
+        reason="Repair only the exact repeated-leaf component.",
+    )
+    context = json.loads(request["prompt"].split("\n\nLOCAL_REPAIR_CONTEXT\n")[1])
+    assert request["schema_version"] == "semantic_reconciliation_repair_request_v2"
+    assert context["duplicate_leaf_conflicts"] == [
+        {
+            "semantic_node_key": response["semantic_nodes"][0]["semantic_node_key"],
+            "duplicated_semantic_unit_refs": [
+                row["semantic_unit_ref"] for row in expected_paths
+            ],
+            "child_paths_by_semantic_unit_ref": expected_paths,
+        }
+    ]
+
+
+def test_repeated_attachment_is_not_a_repeated_leaf_path():
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    ref = list(response["decisions_by_candidate_ref"])[0]
+    attachments = response["decisions_by_candidate_ref"][ref]["attachments"]
+    attachments.append(deepcopy(attachments[0]))
+    stage["stage_sha256"] = semantic_module._sha256(
+        {key: value for key, value in stage.items() if key != "stage_sha256"}
+    )
+    response["stage_sha256"] = stage["stage_sha256"]
+
+    with pytest.raises(
+        SemanticIntegrationError, match="duplicate or invalid attachment"
+    ):
+        validate_reconciliation_stage(bundle, stage, [response])
+    diagnostic = semantic_module.diagnose_reconciliation_response(bundle, stage, response)
+    assert [row["code"] for row in diagnostic["issues"]] == [
+        "duplicate_or_invalid_attachment"
+    ]
+
+    request = semantic_module.prepare_reconciliation_repair(
+        bundle,
+        stage,
+        response,
+        node_keys=[response["semantic_nodes"][0]["semantic_node_key"]],
+        reason="Repair only the exact connected component.",
+    )
+    context = json.loads(request["prompt"].split("\n\nLOCAL_REPAIR_CONTEXT\n")[1])
+    assert request["schema_version"] == "semantic_reconciliation_repair_request_v1"
+    assert "duplicate_leaf_conflicts" not in context
+
+
+def test_repeated_leaf_paths_never_present_unobserved_ownership_as_complete():
+    bundle, _, stage, _, response = _decision_reconciliation_fixture(count=3)
+    refs = list(response["decisions_by_candidate_ref"])
+    key = response["semantic_nodes"][0]["semantic_node_key"]
+    shared = stage["candidates"][0]["candidate_ref"]
+    for candidate in stage["candidates"]:
+        candidate["leaf_relations"] = [
+            {"semantic_unit_ref": shared, "relation": "support"}
+        ]
+    response["decisions_by_candidate_ref"][refs[0]]["attachments"] = [
+        {"semantic_node_key": key, "relation": "not a relation"}
+    ]
+    stage["stage_sha256"] = semantic_module._sha256(
+        {name: value for name, value in stage.items() if name != "stage_sha256"}
+    )
+    response["stage_sha256"] = stage["stage_sha256"]
+
+    diagnostic = semantic_module.diagnose_reconciliation_response(
+        bundle, stage, response
+    )
+    issue = next(row for row in diagnostic["issues"] if row["code"] == "duplicate_leaf")
+    # Every enumerated path stays exact ...
+    assert issue["duplicated_semantic_unit_refs"] == [shared]
+    assert [
+        row["child_ref"]
+        for row in issue["child_paths_by_semantic_unit_ref"][0]["child_paths"]
+    ] == sorted(refs[1:])
+    # ... and the third real owner, hidden by its malformed attachment, is named
+    # at node scope rather than silently dropped from a complete-looking list.
+    assert {
+        "scope": "node",
+        "key": key,
+        "reason": "malformed decisions or attachments cannot show every child entering this node",
+    } in diagnostic["skipped_dependent_checks"]
+    # The bounded repair route stays fail-closed on the same response.
+    with pytest.raises(SemanticIntegrationError, match="malformed attachment"):
+        semantic_module.prepare_reconciliation_repair(
+            bundle,
+            stage,
+            response,
+            node_keys=[key],
+            reason="Repair only the exact repeated-leaf component.",
+        )
+
+
 @pytest.mark.parametrize("revision,version", [("unknown", None),
     (semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1, semantic_module.RECONCILIATION_RESPONSE_VERSION_V2)])
 def test_normal_authoring_wrong_revision_fails_before_rendering(revision, version):
@@ -3352,6 +3512,9 @@ def test_local_repair_wrong_cause(mutation, error):
 def test_local_repair_connected_scope_context_and_semantic_nonclaim():
     bundle, stage, response, request, patch = _local_repair_fixture()
     context = json.loads(request["prompt"].split("\n\nLOCAL_REPAIR_CONTEXT\n")[1])
+    assert request["schema_version"] == "semantic_reconciliation_repair_request_v1"
+    assert request["request_sha256"] == "87376544cbc66a1995c5a8e89c719cc379a06ea7732baefb17b32cb56bd404ec"
+    assert "duplicate_leaf_conflicts" not in context
     assert len(context["candidates"]) == len(context["evidence"]) == 1
     assert context["source_inventory_not_claim_support"]["evidence_row_count"] == 1
     assert context["evidence"][0]["text"]

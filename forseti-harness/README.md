@@ -51,7 +51,7 @@ repair keep their previously fitting historical requests and existing keys.
 Oversized local repairs try a lossless table layout before enforcing the same
 byte limit; all sources and connected attachments remain present, and the
 response schema is unchanged. This packing adds no provider stage or semantic
-clearance. The semantic-integration contract v105 owns this boundary.
+clearance. The semantic-integration contract v106 owns this boundary.
 
 For authorized unattended Codex jobs whose retries, elapsed time, or failure
 history matter, use the shared executor rather than a task-local buffered
