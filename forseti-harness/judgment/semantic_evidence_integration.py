@@ -7665,6 +7665,17 @@ def diagnose_reconciliation_response(
                         )
                     }
                 )
+                if unreadable_owners or key in ambiguous_owner_keys:
+                    # Every enumerated path is exact, but unreadable ownership
+                    # may still hide another entering child. Never present a
+                    # partial collision as the complete one.
+                    skipped.append(
+                        {
+                            "scope": "node",
+                            "key": key,
+                            "reason": "malformed decisions or attachments cannot show every child entering this node",
+                        }
+                    )
             if unique_nodes[key].get("terminal_proposition") is True:
                 support_evidence = {
                     _leaf_evidence_id(ref, evidence_index, node_key=key)

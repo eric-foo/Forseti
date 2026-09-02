@@ -2971,6 +2971,51 @@ def test_repeated_attachment_is_not_a_repeated_leaf_path():
     assert "duplicate_leaf_conflicts" not in context
 
 
+def test_repeated_leaf_paths_never_present_unobserved_ownership_as_complete():
+    bundle, _, stage, _, response = _decision_reconciliation_fixture(count=3)
+    refs = list(response["decisions_by_candidate_ref"])
+    key = response["semantic_nodes"][0]["semantic_node_key"]
+    shared = stage["candidates"][0]["candidate_ref"]
+    for candidate in stage["candidates"]:
+        candidate["leaf_relations"] = [
+            {"semantic_unit_ref": shared, "relation": "support"}
+        ]
+    response["decisions_by_candidate_ref"][refs[0]]["attachments"] = [
+        {"semantic_node_key": key, "relation": "not a relation"}
+    ]
+    stage["stage_sha256"] = semantic_module._sha256(
+        {name: value for name, value in stage.items() if name != "stage_sha256"}
+    )
+    response["stage_sha256"] = stage["stage_sha256"]
+
+    diagnostic = semantic_module.diagnose_reconciliation_response(
+        bundle, stage, response
+    )
+    issue = next(row for row in diagnostic["issues"] if row["code"] == "duplicate_leaf")
+    # Every enumerated path stays exact ...
+    assert issue["duplicated_semantic_unit_refs"] == [shared]
+    assert [
+        row["child_ref"]
+        for row in issue["child_paths_by_semantic_unit_ref"][0]["child_paths"]
+    ] == sorted(refs[1:])
+    # ... and the third real owner, hidden by its malformed attachment, is named
+    # at node scope rather than silently dropped from a complete-looking list.
+    assert {
+        "scope": "node",
+        "key": key,
+        "reason": "malformed decisions or attachments cannot show every child entering this node",
+    } in diagnostic["skipped_dependent_checks"]
+    # The bounded repair route stays fail-closed on the same response.
+    with pytest.raises(SemanticIntegrationError, match="malformed attachment"):
+        semantic_module.prepare_reconciliation_repair(
+            bundle,
+            stage,
+            response,
+            node_keys=[key],
+            reason="Repair only the exact repeated-leaf component.",
+        )
+
+
 @pytest.mark.parametrize("revision,version", [("unknown", None),
     (semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1, semantic_module.RECONCILIATION_RESPONSE_VERSION_V2)])
 def test_normal_authoring_wrong_revision_fails_before_rendering(revision, version):
