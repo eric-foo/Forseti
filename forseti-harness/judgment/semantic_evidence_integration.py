@@ -6728,10 +6728,14 @@ def prepare_reconciliation_repair(
                 raise SemanticIntegrationError("local repair malformed attachment")
             key = attachment["semantic_node_key"]
             refs_by_key[key].add(ref)
+            if key not in keys_by_ref[ref]:
+                # One entering path per child, exactly as the diagnostic reads
+                # ownership: a repeated attachment is its own separate issue,
+                # never a second path that repeats a leaf.
+                relations_by_key[key].append(
+                    {"child_ref": ref, "relation": attachment["relation"]}
+                )
             keys_by_ref[ref].add(key)
-            relations_by_key[key].append(
-                {"child_ref": ref, "relation": attachment["relation"]}
-            )
     seeds = {"node_keys": _string_list(list(node_keys), field="repair.node_keys"),
              "candidate_refs": _string_list(list(candidate_refs), field="repair.candidate_refs"), "reason": reason}
     if (not _nonempty(reason) or not (node_keys or candidate_refs)

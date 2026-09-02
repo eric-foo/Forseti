@@ -2940,6 +2940,37 @@ def test_duplicate_leaf_diagnostic_and_repair_name_every_leaf_path():
     ]
 
 
+def test_repeated_attachment_is_not_a_repeated_leaf_path():
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    ref = list(response["decisions_by_candidate_ref"])[0]
+    attachments = response["decisions_by_candidate_ref"][ref]["attachments"]
+    attachments.append(deepcopy(attachments[0]))
+    stage["stage_sha256"] = semantic_module._sha256(
+        {key: value for key, value in stage.items() if key != "stage_sha256"}
+    )
+    response["stage_sha256"] = stage["stage_sha256"]
+
+    with pytest.raises(
+        SemanticIntegrationError, match="duplicate or invalid attachment"
+    ):
+        validate_reconciliation_stage(bundle, stage, [response])
+    diagnostic = semantic_module.diagnose_reconciliation_response(bundle, stage, response)
+    assert [row["code"] for row in diagnostic["issues"]] == [
+        "duplicate_or_invalid_attachment"
+    ]
+
+    request = semantic_module.prepare_reconciliation_repair(
+        bundle,
+        stage,
+        response,
+        node_keys=[response["semantic_nodes"][0]["semantic_node_key"]],
+        reason="Repair only the exact connected component.",
+    )
+    context = json.loads(request["prompt"].split("\n\nLOCAL_REPAIR_CONTEXT\n")[1])
+    assert request["schema_version"] == "semantic_reconciliation_repair_request_v1"
+    assert "duplicate_leaf_conflicts" not in context
+
+
 @pytest.mark.parametrize("revision,version", [("unknown", None),
     (semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1, semantic_module.RECONCILIATION_RESPONSE_VERSION_V2)])
 def test_normal_authoring_wrong_revision_fails_before_rendering(revision, version):
