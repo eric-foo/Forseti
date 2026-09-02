@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v104
+version: v105
 effective_date: 2026-09-02
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v104
+# Semantic Evidence Integration Contract v105
 
 ## Purpose
 
@@ -2184,6 +2184,30 @@ new frontier.
 
 ## Changelog
 
+- `v105` / 2026-09-02 — added a separate fail-closed reconciliation recovery
+  route for a completed structured `agent_message` stranded by a timed-out
+  immutable provider attempt. Normal publication still rejects timed-out
+  executions, and recovery never relabels the attempt. It verifies the start
+  and terminal execution receipts; their prompt, response-schema, event,
+  stderr, and optional response bindings; strict JSONL; one distinct completed
+  message; the exact stored response schema; and the unchanged reconciliation
+  consumer before writing a new no-replace response and recovery receipt.
+  Exact identical retransmissions inside one attempt may collapse. Across
+  eligible retry attempts the earliest bound start time wins without semantic
+  comparison. Missing completed-turn usage remains `UNOBSERVED`; zero or
+  multiple distinct messages, malformed or partial JSON, hash drift, schema or
+  native rejection, and non-timeout outcomes fail closed. Read-only dogfood
+  over all 14 frozen Dieux v1/v2 level-4 timeout attempts found 7 recoverable
+  and 7 rejected: 3 had no completed message, 1 had two distinct completed
+  messages, and 3 failed the unchanged native consumer. All 56 source files
+  remained byte-identical. A fresh proof selected the earlier of two distinct
+  schema- and native-valid batch-0025 answers by start time, rejected its
+  zero-message newest retry, preserved usage as unobserved, and passed the
+  current consumer with validation hash
+  `97f28fe84672fc0aaa87402869d0a80e4869a0e77b8b0e50d5baba0a50a73292`.
+  This is transport recovery, not provider-completion evidence, semantic
+  best-of selection, token accounting, provider reliability, Phase A
+  completion, or Deliver work; it adds no provider call or retry loop.
 - `v104` / 2026-09-02 — versioned current normal reconciliation authoring to
   `exact_identity_namespaces_v2`. It states the unchanged native rule that one
   original semantic leaf may enter a node through only one attached child, and

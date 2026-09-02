@@ -51,7 +51,7 @@ repair keep their previously fitting historical requests and existing keys.
 Oversized local repairs try a lossless table layout before enforcing the same
 byte limit; all sources and connected attachments remain present, and the
 response schema is unchanged. This packing adds no provider stage or semantic
-clearance. The semantic-integration contract v93 owns this boundary.
+clearance. The semantic-integration contract v105 owns this boundary.
 
 For authorized unattended Codex jobs whose retries, elapsed time, or failure
 history matter, use the shared executor rather than a task-local buffered
@@ -95,6 +95,25 @@ Historical attempts with no executor record retain their existing
 execution-record exemption, not an exemption from duplicate-key rejection.
 A retry gets a new attempt ID; the executor launches no
 automatic retry and never changes prompts, models, or evidence to obtain a pass.
+
+When a timed-out attempt contains a completed structured `agent_message`, do not
+weaken the normal publisher or relabel the attempt. Reconciliation may use the
+separate recovery command with one or more chronological retry candidates:
+
+```powershell
+python runners/run_semantic_evidence_integration.py recover-reconciliation-provider-attempt --bundle <bundle.json> --stage <stage.json> --response-schema <batch.schema.json> --attempt-dir <attempt-1> --attempt-dir <attempt-2> --recovery-dir <new-recovery-dir>
+```
+
+The command verifies the execution start and terminal receipts, their bound
+prompt/schema/output hashes, and a strict complete JSONL stream. It requires one
+distinct completed `agent_message` per attempt, collapsing only exact identical
+retransmissions, then applies the bound JSON schema and unchanged native
+reconciliation consumer. Among eligible attempts it selects the earliest bound
+`started_at`; it never compares answer quality. Zero or multiple distinct
+messages, malformed JSON, hash drift, schema or native rejection, and any
+non-timeout outcome fail closed. The new response and recovery receipt are
+no-replace artifacts. Missing completed-turn usage remains `UNOBSERVED`, the
+original attempt remains `TIMED_OUT`, and the command makes no provider call.
 
 The shared runtime lives in `provider_execution.py`; immutable storage and
 publication remain in `provider_attempts.py`. This is not a mandatory wrapper

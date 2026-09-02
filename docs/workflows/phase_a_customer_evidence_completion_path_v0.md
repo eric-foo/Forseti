@@ -347,6 +347,24 @@ validates the batch-bound response, extracts and preserves the exact completed-
 turn usage, and atomically hard-links the response without replacement. Keep
 every attempt directory after publication or failure.
 
+A completed structured answer stranded inside a timed-out attempt is not a
+normal publication success. For reconciliation only, use
+`recover-reconciliation-provider-attempt` with the exact bundle, immutable
+stage, stored batch schema, every candidate attempt directory, and a new
+recovery directory. The route verifies both execution receipts; the bound
+prompt, schema, events, stderr, and optional response hashes; one distinct
+completed `agent_message`; strict JSON object decoding; the stored response
+schema; and the unchanged stage-native consumer. Exact identical
+retransmissions inside one attempt may collapse. Across eligible retries the
+earliest bound `started_at` wins without comparing answer meaning or quality.
+Zero messages, multiple distinct messages, partial or malformed JSON, changed
+hashes, schema or native rejection, and non-timeout outcomes remain rejected.
+The route writes new no-replace response and recovery-receipt artifacts, never
+changes the attempt, never relabels its `TIMED_OUT` outcome, makes no provider
+call, and records missing completed-turn usage as `UNOBSERVED` rather than
+estimating it. Normal publication remains unchanged and still refuses timed-out
+attempts.
+
 Whole-row verification and repair preparation for current keyed-v3 methods v10,
 v11 and v12 emits response v2 with one required answer slot per assigned evidence ID. Use the
 public preparation runner's accompanying `.schema.json` as the provider output

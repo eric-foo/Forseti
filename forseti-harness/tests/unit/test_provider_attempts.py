@@ -7,6 +7,11 @@ from pathlib import Path
 import pytest
 
 from provider_attempts import publish_provider_attempt, reserve_provider_attempt
+from provider_attempts import (
+    ProviderAttemptRecoveryError,
+    inspect_timed_out_provider_attempt,
+    recover_timed_out_provider_attempt,
+)
 
 
 def _events(usage: dict[str, int]) -> str:
@@ -190,3 +195,217 @@ def test_publication_recovery_never_restamps_conflicting_usage(tmp_path: Path, v
         publish_provider_attempt(**kwargs)
     assert usage_path.read_bytes() == before
     assert not (tmp_path / "responses/answer.json").exists()
+
+
+def _timeout_attempt(
+    tmp_path: Path,
+    *,
+    name: str,
+    messages: list[str],
+    started_at: str,
+    schema_path: Path | None = None,
+    outcome: str = "TIMED_OUT",
+) -> tuple[Path, Path]:
+    prompt = tmp_path / "prompt.md"
+    if not prompt.exists():
+        prompt.write_text("bound prompt", encoding="utf-8")
+    schema_path = schema_path or tmp_path / "response.schema.json"
+    if not schema_path.exists():
+        schema_path.write_text(
+            json.dumps(
+                {
+                    "type": "object",
+                    "properties": {"answer": {"type": "integer"}},
+                    "required": ["answer"],
+                    "additionalProperties": False,
+                }
+            ),
+            encoding="utf-8",
+        )
+    attempt = Path(
+        reserve_provider_attempt(
+            attempt_root=tmp_path / "timeout-attempts", attempt_id=name
+        )["attempt_dir"]
+    )
+    events = b"".join(
+        (
+            json.dumps(
+                {
+                    "type": "item.completed",
+                    "item": {"type": "agent_message", "text": message},
+                },
+                separators=(",", ":"),
+            )
+            + "\n"
+        ).encode("utf-8")
+        for message in messages
+    )
+    stderr = b"retrying sampling request (1/5)\n"
+    start = {
+        "schema_version": "forseti_provider_execution_started_v1",
+        "command": ["codex", "exec"],
+        "started_at": started_at,
+        "timeout_seconds": 600,
+        "prompt_path": str(prompt),
+        "prompt_sha256": hashlib.sha256(prompt.read_bytes()).hexdigest(),
+        "prompt_bytes": prompt.stat().st_size,
+        "response_schema_path": str(schema_path),
+        "response_schema_sha256": hashlib.sha256(schema_path.read_bytes()).hexdigest(),
+    }
+    (attempt / "execution_started.json").write_text(
+        json.dumps(start), encoding="utf-8"
+    )
+    (attempt / "events.jsonl").write_bytes(events)
+    (attempt / "stderr.log").write_bytes(stderr)
+    receipt = {
+        **start,
+        "schema_version": "forseti_provider_execution_receipt_v1",
+        "outcome": outcome,
+        "acceptance_status": "NOT_VALIDATED",
+        "events_sha256": hashlib.sha256(events).hexdigest(),
+        "stderr_sha256": hashlib.sha256(stderr).hexdigest(),
+        "response_sha256": None,
+        "response_bytes": 0,
+        "usage": None,
+        "usage_status": "UNOBSERVED_OR_INCOMPLETE",
+    }
+    (attempt / "execution_receipt.json").write_text(
+        json.dumps(receipt), encoding="utf-8"
+    )
+    return attempt, schema_path
+
+
+def test_timeout_recovery_selects_earliest_exact_message_and_preserves_sources(
+    tmp_path: Path,
+) -> None:
+    later, schema = _timeout_attempt(
+        tmp_path,
+        name="attempt-002",
+        messages=['{ "answer": 2 }'],
+        started_at="2026-09-02T02:00:00.000000Z",
+    )
+    earlier, _ = _timeout_attempt(
+        tmp_path,
+        name="attempt-001",
+        messages=['{ "answer": 1 }', '{ "answer": 1 }'],
+        started_at="2026-09-02T01:00:00.000000Z",
+        schema_path=schema,
+    )
+    before = {
+        path: path.read_bytes()
+        for attempt in (earlier, later)
+        for path in attempt.iterdir()
+    }
+    seen: list[int] = []
+
+    def native(response: dict) -> dict:
+        seen.append(response["answer"])
+        return {"native_answer": response["answer"]}
+
+    result = recover_timed_out_provider_attempt(
+        attempt_dirs=[later, earlier],
+        response_schema_path=schema,
+        recovery_dir=tmp_path / "recovery",
+        validate_response=native,
+    )
+    assert seen == [2, 1]
+    assert result["selected_attempt_id"] == "attempt-001"
+    assert result["provider_attempt_outcome"] == "TIMED_OUT"
+    assert result["provider_attempt_acceptance_status"] == "NOT_VALIDATED"
+    assert result["provider_attempt_reclassified"] is False
+    assert result["agent_message_count"] == 2
+    assert result["distinct_agent_message_count"] == 1
+    assert result["identical_retransmission_count"] == 1
+    assert result["usage"] is None
+    assert result["usage_status"] == "UNOBSERVED"
+    assert result["validation"] == {"native_answer": 1}
+    assert Path(result["response_path"]).read_bytes() == b'{ "answer": 1 }'
+    durable = json.loads(Path(result["recovery_receipt_path"]).read_text())
+    assert durable["selected_attempt_id"] == "attempt-001"
+    assert durable["selection_rule"].startswith("earliest eligible attempt")
+    assert all(path.read_bytes() == value for path, value in before.items())
+    with pytest.raises(ValueError, match="refusing to overwrite existing recovery"):
+        recover_timed_out_provider_attempt(
+            attempt_dirs=[earlier],
+            response_schema_path=schema,
+            recovery_dir=tmp_path / "recovery",
+            validate_response=native,
+        )
+    assert all(path.read_bytes() == value for path, value in before.items())
+
+
+def test_timeout_recovery_rejects_each_bound_failure_at_its_intended_guard(
+    tmp_path: Path,
+) -> None:
+    cases = [
+        ("zero", [], "TIMED_OUT", lambda value: {}, "ZERO_AGENT_MESSAGES"),
+        (
+            "multiple",
+            ['{"answer":1}', '{"answer":2}'],
+            "TIMED_OUT",
+            lambda value: {},
+            "MULTIPLE_DISTINCT_AGENT_MESSAGES",
+        ),
+        (
+            "malformed",
+            ['{"answer":'],
+            "TIMED_OUT",
+            lambda value: {},
+            "MALFORMED_AGENT_MESSAGE_JSON",
+        ),
+        (
+            "schema",
+            ['{"answer":"wrong"}'],
+            "TIMED_OUT",
+            lambda value: {},
+            "RESPONSE_SCHEMA_REJECTED",
+        ),
+        (
+            "native",
+            ['{"answer":1}'],
+            "TIMED_OUT",
+            lambda value: (_ for _ in ()).throw(ValueError("native reject")),
+            "NATIVE_VALIDATION_REJECTED",
+        ),
+        (
+            "completed",
+            ['{"answer":1}'],
+            "PROCESS_COMPLETED",
+            lambda value: {},
+            "NOT_TIMED_OUT",
+        ),
+    ]
+    schema: Path | None = None
+    for index, (name, messages, outcome, native, expected_code) in enumerate(cases):
+        attempt, schema = _timeout_attempt(
+            tmp_path,
+            name=name,
+            messages=messages,
+            started_at=f"2026-09-02T01:00:{index:02d}.000000Z",
+            schema_path=schema,
+            outcome=outcome,
+        )
+        with pytest.raises(ProviderAttemptRecoveryError) as error:
+            inspect_timed_out_provider_attempt(
+                attempt_dir=attempt,
+                response_schema_path=schema,
+                validate_response=native,
+            )
+        assert error.value.code == expected_code
+
+    drifted, schema = _timeout_attempt(
+        tmp_path,
+        name="drifted",
+        messages=['{"answer":1}'],
+        started_at="2026-09-02T01:01:00.000000Z",
+        schema_path=schema,
+    )
+    with (drifted / "events.jsonl").open("ab") as handle:
+        handle.write(b"{}\n")
+    with pytest.raises(ProviderAttemptRecoveryError) as error:
+        inspect_timed_out_provider_attempt(
+            attempt_dir=drifted,
+            response_schema_path=schema,
+            validate_response=lambda value: {},
+        )
+    assert error.value.code == "HASH_DRIFT"
