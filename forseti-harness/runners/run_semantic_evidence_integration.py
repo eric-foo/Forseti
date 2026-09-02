@@ -111,6 +111,7 @@ from judgment.phase_a_evidence_selection import (  # noqa: E402
 from harness_utils import hash_file  # noqa: E402
 from provider_attempts import (  # noqa: E402
     publish_provider_attempt,
+    recover_timed_out_provider_attempt,
     reserve_provider_attempt,
     unique_json_object,
 )
@@ -1002,6 +1003,31 @@ def validate_reconciliation_response_file(
         **receipt,
         "receipt_out": str(receipt_out) if receipt_out is not None else None,
         "model_api_calls": 0,
+    }
+
+
+def recover_reconciliation_provider_attempt(
+    *,
+    bundle_path: Path,
+    stage_path: Path,
+    response_schema_path: Path,
+    attempt_dirs: Sequence[Path],
+    recovery_dir: Path,
+) -> dict[str, Any]:
+    """Recover one timeout message through schema and the native consumer."""
+
+    bundle, stage = _load_object(bundle_path), _load_object(stage_path)
+    recovered = recover_timed_out_provider_attempt(
+        attempt_dirs=attempt_dirs,
+        response_schema_path=response_schema_path,
+        recovery_dir=recovery_dir,
+        validate_response=lambda response: validate_one_reconciliation_response(
+            bundle, stage, response
+        ),
+    )
+    return {
+        **recovered,
+        "status": "SEMANTIC_RECONCILIATION_PROVIDER_ATTEMPT_RECOVERED",
     }
 
 
@@ -2687,6 +2713,15 @@ def _parser() -> argparse.ArgumentParser:
     validate_reconciliation.add_argument("--response", type=Path, required=True)
     validate_reconciliation.add_argument("--receipt-out", type=Path)
 
+    recover_reconciliation = sub.add_parser("recover-reconciliation-provider-attempt")
+    recover_reconciliation.add_argument("--bundle", type=Path, required=True)
+    recover_reconciliation.add_argument("--stage", type=Path, required=True)
+    recover_reconciliation.add_argument("--response-schema", type=Path, required=True)
+    recover_reconciliation.add_argument(
+        "--attempt-dir", type=Path, action="append", required=True
+    )
+    recover_reconciliation.add_argument("--recovery-dir", type=Path, required=True)
+
     diagnose_reconciliation = sub.add_parser("diagnose-reconciliation-response")
     diagnose_reconciliation.add_argument("--bundle", type=Path, required=True)
     diagnose_reconciliation.add_argument("--stage", type=Path, required=True)
@@ -3211,6 +3246,14 @@ def main(argv: list[str] | None = None) -> int:
                 stage_path=args.stage,
                 response_path=args.response,
                 receipt_out=args.receipt_out,
+            )
+        elif args.command == "recover-reconciliation-provider-attempt":
+            result = recover_reconciliation_provider_attempt(
+                bundle_path=args.bundle,
+                stage_path=args.stage,
+                response_schema_path=args.response_schema,
+                attempt_dirs=args.attempt_dir,
+                recovery_dir=args.recovery_dir,
             )
         elif args.command == "diagnose-reconciliation-response":
             result = diagnose_reconciliation_response_file(
