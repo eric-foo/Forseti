@@ -201,7 +201,13 @@ relation, and derived effective relation. The same deterministic structure is
 included in a repeated-leaf local-repair context under
 `duplicate_leaf_conflicts`. It is derived only from already-supplied candidates
 and attachments; it does not select a child to detach, deduplicate a leaf, alter
-a relation, or award semantic warrant. Repeated-leaf requests use repair-request
+a relation, or award semantic warrant. Enumerated paths are always exact, and
+they are complete wherever node ownership is fully observed. Where a malformed
+decision or attachment could still hide an entering child, the diagnostic keeps
+the observed paths and records that node in `skipped_dependent_checks` instead
+of presenting a partial collision as the complete one; the bounded repair route
+never packs a partial collision because it already rejects any malformed
+decision or attachment. Repeated-leaf requests use repair-request
 v2. Clean components keep their prior v1 request bytes, and the composer
 rederives stored v1 requests by their recorded version so historical successors
 remain replayable.
