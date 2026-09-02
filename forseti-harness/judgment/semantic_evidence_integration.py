@@ -69,7 +69,9 @@ PACK_BATCH_ID_PREFIX = "batch-"
 RECONCILIATION_RESPONSE_VERSION = "semantic_evidence_reconciliation_response_v1"
 RECONCILIATION_RESPONSE_VERSION_V2 = "semantic_evidence_reconciliation_response_v2"
 RECONCILIATION_RESPONSE_VERSION_V3 = "semantic_evidence_reconciliation_response_v3"
-RECONCILIATION_DIAGNOSTIC_VERSION = "semantic_evidence_reconciliation_diagnostic_v1"
+RECONCILIATION_DIAGNOSTIC_VERSION = "semantic_evidence_reconciliation_diagnostic_v2"
+RECONCILIATION_REPAIR_REQUEST_VERSION_V1 = "semantic_reconciliation_repair_request_v1"
+RECONCILIATION_REPAIR_REQUEST_VERSION_V2 = "semantic_reconciliation_repair_request_v2"
 RECONCILIATION_AUTHORING_LEGACY = "legacy"
 RECONCILIATION_AUTHORING_IDENTITY_V1 = "exact_identity_namespaces_v1"
 RECONCILIATION_AUTHORING_IDENTITY_V2 = "exact_identity_namespaces_v2"
@@ -6641,7 +6643,57 @@ def _pack_reconciliation_repair_context(context):
     return packed
 
 
-def prepare_reconciliation_repair(bundle, stage, response, *, node_keys=(), candidate_refs=(), reason):
+def _reconciliation_duplicate_leaf_conflict(node_key, relations, candidate_index):
+    """Return every deterministic child path for leaves repeated at one node."""
+    paths_by_ref = defaultdict(list)
+    for relation in relations:
+        child = candidate_index[relation["child_ref"]]
+        for leaf in child["leaf_relations"]:
+            paths_by_ref[leaf["semantic_unit_ref"]].append({
+                "child_ref": relation["child_ref"],
+                "child_relation": relation["relation"],
+                "leaf_relation": leaf["relation"],
+                "effective_relation": _relation_product(
+                    relation["relation"], leaf["relation"]
+                ),
+            })
+    repeated = [
+        {
+            "semantic_unit_ref": ref,
+            "child_paths": sorted(
+                paths,
+                key=lambda row: (
+                    row["child_ref"],
+                    row["child_relation"],
+                    row["leaf_relation"],
+                    row["effective_relation"],
+                ),
+            ),
+        }
+        for ref, paths in sorted(paths_by_ref.items())
+        if len(paths) > 1
+    ]
+    if not repeated:
+        return None
+    return {
+        "semantic_node_key": node_key,
+        "duplicated_semantic_unit_refs": [
+            row["semantic_unit_ref"] for row in repeated
+        ],
+        "child_paths_by_semantic_unit_ref": repeated,
+    }
+
+
+def prepare_reconciliation_repair(
+    bundle,
+    stage,
+    response,
+    *,
+    node_keys=(),
+    candidate_refs=(),
+    reason,
+    request_version=None,
+):
     """Pack an explicitly nominated connected component; never detect meaning errors.
 
     This failure/review-only route includes exact source context. It adds no
@@ -6665,7 +6717,7 @@ def prepare_reconciliation_repair(bundle, stage, response, *, node_keys=(), cand
         nodes_by_key[node["semantic_node_key"]].append(node)
     by_key = {key: rows[0] for key, rows in nodes_by_key.items()}
     duplicate_keys = {key for key, rows in nodes_by_key.items() if len(rows) > 1}
-    refs_by_key, keys_by_ref = defaultdict(set), {}
+    refs_by_key, keys_by_ref, relations_by_key = defaultdict(set), {}, defaultdict(list)
     for ref, decision in decisions.items():
         if not isinstance(decision, Mapping) or set(decision) != {"attachments", "unmerged_reason"} or not isinstance(decision["attachments"], list):
             raise SemanticIntegrationError("local repair malformed candidate decision")
@@ -6676,6 +6728,13 @@ def prepare_reconciliation_repair(bundle, stage, response, *, node_keys=(), cand
                 raise SemanticIntegrationError("local repair malformed attachment")
             key = attachment["semantic_node_key"]
             refs_by_key[key].add(ref)
+            if key not in keys_by_ref[ref]:
+                # One entering path per child, exactly as the diagnostic reads
+                # ownership: a repeated attachment is its own separate issue,
+                # never a second path that repeats a leaf.
+                relations_by_key[key].append(
+                    {"child_ref": ref, "relation": attachment["relation"]}
+                )
             keys_by_ref[ref].add(key)
     seeds = {"node_keys": _string_list(list(node_keys), field="repair.node_keys"),
              "candidate_refs": _string_list(list(candidate_refs), field="repair.candidate_refs"), "reason": reason}
@@ -6723,6 +6782,27 @@ def prepare_reconciliation_repair(bundle, stage, response, *, node_keys=(), cand
     contexts = _context_index(bundle)
     if context_ids - set(contexts):
         raise SemanticIntegrationError("local repair source context is unavailable")
+    duplicate_leaf_conflicts = [
+        conflict
+        for key in sorted(selected_keys)
+        if (
+            conflict := _reconciliation_duplicate_leaf_conflict(
+                key, relations_by_key[key], index
+            )
+        )
+        is not None
+    ]
+    if request_version is None:
+        request_version = (
+            RECONCILIATION_REPAIR_REQUEST_VERSION_V2
+            if duplicate_leaf_conflicts
+            else RECONCILIATION_REPAIR_REQUEST_VERSION_V1
+        )
+    if request_version not in {
+        RECONCILIATION_REPAIR_REQUEST_VERSION_V1,
+        RECONCILIATION_REPAIR_REQUEST_VERSION_V2,
+    }:
+        raise SemanticIntegrationError("unsupported local repair request version")
     context = {"nomination": seeds,
         "semantic_nodes": [node for node in nodes if node["semantic_node_key"] in selected_keys],
         "decisions_by_candidate_ref": {ref: decisions[ref] for ref in sorted(selected_refs)},
@@ -6731,6 +6811,8 @@ def prepare_reconciliation_repair(bundle, stage, response, *, node_keys=(), cand
         "source_inventory_not_claim_support": {"evidence_row_count": len(evidence_ids),
             "credited_origin_count": len({key for eid in evidence_ids if (key := _credited_origin_key(evidence[eid])) is not None}),
             "uncredited_evidence_ids": [eid for eid in evidence_ids if _credited_origin_key(evidence[eid]) is None]}}
+    if request_version == RECONCILIATION_REPAIR_REQUEST_VERSION_V2:
+        context["duplicate_leaf_conflicts"] = duplicate_leaf_conflicts
     render_args = dict(stage_sha256=stage["stage_sha256"], batch_id=batch["batch_id"],
         candidates=chosen, evidence_index=evidence, preserve_child_scope=True, agreement_origin_rule=True,
         reconciliation_mode=stage.get("reconciliation_mode"), decision_only=True, local_repair=context)
@@ -6740,7 +6822,7 @@ def prepare_reconciliation_repair(bundle, stage, response, *, node_keys=(), cand
         prompt = _render_v3_reconciliation_prompt(**render_args, compact_json=True)
     if len(prompt.encode("utf-8")) > stage["max_prompt_bytes"]:
         raise SemanticIntegrationError("local repair exceeds rendered prompt byte ceiling; no truncation allowed")
-    identity = {"schema_version": "semantic_reconciliation_repair_request_v1", "bundle_sha256": bundle["bundle_sha256"],
+    identity = {"schema_version": request_version, "bundle_sha256": bundle["bundle_sha256"],
         "stage_sha256": stage["stage_sha256"], "response_sha256": _sha256(response), "batch_id": batch["batch_id"],
         "nomination": seeds, "node_keys": sorted(selected_keys), "candidate_refs": sorted(selected_refs),
         "context_sha256": _sha256(context), "prompt": prompt, "prompt_utf8_bytes": len(prompt.encode("utf-8"))}
@@ -6766,7 +6848,13 @@ def prepare_reconciliation_repair(bundle, stage, response, *, node_keys=(), cand
 
 def compose_reconciliation_repair_intermediate(bundle, stage, response, request, patch):
     """Compose one scope-checked repair without presenting it as accepted."""
-    expected = prepare_reconciliation_repair(bundle, stage, response, **request["nomination"])
+    expected = prepare_reconciliation_repair(
+        bundle,
+        stage,
+        response,
+        **request["nomination"],
+        request_version=request.get("schema_version"),
+    )
     if request != expected:
         raise SemanticIntegrationError("local repair request differs from bound inputs")
     if not isinstance(patch, Mapping) or set(patch) != {"request_sha256", "correction"}:
@@ -7342,13 +7430,14 @@ def diagnose_reconciliation_response(
         *,
         candidate_refs: Sequence[str] = (),
         node_keys: Sequence[str] = (),
-    ) -> None:
+    ) -> dict[str, Any]:
         row: dict[str, Any] = {"code": code, "message": message}
         if candidate_refs:
             row["candidate_refs"] = sorted(set(candidate_refs))
         if node_keys:
             row["semantic_node_keys"] = sorted(set(node_keys))
         issues.append(row)
+        return row
 
     shape = _decision_reconciliation_shape(stage["stage_sha256"], batch_id)
     decisions = response.get("decisions_by_candidate_ref")
@@ -7549,24 +7638,44 @@ def diagnose_reconciliation_response(
                 continue
 
             leaf_relations: dict[str, str] = {}
-            duplicate_leaf = False
             for relation in relations:
                 child = candidate_index[relation["child_ref"]]
                 for leaf in child["leaf_relations"]:
                     ref = leaf["semantic_unit_ref"]
-                    if ref in leaf_relations:
-                        duplicate_leaf = True
-                    else:
+                    if ref not in leaf_relations:
                         leaf_relations[ref] = _relation_product(
                             relation["relation"], leaf["relation"]
                         )
-            if duplicate_leaf:
-                add(
+            duplicate_leaf_conflict = _reconciliation_duplicate_leaf_conflict(
+                key, relations, candidate_index
+            )
+            if duplicate_leaf_conflict is not None:
+                issue = add(
                     "duplicate_leaf",
                     f"semantic node {key} duplicates one leaf through multiple children",
                     candidate_refs=[row["child_ref"] for row in relations],
                     node_keys=[key],
                 )
+                issue.update(
+                    {
+                        field: duplicate_leaf_conflict[field]
+                        for field in (
+                            "duplicated_semantic_unit_refs",
+                            "child_paths_by_semantic_unit_ref",
+                        )
+                    }
+                )
+                if unreadable_owners or key in ambiguous_owner_keys:
+                    # Every enumerated path is exact, but unreadable ownership
+                    # may still hide another entering child. Never present a
+                    # partial collision as the complete one.
+                    skipped.append(
+                        {
+                            "scope": "node",
+                            "key": key,
+                            "reason": "malformed decisions or attachments cannot show every child entering this node",
+                        }
+                    )
             if unique_nodes[key].get("terminal_proposition") is True:
                 support_evidence = {
                     _leaf_evidence_id(ref, evidence_index, node_key=key)

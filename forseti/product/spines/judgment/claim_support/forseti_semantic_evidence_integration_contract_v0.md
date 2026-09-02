@@ -8,7 +8,7 @@ depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v104
+# Semantic Evidence Integration Contract v105
 
 ## Purpose
 
@@ -193,6 +193,24 @@ skipped instead of guessing another failure. The report is write-once,
 deterministic, current-v3-only, and makes no provider call. It neither selects a
 repair scope nor proves semantic warrant; source-aware judgment and the existing
 bounded repair routes remain unchanged.
+
+Diagnostic v2 makes a repeated-leaf issue actionable without choosing its
+repair. It lists every duplicated `semantic_unit_ref`, then for each leaf lists
+every entering path as the child ref, child-to-node relation, child leaf
+relation, and derived effective relation. The same deterministic structure is
+included in a repeated-leaf local-repair context under
+`duplicate_leaf_conflicts`. It is derived only from already-supplied candidates
+and attachments; it does not select a child to detach, deduplicate a leaf, alter
+a relation, or award semantic warrant. Enumerated paths are always exact, and
+they are complete wherever node ownership is fully observed. Where a malformed
+decision or attachment could still hide an entering child, the diagnostic keeps
+the observed paths and records that node in `skipped_dependent_checks` instead
+of presenting a partial collision as the complete one; the bounded repair route
+never packs a partial collision because it already rejects any malformed
+decision or attachment. Repeated-leaf requests use repair-request
+v2. Clean components keep their prior v1 request bytes, and the composer
+rederives stored v1 requests by their recorded version so historical successors
+remain replayable.
 
 If a scope-correct repair exposes another independent native failure, the
 failure-only composer may persist that exact repair as
@@ -2184,6 +2202,24 @@ new frontier.
 
 ## Changelog
 
+- `v105` / 2026-09-02 — made repeated-leaf diagnostics and bounded repair
+  contexts enumerate the complete duplicated `semantic_unit_ref` intersection
+  and every child/leaf/effective relation path into the affected node. A
+  two-leaf synthetic collision exercises complete enumeration while the clean
+  fixture retains its prior v1 request hash. Stored v1 repair replay remains
+  byte-identical. On frozen Dieux current-authoring v2 batch
+  `reconcile-0004-0026`, diagnostic v2 deterministically reported all four
+  shared leaf refs through children `node_a853e721919eb5bba8ea` and
+  `node_a9b7375165fae4dd5a1d`; two diagnostic writes were byte-identical. The
+  materially changed repair request grew from 44,923 to 46,781 bytes under the
+  unchanged 120,000-byte ceiling. One `gpt-5.6-sol`/high bounded call produced
+  a scope-valid composition that the unchanged native validator accepted
+  (`validation_sha256`
+  `071358887a99d511add7ca031a1081fd6933b51531a0b4d3dbe6cbb915a79331`).
+  This one outcome does not prove provider reliability or semantic quality;
+  no child choice, automatic deduplication, evidence removal, validator change,
+  provider stage, whole-batch regeneration, frozen mutation, or Deliver claim
+  is added.
 - `v104` / 2026-09-02 — versioned current normal reconciliation authoring to
   `exact_identity_namespaces_v2`. It states the unchanged native rule that one
   original semantic leaf may enter a node through only one attached child, and
