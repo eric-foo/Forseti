@@ -353,10 +353,13 @@ normal publication success. For reconciliation only, use
 stage, stored batch schema, every candidate attempt directory, and a new
 recovery directory. The route verifies both execution receipts; the bound
 prompt, schema, events, stderr, and optional response hashes; one distinct
-completed `agent_message`; strict JSON object decoding; the stored response
-schema; and the unchanged stage-native consumer. Exact identical
+completed `agent_message`; strict JSON object decoding that rejects non-finite
+constants; LF-delimited JSONL that preserves Unicode separators inside string
+values; the stored response schema; and the unchanged stage-native consumer. Exact identical
 retransmissions inside one attempt may collapse. Across eligible retries the
-earliest bound `started_at` wins without comparing answer meaning or quality.
+earliest bound `started_at` UTC instant wins without comparing answer meaning
+or quality; canonical whole-second and fractional-second timestamps are both
+ordered by parsed time rather than their text representation.
 Zero messages, multiple distinct messages, partial or malformed JSON, changed
 hashes, schema or native rejection, and non-timeout outcomes remain rejected.
 The route writes new no-replace response and recovery-receipt artifacts, never

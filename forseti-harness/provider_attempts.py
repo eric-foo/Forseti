@@ -29,6 +29,19 @@ class ProviderAttemptRecoveryError(ValueError):
         super().__init__(f"{code}: {message}")
 
 
+def _reject_json_constant(value: str) -> None:
+    raise ValueError(f"non-finite JSON constant {value!r} is not allowed")
+
+
+def _recovery_started_at(value: str) -> datetime:
+    for shape in ("%Y-%m-%dT%H:%M:%S.%fZ", "%Y-%m-%dT%H:%M:%SZ"):
+        try:
+            return datetime.strptime(value, shape)
+        except ValueError:
+            continue
+    raise ValueError("timestamp is not canonical UTC")
+
+
 def unique_json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     """Decode one JSON object without silently replacing an earlier decision."""
     result = {}
@@ -54,6 +67,7 @@ def _load_unique_object(path: Path, *, label: str) -> tuple[dict[str, Any], byte
         value = json.loads(
             raw.decode("utf-8-sig"),
             object_pairs_hook=unique_json_object,
+            parse_constant=_reject_json_constant,
         )
     except (OSError, UnicodeError, ValueError) as exc:
         raise ProviderAttemptRecoveryError(
@@ -116,7 +130,7 @@ def _verified_timeout_candidate(
             "EXECUTION_RECEIPT_INVALID", "execution receipt lacks a string started_at"
         )
     try:
-        datetime.strptime(execution["started_at"], "%Y-%m-%dT%H:%M:%S.%fZ")
+        started_at_order = _recovery_started_at(execution["started_at"])
     except ValueError as exc:
         raise ProviderAttemptRecoveryError(
             "EXECUTION_RECEIPT_INVALID", "execution receipt started_at is not canonical UTC"
@@ -206,11 +220,15 @@ def _verified_timeout_candidate(
         raise ProviderAttemptRecoveryError(
             "MALFORMED_EVENT_STREAM", "events.jsonl is not valid UTF-8"
         ) from exc
-    for line_number, line in enumerate(event_text.splitlines(), start=1):
+    for line_number, line in enumerate(event_text.split("\n"), start=1):
         if not line.strip():
             continue
         try:
-            event = json.loads(line, object_pairs_hook=unique_json_object)
+            event = json.loads(
+                line,
+                object_pairs_hook=unique_json_object,
+                parse_constant=_reject_json_constant,
+            )
         except ValueError as exc:
             raise ProviderAttemptRecoveryError(
                 "MALFORMED_EVENT_STREAM", f"invalid JSONL event at line {line_number}: {exc}"
@@ -244,7 +262,9 @@ def _verified_timeout_candidate(
     response_bytes = distinct_messages[0].encode("utf-8")
     try:
         response = json.loads(
-            distinct_messages[0], object_pairs_hook=unique_json_object
+            distinct_messages[0],
+            object_pairs_hook=unique_json_object,
+            parse_constant=_reject_json_constant,
         )
     except ValueError as exc:
         raise ProviderAttemptRecoveryError(
@@ -259,6 +279,7 @@ def _verified_timeout_candidate(
         schema = json.loads(
             schema_bytes.decode("utf-8-sig"),
             object_pairs_hook=unique_json_object,
+            parse_constant=_reject_json_constant,
         )
         if not isinstance(schema, dict):
             raise ValueError("schema must be one JSON object")
@@ -301,6 +322,7 @@ def _verified_timeout_candidate(
         "attempt_dir": str(attempt_dir),
         "attempt_id": attempt_dir.name,
         "started_at": execution["started_at"],
+        "started_at_order": started_at_order,
         "execution_started_sha256": sha256_bytes(started_bytes),
         "execution_receipt_sha256": sha256_bytes(execution_bytes),
         "events_sha256": sha256_bytes(events_bytes),
@@ -335,7 +357,7 @@ def inspect_timed_out_provider_attempt(
     return {
         key: value
         for key, value in candidate.items()
-        if key not in {"response", "response_bytes"}
+        if key not in {"response", "response_bytes", "started_at_order"}
     }
 
 
@@ -389,7 +411,10 @@ def recover_timed_out_provider_attempt(
         raise ProviderAttemptRecoveryError(
             "NO_ELIGIBLE_ATTEMPT", causes or "no attempt was eligible"
         )
-    selected = min(eligible, key=lambda row: (row["started_at"], row["attempt_dir"]))
+    selected = min(
+        eligible,
+        key=lambda row: (row["started_at_order"], row["attempt_dir"]),
+    )
     try:
         recovery_dir.mkdir(parents=True)
     except FileExistsError as exc:

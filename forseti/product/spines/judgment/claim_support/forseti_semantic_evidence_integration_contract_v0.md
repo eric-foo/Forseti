@@ -2196,8 +2196,13 @@ new frontier.
   eligible retry attempts the earliest bound start time wins without semantic
   comparison. Missing completed-turn usage remains `UNOBSERVED`; zero or
   multiple distinct messages, malformed or partial JSON, hash drift, schema or
-  native rejection, and non-timeout outcomes fail closed. Read-only dogfood
-  over all 14 frozen Dieux v1/v2 level-4 timeout attempts found 7 recoverable
+  native rejection, and non-timeout outcomes fail closed. Before landing,
+  response, event, receipt, and schema decoding
+  rejects non-finite JSON constants; JSONL records split only on LF so Unicode
+  separators inside string values remain data; and canonical whole-second plus
+  fractional-second UTC starts are compared as parsed instants rather than
+  lexically. These corrections add no provider call, retry, or semantic choice.
+  Read-only dogfood over all 14 frozen Dieux v1/v2 level-4 timeout attempts found 7 recoverable
   and 7 rejected: 3 had no completed message, 1 had two distinct completed
   messages, and 3 failed the unchanged native consumer. All 56 source files
   remained byte-identical. A fresh proof selected the earlier of two distinct

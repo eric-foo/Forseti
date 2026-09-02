@@ -334,6 +334,104 @@ def test_timeout_recovery_selects_earliest_exact_message_and_preserves_sources(
     assert all(path.read_bytes() == value for path, value in before.items())
 
 
+def test_timeout_recovery_rejects_nonfinite_json_constants(tmp_path: Path) -> None:
+    schema = tmp_path / "nonfinite-response.schema.json"
+    schema.write_text(
+        json.dumps(
+            {
+                "type": "object",
+                "properties": {"answer": {"type": "number"}},
+                "required": ["answer"],
+                "additionalProperties": False,
+            }
+        ),
+        encoding="utf-8",
+    )
+    attempt, _ = _timeout_attempt(
+        tmp_path,
+        name="nonfinite",
+        messages=['{"answer":NaN}'],
+        started_at="2026-09-02T01:00:00.000000Z",
+        schema_path=schema,
+    )
+
+    with pytest.raises(ProviderAttemptRecoveryError) as error:
+        inspect_timed_out_provider_attempt(
+            attempt_dir=attempt,
+            response_schema_path=schema,
+            validate_response=lambda value: {},
+        )
+    assert error.value.code == "MALFORMED_AGENT_MESSAGE_JSON"
+
+
+def test_timeout_recovery_orders_whole_and_fractional_seconds(
+    tmp_path: Path,
+) -> None:
+    later, schema = _timeout_attempt(
+        tmp_path,
+        name="fractional-later",
+        messages=['{"answer":2}'],
+        started_at="2026-09-02T01:00:00.500000Z",
+    )
+    earlier, _ = _timeout_attempt(
+        tmp_path,
+        name="whole-second-earlier",
+        messages=['{"answer":1}'],
+        started_at="2026-09-02T01:00:00Z",
+        schema_path=schema,
+    )
+
+    result = recover_timed_out_provider_attempt(
+        attempt_dirs=[later, earlier],
+        response_schema_path=schema,
+        recovery_dir=tmp_path / "whole-second-recovery",
+        validate_response=lambda value: {"answer": value["answer"]},
+    )
+    assert result["selected_attempt_id"] == "whole-second-earlier"
+
+
+def test_timeout_recovery_keeps_unicode_separator_inside_jsonl_string(
+    tmp_path: Path,
+) -> None:
+    schema = tmp_path / "unicode-response.schema.json"
+    schema.write_text(
+        json.dumps(
+            {
+                "type": "object",
+                "properties": {
+                    "answer": {"type": "integer"},
+                    "note": {"type": "string"},
+                },
+                "required": ["answer", "note"],
+                "additionalProperties": False,
+            }
+        ),
+        encoding="utf-8",
+    )
+    message = '{"answer":1,"note":"left\u2028right"}'
+    attempt, _ = _timeout_attempt(
+        tmp_path,
+        name="unicode-separator",
+        messages=[message],
+        started_at="2026-09-02T01:00:00.000000Z",
+        schema_path=schema,
+    )
+    events_path = attempt / "events.jsonl"
+    events = events_path.read_bytes().replace(b"\\u2028", "\u2028".encode("utf-8"))
+    events_path.write_bytes(events)
+    receipt_path = attempt / "execution_receipt.json"
+    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+    receipt["events_sha256"] = hashlib.sha256(events).hexdigest()
+    receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+
+    result = inspect_timed_out_provider_attempt(
+        attempt_dir=attempt,
+        response_schema_path=schema,
+        validate_response=lambda value: {"note": value["note"]},
+    )
+    assert result["validation"] == {"note": "left\u2028right"}
+
+
 def test_timeout_recovery_rejects_each_bound_failure_at_its_intended_guard(
     tmp_path: Path,
 ) -> None:

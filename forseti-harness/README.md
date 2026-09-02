@@ -105,12 +105,14 @@ python runners/run_semantic_evidence_integration.py recover-reconciliation-provi
 ```
 
 The command verifies the execution start and terminal receipts, their bound
-prompt/schema/output hashes, and a strict complete JSONL stream. It requires one
+prompt/schema/output hashes, and a strict complete LF-delimited JSONL stream
+that preserves Unicode separators inside JSON string values. It requires one
 distinct completed `agent_message` per attempt, collapsing only exact identical
 retransmissions, then applies the bound JSON schema and unchanged native
-reconciliation consumer. Among eligible attempts it selects the earliest bound
-`started_at`; it never compares answer quality. Zero or multiple distinct
-messages, malformed JSON, hash drift, schema or native rejection, and any
+reconciliation consumer. JSON decoding rejects non-finite constants. Among
+eligible attempts it selects the earliest parsed UTC `started_at`, accepting
+canonical whole-second or fractional-second timestamps; it never compares answer
+quality. Zero or multiple distinct messages, malformed JSON, hash drift, schema or native rejection, and any
 non-timeout outcome fail closed. The new response and recovery receipt are
 no-replace artifacts. Missing completed-turn usage remains `UNOBSERVED`, the
 original attempt remains `TIMED_OUT`, and the command makes no provider call.
