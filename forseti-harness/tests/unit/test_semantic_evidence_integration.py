@@ -2807,9 +2807,12 @@ def test_public_normal_authoring_default_and_legacy_replay_are_separate(tmp_path
 
 
 def test_identity_v2_caps_current_batches_and_states_leaf_path_invariant(monkeypatch):
-    bundle, verified, _, _, _ = _decision_reconciliation_fixture()
+    # The cap must be exercised above one with a remainder: at one, an
+    # off-by-one that packed cap-1 candidates per batch is indistinguishable
+    # from the correct bound and would silently repack every current stage.
+    bundle, verified, _, _, _ = _decision_reconciliation_fixture(count=8)
     monkeypatch.setattr(
-        semantic_module, "RECONCILIATION_IDENTITY_V2_MAX_BATCH_CANDIDATES", 1
+        semantic_module, "RECONCILIATION_IDENTITY_V2_MAX_BATCH_CANDIDATES", 3
     )
     v1_stage, v1_prompts = prepare_reconciliation_stage(
         bundle,
@@ -2824,7 +2827,7 @@ def test_identity_v2_caps_current_batches_and_states_leaf_path_invariant(monkeyp
         authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V2,
     )
     assert len(v1_stage["batches"]) == 1
-    assert [len(row["candidate_refs"]) for row in v2_stage["batches"]] == [1, 1]
+    assert [len(row["candidate_refs"]) for row in v2_stage["batches"]] == [3, 3, 2]
     assert sorted(
         ref for batch in v2_stage["batches"] for ref in batch["candidate_refs"]
     ) == sorted(row["candidate_ref"] for row in v2_stage["candidates"])
