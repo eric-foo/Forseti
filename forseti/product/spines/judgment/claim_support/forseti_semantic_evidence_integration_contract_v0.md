@@ -224,7 +224,12 @@ definitions; and deterministic forbidden same-node leaf paths. Raw evidence and
 source-context bodies are omitted, not summarized or presented as read. Source
 roles required by the unchanged schema/consumer remain present as derived
 candidate metadata. A mixed, stale, partial, clean, within-one-child, or
-under-nominated diagnostic fails rather than activating the compact route.
+under-nominated diagnostic fails rather than activating the compact route. A
+convergence-mode stage also fails closed: convergence retains a node only on
+repeated distinct source rows, and this projection carries neither those rows
+nor the compiler count that decides retention, so that failure stays on the
+general repair route rather than reaching the provider blind to its own
+acceptance rule.
 
 The model chooses whether and how to split or regroup the affected meanings.
 Code never selects an attachment to delete, changes a relation, authors prose, or
@@ -2232,8 +2237,11 @@ new frontier.
   validator while omitting raw evidence/context bodies and retaining exact
   affected candidate meaning, conditions, identities, provenance paths,
   decisions, parent definitions and deterministic conflicts. Mixed, stale,
-  incomplete, under-scoped, clean and within-one-child diagnostics fail closed;
-  v1/v2 repair and normal authoring replay unchanged. Frozen Dieux level-7 Batch
+  incomplete, under-scoped, clean and within-one-child diagnostics fail closed,
+  as does a convergence-mode stage whose retention rule this projection cannot
+  expose; v1/v2 repair and normal authoring replay unchanged. The frozen stage
+  below is `normal` mode, so that proof is unaffected by the convergence
+  refusal. Frozen Dieux level-7 Batch
   21 retry3 measured 327,975 normal and 316,313 existing-packed prompt bytes
   against the 120,000-byte ceiling. V3 rendered twice at 64,626 bytes with
   identical stored prompt/schema/request hashes. One `gpt-5.6-sol`/high attempt

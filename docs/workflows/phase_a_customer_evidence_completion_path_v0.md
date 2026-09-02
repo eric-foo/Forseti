@@ -513,8 +513,11 @@ bodies rather than truncating or claiming to reread them. The provider still
 chooses the semantic restructuring, and the ordinary composer plus unchanged
 whole-response validator remain final. A stale diagnostic, mixed issue class,
 skipped dependent check, omitted diagnosed scope, clean response, or repeated
-leaf confined to one child blocks this mode. Without `--diagnostic`, the existing
-general repair and historical replay path is unchanged.
+leaf confined to one child blocks this mode. A convergence-mode stage also blocks
+it, because convergence retention counts repeated distinct source rows this
+projection does not carry; use the general repair route for that level. Without
+`--diagnostic`, the existing general repair and historical replay path is
+unchanged.
 
 If the native failure is a reused node key, explicitly nominate that key. The
 repair request includes every definition sharing it and every connected

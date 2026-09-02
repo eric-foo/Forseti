@@ -56,8 +56,10 @@ complete cross-child `duplicate_leaf` issues, pass that report with
 structural repair rendering. It includes the affected validated child meanings,
 identities, conditions, provenance paths, decisions, and parent definitions but
 no raw evidence or source-context bodies. Mixed, stale, incomplete, clean, or
-within-one-child diagnostics fail closed. This adds no provider stage or semantic
-clearance. The semantic-integration contract v107 owns this boundary.
+within-one-child diagnostics fail closed, as does a convergence-mode stage whose
+repeated-source-row retention this projection cannot expose. This adds no
+provider stage or semantic clearance. The semantic-integration contract v107 owns
+this boundary.
 
 For authorized unattended Codex jobs whose retries, elapsed time, or failure
 history matter, use the shared executor rather than a task-local buffered

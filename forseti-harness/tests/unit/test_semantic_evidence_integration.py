@@ -3158,6 +3158,40 @@ def test_duplicate_leaf_compact_repair_distinguishes_one_child_repetition():
         )
 
 
+def test_duplicate_leaf_compact_repair_refuses_convergence_retention_mode():
+    bundle, stage, response = _duplicate_leaf_compact_repair_fixture()[:3]
+    stage["reconciliation_mode"] = "convergence"
+    stage["stage_sha256"] = semantic_module._sha256(
+        {key: value for key, value in stage.items() if key != "stage_sha256"}
+    )
+    response["stage_sha256"] = stage["stage_sha256"]
+    diagnostic = semantic_module.diagnose_reconciliation_response(
+        bundle, stage, response
+    )
+    assert [issue["code"] for issue in diagnostic["issues"]] == ["duplicate_leaf"]
+    nomination = {
+        "node_keys": ["affected"],
+        "reason": "Resolve only the diagnosed repeated-leaf ownership conflict.",
+    }
+    with pytest.raises(SemanticIntegrationError, match="convergence retention requires"):
+        semantic_module.prepare_reconciliation_repair(
+            bundle, stage, response, **nomination, diagnostic=diagnostic
+        )
+    with pytest.raises(SemanticIntegrationError, match="convergence retention requires"):
+        semantic_module.prepare_reconciliation_repair(
+            bundle, stage, response, **nomination,
+            request_version=semantic_module.RECONCILIATION_REPAIR_REQUEST_VERSION_V3,
+        )
+    # The general repair route still carries the evidence rows convergence
+    # counting needs, so it stays available for the same failure.
+    general = semantic_module.prepare_reconciliation_repair(
+        bundle, stage, response, **nomination
+    )
+    assert general["schema_version"] == "semantic_reconciliation_repair_request_v2"
+    context = json.loads(general["prompt"].split("\n\nLOCAL_REPAIR_CONTEXT\n")[1])
+    assert context["evidence"]
+
+
 def test_repeated_attachment_is_not_a_repeated_leaf_path():
     bundle, _, stage, _, response = _decision_reconciliation_fixture()
     ref = list(response["decisions_by_candidate_ref"])[0]

@@ -6885,6 +6885,15 @@ def prepare_reconciliation_repair(
         raise SemanticIntegrationError(
             "duplicate-leaf diagnostic requires current compact repair request version"
         )
+    if compact_duplicate_leaf and stage.get("reconciliation_mode") == "convergence":
+        # Convergence retains a node only on repeated distinct source rows, and
+        # this projection carries neither the evidence rows nor the compiler
+        # count that decides it. Keep the general repair route, which still
+        # supplies those rows, rather than ask for a restructuring whose
+        # acceptance rule the provider cannot see.
+        raise SemanticIntegrationError(
+            "compact local repair omits the source rows convergence retention requires"
+        )
     bound_diagnostic = None
     if compact_duplicate_leaf:
         if diagnostic is None:
