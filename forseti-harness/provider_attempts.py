@@ -7,6 +7,7 @@ validator before canonical publication.
 from __future__ import annotations
 
 import json
+import math
 import os
 from datetime import datetime
 from pathlib import Path
@@ -14,6 +15,7 @@ from typing import Any, Callable, Mapping, Sequence
 
 from jsonschema import SchemaError, ValidationError
 from jsonschema.validators import validator_for
+from referencing.exceptions import Unresolvable
 
 from harness_utils import hash_file, sha256_bytes
 
@@ -31,6 +33,15 @@ class ProviderAttemptRecoveryError(ValueError):
 
 def _reject_json_constant(value: str) -> None:
     raise ValueError(f"non-finite JSON constant {value!r} is not allowed")
+
+
+def _reject_non_finite_number(value: str) -> float:
+    # parse_constant only sees the NaN/Infinity tokens; an overflowing literal
+    # such as 1e400 reaches float() directly and would decode to inf.
+    number = float(value)
+    if not math.isfinite(number):
+        raise ValueError(f"non-finite JSON number {value!r} is not allowed")
+    return number
 
 
 def _recovery_started_at(value: str) -> datetime:
@@ -68,6 +79,7 @@ def _load_unique_object(path: Path, *, label: str) -> tuple[dict[str, Any], byte
             raw.decode("utf-8-sig"),
             object_pairs_hook=unique_json_object,
             parse_constant=_reject_json_constant,
+            parse_float=_reject_non_finite_number,
         )
     except (OSError, UnicodeError, ValueError) as exc:
         raise ProviderAttemptRecoveryError(
@@ -228,6 +240,7 @@ def _verified_timeout_candidate(
                 line,
                 object_pairs_hook=unique_json_object,
                 parse_constant=_reject_json_constant,
+                parse_float=_reject_non_finite_number,
             )
         except ValueError as exc:
             raise ProviderAttemptRecoveryError(
@@ -259,12 +272,19 @@ def _verified_timeout_candidate(
             "MULTIPLE_DISTINCT_AGENT_MESSAGES",
             f"attempt contains {len(distinct_messages)} distinct completed agent_message values",
         )
-    response_bytes = distinct_messages[0].encode("utf-8")
+    try:
+        response_bytes = distinct_messages[0].encode("utf-8")
+    except UnicodeEncodeError as exc:
+        raise ProviderAttemptRecoveryError(
+            "MALFORMED_AGENT_MESSAGE_JSON",
+            f"completed agent_message is not encodable UTF-8 text: {exc}",
+        ) from exc
     try:
         response = json.loads(
             distinct_messages[0],
             object_pairs_hook=unique_json_object,
             parse_constant=_reject_json_constant,
+            parse_float=_reject_non_finite_number,
         )
     except ValueError as exc:
         raise ProviderAttemptRecoveryError(
@@ -280,19 +300,23 @@ def _verified_timeout_candidate(
             schema_bytes.decode("utf-8-sig"),
             object_pairs_hook=unique_json_object,
             parse_constant=_reject_json_constant,
+            parse_float=_reject_non_finite_number,
         )
         if not isinstance(schema, dict):
             raise ValueError("schema must be one JSON object")
         validator_type = validator_for(schema)
         validator_type.check_schema(schema)
         validator_type(schema).validate(response)
-    except (OSError, UnicodeError, ValueError, SchemaError) as exc:
-        raise ProviderAttemptRecoveryError(
-            "RESPONSE_SCHEMA_INVALID", f"bound response schema is unusable: {exc}"
-        ) from exc
     except ValidationError as exc:
         raise ProviderAttemptRecoveryError(
             "RESPONSE_SCHEMA_REJECTED", f"completed agent_message fails response schema: {exc.message}"
+        ) from exc
+    except (OSError, UnicodeError, ValueError, SchemaError, Unresolvable) as exc:
+        # Reference resolution raises outside the prior ValueError/SchemaError
+        # tuple. Keep known unusable-schema failures local without hiding an
+        # unexpected validator programming fault as bad provider evidence.
+        raise ProviderAttemptRecoveryError(
+            "RESPONSE_SCHEMA_INVALID", f"bound response schema is unusable: {exc}"
         ) from exc
     try:
         validation = dict(validate_response(response))
@@ -374,6 +398,13 @@ def recover_timed_out_provider_attempt(
         raise ValueError("at least one provider attempt is required")
     if len({str(path.resolve()) for path in attempt_dirs}) != len(attempt_dirs):
         raise ValueError("provider attempt list contains a duplicate directory")
+    resolved_recovery = recovery_dir.resolve()
+    for attempt_dir in attempt_dirs:
+        resolved_attempt = attempt_dir.resolve()
+        if resolved_attempt == resolved_recovery or resolved_attempt in resolved_recovery.parents:
+            raise ValueError(
+                f"refusing to write recovery inside a frozen attempt: {attempt_dir}"
+            )
     considered: list[dict[str, Any]] = []
     eligible: list[dict[str, Any]] = []
     for attempt_dir in attempt_dirs:

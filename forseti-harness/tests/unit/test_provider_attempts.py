@@ -507,3 +507,117 @@ def test_timeout_recovery_rejects_each_bound_failure_at_its_intended_guard(
             validate_response=lambda value: {},
         )
     assert error.value.code == "HASH_DRIFT"
+
+
+def test_timeout_recovery_rejects_non_finite_overflow_number(tmp_path: Path) -> None:
+    schema = tmp_path / "overflow-response.schema.json"
+    schema.write_text(
+        json.dumps(
+            {
+                "type": "object",
+                "properties": {"answer": {"type": "number"}},
+                "required": ["answer"],
+                "additionalProperties": False,
+            }
+        ),
+        encoding="utf-8",
+    )
+    attempt, _ = _timeout_attempt(
+        tmp_path,
+        name="overflow",
+        messages=['{"answer":1e400}'],
+        started_at="2026-09-02T01:00:00.000000Z",
+        schema_path=schema,
+    )
+
+    with pytest.raises(ProviderAttemptRecoveryError) as error:
+        inspect_timed_out_provider_attempt(
+            attempt_dir=attempt,
+            response_schema_path=schema,
+            validate_response=lambda value: {"echo": value["answer"]},
+        )
+    assert error.value.code == "MALFORMED_AGENT_MESSAGE_JSON"
+
+
+def test_timeout_recovery_rejects_unencodable_message_without_losing_sibling(
+    tmp_path: Path,
+) -> None:
+    unencodable, schema = _timeout_attempt(
+        tmp_path,
+        name="unencodable",
+        messages=['{"answer":"\ud800"}'],
+        started_at="2026-09-02T01:00:00.000000Z",
+    )
+    eligible, _ = _timeout_attempt(
+        tmp_path,
+        name="eligible",
+        messages=['{"answer":1}'],
+        started_at="2026-09-02T02:00:00.000000Z",
+        schema_path=schema,
+    )
+
+    with pytest.raises(ProviderAttemptRecoveryError) as error:
+        inspect_timed_out_provider_attempt(
+            attempt_dir=unencodable,
+            response_schema_path=schema,
+            validate_response=lambda value: {},
+        )
+    assert error.value.code == "MALFORMED_AGENT_MESSAGE_JSON"
+
+    result = recover_timed_out_provider_attempt(
+        attempt_dirs=[unencodable, eligible],
+        response_schema_path=schema,
+        recovery_dir=tmp_path / "sibling-recovery",
+        validate_response=lambda value: {"answer": value["answer"]},
+    )
+    assert result["selected_attempt_id"] == "eligible"
+    rejected = [
+        row for row in result["considered_attempts"] if row["eligibility"] == "REJECTED"
+    ]
+    assert [row["rejection_code"] for row in rejected] == ["MALFORMED_AGENT_MESSAGE_JSON"]
+
+
+def test_timeout_recovery_reports_unresolvable_schema_as_invalid(tmp_path: Path) -> None:
+    schema = tmp_path / "unresolvable-response.schema.json"
+    schema.write_text(
+        json.dumps({"$ref": "http://forseti.invalid/absent.json"}), encoding="utf-8"
+    )
+    attempt, _ = _timeout_attempt(
+        tmp_path,
+        name="unresolvable-schema",
+        messages=['{"answer":1}'],
+        started_at="2026-09-02T01:00:00.000000Z",
+        schema_path=schema,
+    )
+
+    with pytest.raises(ProviderAttemptRecoveryError) as error:
+        inspect_timed_out_provider_attempt(
+            attempt_dir=attempt,
+            response_schema_path=schema,
+            validate_response=lambda value: {},
+        )
+    assert error.value.code == "RESPONSE_SCHEMA_INVALID"
+
+
+def test_timeout_recovery_refuses_to_write_inside_a_frozen_attempt(
+    tmp_path: Path,
+) -> None:
+    attempt, schema = _timeout_attempt(
+        tmp_path,
+        name="frozen",
+        messages=['{"answer":1}'],
+        started_at="2026-09-02T01:00:00.000000Z",
+    )
+    before = {path: path.read_bytes() for path in attempt.iterdir()}
+
+    with pytest.raises(ValueError, match="refusing to write recovery inside"):
+        recover_timed_out_provider_attempt(
+            attempt_dirs=[attempt],
+            response_schema_path=schema,
+            recovery_dir=attempt / "recovered",
+            validate_response=lambda value: {},
+        )
+    assert sorted(path.name for path in attempt.iterdir()) == sorted(
+        path.name for path in before
+    )
+    assert all(path.read_bytes() == value for path, value in before.items())
