@@ -2940,6 +2940,224 @@ def test_duplicate_leaf_diagnostic_and_repair_name_every_leaf_path():
     ]
 
 
+def _duplicate_leaf_compact_repair_fixture():
+    bundle, _, stage, _, response = _decision_reconciliation_fixture(count=3)
+    refs = list(response["decisions_by_candidate_ref"])
+    parent = response["semantic_nodes"][0]
+    parent["semantic_node_key"] = "affected"
+    untouched = {**deepcopy(parent), "semantic_node_key": "untouched"}
+    response["semantic_nodes"] = [parent, untouched]
+    response["decisions_by_candidate_ref"][refs[0]] = {
+        "attachments": [{"semantic_node_key": "affected", "relation": "adjacent"}],
+        "unmerged_reason": None,
+    }
+    response["decisions_by_candidate_ref"][refs[1]] = {
+        "attachments": [{"semantic_node_key": "affected", "relation": "support"}],
+        "unmerged_reason": None,
+    }
+    response["decisions_by_candidate_ref"][refs[2]] = {
+        "attachments": [{"semantic_node_key": "untouched", "relation": "support"}],
+        "unmerged_reason": None,
+    }
+    stage["candidates"][1]["leaf_relations"] = deepcopy(
+        stage["candidates"][0]["leaf_relations"]
+    )
+    stage["stage_sha256"] = semantic_module._sha256(
+        {key: value for key, value in stage.items() if key != "stage_sha256"}
+    )
+    response["stage_sha256"] = stage["stage_sha256"]
+    diagnostic = semantic_module.diagnose_reconciliation_response(
+        bundle, stage, response
+    )
+    request = semantic_module.prepare_reconciliation_repair(
+        bundle,
+        stage,
+        response,
+        node_keys=["affected"],
+        reason="Resolve only the diagnosed repeated-leaf ownership conflict.",
+        diagnostic=diagnostic,
+    )
+    model_parent = {
+        key: value for key, value in parent.items() if key != "opposition_checked"
+    }
+    adjacent_parent = {
+        **deepcopy(model_parent),
+        "semantic_node_key": "affected_adjacent",
+        "terminal_proposition": False,
+        "claim_kind": None,
+        "causal_ceiling": None,
+    }
+    support_parent = {
+        **deepcopy(model_parent),
+        "semantic_node_key": "affected_support",
+    }
+    patch = {
+        "request_sha256": request["request_sha256"],
+        "correction": {
+            "replacement": {
+                "semantic_nodes": [adjacent_parent, support_parent],
+                "decisions_by_candidate_ref": {
+                    refs[0]: {
+                        "attachments": [{
+                            "semantic_node_key": "affected_adjacent",
+                            "relation": "adjacent",
+                        }],
+                        "unmerged_reason": None,
+                    },
+                    refs[1]: {
+                        "attachments": [{
+                            "semantic_node_key": "affected_support",
+                            "relation": "support",
+                        }],
+                        "unmerged_reason": None,
+                    },
+                },
+            },
+            "cannot_repair_reason": None,
+        },
+    }
+    return bundle, stage, response, diagnostic, request, patch, refs
+
+
+def test_duplicate_leaf_compact_repair_is_deterministic_generic_and_preserving():
+    bundle, stage, response, diagnostic, request, patch, refs = (
+        _duplicate_leaf_compact_repair_fixture()
+    )
+    repeated = semantic_module.prepare_reconciliation_repair(
+        bundle, stage, response, **request["nomination"], diagnostic=diagnostic
+    )
+    assert repeated == request
+    assert request["schema_version"] == "semantic_reconciliation_repair_request_v3"
+    assert request["repair_rendering_mode"] == "duplicate_leaf_structural_v1"
+    assert request["diagnostic_sha256"] == diagnostic["diagnostic_sha256"]
+    assert request["prompt_utf8_bytes"] < stage["max_prompt_bytes"]
+    assert "raw evidence and source-context bodies are intentionally absent" in request["prompt"]
+    context = json.loads(request["prompt"].split("\n\nLOCAL_REPAIR_CONTEXT\n")[1])
+    assert set(context) == {
+        "nomination",
+        "affected_parent_definitions",
+        "affected_decisions_by_candidate_ref",
+        "validated_child_candidates",
+        "forbidden_same_node_leaf_paths",
+        "semantic_warrant_proven",
+    }
+    assert context["semantic_warrant_proven"] is False
+    assert len(context["validated_child_candidates"]) == 2
+    assert all(
+        set(candidate) >= {
+            "candidate_ref", "statement", "conditions", "subject_product_ids",
+            "comparator_product_ids", "product_version_ids", "leaf_relations",
+            "condition_lineage", "source_roles_by_relation",
+        }
+        for candidate in context["validated_child_candidates"]
+    )
+    assert context["forbidden_same_node_leaf_paths"]
+    assert "evidence" not in context and "contexts" not in context
+    assert all(
+        candidate["subject_product_ids"] == ["summer-fridays-lip-butter-balm"]
+        for candidate in context["validated_child_candidates"]
+    )
+
+    successor, validation = semantic_module.apply_reconciliation_repair(
+        bundle, stage, response, request, patch
+    )
+    assert validation == semantic_module.validate_reconciliation_stage(
+        bundle, stage, [successor], require_all=False
+    )
+    assert next(
+        node for node in successor["semantic_nodes"]
+        if node["semantic_node_key"] == "untouched"
+    ) == response["semantic_nodes"][1]
+    assert successor["decisions_by_candidate_ref"][refs[2]] == response[
+        "decisions_by_candidate_ref"
+    ][refs[2]]
+    assert successor["assignments_by_original_label"] == response[
+        "assignments_by_original_label"
+    ]
+    assert successor["emerging_axis_consolidations"] == response[
+        "emerging_axis_consolidations"
+    ]
+
+    repeated_leaf = deepcopy(patch)
+    repeated_leaf["correction"]["replacement"]["semantic_nodes"] = [
+        repeated_leaf["correction"]["replacement"]["semantic_nodes"][1]
+    ]
+    for decision in repeated_leaf["correction"]["replacement"][
+        "decisions_by_candidate_ref"
+    ].values():
+        decision["attachments"][0]["semantic_node_key"] = "affected_support"
+    with pytest.raises(SemanticIntegrationError, match="duplicates one leaf"):
+        semantic_module.apply_reconciliation_repair(
+            bundle, stage, response, request, repeated_leaf
+        )
+
+
+def test_duplicate_leaf_compact_repair_requires_exact_exclusive_diagnostic():
+    bundle, stage, response, diagnostic, request, _, _ = (
+        _duplicate_leaf_compact_repair_fixture()
+    )
+    changed = deepcopy(diagnostic)
+    changed["diagnostic_sha256"] = "0" * 64
+    with pytest.raises(SemanticIntegrationError, match="differs from bound current response"):
+        semantic_module.prepare_reconciliation_repair(
+            bundle, stage, response, **request["nomination"], diagnostic=changed
+        )
+
+    mixed = deepcopy(response)
+    first = next(iter(mixed["decisions_by_candidate_ref"].values()))
+    first["attachments"].append(deepcopy(first["attachments"][0]))
+    mixed_diagnostic = semantic_module.diagnose_reconciliation_response(
+        bundle, stage, mixed
+    )
+    assert {issue["code"] for issue in mixed_diagnostic["issues"]} == {
+        "duplicate_leaf", "duplicate_or_invalid_attachment"
+    }
+    with pytest.raises(SemanticIntegrationError, match="exclusive complete duplicate-leaf"):
+        semantic_module.prepare_reconciliation_repair(
+            bundle, stage, mixed, **request["nomination"], diagnostic=mixed_diagnostic
+        )
+
+    clean = deepcopy(response)
+    clean["decisions_by_candidate_ref"][request["candidate_refs"][1]]["attachments"][0][
+        "semantic_node_key"
+    ] = "untouched"
+    clean_diagnostic = semantic_module.diagnose_reconciliation_response(
+        bundle, stage, clean
+    )
+    assert clean_diagnostic["valid"] is True
+    with pytest.raises(SemanticIntegrationError, match="exclusive complete duplicate-leaf"):
+        semantic_module.prepare_reconciliation_repair(
+            bundle, stage, clean, node_keys=["untouched"], reason="No defect.",
+            diagnostic=clean_diagnostic
+        )
+
+
+def test_duplicate_leaf_compact_repair_distinguishes_one_child_repetition():
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    refs = list(response["decisions_by_candidate_ref"])
+    response["semantic_nodes"].append({
+        **deepcopy(response["semantic_nodes"][0]), "semantic_node_key": "other"
+    })
+    response["decisions_by_candidate_ref"][refs[1]]["attachments"][0][
+        "semantic_node_key"
+    ] = "other"
+    stage["candidates"][0]["leaf_relations"] *= 2
+    stage["stage_sha256"] = semantic_module._sha256(
+        {key: value for key, value in stage.items() if key != "stage_sha256"}
+    )
+    response["stage_sha256"] = stage["stage_sha256"]
+    diagnostic = semantic_module.diagnose_reconciliation_response(
+        bundle, stage, response
+    )
+    assert [issue["code"] for issue in diagnostic["issues"]] == ["duplicate_leaf"]
+    with pytest.raises(SemanticIntegrationError, match="across distinct child candidates"):
+        semantic_module.prepare_reconciliation_repair(
+            bundle, stage, response,
+            node_keys=[response["semantic_nodes"][0]["semantic_node_key"]],
+            reason="This is not a cross-child conflict.", diagnostic=diagnostic
+        )
+
+
 def test_repeated_attachment_is_not_a_repeated_leaf_path():
     bundle, _, stage, _, response = _decision_reconciliation_fixture()
     ref = list(response["decisions_by_candidate_ref"])[0]

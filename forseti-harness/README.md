@@ -50,8 +50,14 @@ Low-level Python preparation retains legacy defaults; current callers select
 repair keep their previously fitting historical requests and existing keys.
 Oversized local repairs try a lossless table layout before enforcing the same
 byte limit; all sources and connected attachments remain present, and the
-response schema is unchanged. This packing adds no provider stage or semantic
-clearance. The semantic-integration contract v106 owns this boundary.
+response schema is unchanged. When a freshly rederived diagnostic contains only
+complete cross-child `duplicate_leaf` issues, pass that report with
+`prepare-reconciliation-repair --diagnostic <diagnostic.json>` to use the
+structural repair rendering. It includes the affected validated child meanings,
+identities, conditions, provenance paths, decisions, and parent definitions but
+no raw evidence or source-context bodies. Mixed, stale, incomplete, clean, or
+within-one-child diagnostics fail closed. This adds no provider stage or semantic
+clearance. The semantic-integration contract v107 owns this boundary.
 
 For authorized unattended Codex jobs whose retries, elapsed time, or failure
 history matter, use the shared executor rather than a task-local buffered

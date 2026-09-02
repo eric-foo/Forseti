@@ -1542,10 +1542,11 @@ def compose_reconciliation_definitions(
 
 def prepare_reconciliation_local_repair(
     *, bundle_path: Path, stage_path: Path, failed_response_path: Path,
-    nomination_path: Path, output_dir: Path,
+    nomination_path: Path, output_dir: Path, diagnostic_path: Path | None = None,
 ) -> dict[str, Any]:
     request = prepare_reconciliation_repair(_load_object(bundle_path), _load_object(stage_path),
-        _load_object(failed_response_path), **_load_object(nomination_path))
+        _load_object(failed_response_path), **_load_object(nomination_path),
+        diagnostic=_load_object(diagnostic_path) if diagnostic_path is not None else None)
     if output_dir.exists():
         raise ValueError(f"refusing to write into existing local-repair directory: {output_dir}")
     record = {"request": request, "input_sha256": {
@@ -1556,7 +1557,10 @@ def prepare_reconciliation_local_repair(
     _write_json(output_dir / "response.schema.json", request["response_schema"])
     return {"status": "LOCAL_REPAIR_JUDGMENT_REQUIRED", "candidate_count": len(request["candidate_refs"]),
             "node_count": len(request["node_keys"]), "prompt_utf8_bytes": request["prompt_utf8_bytes"],
-            "output_dir": str(output_dir), "model_api_calls": 0}
+            "output_dir": str(output_dir), "model_api_calls": 0,
+            **({"diagnostic_source_sha256": hash_file(diagnostic_path),
+                "repair_rendering_mode": request["repair_rendering_mode"]}
+               if diagnostic_path is not None else {})}
 
 
 def compose_reconciliation_local_repair(
@@ -2706,6 +2710,7 @@ def _parser() -> argparse.ArgumentParser:
             definitions.add_argument("--patch", type=Path, required=True)
         if command == "prepare-reconciliation-repair":
             definitions.add_argument("--nomination", type=Path, required=True)
+            definitions.add_argument("--diagnostic", type=Path)
 
     validate_reconciliation = sub.add_parser("validate-reconciliation-response")
     validate_reconciliation.add_argument("--bundle", type=Path, required=True)
@@ -3217,7 +3222,8 @@ def main(argv: list[str] | None = None) -> int:
                 request_path=args.request, patch_path=args.patch, output_dir=args.output_dir)
         elif args.command == "prepare-reconciliation-repair":
             result = prepare_reconciliation_local_repair(bundle_path=args.bundle, stage_path=args.stage,
-                failed_response_path=args.failed_response, nomination_path=args.nomination, output_dir=args.output_dir)
+                failed_response_path=args.failed_response, nomination_path=args.nomination,
+                output_dir=args.output_dir, diagnostic_path=args.diagnostic)
         elif args.command == "submit-reconciliation-repair":
             result = submit_reconciliation_local_repair(bundle_path=args.bundle, stage_path=args.stage,
                 failed_response_path=args.failed_response, request_path=args.request, patch_path=args.patch, output_dir=args.output_dir)

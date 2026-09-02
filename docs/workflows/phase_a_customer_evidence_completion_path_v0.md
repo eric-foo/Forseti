@@ -502,6 +502,20 @@ or semantic defects can still remain, so this is not a complete error census.
 Current optional retention schemas disallow simultaneous attachments and an
 unmerged reason before submission, while native guards remain unchanged.
 
+When that freshly written diagnostic is invalid and its complete issue set is
+exclusively cross-child `duplicate_leaf`, pass the same file as
+`--diagnostic <diagnostic.json>` to `prepare-reconciliation-repair`. This selects
+the compact structural renderer: it supplies only the affected already-validated
+child definitions and their bounded statements, conditions, identities and
+provenance paths; current affected decisions and parent definitions; and the
+deterministic forbidden same-node leaf paths. It omits raw evidence and context
+bodies rather than truncating or claiming to reread them. The provider still
+chooses the semantic restructuring, and the ordinary composer plus unchanged
+whole-response validator remain final. A stale diagnostic, mixed issue class,
+skipped dependent check, omitted diagnosed scope, clean response, or repeated
+leaf confined to one child blocks this mode. Without `--diagnostic`, the existing
+general repair and historical replay path is unchanged.
+
 If the native failure is a reused node key, explicitly nominate that key. The
 repair request includes every definition sharing it and every connected
 candidate/source, and the provider must return unique bounded replacements.
@@ -523,7 +537,7 @@ submit with `submit-reconciliation-repair --bundle ... --stage ...
 in the continuing selection. Refusal, foreign scope, unsupported grouping,
 missing context, over-limit context or another native failure remains blocking.
 Never clear a problem by automatic relabeling or discarding counterevidence.
-The semantic-integration contract v93's **Local reconciliation correction**
+The semantic-integration contract v107's **Local reconciliation correction**
 section owns this failure/review-only route and its semantic non-claims; it adds
 no standing provider stage and does not replace source-aware judgment.
 
