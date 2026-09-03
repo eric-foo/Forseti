@@ -599,8 +599,8 @@ or unconfirmed rows fail closed. Historical v6 quote manifests retain their
 selected-row confirmation route for exact reproduction; they are not silently
 restamped as v7.
 
-Non-value axis-expanded point packs use `recent_year_coverage_v1` as a display
-preference. The latest two calendar years present in the eligible pool receive
+Historical non-value axis-expanded point packs use `recent_year_coverage_v1` as a display
+preference. The latest two calendar years present in that eligible pool receive
 representation across available venue/role/native-metric buckets, up to half
 the thirteen-origin cap after mandatory relation/protection reservations. When
 eligible and space remains, one dated pre-window origin is retained so the
@@ -1024,7 +1024,7 @@ alone never establish boundedness.
 
 For a fresh point selection, exact linked parent text travels only with the
 point's explicitly admitted semantic refs. It is deduplicated into a compact
-parent-context table rather than repeated across the axis-wide candidate pool.
+parent-context table.
 Every point-scope confirmation batch receives that same compact table so a
 batch cannot decide scope from a context-stripped point. The table may clarify
 the point, but it does not attach parent meaning to every evidence row: a row
@@ -1055,9 +1055,11 @@ support, counter, or adjacent relations under
 `literal_point_relations_display_eligible_v1`; this preserves the evidence that
 actually admitted the point without treating quiet engagement as resonance.
 Every eligible frontier-defining candidate is a mandatory display row and its
-origin is reserved before ordinary cap allocation. If more than thirteen
-distinct frontier origins are required for one point, completion fails at
-`presentation_cap_insufficient` instead of silently skipping quote review.
+origin is reserved before ordinary cap allocation. Fresh complete-frontier
+specs raise the ordinary thirteen-origin cap only to the exact number of bound
+truth origins the point requires, up to forty, and hash-bind that cap. A point
+requiring more than forty fails at `presentation_cap_insufficient` before
+provider work instead of silently skipping quote review.
 Other origins with no operator-protected lane and no material positive
 source-native engagement remain ineligible, and value-first also excludes an
 otherwise material adjacent origin.
@@ -2110,6 +2112,18 @@ creation times into packet v3. A completed packet with a missing time may be
 rehydrated only from the exact source artifact and SHA-256 already bound by its
 bundle; unavailable or unsupported legacy bytes leave the time unavailable and
 changed bytes fail.
+Source-relative display labels such as `2 months ago` remain literal in the
+hash-bound source but are not exact publication times. The selection consumer
+maps only that narrow source-relative shape to explicit unavailability; it does
+not calculate a date from the run date, and other malformed date strings still
+fail closed.
+For a multi-product company frontier, each fresh point selection spec takes its
+subject-product scope from that exact packet proposition, not from the
+company-wide frontier filter. The binding hashes that point-local scope. Axis
+membership remains recoverable from the bound semantic rows, but current
+authoring admits only the frontier's exact point-relative semantic refs instead
+of reopening a product-axis pool for every point. Previously stored unscoped
+and axis-expanded bindings remain replayable.
 The date enables later descriptive alignment with search trends but does not
 establish that either signal caused the other.
 

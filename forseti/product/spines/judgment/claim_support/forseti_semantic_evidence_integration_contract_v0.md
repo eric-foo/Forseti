@@ -1479,17 +1479,20 @@ Points earn investigation through explicit reported customer behavior,
 independent customer recurrence, material source-native engagement, or an
 operator-protected safety/costly lane. Engagement remains comparable only
 inside one role, venue, and metric bucket, and no cross-platform commercial-pull
-score is created. Materializing one admitted proposition produces a v1
+score is created. Materializing one admitted proposition produces a current v2
 selection spec bound to the frontier, source packet, bounded point, candidate-
-admission mode, axis set, transport mode, and literal semantic refs with the
-normal thirteen-origin cap. A non-value point carrying an explicit axis admits
-the same-product axis union plus its literal refs; every row is still judged
-against the exact bounded point, so axis membership grants no relation. Value
-points keep literal-ref admission under their separate value policy. The
+admission mode, transport mode, point subject scope, and literal semantic refs
+with the normal thirteen-origin cap. When the exact frontier relations contain
+more truth origins, current authoring raises and hash-binds the point-local cap
+only to the required count, up to forty; a larger point fails before provider
+work. Current point authoring admits only the complete frontier's exact support,
+counter, and adjacent refs; it does not reopen a whole product-axis pool for
+each point. Historical axis-expanded non-value specs and literal-ref value specs
+retain their stamped replay. The
 frontier changes no packet, source fact, proposition relation, or Deliver
 authority.
 
-At full-axis scale, both relation passes use named batches. The first layer
+When a historical axis-expanded point exceeds one response, both relation passes use named batches. The first layer
 accounts every admitted candidate. The second independently accounts every
 material, protected, or influence row that could reach display, preserving the
 v7 pre-cap correction boundary without one hundreds-row response array. Each
@@ -1499,7 +1502,7 @@ ordinary v7 selector runs. Missing, foreign, transposed, malformed, or partial
 responses fail before quote selection. Historical v6 batching and narrow v7
 single-response replay retain their stamped behavior.
 
-Axis-expanded non-value specs also bind
+Historical axis-expanded non-value specs also bind
 `temporal_presentation_policy=recent_year_coverage_v1`. The latest two literal
 calendar years in the display-eligible pool receive representation across
 available role/venue/native-metric buckets up to half the cap after mandatory
@@ -1666,6 +1669,16 @@ from the exact hash-bound source artifact named by the bundle; missing source
 bytes and unsupported legacy source formats remain unavailable, while changed
 bytes fail rather than supplying a date. This is source chronology for later time alignment, not proof that search
 interest caused the evidence or vice versa.
+Source-relative display labels such as `2 months ago` stay preserved in the
+hash-bound source but do not become exact publication times. The selection
+consumer maps only that narrow relative-label shape to explicit unavailability;
+it never derives a calendar date from the execution date, and other malformed
+date strings continue to fail closed.
+For a multi-product frontier, current point-spec authoring derives and hashes
+the subject-product scope of the exact packet proposition. It does not copy the
+frontier's company-wide product filter into every point. That identity remains
+exact while current selection consumes only the literal point relations;
+historical unscoped bindings retain their replay behavior.
 
 Semantic posture distinguishes first-hand experience, personal agreement,
 attribution or echo, questions, speculation, observable statements, and actor
@@ -2280,6 +2293,23 @@ new frontier.
 
 ## Changelog
 
+- `v110` / 2026-09-03 — made current complete-frontier point selection consume
+  only the exact point-relative support, counter, and adjacent semantic refs
+  already bound by the frontier, instead of reopening a whole product-axis pool
+  for every point. Historical axis-expanded specs retain their stamped replay.
+  Evidence-rich points raise and bind the thirteen-origin display cap only to
+  their exact required frontier-origin count, up to forty, and fail locally
+  above that bound instead of spending provider calls before a predictable cap
+  error.
+  Also scoped multi-product point selection to each
+  exact packet proposition and bound that subject scope against later mutation,
+  removing repeated unrelated-product payload while retaining historical
+  unscoped-spec replay. Also kept source-relative retailer date labels literal in
+  their hash-bound source while making their exact publication time explicitly
+  unavailable at evidence selection. The consumer recognizes only a narrow
+  quantity-plus-unit-plus-`ago` display shape, never calculates a calendar date,
+  and continues to reject other malformed time strings. ISO publication times,
+  frozen artifacts, source hashes, and provider stage count are unchanged.
 - `v109` / 2026-09-03 — ended policy-v2 convergence placeholder circulation:
   current response-v3 convergence schemas emit terminal nodes only, terminal
   repeated customer findings remain required, and nonterminal inputs may become

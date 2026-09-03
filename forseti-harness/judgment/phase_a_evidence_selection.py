@@ -87,7 +87,7 @@ POSITIONAL_REASON_CODE_BY_RELATION = {
 TRUTH_ROLES = {"community_post", "retailer_review", "audience_comment"}
 INFLUENCE_ROLES = {"creator_authored"}
 MAX_TRUTH_GROUPS = 13
-MAX_CONFIGURABLE_TRUTH_GROUPS = 20
+MAX_CONFIGURABLE_TRUTH_GROUPS = 40
 MAX_RELATION_BATCH_SIZE = 300
 MAX_INFLUENCE_GROUPS = 3
 SHORT_BODY_QUOTE_CHARACTERS = 220
@@ -106,6 +106,10 @@ VENUE_HOST_SUFFIXES: tuple[tuple[str, tuple[str, ...]], ...] = (
 # A whole numeric token only: a partial parse of "1.2k" or "1,234" would order
 # rows by a value the source never stated.
 ENGAGEMENT_NUMBER_RE = re.compile(r"^\s*(-?[0-9]+(?:\.[0-9]+)?)(?![0-9A-Za-z.,])")
+SOURCE_RELATIVE_PUBLICATION_TIME_RE = re.compile(
+    r"^(?:[0-9]+|a|an)\s+(?:minute|hour|day|week|month|year)s?\s+ago$",
+    re.IGNORECASE,
+)
 INTERNAL_RELATION_LABEL_RE = re.compile(r"\b(?:support|counter|adjacent|exclude)\b", re.IGNORECASE)
 REASON_CODE_RE = re.compile(r"^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$")
 DISPLAY_LABEL_BY_REASON_CODE = {
@@ -648,6 +652,30 @@ def selection_spec_from_customer_pull_frontier(
             "customer_pull_frontier_point", "point is not an admitted frontier candidate"
         )
     queue, point = matches[0]
+    packet_propositions = {
+        row.get("proposition_id"): row
+        for row in packet.get("propositions", [])
+        if isinstance(row, Mapping)
+    }
+    packet_point = packet_propositions.get(proposition_id)
+    point_subject_product_ids = sorted(
+        {
+            value
+            for value in (
+                packet_point.get("subject_product_ids", [])
+                if isinstance(packet_point, Mapping)
+                else []
+            )
+            if isinstance(value, str) and value
+        }
+    )
+    if not point_subject_product_ids or not set(point_subject_product_ids) <= set(
+        frontier["subject_product_ids"]
+    ):
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_point",
+            "point subject products are absent from the frontier subject scope",
+        )
     admitted = [
         {"source_id": source_id, "semantic_unit_ref": semantic_ref}
         for source_id, semantic_ref in sorted(
@@ -659,20 +687,39 @@ def selection_spec_from_customer_pull_frontier(
             }
         )
     ]
-    point_axis_ids = sorted(
-        value for value in point.get("axis_ids", []) if isinstance(value, str)
-    )
-    expand_axis = bool(point_axis_ids) and VALUE_AXIS_ID not in point_axis_ids
-    axis_ids = point_axis_ids if expand_axis else []
-    candidate_admission = (
-        "subject_axis_union_with_literal_refs"
-        if expand_axis
-        else "literal_point_relations"
-    )
     normalized_rejections = _normalize_frontier_relation_rejections(
         frontier_relation_rejections,
         admitted_refs={(row["source_id"], row["semantic_unit_ref"]) for row in admitted},
     )
+    rejected_pairs = {
+        (row["source_id"], row["semantic_unit_ref"])
+        for row in normalized_rejections
+    }
+    point_truth_origin_count = len(
+        {
+            relation_row["independence_key"]
+            for relation in ("support", "counter", "adjacent")
+            for relation_row in point["relation_rows"][relation]
+            if relation_row["source_role"] in TRUTH_ROLES
+            and any(
+                (frontier["source_id"], semantic_ref) not in rejected_pairs
+                for semantic_ref in relation_row["semantic_unit_refs"]
+            )
+        }
+    )
+    truth_group_cap = max(MAX_TRUTH_GROUPS, point_truth_origin_count)
+    if truth_group_cap > MAX_CONFIGURABLE_TRUTH_GROUPS:
+        raise EvidenceConsumerError(
+            "presentation_cap_insufficient",
+            "frontier point requires more truth origins than the supported point cap",
+        )
+    # A complete frontier already carries the exact support, counter, and
+    # adjacent semantic refs that own this bounded point. Reopening the whole
+    # product/axis pool for every point repeats unrelated evidence quadratically
+    # and can let later selection silently re-author the frontier. Historical
+    # axis-expanded specs still replay through their stored binding.
+    axis_ids: list[str] = []
+    candidate_admission = "literal_point_relations"
     if normalized_rejections:
         _validate_resolved_frontier_earning(
             packet,
@@ -691,11 +738,13 @@ def selection_spec_from_customer_pull_frontier(
         "bounded_point_sha256": sha256_text(str(point["bounded_point"])),
         "admit_semantic_refs_sha256": _canonical_json_sha256(admitted),
         "axis_ids_sha256": _canonical_json_sha256(axis_ids),
-        "candidate_admission": candidate_admission,
-        "relation_response_mode": "positional" if expand_axis else "literal_ids",
-        "temporal_presentation_policy": (
-            "recent_year_coverage_v1" if expand_axis else None
+        "subject_product_ids_sha256": _canonical_json_sha256(
+            point_subject_product_ids
         ),
+        "truth_group_cap_sha256": _canonical_json_sha256(truth_group_cap),
+        "candidate_admission": candidate_admission,
+        "relation_response_mode": "literal_ids",
+        "temporal_presentation_policy": None,
         "frontier_relation_display_policy": FRONTIER_RELATION_DISPLAY_POLICY,
         "relation_policy": "bounded_point",
     }
@@ -709,19 +758,17 @@ def selection_spec_from_customer_pull_frontier(
         "selection_id": proposition_id,
         "bounded_claim": point["bounded_point"],
         "axis_ids": axis_ids,
-        "subject_product_ids": frontier["subject_product_ids"],
+        "subject_product_ids": point_subject_product_ids,
         "admit_semantic_refs": admitted,
         "protected_evidence_ids": {},
-        "truth_group_cap": MAX_TRUTH_GROUPS,
-        "relation_response_mode": "positional" if expand_axis else "literal_ids",
+        "truth_group_cap": truth_group_cap,
+        "relation_response_mode": "literal_ids",
         "relation_policy": "bounded_point",
         "frontier_relation_display_policy": FRONTIER_RELATION_DISPLAY_POLICY,
         "customer_pull_frontier_binding": binding,
     }
     if normalized_rejections:
         spec["frontier_relation_rejections"] = normalized_rejections
-    if expand_axis:
-        spec["temporal_presentation_policy"] = "recent_year_coverage_v1"
     return spec
 
 
@@ -1303,6 +1350,12 @@ def _publication_time_value(value: Any) -> str | None:
         )
     normalized = value.strip()
     if normalized.casefold() in {"unknown", "unavailable", "not available"}:
+        return None
+    # Some preserved retailer surfaces expose only a source-relative display
+    # label (for example, ``2 months ago``). It is useful source text but not an
+    # exact publication time: mark the exact time unavailable while the
+    # hash-bound source retains the literal label.
+    if SOURCE_RELATIVE_PUBLICATION_TIME_RE.fullmatch(normalized):
         return None
     try:
         datetime.fromisoformat(normalized.replace("Z", "+00:00"))
@@ -2126,13 +2179,20 @@ def _validate_customer_pull_frontier_spec_binding(
         "temporal_presentation_policy",
     }
     current_keys = expanded_keys | {"frontier_relation_display_policy"}
+    scoped_keys = current_keys | {
+        "subject_product_ids_sha256",
+        "truth_group_cap_sha256",
+    }
     resolved_keys = current_keys | {"frontier_relation_rejections_sha256"}
+    scoped_resolved_keys = scoped_keys | {"frontier_relation_rejections_sha256"}
     binding_keys = frozenset(binding) if isinstance(binding, Mapping) else frozenset()
     if not isinstance(binding, Mapping) or binding_keys not in {
         frozenset(legacy_keys),
         frozenset(expanded_keys),
         frozenset(current_keys),
+        frozenset(scoped_keys),
         frozenset(resolved_keys),
+        frozenset(scoped_resolved_keys),
     }:
         raise EvidenceConsumerError(
             "customer_pull_frontier_binding", "frontier binding shape changed"
@@ -2145,7 +2205,9 @@ def _validate_customer_pull_frontier_spec_binding(
     if binding_keys in {
         frozenset(expanded_keys),
         frozenset(current_keys),
+        frozenset(scoped_keys),
         frozenset(resolved_keys),
+        frozenset(scoped_resolved_keys),
     } and (
         binding.get("axis_ids_sha256")
         != _canonical_json_sha256(spec.get("axis_ids") or [])
@@ -2168,7 +2230,12 @@ def _validate_customer_pull_frontier_spec_binding(
         raise EvidenceConsumerError(
             "customer_pull_frontier_binding", "frontier candidate admission changed"
         )
-    if binding_keys in {frozenset(current_keys), frozenset(resolved_keys)}:
+    if binding_keys in {
+        frozenset(current_keys),
+        frozenset(scoped_keys),
+        frozenset(resolved_keys),
+        frozenset(scoped_resolved_keys),
+    }:
         if (
             binding.get("frontier_relation_display_policy")
             != spec.get("frontier_relation_display_policy")
@@ -2185,7 +2252,22 @@ def _validate_customer_pull_frontier_spec_binding(
         raise EvidenceConsumerError(
             "customer_pull_frontier_binding", "frontier candidate admission changed"
         )
-    if binding_keys == frozenset(resolved_keys):
+    if binding_keys in {
+        frozenset(scoped_keys),
+        frozenset(scoped_resolved_keys),
+    } and (
+        binding.get("subject_product_ids_sha256")
+        != _canonical_json_sha256(spec.get("subject_product_ids") or [])
+        or binding.get("truth_group_cap_sha256")
+        != _canonical_json_sha256(spec.get("truth_group_cap"))
+    ):
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_binding", "frontier point scope or cap changed"
+        )
+    if binding_keys in {
+        frozenset(resolved_keys),
+        frozenset(scoped_resolved_keys),
+    }:
         rejections = _normalize_frontier_relation_rejections(
             spec.get("frontier_relation_rejections"),
             admitted_refs={

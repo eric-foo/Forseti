@@ -1582,7 +1582,7 @@ def test_customer_pull_frontier_binding_and_materialized_point_spec_fail_closed(
     assert caught.value.boundary == "customer_pull_frontier_accounting"
 
 
-def test_non_value_frontier_point_admits_its_complete_axis_with_bound_recency_policy() -> None:
+def test_fresh_non_value_frontier_point_admits_only_its_literal_relations() -> None:
     packet = _proposition_packet_for_frontier()
     hydration = {
         "proposition_id": "point-hydration",
@@ -1625,19 +1625,13 @@ def test_non_value_frontier_point_admits_its_complete_axis_with_bound_recency_po
         }
     ]
 
-    assert spec["axis_ids"] == ["hydration_and_moisture"]
-    assert spec["relation_response_mode"] == "positional"
-    assert spec["temporal_presentation_policy"] == "recent_year_coverage_v1"
-    assert len(_candidate_rows(sources, spec)) == 10
+    assert spec["axis_ids"] == []
+    assert spec["relation_response_mode"] == "literal_ids"
+    assert "temporal_presentation_policy" not in spec
+    assert len(_candidate_rows(sources, spec)) == 1
 
     tampered = copy.deepcopy(spec)
     tampered["axis_ids"] = ["texture_and_skin_finish"]
-    with pytest.raises(EvidenceConsumerError) as caught:
-        prepare_evidence_selection(tampered, sources)
-    assert caught.value.boundary == "customer_pull_frontier_binding"
-
-    tampered = copy.deepcopy(spec)
-    tampered.pop("temporal_presentation_policy")
     with pytest.raises(EvidenceConsumerError) as caught:
         prepare_evidence_selection(tampered, sources)
     assert caught.value.boundary == "customer_pull_frontier_binding"
@@ -1658,10 +1652,153 @@ def test_non_value_frontier_point_admits_its_complete_axis_with_bound_recency_po
         prepare_evidence_selection(tampered, sources)
     assert caught.value.boundary == "customer_pull_frontier_binding"
 
-    legacy = copy.deepcopy(spec)
-    legacy["customer_pull_frontier_binding"].pop("frontier_relation_display_policy")
-    legacy.pop("frontier_relation_display_policy")
-    _validate_customer_pull_frontier_spec_binding(legacy, sources)
+    historical_axis_expanded = copy.deepcopy(spec)
+    historical_axis_expanded["axis_ids"] = ["hydration_and_moisture"]
+    historical_axis_expanded["relation_response_mode"] = "positional"
+    historical_axis_expanded["temporal_presentation_policy"] = (
+        "recent_year_coverage_v1"
+    )
+    historical_binding = historical_axis_expanded["customer_pull_frontier_binding"]
+    historical_binding["axis_ids_sha256"] = _canonical_hash(
+        ["hydration_and_moisture"]
+    )
+    historical_binding["candidate_admission"] = (
+        "subject_axis_union_with_literal_refs"
+    )
+    historical_binding["relation_response_mode"] = "positional"
+    historical_binding["temporal_presentation_policy"] = (
+        "recent_year_coverage_v1"
+    )
+    historical_binding.pop("subject_product_ids_sha256")
+    historical_binding.pop("truth_group_cap_sha256")
+    _validate_customer_pull_frontier_spec_binding(historical_axis_expanded, sources)
+    assert len(_candidate_rows(sources, historical_axis_expanded)) == 10
+
+
+def test_multi_product_frontier_point_admits_only_its_own_product_rows() -> None:
+    packet = _proposition_packet_for_frontier()
+    hydration = {
+        "proposition_id": "point-hydration",
+        "bounded_proposition": "Customers report that the balm hydrates their lips.",
+        "claim_kind": "customer_experience",
+        "axis_ids": ["hydration_and_moisture"],
+        "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+        "product_version_ids": [],
+        "conditions": [],
+        "evidence_item_counts": {"support": 1, "counter": 0, "adjacent": 0},
+        "evidence_relations": {
+            "support": [["community_post:5", ["community_post:5::hydration"]]],
+            "counter": [],
+            "adjacent": [],
+        },
+    }
+    packet["propositions"].append(hydration)
+    packet["selection"]["axis_ids"].append("hydration_and_moisture")
+    packet["selection"]["proposition_ids"].append("point-hydration")
+    packet["selection_coverage"]["selected_proposition_count"] += 1
+    packet.pop("packet_sha256")
+    packet["packet_sha256"] = _canonical_hash(packet)
+    frontier = build_customer_pull_point_frontier(
+        packet,
+        frontier_id="multi-product-frontier",
+        business_question="Which points merit investigation?",
+        subject_product_ids=[
+            "summer-fridays-lip-butter-balm",
+            "unrelated-company-product",
+        ],
+    )
+
+    spec = selection_spec_from_customer_pull_frontier(
+        frontier, packet, "point-hydration"
+    )
+
+    assert spec["subject_product_ids"] == ["summer-fridays-lip-butter-balm"]
+    assert len(spec["admit_semantic_refs"]) == 1
+    assert spec["customer_pull_frontier_binding"]["subject_product_ids_sha256"] == (
+        _canonical_hash(["summer-fridays-lip-butter-balm"])
+    )
+    tampered = copy.deepcopy(spec)
+    tampered["subject_product_ids"] = ["unrelated-company-product"]
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _validate_customer_pull_frontier_spec_binding(tampered, [])
+    assert caught.value.boundary == "customer_pull_frontier_binding"
+
+    tampered = copy.deepcopy(spec)
+    tampered["truth_group_cap"] += 1
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _validate_customer_pull_frontier_spec_binding(tampered, [])
+    assert caught.value.boundary == "customer_pull_frontier_binding"
+
+
+def test_frontier_point_cap_expands_only_to_fit_its_exact_truth_origins(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    packet, _ = _packet_and_bundle(25)
+    truth_evidence_ids = [
+        f"{source_role}:{index}"
+        for index in range(25)
+        for source_role in [
+            (
+                "community_post",
+                "retailer_review",
+                "retailer_review",
+                "audience_comment",
+                "creator_authored",
+            )[index % 5]
+        ]
+        if source_role != "creator_authored"
+    ][:14]
+    point = {
+        "proposition_id": "point-many-origins",
+        "bounded_proposition": "Many customers report the same bounded outcome.",
+        "claim_kind": "customer_experience",
+        "axis_ids": ["hydration_and_moisture"],
+        "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+        "product_version_ids": [],
+        "conditions": [],
+        "evidence_item_counts": {"support": 14, "counter": 0, "adjacent": 0},
+        "evidence_relations": {
+            "support": [
+                [evidence_id, [f"{evidence_id}::hydration"]]
+                for evidence_id in truth_evidence_ids
+            ],
+            "counter": [],
+            "adjacent": [],
+        },
+    }
+    packet["selection"] = {
+        "mode": "proposition",
+        "axis_ids": ["hydration_and_moisture"],
+        "proposition_ids": [point["proposition_id"]],
+    }
+    packet["selection_coverage"] = {
+        "truncated": False,
+        "selected_proposition_count": 1,
+    }
+    packet["propositions"] = [point]
+    packet.pop("packet_sha256")
+    packet["packet_sha256"] = _canonical_hash(packet)
+    frontier = build_customer_pull_point_frontier(
+        packet,
+        frontier_id="many-origin-frontier",
+        business_question="Which bounded point merits investigation?",
+        subject_product_ids=["summer-fridays-lip-butter-balm"],
+    )
+
+    spec = selection_spec_from_customer_pull_frontier(
+        frontier, packet, point["proposition_id"]
+    )
+
+    assert spec["truth_group_cap"] == 14
+    assert spec["customer_pull_frontier_binding"]["truth_group_cap_sha256"] == (
+        _canonical_hash(14)
+    )
+    monkeypatch.setattr(evidence_selection, "MAX_CONFIGURABLE_TRUTH_GROUPS", 13)
+    with pytest.raises(EvidenceConsumerError) as caught:
+        selection_spec_from_customer_pull_frontier(
+            frontier, packet, point["proposition_id"]
+        )
+    assert caught.value.boundary == "presentation_cap_insufficient"
 
 
 def test_rejected_literal_frontier_relation_stays_accounted_without_forcing_display(
@@ -1736,12 +1873,15 @@ def test_rejected_literal_frontier_relation_stays_accounted_without_forcing_disp
         for row in candidates
         if row["semantic_unit_ref"] == "community_post:5::hydration"
     )
-    response = _positional_relation_response(candidates)
-    for index, candidate in enumerate(candidates):
+    response = _relation_response(candidates)
+    response_rows = {
+        row["candidate_id"]: row for row in response["results"]
+    }
+    for candidate in candidates:
         if candidate["candidate_id"] == rejected_candidate["candidate_id"]:
-            response["results_by_candidate_row"][f"row_{index:04d}"] = "exclude"
+            response_rows[candidate["candidate_id"]]["relation"] = "exclude"
         elif candidate["candidate_id"] == surviving_candidate["candidate_id"]:
-            response["results_by_candidate_row"][f"row_{index:04d}"] = "support"
+            response_rows[candidate["candidate_id"]]["relation"] = "support"
     _, _, quote_manifest = finalize_relations_prepare_quotes(
         manifest, sources, response
     )
@@ -2461,6 +2601,36 @@ def test_year_derivation_matches_admitted_publication_time_shapes() -> None:
     assert _publication_year({"publication_time": "2026-05-13"}) == 2026
     assert _publication_year({"publication_time": None}) is None
     assert _publication_year({"publication_time": "not-a-date"}) is None
+
+
+@pytest.mark.parametrize("value", ["1 year ago", "4 months ago", "an hour ago"])
+def test_source_relative_publication_labels_remain_exact_time_unavailable(value: str) -> None:
+    assert _publication_time_value(value) is None
+
+
+@pytest.mark.parametrize("value", ["last year", "about 1 year ago", "1 year", "2026ish"])
+def test_malformed_publication_times_still_fail_closed(value: str) -> None:
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _publication_time_value(value)
+    assert caught.value.boundary == "publication_time"
+
+
+def test_relative_publication_label_is_not_mutated_or_promoted_to_an_exact_date(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, count=1)
+    source = sources[0]
+    packet = source["packet"]
+    evidence_columns = packet["source_groups"][0]["evidence_columns"]
+    evidence_row = packet["source_groups"][0]["evidence_rows"][0]
+    publication_index = evidence_columns.index("publication_time")
+    evidence_row[publication_index] = "2 months ago"
+    _reseal(source)
+
+    candidates = _candidate_rows(sources, spec)
+
+    assert candidates[0]["publication_time"] is None
+    assert evidence_row[publication_index] == "2 months ago"
 
 
 def test_temporal_display_order_never_reads_unavailable_engagement_as_zero() -> None:
@@ -4475,7 +4645,7 @@ def test_relation_batch_runner_writes_and_finalizes_exact_batch_set(
     ).command == "prepare-batched-preselection-relation-confirmation"
 
 
-@pytest.mark.parametrize("cap", [0, 21, "15", True])
+@pytest.mark.parametrize("cap", [0, 41, "15", True])
 def test_selection_spec_rejects_invalid_truth_origin_cap(
     tmp_path: Path, cap: object
 ) -> None:
