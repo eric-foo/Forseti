@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v113
+version: v114
 effective_date: 2026-09-04
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v113
+# Semantic Evidence Integration Contract v114
 
 ## Purpose
 
@@ -1133,11 +1133,13 @@ Different people's opposed preferences do not disprove a particular person's
 private state. Frozen selection spec v1 replay keeps its original scope
 semantics; it is not fresh authoring and gains no default.
 Current scoped specs may carry the completion path's inline
-`phase_a_relation_adjudication_v1` exception input. It preserves an explicit
+`phase_a_relation_adjudication_v2` exception input. It preserves an explicit
 bounded judgment on an unchanged point/source/inventory/policy basis across
-confirmation reruns, retaining the raw answers and all changed labels. The
-semantic finalizer applies only the authored relation/reason to exactly matching
-row-owned ref sets; it does not infer semantic correctness or select refs.
+confirmation reruns, retaining the raw answers, prior binding, replacement
+binding, and all changed labels. The semantic finalizer locates exactly the
+authored prior row-owned ref set, requires the replacement refs to be owned by
+that same evidence row, and then applies only the authored refs,
+relation, and reason. It does not infer semantic correctness or select refs.
 Missing, duplicate, foreign, or stale corrections fail visibly. The builder
 and readers still only preserve and verify attachments, never settle meaning.
 The record travels with the current spec; no machine-local locator or historical
@@ -1379,6 +1381,15 @@ experienced outcome to intent alone. The display panel remains selected examples
 even when its row count happens to equal the full-pool row count. This is an
 existing-reader instruction correction, not a new checker, provider stage,
 semantic classifier, or deterministic claim that the interpretation is true.
+
+Current point-reader request v5 additionally keeps current use or possession of
+another container distinct from an observed repeat purchase. Only an exact owned
+meaning that records acquisition or repurchase can support the completed action.
+It also distinguishes the analyst's Phase A boundary from the source's speech:
+the reader does not make or infer a Deliver recommendation, but it preserves a
+source-authored recommendation as source-local evidence without adopting it.
+This changes no evidence relation or state upstream and adds no phrase list,
+checker stage, provider call, or deterministic semantic classifier.
 
 Companion-owned semantic fields that the frozen projection does not carry remain
 null and are listed in `unbound_meaning_fields`; they never inherit the selected
@@ -2301,6 +2312,16 @@ new frontier.
 
 ## Changelog
 
+- `v114` / 2026-09-04 — made point-reader request v5 preserve two neighboring
+  Decision State boundaries exposed by source-complete Dieux dogfood. Current
+  use or possession of another container no longer stands in for an explicitly
+  recorded repeat acquisition, and the analyst's prohibition on making a
+  Deliver recommendation no longer erases advice actually authored by a source.
+  Also advanced the existing inline relation-adjudication record to v2 so an
+  explicit bounded correction can replace, rather than merely relabel, the
+  exact same-evidence meaning set while preserving v1 replay. The changes add
+  no phrase list, checker stage, provider call, automatic relation rewrite, or
+  semantic-proof claim.
 - `v113` / 2026-09-04 — made new point-reader request v4 bind conditions,
   timing, actions, quantities, attribution, and outcomes to the exact meaning
   that states them. Same-evidence quotes and companion meanings remain visible

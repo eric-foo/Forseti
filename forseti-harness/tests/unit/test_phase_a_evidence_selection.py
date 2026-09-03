@@ -285,6 +285,7 @@ def _adjudication_fixture(tmp_path: Path, response_mode: str | None = None):
         "schema_version": evidence_selection.RELATION_ADJUDICATION_VERSION,
         "basis_sha256": evidence_selection.relation_adjudication_basis(original, candidates),
         "decisions": [{"source_id": "full-corpus", "evidence_id": "community_post:0",
+                       "prior_relation_semantic_unit_refs": [primary_ref],
                        "relation_semantic_unit_refs": [primary_ref], "relation": "adjacent",
                        "reason_code": "bounded_fixture_meaning",
                        "rationale": "Explicit fixture judgment, not proven semantic truth."}],
@@ -408,11 +409,51 @@ def test_adjudication_missing_binding_fails_not_primary_ref_fallback(tmp_path: P
     spec, sources, record = _adjudication_fixture(tmp_path)
     # Owned but not the exact meaning chosen by the confirmation. This cannot
     # silently apply to a different ref set, even within the same evidence.
-    record["decisions"][0]["relation_semantic_unit_refs"] = ["community_post:0::companion"]
+    record["decisions"][0]["prior_relation_semantic_unit_refs"] = ["community_post:0::companion"]
     with pytest.raises(EvidenceConsumerError) as caught:
         _adjudicated_quote(spec, sources)
     assert caught.value.boundary == "relation_adjudication_binding"
     assert "absent from confirmed rows" in str(caught.value)
+
+
+def test_adjudication_v2_replaces_exact_row_owned_relation_refs(tmp_path: Path) -> None:
+    spec, sources, record = _adjudication_fixture(tmp_path)
+    decision = record["decisions"][0]
+    decision["relation_semantic_unit_refs"] = ["community_post:0::companion"]
+    quote, _ = _adjudicated_quote(spec, sources)
+    target = [
+        row for row in quote["labeled_inventory"]
+        if row["evidence_id"] == "community_post:0"
+    ]
+    assert target
+    assert all(
+        row["relation_semantic_unit_refs"] == ["community_post:0::companion"]
+        for row in target
+    )
+    changes = quote["preselection_relation_confirmation"]["relation_adjudication"]["changes"]
+    assert all(
+        change["prior_relation_semantic_unit_refs"]
+        == ["community_post:0::hydration"]
+        and change["relation_semantic_unit_refs"]
+        == ["community_post:0::companion"]
+        for change in changes
+    )
+
+
+def test_adjudication_v1_replay_keeps_existing_shape(tmp_path: Path) -> None:
+    spec, sources, record = _adjudication_fixture(tmp_path)
+    record["schema_version"] = evidence_selection.PREVIOUS_RELATION_ADJUDICATION_VERSION
+    for decision in record["decisions"]:
+        decision.pop("prior_relation_semantic_unit_refs")
+    quote, _ = _adjudicated_quote(spec, sources)
+    changes = quote["preselection_relation_confirmation"]["relation_adjudication"]["changes"]
+    assert changes
+    assert all("prior_relation_semantic_unit_refs" not in change for change in changes)
+    target = next(
+        row for row in quote["labeled_inventory"]
+        if row["evidence_id"] == "community_post:0"
+    )
+    assert target["relation_semantic_unit_refs"] == ["community_post:0::hydration"]
 
 
 def test_adjudication_record_is_carried_inline_to_quote_consumer(tmp_path: Path) -> None:

@@ -1852,6 +1852,8 @@ def test_reader_instructions_oblige_pool_counts_before_display_balance(
     assert "only to the exact meaning that states it" in method_text
     assert "context, not permission to transfer its fields" in method_text
     assert "without fusing them" in method_text
+    assert "does not prove a completed repeat purchase" in method_text
+    assert "Preserve source-authored advice as source-local evidence" in method_text
     assert "even when its row count happens to equal" in method_text
 
     reader, _ = build_axis_reader_bundle(

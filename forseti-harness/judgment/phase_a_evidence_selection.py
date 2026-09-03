@@ -65,7 +65,8 @@ PREVIOUS_PRESELECTION_CONFIRMATION_BATCH_MANIFEST_VERSION = (
     "phase_a_evidence_preselection_confirmation_batch_manifest_v1"
 )
 RELATIONS = ("support", "counter", "adjacent", "exclude")
-RELATION_ADJUDICATION_VERSION = "phase_a_relation_adjudication_v1"
+PREVIOUS_RELATION_ADJUDICATION_VERSION = "phase_a_relation_adjudication_v1"
+RELATION_ADJUDICATION_VERSION = "phase_a_relation_adjudication_v2"
 RELATION_REF_INSTRUCTION = (
     "For every row, return relation_semantic_unit_refs as the smallest nonempty "
     "subset of its supplied primary_semantic_unit_ref and "
@@ -1200,7 +1201,10 @@ def _load_relation_adjudication(
     if (manifest["spec"].get("schema_version") != SELECTION_SPEC_VERSION
         or not isinstance(binding, Mapping)
         or set(binding) != {"schema_version", "basis_sha256", "decisions"}
-        or binding.get("schema_version") != RELATION_ADJUDICATION_VERSION):
+        or binding.get("schema_version") not in {
+            PREVIOUS_RELATION_ADJUDICATION_VERSION,
+            RELATION_ADJUDICATION_VERSION,
+        }):
         raise EvidenceConsumerError(boundary, "current adjudication requires an inline record")
     record = binding
     if record["basis_sha256"] != relation_adjudication_basis(manifest, candidates):
@@ -1214,24 +1218,53 @@ def _load_relation_adjudication(
     result = {}
     value_policy = _uses_value_policy(manifest["spec"], candidates)
     for decision in decisions:
-        if (not isinstance(decision, dict) or set(decision) != {
+        version = binding["schema_version"]
+        expected_fields = {
             "source_id", "evidence_id", "relation_semantic_unit_refs",
             "relation", "reason_code", "rationale",
-        } or not all(isinstance(decision[key], str) and decision[key].strip()
-                     for key in decision if key != "relation_semantic_unit_refs")):
+        }
+        if version == RELATION_ADJUDICATION_VERSION:
+            expected_fields.add("prior_relation_semantic_unit_refs")
+        list_fields = {
+            "relation_semantic_unit_refs",
+            "prior_relation_semantic_unit_refs",
+        }
+        if (not isinstance(decision, dict) or set(decision) != expected_fields
+            or not all(isinstance(decision[key], str) and decision[key].strip()
+                       for key in decision if key not in list_fields)):
             raise EvidenceConsumerError(boundary, "invalid adjudication decision")
-        refs = decision["relation_semantic_unit_refs"]
-        if (not isinstance(refs, list) or not refs
+        replacement_refs = decision["relation_semantic_unit_refs"]
+        prior_refs = (
+            decision["prior_relation_semantic_unit_refs"]
+            if version == RELATION_ADJUDICATION_VERSION
+            else replacement_refs
+        )
+        if any(
+            not isinstance(refs, list) or not refs
             or not all(isinstance(ref, str) and ref for ref in refs)
-            or len(refs) != len(set(refs))):
+            or len(refs) != len(set(refs))
+            for refs in (prior_refs, replacement_refs)
+        ):
             raise EvidenceConsumerError(boundary, "empty or duplicate adjudicated refs")
-        key = (decision["source_id"], decision["evidence_id"], frozenset(refs))
+        key = (
+            decision["source_id"],
+            decision["evidence_id"],
+            frozenset(prior_refs),
+        )
         if key in result:
             raise EvidenceConsumerError(boundary, "duplicate adjudicated binding")
         owners = rows_by_evidence.get(key[:2], [])
-        if not any(set(refs) <= {row["semantic_unit_ref"], *(
-            item["semantic_unit_ref"] for item in row["same_evidence_companion_meanings"]
-        )} for row in owners):
+        if not any(
+            set(prior_refs) | set(replacement_refs)
+            <= {
+                row["semantic_unit_ref"],
+                *(
+                    item["semantic_unit_ref"]
+                    for item in row["same_evidence_companion_meanings"]
+                ),
+            }
+            for row in owners
+        ):
             raise EvidenceConsumerError(boundary, "adjudication references a foreign row-owned meaning")
         relation, reason = decision["relation"], decision["reason_code"]
         if not value_policy:
@@ -1243,6 +1276,9 @@ def _load_relation_adjudication(
             raise EvidenceConsumerError(boundary, "invalid adjudicated relation or reason")
         normalized = dict(decision)
         normalized["reason_code"] = reason
+        normalized["_replacement_relation_semantic_unit_refs"] = sorted(
+            replacement_refs
+        )
         result[key] = normalized
     return result
 
@@ -1254,6 +1290,7 @@ def _apply_relation_adjudication(
     decisions = _load_relation_adjudication(manifest, candidates)
     if not decisions:
         return None
+    record = manifest["spec"]["relation_adjudication"]
     matched = set()
     changed = []
     matched_count = 0
@@ -1267,17 +1304,33 @@ def _apply_relation_adjudication(
         matched_count += 1
         if row["layer"] == "influence_context" and decision["relation"] in {"support", "counter"}:
             raise EvidenceConsumerError("creator_customer_laundering", "adjudication cannot promote creator evidence into customer truth")
-        if (row["relation"], row["reason_code"]) != (decision["relation"], decision["reason_code"]):
-            changed.append({"candidate_id": row["candidate_id"],
-                            "prior_relation": row["relation"],
-                            "prior_reason_code": row["reason_code"],
-                            "relation": decision["relation"],
-                            "reason_code": decision["reason_code"]})
+        replacement_refs = (
+            decision["_replacement_relation_semantic_unit_refs"]
+            if record["schema_version"] == RELATION_ADJUDICATION_VERSION
+            else list(row["relation_semantic_unit_refs"])
+        )
+        if (
+            (row["relation"], row["reason_code"])
+            != (decision["relation"], decision["reason_code"])
+            or row.get("relation_semantic_unit_refs") != replacement_refs
+        ):
+            change = {"candidate_id": row["candidate_id"],
+                      "prior_relation": row["relation"],
+                      "prior_reason_code": row["reason_code"],
+                      "relation": decision["relation"],
+                      "reason_code": decision["reason_code"]}
+            if record["schema_version"] == RELATION_ADJUDICATION_VERSION:
+                change["prior_relation_semantic_unit_refs"] = list(
+                    row["relation_semantic_unit_refs"]
+                )
+                change["relation_semantic_unit_refs"] = list(replacement_refs)
+            changed.append(change)
         row["relation"] = decision["relation"]
         row["reason_code"] = decision["reason_code"]
+        if record["schema_version"] == RELATION_ADJUDICATION_VERSION:
+            row["relation_semantic_unit_refs"] = list(replacement_refs)
     if matched != set(decisions):
         raise EvidenceConsumerError("relation_adjudication_binding", "adjudicated binding is absent from confirmed rows; renewed judgment required")
-    record = manifest["spec"]["relation_adjudication"]
     return {"binding": {"schema_version": record["schema_version"],
                         "basis_sha256": record["basis_sha256"],
                         "record_sha256": _canonical_json_sha256(record)},
