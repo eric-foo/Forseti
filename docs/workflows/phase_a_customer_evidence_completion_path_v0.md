@@ -249,10 +249,11 @@ with `phase_a_evidence_selection.relation_adjudication_basis(manifest,
 candidates)` over the verified current selection and its complete candidate
 inventory. Each authored decision carries `source_id`, `evidence_id`, the
 exact nonempty prior and replacement `relation_semantic_unit_refs`, `relation`,
-`reason_code`, and a source-backed `rationale`. The prior set locates exactly
-one confirmed row; both sets must be nonempty and owned by that same evidence
-row. V1 remains replayable and treats its one ref set as both locator and
-replacement. This is an explicit judgment input, not a provider
+`reason_code`, and a source-backed `rationale`. The prior set locates one exact
+confirmed binding, which may occur on multiple confirmed candidate rows; both
+sets must be nonempty and owned by the same evidence row. V1 remains replayable
+and uses its one ref set only as the locator, leaving the confirmed refs
+unchanged. This is an explicit judgment input, not a provider
 answer, self-certifying approval field, or automatic preference for an older
 label. A changed point/spec, source file, candidate inventory, or judging policy
 invalidates the basis and requires renewed judgment; do not merely rehash it.
@@ -262,16 +263,18 @@ excluded from the basis to avoid a cycle. Because the record travels inside the
 spec, replay does not depend on an authoring machine's filesystem.
 
 Both existing preselection finalizers apply the authored relation and reason
-to every confirmed row with that exact source/evidence/ref-set binding. They
-never choose or change refs. Unmatched or duplicate decisions fail visibly;
-all other rows retain their provider answers and the consistency guard remains
-active. Raw provider responses remain in replay, and the confirmation receipt
-records the embedded correction, every changed candidate and prior label, and
-the mechanically-unproven semantic warrant. The quote consumer revalidates the
-same binding. Historical unscoped specs and pre-confirmation routes cannot
-accept this extension. No default correction, global judgment cache, extra
-provider call, or mandatory review ceremony is introduced. This exception path
-does not remove the existing semantic workload for a genuinely fresh selection.
+to every confirmed row with that exact source/evidence/ref-set binding. V2 also
+applies the authored replacement refs; V1 leaves the confirmed refs unchanged.
+The finalizers do not independently choose either set. Unmatched or duplicate
+decisions fail visibly; all other rows retain their provider answers and the
+consistency guard remains active. Raw provider responses remain in replay, and
+the confirmation receipt records the embedded correction, every changed
+candidate and prior label, and the mechanically-unproven semantic warrant. The
+quote consumer revalidates the same binding. Historical unscoped specs and
+pre-confirmation routes cannot accept this extension. No default correction,
+global judgment cache, extra provider call, or mandatory review ceremony is
+introduced. This exception path does not remove the existing semantic workload
+for a genuinely fresh selection.
 
 The scope survives unchanged into the point artifact, consolidated view,
 structured reader, point-reader request, and compiled brief. Missing or changed
