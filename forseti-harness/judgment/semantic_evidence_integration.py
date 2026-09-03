@@ -7478,6 +7478,18 @@ def validate_reconciliation_stage(
                 child_emerging_labels.update(child["emerging_axis_labels"])
                 child_evidence_postures.update(child.get("evidence_postures", []))
                 child_seen.add(child_ref)
+                # Convergence treats each incoming candidate as one already
+                # bounded meaning, so it has at most one attachment. Decision
+                # authoring already refuses a second one, but the shared
+                # validator is the boundary that produces the durable
+                # compilation and also accepts historical response v2. Without
+                # this check a response-v2 submission could satisfy the
+                # fixed-point equality with a hidden split paid for by a
+                # compensating merge, and the level would be read as terminal.
+                if reconciliation_mode == "convergence" and child_ref in batch_used:
+                    raise SemanticIntegrationError(
+                        f"convergence candidate {child_ref} has multiple attachments"
+                    )
                 batch_used.add(child_ref)
             if reconciliation_mode == "convergence":
                 supporting_rows = {
