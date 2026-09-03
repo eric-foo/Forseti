@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v107
+version: v109
 effective_date: 2026-09-03
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v107
+# Semantic Evidence Integration Contract v109
 
 ## Purpose
 
@@ -1471,6 +1471,10 @@ first-look queue because retailer reviews are closest to completed purchase;
 community- or qualified-audience-only customer points remain in a separate
 discovery queue and record retailer check-back as open. Retailer is not an
 admission gate. Creator-authored material cannot supply customer support.
+The public packet runner's `--all-propositions` selection derives the complete
+proposition-ID set from the finalized view, avoiding an operating-system command
+line limit without changing packet semantics; it is mutually exclusive with
+axis and explicit proposition selection.
 Points earn investigation through explicit reported customer behavior,
 independent customer recurrence, material source-native engagement, or an
 operator-protected safety/costly lane. Engagement remains comparable only
@@ -1845,6 +1849,51 @@ supported view/output. One-off and unresolved evidence remains explicit; lack
 of v34 closure never becomes `none_observed`. Agents must not run v34, treat it
 as completion, or use it to claim global meaning identity, global opposition
 coverage, or global negative conflict coverage.
+
+A valid normal reconciliation level may temporarily produce more nodes than it
+received candidates when one candidate carries multiple distinct bounded
+meanings. That is zero convergence rather than malformed accounting: the next
+level enters the existing convergence/retention mode, which must resolve the
+frontier without silently dropping a meaning.
+
+Convergence treats each incoming candidate as one already-bounded meaning and
+therefore permits at most one attachment, or one unmerged retrieval reason.
+Meaning splits remain available in normal reconciliation; allowing them again
+in convergence would make partial retention unrepresentable and prevent an
+honest fixed point.
+
+Convergence does not circulate nonterminal placeholders. Every newly authored
+convergence node is terminal. A terminal customer finding supported by repeated
+source rows remains required; a nonterminal candidate must either support one
+terminal bounded node or remain explicitly retrievable as unmerged evidence.
+This retirement changes no leaf disposition and does not turn unresolved
+material into a claim merely to satisfy the fixed-point rule. Historical
+responses remain replayable through the shared validator; the terminal
+finalizer still rejects any nonterminal compilation. The compiler, not the
+provider, carries each prior node's terminal status into the next stage; current
+convergence prompts expose that bit only to apply the retention distinction.
+When a complete convergence pass is one-for-one but still contains nonterminal
+nodes, its next stage also hash-binds and carries the already terminal nodes
+outside the nonterminal nodes' transitive shared-leaf neighborhood unchanged.
+It sends the nonterminal nodes and only their leaf-connected terminal neighbors
+back for bounded judgment. This installs no new semantic choice and prevents
+repeated whole-corpus reads whose only purpose would be to preserve an already
+stable, unrelated terminal majority. A convergence fixed point accounts for
+each input as exactly one surviving terminal node or one explicit unmerged
+candidate; honest retirement therefore does not force another level merely
+because the node count fell.
+
+Axis membership remains compiler-owned lineage. Current decision reconciliation
+derives node `axis_ids` from the exact union of its attached children, and the
+final v3 consumer rederives proposition `axis_ids` from the verified root
+semantic leaves. Provider-authored axis strings carry no authority and cannot
+move a proposition across axes. This is deterministic provenance preservation,
+not semantic axis inference.
+
+If an explicitly unmerged candidate shares a semantic leaf with a surviving
+node, the final leaf disposition is `used`; the same leaf cannot also be emitted
+as unmerged. Candidate-level retirement still participates in fixed-point
+accounting, and the source remains recoverable through the surviving node.
 
 Registry-first global identity, embeddings or top-k retrieval, deterministic
 semantic blocking, and exhaustive all-pairs closure are deferred research
@@ -2231,6 +2280,30 @@ new frontier.
 
 ## Changelog
 
+- `v109` / 2026-09-03 — ended policy-v2 convergence placeholder circulation:
+  current response-v3 convergence schemas emit terminal nodes only, terminal
+  repeated customer findings remain required, and nonterminal inputs may become
+  a terminal bounded finding or explicit unmerged retrieval evidence. The
+  compiler carries prior terminal status into later convergence stages. The
+  next stage after a one-for-one convergence pass carries terminal nodes outside
+  the nonterminal nodes' transitive shared-leaf neighborhood unchanged and
+  prompts only that bounded neighborhood, avoiding a repeated whole-corpus
+  provider read. Fixed-point accounting now permits one explicit unmerged input
+  candidate in place of one output node. Current compilation and finalization
+  also rederive axis membership from child and verified-leaf lineage rather than
+  trusting provider-authored axis strings. Shared leaves retained by any node
+  receive one `used` disposition rather than contradictory used-and-unmerged
+  output. Added a mutually exclusive `--all-propositions` packet projection for
+  complete-corpus frontier input without per-proposition command-line growth.
+  The shared validator continues to replay historical responses, while
+  finalization still rejects nonterminal compilations. Added no provider stage,
+  semantic classifier, evidence deletion, or Deliver behavior.
+- `v108` / 2026-09-03 — admitted valid normal-level expansion into convergence,
+  made each convergence candidate atomic, required every retained convergence
+  node to keep effective support from at least two distinct source rows, and
+  exposed that failure through deterministic diagnostics. Historical v1/v2
+  replay, semantic judgment ownership, and the terminal fixed-point rule remain
+  unchanged.
 - `v107` / 2026-09-03 — added repair-request v3's diagnostic-gated compact
   structural rendering for complete cross-child duplicate-leaf-only failures.
   It reuses the existing nomination, schema, composition and unchanged native

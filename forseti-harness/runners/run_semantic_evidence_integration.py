@@ -1847,6 +1847,7 @@ def project_evidence_packet_run(
     proposition_ids: list[str],
     packet_out: Path,
     packet_version: str = "v3",
+    all_propositions: bool = False,
 ) -> dict[str, Any]:
     view = _load_object(view_path)
     bundle = _load_object(bundle_path)
@@ -1859,6 +1860,12 @@ def project_evidence_packet_run(
         "v2": project_evidence_packet_v2,
         "v3": project_evidence_packet,
     }[packet_version]
+    if all_propositions:
+        if axis_ids or proposition_ids:
+            raise ValueError(
+                "all-propositions cannot be combined with axis or proposition selection"
+            )
+        proposition_ids = [row["proposition_id"] for row in view["propositions"]]
     packet = projector(
         view,
         bundle,
@@ -2790,6 +2797,7 @@ def _parser() -> argparse.ArgumentParser:
     selection = evidence_packet.add_mutually_exclusive_group(required=True)
     selection.add_argument("--axis-id", action="append", default=[])
     selection.add_argument("--proposition-id", action="append", default=[])
+    selection.add_argument("--all-propositions", action="store_true")
     evidence_packet.add_argument("--packet-out", type=Path, required=True)
     evidence_packet.add_argument(
         "--packet-version", choices=("v1", "v2", "v3"), default="v3"
@@ -3328,6 +3336,7 @@ def main(argv: list[str] | None = None) -> int:
                 proposition_ids=args.proposition_id,
                 packet_out=args.packet_out,
                 packet_version=args.packet_version,
+                all_propositions=args.all_propositions,
             )
         elif args.command == "prepare-evidence-consumer-batch":
             result = prepare_evidence_consumer_batch_run(

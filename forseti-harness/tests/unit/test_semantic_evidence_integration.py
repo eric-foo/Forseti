@@ -1440,9 +1440,30 @@ def test_evidence_packet_runner_defaults_v3_and_preserves_explicit_v2(
     v2_result = project_evidence_packet_run(
         **kwargs, packet_out=tmp_path / "v2.json", packet_version="v2"
     )
+    all_result = project_evidence_packet_run(
+        **{
+            **kwargs,
+            "proposition_ids": [],
+            "all_propositions": True,
+        },
+        packet_out=tmp_path / "all.json",
+    )
 
     assert default_result["packet_schema_version"] == EVIDENCE_PACKET_VERSION
     assert v2_result["packet_schema_version"] == EVIDENCE_PACKET_VERSION_V2
+    assert all_result["selected_proposition_count"] == len(view["propositions"])
+    all_packet = json.loads((tmp_path / "all.json").read_text(encoding="utf-8"))
+    assert all_packet["selection"]["mode"] == "proposition"
+    assert all_packet["selection"]["proposition_ids"] == sorted(
+        row["proposition_id"] for row in view["propositions"]
+    )
+
+    with pytest.raises(ValueError, match="cannot be combined"):
+        project_evidence_packet_run(
+            **kwargs,
+            all_propositions=True,
+            packet_out=tmp_path / "invalid.json",
+        )
 
 
 def test_evidence_packet_v3_preservation_signal_rejects_wrong_cause_mutations() -> None:
@@ -2545,6 +2566,69 @@ def test_decision_reconciliation_public_consumers_preserve_owned_facts_and_resum
     assert len(validate_reconciliation_stage(bundle, stage, [response])["semantic_nodes"]) == 2
 
 
+def test_decision_reconciliation_convergence_candidate_is_atomic():
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    stage["reconciliation_mode"] = "convergence"
+    stage["stage_sha256"] = semantic_module._sha256(
+        {key: value for key, value in stage.items() if key != "stage_sha256"}
+    )
+    response["stage_sha256"] = stage["stage_sha256"]
+    schema = semantic_module._decision_reconciliation_schema(
+        stage,
+        stage["batches"][0],
+        [],
+        {row["candidate_ref"]: row for row in stage["candidates"]},
+        semantic_module._unit_index(bundle),
+    )
+    assert {
+        choice["properties"]["terminal_proposition"]["const"]
+        for choice in schema["properties"]["semantic_nodes"]["items"]["anyOf"]
+    } == {True}
+    for slot in schema["properties"]["decisions_by_candidate_ref"]["properties"].values():
+        decision = schema["$defs"][slot["$ref"].rsplit("/", 1)[1]]
+        for choice in decision.get("anyOf", [decision]):
+            if choice["properties"]["unmerged_reason"].get("type") == "null":
+                assert choice["properties"]["attachments"]["maxItems"] == 1
+
+    extra = deepcopy(response["semantic_nodes"][0])
+    extra["semantic_node_key"] = "another"
+    response["semantic_nodes"].append(extra)
+    next(iter(response["decisions_by_candidate_ref"].values()))["attachments"].append(
+        {"semantic_node_key": "another", "relation": "support"}
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="convergence candidate has multiple attachments",
+    ):
+        validate_reconciliation_stage(bundle, stage, [response])
+
+
+def test_decision_reconciliation_derives_axis_bindings_from_children():
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    target = response["semantic_nodes"][0]
+    target["axis_ids"] = ["foreign-provider-axis"]
+
+    compiled = validate_reconciliation_stage(bundle, stage, [response])
+    result = next(
+        row
+        for row in compiled["semantic_nodes"]
+        if row["bounded_meaning"] == target["bounded_meaning"]
+    )
+    candidate_index = {row["candidate_ref"]: row for row in stage["candidates"]}
+    child_refs = {
+        attachment["child_ref"]
+        for attachment in result["child_relations"]
+    }
+    assert result["axis_ids"] == sorted(
+        {
+            axis
+            for ref in child_refs
+            for axis in candidate_index[ref]["axis_ids"]
+        }
+    )
+    assert "foreign-provider-axis" not in result["axis_ids"]
+
+
 @pytest.mark.parametrize("mutation,error", [
     ("missing_candidate", "candidate decisions has missing or foreign fields"),
     ("foreign_candidate", "candidate decisions has missing or foreign fields"),
@@ -2682,6 +2766,37 @@ def test_reconciliation_diagnostic_keeps_valid_response_clean_and_public_output_
             response_path=response_path,
             diagnostic_out=output,
         )
+
+
+def test_reconciliation_diagnostic_covers_convergence_repeated_support_failure():
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    stage["reconciliation_mode"] = "convergence"
+    stage["stage_sha256"] = semantic_module._sha256(
+        {key: value for key, value in stage.items() if key != "stage_sha256"}
+    )
+    response["stage_sha256"] = stage["stage_sha256"]
+
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="lacks repeated source-row support",
+    ):
+        validate_reconciliation_stage(bundle, stage, [response])
+
+    diagnostic = semantic_module.diagnose_reconciliation_response(
+        bundle, stage, response
+    )
+    assert diagnostic["primary_error_covered"] is True
+    assert diagnostic["issues"] == [
+        {
+            "code": "convergence_lacks_repeated_support",
+            "message": (
+                f"convergence semantic node {response['semantic_nodes'][0]['semantic_node_key']} "
+                "lacks repeated source-row support"
+            ),
+            "candidate_refs": sorted(response["decisions_by_candidate_ref"]),
+            "semantic_node_keys": [response["semantic_nodes"][0]["semantic_node_key"]],
+        }
+    ]
 
 
 def test_reconciliation_diagnostic_skips_claim_checks_after_identity_crossing():
@@ -3149,7 +3264,7 @@ def test_duplicate_leaf_compact_repair_distinguishes_one_child_repetition():
     diagnostic = semantic_module.diagnose_reconciliation_response(
         bundle, stage, response
     )
-    assert [issue["code"] for issue in diagnostic["issues"]] == ["duplicate_leaf"]
+    assert "duplicate_leaf" in [issue["code"] for issue in diagnostic["issues"]]
     with pytest.raises(SemanticIntegrationError, match="across distinct child candidates"):
         semantic_module.prepare_reconciliation_repair(
             bundle, stage, response,
@@ -3168,7 +3283,7 @@ def test_duplicate_leaf_compact_repair_refuses_convergence_retention_mode():
     diagnostic = semantic_module.diagnose_reconciliation_response(
         bundle, stage, response
     )
-    assert [issue["code"] for issue in diagnostic["issues"]] == ["duplicate_leaf"]
+    assert "duplicate_leaf" in [issue["code"] for issue in diagnostic["issues"]]
     nomination = {
         "node_keys": ["affected"],
         "reason": "Resolve only the diagnosed repeated-leaf ownership conflict.",
@@ -4443,6 +4558,15 @@ def test_v3_terminal_hierarchy_cannot_drop_a_semantic_unit() -> None:
 
     with pytest.raises(SemanticIntegrationError, match="every semantic unit"):
         finalize_v3_view(bundle, compiled, forged)
+
+
+def test_v3_finalization_rederives_axes_from_verified_leaf_rows() -> None:
+    bundle, compiled, terminal, expected = _v3_complete_view()
+    provider_tainted = deepcopy(terminal)
+    provider_tainted["semantic_nodes"][0]["axis_ids"] = ["foreign-provider-axis"]
+    _rehash_node_compilation(provider_tainted)
+
+    assert finalize_v3_view(bundle, compiled, provider_tainted) == expected
 
 
 def test_v3_finalization_rejects_lineage_from_another_batch_compilation() -> None:
@@ -6667,6 +6791,8 @@ def test_policy_v2_enters_convergence_and_enforces_source_row_support() -> None:
     )
     stage_three, prompts_three = prepare_reconciliation_stage(bundle, level_two)
     assert stage_three["reconciliation_mode"] == "convergence"
+    assert stage_three["candidates"][0]["terminal_proposition"] is False
+    assert '"terminal_proposition": false' in prompts_three[0]["prompt"]
     assert '"supporting_evidence_row_count": 2' in prompts_three[0]["prompt"]
 
     response = _group_level_responses(stage_three, terminal=False)[0]
@@ -6677,11 +6803,21 @@ def test_policy_v2_enters_convergence_and_enforces_source_row_support() -> None:
             "reason": "Retained only as retrieval evidence.",
         }
     ]
+    retired = validate_reconciliation_stage(bundle, stage_three, [response])
+    assert retired["semantic_nodes"] == []
+    assert len(retired["unmerged_semantic_units"]) == 2
+
+    retained_stage = deepcopy(stage_three)
+    retained_stage["candidates"][0]["terminal_proposition"] = True
+    retained_stage["stage_sha256"] = semantic_module._sha256(
+        {key: value for key, value in retained_stage.items() if key != "stage_sha256"}
+    )
+    response["stage_sha256"] = retained_stage["stage_sha256"]
     with pytest.raises(
         SemanticIntegrationError,
         match="convergence cannot unmerge repeated customer finding",
     ):
-        validate_reconciliation_stage(bundle, stage_three, [response])
+        validate_reconciliation_stage(bundle, retained_stage, [response])
 
 
 def test_policy_v2_multi_batch_fixed_point_is_terminal() -> None:
@@ -6702,9 +6838,153 @@ def test_policy_v2_multi_batch_fixed_point_is_terminal() -> None:
     changed["input_candidate_count"] = 3
     assert not is_terminal_reconciliation_compilation(changed)
 
+    changed["unmerged_candidate_count"] = 1
+    assert is_terminal_reconciliation_compilation(changed)
+
+    changed["unmerged_candidate_count"] = 2
+    assert not is_terminal_reconciliation_compilation(changed)
+
     normal = deepcopy(compilation)
     normal["reconciliation_mode"] = "normal"
     assert not is_terminal_reconciliation_compilation(normal)
+
+
+def test_policy_v2_fixed_count_carries_terminal_nodes_and_prompts_only_placeholders() -> None:
+    bundle, verified = _verified_policy_compilation(count=2)
+    stage_one, _ = prepare_reconciliation_stage(
+        bundle,
+        verified,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+    )
+    level_one = validate_reconciliation_stage(
+        bundle,
+        stage_one,
+        _terminal_singleton_reconciliation_responses(stage_one),
+    )
+    pending = level_one["semantic_nodes"][0]
+    pending.update(
+        terminal_proposition=False,
+        claim_kind=None,
+        opposition_checked=None,
+        causal_ceiling=None,
+    )
+    # Model the completed convergence pass that exposed the real large-corpus
+    # case: most nodes were terminal while a bounded remainder stayed pending.
+    level_one["reconciliation_mode"] = "convergence"
+    level_one["node_compilation_sha256"] = semantic_module._sha256(
+        {key: value for key, value in level_one.items() if key != "node_compilation_sha256"}
+    )
+
+    stage_two, prompts = prepare_reconciliation_stage(bundle, level_one)
+    assert stage_two["reconciliation_mode"] == "convergence"
+    assert [row["candidate_ref"] for row in stage_two["candidates"]] == [
+        pending["semantic_node_ref"]
+    ]
+    assert stage_two["carried_terminal_nodes"] == [level_one["semantic_nodes"][1]]
+    assert len(stage_two["batches"]) == len(prompts) == 1
+    assert pending["semantic_node_ref"] in prompts[0]["prompt"]
+    assert level_one["semantic_nodes"][1]["semantic_node_ref"] not in prompts[0]["prompt"]
+
+    response = _singleton_reconciliation_responses(stage_two)[0]
+    response["semantic_nodes"] = []
+    response["unmerged_children"] = [
+        {
+            "child_ref": pending["semantic_node_ref"],
+            "reason": "No source-supported terminal common meaning was exposed.",
+        }
+    ]
+    completed = validate_reconciliation_stage(bundle, stage_two, [response])
+    assert completed["semantic_nodes"] == stage_two["carried_terminal_nodes"]
+    assert completed["input_candidate_count"] == 2
+    assert len(completed["unmerged_semantic_units"]) == 1
+    assert is_terminal_reconciliation_compilation(completed)
+
+    wrong = deepcopy(stage_two)
+    wrong["carried_terminal_nodes"][0]["terminal_proposition"] = False
+    wrong["stage_sha256"] = semantic_module._sha256(
+        {key: value for key, value in wrong.items() if key != "stage_sha256"}
+    )
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="invalid carried terminal nodes",
+    ):
+        validate_reconciliation_stage(bundle, wrong, [], require_all=False)
+
+
+def test_policy_v2_fixed_count_keeps_shared_leaf_neighbors_active() -> None:
+    bundle, verified = _verified_policy_compilation(count=3)
+    stage_one, _ = prepare_reconciliation_stage(
+        bundle,
+        verified,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+    )
+    level_one = validate_reconciliation_stage(
+        bundle,
+        stage_one,
+        _terminal_singleton_reconciliation_responses(stage_one),
+    )
+    pending, neighbor, unrelated = level_one["semantic_nodes"]
+    pending.update(
+        terminal_proposition=False,
+        claim_kind=None,
+        opposition_checked=None,
+        causal_ceiling=None,
+    )
+    shared_relations = deepcopy(
+        pending["leaf_relations"] + neighbor["leaf_relations"]
+    )
+    shared_lineage = deepcopy(
+        pending["condition_lineage"] + neighbor["condition_lineage"]
+    )
+    pending["leaf_relations"] = deepcopy(shared_relations)
+    pending["condition_lineage"] = deepcopy(shared_lineage)
+    neighbor["leaf_relations"] = deepcopy(shared_relations)
+    neighbor["condition_lineage"] = deepcopy(shared_lineage)
+    level_one["reconciliation_mode"] = "convergence"
+    level_one["node_compilation_sha256"] = semantic_module._sha256(
+        {key: value for key, value in level_one.items() if key != "node_compilation_sha256"}
+    )
+
+    next_stage, prompts = prepare_reconciliation_stage(bundle, level_one)
+    assert {row["candidate_ref"] for row in next_stage["candidates"]} == {
+        pending["semantic_node_ref"],
+        neighbor["semantic_node_ref"],
+    }
+    assert next_stage["carried_terminal_nodes"] == [unrelated]
+    assert pending["semantic_node_ref"] in prompts[0]["prompt"]
+    assert neighbor["semantic_node_ref"] in prompts[0]["prompt"]
+    assert unrelated["semantic_node_ref"] not in prompts[0]["prompt"]
+
+    response = _terminal_singleton_reconciliation_responses(next_stage)[0]
+    response["semantic_nodes"] = [
+        row
+        for row in response["semantic_nodes"]
+        if row["child_relations"][0]["child_ref"] == neighbor["semantic_node_ref"]
+    ]
+    response["unmerged_children"] = [
+        {
+            "child_ref": pending["semantic_node_ref"],
+            "reason": "The overlapping nonterminal candidate did not warrant a terminal finding.",
+        }
+    ]
+    completed = validate_reconciliation_stage(bundle, next_stage, [response])
+    shared_refs = {row["semantic_unit_ref"] for row in shared_relations}
+    assert not shared_refs & {
+        row["semantic_unit_ref"] for row in completed["unmerged_semantic_units"]
+    }
+    assert completed["unmerged_candidate_count"] == 1
+    assert is_terminal_reconciliation_compilation(completed)
+
+
+def test_policy_v2_expanding_normal_level_enters_convergence() -> None:
+    compilation = {
+        "input_candidate_count": 2,
+        "reconciliation_policy_version": RECONCILIATION_POLICY_VERSION_V2,
+        "reconciliation_mode": "normal",
+        "semantic_nodes": [{}, {}, {}],
+    }
+
+    assert semantic_module._next_reconciliation_mode(compilation) == "convergence"
 
 
 def _relation_closure_fixture(

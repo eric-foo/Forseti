@@ -5354,6 +5354,7 @@ def _v3_candidate_from_node(
     candidate = {
         "candidate_ref": node["semantic_node_ref"],
         "statement": node["bounded_meaning"],
+        "terminal_proposition": node["terminal_proposition"],
         "subject_product_ids": node["subject_product_ids"],
         "comparator_product_ids": node["comparator_product_ids"],
         "product_version_ids": node["product_version_ids"],
@@ -5395,6 +5396,8 @@ def _agent_reconciliation_candidate(
     }
     if "evidence_postures" in candidate:
         agent_candidate["evidence_postures"] = candidate["evidence_postures"]
+    if convergence_mode and "terminal_proposition" in candidate:
+        agent_candidate["terminal_proposition"] = candidate["terminal_proposition"]
     if include_source_roles:
         if evidence_index is None:
             raise SemanticIntegrationError("reconciliation prompt lacks source roles")
@@ -5448,7 +5451,6 @@ def _next_reconciliation_mode(compilation: Mapping[str, Any]) -> str:
         or isinstance(input_count, bool)
         or input_count <= 0
         or not isinstance(nodes, list)
-        or len(nodes) > input_count
     ):
         raise SemanticIntegrationError(
             "reconciliation policy v2 compilation lacks valid convergence accounting"
@@ -5629,10 +5631,19 @@ def _must_retain_reconciliation_candidate(candidate, mode, evidence_index) -> bo
         return False
     if mode == "normal":
         return True
-    return mode == "convergence" and len({
-        _leaf_evidence_id(leaf["semantic_unit_ref"], evidence_index, node_key=candidate["candidate_ref"])
-        for leaf in candidate["leaf_relations"] if leaf["relation"] == "support"
-    }) > 1
+    return (
+        mode == "convergence"
+        and candidate.get("terminal_proposition") is True
+        and len({
+            _leaf_evidence_id(
+                leaf["semantic_unit_ref"],
+                evidence_index,
+                node_key=candidate["candidate_ref"],
+            )
+            for leaf in candidate["leaf_relations"]
+            if leaf["relation"] == "support"
+        }) > 1
+    )
 
 
 def _decision_reconciliation_schema(stage, batch, labels, candidate_index, evidence_index):
@@ -5646,7 +5657,12 @@ def _decision_reconciliation_schema(stage, batch, labels, candidate_index, evide
         del node["properties"][field]
     node["required"] = list(node["properties"])
     node_choices = []
-    for terminal in (False, True):
+    terminal_choices = (
+        (True,)
+        if stage.get("reconciliation_mode") == "convergence"
+        else (False, True)
+    )
+    for terminal in terminal_choices:
         choice = deepcopy(node)
         choice["properties"]["terminal_proposition"] = {"type": "boolean", "const": terminal}
         choice["properties"]["claim_kind"] = (
@@ -5671,11 +5687,14 @@ def _decision_reconciliation_schema(stage, batch, labels, candidate_index, evide
 
     definitions = {}
     for required in (False, True):
+        attachment_cardinality = {"minItems": 1} if required else {}
+        if required and stage.get("reconciliation_mode") == "convergence":
+            attachment_cardinality["maxItems"] = 1
         definitions["retained_decision" if required else "decision"] = obj({
             "attachments": {"type": "array", "items": obj({
                 "semantic_node_key": {"type": "string"},
                 "relation": {"type": "string", "enum": sorted(RELATIONS)},
-            }), **({"minItems": 1} if required else {})},
+            }), **attachment_cardinality},
             "unmerged_reason": {"type": "null"} if required else {"type": ["string", "null"]},
         })
     schema["$defs"] = definitions
@@ -5753,6 +5772,10 @@ def _assemble_decision_reconciliation(response, stage, batch, labels, candidate_
             ):
                 raise SemanticIntegrationError(f"decision reconciliation cannot unmerge required finding {ref}")
             unmerged.append({"child_ref": ref, "reason": reason})
+        if stage.get("reconciliation_mode") == "convergence" and len(attachments) > 1:
+            raise SemanticIntegrationError(
+                "decision reconciliation convergence candidate has multiple attachments"
+            )
         seen = set()
         for attachment in attachments:
             exact(attachment, {"semantic_node_key", "relation"}, "attachment")
@@ -5769,6 +5792,9 @@ def _assemble_decision_reconciliation(response, stage, batch, labels, candidate_
         if not children:
             raise SemanticIntegrationError(f"decision reconciliation orphan node {key}")
         row.update(_reconciliation_product_bindings(children, key))
+        row["axis_ids"] = sorted(
+            {axis for child in children for axis in child["axis_ids"]}
+        )
         # Historical nodes may also carry qualified conditions beyond the leaf
         # strings. Keep those at their existing node scope, never invent leaf ownership.
         row["conditions"] = sorted({condition for child in children for condition in child["conditions"]}
@@ -5878,7 +5904,15 @@ def _render_v3_reconciliation_prompt(
             "count is greater than one. A one-row candidate stays in unmerged_children "
             "unless it is merged with meaning-equivalent candidates and the resulting "
             "node spans more than one distinct source row. Unmerged remains retained for "
-            "retrieval, not deleted. "
+            "retrieval, not deleted. Each incoming candidate is already one bounded "
+            "meaning: use at most one attachment for it, or one unmerged reason. Do not "
+            "split an incoming convergence candidate into multiple output meanings. Every "
+            "emitted semantic node must be terminal. An incoming nonterminal candidate that "
+            "cannot support a terminal bounded proposition remains retrievable with one "
+            "explicit unmerged reason; do not relabel it merely to finish. "
+            "Before returning each node, apply its child relations to the original leaf "
+            "relations and verify at least two distinct source rows remain effective "
+            "support; adjacent evidence and nonterminal status do not satisfy this rule. "
         )
     else:
         retention_instruction = ""
@@ -6018,6 +6052,20 @@ def _render_v3_reconciliation_prompt(
                 "original meaning. All IDs, source text, types and distinctions are unchanged; "
                 "these are exact records, not summaries. Return the original supplied response schema. "
             )
+        repair_attachment_instruction = (
+            "Within one candidate decision, use at most one attachment; each incoming "
+            "convergence candidate is already one bounded meaning and must not be split. "
+            "Every returned semantic node must be terminal; a nonterminal input that cannot "
+            "support a terminal bounded proposition may instead remain explicitly unmerged. "
+            "Every returned node still needs effective support from at least two distinct "
+            "source rows; adjacent evidence and nonterminal status do not satisfy that rule. "
+            if reconciliation_mode == "convergence"
+            else (
+                "Within one candidate decision, use each semantic_node_key at most once; "
+                "never attach the same key as both support and counter. Splitting is permitted "
+                "when source identities or meanings require it. "
+            )
+        )
         return (
             "Output mode: file-write through the designated response artifact. "
             "Edit permission: read-only evidence analysis; return JSON only matching the supplied schema.\n"
@@ -6025,10 +6073,9 @@ def _render_v3_reconciliation_prompt(
             "Return a complete replacement for the supplied candidate decisions and component definitions, "
             "or replacement=null with a nonempty cannot_repair_reason. Never rewrite upstream candidates "
             "or use unrelated nodes. Keep every required candidate, conditions, opposing evidence and "
-            "attribution. Within one candidate decision, use each semantic_node_key at most once; "
-            "never attach the same key as both support and counter. Splitting is permitted when "
-            "source identities or meanings require it. "
-            "Do not fabricate a positive claim just to supply a counter target. A corrected component "
+            "attribution. "
+            + repair_attachment_instruction
+            + "Do not fabricate a positive claim just to supply a counter target. A corrected component "
             "may retain its original choices when the allegation is unsupported. This is not semantic clearance. "
             "Inventory counts below describe the supplied sources, not support for every claim. "
             "Distinct comments or meaning units from one credited identity are not extra people or events. "
@@ -6102,17 +6149,33 @@ def _render_v3_reconciliation_prompt(
         + axis_payload
     )
     if decision_only:
+        attachment_instruction = (
+            "Fill every decisions_by_candidate_ref slot. Use exactly one attachment "
+            "to a declared semantic_node_key value, or an allowed unmerged_reason, "
+            "never both. "
+            if reconciliation_mode == "convergence"
+            else (
+                "Fill every decisions_by_candidate_ref slot. Use one or more attachments "
+                "to declared semantic_node_key values, or an allowed unmerged_reason, "
+                "never both. "
+            )
+        )
         result = result.replace(
             "Reconcile these candidates into meaning-equivalent semantic nodes. ",
             "Reconcile these candidates into source-supported semantic nodes at a useful common level. ",
         )
+        convergence_completion_instruction = (
+            "Every emitted semantic node must be terminal. An incoming nonterminal candidate "
+            "that cannot support a terminal bounded proposition may remain explicitly "
+            "unmerged; do not relabel it merely to finish. "
+            if reconciliation_mode == "convergence"
+            else "A required finding can remain a nonterminal singleton; retention does not force a terminal claim. "
+        )
         result = result.replace(
             "Every child must appear in at least one node or exactly once in "
             "unmerged_children. Preserve exact subject/comparator/version orientation. ",
-            "Fill every decisions_by_candidate_ref slot. Use one or more attachments "
-            "to declared semantic_node_key values, or an allowed unmerged_reason, "
-            "never both. A required finding can remain a nonterminal singleton; "
-            "retention does not force a terminal claim. Within one candidate decision, "
+            attachment_instruction + convergence_completion_instruction
+            + "Within one candidate decision, "
             "use each semantic_node_key at most once; the relation is single-valued for "
             "that candidate-node pair. If one candidate has different relations to "
             "different bounded meanings, use different node keys; never attach the same "
@@ -6341,6 +6404,58 @@ def prepare_reconciliation_stage(
         if reconciliation_policy == RECONCILIATION_POLICY_VERSION_V2
         else None
     )
+    if reconciliation_policy != RECONCILIATION_POLICY_VERSION_V2:
+        for candidate in candidates:
+            candidate.pop("terminal_proposition", None)
+    carried_terminal_nodes: list[dict[str, Any]] = []
+    if (
+        reconciliation_mode == "convergence"
+        and compilation.get("schema_version")
+        == "semantic_evidence_node_compilation_v2"
+        and compilation.get("reconciliation_mode") == "convergence"
+        and compilation.get("input_candidate_count")
+        == len(compilation["semantic_nodes"])
+        and any(
+            row.get("terminal_proposition") is not True
+            for row in compilation["semantic_nodes"]
+        )
+    ):
+        # A full convergence pass has already left these terminal nodes as a
+        # one-for-one fixed set. Re-reading them cannot be required to settle
+        # the remaining placeholders, so bind and carry them unchanged.
+        pending_refs = {
+            row["semantic_node_ref"]
+            for row in compilation["semantic_nodes"]
+            if row.get("terminal_proposition") is not True
+        }
+        node_index = {
+            row["semantic_node_ref"]: row for row in compilation["semantic_nodes"]
+        }
+        refs_by_leaf: dict[str, set[str]] = defaultdict(set)
+        for row in compilation["semantic_nodes"]:
+            for relation in row["leaf_relations"]:
+                refs_by_leaf[relation["semantic_unit_ref"]].add(
+                    row["semantic_node_ref"]
+                )
+        active_refs = set(pending_refs)
+        frontier = list(pending_refs)
+        while frontier:
+            current_ref = frontier.pop()
+            for relation in node_index[current_ref]["leaf_relations"]:
+                for related_ref in refs_by_leaf[relation["semantic_unit_ref"]]:
+                    if related_ref not in active_refs:
+                        active_refs.add(related_ref)
+                        frontier.append(related_ref)
+        carried_terminal_nodes = [
+            row
+            for row in compilation["semantic_nodes"]
+            if row["semantic_node_ref"] not in active_refs
+        ]
+        candidates = [
+            candidate
+            for candidate in candidates
+            if candidate["candidate_ref"] in active_refs
+        ]
     evidence_index = _unit_index(bundle)
     max_bytes = bundle["max_prompt_bytes"]
     compact_lineage = bundle.get("schema_version") in {
@@ -6468,6 +6583,8 @@ def prepare_reconciliation_stage(
     if reconciliation_mode is not None:
         stage["reconciliation_policy_version"] = reconciliation_policy
         stage["reconciliation_mode"] = reconciliation_mode
+    if carried_terminal_nodes:
+        stage["carried_terminal_nodes"] = carried_terminal_nodes
     stage["stage_sha256"] = _sha256(stage)
     return stage, prepare_reconciliation_prompts(bundle, stage, response_version=response_version,
                                                 authoring_revision=authoring_revision)
@@ -6481,6 +6598,44 @@ def _reconciliation_decision_only(bundle, response_version):
     if response_version == RECONCILIATION_RESPONSE_VERSION_V3 and bundle.get("method_version") == METHOD_VERSION_V12:
         return True
     raise SemanticIntegrationError("unsupported reconciliation authoring response version")
+
+
+def _validated_carried_terminal_nodes(stage, candidate_index):
+    carried = stage.get("carried_terminal_nodes", [])
+    if not isinstance(carried, list) or any(
+        not isinstance(row, Mapping)
+        or row.get("terminal_proposition") is not True
+        or not _nonempty(row.get("semantic_node_ref"))
+        for row in carried
+    ):
+        raise SemanticIntegrationError(
+            "reconciliation stage has invalid carried terminal nodes"
+        )
+    carried_node_refs = [row["semantic_node_ref"] for row in carried]
+    if (
+        len(carried_node_refs) != len(set(carried_node_refs))
+        or set(carried_node_refs) & set(candidate_index)
+    ):
+        raise SemanticIntegrationError(
+            "reconciliation stage repeats a carried terminal node"
+        )
+    carried_leaf_refs = {
+        relation.get("semantic_unit_ref")
+        for row in carried
+        for relation in row.get("leaf_relations", [])
+        if isinstance(relation, Mapping)
+    }
+    pending_leaf_refs = {
+        relation.get("semantic_unit_ref")
+        for candidate in candidate_index.values()
+        for relation in candidate.get("leaf_relations", [])
+        if isinstance(relation, Mapping)
+    }
+    if None in carried_leaf_refs or carried_leaf_refs & pending_leaf_refs:
+        raise SemanticIntegrationError(
+            "reconciliation stage carried terminal lineage overlaps pending candidates"
+        )
+    return carried
 
 
 def prepare_reconciliation_prompts(bundle, stage, *, response_version=None, authoring_revision=None):
@@ -7187,6 +7342,9 @@ def validate_reconciliation_stage(
         )
     evidence_index = _unit_index(bundle)
     candidate_index = {row["candidate_ref"]: row for row in stage["candidates"]}
+    carried_terminal_nodes = _validated_carried_terminal_nodes(
+        stage, candidate_index
+    )
     expected_batches = {row["batch_id"]: row for row in stage["batches"]}
     emerging_axis_owner_batch_id = stage.get("emerging_axis_owner_batch_id")
     if emerging_axis_owner_batch_id is not None and emerging_axis_owner_batch_id not in expected_batches:
@@ -7201,8 +7359,9 @@ def validate_reconciliation_stage(
     elif reconciliation_policy is not None or reconciliation_mode is not None:
         raise SemanticIntegrationError("reconciliation stage carries unknown policy")
     seen_batches: set[str] = set()
-    nodes: list[dict[str, Any]] = []
+    nodes: list[dict[str, Any]] = list(carried_terminal_nodes)
     unmerged: list[dict[str, Any]] = list(stage["carried_unmerged_semantic_units"])
+    unmerged_candidate_refs: set[str] = set()
     carried_consolidations = _validate_emerging_axis_consolidations(
         stage.get("carried_emerging_axis_consolidations"),
         original_labels={
@@ -7444,8 +7603,10 @@ def validate_reconciliation_stage(
                 raise SemanticIntegrationError(
                     f"normal reconciliation cannot unmerge customer finding {child_ref}"
                 )
-            if reconciliation_mode == "convergence" and _is_customer_finding_candidate(
-                candidate
+            if (
+                reconciliation_mode == "convergence"
+                and candidate.get("terminal_proposition") is True
+                and _is_customer_finding_candidate(candidate)
             ):
                 supporting_rows = {
                     _leaf_evidence_id(
@@ -7470,6 +7631,7 @@ def validate_reconciliation_stage(
             raise SemanticIntegrationError(
                 f"reconciliation batch {batch_id} does not account for every child"
             )
+        unmerged_candidate_refs.update(batch_unmerged)
         original_labels = (
             level_emerging_labels
             if batch_id == emerging_axis_owner_batch_id
@@ -7536,6 +7698,11 @@ def validate_reconciliation_stage(
         for relation in row["child_relations"]
     ):
         raise SemanticIntegrationError("reconciliation hierarchy contains a cycle")
+    used_leaf_refs = {
+        relation["semantic_unit_ref"]
+        for row in nodes
+        for relation in row["leaf_relations"]
+    }
     result = {
         "schema_version": "semantic_evidence_node_compilation_v2",
         "bundle_sha256": bundle["bundle_sha256"],
@@ -7545,7 +7712,11 @@ def validate_reconciliation_stage(
         "input_batch_count": len(stage["batches"]),
         "semantic_nodes": sorted(nodes, key=lambda row: row["semantic_node_ref"]),
         "unmerged_semantic_units": sorted(
-            {row["semantic_unit_ref"]: row for row in unmerged}.values(),
+            {
+                row["semantic_unit_ref"]: row
+                for row in unmerged
+                if row["semantic_unit_ref"] not in used_leaf_refs
+            }.values(),
             key=lambda row: row["semantic_unit_ref"],
         ),
         "emerging_axis_consolidations": [
@@ -7556,7 +7727,10 @@ def validate_reconciliation_stage(
     if reconciliation_policy == RECONCILIATION_POLICY_VERSION_V2:
         result["reconciliation_policy_version"] = reconciliation_policy
         result["reconciliation_mode"] = reconciliation_mode
-        result["input_candidate_count"] = len(stage["candidates"])
+        result["input_candidate_count"] = len(stage["candidates"]) + len(
+            carried_terminal_nodes
+        )
+        result["unmerged_candidate_count"] = len(unmerged_candidate_refs)
     result["node_compilation_sha256"] = _sha256(result)
     return result
 
@@ -7850,12 +8024,22 @@ def diagnose_reconciliation_response(
                             "reason": "malformed decisions or attachments cannot show every child entering this node",
                         }
                     )
+            support_evidence = {
+                _leaf_evidence_id(ref, evidence_index, node_key=key)
+                for ref, stance in leaf_relations.items()
+                if stance == "support"
+            }
+            if (
+                stage.get("reconciliation_mode") == "convergence"
+                and len(support_evidence) < 2
+            ):
+                add(
+                    "convergence_lacks_repeated_support",
+                    f"convergence semantic node {key} lacks repeated source-row support",
+                    candidate_refs=[row["child_ref"] for row in relations],
+                    node_keys=[key],
+                )
             if unique_nodes[key].get("terminal_proposition") is True:
-                support_evidence = {
-                    _leaf_evidence_id(ref, evidence_index, node_key=key)
-                    for ref, stance in leaf_relations.items()
-                    if stance == "support"
-                }
                 if not support_evidence:
                     add(
                         "terminal_lacks_support",
@@ -9332,11 +9516,16 @@ def is_terminal_reconciliation_compilation(
         return True
     if compilation.get("input_batch_count") == 1:
         return True
+    unmerged_candidate_count = compilation.get("unmerged_candidate_count", 0)
     return (
         compilation.get("reconciliation_policy_version")
         == RECONCILIATION_POLICY_VERSION_V2
         and compilation.get("reconciliation_mode") == "convergence"
-        and compilation.get("input_candidate_count") == len(nodes)
+        and isinstance(unmerged_candidate_count, int)
+        and not isinstance(unmerged_candidate_count, bool)
+        and unmerged_candidate_count >= 0
+        and compilation.get("input_candidate_count")
+        == len(nodes) + unmerged_candidate_count
     )
 
 
@@ -9402,6 +9591,27 @@ def finalize_v3_view(
     container_index = {row["container_id"]: row for row in bundle["containers"]}
     axis_ids = {row["axis_id"] for row in bundle["axes"]}
     compiled_props: list[dict[str, Any]] = []
+    source_axes_by_node_ref: dict[str, list[str]] = {}
+    for node in nodes:
+        key = node["semantic_node_ref"]
+        source_axes: set[str] = set()
+        for relation in node.get("leaf_relations", []):
+            if (
+                not isinstance(relation, Mapping)
+                or relation.get("semantic_unit_ref") not in semantic_index
+                or relation.get("relation") not in RELATIONS
+            ):
+                raise SemanticIntegrationError(
+                    f"terminal semantic node {key} has invalid leaf lineage"
+                )
+            source_axes.update(
+                semantic_index[relation["semantic_unit_ref"]]["axis_ids"]
+            )
+        if not source_axes <= axis_ids:
+            raise SemanticIntegrationError(
+                f"terminal semantic node {key} derives an unknown source axis"
+            )
+        source_axes_by_node_ref[key] = sorted(source_axes)
     proposition_ids_by_node = {
         node["semantic_node_ref"]: (
             _stable_id(
@@ -9417,7 +9627,7 @@ def finalize_v3_view(
                 *sorted(node["subject_product_ids"]),
                 *sorted(node["comparator_product_ids"]),
                 *sorted(node["product_version_ids"]),
-                *sorted(node["axis_ids"]),
+                *source_axes_by_node_ref[node["semantic_node_ref"]],
                 *sorted(node["conditions"]),
             )
         )
@@ -9446,9 +9656,7 @@ def finalize_v3_view(
     for node in nodes:
         key = node["semantic_node_ref"]
         kind = node["claim_kind"]
-        axes = node["axis_ids"]
-        if not set(axes) <= axis_ids:
-            raise SemanticIntegrationError(f"terminal semantic node {key} cites unknown axis")
+        axes = source_axes_by_node_ref[key]
         related: dict[str, list[str]] = {name: [] for name in RELATIONS}
         for relation in node["leaf_relations"]:
             ref = relation["semantic_unit_ref"]

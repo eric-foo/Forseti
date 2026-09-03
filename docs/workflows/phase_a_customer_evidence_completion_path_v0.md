@@ -706,6 +706,11 @@ resolution remain available. Operators do not select examples, supply a top-k
 cap, perform a new lookup, or request v3 through an extra flag. Explicit v2 is
 the matched comparison route; v1 is historical reproduction.
 
+Use `--all-propositions` when the downstream customer-pull frontier needs the
+complete finalized view. The runner expands that selection from the view itself
+rather than requiring one command-line argument per proposition; it cannot be
+combined with axis or explicit proposition selection.
+
 ### Adopted token-cost baseline
 
 On 2026-08-16, `phase_a_evidence_packet_v2` was adopted as the provisional
@@ -2856,9 +2861,49 @@ the policy remains byte-stable; the completed verified method-v7 compilation
 can therefore be replayed under the new reconciliation policy without
 re-extraction or row re-verification.
 
+“Removes less than one percent” includes a valid normal level that temporarily
+expands because one input candidate must attach to multiple distinct bounded
+meanings. That expansion enters convergence; it is not rejected or hidden by
+discarding one of the meanings.
+
+Once convergence begins, each incoming candidate is already one bounded
+meaning. It therefore has one destination: one retained attachment or one
+unmerged retrieval reason. Normal mode remains the place where a compound
+candidate may be split; convergence must not recreate that ambiguity.
+
+Convergence also ends placeholder circulation. Every emitted node is terminal.
+An incoming terminal finding with repeated source-row support remains attached;
+an incoming nonterminal candidate either supports a terminal bounded finding or
+stays recoverable as explicitly unmerged evidence. It must not be relabelled
+merely to finish, and it must not return as another nonterminal placeholder.
+The compiler carries the prior node's terminal status into the next immutable
+stage so the schema can distinguish those two retention duties.
+
+After a complete convergence pass returns one node per input but leaves some
+nonterminal placeholders, the next stage hash-binds and carries the already
+terminal nodes whose leaf evidence is outside the nonterminal candidates'
+transitive overlap neighborhood. Only the nonterminal candidates and terminal
+neighbors connected to them by shared leaf evidence return to the model. This
+is not a new semantic decision: the carried nodes already survived the complete
+fixed-count pass and cannot affect the bounded remainder, while the remaining
+evidence is still accounted as terminal output or explicit unmerged retrieval
+material.
+
+Axis membership is mechanical lineage, not reconciliation judgment. Current
+decision reconciliation derives each node's axis IDs from its attached children,
+and the final consumer rederives them from the verified leaf rows in the root
+batch compilation. A provider-authored axis string cannot add, remove, or move a
+finding between axes.
+
+When an explicitly retired candidate shares a leaf with a surviving finding,
+the leaf's final disposition is `used`, never both `used` and `unmerged`. The
+retired candidate still counts in convergence input accounting; its source row
+remains recoverable through the surviving finding.
+
 A convergence pass is terminal when every surviving candidate remains a
-terminal node and the pass produces exactly as many nodes as it received
-candidates. This fixed-point rule may span multiple prompt-bounded batches:
+terminal node and the pass produces exactly as many nodes plus explicitly
+unmerged input candidates as it received candidates. This fixed-point rule may
+span multiple prompt-bounded batches:
 prompt byte size is a transport constraint, not a semantic requirement to
 invent another merge. Historical reconciliation without policy v2 retains its
 single-batch terminal rule.
