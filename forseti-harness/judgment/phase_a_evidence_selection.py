@@ -116,6 +116,7 @@ SOURCE_RELATIVE_PUBLICATION_TIME_RE = re.compile(
 )
 INTERNAL_RELATION_LABEL_RE = re.compile(r"\b(?:support|counter|adjacent|exclude)\b", re.IGNORECASE)
 REASON_CODE_RE = re.compile(r"^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$")
+MAX_REASON_CODE_LENGTH = 80
 DISPLAY_LABEL_BY_REASON_CODE = {
     "repurchase_despite_price": "Repurchase intent despite price",
     "explicitly_worth_price": "Explicitly worth the price",
@@ -1235,7 +1236,7 @@ def _load_relation_adjudication(
         relation, reason = decision["relation"], decision["reason_code"]
         if not value_policy:
             reason = _normalize_reason_code(reason)
-        if (relation not in RELATIONS or len(reason) > 80
+        if (relation not in RELATIONS or len(reason) > MAX_REASON_CODE_LENGTH
             or not REASON_CODE_RE.fullmatch(reason)
             or INTERNAL_RELATION_LABEL_RE.search(reason.replace("_", " "))
             or (value_policy and VALUE_REASON_RELATIONS.get(reason) != relation)):
@@ -1978,6 +1979,7 @@ def _relation_schema(
         reason_schema: dict[str, Any] = {
             "type": "string",
             "pattern": REASON_CODE_RE.pattern,
+            "maxLength": MAX_REASON_CODE_LENGTH,
         }
         if relation is None:
             relation_schema["enum"] = list(RELATIONS)
@@ -3021,6 +3023,7 @@ def _preselection_relation_confirmation_schema(
         reason_schema: dict[str, Any] = {
             "type": "string",
             "pattern": REASON_CODE_RE.pattern,
+            "maxLength": MAX_REASON_CODE_LENGTH,
         }
         if relation is None:
             relation_schema["enum"] = list(RELATIONS)
@@ -3733,7 +3736,7 @@ def _validate_relation_response(
         if (
             result["relation"] not in RELATIONS
             or not isinstance(result["reason_code"], str)
-            or len(result["reason_code"]) > 80
+            or len(result["reason_code"]) > MAX_REASON_CODE_LENGTH
             or not REASON_CODE_RE.fullmatch(result["reason_code"])
         ):
             raise EvidenceConsumerError("relation_response_shape", "invalid relation result")
@@ -4470,7 +4473,7 @@ def _finalize_preselection_relation_confirmation_prepare_quotes(
         if (
             relation not in RELATIONS
             or not isinstance(reason_code, str)
-            or len(reason_code) > 80
+            or len(reason_code) > MAX_REASON_CODE_LENGTH
             or not REASON_CODE_RE.fullmatch(reason_code)
         ):
             raise EvidenceConsumerError(
@@ -5721,6 +5724,10 @@ def finalize_quotes(
                 "semantic adequacy of a structurally valid quote span is not mechanically proven",
                 "relation semantic-unit references are judgment-authored and ownership-checked; their semantic warrant is not mechanically proven",
             ]
+        )
+    elif manifest_version == DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION:
+        artifact["output_boundary"].append(
+            "relation semantic-unit references are judgment-authored and ownership-checked; their semantic warrant is not mechanically proven"
         )
     if temporal_policy is not None:
         timeline: dict[int | None, list[str]] = defaultdict(list)

@@ -45,7 +45,9 @@ from judgment.phase_a_evidence_axis_consolidation import (  # noqa: E402
 )
 from judgment.phase_a_evidence_consumer import EvidenceConsumerError  # noqa: E402
 from judgment.phase_a_decision_state_reconciliation import (  # noqa: E402
+    combine_phase_a_decision_state_adjudication_batches,
     finalize_phase_a_decision_state_reconciliation,
+    prepare_phase_a_decision_state_adjudication_batches,
     prepare_phase_a_decision_state_reconciliation,
 )
 
@@ -279,6 +281,79 @@ def finalize_decision_state_reconciliation_run(
     }
     _write_new(receipt_output, receipt)
     return {**receipt, "receipt_output": str(receipt_output)}
+
+
+def prepare_decision_state_adjudication_batches_run(
+    *, manifest_path: Path, output_dir: Path, max_prompt_characters: int
+) -> dict[str, Any]:
+    if output_dir.exists():
+        raise ValueError(f"refusing to overwrite existing output: {output_dir}")
+    batch_set = prepare_phase_a_decision_state_adjudication_batches(
+        _load_object(manifest_path),
+        max_prompt_characters=max_prompt_characters,
+    )
+    written: list[dict[str, Any]] = []
+    for batch in batch_set["batches"]:
+        batch_dir = output_dir / batch["batch_id"]
+        prompt_path = batch_dir / "prompt.txt"
+        schema_path = batch_dir / "schema.json"
+        _write_new_bytes(prompt_path, (batch["prompt"] + "\n").encode("utf-8"))
+        _write_new(schema_path, batch["response_schema"])
+        written.append(
+            {
+                "batch_id": batch["batch_id"],
+                "prompt_path": str(prompt_path),
+                "prompt_file_sha256": hash_file(prompt_path),
+                "prompt_characters": batch["prompt_characters"],
+                "response_schema_path": str(schema_path),
+                "response_schema_file_sha256": hash_file(schema_path),
+                "item_count": len(batch["item_ids"]),
+            }
+        )
+    batch_set_path = output_dir / "batch-set.json"
+    _write_new(batch_set_path, batch_set)
+    return {
+        "status": "complete",
+        "manifest_path": str(manifest_path),
+        "manifest_file_sha256": hash_file(manifest_path),
+        "batch_set_path": str(batch_set_path),
+        "batch_set_file_sha256": hash_file(batch_set_path),
+        "batch_set_sha256": batch_set["batch_set_sha256"],
+        "counts": batch_set["counts"],
+        "batches": written,
+        "model_api_calls": 0,
+    }
+
+
+def combine_decision_state_adjudication_batches_run(
+    *,
+    manifest_path: Path,
+    batch_set_path: Path,
+    response_paths: list[Path],
+    output_path: Path,
+) -> dict[str, Any]:
+    if output_path.exists():
+        raise ValueError(f"refusing to overwrite existing output: {output_path}")
+    responses = [_load_object(path) for path in response_paths]
+    combined = combine_phase_a_decision_state_adjudication_batches(
+        _load_object(manifest_path),
+        _load_object(batch_set_path),
+        responses,
+    )
+    _write_new(output_path, combined)
+    return {
+        "status": "complete",
+        "manifest_path": str(manifest_path),
+        "manifest_file_sha256": hash_file(manifest_path),
+        "batch_set_path": str(batch_set_path),
+        "batch_set_file_sha256": hash_file(batch_set_path),
+        "response_paths": [str(path) for path in response_paths],
+        "response_file_sha256s": [hash_file(path) for path in response_paths],
+        "output_path": str(output_path),
+        "output_file_sha256": hash_file(output_path),
+        "judgment_count": len(combined["judgments"]),
+        "model_api_calls": 0,
+    }
 
 
 def prepare_no_frontier_reader_request_run(
@@ -800,6 +875,33 @@ def main() -> int:
     prepare_reconciliation_parser.add_argument("--output", type=Path, required=True)
     prepare_reconciliation_parser.add_argument("--prompt-output", type=Path)
     prepare_reconciliation_parser.add_argument("--response-schema-output", type=Path)
+    prepare_adjudication_batches_parser = subparsers.add_parser(
+        "prepare-decision-state-adjudication-batches"
+    )
+    prepare_adjudication_batches_parser.add_argument(
+        "--manifest", type=Path, required=True
+    )
+    prepare_adjudication_batches_parser.add_argument(
+        "--output-dir", type=Path, required=True
+    )
+    prepare_adjudication_batches_parser.add_argument(
+        "--max-prompt-characters", type=int, required=True
+    )
+    combine_adjudication_batches_parser = subparsers.add_parser(
+        "combine-decision-state-adjudication-batches"
+    )
+    combine_adjudication_batches_parser.add_argument(
+        "--manifest", type=Path, required=True
+    )
+    combine_adjudication_batches_parser.add_argument(
+        "--batch-set", type=Path, required=True
+    )
+    combine_adjudication_batches_parser.add_argument(
+        "--response", type=Path, action="append", required=True
+    )
+    combine_adjudication_batches_parser.add_argument(
+        "--output", type=Path, required=True
+    )
     finalize_reconciliation_parser = subparsers.add_parser(
         "finalize-decision-state-reconciliation"
     )
@@ -1006,6 +1108,19 @@ def main() -> int:
             output_path=args.output,
             prompt_output=args.prompt_output,
             response_schema_output=args.response_schema_output,
+        )
+    elif args.command == "prepare-decision-state-adjudication-batches":
+        result = prepare_decision_state_adjudication_batches_run(
+            manifest_path=args.manifest,
+            output_dir=args.output_dir,
+            max_prompt_characters=args.max_prompt_characters,
+        )
+    elif args.command == "combine-decision-state-adjudication-batches":
+        result = combine_decision_state_adjudication_batches_run(
+            manifest_path=args.manifest,
+            batch_set_path=args.batch_set,
+            response_paths=args.response,
+            output_path=args.output,
         )
     elif args.command == "finalize-decision-state-reconciliation":
         result = finalize_decision_state_reconciliation_run(

@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v111
-effective_date: 2026-09-03
+version: v113
+effective_date: 2026-09-04
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v111
+# Semantic Evidence Integration Contract v113
 
 ## Purpose
 
@@ -1349,6 +1349,17 @@ or independently writable evidence authority. Exact historical agreement proves
 mechanical reuse eligibility, not semantic truth; bounded review retains the
 right to challenge an old judgment.
 
+When the unresolved prompt exceeds a provider or operator-selected character
+ceiling, `prepare-decision-state-adjudication-batches` greedily packs whole
+evidence groups into deterministic bounded prompts. It never splits one
+evidence group, duplicates a semantic identity, changes the reconciliation
+scope, or adds another judgment pass. Each response remains immutable and
+attempt-specific. `combine-decision-state-adjudication-batches` requires one
+response per batch, exact batch-local identity coverage, and exact combined
+coverage at the unchanged full reconciliation boundary before finalization.
+The ceiling is an execution control, not an evidence or semantic rule; one
+evidence group that cannot fit fails visibly instead of being clipped.
+
 The current point reader projects the exact meanings named by a displayed row's
 `relation_semantic_unit_refs`. A selected row's primary meaning and quote remain
 available as lineage, but they are not presented as the relation-owned meaning
@@ -1358,6 +1369,16 @@ span owned by that exact meaning was captured. This prevents a neighboring
 selected-row quote from visually impersonating the meaning that supports,
 counters, or sits adjacent to the point; it does not decide whether the chosen
 semantic-reference subset is itself warranted.
+
+Current point-reader request v4 also keeps every condition, time, action,
+quantity, attribution, and outcome owned by the exact meaning that states it.
+A literal quote or companion meaning from the same evidence may provide honest
+context, but it cannot lend one observation's fields to a neighboring meaning.
+The reader preserves coexisting observations without fusing them or reducing an
+experienced outcome to intent alone. The display panel remains selected examples
+even when its row count happens to equal the full-pool row count. This is an
+existing-reader instruction correction, not a new checker, provider stage,
+semantic classifier, or deterministic claim that the interpretation is true.
 
 Companion-owned semantic fields that the frozen projection does not carry remain
 null and are listed in `unbound_meaning_fields`; they never inherit the selected
@@ -2280,6 +2301,35 @@ new frontier.
 
 ## Changelog
 
+- `v113` / 2026-09-04 — made new point-reader request v4 bind conditions,
+  timing, actions, quantities, attribution, and outcomes to the exact meaning
+  that states them. Same-evidence quotes and companion meanings remain visible
+  context but cannot donate fields to a neighboring observation; coexisting
+  experienced outcomes cannot be reduced to intent alone. Also made explicit
+  that an equal display/full-pool row count does not turn selected examples into
+  the full-pool definition. A source-complete Dieux audit exposed four critical
+  reader distortions across 64 deliberately risk-weighted point-axis readings;
+  this correction adds no checker stage, provider call type, word-pair exception,
+  frozen-output rewrite, or Deliver behavior. A fresh targeted run corrected all
+  four exposed points, preserved one clean Direct Outcome and one clean Decision
+  State canary, compiled all six through the unchanged brief consumer, and a
+  source-complete audit returned no critical or material finding. That bounded
+  rerun is behavioral evidence, not proof over every possible point; semantic
+  warrant remains review-owned.
+- `v112` / 2026-09-04 — made current all-axis Phase A consolidation preserve
+  the packet-bound point-axis membership when one multi-axis point's selected
+  evidence rows carry split axis tags; an axis absent from the exact packet
+  proposition still fails, and historical sparse manifests retain their
+  conservative all-row rule. Aligned provider reason-code schemas with the
+  existing 80-character consumer boundary. Restored the missing mechanically-
+  unproven relation-warrant disclosure on deterministic full-source v10 point
+  artifacts. Added deterministic evidence-group-preserving batching and exact
+  recombination for Decision State deltas that exceed a provider prompt limit;
+  this changes transport only and leaves the full semantic validator intact.
+  The Dieux proof exposed the unbatched 1,114,700-character request at the
+  provider's 1,048,576-character entry limit; the first legal near-limit batch
+  later timed out, so the successful continuation used an explicit lower
+  operating ceiling rather than presenting the hard limit as a latency promise.
 - `v111` / 2026-09-03 — reduced current point authoring from three provider
   calls to two by retiring only the final quote-shortening call. After the
   first relation judgment and independent hidden-label confirmation, quote

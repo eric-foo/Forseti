@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 
 import pytest
+from jsonschema import ValidationError, validate
 
 from harness_utils import hash_file
 import judgment.phase_a_evidence_selection as evidence_selection
@@ -5015,6 +5016,11 @@ def test_v10_finalizes_full_source_without_a_quote_provider_and_fails_on_attachm
     row = artifact["source_groups"][0]["rows"][0]
     assert row["exact_quote"] == body
     assert row["relation_semantic_unit_refs"]
+    assert any(
+        "relation semantic-unit references are judgment-authored"
+        in boundary
+        for boundary in artifact["output_boundary"]
+    )
     assert _finalize_quotes_runtime(quote_manifest, sources, {}) == artifact
     with pytest.raises(EvidenceConsumerError) as caught:
         _finalize_quotes_runtime(quote_manifest, sources, {"quotes": []})
@@ -6087,6 +6093,49 @@ def test_value_policy_does_not_turn_time_to_finish_into_quantity_value() -> None
     assert "Time to finish, pan, or empty a product is completed-use evidence" in guidance
     assert "not quantity efficiency" in guidance
     assert "explicitly says it will buy or repurchase again" in guidance
+
+
+def test_relation_schemas_enforce_the_consumer_reason_code_length_limit() -> None:
+    relation_schema = _relation_schema()
+    valid_relation = {
+        "results": [
+            {
+                "candidate_id": "candidate_01",
+                "relation": "support",
+                "reason_code": "a" * 80,
+            }
+        ]
+    }
+    validate(valid_relation, relation_schema)
+    invalid_relation = copy.deepcopy(valid_relation)
+    invalid_relation["results"][0]["reason_code"] = "a" * 81
+    with pytest.raises(ValidationError, match="is too long"):
+        validate(invalid_relation, relation_schema)
+
+    confirmation_schema = (
+        evidence_selection._preselection_relation_confirmation_schema(
+            value_policy=False,
+            include_relation_refs=True,
+            row_relation_bindings=[("row_01", ["semantic::01"])],
+        )
+    )
+    valid_confirmation = {
+        "point_scope": "single_point",
+        "point_scope_reason": "one bounded point",
+        "relation_checks": [
+            {
+                "confirmation_row_id": "row_01",
+                "relation": "support",
+                "reason_code": "a" * 80,
+                "relation_semantic_unit_refs": ["semantic::01"],
+            }
+        ],
+    }
+    validate(valid_confirmation, confirmation_schema)
+    invalid_confirmation = copy.deepcopy(valid_confirmation)
+    invalid_confirmation["relation_checks"][0]["reason_code"] = "a" * 81
+    with pytest.raises(ValidationError, match="is too long"):
+        validate(invalid_confirmation, confirmation_schema)
 
 
 def test_hype_policy_guidance_forbids_laundering_generic_expectations_into_hype() -> None:
