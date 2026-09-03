@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v106
-effective_date: 2026-09-02
+version: v107
+effective_date: 2026-09-03
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v106
+# Semantic Evidence Integration Contract v107
 
 ## Purpose
 
@@ -211,6 +211,35 @@ decision or attachment. Repeated-leaf requests use repair-request
 v2. Clean components keep their prior v1 request bytes, and the composer
 rederives stored v1 requests by their recorded version so historical successors
 remain replayable.
+
+Repair-request v3 is a narrower rendering selected only when the caller supplies
+a diagnostic that exactly rederives from the current bundle, stage and response;
+the response is invalid; every complete diagnostic issue is `duplicate_leaf`;
+the primary native error is covered; no dependent check was skipped; every
+duplicated path crosses distinct child candidates; and the explicit nomination
+covers every diagnosed node and candidate. The request carries only the affected
+already-validated child definitions with bounded statements, conditions, product
+identity and provenance refs; the current affected decisions and parent
+definitions; and deterministic forbidden same-node leaf paths. Raw evidence and
+source-context bodies are omitted, not summarized or presented as read. Source
+roles required by the unchanged schema/consumer remain present as derived
+candidate metadata. A mixed, stale, partial, clean, within-one-child, or
+under-nominated diagnostic fails rather than activating the compact route. A
+convergence-mode stage also fails closed: convergence retains a node only on
+repeated distinct source rows, and this projection carries neither those rows
+nor the compiler count that decides retention, so that failure stays on the
+general repair route rather than reaching the provider blind to its own
+acceptance rule.
+
+The model chooses whether and how to split or regroup the affected meanings.
+Code never selects an attachment to delete, changes a relation, authors prose, or
+accepts the component in isolation. Composition still requires every affected
+candidate, preserves every unaffected node, decision, label assignment and
+carried field, and sends the whole successor through the unchanged native
+validator. A retained or reintroduced repeated leaf therefore fails at that
+native boundary. Omission of `--diagnostic` preserves general repair behavior,
+including v1/v2 request replay and the lossless packed fallback. V3 adds no
+normal provider call, whole-batch retry, raw-source reread, or semantic warrant.
 
 If a scope-correct repair exposes another independent native failure, the
 failure-only composer may persist that exact repair as
@@ -2202,6 +2231,31 @@ new frontier.
 
 ## Changelog
 
+- `v107` / 2026-09-03 — added repair-request v3's diagnostic-gated compact
+  structural rendering for complete cross-child duplicate-leaf-only failures.
+  It reuses the existing nomination, schema, composition and unchanged native
+  validator while omitting raw evidence/context bodies and retaining exact
+  affected candidate meaning, conditions, identities, provenance paths,
+  decisions, parent definitions and deterministic conflicts. Mixed, stale,
+  incomplete, under-scoped, clean and within-one-child diagnostics fail closed,
+  as does a convergence-mode stage whose retention rule this projection cannot
+  expose; v1/v2 repair and normal authoring replay unchanged. The frozen stage
+  below is `normal` mode, so that proof is unaffected by the convergence
+  refusal. Frozen Dieux level-7 Batch
+  21 retry3 measured 327,975 normal and 316,313 existing-packed prompt bytes
+  against the 120,000-byte ceiling. V3 rendered twice at 64,626 bytes with
+  identical stored prompt/schema/request hashes. One `gpt-5.6-sol`/high attempt
+  completed in 87.75 seconds with zero observed retries/fallbacks and reported
+  37,820 input, 4,596 output and 3,704 reasoning tokens. Its exact patch composed
+  to a 95-node/748-unmerged whole response accepted by the unchanged validator
+  (`validation_sha256`
+  `0541b67c0b9b0ed599b97d1c30e532f5eff18f493e428cf5986d9d0ca8dafb32`).
+  All 88 unaffected nodes, 91 unaffected decisions, label/group structures and
+  outer fields compared exactly; an exactly request-pinned seeded recurrence
+  failed at `duplicate_leaf`. This n=1 dogfood proves provider fit and structural
+  enforcement for these frozen inputs, not optimal restructuring, semantic
+  warrant, general provider reliability, attention-overload causality, Phase A
+  completion, or Deliver readiness.
 - `v106` / 2026-09-02 — added a separate fail-closed reconciliation recovery
   route for a completed structured `agent_message` stranded by a timed-out
   immutable provider attempt. Normal publication still rejects timed-out

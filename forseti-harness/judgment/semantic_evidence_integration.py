@@ -72,6 +72,8 @@ RECONCILIATION_RESPONSE_VERSION_V3 = "semantic_evidence_reconciliation_response_
 RECONCILIATION_DIAGNOSTIC_VERSION = "semantic_evidence_reconciliation_diagnostic_v2"
 RECONCILIATION_REPAIR_REQUEST_VERSION_V1 = "semantic_reconciliation_repair_request_v1"
 RECONCILIATION_REPAIR_REQUEST_VERSION_V2 = "semantic_reconciliation_repair_request_v2"
+RECONCILIATION_REPAIR_REQUEST_VERSION_V3 = "semantic_reconciliation_repair_request_v3"
+RECONCILIATION_DUPLICATE_LEAF_REPAIR_MODE = "duplicate_leaf_structural_v1"
 RECONCILIATION_AUTHORING_LEGACY = "legacy"
 RECONCILIATION_AUTHORING_IDENTITY_V1 = "exact_identity_namespaces_v1"
 RECONCILIATION_AUTHORING_IDENTITY_V2 = "exact_identity_namespaces_v2"
@@ -5814,6 +5816,7 @@ def _render_v3_reconciliation_prompt(
     compact_json: bool = False,
     definition_recovery: Mapping[str, Any] | None = None,
     local_repair: Mapping[str, Any] | None = None,
+    duplicate_leaf_structural_repair: bool = False,
 ) -> str:
     posture_instruction = (
         "For candidates carrying evidence_postures, customer_experience and "
@@ -5969,6 +5972,42 @@ def _render_v3_reconciliation_prompt(
     if local_repair is not None:
         if not decision_only or definition_recovery is not None:
             raise SemanticIntegrationError("local repair requires decision-only response v3")
+        if duplicate_leaf_structural_repair:
+            if compact_json:
+                raise SemanticIntegrationError(
+                    "duplicate-leaf structural repair has one canonical rendering"
+                )
+            return (
+                "Output mode: file-write through the designated response artifact. "
+                "Edit permission: read-only structural analysis of already-validated semantic candidates; "
+                "return JSON only matching the supplied schema.\n"
+                "Correct only this nominated connected reconciliation component. The native diagnostic "
+                "found only repeated-leaf ownership conflicts; it is not a semantic verdict. Return a "
+                "complete replacement for every supplied candidate decision and affected parent definition, "
+                "or replacement=null with a nonempty cannot_repair_reason. The validated child candidates "
+                "supply their exact bounded statements, conditions, identities, and provenance references; "
+                "raw evidence and source-context bodies are intentionally absent and were not read for this "
+                "structural repair request. Never rewrite an upstream candidate, invent evidence, infer a new "
+                "relation mechanically, omit a candidate, or use unrelated nodes. "
+                "Each FORBIDDEN_SAME_NODE_LEAF_PATHS entry enumerates paths that must not coexist at one "
+                "semantic node. You choose the meaning-preserving restructuring: deterministic code does not "
+                "choose an attachment to delete or a node to split. Keep every required candidate, condition, "
+                "opposing relation, attribution, and identity distinction. Within one candidate decision, use "
+                "each semantic_node_key at most once and never attach the same key as both support and counter. "
+                "Do not fabricate a positive claim just to supply a counter target. A structurally accepted "
+                "repair does not prove that its meaning is optimal or warranted. Do not emit "
+                "opposition_checked; code invalidates prior clearance when meaning or attachments change. "
+                + posture_instruction
+                + scope_instruction
+                + source_role_instruction
+                + "\n\nLOCAL_REPAIR_CONTEXT\n"
+                + json.dumps(
+                    local_repair,
+                    ensure_ascii=False,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+            )
         packing_instruction = ""
         if compact_json:
             local_repair = _pack_reconciliation_repair_context(local_repair)
@@ -6684,6 +6723,55 @@ def _reconciliation_duplicate_leaf_conflict(node_key, relations, candidate_index
     }
 
 
+def _exclusive_duplicate_leaf_repair_diagnostic(bundle, stage, response, diagnostic):
+    """Bind compact repair to one complete, current duplicate-leaf diagnosis."""
+    observed = diagnose_reconciliation_response(bundle, stage, response)
+    if diagnostic != observed:
+        raise SemanticIntegrationError(
+            "local repair diagnostic differs from bound current response"
+        )
+    issues = observed["issues"]
+    if (
+        observed["schema_version"] != RECONCILIATION_DIAGNOSTIC_VERSION
+        or observed["valid"]
+        or observed["accepted"]
+        or not _nonempty(observed["primary_validation_error"])
+        or not observed["primary_error_covered"]
+        or not issues
+        or any(issue.get("code") != "duplicate_leaf" for issue in issues)
+        or observed["skipped_dependent_checks"]
+    ):
+        raise SemanticIntegrationError(
+            "compact local repair requires an exclusive complete duplicate-leaf diagnostic"
+        )
+    for issue in issues:
+        paths = issue.get("child_paths_by_semantic_unit_ref")
+        if not isinstance(paths, list) or not paths:
+            raise SemanticIntegrationError(
+                "compact local repair diagnostic lacks duplicate-leaf paths"
+            )
+        if any(
+            len({path.get("child_ref") for path in row.get("child_paths", [])}) < 2
+            for row in paths
+        ):
+            raise SemanticIntegrationError(
+                "compact local repair requires duplicate leaves across distinct child candidates"
+            )
+    return observed
+
+
+def _duplicate_leaf_repair_candidate(candidate, evidence_index):
+    """Project one validated child without raw evidence or source-context bodies."""
+    projected = _agent_reconciliation_candidate(
+        candidate,
+        evidence_index=evidence_index,
+        include_source_roles=True,
+    )
+    projected["leaf_relations"] = candidate["leaf_relations"]
+    projected["condition_lineage"] = candidate["condition_lineage"]
+    return projected
+
+
 def prepare_reconciliation_repair(
     bundle,
     stage,
@@ -6693,6 +6781,7 @@ def prepare_reconciliation_repair(
     candidate_refs=(),
     reason,
     request_version=None,
+    diagnostic=None,
 ):
     """Pack an explicitly nominated connected component; never detect meaning errors.
 
@@ -6775,13 +6864,6 @@ def prepare_reconciliation_repair(
     if omitted:
         raise SemanticIntegrationError("local repair nomination omits incompatible nodes: " + ", ".join(sorted(omitted)))
     chosen = [index[ref] for ref in batch["candidate_refs"] if ref in selected_refs]
-    evidence_ids = sorted({_leaf_evidence_id(leaf["semantic_unit_ref"], evidence, node_key=candidate["candidate_ref"])
-                           for candidate in chosen for leaf in candidate["leaf_relations"]})
-    context_ids = {ref for eid in evidence_ids for field in ("parent_context_refs", "product_context_refs")
-                   for ref in evidence[eid].get(field, [])}
-    contexts = _context_index(bundle)
-    if context_ids - set(contexts):
-        raise SemanticIntegrationError("local repair source context is unavailable")
     duplicate_leaf_conflicts = [
         conflict
         for key in sorted(selected_keys)
@@ -6792,32 +6874,121 @@ def prepare_reconciliation_repair(
         )
         is not None
     ]
+    compact_duplicate_leaf = (
+        diagnostic is not None
+        or request_version == RECONCILIATION_REPAIR_REQUEST_VERSION_V3
+    )
+    if diagnostic is not None and request_version not in {
+        None,
+        RECONCILIATION_REPAIR_REQUEST_VERSION_V3,
+    }:
+        raise SemanticIntegrationError(
+            "duplicate-leaf diagnostic requires current compact repair request version"
+        )
+    if compact_duplicate_leaf and stage.get("reconciliation_mode") == "convergence":
+        # Convergence retains a node only on repeated distinct source rows, and
+        # this projection carries neither the evidence rows nor the compiler
+        # count that decides it. Keep the general repair route, which still
+        # supplies those rows, rather than ask for a restructuring whose
+        # acceptance rule the provider cannot see.
+        raise SemanticIntegrationError(
+            "compact local repair omits the source rows convergence retention requires"
+        )
+    bound_diagnostic = None
+    if compact_duplicate_leaf:
+        if diagnostic is None:
+            diagnostic = diagnose_reconciliation_response(bundle, stage, response)
+        bound_diagnostic = _exclusive_duplicate_leaf_repair_diagnostic(
+            bundle, stage, response, diagnostic
+        )
+        diagnosed_keys = {
+            key
+            for issue in bound_diagnostic["issues"]
+            for key in issue["semantic_node_keys"]
+        }
+        diagnosed_refs = {
+            ref
+            for issue in bound_diagnostic["issues"]
+            for ref in issue["candidate_refs"]
+        }
+        if diagnosed_keys - selected_keys or diagnosed_refs - selected_refs:
+            raise SemanticIntegrationError(
+                "compact local repair nomination omits diagnosed duplicate-leaf scope"
+            )
+        diagnosed_conflicts = [
+            {
+                "semantic_node_key": issue["semantic_node_keys"][0],
+                "duplicated_semantic_unit_refs": issue[
+                    "duplicated_semantic_unit_refs"
+                ],
+                "child_paths_by_semantic_unit_ref": issue[
+                    "child_paths_by_semantic_unit_ref"
+                ],
+            }
+            for issue in bound_diagnostic["issues"]
+        ]
+        if duplicate_leaf_conflicts != diagnosed_conflicts:
+            raise SemanticIntegrationError(
+                "compact local repair conflicts differ from bound diagnostic"
+            )
     if request_version is None:
         request_version = (
-            RECONCILIATION_REPAIR_REQUEST_VERSION_V2
-            if duplicate_leaf_conflicts
-            else RECONCILIATION_REPAIR_REQUEST_VERSION_V1
+            RECONCILIATION_REPAIR_REQUEST_VERSION_V3
+            if compact_duplicate_leaf
+            else (
+                RECONCILIATION_REPAIR_REQUEST_VERSION_V2
+                if duplicate_leaf_conflicts
+                else RECONCILIATION_REPAIR_REQUEST_VERSION_V1
+            )
         )
     if request_version not in {
         RECONCILIATION_REPAIR_REQUEST_VERSION_V1,
         RECONCILIATION_REPAIR_REQUEST_VERSION_V2,
+        RECONCILIATION_REPAIR_REQUEST_VERSION_V3,
     }:
         raise SemanticIntegrationError("unsupported local repair request version")
-    context = {"nomination": seeds,
-        "semantic_nodes": [node for node in nodes if node["semantic_node_key"] in selected_keys],
-        "decisions_by_candidate_ref": {ref: decisions[ref] for ref in sorted(selected_refs)},
-        "candidates": chosen, "evidence": [evidence[eid] for eid in evidence_ids],
-        "contexts": [contexts[ref] for ref in sorted(context_ids)],
-        "source_inventory_not_claim_support": {"evidence_row_count": len(evidence_ids),
-            "credited_origin_count": len({key for eid in evidence_ids if (key := _credited_origin_key(evidence[eid])) is not None}),
-            "uncredited_evidence_ids": [eid for eid in evidence_ids if _credited_origin_key(evidence[eid]) is None]}}
-    if request_version == RECONCILIATION_REPAIR_REQUEST_VERSION_V2:
-        context["duplicate_leaf_conflicts"] = duplicate_leaf_conflicts
+    if compact_duplicate_leaf:
+        context = {
+            "nomination": seeds,
+            "affected_parent_definitions": [
+                node
+                for node in nodes
+                if node["semantic_node_key"] in selected_keys
+            ],
+            "affected_decisions_by_candidate_ref": {
+                ref: decisions[ref] for ref in sorted(selected_refs)
+            },
+            "validated_child_candidates": [
+                _duplicate_leaf_repair_candidate(candidate, evidence)
+                for candidate in chosen
+            ],
+            "forbidden_same_node_leaf_paths": duplicate_leaf_conflicts,
+            "semantic_warrant_proven": False,
+        }
+    else:
+        evidence_ids = sorted({_leaf_evidence_id(leaf["semantic_unit_ref"], evidence, node_key=candidate["candidate_ref"])
+                               for candidate in chosen for leaf in candidate["leaf_relations"]})
+        context_ids = {ref for eid in evidence_ids for field in ("parent_context_refs", "product_context_refs")
+                       for ref in evidence[eid].get(field, [])}
+        contexts = _context_index(bundle)
+        if context_ids - set(contexts):
+            raise SemanticIntegrationError("local repair source context is unavailable")
+        context = {"nomination": seeds,
+            "semantic_nodes": [node for node in nodes if node["semantic_node_key"] in selected_keys],
+            "decisions_by_candidate_ref": {ref: decisions[ref] for ref in sorted(selected_refs)},
+            "candidates": chosen, "evidence": [evidence[eid] for eid in evidence_ids],
+            "contexts": [contexts[ref] for ref in sorted(context_ids)],
+            "source_inventory_not_claim_support": {"evidence_row_count": len(evidence_ids),
+                "credited_origin_count": len({key for eid in evidence_ids if (key := _credited_origin_key(evidence[eid])) is not None}),
+                "uncredited_evidence_ids": [eid for eid in evidence_ids if _credited_origin_key(evidence[eid]) is None]}}
+        if request_version == RECONCILIATION_REPAIR_REQUEST_VERSION_V2:
+            context["duplicate_leaf_conflicts"] = duplicate_leaf_conflicts
     render_args = dict(stage_sha256=stage["stage_sha256"], batch_id=batch["batch_id"],
         candidates=chosen, evidence_index=evidence, preserve_child_scope=True, agreement_origin_rule=True,
-        reconciliation_mode=stage.get("reconciliation_mode"), decision_only=True, local_repair=context)
+        reconciliation_mode=stage.get("reconciliation_mode"), decision_only=True, local_repair=context,
+        duplicate_leaf_structural_repair=compact_duplicate_leaf)
     prompt = _render_v3_reconciliation_prompt(**render_args)
-    if len(prompt.encode("utf-8")) > stage["max_prompt_bytes"]:
+    if not compact_duplicate_leaf and len(prompt.encode("utf-8")) > stage["max_prompt_bytes"]:
         # Preserve every previously valid request exactly; compact only rejected transport.
         prompt = _render_v3_reconciliation_prompt(**render_args, compact_json=True)
     if len(prompt.encode("utf-8")) > stage["max_prompt_bytes"]:
@@ -6826,6 +6997,9 @@ def prepare_reconciliation_repair(
         "stage_sha256": stage["stage_sha256"], "response_sha256": _sha256(response), "batch_id": batch["batch_id"],
         "nomination": seeds, "node_keys": sorted(selected_keys), "candidate_refs": sorted(selected_refs),
         "context_sha256": _sha256(context), "prompt": prompt, "prompt_utf8_bytes": len(prompt.encode("utf-8"))}
+    if compact_duplicate_leaf:
+        identity["repair_rendering_mode"] = RECONCILIATION_DUPLICATE_LEAF_REPAIR_MODE
+        identity["diagnostic_sha256"] = bound_diagnostic["diagnostic_sha256"]
     def obj(properties):
         return {"type": "object", "properties": properties, "required": list(properties), "additionalProperties": False}
     generated = _decision_reconciliation_schema(stage, {**batch, "candidate_refs": sorted(selected_refs)}, [], index, evidence)
