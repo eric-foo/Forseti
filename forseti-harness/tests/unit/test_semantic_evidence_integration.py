@@ -6820,6 +6820,49 @@ def test_policy_v2_enters_convergence_and_enforces_source_row_support() -> None:
         validate_reconciliation_stage(bundle, retained_stage, [response])
 
 
+def test_policy_v2_convergence_candidate_is_atomic_for_historical_response_v2() -> None:
+    # Decision authoring refuses a second attachment, but the shared validator
+    # also accepts historical response v2 and is the boundary that writes the
+    # durable compilation. An unguarded split there could be paid for by a
+    # compensating merge, leaving input == nodes + unmerged and reading as a
+    # terminal fixed point while one bounded meaning silently became two.
+    bundle, verified = _verified_policy_compilation(count=2)
+    stage_one, _ = prepare_reconciliation_stage(
+        bundle,
+        verified,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+    )
+    level_one = validate_reconciliation_stage(
+        bundle, stage_one, _singleton_reconciliation_responses(stage_one)
+    )
+    stage_two, _ = prepare_reconciliation_stage(bundle, level_one)
+    level_two = validate_reconciliation_stage(
+        bundle, stage_two, _group_level_responses(stage_two, terminal=False)
+    )
+    stage_three, _ = prepare_reconciliation_stage(bundle, level_two)
+    assert stage_three["reconciliation_mode"] == "convergence"
+
+    response = _group_level_responses(stage_three, terminal=True)[0]
+    assert response["schema_version"] == RECONCILIATION_RESPONSE_VERSION_V2
+    split = deepcopy(response["semantic_nodes"][0])
+    split["semantic_node_key"] = "split"
+    response["semantic_nodes"].append(split)
+
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="has multiple attachments",
+    ):
+        validate_reconciliation_stage(bundle, stage_three, [response])
+
+    # The same response without the split stays valid, so the rejection is
+    # cause-specific rather than a blanket refusal of response v2.
+    response["semantic_nodes"] = response["semantic_nodes"][:1]
+    single = validate_reconciliation_stage(bundle, stage_three, [response])
+    assert len(single["semantic_nodes"]) == 1
+    assert single["input_candidate_count"] == 1
+    assert single["unmerged_candidate_count"] == 0
+
+
 def test_policy_v2_multi_batch_fixed_point_is_terminal() -> None:
     compilation = {
         "input_batch_count": 2,
