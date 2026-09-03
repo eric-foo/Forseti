@@ -24,11 +24,13 @@ from judgment.phase_a_evidence_consumer import (
     _verify_packet,
 )
 from judgment.phase_a_evidence_selection import (
+    DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
     POINT_ACTOR_SCOPE_GUIDANCE,
     PARENT_CONTEXT_POLICY,
     SELECTION_BATCH_MANIFEST_VERSION,
     _candidate_rows,
     _point_actor_scope,
+    _truth_group_cap,
     _validate_actor_relations,
     _verify_bundle,
     load_selection_sources,
@@ -111,12 +113,12 @@ SOURCE_AXIS_PACK_VERSION = AXIS_PACK_VERSION
 LEGACY_HYDRATION_AXIS_PACK_VERSION = "phase_a_hydration_axis_pack_v2"
 LEGACY_CONSOLIDATION_POLICY = "origin_normalized_surface_separated_v1"
 CONSOLIDATION_POLICY = "point_routed_origin_normalized_surface_separated_v2"
-POINT_TRUTH_ORIGIN_CAP = 13
 SUPPORTED_QUOTE_MANIFEST_VERSIONS = {
     "phase_a_evidence_quote_manifest_v6",
     "phase_a_evidence_quote_manifest_v7",
     "phase_a_evidence_quote_manifest_v8",
     "phase_a_evidence_quote_manifest_v9",
+    DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
 }
 INDEPENDENCE_POSTURES = {
     "credited",
@@ -647,6 +649,7 @@ def _validate_point_binding(
         )
     ):
         raise EvidenceConsumerError("candidate_access", f"axis binding changed: {point_id}")
+    expected_truth_group_cap = _truth_group_cap(selection_spec)
     sources = load_selection_sources(selection_manifest)
     for source in sources:
         packet = source.get("packet")
@@ -701,9 +704,11 @@ def _validate_point_binding(
         raise EvidenceConsumerError("quote_binding", f"artifact quote binding changed: {point_id}")
 
     if require_complete_pins:
-        if artifact.get("truth_group_cap") != POINT_TRUTH_ORIGIN_CAP:
+        if artifact.get("truth_group_cap") != expected_truth_group_cap:
             raise EvidenceConsumerError(
-                "point_policy", f"truth origin cap must be {POINT_TRUTH_ORIGIN_CAP}: {point_id}"
+                "point_policy",
+                f"truth origin cap must be {expected_truth_group_cap} from the bound "
+                f"selection spec: {point_id}",
             )
         if artifact.get("selection_manifest_sha256") != selection_manifest.get(
             "manifest_sha256"
@@ -749,7 +754,7 @@ def _validate_point_binding(
     }
     if artifact.get("truth_group_count") != len(truth_origins):
         raise EvidenceConsumerError("point_policy", f"truth origin count changed: {point_id}")
-    if len(truth_origins) > POINT_TRUTH_ORIGIN_CAP:
+    if len(truth_origins) > expected_truth_group_cap:
         raise EvidenceConsumerError("point_policy", f"truth origin cap exceeded: {point_id}")
     if require_complete_pins:
         disclosure = artifact.get("selection_disclosure")

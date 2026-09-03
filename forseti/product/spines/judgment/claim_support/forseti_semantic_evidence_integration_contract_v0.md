@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v109
+version: v111
 effective_date: 2026-09-03
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v109
+# Semantic Evidence Integration Contract v111
 
 ## Purpose
 
@@ -1202,52 +1202,39 @@ Creator-authored material is influence context and is
 deterministically barred from customer support or counter relations; qualified
 creator-audience comments retain their customer role.
 
-Only selected display rows expose their source bodies to the existing external
-quote response. Current v9 authoring presents stable token addresses inside
-each deduplicated body. Every returned row is schema-bound to its selected row
-and body and chooses an inclusive start/end token pair; deterministic code
-copies the original contiguous source characters. Foreign bodies, foreign
-tokens, reversed spans, transcription-shaped responses, and changed bodies fail
-locally. This proves exact row/body transfer, not that a structurally valid span
-is semantically adequate; context completeness remains a bounded quality
-judgment. The bundle is content-verified against its own stored
+Only selected display rows expose their source bodies to the quote finalizer.
+Current v10 authoring makes no quote provider call: it copies each available
+selected row's complete bound source body and rejects any attached quote
+response. This removes model transcription, clipping, and cross-row quote
+transfer from current authoring. It proves complete row/body transfer, not that
+the selected source or judgment-authored relation is semantically adequate.
+The bundle is content-verified against its own stored
 `bundle_sha256` where it enters the trust boundary, and the finalizer follows
 the packet's bundle hash to its literal evidence ID, requires exact
 source-artifact and source-ref equality, and rejects a body whose hash differs
-from the one the quote manifest recorded. An available source body of no more
-than 220 characters must be quoted in full; this deterministic boundary prevents
-a short comment from being clipped before a material qualification or
-countervailing behavior. Under current v9 token addressing, quoted in full means
-that body's first token through its last, because a token address cannot name
-leading or trailing whitespace. Current v9 and historical v8 use that threshold only for short-body copying and
-external-review workload selection, never as a semantic ceiling. A longer
-available quote must be the shortest context-complete contiguous source
-substring that carries the material meaning, with no inserted ellipsis or
-rewriting, and must contain at least two Unicode alphanumeric characters. It may
-exceed 220 characters when the necessary antecedent or qualification requires
-it. The substring must express the display label through either the
-selected normalized meaning or the same-evidence companion meaning that
-justified that label. If no contiguous exact span carries the material meaning,
-the external response returns unavailable instead of a misleading fragment;
-length alone is not an unavailable cause in current v9 or historical v8. No lexical-overlap relevance
-rule is applied. For historical v4/v5/v6/v7/v8 quote manifests, a long-body quote
+from the one the quote manifest recorded. Missing source bodies remain explicit
+as `quote_unavailable` with `source_body_unavailable`; linked parent context is
+separate reading context and never substitutes for or splices into the row body.
+Historical v9 authoring retains its stable row-owned token transport and
+provider response. Historical v9 and v8 use the 220-character threshold only
+for short-body copying and external-review workload selection, never as a
+semantic ceiling. Historical token or text transports retain their exactness,
+substance, relevance, and context-completeness rules under their stamped
+versions. For historical v4/v5/v6/v7/v8 quote manifests, a long-body quote
 that ends in an alphanumeric
 character while the bound source continues with whitespace and another
 alphanumeric character fails at `quote_boundary_incomplete`; this deterministic
 check prevents an exact but mid-phrase span from silently satisfying the
-context-complete contract. Current v9 does not apply that prose heuristic after
+context-complete contract. Historical v9 does not apply that prose heuristic after
 token-span selection: deterministic enforcement owns exact row/body/token
 attachment, while semantic completeness remains explicitly not mechanically
-proven. A typed
-`quote_unavailable` covers two distinct cases: no source body yields
-`source_body_unavailable`, while a present body with no returned exact relevant
-quote yields `no_relevant_exact_quote_returned`. Available quotes carry a null
-cause. Each displayed row also records `source_body_present`, and the
+proven. Historical provider routes retain the distinction between
+`source_body_unavailable` and `no_relevant_exact_quote_returned`. Current v10
+has only the former unavailable cause because every present selected body is
+copied in full. Each displayed row records `source_body_present`, and the
 source-owned normalized meaning and same-evidence companion meanings remain in
-all cases. Full-body enforcement closes context clipping for short sources;
-semantic relevance and context completeness for longer sources remain a
-quality-adjudication obligation outside the deterministic runtime. Both
-prepare/finalize stages make zero provider calls and are deterministic and
+all cases. The current prepare/finalize stage makes zero provider calls and is
+deterministic and
 idempotent.
 
 For a large non-value selection, positional relation transport may be split
@@ -2293,6 +2280,21 @@ new frontier.
 
 ## Changelog
 
+- `v111` / 2026-09-03 — reduced current point authoring from three provider
+  calls to two by retiring only the final quote-shortening call. After the
+  first relation judgment and independent hidden-label confirmation, quote
+  manifest v10 deterministically copies each selected row's complete
+  hash-bound source body and rejects any provider quote attachment. Missing
+  bodies remain explicitly unavailable; relation choice and semantic warrant
+  remain judgment-owned. Historical v9 token-span and earlier quote artifacts
+  retain their exact replay routes. Also made the axis consumer enforce the
+  truth-origin cap sealed in each selection spec instead of a stale global
+  thirteen-origin constant, so current evidence-rich points with a bound cap up
+  to forty remain consumable. Dieux measurement covered 1,092 admitted
+  references: full bodies added a mean 1,693 bytes per point and at most 13,711
+  bytes for one point; these are corpus observations, not universal limits or
+  reader-quality proof. No provider stage, retry loop, semantic classifier,
+  standing canary, frozen rewrite, or Deliver behavior was added.
 - `v110` / 2026-09-03 — made current complete-frontier point selection consume
   only the exact point-relative support, counter, and adjacent semantic refs
   already bound by the frontier, instead of reopening a whole product-axis pool

@@ -124,7 +124,7 @@ Test names below resolve in
 | Price concern, value rejection or approval, and source-supported premium quality/positioning remain separate; Phase A does not infer pricing power or a higher-tier recommendation. | "Expensive but worth it" is flattened into poor value, or the word `premium` is invented from price and handed downstream as a recommendation. | This workflow, paragraph beginning `For price-and-value evidence`; `DECISION_STATE_BOUNDARIES` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; `VALUE_RELATION_GUIDANCE`, `_uses_value_policy`, and `_select_value_groups` in `forseti-harness/judgment/phase_a_evidence_selection.py`; axis test `test_decision_state_keeps_price_value_and_premium_meanings_distinct`; selection tests `test_high_spend_buyer_remorse_cannot_be_promoted_to_value_support` and `test_value_policy_does_not_turn_time_to_finish_into_quantity_value`. | Semantic-integration contract changelog `v40`, `v45`, `v46`, and `v48`; commits `5529a646`, `ef791055`; PR [#1513](https://github.com/eric-foo/forseti/pull/1513). |
 | Several matching statements from one origin remain several source observations but add only one independent origin; literal evidence, date, surface, and native engagement stay attached to each observation. | Two statements from one account are reported as two independent people, or the later statement disappears during origin de-duplication. | `forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`, "Independent origins and source observations are different counts"; `EVIDENCE_ACCOUNTING_CONTRACT` and `_same_origin_observation_groups` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_same_origin_repeated_observation_survives_without_adding_origin_credit` and `test_generic_axis_pack_preserves_same_origin_repeated_observation`. | Commit `8442885a`; PR [#1513](https://github.com/eric-foo/forseti/pull/1513). |
 | Every admitted frontier candidate remains accounted; a literal relation rejected for a proved wrong source link stays excluded and cold-resolvable, while counterevidence and the last earning signal cannot be removed. Rejected-only axes require pinned resolution receipts. | A bad literal link is replaced with a nearby quote, or rejected and awkward evidence simply disappears so the axis looks complete. | This workflow, `frontier_relation_rejections` paragraph beginning `That failure removes only`, and rejected-only paragraph beginning `An axis whose entire frontier fails`; `_validate_resolved_frontier_earning` and `_apply_frontier_relation_rejections` in `forseti-harness/judgment/phase_a_evidence_selection.py`; `build_phase_a_evidence_axis_pack` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; selection tests `test_rejected_literal_frontier_relation_stays_accounted_without_forcing_display`, `test_frontier_relation_rejection_cannot_remove_the_last_earning_signal`, and `test_frontier_relation_rejection_cannot_hide_counterevidence`; axis tests `test_rejected_only_axis_requires_and_preserves_cold_resolution_receipt` and `test_decision_state_preserves_mixed_axis_rejected_point_resolution_receipt`. | Commits `9b6dd2ca`, `36a40086`, `3ffe2d4e`; PR [#1515](https://github.com/eric-foo/forseti/pull/1515). |
-| Quote length never decides whether current evidence is truthful. Current v9 authoring returns row-bound source-token addresses and deterministic code copies the exact contiguous span; 220 remains only the short-body copy/review-workload threshold. Historical v7/v8 quote responses retain their stamped text transport and boundary rules. | A long truthful explanation is rejected because it is inconvenient to display, a model transcribes or transfers another row's quote, or historical replay silently changes. | This workflow, paragraph beginning `Every selected row whose literal semantic reference` and quote-stage paragraph beginning `The quote stage reads bodies`; `PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION`, `CURRENT_QUOTE_TRANSPORT`, and historical compatibility branches in `forseti-harness/judgment/phase_a_evidence_selection.py`; selection test `test_v9_accepts_relation_binding_v8_replays_and_v7_remains_bounded`, including foreign-body, foreign-token, reversed-span, and structurally valid but semantically unproven controls. | Semantic-integration contract changelog `v58` and `v66`; commits `54610553`, `ce3e7a61`; PR [#1516](https://github.com/eric-foo/forseti/pull/1516). |
+| Quote length never decides whether current evidence is truthful. Current v10 authoring deterministically copies each selected row's complete bound source body; the model neither transcribes nor shortens it. Historical v7/v8 text and v9 token-span quote responses retain their stamped transports and boundary rules. | A long truthful explanation is rejected because it is inconvenient to display, a model clips or transfers another row's quote, or historical replay silently changes. | This workflow, paragraph beginning `Every selected row whose literal semantic reference` and quote-stage paragraph beginning `The current quote stage`; `DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION` and historical compatibility branches in `forseti-harness/judgment/phase_a_evidence_selection.py`; selection tests `test_v10_finalizes_full_source_without_a_quote_provider_and_fails_on_attachment` and `test_v9_accepts_relation_binding_v8_replays_and_v7_remains_bounded`. | Semantic-integration contract changelog `v58`, `v66`, and `v111`; historical commits `54610553`, `ce3e7a61`; PR [#1516](https://github.com/eric-foo/forseti/pull/1516). |
 | A cold model reads routed v2 evidence through a hash-bound manifest plus one point-local JSONL file containing self-contained displayed facts; route-specific meaning remains inside each fact. | A normalized view or one axis-wide fact stream forces repeated joins or searches, so reading cost becomes unstable or a quote, date, relation, companion meaning, or Decision State is transferred across points. | This workflow, paragraph beginning `When a cold model must read`; `build_axis_reader_bundle` and `validate_axis_reader_bundle` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_axis_reader_bundle_keeps_complete_direct_outcome_facts_local`, `test_axis_reader_bundle_keeps_decision_state_and_mixed_routes_distinct`, and `test_axis_reader_bundle_wrong_cause_reaches_reprojection_boundary`. | The landing revision and review disposition are preserved in Git history; no frozen consolidated-view bytes are changed. |
 | Scalable reader compilation freezes path-independent point identities, lets one worker read one complete point, compiler-attaches exact evidence and Decision State, reuses unchanged briefs, and assembles only exact accepted/rejected membership. | Rebuilding or prompting a whole axis after one point changes wastes work; a compact answer can also look exact while dropping a state, borrowing a quote, or omitting a late worker result. | This workflow, paragraph beginning `For scalable point-at-a-time compilation`; point-reader functions in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py` and `forseti-harness/runners/run_phase_a_evidence_axis_consolidation.py`; axis tests `test_point_reader_compiler_closes_decision_state_at_consumer_boundary`, `test_point_reader_identity_binds_meaning_but_not_storage_path`, `test_point_reader_runner_reuses_valid_points_and_recovers_partial_run`, and `test_point_reader_membership_scales_without_a_whole_axis_schema`. | Semantic-integration contract changelog `v59`; commits `81cad271`, `cb102c6a`, and `3ef82edc`. This route adds generated run bookkeeping, not an evidence authority, global index, hierarchy, or Deliver stage. Frozen v1/v2 outputs remain unchanged. |
 | Every compact reader carries a deterministic full-candidate-pool label beside its selected display examples. Point-bearing labels preserve point-relative relation rows, evidence items, origins, direct-relation overlap, source-role splits, and material-engagement origins; no-frontier labels preserve full candidate shape but make relations explicitly not applicable. Current reader accounting and point-local compilation accept only current-format packs with their complete embedded identity and lineage; the legacy hydration v2 pack remains replayable through its historical consolidated-view route but fails loudly at the current-reader boundary. | A balanced-looking 13-origin display panel hides a materially asymmetric 327-row captured pool, an evidence-rich no-point axis acquires invented support/counter labels merely to obtain a compact summary, or a replay-only legacy pack silently enters the current point reader with reconstructed identity or lineage. | This workflow, paragraph beginning `Before reading selected examples as the axis`; `build_axis_reader_accounting` and `validate_axis_reader_accounting` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; the exact-count-before-characterization duty carried to the consumer in `POINT_READER_METHOD_TEXT` and the `build_axis_reader_bundle` reader rule; tests `test_axis_reader_accounting_keeps_full_candidate_pool_distinct_from_display`, `test_current_reader_rejects_legacy_hydration_pack_but_replay_still_builds`, `test_axis_reader_accounting_rejects_a_coherently_rehashed_false_full_pool`, `test_reader_instructions_oblige_pool_counts_before_display_balance`, and `test_no_frontier_reader_accounting_preserves_shape_without_inventing_relations`. Deterministic validators prove the accounting arrives and reprojects; they cannot read model prose, so a reader that receives the duty and ignores it stays undetectable at every current boundary. | A temporary, independently reviewed legacy bridge was used only for the 12-axis measurement recorded in semantic-integration changelog `v60`, then removed before publication. Frozen point artifacts, axis packs, consolidation specs, and consolidated views retain their bytes. |
@@ -295,9 +295,8 @@ prepare-evidence-selection
   -> prepare-preselection-relation-confirmation
   -> external hidden-label confirmation over every material, protected, or
      influence row that could reach display
-  -> finalize-preselection-relation-confirmation
-  -> external row-bound quote-span response
-  -> finalize-evidence-selection-quotes (no separate confirmation attachment for v9)
+  -> finalize-preselection-relation-confirmation-full-source
+     (deterministically copies each selected row's complete bound source body)
 ```
 
 When that frontier-bound non-value point expands to a large axis pool, use the
@@ -309,9 +308,8 @@ prepare-evidence-selection-batches
   -> prepare-batched-preselection-relation-confirmation
   -> external named hidden-label confirmation responses over every material,
      protected, or influence row that could reach display
-  -> finalize-batched-preselection-relation-confirmation
-  -> external row-bound quote-span response
-  -> finalize-evidence-selection-quotes (no separate confirmation attachment for v9)
+  -> finalize-batched-preselection-relation-confirmation-full-source
+     (deterministically copies each selected row's complete bound source body)
 ```
 
 Both batch manifests bind contiguous complete row coverage and each response's
@@ -1068,18 +1066,15 @@ bounded point passed the separate scope classification; a broad axis or bundled
 claim never reaches a completed point-pack disclosure.
 
 Every selected row whose literal semantic reference helped admit the frontier
-point also enters exact-quote relevance review even when its source body is 220
-characters or shorter. A short body is still quoted in full when relevant, but
-it may no longer become an automatic exact-looking quote for a meaning it does
-not contain. If an available frontier-defining body yields no relevant exact
-quote, point completion fails at `frontier_relation_quote_relevance`; do not
-replace it with parent, child, sibling, or engagement meaning. One narrow case
-is not replacement: when the literal body is a direct terse reply and its
-selected row names one exact hash-bound parent context, the parent may supply
-the omitted premise or referent. Quote review receives only that row-bound
-context, and the returned quote remains one contiguous exact substring of the
-child body. Never copy, splice, or paraphrase parent text into the quote; if the
-exact parent-child pair still leaves any material meaning unstated, reject it.
+point keeps its complete bound source body as the exact quote. Deterministic
+code verifies the packet, evidence identity, source identity, and body hash,
+then copies the original body without asking a model to shorten, transcribe, or
+substitute it. An absent body remains explicitly `quote_unavailable` with cause
+`source_body_unavailable`; no parent, child, sibling, or engagement meaning may
+replace it. Linked parent context remains separately bound reading context and
+is never copied or spliced into the row's exact quote. This proves complete
+row/body transfer, not that the chosen source or relation is semantically
+correct; that remains the responsibility of the two relation judgments.
 
 That failure removes only the affected literal support relation, not
 automatically every other relation attached to the point. Counter and adjacent
@@ -1087,10 +1082,9 @@ relations are not eligible for this repair. After checking the bound source, an
 author may rerun the point with a hash-bound `frontier_relation_rejections` row
 using `literal_source_does_not_state_bounded_relation` for a wrong packet link.
 Never substitute a nearby quote that states another product, state, or stage.
-When the source does state the relation, return the shortest context-complete
-contiguous exact span; quote length is not a rejection cause. The 220-character
-threshold only determines whether a short body is copied in full and whether
-external quote review is needed. A truthful span may exceed it. Historical v7
+When the source does state the relation, current v10 authoring keeps its full
+body; quote length is not a rejection cause. Historical v9 token-span authoring
+retains its context-complete span rule and 220-character workload threshold. Historical v7
 specs may retain `no_context_complete_quote_within_display_limit` for exact
 replay, but new authoring must not create that cause. A genuinely rejected
 semantic reference stays admitted and candidate-accounted, must be labeled
@@ -1392,7 +1386,7 @@ the builder's own recomputation. Every field named in this paragraph and the one
 above it, apart from `projection_routes`, is rejected in a v1 spec and in a v2
 spec that routes no `decision_state` point.
 
-New authoring uses `phase_a_evidence_quote_manifest_v9`,
+New authoring uses `phase_a_evidence_quote_manifest_v10`,
 `phase_a_evidence_selection_artifact_v3`, and
 `phase_a_evidence_axis_consolidation_spec_v4`. The existing hidden-label
 preselection confirmation returns, for every confirmed candidate, the relation
@@ -1401,14 +1395,14 @@ companion semantic-unit references that explains it. This is part of the
 existing batched semantic confirmation call; it adds no selected-row review,
 consensus call, whole-axis reread, or other provider stage.
 
-The same v9 quote manifest uses `row_owned_token_span_v1` for its existing quote
-call. The provider selects an inclusive start/end token address only from the
-source body bound to that selected row; deterministic finalization copies the
-original characters between those addresses. Foreign bodies, foreign tokens,
-reversed spans, transcription-shaped responses, and changed source bodies fail
-locally. This prevents mechanical quote transfer or rewriting without a new
-provider stage. It does not prove that a structurally valid selected span is the
-semantically best or complete span; that remains bounded review judgment.
+The v10 quote manifest uses `complete_available_source_body_v1`: after the two
+relation passes, deterministic finalization copies every available selected
+row's complete hash-bound source body and accepts no provider quote response.
+Changed bodies or lineage fail locally; absent bodies remain typed unavailable.
+Historical v9 manifests retain `row_owned_token_span_v1` and replay through
+their original quote-response route. Complete body transfer prevents mechanical
+clipping, transcription, and cross-row quote transfer. It does not prove that
+the selected source or judgment-authored relation is semantically correct.
 
 The v3 selection artifact carries those exact row-owned references. Every
 displayed Direct Outcome and Decision State row in a v4 consolidation spec must
@@ -2043,11 +2037,10 @@ concurrency and 0.963 points to net per-call provider variance; concurrency
 accounts for 98% of the saving, and the residual variance is why the figure is
 reported as observed rather than as a concurrency guarantee.
 
-The quote stage reads bodies only for selected display rows. Ordinary bodies of
-at most 220 characters are copied in full by deterministic code, and absent
-bodies are typed unavailable; neither is sent to the model. Longer bodies and
-short bodies whose literal relation helped admit the point enter the provider
-prompt. Current v9 prompts render each deduplicated body with stable token
+The current quote stage reads bodies only for selected display rows. V10 copies
+every available selected source body in full by deterministic code and types an
+absent body unavailable; no quote provider call is made. Historical v9 prompts
+render each deduplicated body with stable token
 addresses and require each selected row to return only its bound body plus an
 inclusive start/end token pair. Deterministic code, not the model, copies the
 original contiguous characters. Foreign-body, foreign-token, reversed-span,
@@ -2075,10 +2068,10 @@ the complete normalized meaning; quote length alone is not a rejection cause. An
 available source body of at most 220 characters must be quoted in full, so a
 short comment cannot
 be clipped before a material qualification or same-source costly behavior. Under
-current v9 token addressing, quoted in full means that body's first token
+historical v9 token addressing, quoted in full means that body's first token
 through its last: a token address cannot name leading or trailing whitespace, so
 requiring the raw bytes would leave such a row no finalizable answer at all. For
-a longer body, current v9 asks for the shortest context-complete contiguous
+a longer body, historical v9 asks for the shortest context-complete contiguous
 exact substring needed by the meaning, even when it exceeds 220 characters,
 after packet and bundle
 content verification and evidence-ID, artifact-ID, and source-ref verification,
@@ -2092,7 +2085,7 @@ character while the bound source continues with whitespace and another
 alphanumeric character fails at
 `quote_boundary_incomplete`. This catches a literal substring that stops before
 its next source word; it adds no provider retry and makes the incomplete result
-visible instead of publishing it. Current v9 does not apply that prose heuristic:
+visible instead of publishing it. Historical v9 does not apply that prose heuristic:
 its deterministic responsibility is exact row/body/token ownership and transfer,
 while semantic completeness of an otherwise valid span remains explicitly not
 mechanically proven.

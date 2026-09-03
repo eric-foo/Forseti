@@ -44,6 +44,10 @@ PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION = (
     "phase_a_evidence_quote_manifest_v8"
 )
 PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v9"
+DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION = (
+    "phase_a_evidence_quote_manifest_v10"
+)
+DETERMINISTIC_SOURCE_BODY_QUOTE_POLICY = "complete_available_source_body_v1"
 BATCHED_QUOTE_MANIFEST_VERSION = QUOTE_MANIFEST_VERSION
 RELATION_CONFIRMATION_MANIFEST_VERSION = (
     "phase_a_evidence_relation_confirmation_manifest_v2"
@@ -4581,6 +4585,38 @@ def finalize_preselection_relation_confirmation_prepare_quotes(
     )
 
 
+def _deterministic_source_body_quote_manifest(
+    provider_quote_manifest: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Replace the provider quote transport with bound full-source copying."""
+    if (
+        _verified_quote_manifest_version(provider_quote_manifest)
+        != PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification",
+            "deterministic source-body finalization requires a current v9 lineage",
+        )
+    quote_manifest = dict(provider_quote_manifest)
+    quote_manifest.pop("manifest_sha256")
+    for key in (
+        "prompt_sha256",
+        "response_schema_sha256",
+        "provider_selected_ids",
+        "quote_body_ids",
+        "quote_transport",
+    ):
+        quote_manifest.pop(key, None)
+    quote_manifest["schema_version"] = (
+        DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION
+    )
+    quote_manifest["quote_derivation_policy"] = (
+        DETERMINISTIC_SOURCE_BODY_QUOTE_POLICY
+    )
+    quote_manifest["manifest_sha256"] = _canonical_json_sha256(quote_manifest)
+    return quote_manifest
+
+
 def _assemble_batched_relation_response(
     batch_manifest: Mapping[str, Any],
     sources: Sequence[Mapping[str, Any]],
@@ -4997,6 +5033,7 @@ def _verified_quote_manifest_version(quote_manifest: Mapping[str, Any]) -> str:
             LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
             PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
             PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+            DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
         }
         or stored != _canonical_json_sha256(payload)
     ):
@@ -5169,6 +5206,16 @@ def finalize_quotes(
     current_token_transport = (
         manifest_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
     )
+    deterministic_source_body = (
+        manifest_version == DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION
+    )
+    if deterministic_source_body and quote_manifest.get(
+        "quote_derivation_policy"
+    ) != DETERMINISTIC_SOURCE_BODY_QUOTE_POLICY:
+        raise EvidenceConsumerError(
+            "manifest_verification",
+            "deterministic source-body quote policy is missing or changed",
+        )
     if current_token_transport and (
         quote_manifest.get("quote_transport") != CURRENT_QUOTE_TRANSPORT
         or not isinstance(quote_manifest.get("quote_body_ids"), Mapping)
@@ -5180,6 +5227,7 @@ def finalize_quotes(
         LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+        DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
     }:
         replay = quote_manifest.get("preselection_replay")
         legacy_replay_keys = {
@@ -5203,26 +5251,48 @@ def finalize_quotes(
                 "manifest_verification", "preselection replay binding missing"
             )
         if replay_keys == frozenset(legacy_replay_keys):
-            _, _, expected_quote_manifest = (
+            _, _, expected_provider_quote_manifest = (
                 _finalize_preselection_relation_confirmation_prepare_quotes(
                     replay["selection_manifest"],
                     sources,
                     replay["first_pass_response"],
                     replay["confirmation_manifest"],
                     replay["confirmation_response"],
-                    quote_manifest_version=manifest_version,
+                    quote_manifest_version=(
+                        PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+                        if deterministic_source_body
+                        else manifest_version
+                    ),
                 )
             )
+            expected_quote_manifest = (
+                _deterministic_source_body_quote_manifest(
+                    expected_provider_quote_manifest
+                )
+                if deterministic_source_body
+                else expected_provider_quote_manifest
+            )
         else:
-            _, _, expected_quote_manifest = (
+            _, _, expected_provider_quote_manifest = (
                 _finalize_batched_preselection_relation_confirmations_prepare_quotes(
                     replay["batch_manifest"],
                     sources,
                     replay["batch_responses"],
                     replay["confirmation_batch_manifest"],
                     replay["confirmation_batch_responses"],
-                    quote_manifest_version=manifest_version,
+                    quote_manifest_version=(
+                        PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+                        if deterministic_source_body
+                        else manifest_version
+                    ),
                 )
+            )
+            expected_quote_manifest = (
+                _deterministic_source_body_quote_manifest(
+                    expected_provider_quote_manifest
+                )
+                if deterministic_source_body
+                else expected_provider_quote_manifest
             )
         if dict(quote_manifest) != expected_quote_manifest:
             raise EvidenceConsumerError(
@@ -5247,8 +5317,17 @@ def finalize_quotes(
             "unexpected_relation_confirmation",
             "historical quote manifests do not accept a confirmation attachment",
         )
-    if set(response) != {"quotes"} or not isinstance(response.get("quotes"), list):
-        raise EvidenceConsumerError("quote_response_shape", "quotes missing")
+    if deterministic_source_body:
+        if dict(response):
+            raise EvidenceConsumerError(
+                "unexpected_quote_response",
+                "deterministic source-body finalization accepts no provider quote response",
+            )
+        quotes: list[Mapping[str, Any]] = []
+    else:
+        if set(response) != {"quotes"} or not isinstance(response.get("quotes"), list):
+            raise EvidenceConsumerError("quote_response_shape", "quotes missing")
+        quotes = response["quotes"]
     selected = quote_manifest["selected_rows"]
     frontier_relation_ids = quote_manifest.get(
         "frontier_relation_candidate_ids", []
@@ -5261,17 +5340,21 @@ def finalize_quotes(
         )
     frontier_relation_candidate_ids = frozenset(frontier_relation_ids)
     expected = (
-        quote_manifest.get("provider_selected_ids")
-        if manifest_version
-        in {
-            PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
-            PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
-            QUOTE_MANIFEST_VERSION,
-            LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
-            PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
-            PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
-        }
-        else [row["selected_id"] for row in selected]
+        []
+        if deterministic_source_body
+        else (
+            quote_manifest.get("provider_selected_ids")
+            if manifest_version
+            in {
+                PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
+                PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
+                QUOTE_MANIFEST_VERSION,
+                LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+            }
+            else [row["selected_id"] for row in selected]
+        )
     )
     if not isinstance(expected, list) or not all(
         isinstance(selected_id, str) for selected_id in expected
@@ -5279,7 +5362,6 @@ def finalize_quotes(
         raise EvidenceConsumerError(
             "manifest_verification", "provider quote ids are invalid"
         )
-    quotes = response["quotes"]
     observed = [row.get("selected_id") for row in quotes if isinstance(row, dict)]
     if len(observed) != len(quotes):
         raise EvidenceConsumerError("quote_response_shape", "invalid quote row")
@@ -5292,7 +5374,7 @@ def finalize_quotes(
         raise EvidenceConsumerError(boundary, "quote result set/order mismatch")
     bodies = _bundle_bodies(sources)
     recorded_body_hashes = quote_manifest["quote_body_sha256"]
-    if manifest_version in {
+    if not deterministic_source_body and manifest_version in {
         PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
         PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
         QUOTE_MANIFEST_VERSION,
@@ -5352,6 +5434,7 @@ def finalize_quotes(
                 LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                 PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                 PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
             }:
                 raise EvidenceConsumerError(
                     "missing_quote_result", "selected row has no quote result"
@@ -5359,7 +5442,7 @@ def finalize_quotes(
             if body is None:
                 status = "quote_unavailable"
                 quote = None
-            elif len(body) <= SHORT_BODY_QUOTE_CHARACTERS:
+            elif deterministic_source_body or len(body) <= SHORT_BODY_QUOTE_CHARACTERS:
                 status = "quote_available"
                 quote = body
             else:
@@ -5428,11 +5511,15 @@ def finalize_quotes(
                 not in {
                     PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                     PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                    DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
                 }
                 and len(quote) > SHORT_BODY_QUOTE_CHARACTERS
             ):
                 raise EvidenceConsumerError("quote_overlength", "quote exceeds 220 characters")
-            if sum(character.isalnum() for character in quote) < 2:
+            if (
+                not deterministic_source_body
+                and sum(character.isalnum() for character in quote) < 2
+            ):
                 raise EvidenceConsumerError(
                     "quote_substance", "available quote has fewer than two alphanumeric characters"
                 )
@@ -5447,8 +5534,10 @@ def finalize_quotes(
                     LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                     PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                     PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                    DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
                 }
                 and not current_token_transport
+                and not deterministic_source_body
                 and not _quote_has_complete_end(body, quote)
             ):
                 raise EvidenceConsumerError(
@@ -5469,6 +5558,7 @@ def finalize_quotes(
                 body is not None
                 and selected_row["candidate_id"]
                 in frontier_relation_candidate_ids
+                and not deterministic_source_body
             ):
                 raise EvidenceConsumerError(
                     "frontier_relation_quote_relevance",
@@ -5509,6 +5599,7 @@ def finalize_quotes(
                         LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                         PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                         PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                        DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
                     }
                     else {}
                 ),
@@ -5532,7 +5623,10 @@ def finalize_quotes(
                         ]
                     }
                     if manifest_version
-                    == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+                    in {
+                        PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                        DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
+                    }
                     else {}
                 ),
                 "independence_key": selected_row["independence_key"],
@@ -5557,7 +5651,11 @@ def finalize_quotes(
     artifact = {
         "schema_version": (
             "phase_a_evidence_selection_artifact_v3"
-            if manifest_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+            if manifest_version
+            in {
+                PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
+            }
             else (
                 "phase_a_evidence_selection_artifact_v2"
                 if manifest_version
@@ -5589,10 +5687,27 @@ def finalize_quotes(
             "not a causal judgment",
             "not a commercial-pull score",
             "creator influence is not customer corroboration",
-            "a source body of 220 characters or fewer is quoted in full to prevent context clipping",
-            "longer exact quotes remain quality-adjudicated for semantic relevance and context completeness",
-            "quote_unavailable with source_body_present true means no quote was produced from an available body",
-            "quote_unavailable_cause names whether the source body was unavailable or returned no relevant exact quote",
+            *(
+                [
+                    "every available selected source body is copied in full without clipping",
+                    "semantic adequacy of the selected source and relation is not mechanically proven",
+                ]
+                if deterministic_source_body
+                else [
+                    "a source body of 220 characters or fewer is quoted in full to prevent context clipping",
+                    "longer exact quotes remain quality-adjudicated for semantic relevance and context completeness",
+                ]
+            ),
+            *(
+                [
+                    "quote_unavailable means the bound source body was unavailable",
+                ]
+                if deterministic_source_body
+                else [
+                    "quote_unavailable with source_body_present true means no quote was produced from an available body",
+                    "quote_unavailable_cause names whether the source body was unavailable or returned no relevant exact quote",
+                ]
+            ),
         ],
         "model_api_calls": 0,
     }
@@ -5628,11 +5743,13 @@ def finalize_quotes(
         LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+        DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
     }:
         if manifest_version in {
             LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
             PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
             PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+            DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
         }:
             preselection = quote_manifest.get("preselection_relation_confirmation")
             if (
@@ -5643,7 +5760,10 @@ def finalize_quotes(
                 or not preselection["point_scope_reason"].strip()
                 or (
                     manifest_version
-                    == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+                    in {
+                        PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                        DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
+                    }
                     and preselection.get("relation_binding_status") != "passed"
                 )
             ):
@@ -5812,15 +5932,64 @@ def finalize_quotes(
     return artifact
 
 
+def finalize_preselection_relation_confirmation_full_source(
+    manifest: Mapping[str, Any],
+    sources: Sequence[Mapping[str, Any]],
+    first_pass_response: Mapping[str, Any],
+    confirmation_manifest: Mapping[str, Any],
+    confirmation_response: Mapping[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Finalize a current point with full source bodies and no quote provider call."""
+    _, _, provider_quote_manifest = (
+        finalize_preselection_relation_confirmation_prepare_quotes(
+            manifest,
+            sources,
+            first_pass_response,
+            confirmation_manifest,
+            confirmation_response,
+        )
+    )
+    quote_manifest = _deterministic_source_body_quote_manifest(
+        provider_quote_manifest
+    )
+    return quote_manifest, finalize_quotes(quote_manifest, sources, {})
+
+
+def finalize_batched_preselection_relation_confirmations_full_source(
+    batch_manifest: Mapping[str, Any],
+    sources: Sequence[Mapping[str, Any]],
+    responses: Mapping[str, Mapping[str, Any]],
+    confirmation_batch_manifest: Mapping[str, Any],
+    confirmation_batch_responses: Mapping[str, Mapping[str, Any]],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Finalize a batched current point with no quote provider call."""
+    _, _, provider_quote_manifest = (
+        finalize_batched_preselection_relation_confirmations_prepare_quotes(
+            batch_manifest,
+            sources,
+            responses,
+            confirmation_batch_manifest,
+            confirmation_batch_responses,
+        )
+    )
+    quote_manifest = _deterministic_source_body_quote_manifest(
+        provider_quote_manifest
+    )
+    return quote_manifest, finalize_quotes(quote_manifest, sources, {})
+
+
 __all__ = [
     "CUSTOMER_PULL_FRONTIER_VERSION",
+    "DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION",
     "PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION",
     "QUOTE_MANIFEST_VERSION",
     "SELECTION_MANIFEST_VERSION",
     "SELECTION_SPEC_VERSION",
     "build_customer_pull_point_frontier",
     "finalize_batched_preselection_relation_confirmations_prepare_quotes",
+    "finalize_batched_preselection_relation_confirmations_full_source",
     "finalize_preselection_relation_confirmation_prepare_quotes",
+    "finalize_preselection_relation_confirmation_full_source",
     "finalize_quotes",
     "finalize_relations_prepare_quotes",
     "load_selection_sources",

@@ -4293,6 +4293,46 @@ def test_generic_pack_rejects_a_nonstandard_truth_origin_cap_after_repinning(
         build_phase_a_evidence_axis_pack(changed)
 
 
+def test_generic_pack_accepts_truth_origin_cap_bound_by_selection_spec(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, _, paths = _generic_fixture(tmp_path, monkeypatch)
+    descriptor = manifest["accepted_points"][0]
+    selection_path = Path(descriptor["selection_manifest_path"])
+    quote_path = Path(descriptor["quote_manifest_path"])
+    artifact_path = Path(descriptor["artifact_path"])
+
+    selection = json.loads(selection_path.read_text(encoding="utf-8"))
+    selection["spec"]["truth_group_cap"] = 20
+    _rehash_manifest(selection)
+    _write(selection_path, selection)
+
+    quote = json.loads(quote_path.read_text(encoding="utf-8"))
+    quote["selection_manifest_sha256"] = selection["manifest_sha256"]
+    quote["truth_group_cap"] = 20
+    _rehash_manifest(quote)
+    _write(quote_path, quote)
+
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    artifact["selection_manifest_sha256"] = selection["manifest_sha256"]
+    artifact["quote_manifest_sha256"] = quote["manifest_sha256"]
+    artifact["truth_group_cap"] = 20
+    _write(artifact_path, artifact)
+
+    descriptor.update(
+        artifact_sha256=hash_file(artifact_path),
+        selection_manifest_file_sha256=hash_file(selection_path),
+        selection_manifest_sha256=selection["manifest_sha256"],
+        quote_manifest_file_sha256=hash_file(quote_path),
+        quote_manifest_sha256=quote["manifest_sha256"],
+    )
+    _rehash_manifest(manifest)
+
+    pack = build_phase_a_evidence_axis_pack(manifest)
+    assert pack["points"][0]["point_id"] == "point_a"
+    assert paths["artifact_point_a"].is_file()
+
+
 def test_non_truth_support_origin_is_displayed_but_never_counted_as_truth(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

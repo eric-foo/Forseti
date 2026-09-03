@@ -26,6 +26,7 @@ from judgment.phase_a_evidence_axis_consolidation import (
 from judgment.phase_a_evidence_consumer import EvidenceConsumerError
 from judgment.phase_a_evidence_selection import (
     BATCHED_QUOTE_MANIFEST_VERSION,
+    DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
     DISPLAY_LABEL_BY_REASON_CODE,
     LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
     PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
@@ -52,7 +53,9 @@ from judgment.phase_a_evidence_selection import (
     _validate_relation_response,
     build_customer_pull_point_frontier,
     finalize_batched_preselection_relation_confirmations_prepare_quotes,
+    finalize_batched_preselection_relation_confirmations_full_source,
     finalize_preselection_relation_confirmation_prepare_quotes,
+    finalize_preselection_relation_confirmation_full_source,
     finalize_batched_relations_prepare_quotes,
     finalize_quotes as _finalize_quotes_runtime,
     finalize_relations_prepare_quotes,
@@ -71,6 +74,7 @@ from runners.run_semantic_evidence_integration import (
     finalize_batched_preselection_relation_confirmation_run,
     finalize_evidence_selection_batches_run,
     finalize_evidence_selection_quotes_run,
+    finalize_preselection_relation_confirmation_full_source_run,
     finalize_evidence_selection_relations_run,
     materialize_customer_pull_point_selection_spec_run as _materialize_frontier_run,
     prepare_evidence_selection_batches_run,
@@ -4247,6 +4251,15 @@ def test_batched_frontier_route_confirms_before_cap_and_replays_exactly(
     artifact = _finalize_quotes_runtime(
         quote_manifest, sources, _quote_response(quote_manifest, sources)
     )
+    full_source_manifest, full_source_artifact = (
+        finalize_batched_preselection_relation_confirmations_full_source(
+            batch_manifest,
+            sources,
+            responses,
+            confirmation_manifest,
+            confirmation_responses,
+        )
+    )
 
     assert quote_manifest["schema_version"] == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
     assert quote_manifest["relation_transport"]["mode"] == "named_positional_batches"
@@ -4254,6 +4267,15 @@ def test_batched_frontier_route_confirms_before_cap_and_replays_exactly(
     assert artifact["candidate_count"] == 20
     assert artifact["point_actor_scope"] == spec["point_actor_scope"]
     assert artifact["timeline"]
+    assert full_source_manifest["schema_version"] == (
+        DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION
+    )
+    assert full_source_artifact["candidate_count"] == 20
+    assert all(
+        row["exact_quote"]
+        for group in full_source_artifact["source_groups"]
+        for row in group["rows"]
+    )
     assert artifact["selection_disclosure"]["temporal_presentation_policy"] == (
         "recent_year_coverage_v1"
     )
@@ -4804,6 +4826,8 @@ def test_v9_accepts_relation_binding_v8_replays_and_v7_remains_bounded(
     dubious_artifact = _finalize_quotes_runtime(
         quote_manifest, sources, structurally_exact_but_semantically_dubious
     )
+
+
     assert dubious_artifact["source_groups"][0]["rows"][0]["exact_quote"] == (
         "Goal is to finish this tube because"
     )
@@ -4922,6 +4946,161 @@ def test_v9_accepts_relation_binding_v8_replays_and_v7_remains_bounded(
     with pytest.raises(EvidenceConsumerError) as caught:
         _finalize_quotes_runtime(legacy_manifest, sources, historical_response)
     assert caught.value.boundary == "quote_overlength"
+
+
+def _current_confirmation_response(
+    candidates: list[dict[str, object]],
+    first_pass: dict[str, object],
+    confirmation_manifest: dict[str, object],
+) -> dict[str, object]:
+    relation_by_candidate = {
+        row["candidate_id"]: row for row in first_pass["results"]
+    }
+    semantic_ref_by_candidate = {
+        row["candidate_id"]: row["semantic_unit_ref"] for row in candidates
+    }
+    return {
+        "point_scope": "single_point",
+        "point_scope_reason": "One product state under one condition set.",
+        "relation_checks": [
+            {
+                "confirmation_row_id": row_id,
+                "relation": relation_by_candidate[candidate_id]["relation"],
+                "reason_code": relation_by_candidate[candidate_id]["reason_code"],
+                "relation_semantic_unit_refs": [semantic_ref_by_candidate[candidate_id]],
+            }
+            for row_id, candidate_id in zip(
+                confirmation_manifest["confirmation_row_ids"],
+                confirmation_manifest["confirmation_candidate_ids"],
+                strict=True,
+            )
+        ],
+    }
+
+
+def test_v10_finalizes_full_source_without_a_quote_provider_and_fails_on_attachment(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    body = "Opening qualifier. " + "The balm works in cold weather. " * 20
+    assert len(body) > 220
+    sources[0]["bundle"]["evidence_units"][0]["text"] = body
+    _reseal(sources[0])
+    _, _, selection_manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    first_pass = _relation_response(candidates)
+    _, _, confirmation_manifest = prepare_preselection_relation_confirmation(
+        selection_manifest, sources, first_pass
+    )
+    confirmation_response = _current_confirmation_response(
+        candidates, first_pass, confirmation_manifest
+    )
+
+    quote_manifest, artifact = (
+        finalize_preselection_relation_confirmation_full_source(
+            selection_manifest,
+            sources,
+            first_pass,
+            confirmation_manifest,
+            confirmation_response,
+        )
+    )
+
+    assert quote_manifest["schema_version"] == (
+        DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION
+    )
+    assert "provider_selected_ids" not in quote_manifest
+    assert "quote_transport" not in quote_manifest
+    assert "prompt_sha256" not in quote_manifest
+    row = artifact["source_groups"][0]["rows"][0]
+    assert row["exact_quote"] == body
+    assert row["relation_semantic_unit_refs"]
+    assert _finalize_quotes_runtime(quote_manifest, sources, {}) == artifact
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(quote_manifest, sources, {"quotes": []})
+    assert caught.value.boundary == "unexpected_quote_response"
+
+
+def test_v10_preserves_missing_source_body_as_explicit_unavailability(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    sources[0]["bundle"]["evidence_units"] = []
+    _reseal(sources[0])
+    _, _, selection_manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    first_pass = _relation_response(candidates)
+    _, _, confirmation_manifest = prepare_preselection_relation_confirmation(
+        selection_manifest, sources, first_pass
+    )
+    confirmation_response = _current_confirmation_response(
+        candidates, first_pass, confirmation_manifest
+    )
+
+    _, artifact = finalize_preselection_relation_confirmation_full_source(
+        selection_manifest,
+        sources,
+        first_pass,
+        confirmation_manifest,
+        confirmation_response,
+    )
+    row = artifact["source_groups"][0]["rows"][0]
+    assert row["quote_status"] == "quote_unavailable"
+    assert row["source_body_present"] is False
+    assert row["quote_unavailable_cause"] == "source_body_unavailable"
+    assert row["exact_quote"] is None
+
+
+def test_full_source_runner_writes_manifest_and_artifact_once(tmp_path: Path) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    _, _, selection_manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    first_pass = _relation_response(candidates)
+    _, _, confirmation_manifest = prepare_preselection_relation_confirmation(
+        selection_manifest, sources, first_pass
+    )
+    confirmation_response = _current_confirmation_response(
+        candidates, first_pass, confirmation_manifest
+    )
+    inputs = {
+        "selection": selection_manifest,
+        "first": first_pass,
+        "confirmation_manifest": confirmation_manifest,
+        "confirmation_response": confirmation_response,
+    }
+    paths = {}
+    for name, value in inputs.items():
+        path = tmp_path / f"{name}.json"
+        path.write_text(json.dumps(value), encoding="utf-8")
+        paths[name] = path
+    quote_out = tmp_path / "quote-v10.json"
+    artifact_out = tmp_path / "artifact-v3.json"
+
+    result = finalize_preselection_relation_confirmation_full_source_run(
+        selection_manifest_path=paths["selection"],
+        first_response_path=paths["first"],
+        confirmation_manifest_path=paths["confirmation_manifest"],
+        confirmation_response_path=paths["confirmation_response"],
+        quote_manifest_out=quote_out,
+        artifact_out=artifact_out,
+    )
+
+    assert result["model_api_calls"] == 0
+    assert json.loads(quote_out.read_text(encoding="utf-8"))["schema_version"] == (
+        DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION
+    )
+    assert json.loads(artifact_out.read_text(encoding="utf-8"))["schema_version"] == (
+        "phase_a_evidence_selection_artifact_v3"
+    )
+    with pytest.raises(ValueError, match="refusing to overwrite"):
+        finalize_preselection_relation_confirmation_full_source_run(
+            selection_manifest_path=paths["selection"],
+            first_response_path=paths["first"],
+            confirmation_manifest_path=paths["confirmation_manifest"],
+            confirmation_response_path=paths["confirmation_response"],
+            quote_manifest_out=quote_out,
+            artifact_out=artifact_out,
+        )
 
 
 @pytest.mark.parametrize(
