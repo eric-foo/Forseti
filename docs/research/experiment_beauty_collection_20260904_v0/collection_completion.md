@@ -9,6 +9,11 @@ status: CAPTURE_BATCH_COMPLETE_MATERIAL_SATURATION_NOT_PROVEN
 captured_through_utc: 2026-09-04T15:24:58Z
 authority_boundary: evidence_only_no_cleaning_judgment_or_delivery
 canonical_data_lake_root: F:\forseti-data-lake
+packet_count: 100
+packet_inventory: docs/research/experiment_beauty_collection_20260904_v0/capture_packet_inventory.json
+provisional_axis_inventory: docs/research/experiment_beauty_collection_20260904_v0/consumer_brand_axis_inventory.json
+provisional_maturity_scan: docs/research/experiment_beauty_collection_20260904_v0/provisional_maturity_scan.json
+downstream_state: TARGETED_ACQUISITION_REQUIRED
 accepted_residuals:
   - one_reddit_thread_raw_fallback_after_three_repeatable_extraction_failures
   - structured_reddit_records_not_accepted_by_legacy_html_consolidator
@@ -92,19 +97,22 @@ is an unresolved source-content conflict, not a formula or version verdict.
 
 ## Retail Capture
 
-| Product | Sephora PDP packet | Bazaarvoice onboarding packet | Exact non-incentivized bodies | Provider total | Q / A |
-| --- | --- | --- | ---: | ---: | ---: |
-| Molecular Mesh | `01M1PBPFEW6441KE5GZFDT9XGM` | `01M1PBQTH5SKRR7HE0TBXE2WQY` | 65 | 230 | 8 / 11 |
-| Super Saturated | `01M1PBST9GP1QWHWJFT0H4ZNWB` | `01M1PBV0ZSHMDHYXF2T8ZHP540` | 74 | 305 | 6 / 14 |
-| Continuum | `01M1PBWS84TJDPCG0A0SG1CZ5B` | `01M1PBXY1VSYR6YJ7MT94BXD0V` | 12 | 211 | 5 / 4 |
-| Softwear | `01M1PBZTXG05X1M0W6T9QKB6QG` | `01M1PC17T51Z0DGASF1PJ8FAF8` | 115 | 412 | 4 / 6 |
-| Plasma Wash | `01M1PC2X8PQRCCNF7S7YYY5KWB` | `01M1PC435D2S5CBBGS6E48RQWW` | 19 | 108 | 2 / 1 |
-| Buffer Jelly | `01M1PC5STBPNBA45JAYVVF5T3M` | `01M1PC70AH91DCB41ECTT5QM0A` | 17 | 114 | 3 / 5 |
-| Avant Guard | `01M1PC8NH9XP8XE6KE4G2GDX2K` | `01M1PC9V7CHF6RJJNEV5ZSW2Z0` | 16 | 86 | 1 / 1 |
-| **Total** |  |  | **318** | **1,466** |  |
+| Product | Sephora PDP packet | Bazaarvoice onboarding packet | Captured unique non-incentivized bodies | Provider-declared non-incentivized total | Provider all-review total | Q / A |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+| Molecular Mesh | `01M1PBPFEW6441KE5GZFDT9XGM` | `01M1PBQTH5SKRR7HE0TBXE2WQY` | 65 | 65 | 230 | 8 / 11 |
+| Super Saturated | `01M1PBST9GP1QWHWJFT0H4ZNWB` | `01M1PBV0ZSHMDHYXF2T8ZHP540` | 74 | 74 | 305 | 6 / 14 |
+| Continuum | `01M1PBWS84TJDPCG0A0SG1CZ5B` | `01M1PBXY1VSYR6YJ7MT94BXD0V` | 12 | 12 | 211 | 5 / 4 |
+| Softwear | `01M1PBZTXG05X1M0W6T9QKB6QG` | `01M1PC17T51Z0DGASF1PJ8FAF8` | 105 | 115 | 412 | 4 / 6 |
+| Plasma Wash | `01M1PC2X8PQRCCNF7S7YYY5KWB` | `01M1PC435D2S5CBBGS6E48RQWW` | 19 | 19 | 108 | 2 / 1 |
+| Buffer Jelly | `01M1PC5STBPNBA45JAYVVF5T3M` | `01M1PC70AH91DCB41ECTT5QM0A` | 17 | 17 | 114 | 3 / 5 |
+| Avant Guard | `01M1PC8NH9XP8XE6KE4G2GDX2K` | `01M1PC9V7CHF6RJJNEV5ZSW2Z0` | 16 | 16 | 86 | 1 / 1 |
+| **Total** |  |  | **308** | **318** | **1,466** |  |
 
-The exact captured-body count and the source/provider total are different
-denominators and remain separate. The Sephora brand-grid packet
+The 308 captured unique review bodies, the provider-declared 318-row
+non-incentivized universe, and the 1,466-row all-review universe are different
+denominators and remain separate. Softwear accounts for the ten uncaptured
+non-incentivized rows: its two preserved 100-row sorted windows union to 105
+unique review IDs against the provider-declared 115. The Sephora brand-grid packet
 `01M1PBH5ZJ8695V7MWGBNJDPAJ` preserved the visible grid, but did not earn a
 strict US market-pin completion claim.
 
@@ -322,10 +330,22 @@ No unsupported surface is silently promoted to semantic-ready evidence.
 
 `CAPTURE_BATCH_COMPLETE_MATERIAL_SATURATION_NOT_PROVEN`.
 
-The next consumer may ingest the supported Sephora onboarding corpus, accept or
-adapt the structured Reddit records, and preserve all denominator,
-relationship, access, and formula-conflict fields for the lightweight
-provisional maturity scan. It must use that scan to commission the missing
-material-exhaustion work before terminal Evidence Consolidation, and it must
-not convert candidate-row counts into independent-origin corroboration without
-doing the claim-support contract's origin resolution.
+The Acquire & Seal consumer can begin from the machine-readable
+[`capture_packet_inventory.json`](capture_packet_inventory.json), the
+evidence-backed provisional
+[`consumer_brand_axis_inventory.json`](consumer_brand_axis_inventory.json),
+and its gap-only
+[`provisional_maturity_scan.json`](provisional_maturity_scan.json). The
+inventory binds all 100 verified packet identities and identifies the two
+superseded fallback-history packets without mutating them. The maturity scan
+keeps all eight provisional axes open, names 24 axis-specific Phase 2 queries,
+records the profile-floor and current-route gaps, and starts every post-addition
+continuation counter at zero.
+
+The Acquire & Seal consumer must now adapt every active semantic-bearing packet
+or terminally disposition its source family, run the missing evidence-floor and
+material-exhaustion work, and preserve all denominator, relationship, access,
+and formula-conflict fields through acquisition-stage semantic integration. It
+must not convert candidate-row counts into independent-origin corroboration
+without doing the claim-support contract's origin resolution, and it must not
+authorize Synthesize or Deliver until the validator-backed phase seal passes.

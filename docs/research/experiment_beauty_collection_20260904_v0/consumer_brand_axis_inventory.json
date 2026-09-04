@@ -1,0 +1,199 @@
+{
+  "schema_version": "consumer_brand_axis_inventory_v1",
+  "subject": "Experiment Beauty",
+  "cycle_id": "EXPERIMENT-BEAUTY-UNDERSTANDING-20260905-001",
+  "created_at": "2026-09-04T19:53:47.4345247Z",
+  "authority_revision": "1b025e3b33cf59f58ac24d8f4504fd3e49d51cda",
+  "commission_id": "OWNER-EXPERIMENT-MATERIAL-SATURATION-20260905-001",
+  "method": "Provisional acquisition-routing inventory produced from verified reads of the Capture handoff's immutable packet set. The read covered 717 readable Reddit post/comment records and the seven Sephora onboarding corpora, with owned, YouTube, GoPicky, and access-limit observations retained from the handoff. Overlapping observations were grouped only to nominate the material-exhaustion work; no origin-independence, prevalence, decision maturity, or final semantic conclusion is awarded here.",
+  "source_artifacts": [
+    {
+      "locator": "docs/research/experiment_beauty_collection_20260904_v0/capture_packet_inventory.json",
+      "sha256": "2e69fd71a45661dc58388dc30d99c101a8679cfd09b9844a58a2ad1c6d6209c2"
+    }
+  ],
+  "axes": [
+    {
+      "axis_id": "hydration_barrier_visible_results",
+      "label": "Hydration, barrier support, and visible results",
+      "polarity": "mixed",
+      "disposition": "material",
+      "scope": "Super Saturated, Molecular Mesh, Buffer Jelly, Continuum, and the brand-level hydration/barrier promise",
+      "source_axis_ids": ["hydration_barrier_performance", "efficacy_visible_results"],
+      "customer_tension": "Captured customers describe strong hydration and barrier comfort, while others describe short-lived hydration, increased dryness, or too little visible difference to repurchase.",
+      "segment_or_condition": "Dry or dehydrated skin, damaged barriers, cold climates, tretinoin routines, and combination skin.",
+      "observed_behavior": ["retained_or_repurchased", "routine_stacking", "stopped_or_discarded", "no_future_purchase"],
+      "competitor_destinations": ["Dieux", "Regimen Lab", "Skinfix", "Zerafite"],
+      "strongest_counterevidence": "Multiple captured Reddit accounts describe Super Saturated or an Experiment multi-product routine as unusually effective for dehydration and overnight barrier comfort.",
+      "known_gap": "Separate product, skin-state, season, and routine effects; test independent support beyond the current retailer and known-source Reddit batch.",
+      "maturity_scan": "open",
+      "routing_evidence_refs": [
+        "reddit:1qs3yv1:comment:o2syqz4",
+        "reddit:1qs3yv1:comment:o2tfcq3",
+        "sephora:P518188:review:355233820"
+      ]
+    },
+    {
+      "axis_id": "irritation_breakout_active_condition_fit",
+      "label": "Irritation, breakout, and active-condition fit",
+      "polarity": "mixed",
+      "disposition": "material",
+      "scope": "Reaction and tolerance reports across high-glycerin, moisturizer, cleanser, and occlusive products",
+      "source_axis_ids": ["reaction_irritation_breakout", "active_condition_compatibility"],
+      "customer_tension": "Some captured customers report burning, itching, whiteheads, eczema discomfort, or breakouts, while others describe soothing use on irritated or tretinoin-affected skin.",
+      "segment_or_condition": "Sensitive, acne-prone, eczema-prone, rosacea-prone, and retinoid-using customers.",
+      "observed_behavior": ["returned_or_refunded", "stopped_or_discarded", "retained_or_repurchased"],
+      "competitor_destinations": ["Summer Fridays", "Skinfix", "Zerafite"],
+      "strongest_counterevidence": "Captured community accounts describe Super Saturated and Buffer Jelly as soothing or useful in irritated and tretinoin routines.",
+      "known_gap": "Test product- and condition-specific segmentation without treating anecdotes as medical-safety or causal evidence.",
+      "maturity_scan": "open",
+      "routing_evidence_refs": [
+        "sephora:P518192:review:369497268",
+        "sephora:P518192:review:375991175",
+        "reddit:1jmy2l8:comment:n6uwqah"
+      ]
+    },
+    {
+      "axis_id": "texture_finish_layering_routine_fit",
+      "label": "Texture, finish, layering, and routine fit",
+      "polarity": "mixed",
+      "disposition": "material",
+      "scope": "Stickiness, slime/stringing, absorption, pilling, shine, makeup use, and day/night fit",
+      "source_axis_ids": ["texture_weight_finish", "routine_layering_compatibility"],
+      "customer_tension": "The textures can make hydration feel distinctive and effective, but tack, slime, pilling, shine, or poor absorption can make the same products unacceptable in another routine.",
+      "segment_or_condition": "Makeup wearers, oily or combination skin, dry skin, layered routines, and people using products at different times of day.",
+      "observed_behavior": ["routine_adaptation", "retained_or_repurchased", "returned_or_refunded", "switched_or_replaced"],
+      "competitor_destinations": ["Dieux", "Regimen Lab", "Summer Fridays"],
+      "strongest_counterevidence": "Captured comparisons praise Molecular Mesh's bouncy texture and describe tack as useful under makeup or manageable through layering changes.",
+      "known_gap": "Determine which texture consequences change purchase or routine behavior and which are merely preference language.",
+      "maturity_scan": "open",
+      "routing_evidence_refs": [
+        "reddit:1w5h3op:comment:p7f7196",
+        "reddit:1qs3yv1:comment:o2um0uu",
+        "sephora:P518192:review:360213068"
+      ]
+    },
+    {
+      "axis_id": "packaging_dispensing_durability",
+      "label": "Packaging, dispensing, and physical durability",
+      "polarity": "mixed",
+      "disposition": "material",
+      "scope": "Tubes, pumps/nozzles, reusable-mask durability, refill utility, and usable product loss",
+      "source_axis_ids": ["packaging_dispensing_usability", "physical_product_durability"],
+      "customer_tension": "Customers can like the formula or packaging concept while reporting failing nozzles, hard-to-use containers, small fill, or a reusable mask tearing after very little use.",
+      "segment_or_condition": "Repeat users, travelers, customers judging usable quantity, and reusable-product buyers.",
+      "observed_behavior": ["returned_or_refunded", "no_future_purchase", "repair_attempt", "retained_or_repurchased"],
+      "competitor_destinations": ["Eadem"],
+      "strongest_counterevidence": "Other captured users praise the packaging or refill option, and some continue using products despite dispensing complaints.",
+      "known_gap": "Test recurrence by product and packaging version, and distinguish aesthetic praise from reliable dispensing and durability.",
+      "maturity_scan": "open",
+      "routing_evidence_refs": [
+        "sephora:P518193:review:380258908",
+        "sephora:P518191:review:400419046",
+        "reddit:1gi3vi3:comment:lvzxt5l"
+      ]
+    },
+    {
+      "axis_id": "price_value_quantity_access",
+      "label": "Price, value, quantity, and access",
+      "polarity": "mixed",
+      "disposition": "material",
+      "scope": "Price-to-result, usable quantity, refill economics, prestige alternatives, and US/Canada purchasing routes",
+      "source_axis_ids": ["price_value_hype", "quantity_and_access"],
+      "customer_tension": "Some customers accept the price for unusual hydration or formula feel, while others see a familiar substitute, too little product, or too little difference to justify repeat purchase.",
+      "segment_or_condition": "Budget-sensitive repeat buyers, cross-border shoppers, prestige switchers, and customers comparing functional substitutes.",
+      "observed_behavior": ["retained_or_repurchased", "no_future_purchase", "replacement_search", "switched_or_replaced"],
+      "competitor_destinations": ["Aquaphor", "Dieux", "The Ordinary"],
+      "strongest_counterevidence": "Captured repeat-purchase accounts describe certain Experiment products as unusually effective or economical in use because a small amount is sufficient.",
+      "known_gap": "Separate generic price objection from observed switching, refill value, and access-driven purchase friction.",
+      "maturity_scan": "open",
+      "routing_evidence_refs": [
+        "sephora:P518194:review:374657713",
+        "sephora:P518193:review:399943224",
+        "reddit:1qs3yv1:comment:o2ssniz"
+      ]
+    },
+    {
+      "axis_id": "formula_consistency_quality_service_trust",
+      "label": "Formula consistency, quality, service, and brand trust",
+      "polarity": "mixed",
+      "disposition": "material",
+      "scope": "Ingredient-list conflict, batch/scent observations, contamination allegations, response handling, and confidence in brand standards",
+      "source_axis_ids": ["formula_consistency", "quality_and_service_trust"],
+      "customer_tension": "Captured sources include strong formula praise alongside differing official ingredient lists, batch/scent concerns, and a customer account linking a foreign-material allegation with an unresolved support interaction.",
+      "segment_or_condition": "Ingredient-sensitive buyers, repeat users noticing batch differences, and customers needing remediation after a quality concern.",
+      "observed_behavior": ["retained_or_repurchased", "returned_or_refunded", "no_future_purchase", "buying_confidence_reduced"],
+      "competitor_destinations": ["Summer Fridays"],
+      "strongest_counterevidence": "Captured community accounts also praise the formulations and report good use without adverse reaction; the official ingredient mismatch is unresolved source content, not proof of a formula change.",
+      "known_gap": "Resolve current formula/version identity and seek independent recurrence or successful remediation without promoting a single allegation into prevalence or causation.",
+      "maturity_scan": "open",
+      "routing_evidence_refs": [
+        "owned:ingredient_hash:485c6ae3cf1008cc78bf0afe0e8cf8ffcfe266ce1bc34654bacd6bcedbc16d94",
+        "owned:ingredient_hash:a1e4b8dac9a7d109c67b7a815d8ab999f195043daadef667924cb4c35ffa8dd4",
+        "sephora:P518188:review:373164742",
+        "reddit:1qs3yv1:comment:ogc97i6"
+      ]
+    },
+    {
+      "axis_id": "repeat_purchase_switching_destinations",
+      "label": "Repeat purchase, rejection, and switching destinations",
+      "polarity": "mixed",
+      "disposition": "material",
+      "scope": "Executed retention, return, replacement, and named competitor or substitute destinations",
+      "source_axis_ids": ["repeat_purchase_switching_destinations"],
+      "customer_tension": "The captured corpus contains enthusiastic retention and routine reliance, but also returns and named moves driven by texture, reaction, value, or product-performance fit.",
+      "segment_or_condition": "Customers with direct comparative use and an expressed purchase or routine consequence.",
+      "observed_behavior": ["retained_or_repurchased", "returned_or_refunded", "switched_or_replaced", "no_future_purchase"],
+      "competitor_destinations": ["Dieux", "Eadem", "Regimen Lab", "Summer Fridays", "Skinfix", "Zerafite"],
+      "strongest_counterevidence": "Several captured users call Super Saturated indispensable or describe the Experiment routine as their best overnight routine.",
+      "known_gap": "Distinguish executed destinations from comparison mentions, resolve the triggering tension, and test whether behavior repeats across independent origins.",
+      "maturity_scan": "open",
+      "routing_evidence_refs": [
+        "reddit:1w5h3op:comment:p7f5xgd",
+        "sephora:P518192:review:379677604",
+        "sephora:2967453:review:384880281"
+      ]
+    },
+    {
+      "axis_id": "portfolio_product_routine_fit",
+      "label": "Portfolio, product selection, and routine fit",
+      "polarity": "mixed",
+      "disposition": "material",
+      "scope": "Choosing and combining Experiment products by skin state, desired intensity, routine slot, and product category",
+      "source_axis_ids": ["segment_condition_fit", "product_selection_portfolio_fit"],
+      "customer_tension": "Captured users describe coherent multi-product routines and strong hero products, while product boundaries and category expansion can also produce mismatch or uneven confidence across the portfolio.",
+      "segment_or_condition": "New-to-brand buyers, multi-product users, sensitive or dry skin, makeup routines, and lip/body-category shoppers.",
+      "observed_behavior": ["routine_stacking", "internal_product_switch", "retained_or_repurchased", "rejected_or_not_purchased"],
+      "competitor_destinations": ["Dieux", "Dr. Idriss", "Eadem", "Regimen Lab"],
+      "strongest_counterevidence": "Captured users explain purposeful stacking of Super Saturated, Molecular Mesh, and Buffer Jelly and describe differentiated uses across routine slots.",
+      "known_gap": "Test whether the portfolio ladder is legible and whether weaker categories dilute or materially change trust in the hero-product proposition.",
+      "maturity_scan": "open",
+      "routing_evidence_refs": [
+        "reddit:1qs3yv1:comment:o2syqz4",
+        "reddit:1jn0nvd:comment:mq7f7tt",
+        "sephora:P518194:review:379708083"
+      ]
+    }
+  ],
+  "excluded_or_merged_provisional_axes": [
+    {
+      "axis_id": "strongest_delight_counterevidence",
+      "disposition": "merged_as_required_counterevidence_field",
+      "reason": "Strongest delight is a required counterweight within every material axis, not a separate customer tension."
+    },
+    {
+      "axis_id": "availability_distribution",
+      "disposition": "merged",
+      "into": "price_value_quantity_access",
+      "reason": "The current access evidence is routing context and has not yet shown a distinct customer-behavior axis."
+    },
+    {
+      "axis_id": "service_support",
+      "disposition": "merged",
+      "into": "formula_consistency_quality_service_trust",
+      "reason": "The present service signal is tied to one quality allegation; separate service recurrence has not yet been established."
+    }
+  ],
+  "claim_ceiling": "This inventory routes acquisition. It is not prevalence, causation, medical-safety, market-consensus, final semantic adjudication, decision maturity, or axis-closure authority.",
+  "deliver_started": false
+}

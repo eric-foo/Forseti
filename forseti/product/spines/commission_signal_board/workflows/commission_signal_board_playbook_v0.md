@@ -324,12 +324,16 @@ not spend a separate sacrificial query.
    A cold executor follows this order without reconstructing the authoring
    conversation:
 
-   1. Build the provisional axis inventory from the captured retailer,
-      community, editorial, creator, and owned-source evidence, and hash-pin it
-      as the single axis inventory this phase's Phase 2 jobs reference; do not
-      create a second inventory beside it. Use as many or as few axes as the
-      evidence requires; record each axis's pain, delight, or mixed posture,
-      affected segment or condition, observed behavior, competitor destination,
+   1. For a multi-packet Capture handoff, verify the Capture obligation
+      contract's one machine-readable packet inventory and resolve its current
+      packet set before semantic work; do not reconstruct packet identity from
+      prose or treat superseded-history packets as current. Then build the
+      provisional axis inventory from the captured retailer, community,
+      editorial, creator, and owned-source evidence, and hash-pin it as the
+      single axis inventory this phase's Phase 2 jobs reference; do not create a
+      second inventory beside it. Use as many or as few axes as the evidence
+      requires; record each axis's pain, delight, or mixed posture, affected
+      segment or condition, observed behavior, competitor destination,
       counterevidence, and known gap. This inventory is a routing map, not a
       conclusion.
    2. Run the lightweight maturity scan as a gap audit over that inventory, not

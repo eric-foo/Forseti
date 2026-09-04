@@ -505,6 +505,12 @@ Minimum handoff accomplishments:
 - bundled-offer structure, source-visible framing, and visible packaging cues
   are preserved when the source is a multi-term proposal;
 - capture obligations and limitations are visible;
+- a multi-packet batch handoff provides one machine-readable, unique packet-ID
+  inventory that distinguishes current handoff packets from superseded history,
+  so the downstream consumer can resolve immutable source material without
+  reconstructing packet identity from prose; this inventory is transport
+  accounting only and does not select semantic evidence or award source
+  sufficiency;
 - Cleaning can proceed without reconstructing collection history;
 - Judgment can inspect capture limits without Capture making judgment calls.
 
