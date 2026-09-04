@@ -976,6 +976,65 @@ def test_prepare_runner_rejects_source_hash_mismatch(tmp_path: Path) -> None:
         )
 
 
+def test_prepare_runner_uses_relocated_materialized_source_without_collection_files(
+    tmp_path: Path,
+) -> None:
+    source = materialize_source_v3(_source_v10(count=2))
+    expected = build_bundle(
+        source,
+        max_batch_chars=80_000,
+        max_prompt_bytes=12_000,
+    )
+    source_path = tmp_path / "materialized-source.json"
+    source_path.write_text(json.dumps(source), encoding="utf-8")
+    relocated_root = tmp_path / "relocated"
+    relocated_root.mkdir()
+    bundle_path = tmp_path / "bundle.json"
+
+    prepare_batches(
+        source_path=source_path,
+        repo_root=relocated_root,
+        bundle_out=bundle_path,
+        prompt_dir=tmp_path / "prompts",
+        max_batch_chars=80_000,
+        max_prompt_bytes=12_000,
+    )
+
+    observed = json.loads(bundle_path.read_text(encoding="utf-8"))
+    assert observed == expected
+    assert observed["bundle_sha256"] == expected["bundle_sha256"]
+
+
+def test_materialized_source_tampering_fails_before_bundle_outputs(
+    tmp_path: Path,
+) -> None:
+    source = materialize_source_v3(_source_v10(count=2))
+    build_bundle(source, max_prompt_bytes=12_000)
+    source["captured_items"][0]["text"] += " tampered"
+    mismatch = (
+        "semantic evidence source content does not match its stored source_sha256"
+    )
+
+    with pytest.raises(SemanticIntegrationError, match=mismatch):
+        build_bundle(source, max_prompt_bytes=12_000)
+
+    source_path = tmp_path / "tampered-source.json"
+    source_path.write_text(json.dumps(source), encoding="utf-8")
+    bundle_path = tmp_path / "bundle.json"
+    prompt_dir = tmp_path / "prompts"
+    with pytest.raises(SemanticIntegrationError, match=mismatch):
+        prepare_batches(
+            source_path=source_path,
+            repo_root=tmp_path,
+            bundle_out=bundle_path,
+            prompt_dir=prompt_dir,
+            max_batch_chars=80_000,
+            max_prompt_bytes=12_000,
+        )
+    assert not bundle_path.exists()
+    assert not prompt_dir.exists()
+
+
 def _source_v3(*, actor_mode: str = "distinct", count: int = 7) -> dict:
     artifacts = []
     containers = []
