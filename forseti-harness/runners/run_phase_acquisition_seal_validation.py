@@ -241,8 +241,9 @@ UNDERSTANDING_ROUTE_VERSIONS = {
     "1.5.0",
     "1.6.0",
     "1.7.0",
+    "1.8.0",
 }
-CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.7.0"
+CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.8.0"
 CAMPAIGN_EVIDENCE_VIEW_VERSION = "campaign_evidence_view_v1"
 SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION_V1 = (
     "semantic_evidence_integration_view_v1"
@@ -279,9 +280,16 @@ _CAMPAIGN_INTEGRATION_ROUTE_VERSIONS = {
     "1.5.0",
     "1.6.0",
     "1.7.0",
+    "1.8.0",
 }
 _SEMANTIC_INTEGRATION_ROUTE_ID = "semantic_evidence_integration"
-_SEMANTIC_INTEGRATION_ROUTE_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0"}
+_SEMANTIC_INTEGRATION_ROUTE_VERSIONS = {
+    "1.4.0",
+    "1.5.0",
+    "1.6.0",
+    "1.7.0",
+    "1.8.0",
+}
 # Route 1.1.0 introduced comparator closure, campaign-evidence integration,
 # conditional verification, and retailer-state accounting together, so a
 # historical audit of a 1.1.0 seal still owes all of them. Pre-fanout
@@ -295,6 +303,7 @@ _ROUTE_REVISION_1_1_OBLIGATION_VERSIONS = {
     "1.5.0",
     "1.6.0",
     "1.7.0",
+    "1.8.0",
 }
 _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {
     "1.2.0",
@@ -303,12 +312,31 @@ _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {
     "1.5.0",
     "1.6.0",
     "1.7.0",
+    "1.8.0",
 }
-_ROUTE_REVISION_1_3_OBLIGATION_VERSIONS = {"1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0"}
-_ROUTE_REVISION_1_4_OBLIGATION_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0"}
-_ROUTE_REVISION_1_5_OBLIGATION_VERSIONS = {"1.5.0", "1.6.0", "1.7.0"}
-_ROUTE_REVISION_1_6_OBLIGATION_VERSIONS = {"1.6.0", "1.7.0"}
-_ROUTE_REVISION_1_7_OBLIGATION_VERSIONS = {"1.7.0"}
+_ROUTE_REVISION_1_3_OBLIGATION_VERSIONS = {
+    "1.3.0",
+    "1.4.0",
+    "1.5.0",
+    "1.6.0",
+    "1.7.0",
+    "1.8.0",
+}
+_ROUTE_REVISION_1_4_OBLIGATION_VERSIONS = {
+    "1.4.0",
+    "1.5.0",
+    "1.6.0",
+    "1.7.0",
+    "1.8.0",
+}
+_ROUTE_REVISION_1_5_OBLIGATION_VERSIONS = {
+    "1.5.0",
+    "1.6.0",
+    "1.7.0",
+    "1.8.0",
+}
+_ROUTE_REVISION_1_6_OBLIGATION_VERSIONS = {"1.6.0", "1.7.0", "1.8.0"}
+_ROUTE_REVISION_1_7_OBLIGATION_VERSIONS = {"1.7.0", "1.8.0"}
 _CAMPAIGN_SOURCE_ROLES = {
     "owned_post",
     "paid_ad",

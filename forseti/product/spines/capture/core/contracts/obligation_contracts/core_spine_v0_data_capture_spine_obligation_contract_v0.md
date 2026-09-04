@@ -19,11 +19,11 @@ stale_if:
   - Forseti authorizes standing/opportunistic corpus capture as part of Data Capture Spine.
   - Evidence Candidate Record architecture changes the handoff boundary.
   - A pressure-test revision supersedes these v0 obligations.
-  - `docs/product/data_capture_source_access_boundary_decision_v0.md` materially amends or supersedes the source-access boundary for Obligation 2.
-  - `docs/product/data_capture_source_access_method_plan_v0.md` materially changes method planning for the current source-access boundary.
+  - `forseti/product/spines/capture/core/contracts/source_access_boundary/data_capture_source_access_boundary_decision_v0.md` materially amends or supersedes the source-access boundary for Obligation 2.
+  - `forseti/product/spines/capture/core/contracts/source_access_boundary/data_capture_source_access_method_plan_v0.md` materially changes method planning for the current source-access boundary.
 ```
 
-- Status: CONTRACT_DRAFT_V0_AMENDED_2026_06_05
+- Status: CONTRACT_DRAFT_V0_AMENDED_2026_09_04
 - Artifact type: Product-method contract
 - Scope: Commissioned Data Capture Spine obligations, discharge states, mode rules, re-capture rules, and pressure-test checks
 - Source basis: `docs/product/core_spine_v0_data_capture_spine_architecture_blueprint_v0.md`, `docs/product/core_spine_v0_data_capture_context_preservation_note_v0.md`, `docs/product/core_spine_v0_data_and_cleaning_spine_boundary_v0.md`, `docs/product/data_capture_source_access_boundary_decision_v0.md`, `docs/product/data_capture_spine_obligation_contract_patch_proposal_v0.md`, `docs/decisions/data_capture_spine_obligation_contract_patch_proposal_owner_decision_v0.md`, `docs/product/data_capture_spine_posture_vocabulary_enforcement_proposal_v0.md`, `docs/review-outputs/adversarial-artifact-reviews/data_capture_spine_posture_vocabulary_enforcement_proposal_adversarial_review_v0.md`
@@ -114,7 +114,7 @@ Failure mode: if there is no Decision Frame, Data Capture Spine has not started.
 
 Capture must stay inside the current Forseti source-access boundary. The
 controlling interpretation of that boundary for Obligation 2 is
-`docs/product/data_capture_source_access_boundary_decision_v0.md`; if this
+`forseti/product/spines/capture/core/contracts/source_access_boundary/data_capture_source_access_boundary_decision_v0.md`; if this
 section and that boundary decision differ, the boundary decision controls until
 amended or superseded.
 
@@ -127,6 +127,13 @@ Free or account-created access is allowed. Entitled paid, client, or
 consenting-coworker access is allowed. If access visibly spills into
 cross-account, private, or admin material, Capture must not use that spillover
 once noticed.
+
+For community sources, an owner's existing entitled/logged-in membership may
+be used within the permissions actually visible to that session, including
+private Facebook groups, Discord servers, and other login-gated communities.
+Capture must not obtain new credentials, create or borrow another identity,
+join a community, bypass controls, or exceed those permissions for the
+collection.
 
 Capture must not use stolen credentials or cookies, nonconsensual sessions,
 security exploits, malware, credential stuffing, no-entitlement payment/access
@@ -339,6 +346,10 @@ Minimum obligation:
 - whether visibility was gated, ephemeral, archive-only, deleted, edited,
   cached, dynamic, vendor-moderated, or otherwise constrained where visible;
 - whether exact access failed, degraded, or required a fallback mode;
+- for private or login-gated communities, the visibility class,
+  entitlement/session provenance without secrets, actual permission scope, and
+  any source-visible privacy, quotation, attribution, retention, or
+  redistribution constraint material to downstream use;
 - when source visibility shifts, preserve the relationship among the original
   locator, current locator, migrated locator, archive/cache locator, fallback
   locator, and failed access attempt where visible.

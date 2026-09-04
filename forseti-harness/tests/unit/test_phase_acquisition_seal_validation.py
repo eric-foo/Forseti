@@ -1075,7 +1075,7 @@ def _understanding_route(tmp_path: Path) -> dict:
         _semantic_integration_view(tmp_path)
     )
     return {
-        "route_version": "1.7.0",
+        "route_version": "1.8.0",
         "comparator_closure": {
             "state": "phase_a_competitor_context_closed",
             "candidate_frame": frame,

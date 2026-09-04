@@ -108,7 +108,8 @@ The default coordinated route has exactly four evidence actors:
   split retailers by actor; and
 - `CO3`: mandatory customer/community, complete bounded review-corpus
   acquisition, and selected interpretation — retailer reviews and Q&A, bounded
-  Reddit and qualified community routes, the current weekly Reddit lake read,
+  Reddit-prioritized but not Reddit-only qualified community routes under the
+  prompt-structure authority, the current weekly Reddit lake read,
   conditionally licensed native TikTok/Instagram/YouTube items and TikTok Shop,
   customer language, pain points, objections, complaints, usage contexts,
   workarounds, response patterns, syndication ceilings, and discriminating
@@ -168,6 +169,10 @@ Any pair/group dispatcher is mechanical and is not another evidence actor.
 authorized independent worktree is genuinely required. They create no further
 actors. Company-owned authorization precedes retailer probing. `CO2` supplies
 the reconciled breadth and selected-product pointers that `CO3` needs for depth.
+Actor topology and context capacity do not set evidence-sampling or collection
+caps. `CO3` depth and stopping remain governed by the bound question, evidence
+yield, source-native exhaustion, access, duplication/syndication, provenance,
+and the Capture and claim-support contracts.
 
 Run those four actors through this lean execution protocol:
 
@@ -602,7 +607,7 @@ phase_acquisition_seal:
     locator:
     sha256:
   understanding_route:
-    route_version: "1.7.0"
+    route_version: "1.8.0"
     comparator_closure:
       state: phase_a_competitor_context_closed | blocked_open_comparator_candidates
       candidate_frame:
@@ -1122,7 +1127,7 @@ version unless an explicit migration/restart is applied and recorded.
 
 ```yaml
 understanding_acquire_seal_route:
-  current_version: 1.7.0
+  current_version: 1.8.0
   versioning_started: 2026-08-07
   baseline_revision: 1aa3a833edbb8425a4ca2eee91bd850feec4e32c
   version_semantics:
@@ -1313,6 +1318,23 @@ understanding_acquire_seal_route:
       migration_note: >
         A run started under 1.6.0 retains 1.6.0 unless explicitly restarted.
         Historical seals are never restamped. New runs seal under 1.7.0.
+    - version: 1.8.0
+      date: 2026-09-04
+      owning_change: owner-directed company-agnostic community-collection update
+      changed_behavior: >
+        Keeps Route 1.7's acquisition order, semantic-source boundary, and
+        closure gates, while making community acquisition Reddit-prioritized
+        rather than Reddit-only; admitting decision-material public and
+        existing-entitlement community venues under the Capture source-access
+        boundary; and forbidding evidence-volume or stopping caps derived only
+        from actor topology or context capacity. Capture, Cleaning, Judgment,
+        and Deliver authority and claim-support boundaries remain separate.
+      affected_gate: >
+        No new seal field or closure gate. Route-version validation recognizes
+        1.8.0 as current and inherits all Route 1.7 obligations.
+      migration_note: >
+        A run started under 1.7.0 retains 1.7.0 unless explicitly restarted.
+        Historical seals are never restamped. New runs seal under 1.8.0.
   append_only_rule: >
     Every future semantic route change appends one row with version, date,
     owning change/PR when known, changed behavior, affected gate, and

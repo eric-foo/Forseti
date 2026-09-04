@@ -25,13 +25,14 @@ stale_if:
 
 ## Status
 
-`ACCEPTED_SOURCE_ACCESS_METHOD_PLAN_V0` — patched 2026-05-30 to reflect the discoverable-or-entitled + disclosable standard with materiality-gated provenance cleanup; patched 2026-06-01 to add API cost/sequence preference without changing boundary permission; patched 2026-06-02 to link the bounded first-tranche source-access tooling build authorization; patched 2026-06-05 to reflect third-tranche anti-blocking authorization, CloakBrowser-first selection, Reddit pre-commercial ordering, old Reddit HTML preference, and `.json` unreliability; patched 2026-06-08 to set exact old Reddit Direct HTTP as the current operator default for supplied thread URLs while retaining CloakBrowser as the primary anti-blocking backend.
+`ACCEPTED_SOURCE_ACCESS_METHOD_PLAN_V0` — patched 2026-05-30 to reflect the discoverable-or-entitled + disclosable standard with materiality-gated provenance cleanup; patched 2026-06-01 to add API cost/sequence preference without changing boundary permission; patched 2026-06-02 to link the bounded first-tranche source-access tooling build authorization; patched 2026-06-05 to reflect third-tranche anti-blocking authorization, CloakBrowser-first selection, Reddit pre-commercial ordering, old Reddit HTML preference, and `.json` unreliability; patched 2026-06-08 to set exact old Reddit Direct HTTP as the current operator default for supplied thread URLs while retaining CloakBrowser as the primary anti-blocking backend; patched 2026-09-04 to bind existing-entitlement community access without authorizing credential acquisition or community joining.
 
 Artifact type: Product artifact — method plan and build-scope input.
-Produced: 2026-05-28. Patched: 2026-05-28, 2026-05-30, 2026-06-01, 2026-06-02, and 2026-06-05.
+Produced: 2026-05-28. Patched: 2026-05-28, 2026-05-30, 2026-06-01,
+2026-06-02, 2026-06-05, 2026-06-08, and 2026-09-04.
 Phase: bounded source-access tooling build authorized only through `docs/decisions/data_capture_spine_source_access_tooling_build_authorization_v0.md`, including the first, second, and third tranches recorded there.
 Edit permission: docs-write (this file only).
-Controlling standard: `docs/product/data_capture_source_access_boundary_decision_v0.md`.
+Controlling standard: `forseti/product/spines/capture/core/contracts/source_access_boundary/data_capture_source_access_boundary_decision_v0.md`.
 
 ---
 
@@ -60,7 +61,7 @@ orca_start_preflight:
 
 ## The Controlling Standard
 
-From `docs/product/data_capture_source_access_boundary_decision_v0.md` (patched 2026-05-30 to `LOOSEN_SOURCE_ACCESS_TO_DISCOVERABLE_OR_ENTITLED_DISCLOSABLE`):
+From `forseti/product/spines/capture/core/contracts/source_access_boundary/data_capture_source_access_boundary_decision_v0.md` (amended through 2026-09-04 under `LOOSEN_SOURCE_ACCESS_TO_DISCOVERABLE_OR_ENTITLED_DISCLOSABLE`):
 
 A method is **in-bounds** when **all** hold:
 
@@ -70,6 +71,14 @@ A method is **in-bounds** when **all** hold:
 4. The method avoids the hard stops: stolen credentials/cookies, nonconsensual sessions, exploits, malware, credential stuffing, no-entitlement gate bypass, using obvious cross-account/private/admin spillover once noticed, private/confidential account areas without consent, and methods Orca would refuse to disclose internally.
 
 **This permits:** scraping of public or discoverable pages; free or account-created login access; entitled paid, client, or consenting-coworker access; JS-rendering headless browsers; rate-limited or aggressive fetching; official or sanctioned APIs; archive/cache/mirror access; logged-in capture or browser automation; convenience shortcuts for discovery; **and anti-blocking techniques — anti-detect / "cloaked" browsers, user-agent and fingerprint configuration, residential or rotating proxies, and CAPTCHA / JS-challenge handling — used to reach source material inside this boundary.**
+
+For community collection, this includes private Facebook groups, Discord
+servers, and other login-gated communities already visible through the owner's
+existing entitled/logged-in session. It does not authorize obtaining new
+credentials, creating or borrowing another identity, joining a community,
+bypassing controls, or exceeding the session's actual permissions. Preserve
+visibility, entitlement/access provenance without secrets, and material
+community privacy constraints.
 
 **This still excludes (hard line, not risk-tolerance):** no-entitlement gate bypass, stolen credentials or cookies, nonconsensual sessions, security exploits, malware, credential stuffing, using obvious cross-account/private/admin spillover once noticed, and private/confidential account areas without consent.
 
@@ -299,7 +308,7 @@ Note on the archive.org block: the Wayback Machine availability API (`archive.or
 
 ### Method 11: Free / Account-Created And Entitled Gated Access
 
-**What it is:** Using a free account, normal login, subscription, client/coworker entitlement, account export, browser session, headless browser, API, cached copy, mirror, or faster endpoint for source material.
+**What it is:** Using a free account, normal login, subscription, client/coworker entitlement, an owner's existing entitled community membership, account export, browser session, headless browser, API, cached copy, mirror, or faster endpoint for source material.
 
 **Boundary test:**
 1. Discoverable, free/account-created, or entitlement-visible material: YES.
@@ -309,7 +318,7 @@ Note on the archive.org block: the Wayback Machine availability API (`archive.or
 
 **Boundary verdict: IN-BOUNDS for free/account-created access and for paid/client/coworker entitlement; OUT-OF-BOUNDS for no-entitlement gate bypass and obvious spillover once noticed**
 
-**Works for which sources:** Any source where access is free/account-created, or where the client, Orca, or a consenting collaborator has legitimate access. For WSO-style email/social unlocks or paid/community-gated pages, this permits a later owner-authorized capture path if the access holder consents.
+**Works for which sources:** Any source where access is free/account-created, or where the client, Forseti, or a consenting collaborator has legitimate access. For an owner's existing private Facebook-group, Discord-server, or other login-gated community membership, collection stays within the permissions and privacy constraints of that supplied session and does not include credential acquisition, identity creation/borrowing, or joining a new community. For WSO-style email/social unlocks or other paid/community-gated pages, this permits a later owner-authorized capture path if the access holder consents.
 
 **Practical notes:** Convenience paths are discovery tools, not final provenance by themselves. If we do not know access is spilling into cross-account/private/admin material, proceed. If obvious spillover appears, do not use that spillover once noticed. If Judgment relies on the material, reacquire or verify through the normal or entitled path before final client-facing or durable evidence use. If clean reacquisition is impossible, carry the limitation visibly downstream.
 

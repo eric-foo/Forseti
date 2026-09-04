@@ -421,7 +421,7 @@ Visible limitations to preserve in the output:
 - not exhaustive web monitoring;
 - not a standing source registry;
 - not automated crawling or platform scraping authorization;
-- not Discord scraping by default;
+- not entitlement creation, community joining, or non-entitled private-community capture;
 - not LinkedIn live access or relationship-graph analytics;
 - not a graph database;
 - not graph scoring;
@@ -443,7 +443,7 @@ requires them.
 
 | Source family | Subfamilies / surfaces | Signal role / content | Capture posture |
 | --- | --- | --- | --- |
-| Forums / community | Reddit; Quora; category-relevant generic or specialist forums discovered for the subject | external/customer language, comparisons, objections, corrections, and response context | Keep Reddit and Quora as explicit search-hygiene considerations. Commission external scouting only when the venue performs a named decision-material job and is not dominated by an equal-or-better included route; otherwise record the exclusion or `not_applicable` rationale. Zero yield is a route result, not completion. Discover other forums by category and hidden-venue cues, not a universal platform list. Community evidence is never representative demand or internal company fact. Execution stays with Scanning/Capture. |
+| Forums / community | Reddit; public or entitled social comments/discussions; creator communities; platform-native forums; retailer communities/Q&A when semantically appropriate; public category forums including beauty forums; relevant private or entitled Facebook groups, Discord servers, and other login-gated communities | external/customer language, comparisons, objections, corrections, and response context | Reddit is prioritized, not exclusive. Keep Reddit/Quora as explicit search-hygiene considerations, and use category-aware hidden-venue discovery for other venues. Commission a route only for a named decision-material job with no equal-or-better included substitute; otherwise record the exclusion or `not_applicable` rationale. Zero yield is a route result, not completion. Private/login-gated access must use only the owner's existing entitled/logged-in session within its actual permissions under the Data Capture source-access boundary; do not obtain credentials, create or borrow identities, join communities, bypass controls, or exceed permissions, and preserve access/privacy provenance. Community evidence is never representative demand or internal company fact; creator-, brand-, retailer-, sponsored-, affiliate-, or relationship-unknown participation never becomes independent customer evidence merely because it appears in a community. Execution stays with Scanning/Capture. |
 | Reviews | retailer reviews, marketplace reviews, brand-site reviews, specialist fragrance reviews | experience claims, recency, complaints, repeat-use hints, contradiction checks | Do not collapse to aggregate stars. Preserve recency, source conventions, row-level incentive labels, corpus size, captured count, selection route, and truncation. |
 | Creator / social video | Instagram, TikTok, YouTube, shorts/reels, affiliate/creator posts, later Reddit creator/community personalities | attention spread, creator clusters, campaign risk, audience language, propagation timing | Instagram has current adjacent capture/discovery work. TikTok, YouTube, and Reddit creator profiles are planned/deferred seams unless separately authorized. |
 | Retail / PDP | Sephora, Ulta, Amazon, Nordstrom, brand PDPs, retailer search/category pages | availability, assortment, stock/discounting posture, review context, retailer corroboration | Retail/PDP is corroborative and operationally useful; it is not consumer-origin by itself. |
@@ -1549,6 +1549,14 @@ dominance, and acquisition closure. In lens coverage, `complete` means covered
 for the commissioned purpose with typed gaps — never exhaustive; when coverage
 is materially partial, the lens rationale names its decisive gap ids.
 
+Agent topology, available worker slots, context windows, and compaction are
+execution constraints, never evidence-sampling or collection-stopping rules.
+Do not impose venue, thread, comment, evidence, or collection-volume caps merely
+because of them. Collection depth and stopping are governed by the bound
+decision question, marginal evidence yield, source-native exhaustion, access
+constraints, duplication/syndication, provenance, and the Capture and
+claim-support contracts.
+
 Preservation trigger for requests: route a Capture request when an observation
 is conclusion-bearing, disputable, or likely to disappear, naming which
 conclusion depends on it; negative/absence observations need route, date, and
@@ -1586,8 +1594,11 @@ venue, or a non-selection row recorded as `not_applicable` / `not_applicable`.
 - Treat AEO as visibility annotation only.
 - For backtests, treat post-cutoff source surfaces as `excluded_future_info`
   rather than normal retrieval routes.
-- Treat Discord as noisy_deferred unless public, repeatable, bounded, and
-  noise-controlled.
+- Treat private Facebook groups, Discord servers, and other login-gated
+  communities as eligible only through the owner's existing entitled/logged-in
+  session within its actual permissions; preserve access/privacy provenance and
+  never obtain credentials, create or borrow identities, join communities,
+  bypass controls, or exceed permissions for collection.
 - Treat LinkedIn as no-live/planning-only unless explicitly routed; prefer
   ATS/careers pages for movement.
 - Treat creator surfaces as graph-rich but never demand proof by themselves.

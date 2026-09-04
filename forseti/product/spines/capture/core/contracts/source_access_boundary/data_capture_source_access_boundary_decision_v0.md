@@ -22,7 +22,8 @@ stale_if:
 
 ## Status And Decision
 
-Status: `ACCEPTED_SOURCE_ACCESS_BOUNDARY_DECISION_V0`, amended 2026-05-30 and 2026-07-03.
+Status: `ACCEPTED_SOURCE_ACCESS_BOUNDARY_DECISION_V0`, amended 2026-05-30,
+2026-07-03, and 2026-09-04.
 
 Primary decision: `LOOSEN_SOURCE_ACCESS_TO_DISCOVERABLE_OR_ENTITLED_DISCLOSABLE`.
 
@@ -66,9 +67,9 @@ Operationally, a method is in-bounds when **all** hold:
 3. Forseti would **disclose exactly how the data was obtained** if asked — no method Forseti would need to conceal.
 4. The method avoids the hard stops below.
 
-**This permits:** scraping of public or discoverable pages; free or account-created login access; entitled paid, client, or consenting-coworker access; JS-rendering headless browsers; rate-limited or aggressive fetching; official or sanctioned APIs; archive/cache/mirror access; logged-in capture or browser automation; convenience shortcuts for discovery; **and anti-blocking techniques — anti-detect / "cloaked" browsers, user-agent and fingerprint configuration, residential or rotating proxies, and CAPTCHA / JS-challenge handling — used to reach source material inside this boundary.**
+**This permits:** scraping of public or discoverable pages; free or account-created login access; entitled paid, client, or consenting-coworker access; an owner's existing entitled/logged-in access to private or login-gated communities; JS-rendering headless browsers; rate-limited or aggressive fetching; official or sanctioned APIs; archive/cache/mirror access; logged-in capture or browser automation; convenience shortcuts for discovery; **and anti-blocking techniques — anti-detect / "cloaked" browsers, user-agent and fingerprint configuration, residential or rotating proxies, and CAPTCHA / JS-challenge handling — used to reach source material inside this boundary.**
 
-**This still excludes (hard line, not risk-tolerance):** stolen credentials or cookies; nonconsensual sessions; security exploits; malware; credential stuffing; no-entitlement gate bypass; using obvious cross-account/private/admin spillover once noticed; accessing private messages, private groups, confidential docs, or personal account areas without consent; and any method Forseti would refuse to disclose internally. These are out because they are explicitly illegal, internally non-disclosable, or too morally compromising for Forseti's trust story.
+**This still excludes (hard line, not risk-tolerance):** stolen credentials or cookies; nonconsensual sessions; security exploits; malware; credential stuffing; no-entitlement gate bypass; using obvious cross-account/private/admin spillover once noticed; accessing private messages, non-entitled private groups, confidential docs, or personal account areas without consent; and any method Forseti would refuse to disclose internally. These are out because they are explicitly illegal, internally non-disclosable, or too morally compromising for Forseti's trust story.
 
 **Owner-accepted risk posture:** the permitted anti-blocking techniques carry real Terms-of-Service, reputational, and (for actively-enforcing sources such as Reddit) litigation risk. The owner accepts this risk as a deliberate, disclosable posture. This is not a claim of legal sufficiency; obtain real legal counsel before commercializing a scraping-based capability.
 
@@ -86,6 +87,23 @@ This clarification does not authorize dragging or solving CAPTCHA/slider puzzles
 credential misuse, nonconsensual session use, private/admin spillover, or hiding
 the method. If the challenge remains visible after the close attempt, preserve it
 as a source-access limitation rather than treating it as captured evidence.
+
+## 2026-09-04 Entitled Community Access Clarification
+
+Private Facebook groups, Discord servers, and other login-gated communities are
+in-bounds when the owner can already see the material through an existing,
+legitimately entitled logged-in session. Existing membership is entitlement; it
+must not be mislabeled as private spillover merely because the venue is not
+public.
+
+This clarification does not authorize obtaining new credentials, creating or
+borrowing another identity, joining a community, evading a technical control,
+or exceeding the permissions of the session actually supplied. Capture must
+preserve the visibility class, entitlement/session provenance without secrets,
+actual access scope, and any community privacy, quotation, attribution,
+retention, or redistribution constraint material to downstream use. A private
+community remains private evidence; access does not convert it into a public
+source or waive its rules.
 
 ## Discovery, Materiality, And Provenance
 
@@ -105,12 +123,17 @@ In-bounds examples:
 
 - Anyone can create a free account and view the material.
 - Forseti, the client, or a consenting coworker/collaborator can legitimately log in and view the material.
+- The owner already belongs to a private Facebook group, Discord server, or
+  other login-gated community and supplies that entitled session within its
+  actual permissions and community constraints.
 - A headless browser, automated Chrome session, API, export, cache, or faster endpoint reaches the material for discovery.
 - A cached or mirrored copy helps discover the material, and material use is later verified through the normal or entitled path.
 
 Out-of-bounds examples:
 
 - Someone's cookie, session, credential, account, or device is used without consent.
+- A new credential or identity is obtained, or a community is joined, for the
+  collection without separate authority.
 - A no-entitlement gate is deliberately bypassed.
 - Obvious cross-account, private, or admin spillover appears; that spillover is not used once noticed.
 
