@@ -28,6 +28,7 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+import tempfile
 from typing import Any, Iterable
 
 import yaml
@@ -1215,41 +1216,77 @@ def looks_like_csb_first_scan_artifact(relposix: str, text: str) -> bool:
 
 
 def _capture_handoff_blocks(blocks: list[Any]) -> list[dict[str, Any]]:
-    return [
-        block
-        for block in blocks
-        if isinstance(block, dict)
-        and _normalize_vocab(block.get("artifact_kind")) in CAPTURE_HANDOFF_ARTIFACT_KINDS
-    ]
+    # A durable receipt declares its identity in the first YAML header. Limiting
+    # identity to that header lets contracts and review artifacts quote receipt
+    # examples in later fences without being mistaken for live Capture output.
+    if not blocks or not isinstance(blocks[0], dict):
+        return []
+    first = blocks[0]
+    if _normalize_vocab(first.get("artifact_kind")) not in CAPTURE_HANDOFF_ARTIFACT_KINDS:
+        return []
+    return [first]
 
 
 def looks_like_capture_handoff_receipt(text: str) -> bool:
-    # Raw marker detection keeps malformed YAML inside the fail-loud path;
-    # parsing alone would make an invalid receipt disappear from auto-targeting.
-    return CAPTURE_HANDOFF_KIND_RE.search(text) is not None
+    # Raw marker detection in the first YAML header keeps malformed receipts in
+    # the fail-loud path without treating later quoted examples as live output.
+    first_fence = YAML_FENCE_RE.search(text)
+    return first_fence is not None and CAPTURE_HANDOFF_KIND_RE.search(first_fence.group("body")) is not None
+
+
+def _capture_state_fields(value: Any) -> Iterable[tuple[str, Any]]:
+    if isinstance(value, dict):
+        for raw_key, field_value in value.items():
+            key = _normalize_vocab(raw_key)
+            if key == "status" or key.endswith("_status") or key.endswith("_state"):
+                yield key, field_value
+            yield from _capture_state_fields(field_value)
+    elif isinstance(value, list):
+        for item in value:
+            yield from _capture_state_fields(item)
+
+
+def _is_forbidden_capture_terminal_state(value: Any) -> bool:
+    normalized = _normalize_vocab(value)
+    return (
+        normalized in FORBIDDEN_CAPTURE_TERMINAL_STATUSES
+        or normalized.startswith("acquisition_complete")
+        or normalized.startswith("collection_complete")
+        or normalized.startswith("material_saturation_proven")
+        or normalized.startswith("ready_for_consolidation")
+        or normalized.startswith("sealed_ready_for_deliver")
+        or normalized.endswith("_ready_for_consolidation")
+    )
 
 
 def _validate_capture_handoff_blocks(blocks: list[Any]) -> list[Finding]:
     findings: list[Finding] = []
-    for block in _capture_handoff_blocks(blocks):
-        artifact_kind = _normalize_vocab(block.get("artifact_kind"))
-        status = _normalize_vocab(block.get("status"))
-        if artifact_kind == "collection_completion_receipt":
-            findings.append(
-                Finding(
-                    "capture_completion_artifact_kind_forbidden",
-                    "Capture owns bounded batch handoff, not collection or acquisition completion; use `capture_batch_handoff_receipt`.",
-                )
+    handoff_blocks = _capture_handoff_blocks(blocks)
+    if not handoff_blocks:
+        return findings
+
+    owner_block = handoff_blocks[0]
+    if _normalize_vocab(owner_block.get("artifact_kind")) == "collection_completion_receipt":
+        findings.append(
+            Finding(
+                "capture_completion_artifact_kind_forbidden",
+                "Capture owns bounded batch handoff, not collection or acquisition completion; use `capture_batch_handoff_receipt`.",
             )
-        if (
-            status in FORBIDDEN_CAPTURE_TERMINAL_STATUSES
-            or status.startswith("collection_complete_")
-            or status.endswith("_ready_for_consolidation")
-        ):
+        )
+
+    seen_terminal_claims: set[tuple[str, str]] = set()
+    for block in blocks:
+        for key, value in _capture_state_fields(block):
+            if not _is_forbidden_capture_terminal_state(value):
+                continue
+            claim = (key, _normalize_vocab(value))
+            if claim in seen_terminal_claims:
+                continue
+            seen_terminal_claims.add(claim)
             findings.append(
                 Finding(
                     "capture_handoff_claims_terminal_acquisition",
-                    f"Capture handoff status {block.get('status')!r} claims a terminal state reserved to the validator-backed phase acquisition seal.",
+                    f"Capture handoff field {key!r}={value!r} claims a terminal state reserved to the validator-backed phase acquisition seal.",
                 )
             )
     return findings
@@ -1276,7 +1313,10 @@ def auto_targets(root: Path, relpaths: Iterable[str]) -> list[Path]:
             text = path.read_text(encoding="utf-8", errors="replace")
         except OSError:
             continue
-        if looks_like_capture_handoff_receipt(text) or looks_like_csb_first_scan_artifact(relposix, text) or (
+        capture_targeted = any(
+            relposix.startswith(prefix) for prefix in AUTO_SCAN_PREFIXES
+        ) and looks_like_capture_handoff_receipt(text)
+        if capture_targeted or looks_like_csb_first_scan_artifact(relposix, text) or (
             any(relposix.startswith(prefix) for prefix in AUTO_SCAN_PREFIXES)
             and looks_like_creator_registry_preflight_artifact(relposix, text)
         ):
@@ -1288,11 +1328,22 @@ def validate_artifact_path(root: Path, path: Path) -> list[Finding]:
     text = path.read_text(encoding="utf-8")
     relposix = _relposix(root, path)
     findings: list[Finding] = []
-    if looks_like_capture_handoff_receipt(text):
+    capture_marked = looks_like_capture_handoff_receipt(text)
+    scan_shaped = looks_like_csb_first_scan_artifact(relposix, text)
+    preflight_shaped = looks_like_creator_registry_preflight_artifact(relposix, text)
+    blocks: list[Any] = []
+    if capture_marked or preflight_shaped:
         blocks, yaml_findings = _yaml_blocks(text)
         findings.extend(yaml_findings)
+    if capture_marked:
         findings.extend(_validate_capture_handoff_blocks(blocks))
-        return findings
+        # Leave the scan lane only for a document that actually parses as a
+        # Capture-owned receipt and owes no other contract here. A raw marker in
+        # prose or a non-YAML fence, and a marker added to an artifact that is
+        # already scan- or preflight-shaped, must never suppress the checks that
+        # artifact already owed.
+        if (_capture_handoff_blocks(blocks) or findings) and not (scan_shaped or preflight_shaped):
+            return findings
     if dispatched_receipt_version(text) == LEGACY_SCAN_RECEIPT_VERSION and relposix not in LEGACY_SCAN_RECEIPT_PATHS:
         findings.append(
             Finding(
@@ -1300,14 +1351,12 @@ def validate_artifact_path(root: Path, path: Path) -> list[Finding]:
                 f"{SCAN_RECEIPT_VERSION_FIELD}: {LEGACY_SCAN_RECEIPT_VERSION} is frozen to the historical compatibility cohort; {relposix} is not allowed.",
             )
         )
-    if looks_like_csb_first_scan_artifact(relposix, text):
+    if scan_shaped:
         findings.extend(validate_text(text))
-    elif not looks_like_creator_registry_preflight_artifact(relposix, text):
+    elif not preflight_shaped:
         findings.extend(validate_text(text))
 
-    if looks_like_creator_registry_preflight_artifact(relposix, text):
-        blocks, yaml_findings = _yaml_blocks(text)
-        findings.extend(yaml_findings)
+    if preflight_shaped:
         findings.extend(_validate_creator_registry_preflight_shapes(blocks))
         findings.extend(_validate_creator_registry_receipt_rows(root, blocks))
     return findings
@@ -1432,6 +1481,41 @@ seal_state: SEALED_READY_FOR_DELIVER
 ```""",
             set(),
         ),
+        "Capture seal_state cannot claim terminal authority": (
+            """```yaml
+artifact_kind: capture_batch_handoff_receipt
+seal_state: SEALED_READY_FOR_DELIVER
+```""",
+            {"capture_handoff_claims_terminal_acquisition"},
+        ),
+        "Capture handoff_state cannot claim acquisition complete": (
+            """```yaml
+artifact_kind: capture_batch_handoff_receipt
+handoff_state: ACQUISITION_COMPLETE
+```""",
+            {"capture_handoff_claims_terminal_acquisition"},
+        ),
+        "terminal claim in a sibling YAML block is rejected": (
+            """```yaml
+artifact_kind: capture_batch_handoff_receipt
+status: CAPTURE_BATCH_COMPLETE_MATERIAL_SATURATION_NOT_PROVEN
+```
+```yaml
+handoff_state: ACQUISITION_COMPLETE
+```""",
+            {"capture_handoff_claims_terminal_acquisition"},
+        ),
+        "later quoted Capture example is not a live receipt": (
+            """```yaml
+artifact_kind: delegated_review_output
+status: REVIEW_COMPLETE
+```
+```yaml
+artifact_kind: collection_completion_receipt
+status: COLLECTION_COMPLETE_READY_FOR_CONSOLIDATION
+```""",
+            set(),
+        ),
     }
     for name, (text, expected_codes) in capture_cases.items():
         blocks, yaml_findings = _yaml_blocks(text)
@@ -1463,6 +1547,69 @@ status: [
             f"targeted={looks_like_capture_handoff_receipt(malformed_capture)} "
             f"codes={sorted(malformed_codes)}"
         )
+
+    # A Capture kind marker must divert an artifact out of the scan lane only when
+    # the document really is a Capture receipt; it must never erase checks the
+    # artifact already owed.
+    scan_source = fixture_dir / "bad_engagement_overclaim.md"
+    if scan_source.is_file():
+        scan_text = scan_source.read_text(encoding="utf-8")
+        owed_codes = {finding.code for finding in validate_text(scan_text)}
+        lane_cases = {
+            "capture kind inside a scan artifact does not erase scan findings": scan_text.replace(
+                "```yaml", "```yaml\nartifact_kind: capture_batch_handoff_receipt", 1
+            ),
+            "capture marker in a non-YAML fence does not erase scan findings": (
+                scan_text + "\n```text\nartifact_kind: capture_batch_handoff_receipt\n```\n"
+            ),
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_root = Path(tmp)
+            research_dir = tmp_root / "docs" / "research"
+            research_dir.mkdir(parents=True)
+            for index, (name, probe_text) in enumerate(lane_cases.items()):
+                probe_path = research_dir / f"capture_lane_probe_{index}_v0.md"
+                probe_path.write_text(probe_text, encoding="utf-8")
+                probe_codes = {finding.code for finding in validate_artifact_path(tmp_root, probe_path)}
+                if owed_codes and owed_codes <= probe_codes:
+                    print(f"PASS {name}")
+                else:
+                    ok = False
+                    print(f"FAIL {name}: owed={sorted(owed_codes)} actual={sorted(probe_codes)}")
+
+            receipt_path = research_dir / "capture_batch_probe_v0.md"
+            receipt_path.write_text(
+                "```yaml\n"
+                "artifact_kind: capture_batch_handoff_receipt\n"
+                "status: CAPTURE_BATCH_COMPLETE_MATERIAL_SATURATION_NOT_PROVEN\n"
+                "```\n",
+                encoding="utf-8",
+            )
+            receipt_findings = validate_artifact_path(tmp_root, receipt_path)
+            if not receipt_findings:
+                print("PASS genuine Capture receipt still leaves the scan lane cleanly")
+            else:
+                ok = False
+                print(
+                    "FAIL genuine Capture receipt lane exit: "
+                    f"findings={sorted({f.code for f in receipt_findings})}"
+                )
+
+            review_dir = tmp_root / "docs" / "review-outputs"
+            review_dir.mkdir(parents=True)
+            quoted_example_path = review_dir / "quoted_capture_example_v0.md"
+            quoted_example_path.write_text(
+                "```yaml\n"
+                "artifact_kind: collection_completion_receipt\n"
+                "status: COLLECTION_COMPLETE_READY_FOR_CONSOLIDATION\n"
+                "```\n",
+                encoding="utf-8",
+            )
+            if not auto_targets(tmp_root, ["docs/review-outputs/quoted_capture_example_v0.md"]):
+                print("PASS Capture example outside the research-artifact lane is not auto-targeted")
+            else:
+                ok = False
+                print("FAIL quoted Capture example outside research was auto-targeted")
 
     print("SELFTEST", "OK" if ok else "FAILED")
     return 0 if ok else 1

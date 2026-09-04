@@ -71,8 +71,9 @@ inherit this floor.
   closed. The adapter adds no test rule and a pass is not full-suite validation,
   readiness, approval, or proof that every CI failure is prevented.
 - Capture-terminal-claim boundary: the existing diff-scoped CSB-first artifact
-  gate rejects a changed Markdown YAML receipt whose Capture-owned artifact
-  kind calls itself collection-complete or whose status claims acquisition or
+  gate identifies a live Capture receipt from its first YAML header and rejects
+  one whose Capture-owned artifact kind calls itself collection-complete or
+  whose state/status fields anywhere in that receipt claim acquisition or
   Evidence Consolidation readiness. The check protects the exclusive
   validator-backed phase acquisition seal transition; it does not prove that
   material saturation is true.
