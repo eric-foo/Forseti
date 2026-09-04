@@ -16,6 +16,7 @@ from judgment.semantic_evidence_integration import (
 )
 from runners.run_phase_acquisition_seal_validation import (
     BROAD_UNDERSTANDING_PROFILE,
+    CONSUMER_BRAND_UNDERSTANDING_FLOORS,
     CONSUMER_BRAND_UNDERSTANDING_PROFILE,
     CONSUMER_DEPTH_LEDGER_VERSION,
     CURRENT_SEMANTIC_EVIDENCE_METHOD_SHA256,
@@ -24,12 +25,14 @@ from runners.run_phase_acquisition_seal_validation import (
     LEGACY_SEAL_VERSION,
     PREVIOUS_CONSUMER_BRAND_UNDERSTANDING_PROFILE,
     PREVIOUS_CONSUMER_DEPTH_LEDGER_VERSION,
+    PROVISIONAL_MATURITY_SCAN_VERSION,
     SEAL_VERSION,
     SEMANTIC_EVIDENCE_METHOD_SHA256_V3,
     SEMANTIC_EVIDENCE_METHOD_VERSION_V3,
     _artifact_hash,
     _validate_reddit_candidate_frontier,
     main,
+    validate_consumer_brand_provisional_maturity_scan,
     validate_phase_acquisition_seal,
 )
 
@@ -163,6 +166,39 @@ def _consumer_depth_ledger(tmp_path: Path) -> dict[str, str]:
     ledger["families"]["external_context"] = external
     for row in ledger["families"]["native_social"]["posts"]:
         row["relationship"] = "apparently_independent"
+    search_interest_result = _artifact(
+        tmp_path,
+        "category_benchmark_search_interest.json",
+        '{"source":"Google Trends","index_semantics":"relative_0_100"}\n',
+    )
+    ledger["artifacts"].append(
+        {
+            "artifact_id": "category-benchmark-search-interest-result",
+            **search_interest_result,
+        }
+    )
+    ledger["category_benchmark_search_interest"] = {
+        "status": "captured",
+        "route_job_id": "GT-001",
+        "primary_geo": "US",
+        "worldwide_checked": True,
+        "window_years": 5,
+        "property": "web_search",
+        "subject_brand_term": "Summer Fridays",
+        "category_terms": ["lip balm"],
+        "term_derivation": [
+            {
+                "product_family": "lip care",
+                "exact_candidate_term": "lip balm",
+                "source_phrase": "lip balm",
+                "artifact_id": "depth-source",
+            }
+        ],
+        "anchor_query": "summer fridays lip butter balm",
+        "anchor_source_phrase": "Lip Butter Balm",
+        "anchor_artifact_id": "depth-source",
+        "result_artifact_id": "category-benchmark-search-interest-result",
+    }
     # Each usable independent thread pins its own source-native packet.
     for index, row in enumerate(ledger["families"]["reddit_forum"]["threads"]):
         thread_artifact = _artifact(tmp_path, f"thread_native_{index}.md")
@@ -1075,7 +1111,7 @@ def _understanding_route(tmp_path: Path) -> dict:
         _semantic_integration_view(tmp_path)
     )
     return {
-        "route_version": "1.8.0",
+        "route_version": "1.9.0",
         "comparator_closure": {
             "state": "phase_a_competitor_context_closed",
             "candidate_frame": frame,
@@ -1538,6 +1574,9 @@ def _blocked_seal(tmp_path: Path) -> dict:
         "terminal_artifact_locator": semantic_view["locator"],
         "terminal_artifact_sha256": semantic_view["sha256"],
     }
+    search_interest_terminal = _artifact(
+        tmp_path, "category_benchmark_search_interest_terminal.md"
+    )
     return {
         "schema_version": SEAL_VERSION,
         "cycle_id": "summer_fridays_confirmation",
@@ -1599,6 +1638,22 @@ def _blocked_seal(tmp_path: Path) -> dict:
             campaign_route,
             semantic_route,
             {
+                "route_id": "category_benchmark_search_interest",
+                "phase": "category_benchmark",
+                "required": True,
+                "material": True,
+                "planned_job_ids": ["GT-001"],
+                "planned_count": 1,
+                "completed_job_ids": ["GT-001"],
+                "completed_count": 1,
+                "blocked_job_ids": [],
+                "blocked_count": 0,
+                "unrun_job_ids": [],
+                "unrun_count": 0,
+                "terminal_artifact_locator": search_interest_terminal["locator"],
+                "terminal_artifact_sha256": search_interest_terminal["sha256"],
+            },
+            {
                 "route_id": "serp_phase2",
                 "phase": "serp_phase2",
                 "required": True,
@@ -1649,6 +1704,89 @@ def _write_seal(tmp_path: Path, seal: dict) -> Path:
         + "```\n",
         encoding="utf-8",
     )
+    return path
+
+
+def _write_provisional_maturity_scan(tmp_path: Path) -> Path:
+    axis_inventory = _artifact(tmp_path, "consumer_brand_axis_inventory.json", "{}\n")
+    packet_inventory = _artifact(tmp_path, "capture_packet_inventory.json", "{}\n")
+    axes = [
+        {
+            "axis_id": "hydration",
+            "status": "open",
+            "next_queries": [
+                {"goal": goal, "query": f"query for {goal}"}
+                for goal in (
+                    "corroborate_or_segment",
+                    "compare_switch_or_value",
+                    "disconfirm_or_strongest_delight",
+                )
+            ],
+            "no_material_continuation_families_after_last_addition": 0,
+        }
+    ]
+    scan = {
+        "schema_version": PROVISIONAL_MATURITY_SCAN_VERSION,
+        "subject": "Example Brand",
+        "cycle_id": "EXAMPLE-001",
+        "active_profile_id": CONSUMER_BRAND_UNDERSTANDING_PROFILE,
+        "input_axis_inventory": axis_inventory,
+        "capture_packet_inventory": packet_inventory,
+        "scan_status": "OPEN_TARGETED_ACQUISITION_REQUIRED",
+        "material_saturation_proven": False,
+        "phase_acquisition_seal_present": False,
+        "synthesize_or_deliver_authorized": False,
+        "profile_floor_gap_audit": [
+            {
+                "metric": metric,
+                "required": required,
+                "current": "not_adjudicated",
+                "state": "open",
+            }
+            for metric, required in CONSUMER_BRAND_UNDERSTANDING_FLOORS.items()
+        ],
+        "axes": axes,
+        "route_obligation_audit": {
+            "completion_authority": SEAL_VERSION,
+            "target_route_version": "1.9.0",
+            "serp_phase1": {
+                "status": "not_started",
+                "ordered_family_kinds": [
+                    "balanced_axis_baseline",
+                    "behavior_consequence_displacement",
+                    "brandless_exact_product",
+                    "condition_post_use",
+                ],
+                "query_provenance_bound": False,
+            },
+            "serp_phase2": {
+                "status": "planned",
+                "goals_per_axis": [
+                    "corroborate_or_segment",
+                    "compare_switch_or_value",
+                    "disconfirm_or_strongest_delight",
+                ],
+                "planned_axis_ids": ["hydration"],
+                "planned_query_count": 3,
+            },
+            "category_benchmark_search_interest": {
+                "required": True,
+                "status": "not_started",
+                "window_years": 5,
+                "property": "web_search",
+                "worldwide_check_required": True,
+                "term_derivation_state": "unbound",
+                "anchor_state": "unbound",
+            },
+            "axis_continuation": {
+                "required_dry_families_per_material_axis": 2,
+                "different_family_kinds_required": True,
+                "reset_on_material_addition": True,
+            },
+        },
+    }
+    path = tmp_path / "provisional_maturity_scan.json"
+    path.write_text(json.dumps(scan, indent=2) + "\n", encoding="utf-8")
     return path
 
 
@@ -1823,6 +1961,121 @@ def test_consumer_brand_v2_passes_with_axis_evidence_and_coding(
 ) -> None:
     seal = _blocked_seal(tmp_path)
     seal["evidence_depth_ledger"] = _consumer_depth_ledger(tmp_path)
+
+    assert _validate(tmp_path, _make_passing(seal)) == []
+
+
+def test_route_1_9_consumer_seal_requires_search_interest_route(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["evidence_depth_ledger"] = _consumer_depth_ledger(tmp_path)
+    seal["route_job_accounting"] = [
+        row
+        for row in seal["route_job_accounting"]
+        if row["route_id"] != "category_benchmark_search_interest"
+    ]
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert (
+        "missing_required_route_accounting:category_benchmark_search_interest"
+        in findings
+    )
+
+
+def test_open_provisional_maturity_scan_passes_as_executable_plan(
+    tmp_path: Path,
+) -> None:
+    path = _write_provisional_maturity_scan(tmp_path)
+
+    assert validate_consumer_brand_provisional_maturity_scan(
+        scan_path=path, repo_root=tmp_path
+    ) == []
+
+
+@pytest.mark.parametrize(
+    ("mutation", "expected"),
+    [
+        ("drop_search_interest", "missing_provisional_scan_search_interest"),
+        (
+            "drop_phase1_family",
+            "provisional_scan_serp_phase1_family_order_mismatch",
+        ),
+        ("drop_phase2_goal", "provisional_scan_serp_phase2_goal_mismatch"),
+        (
+            "forge_saturation",
+            "provisional_scan_cannot_assert_material_saturation_proven",
+        ),
+        (
+            "drop_floor",
+            "provisional_scan_floor_contract_mismatch",
+        ),
+    ],
+)
+def test_provisional_maturity_scan_fails_on_omitted_route_or_false_completion(
+    tmp_path: Path, mutation: str, expected: str
+) -> None:
+    path = _write_provisional_maturity_scan(tmp_path)
+    scan = json.loads(path.read_text(encoding="utf-8"))
+    if mutation == "drop_search_interest":
+        scan["route_obligation_audit"].pop(
+            "category_benchmark_search_interest"
+        )
+    elif mutation == "drop_phase1_family":
+        scan["route_obligation_audit"]["serp_phase1"][
+            "ordered_family_kinds"
+        ].pop()
+    elif mutation == "drop_phase2_goal":
+        scan["route_obligation_audit"]["serp_phase2"][
+            "goals_per_axis"
+        ].pop()
+    elif mutation == "forge_saturation":
+        scan["material_saturation_proven"] = True
+    elif mutation == "drop_floor":
+        scan["profile_floor_gap_audit"].pop()
+    path.write_text(json.dumps(scan, indent=2) + "\n", encoding="utf-8")
+
+    findings = validate_consumer_brand_provisional_maturity_scan(
+        scan_path=path, repo_root=tmp_path
+    )
+
+    assert expected in findings
+
+
+def test_route_1_9_consumer_seal_requires_search_interest_result_contract(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["category_benchmark_search_interest"].pop("result_artifact_id")
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "unresolved_search_interest_result_artifact" in findings
+
+
+def test_route_1_9_accepts_exact_unbound_category_terminal(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    read = ledger["category_benchmark_search_interest"]
+    read.update(
+        {
+            "status": "unresolved_category_terms_unbound",
+            "category_terms": [],
+            "term_derivation": [],
+            "unresolved_reason": "unresolved — category terms unbound",
+        }
+    )
+    read.pop("result_artifact_id")
+    _rewrite_depth_reference(seal, ledger_path, ledger)
 
     assert _validate(tmp_path, _make_passing(seal)) == []
 

@@ -1,12 +1,13 @@
 {
-  "schema_version": "consumer_brand_provisional_maturity_scan_v1",
+  "schema_version": "consumer_brand_provisional_maturity_scan_v2",
   "subject": "Experiment Beauty",
   "cycle_id": "EXPERIMENT-BEAUTY-UNDERSTANDING-20260905-001",
+  "active_profile_id": "broad_consumer_brand_understanding_v3",
   "created_at": "2026-09-04T19:53:47.4345247Z",
   "authority_revision": "1b025e3b33cf59f58ac24d8f4504fd3e49d51cda",
   "input_axis_inventory": {
     "locator": "docs/research/experiment_beauty_collection_20260904_v0/consumer_brand_axis_inventory.json",
-    "sha256": "38f1194d6ed5618907e2be87708cb8debc74eb5353628afcaf87a87cef0bc4e9"
+    "sha256": "75c1d90c576a11cb6f2b20c5fa9c2d229ae94c66c1d6400f05f4d55f2d084de3"
   },
   "capture_packet_inventory": {
     "locator": "docs/research/experiment_beauty_collection_20260904_v0/capture_packet_inventory.json",
@@ -135,6 +136,53 @@
     "No axis has two later live continuation families after its last material addition; all continuation counters are zero.",
     "Every selected target and candidate still needs terminal reconciliation before a phase seal can pass."
   ],
+  "route_obligation_audit": {
+    "completion_authority": "phase_acquisition_seal_v3",
+    "target_route_version": "1.9.0",
+    "serp_phase1": {
+      "status": "not_started",
+      "ordered_family_kinds": [
+        "balanced_axis_baseline",
+        "behavior_consequence_displacement",
+        "brandless_exact_product",
+        "condition_post_use"
+      ],
+      "query_provenance_bound": false
+    },
+    "serp_phase2": {
+      "status": "planned",
+      "goals_per_axis": [
+        "corroborate_or_segment",
+        "compare_switch_or_value",
+        "disconfirm_or_strongest_delight"
+      ],
+      "planned_axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_layering_routine_fit",
+        "packaging_dispensing_durability",
+        "price_value_quantity_access",
+        "formula_consistency_quality_service_trust",
+        "repeat_purchase_switching_destinations",
+        "portfolio_product_routine_fit"
+      ],
+      "planned_query_count": 24
+    },
+    "category_benchmark_search_interest": {
+      "required": true,
+      "status": "not_started",
+      "window_years": 5,
+      "property": "web_search",
+      "worldwide_check_required": true,
+      "term_derivation_state": "unbound",
+      "anchor_state": "unbound"
+    },
+    "axis_continuation": {
+      "required_dry_families_per_material_axis": 2,
+      "different_family_kinds_required": true,
+      "reset_on_material_addition": true
+    }
+  },
   "axes": [
     {
       "axis_id": "hydration_barrier_visible_results",

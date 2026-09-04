@@ -128,8 +128,9 @@
       "known_gap": "Resolve current formula/version identity and seek independent recurrence or successful remediation without promoting a single allegation into prevalence or causation.",
       "maturity_scan": "open",
       "routing_evidence_refs": [
-        "owned:ingredient_hash:485c6ae3cf1008cc78bf0afe0e8cf8ffcfe266ce1bc34654bacd6bcedbc16d94",
-        "owned:ingredient_hash:a1e4b8dac9a7d109c67b7a815d8ab999f195043daadef667924cb4c35ffa8dd4",
+        "owned:01M1PDKQSY1C5DETG1G1WHGT96:ingredient_hash:485c6ae3cf1008cc78bf0afe0e8cf8ffcfe266ce1bc34654bacd6bcedbc16d94",
+        "owned:01M1PDM2V1GYAAF9RZ03N1QB92:ingredient_hash:485c6ae3cf1008cc78bf0afe0e8cf8ffcfe266ce1bc34654bacd6bcedbc16d94",
+        "owned:01M1PDKXF2X27X12M3WDKT1SG5:ingredient_hash:a1e4b8dac9a7d109c67b7a815d8ab999f195043daadef667924cb4c35ffa8dd4",
         "sephora:P518188:review:373164742",
         "reddit:1qs3yv1:comment:ogc97i6"
       ]

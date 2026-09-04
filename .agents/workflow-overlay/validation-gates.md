@@ -78,6 +78,15 @@ inherit this floor.
   Consolidation readiness. The check protects the exclusive validator-backed
   phase acquisition seal transition; it does not prove that material saturation
   is true.
+- Consumer-brand acquisition-start completeness: a changed provisional
+  maturity scan in `docs/research/` must satisfy
+  `consumer_brand_provisional_maturity_scan_v2` through the shared acquisition
+  validator. The diff-scoped CI and pre-push adapters reject missing packet or
+  profile-floor binding, incomplete mandatory SERP/Phase 2 route structure,
+  an omitted category-benchmark search-interest obligation, absent per-axis
+  continuation mechanics, or a scan that claims saturation/seal/delivery
+  authority. A pass means the OPEN acquisition work unit is executable; only
+  the final phase acquisition seal can prove completion.
 - No software implementation directories are present unless explicitly authorized.
 - `AGENTS.md` and overlay files do not encode `jb` project-specific authority as Forseti rules.
 - Material authority, source-scope, edit-permission, and repository-state checks

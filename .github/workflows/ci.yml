@@ -97,6 +97,9 @@ jobs:
       - name: CSB-first scanning artifact check
         working-directory: ${{ github.workspace }}
         run: python .agents/hooks/check_csb_scanning_artifact.py --diff "$FORSETI_DIFF_BASE" --strict
+      - name: consumer-brand acquisition-start completeness
+        working-directory: ${{ github.workspace }}
+        run: python .agents/hooks/check_consumer_brand_maturity_scan.py --diff "$FORSETI_DIFF_BASE" --strict
       - name: ontology SSOT integrity
         working-directory: ${{ github.workspace }}
         run: python .agents/hooks/check_ontology_ssot.py --strict

@@ -48,11 +48,12 @@ gate and validator are
 and `forseti-harness/runners/run_phase_acquisition_seal_validation.py`.
 
 For a multi-packet Capture handoff, the first acquisition-stage consumer starts
-from the Capture obligation contract's machine-readable packet inventory, not
-from packet IDs reconstructed out of narrative prose. It verifies those
-immutable packets, then produces one provisional axis inventory and one
-gap-only maturity scan. Those artifacts route coding and targeted acquisition;
-they do not become a parallel final evidence view or inherit terminal authority.
+from the Capture handoff's machine-readable packet inventory required by the
+Capture obligation contract, not from packet IDs reconstructed out of narrative
+prose. It verifies those immutable packets, then produces one provisional axis
+inventory and one gap-only maturity scan. Those artifacts route coding and
+targeted acquisition; they do not become a parallel final evidence view or
+inherit terminal authority.
 
 For new cross-company authoring, use `phase_a_semantic_integration_run_v10`
 (integration method v12, verifier v11). The supplied `CURRENT_AXES` inventory
