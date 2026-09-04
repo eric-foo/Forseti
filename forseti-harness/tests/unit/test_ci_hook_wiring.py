@@ -573,7 +573,7 @@ def test_ci_derives_and_verifies_exact_event_base_sha() -> None:
     assert "github.event.before" in ci_text
     assert '[[ "$FORSETI_DIFF_BASE" =~ ^0+$ ]]' in ci_text
     assert 'git cat-file -e "${FORSETI_DIFF_BASE}^{commit}"' in ci_text
-    assert ci_text.count('--diff "$FORSETI_DIFF_BASE" --strict') == 2
+    assert ci_text.count('--diff "$FORSETI_DIFF_BASE" --strict') == 3
 
 
 def test_ci_uses_public_runner_cpu_capacity_without_splitting_test_files() -> None:

@@ -1582,6 +1582,39 @@ so cross-batch comparison is bridgeable. If it is unbound, record the read as
 fridays lip butter balm"; it sat near the reporting threshold against category
 head terms, so the resulting bridge was weak.
 
+For Understanding Acquire & Seal Route 1.9.0 and later, account this as the
+required material route `category_benchmark_search_interest`, phase
+`category_benchmark`, and bind the evidence-depth ledger's same-named block:
+
+```yaml
+category_benchmark_search_interest:
+  status: captured | unresolved_category_terms_unbound | unresolved_anchor_unbound
+  route_job_id:
+  primary_geo:
+  worldwide_checked: true
+  window_years: 5
+  property: web_search
+  subject_brand_term:
+  category_terms: []
+  term_derivation:
+    - product_family:
+      exact_candidate_term:
+      source_phrase:
+      artifact_id:
+  anchor_query:
+  anchor_source_phrase:
+  anchor_artifact_id:
+  result_artifact_id:
+  unresolved_reason:
+```
+
+A captured read requires every shown derivation/anchor/result binding. A terms-
+unbound terminal omits the result and uses exactly `unresolved — category terms
+unbound`; an anchor-unbound terminal does the same with `unresolved — anchor
+unbound`. Those are completed route evaluations with an unresolved analytical
+result, not silent omissions. Provider or access failure remains a blocked
+material route and cannot be relabelled as either unbound outcome.
+
 ## Graph-Light Contract
 
 Graphing belongs in the commission ecosystem, but the signal board should carry
