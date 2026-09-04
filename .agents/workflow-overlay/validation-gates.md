@@ -71,12 +71,13 @@ inherit this floor.
   closed. The adapter adds no test rule and a pass is not full-suite validation,
   readiness, approval, or proof that every CI failure is prevented.
 - Capture-terminal-claim boundary: the existing diff-scoped CSB-first artifact
-  gate identifies a live Capture receipt from its first YAML header and rejects
-  one whose Capture-owned artifact kind calls itself collection-complete or
-  whose state/status fields anywhere in that receipt claim acquisition or
-  Evidence Consolidation readiness. The check protects the exclusive
-  validator-backed phase acquisition seal transition; it does not prove that
-  material saturation is true.
+  gate targets any YAML Capture marker in the `docs/research/` artifact lane,
+  rejects ambiguous or nested Capture identity, and rejects a receipt whose
+  Capture-owned artifact kind calls itself collection-complete or whose
+  state/status fields anywhere in that receipt claim acquisition or Evidence
+  Consolidation readiness. The check protects the exclusive validator-backed
+  phase acquisition seal transition; it does not prove that material saturation
+  is true.
 - No software implementation directories are present unless explicitly authorized.
 - `AGENTS.md` and overlay files do not encode `jb` project-specific authority as Forseti rules.
 - Material authority, source-scope, edit-permission, and repository-state checks

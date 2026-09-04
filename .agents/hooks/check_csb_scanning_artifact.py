@@ -113,6 +113,7 @@ CAPTURE_HANDOFF_KIND_RE = re.compile(
     r"(?:capture_batch_handoff_receipt|collection_completion_receipt)['\"]?[ \t]*$",
     re.IGNORECASE | re.MULTILINE,
 )
+NEGATED_CONSOLIDATION_READY_RE = re.compile(r"(?:^|_)not_ready_for_consolidation$")
 FORBIDDEN_CAPTURE_TERMINAL_STATUSES = {
     "acquisition_complete",
     "collection_complete",
@@ -1216,22 +1217,22 @@ def looks_like_csb_first_scan_artifact(relposix: str, text: str) -> bool:
 
 
 def _capture_handoff_blocks(blocks: list[Any]) -> list[dict[str, Any]]:
-    # A durable receipt declares its identity in the first YAML header. Limiting
-    # identity to that header lets contracts and review artifacts quote receipt
-    # examples in later fences without being mistaken for live Capture output.
-    if not blocks or not isinstance(blocks[0], dict):
-        return []
-    first = blocks[0]
-    if _normalize_vocab(first.get("artifact_kind")) not in CAPTURE_HANDOFF_ARTIFACT_KINDS:
-        return []
-    return [first]
+    return [
+        block
+        for block in blocks
+        if isinstance(block, dict)
+        and _normalize_vocab(block.get("artifact_kind")) in CAPTURE_HANDOFF_ARTIFACT_KINDS
+    ]
 
 
 def looks_like_capture_handoff_receipt(text: str) -> bool:
-    # Raw marker detection in the first YAML header keeps malformed receipts in
-    # the fail-loud path without treating later quoted examples as live output.
-    first_fence = YAML_FENCE_RE.search(text)
-    return first_fence is not None and CAPTURE_HANDOFF_KIND_RE.search(first_fence.group("body")) is not None
+    # Capture auto-targeting is path-scoped to docs/research. Within that lane,
+    # any YAML Capture marker must remain visible so a leading decoy kind cannot
+    # suppress the terminal-claim boundary.
+    for fence in YAML_FENCE_RE.finditer(text):
+        if CAPTURE_HANDOFF_KIND_RE.search(fence.group("body")) is not None:
+            return True
+    return False
 
 
 def _capture_state_fields(value: Any) -> Iterable[tuple[str, Any]]:
@@ -1248,6 +1249,11 @@ def _capture_state_fields(value: Any) -> Iterable[tuple[str, Any]]:
 
 def _is_forbidden_capture_terminal_state(value: Any) -> bool:
     normalized = _normalize_vocab(value)
+    # A value that DENIES consolidation readiness is the honest non-terminal
+    # state Capture is supposed to be able to record. Only the unanchored
+    # suffix rule below can fire on such a denial, so exclude it explicitly.
+    if NEGATED_CONSOLIDATION_READY_RE.search(normalized):
+        return False
     return (
         normalized in FORBIDDEN_CAPTURE_TERMINAL_STATUSES
         or normalized.startswith("acquisition_complete")
@@ -1265,8 +1271,21 @@ def _validate_capture_handoff_blocks(blocks: list[Any]) -> list[Finding]:
     if not handoff_blocks:
         return findings
 
-    owner_block = handoff_blocks[0]
-    if _normalize_vocab(owner_block.get("artifact_kind")) == "collection_completion_receipt":
+    declared_kind_blocks = [
+        block for block in blocks if isinstance(block, dict) and "artifact_kind" in block
+    ]
+    if len(declared_kind_blocks) > 1:
+        findings.append(
+            Finding(
+                "ambiguous_capture_artifact_identity",
+                "A Capture handoff must declare one top-level artifact_kind; multiple artifact identities cannot share the receipt.",
+            )
+        )
+
+    if any(
+        _normalize_vocab(block.get("artifact_kind")) == "collection_completion_receipt"
+        for block in handoff_blocks
+    ):
         findings.append(
             Finding(
                 "capture_completion_artifact_kind_forbidden",
@@ -1336,6 +1355,13 @@ def validate_artifact_path(root: Path, path: Path) -> list[Finding]:
         blocks, yaml_findings = _yaml_blocks(text)
         findings.extend(yaml_findings)
     if capture_marked:
+        if not _capture_handoff_blocks(blocks) and not yaml_findings:
+            findings.append(
+                Finding(
+                    "capture_artifact_kind_not_top_level",
+                    "Capture handoff artifact_kind must be a top-level field in one YAML block.",
+                )
+            )
         findings.extend(_validate_capture_handoff_blocks(blocks))
         # Leave the scan lane only for a document that actually parses as a
         # Capture-owned receipt and owes no other contract here. A raw marker in
@@ -1505,16 +1531,27 @@ handoff_state: ACQUISITION_COMPLETE
 ```""",
             {"capture_handoff_claims_terminal_acquisition"},
         ),
-        "later quoted Capture example is not a live receipt": (
+        "honest not-ready state is not a terminal claim": (
             """```yaml
-artifact_kind: delegated_review_output
-status: REVIEW_COMPLETE
-```
-```yaml
-artifact_kind: collection_completion_receipt
-status: COLLECTION_COMPLETE_READY_FOR_CONSOLIDATION
+artifact_kind: capture_batch_handoff_receipt
+status: CAPTURE_BATCH_CLOSED_NOT_READY_FOR_CONSOLIDATION
+downstream:
+  consolidation_state: not_ready_for_consolidation
 ```""",
             set(),
+        ),
+        "decoy leading fence cannot hide a terminal Capture claim": (
+            """```yaml
+artifact_kind: research_note
+```
+```yaml
+artifact_kind: capture_batch_handoff_receipt
+status: ACQUISITION_COMPLETE
+```""",
+            {
+                "ambiguous_capture_artifact_identity",
+                "capture_handoff_claims_terminal_acquisition",
+            },
         ),
     }
     for name, (text, expected_codes) in capture_cases.items():
@@ -1593,6 +1630,54 @@ status: [
                 print(
                     "FAIL genuine Capture receipt lane exit: "
                     f"findings={sorted({f.code for f in receipt_findings})}"
+                )
+
+            decoy_path = research_dir / "capture_decoy_probe_v0.md"
+            decoy_path.write_text(
+                """```yaml
+artifact_kind: research_note
+```
+```yaml
+artifact_kind: capture_batch_handoff_receipt
+status: ACQUISITION_COMPLETE
+```
+""",
+                encoding="utf-8",
+            )
+            decoy_rel = "docs/research/capture_decoy_probe_v0.md"
+            decoy_targeted = bool(auto_targets(tmp_root, [decoy_rel]))
+            decoy_codes = {finding.code for finding in validate_artifact_path(tmp_root, decoy_path)}
+            if decoy_targeted and "capture_handoff_claims_terminal_acquisition" in decoy_codes:
+                print("PASS decoy leading fence still auto-targets and fails the terminal claim")
+            else:
+                ok = False
+                print(
+                    "FAIL decoy leading fence bypass: "
+                    f"targeted={decoy_targeted} codes={sorted(decoy_codes)}"
+                )
+
+            nested_kind_path = research_dir / "capture_nested_kind_probe_v0.md"
+            nested_kind_path.write_text(
+                """```yaml
+wrapper:
+  artifact_kind: capture_batch_handoff_receipt
+  status: ACQUISITION_COMPLETE
+```
+""",
+                encoding="utf-8",
+            )
+            nested_kind_rel = "docs/research/capture_nested_kind_probe_v0.md"
+            nested_kind_targeted = bool(auto_targets(tmp_root, [nested_kind_rel]))
+            nested_kind_codes = {
+                finding.code for finding in validate_artifact_path(tmp_root, nested_kind_path)
+            }
+            if nested_kind_targeted and "capture_artifact_kind_not_top_level" in nested_kind_codes:
+                print("PASS nested Capture identity remains auto-targeted and fails loud")
+            else:
+                ok = False
+                print(
+                    "FAIL nested Capture identity bypass: "
+                    f"targeted={nested_kind_targeted} codes={sorted(nested_kind_codes)}"
                 )
 
             review_dir = tmp_root / "docs" / "review-outputs"
