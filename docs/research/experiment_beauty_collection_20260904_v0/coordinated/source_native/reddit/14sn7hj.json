@@ -1,0 +1,97 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": null,
+    "captured_matches_declared_total": true,
+    "comments_captured": 3,
+    "comments_not_captured": 0,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 3,
+    "max_captured_depth": 0
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Hi everyone and welcome to SkincareAddiction! Need skincare guides? Check out our wiki! Everyone is welcome in this community; remember to be kind and assume good faith :) I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "jqy3ot0",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2023-07-06T21:57:49.894000+0000"
+    },
+    {
+      "author_state": "ReaLitTea",
+      "body_text": "PM after cleansing is fine, your routine looks good as long as your skin tolerates it",
+      "comment_id": "jqyh1f6",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "1",
+      "timestamp_state": "2023-07-06T23:34:25.549000+0000"
+    },
+    {
+      "author_state": "laurieinseattle",
+      "body_text": "Some say PM and that's what I do because I use it with a retinol in the evening to increase its success. I use Vitamin C in the morning. But it's my understanding it shouldn't be used at the same time as Vitamin C, AHAs, BHAs, or benzoyl peroxide. As for the number of products it's all in what works for you financially and time wise. I like to use 2 for 1 products that have really good track record. For example my moisturizer has sunscreen in it.",
+      "comment_id": "jqyvime",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "1",
+      "timestamp_state": "2023-07-07T01:26:35.419000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 2
+    },
+    "comments_parsed": 3,
+    "observable_comment_nodes": 3
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "vintagelibra789",
+    "body_text": "AM: Cleanse (CeraVe gentle cleanser or IT Cosmetics Confidence in a Cleanser) SkinCeuticals Phloretin CF Experiment Super Saturated serum IT Cosmetics Confidence in an Eye Cream IT Cosmetics Confidence in a Gel Lotion Ole Henriksen Banana Bright sunscreen PM: Double cleanse (Kiehl’s Midnight cleansing oil to remove makeup) Experiment Super Saturated serum IT Cosmetics Confidence in an Eye Cream Night cream (IT Cosmetics or Ole Henriksen Dewtopia) Not using a retinol at the moment because I’m trying to conceive. My skin is oily, dehydrated, sensitive. I bought Naturium Azelaic Acid 10% but not sure where to use it in this routine. I am thinking PM after cleansing? Thanks!!",
+    "score_state": "2",
+    "timestamp_state": "2023-07-06T21:57:48.783000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddiction/comments/14sn7hj/routine_help_wanting_to_add_azelaic_acid_is_this/",
+  "thread": {
+    "permalink": "/r/SkincareAddiction/comments/14sn7hj/routine_help_wanting_to_add_azelaic_acid_is_this/",
+    "subreddit": "SkincareAddiction",
+    "thread_id": "14sn7hj",
+    "title": "[routine help] wanting to add azelaic acid - is this too many products? AM or PM?"
+  },
+  "warnings": []
+}

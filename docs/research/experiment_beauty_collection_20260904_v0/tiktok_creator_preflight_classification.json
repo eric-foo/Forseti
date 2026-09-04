@@ -1,0 +1,676 @@
+{
+  "creator_registry_match_preflight_receipt": {
+    "accepted_residuals": [
+      "Display-name matching compares case-folded alphanumerics only, so it ignores case, spacing, and punctuation; it performs no approximate/fuzzy matching and a display-name-only match is not proof of the same account.",
+      "Exact preflight does not prove cross-platform creator identity.",
+      "Exact preflight does not prove discovery search quality.",
+      "Exact preflight does not refresh silver metrics or mutate capture outputs."
+    ],
+    "generated_at_utc": "2026-09-04T20:20:22Z",
+    "non_claims": [
+      "not fuzzy identity resolver",
+      "not cross-platform linkage proof",
+      "not capture authorization without receipt review",
+      "not registry mutation",
+      "not live social search",
+      "not silver metric refresh"
+    ],
+    "registry_source": {
+      "generated_at_utc": "2026-07-30T10:40:00Z",
+      "profiles_total": null,
+      "schema_version": "creator_profile_current_view_registry_preflight_v1",
+      "sha256": "22724038f35405c30b0dabb8ed3d14adc5a0ae9a86de2204a61e263ab109c066",
+      "source_pointer": "indexes/derived_retrieval/creator_registry/CURRENT"
+    },
+    "results": [
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_adaatude",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 0,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "adaatude"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@adaatude"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_alexgreysonskin",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 1,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "alexgreysonskin"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@alexgreysonskin"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_ashley_w65",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 2,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "ashley_w65"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@ashley_w65"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_babzy531",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 3,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "babzy531"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@babzy531"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_beautywithtayy_",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 4,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "beautywithtayy_"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@beautywithtayy_"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_carlyrivlin",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 5,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "carlyrivlin"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@carlyrivlin"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_cassandrabankson",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 6,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "cassandrabankson"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@cassandrabankson"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_christinebbbroker",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 7,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "christinebbbroker"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@christinebbbroker"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_dailyglowwithdes",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 8,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "dailyglowwithdes"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@dailyglowwithdes"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_daniipellino",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 9,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "daniipellino"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@daniipellino"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_frag_analysis",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 10,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "frag_analysis"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@frag_analysis"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_girlwithadoge",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 11,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "girlwithadoge"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@girlwithadoge"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_glory_jefa",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 12,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "glory.jefa"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@glory.jefa"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_hannahleigh143",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 13,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "hannahleigh143"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@hannahleigh143"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_hdptravel",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 14,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "hdptravel"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@hdptravel"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_itsabbyak",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 15,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "itsabbyak"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@itsabbyak"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_itselliebunny",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 16,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "itselliebunny"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@itselliebunny"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_jadealycebod",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 17,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "jadealycebod"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@jadealycebod"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_jalikah40",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 18,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "jalikah40"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@jalikah40"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_laurenbliss91",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 19,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "laurenbliss91"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@laurenbliss91"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_lovelady_paige",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 20,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "lovelady_paige"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@lovelady_paige"
+          ],
+          "source_url_or_none": null
+        }
+      },
+      {
+        "action_blockers": [],
+        "action_status": "allowed",
+        "allowed_next_actions": [
+          "new_capture"
+        ],
+        "can_start_new_capture": false,
+        "candidate_id": "tt_madisonmkrohn",
+        "decision": "new_candidate",
+        "duplicate_candidate_identity_keys": [],
+        "errors": [],
+        "input_index": 21,
+        "intended_action": "classify",
+        "matched_registry_profiles": [],
+        "normalized_candidate": {
+          "display_name_or_none": null,
+          "handles": [
+            "madisonmkrohn"
+          ],
+          "platform_account_id_or_none": null,
+          "platform_or_none": "tiktok",
+          "platform_public_account_id_or_none": null,
+          "profile_subject_id_or_none": null,
+          "profile_urls": [
+            "https://tiktok.com/@madisonmkrohn"
+          ],
+          "source_url_or_none": null
+        }
+      }
+    ],
+    "schema_version": "creator_registry_match_preflight_receipt_v0",
+    "summary": {
+      "ambiguous_matches": 0,
+      "blocked_actions": 0,
+      "existing_matches": 0,
+      "invalid_candidates": 0,
+      "new_candidates": 22,
+      "safe_to_capture_new": 0,
+      "total_candidates": 22
+    }
+  }
+}

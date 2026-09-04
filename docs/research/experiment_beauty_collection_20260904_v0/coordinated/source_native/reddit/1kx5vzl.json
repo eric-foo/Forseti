@@ -1,0 +1,109 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": null,
+    "captured_matches_declared_total": true,
+    "comments_captured": 4,
+    "comments_not_captured": 0,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 4,
+    "max_captured_depth": 1
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Are you brand new to skincare? Don't know how to build a skincare routine? The best place to start is our ScA Routine! You can find even more skincare guides in our wiki!. Your answer might already be in there (and if it is, we might remove your post). Everyone is welcome in this community; remember to be kind and assume good faith :) I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "mumq720",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2025-05-28T02:29:06.197000+0000"
+    },
+    {
+      "author_state": "baizhantudi",
+      "body_text": "it’s really difficult to know unless you introduce new products one by one to narrow down the list of suspects. I know that’s frustrating :( sorry.",
+      "comment_id": "mun51mz",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "2",
+      "timestamp_state": "2025-05-28T04:05:25.946000+0000"
+    },
+    {
+      "author_state": "anxietysiesta",
+      "body_text": "i’m going to stop using the new stuff and reintroduce them one by one it’s so frustrating :/ i never broke out like this until last year now i have pie and when things get better bam a new break out",
+      "comment_id": "mun6ihk",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mun51mz",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "2",
+      "timestamp_state": "2025-05-28T04:16:08.419000+0000"
+    },
+    {
+      "author_state": "baizhantudi",
+      "body_text": "If I HAD to guess one of the new ones, I’d pick the vitamin C. acid tends to be irritating. But truly no way to be sure",
+      "comment_id": "mun57ay",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mun51mz",
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "2",
+      "timestamp_state": "2025-05-28T04:06:34.114000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 3
+    },
+    "comments_parsed": 4,
+    "observable_comment_nodes": 4
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "anxietysiesta",
+    "body_text": "products i use: am: dr althea gentle vitamin c (some days i use stratias rewind serum instead) cocokind electrolyte water cream prequel mineral sunscreen pm sometimes i use needly toner pads (not daily) mugwort essence experiment beauty super saturated sometimes mixsoon bean essence 1x every 2 ish weeks geek and gorgeous retinal (a game 5) prescription azaelic acid (not every night) experiment beauty’s molecular mesh niacinamide has never given me issues i haven’t purged from retinal my newest products are the molecular mesh, mugwort essence, and dr althea vit c; however, i infrequently use the bean essence. Could mugwort be breaking me out?",
+    "score_state": "1",
+    "timestamp_state": "2025-05-28T02:29:05.623000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddiction/comments/1kx5vzl/acne_what_could_be_breaking_me_out/",
+  "thread": {
+    "permalink": "/r/SkincareAddiction/comments/1kx5vzl/acne_what_could_be_breaking_me_out/",
+    "subreddit": "SkincareAddiction",
+    "thread_id": "1kx5vzl",
+    "title": "[acne] what could be breaking me out?"
+  },
+  "warnings": []
+}

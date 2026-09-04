@@ -1,0 +1,106 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": null,
+    "captured_matches_declared_total": true,
+    "comments_captured": 4,
+    "comments_not_captured": 0,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 4,
+    "max_captured_depth": 0
+  },
+  "comments": [
+    {
+      "author_state": "growthandgoal",
+      "body_text": "Love it. Get the glycerin serum also. I do tret on weekdays and hydration on weekend. More people should speak about this.",
+      "comment_id": "oi714b6",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0001",
+      "score_state": "3",
+      "timestamp_state": "2026-04-25T13:24:05.091000+0000"
+    },
+    {
+      "author_state": "InsideThought3827",
+      "body_text": "Want to love it but something always makes it burn when I apply it",
+      "comment_id": "oib2qox",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "2",
+      "timestamp_state": "2026-04-26T02:19:29.263000+0000"
+    },
+    {
+      "author_state": "JiggyBananas14",
+      "body_text": "I LOOOOVVEEEE IT!",
+      "comment_id": "oibnfsn",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "2",
+      "timestamp_state": "2026-04-26T04:41:52.094000+0000"
+    },
+    {
+      "author_state": "donotdisturb15",
+      "body_text": "My current moisturizer right now! My skin is extremely sensitive and most moisturizers make me feel itchy and red after applying. This one works great for my sensitive skin. It's hydrating without being heavy but I am on the dryer side so I add something extra most nights.",
+      "comment_id": "ojxqsch",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "2",
+      "timestamp_state": "2026-05-04T20:46:52.562000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "present": 4
+    },
+    "comments_parsed": 4,
+    "observable_comment_nodes": 4
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "TheMeepyBoy",
+    "body_text": "What does everyone really think about the Experiment Molecular Mesh? Share your experience, whether it's positive or negative :)",
+    "score_state": "5",
+    "timestamp_state": "2026-04-25T07:38:00.989000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkinbarrierLovers/comments/1sv5mkq/lets_be_honest_experiment_molecular_mesh/",
+  "thread": {
+    "permalink": "/r/SkinbarrierLovers/comments/1sv5mkq/lets_be_honest_experiment_molecular_mesh/",
+    "subreddit": "SkinbarrierLovers",
+    "thread_id": "1sv5mkq",
+    "title": "Let's be honest: Experiment Molecular Mesh"
+  },
+  "warnings": []
+}

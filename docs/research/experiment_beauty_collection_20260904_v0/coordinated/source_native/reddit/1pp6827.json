@@ -1,0 +1,229 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": null,
+    "captured_matches_declared_total": true,
+    "comments_captured": 14,
+    "comments_not_captured": 0,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 14,
+    "max_captured_depth": 1
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Beep boop! Friendly reminder that this is a subreddit geared towards the discussion of higher end and luxury skincare, and we're happy to have you here. To have a good understanding of the types of brands you can discuss here, please consult our Wiki if you haven't already. You're welcome to discuss anything mid-range and up. Note: Circumventing automation filtres and discussing products that are not higher end or luxury may result in a temporary or permanent ban. The mod team asks you to respect our subreddit's rules to keep the space on-topic. If you'd like to discuss affordable products, we kindly ask that you take the discussion to other subs. I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "nuke7t9",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2025-12-17T19:52:09.079000+0000"
+    },
+    {
+      "author_state": "iammrsclean",
+      "body_text": "Put a humidifier next to your bed. I have super dry skin and it’s worked so well to combat forced heat.",
+      "comment_id": "nukuw4e",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "6",
+      "timestamp_state": "2025-12-17T21:15:44.423000+0000"
+    },
+    {
+      "author_state": "AlarmedAd9962",
+      "body_text": "That's a great idea! I'll look into that.",
+      "comment_id": "nukxhch",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "nukuw4e",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "1",
+      "timestamp_state": "2025-12-17T21:28:31.583000+0000"
+    },
+    {
+      "author_state": "312midwestgirl",
+      "body_text": "I’ve never been a moisturizer person (normally a serum gal), but wow Epicutis Hyvia cream is so so good and skinbeautifulrx carries it! I’m also acne prone and it hasnt broken me out",
+      "comment_id": "nup3jpp",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "3",
+      "timestamp_state": "2025-12-18T15:18:41.744000+0000"
+    },
+    {
+      "author_state": "AlarmedAd9962",
+      "body_text": "Thank you! I’ll look at this one too!",
+      "comment_id": "nupa62l",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "nup3jpp",
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "2",
+      "timestamp_state": "2025-12-18T15:53:10.535000+0000"
+    },
+    {
+      "author_state": "cherrybearblush",
+      "body_text": "Skinfix, Aestura ATO Barrier Cream, or Experiment Molecular Mesh (Experiment Super Saturated + Molecular Mesh + Buffer Jelly is pretty much the most hydrating trio I have found)",
+      "comment_id": "nuposz0",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "3",
+      "timestamp_state": "2025-12-18T17:07:47.197000+0000"
+    },
+    {
+      "author_state": "AlarmedAd9962",
+      "body_text": "Oooo! I haven't heard of these yet! Will research. thank you!",
+      "comment_id": "nuq28jf",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "nuposz0",
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "1",
+      "timestamp_state": "2025-12-18T18:17:02.164000+0000"
+    },
+    {
+      "author_state": "Beatleslover4ever1",
+      "body_text": "Alpyn Barrier Relief Moisturizer is pretty amazing.",
+      "comment_id": "nuq8ygr",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "2",
+      "timestamp_state": "2025-12-18T18:50:49.719000+0000"
+    },
+    {
+      "author_state": "AlarmedAd9962",
+      "body_text": "Just found this. The ingredients are sooo good!",
+      "comment_id": "nuvubz2",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "nuq8ygr",
+      "parser_warnings": [],
+      "row_id": "comment_0009",
+      "score_state": "2",
+      "timestamp_state": "2025-12-19T16:20:14.149000+0000"
+    },
+    {
+      "author_state": "Cold_Cryptographer",
+      "body_text": "Future 5 Elements Extreme No. 2 Cream! Also a humidifier is a game-changer, but make sure to clean it often since you can get sick from not doing so.",
+      "comment_id": "nuydrfp",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0010",
+      "score_state": "1",
+      "timestamp_state": "2025-12-20T00:38:53.832000+0000"
+    },
+    {
+      "author_state": "AlarmedAd9962",
+      "body_text": "I was using the No. 1 cream as my night cream! I am obsessed. The smell and the consistency is incredible. I felt like it wasn't enough lately but I'll look into the No. 2",
+      "comment_id": "nuyuf7d",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "nuydrfp",
+      "parser_warnings": [],
+      "row_id": "comment_0011",
+      "score_state": "2",
+      "timestamp_state": "2025-12-20T02:22:10.324000+0000"
+    },
+    {
+      "author_state": "Feisty-Operation8583",
+      "body_text": "My favorite heavy hitters are Skin Fix TR and ZO Renewal. ZO Hydration Cream is very nice for day too.",
+      "comment_id": "nulyn5d",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0012",
+      "score_state": "3",
+      "timestamp_state": "2025-12-18T00:49:55.667000+0000"
+    },
+    {
+      "author_state": "calicocant",
+      "body_text": "Retrouvé Intensive Replenishing is the absolute best for this. It's so rich, moisturising, and barrier repairing, and it's a lovely balm texture.",
+      "comment_id": "nutbdzk",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0013",
+      "score_state": "1",
+      "timestamp_state": "2025-12-19T05:11:13.395000+0000"
+    },
+    {
+      "author_state": "thti87",
+      "body_text": "Skincueticals Triple Lipid is the only thing that stops tret from drying out my skin",
+      "comment_id": "nuuzk1f",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0014",
+      "score_state": "1",
+      "timestamp_state": "2025-12-19T13:38:34.249000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 13
+    },
+    "comments_parsed": 14,
+    "observable_comment_nodes": 14
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "AlarmedAd9962",
+    "body_text": "With this winter weather and forced heat air inside day and night, my skin is dry every morning I wake up when using the same night cream I used in the summer. I'm getting ready to do a SBRX purchase and would love to hear about your go-to super hydrating night creams! Looking for ceramide rich, lipid restoring. Does not need to have gf or other actives, I use serums for that. What do you love for this??",
+    "score_state": "6",
+    "timestamp_state": "2025-12-17T19:52:08.820000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddictionLux/comments/1pp6827/mega_hydrating_night_cream/",
+  "thread": {
+    "permalink": "/r/SkincareAddictionLux/comments/1pp6827/mega_hydrating_night_cream/",
+    "subreddit": "SkincareAddictionLux",
+    "thread_id": "1pp6827",
+    "title": "Mega Hydrating Night Cream"
+  },
+  "warnings": []
+}

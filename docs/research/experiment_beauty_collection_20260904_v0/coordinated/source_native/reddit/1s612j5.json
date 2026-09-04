@@ -1,0 +1,109 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": null,
+    "captured_matches_declared_total": true,
+    "comments_captured": 4,
+    "comments_not_captured": 0,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 4,
+    "max_captured_depth": 0
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Are you brand new to skincare? Don't know how to build a skincare routine? The best place to start is our ScA Routine! You can find even more skincare guides in our wiki!. Your answer might already be in there (and if it is, we might remove your post). Everyone is welcome in this community; remember to be kind and assume good faith :) I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "ocyg172",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2026-03-28T13:58:15.420000+0000"
+    },
+    {
+      "author_state": "Any_Watch_8693",
+      "body_text": "start with just the cleanser and one moisturizer for like 2 weeks before adding anything else or you'll mess up your skin barrier even more",
+      "comment_id": "ocylslc",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "2",
+      "timestamp_state": "2026-03-28T14:28:32.983000+0000"
+    },
+    {
+      "author_state": "Certain-Head-7517",
+      "body_text": "Super dry/flaky skin, i would not start all of these at once or do every layer morning and night just because you own them. that is how you end up with no idea what your skin likes. i’d do something like: AM: rinse or plasma wash only if you need it, pyunkang toner or super saturated, molecular mesh, sunscreen PM: plasma wash, centella ampoule or super saturated, molecular mesh and use the illiyoon on body only. i’d keep it that simple for a couple weeks before adding extra layers. you really do not need toner + ampoule + serum + lotion every single time.",
+      "comment_id": "ocymlh0",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "1",
+      "timestamp_state": "2026-03-28T14:32:38.829000+0000"
+    },
+    {
+      "author_state": "I_just_cant855",
+      "body_text": "Agreed. You should start with something simple, just cleanser and moisturizer + spf, for a week or two and make sure it improves things and then add one product at a time",
+      "comment_id": "ocz8flx",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "1",
+      "timestamp_state": "2026-03-28T16:21:21.852000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 3
+    },
+    "comments_parsed": 4,
+    "observable_comment_nodes": 4
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "tattoolvr2003",
+    "body_text": "I have had NO skin care routine really before and I’m starting now- I have very dry skin sometimes it flakes off and scabs over in same area over and over again, i also can get pimples sometimes I have placed and order for these products: Molecular mesh lotion- experiment beauty (for face) Super saturated serum- experiment beauty (for face) Plasma wash- experiment beauty (for face) Pyunkang essential toner (for face) 5.Madagascar centella ampoule- skin1004 (for face) 6. Madagascar Centella Hyalu-Cica Waterproof Sunscreen-skin1004 (for face) 7.illiyoon ceramide ayo lotion - illiyoon (for body) 8. Gleanser, body and face - prequel (for body) What order should I use these products? and what frequency? AM and PM? Any and all guidance is appreciated!!!",
+    "score_state": "1",
+    "timestamp_state": "2026-03-28T13:58:14.970000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddiction/comments/1s612j5/routine_help_how_should_i_structure_my_routine/",
+  "thread": {
+    "permalink": "/r/SkincareAddiction/comments/1s612j5/routine_help_how_should_i_structure_my_routine/",
+    "subreddit": "SkincareAddiction",
+    "thread_id": "1s612j5",
+    "title": "[Routine Help] How should I structure my routine with the products that I have?"
+  },
+  "warnings": []
+}

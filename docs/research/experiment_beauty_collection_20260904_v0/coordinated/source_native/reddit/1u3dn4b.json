@@ -1,0 +1,145 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": false,
+    "captured_matches_declared_total": false,
+    "comments_captured": 7,
+    "comments_not_captured": 5,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 12,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "Commercial_Trifle521",
+      "body_text": "Thank you, but esp that area is so sensitive and stingy.",
+      "comment_id": "or4w58u",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2026-06-11T23:59:41.071000+0000"
+    },
+    {
+      "author_state": "SadQueerBruja",
+      "body_text": "SPF is good but you’re not doing anything to treat it. You want tyrosinase inhibitors. There are many products out there. I won’t recommend a specific one because that will be up to your budget and needs. Retinol and azelaic acid will also be helpful but do your research before getting into retinoids!",
+      "comment_id": "or4vsq8",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "2",
+      "timestamp_state": "2026-06-11T23:57:39.270000+0000"
+    },
+    {
+      "author_state": "sddk1",
+      "body_text": "I have no budget recommendations are welcome! please and thank you!",
+      "comment_id": "orc8eex",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "or4vsq8",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "1",
+      "timestamp_state": "2026-06-13T01:29:19.427000+0000"
+    },
+    {
+      "author_state": "SadQueerBruja",
+      "body_text": "The topicals faded serum is fantastic for the pigmentation I see. Retinol too but rx tretinoin may be a lot to start with. The one from Murad is incredibly underrated and was my jam before I got on Tret. Start 2x a week, increase slowly to 4-5. Exfoliate on off days from retinol 1-2 times a week. 1 is fine if you’re sensitive. I like the Paula’s choice mandelic acid toner, it’s very gentle but helpful! You’ve already got your spf so that’s good. Retinol does increase photosensitivity though so make sure it’s a high spf, upgrade if it’s not at least 50. You’ll also want to sandwich the retinol between layers of a good moisturizer. I’m obsessed with Dieux instant angel, aestura barrier cream, molecular mesh by experiment, illyoon barrier cream, vanicream c and la roche posay double repair are lovely. Dieux is my personal ride or die. Edit to add: finding a deem or good esthetician in your area that does chemical peels in the winter when sun is less harsh is also a fantastic idea and will handle the pigmentation with ease. For the redness I’d get a little azelaic acid and work up to daily use with it. I use it in the morning and my retinol at night!",
+      "comment_id": "orcvcxr",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "orc8eex",
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "1",
+      "timestamp_state": "2026-06-13T03:54:20.971000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "",
+      "comment_id": "or4h9if",
+      "comment_posture": "deleted",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "2",
+      "timestamp_state": "2026-06-11T22:35:34.760000+0000"
+    },
+    {
+      "author_state": "studiowarp",
+      "body_text": "Why tinted?",
+      "comment_id": "or4jmzz",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "or4h9if",
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "1",
+      "timestamp_state": "2026-06-11T22:48:30.695000+0000"
+    },
+    {
+      "author_state": "SadQueerBruja",
+      "body_text": "Tinted mineral spf has been shown in research to be helpful for melasma",
+      "comment_id": "or4vlus",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "or4jmzz",
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "3",
+      "timestamp_state": "2026-06-11T23:56:32.794000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "deleted": 1,
+      "present": 6
+    },
+    "comments_parsed": 7,
+    "observable_comment_nodes": 7
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "Commercial_Trifle521",
+    "body_text": "I wear sunscreen regularly so, my melasma has improved a lot, but some days, esp during summer it looks so red. This is under really bright light. I don’t use any treatment rn, just some things for hydration since I’ve a super dry skin.",
+    "score_state": "3",
+    "timestamp_state": "2026-06-11T22:32:11.564000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/30PlusSkinCare/comments/1u3dn4b/what_should_i_be_doing/",
+  "thread": {
+    "permalink": "/r/30PlusSkinCare/comments/1u3dn4b/what_should_i_be_doing/",
+    "subreddit": "30PlusSkinCare",
+    "thread_id": "1u3dn4b",
+    "title": "What should I be doing?"
+  },
+  "warnings": [
+    "thread declares 12 comments; 7 captured (5 not captured)"
+  ]
+}

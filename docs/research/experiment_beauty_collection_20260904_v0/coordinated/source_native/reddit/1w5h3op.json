@@ -1,0 +1,325 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": false,
+    "captured_matches_declared_total": false,
+    "comments_captured": 22,
+    "comments_not_captured": 10,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 32,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "elianna7",
+      "body_text": "While this post does mention a product that isn’t high end, the actual question is about Regimen Wave Serum, which does meet the sub’s criteria of mid-range/higher end products. Please do not report the post for not being about high end products. Thanks!",
+      "comment_id": "p7hprd3",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2026-09-03T01:17:39.045000+0000"
+    },
+    {
+      "author_state": "Longjumping_Week4092",
+      "body_text": "Been using wave for a year and a half! It is not sticky and I love it. I think regimen lab might’ve tested it against super saturated serum and found it to be more hydrating in both the short and long term, too!",
+      "comment_id": "p7f0k7r",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "9",
+      "timestamp_state": "2026-09-02T17:35:13.215000+0000"
+    },
+    {
+      "author_state": "Icy-Election-2237",
+      "body_text": "Thank you for chiming in! Have you ever used Super Saturated? How did you come around to thinking Regimen tested it against Super Saturated? I've seen their comparison charts on their website, but they don't specifically share which other brands/labs they've been comparing the product to.",
+      "comment_id": "p7f0wpv",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "p7f0k7r",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "4",
+      "timestamp_state": "2026-09-02T17:36:39.427000+0000"
+    },
+    {
+      "author_state": "vikingmurse",
+      "body_text": "I like them both for different uses; Wave works superbly as a year-round hydration booster. Super Saturated can do that too but I like it more for when my skin needs some mad TLC, like post procedure, went a little hard on the exfoliation, too much heat/sun, etc.",
+      "comment_id": "p7fkj2n",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "p7f0wpv",
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "4",
+      "timestamp_state": "2026-09-02T18:59:45.707000+0000"
+    },
+    {
+      "author_state": "leighsz",
+      "body_text": "I’ve used both and I prefer the Wave. I mix it with Sente Dermal Repair in the AM and Regimen’s CREAM in the PM. I’m a huge fan of the brand.",
+      "comment_id": "p7f5xgd",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "7",
+      "timestamp_state": "2026-09-02T17:58:08.645000+0000"
+    },
+    {
+      "author_state": "Icy-Election-2237",
+      "body_text": "Had never heard of Sente Dermal. Will check it out, thanks.",
+      "comment_id": "p7fpad4",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "p7f5xgd",
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "2",
+      "timestamp_state": "2026-09-02T19:20:03.358000+0000"
+    },
+    {
+      "author_state": "steezMcghee",
+      "body_text": "I’m kinda obsessed with this brand lately. Every product is so well formulated.",
+      "comment_id": "p7f8qud",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "p7f5xgd",
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "7",
+      "timestamp_state": "2026-09-02T18:10:19.327000+0000"
+    },
+    {
+      "author_state": "cornichon18",
+      "body_text": "I’m going to try this! I am new to Sente Dermal Repair and have been using it after tret. Love Regimen CREAM and use it on recovery nights when I don’t use tret.",
+      "comment_id": "p7fbor2",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "p7f5xgd",
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "3",
+      "timestamp_state": "2026-09-02T18:22:49.972000+0000"
+    },
+    {
+      "author_state": "handflex",
+      "body_text": "i use/love both in my routine. i use the wave serum in the morning and super saturated in the evening on tret nights. i do think wave is a bit of a lighter hydration, but it sinks in much better and still provides great hydration. i layer on damp skin with a hydrating toner and don’t experience any sort of dryness. i think it’s worth trying if you’re looking for something that feels less goopy on the face.",
+      "comment_id": "p7f6drt",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0009",
+      "score_state": "2",
+      "timestamp_state": "2026-09-02T18:00:07.846000+0000"
+    },
+    {
+      "author_state": "Icy-Election-2237",
+      "body_text": "Thank you! How/when do you use Super Saturated? Could you share your routine please? Thank you :)",
+      "comment_id": "p7fdvqi",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "p7f6drt",
+      "parser_warnings": [],
+      "row_id": "comment_0010",
+      "score_state": "1",
+      "timestamp_state": "2026-09-02T18:32:00.788000+0000"
+    },
+    {
+      "author_state": "WhomstIsGamora",
+      "body_text": "They’re both excellent hydrating serums. The experiment is much thicker and goopier, and also more tacky on the dry down. The glycerin is obviously the star, with some helping ingredients like niacinamide and polyglutamic acid. The wave serum is much thinner, feels more weightless and absorbs faster, but is still very hydrating and more soothing imo. Regimen lab split up the humectant load into glycerin, Acetamidoethoxyethanol (newer humectant that is very promising) and hydroxy ethyl urea (derivative of urea that is less irritating) and there’s also the active compounds from Centella, panthenol, betaine, and the xylitol sugar trio. I personally prefer the regimen lab because of the texture, but you can’t really go wrong with either",
+      "comment_id": "p7f7196",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0011",
+      "score_state": "2",
+      "timestamp_state": "2026-09-02T18:03:00.955000+0000"
+    },
+    {
+      "author_state": "Icy-Election-2237",
+      "body_text": "Thank you for chiming in! Does Wave Serum help you get a glow along any moisturizer? Plumpness?",
+      "comment_id": "p7fe8h8",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "p7f7196",
+      "parser_warnings": [],
+      "row_id": "comment_0012",
+      "score_state": "1",
+      "timestamp_state": "2026-09-02T18:33:30.508000+0000"
+    },
+    {
+      "author_state": "WhomstIsGamora",
+      "body_text": "I don’t really pay attention to glow to much, I prefer a natural/satin finish but pretty much any skincare on me that isn’t specifically matte typically leans glowy, I think the wave serum is no exception. I do remember super saturated being notably glowy so maybe not as much as that tho. Super plumping, comparable to super saturated imo. To me it’s strengths over super saturated are texture/finish (personal preference tho), soothing, and the spread of humectants vs 1 major humectant plus a few others in super saturated imo",
+      "comment_id": "p7giepp",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "p7fe8h8",
+      "parser_warnings": [],
+      "row_id": "comment_0013",
+      "score_state": "1",
+      "timestamp_state": "2026-09-02T21:28:37.408000+0000"
+    },
+    {
+      "author_state": "morekidsthansense",
+      "body_text": "Wave is not sticky or gooey at all. It's instant absorption on my skin.",
+      "comment_id": "p7hgn1v",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0014",
+      "score_state": "2",
+      "timestamp_state": "2026-09-03T00:27:23.518000+0000"
+    },
+    {
+      "author_state": "Icy-Election-2237",
+      "body_text": "Nice. Is it ultra nourishing?",
+      "comment_id": "p7hmuwn",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "p7hgn1v",
+      "parser_warnings": [],
+      "row_id": "comment_0015",
+      "score_state": "1",
+      "timestamp_state": "2026-09-03T01:01:36.839000+0000"
+    },
+    {
+      "author_state": "morekidsthansense",
+      "body_text": "I don't know that I would call any product nourishing, so I may be the wrong person to answer that question. What I like about it is that it feels like wearing nothing. It's an easy layer that doesn't compete with other stuff. It gets the job done without demanding any time/thought/fuss and I sincerely appreciate that in a product.",
+      "comment_id": "p7htw6e",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "p7hmuwn",
+      "parser_warnings": [],
+      "row_id": "comment_0016",
+      "score_state": "1",
+      "timestamp_state": "2026-09-03T01:40:40.686000+0000"
+    },
+    {
+      "author_state": "Fickle_Question_6417",
+      "body_text": "Super saturated is sooo slimy and sticky that I never use it. It feels like rubbing okra on my face. I haven’t tried wave serum but I love face reality hydraremedy and sweet chemistry hydra serum (though this is more complex than the other two)",
+      "comment_id": "p7fmd6t",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0017",
+      "score_state": "1",
+      "timestamp_state": "2026-09-02T19:07:38.089000+0000"
+    },
+    {
+      "author_state": "Icy-Election-2237",
+      "body_text": "Thank you for your input! Will check ‘em out",
+      "comment_id": "p7h3i38",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "p7fmd6t",
+      "parser_warnings": [],
+      "row_id": "comment_0018",
+      "score_state": "1",
+      "timestamp_state": "2026-09-02T23:15:21.285000+0000"
+    },
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Beep boop! Friendly reminder that this is a subreddit geared towards the discussion of higher end and luxury skincare, and we're happy to have you here. To have a good understanding of the types of brands you can discuss here, please consult our Wiki if you haven't already. You're welcome to discuss anything mid-range and up. Note: Circumventing automation filtres and discussing products that are not higher end or luxury may result in a temporary or permanent ban. The mod team asks you to respect our subreddit's rules to keep the space on-topic. If you'd like to discuss affordable products, we kindly ask that you take the discussion to other subs. I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "p7ezwo7",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0019",
+      "score_state": "1",
+      "timestamp_state": "2026-09-02T17:32:26.969000+0000"
+    },
+    {
+      "author_state": "elenafoxx",
+      "body_text": "Regimen Lab is a more complex formulation; it’s easy to layer and is considerably thinner so you can easily layer over it or potentially mix it with other serums and is good for keeping skin hydrated long term. Super Saturated is significantly thicker; if your skin is feeling red or irritated it behaves more like a soothing blanket. The way I have used it is I don’t like too much fake AC air and during heatwaves I don’t want to add a super occlusive moisturizer that could trap sweat. So during heatwaves I use it instead of a moisturizer as my final step:)",
+      "comment_id": "p7oyttv",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0020",
+      "score_state": "1",
+      "timestamp_state": "2026-09-04T01:19:51.496000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "",
+      "comment_id": "p7f1pf6",
+      "comment_posture": "deleted",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0021",
+      "score_state": "1",
+      "timestamp_state": "2026-09-02T17:39:57.212000+0000"
+    },
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Your post or comment has been removed because your account has less than 15 total karma. Please participate elsewhere on Reddit to gain karma and try again later. This is enforced to prevent spam on the subreddit. I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "p7f1pkm",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "p7f1pf6",
+      "parser_warnings": [],
+      "row_id": "comment_0022",
+      "score_state": "1",
+      "timestamp_state": "2026-09-02T17:39:58.164000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "deleted": 1,
+      "present": 21
+    },
+    "comments_parsed": 22,
+    "observable_comment_nodes": 22
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "Icy-Election-2237",
+    "body_text": "TL;DR: Is Super Saturated comparable to and replaceable by Wave Serum? Is Wave Serum \"better\" and less gooey and sticky? Sinking right in? I've been using Experiment's Super Saturated for a while, and it's been a gamechanger. I was using it at night, but have now moved it to the morning as I'm using bare tretinoin on my skin nights. Thus, I need potent hydration the next morning. However, it's a bit gooey for me. I'm bedbound so I don't mind being gooey because I'm not out and about. Yet, I wonder, would Regimen's Wave Serum 2.5 be a good/better substitute for the 30% glycerin of Super Saturated? Wave Serum has only 10% glycerin, 10% Hydroxyethyl Urea and 10% ACE (Acetamidoethoxyethanol) -- the last two compounds I don't know what they are. (Urea I do). My question/post is all assuming that Wave Serum 2.5 is less sticky than Super Saturated, but I might be wrong. Suggestions? Comments? Any users who have tried both? Is Wave Serum a contender to replace Super Saturated, or they're nothing comparable? Thank you! <3 Wish you a good day.",
+    "score_state": "10",
+    "timestamp_state": "2026-09-02T17:32:26.620000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddictionLux/comments/1w5h3op/regimens_wave_serum_25_or_experiments_super/",
+  "thread": {
+    "permalink": "/r/SkincareAddictionLux/comments/1w5h3op/regimens_wave_serum_25_or_experiments_super/",
+    "subreddit": "SkincareAddictionLux",
+    "thread_id": "1w5h3op",
+    "title": "Regimen's Wave Serum 2.5 or Experiment's Super Saturated? Are they comparable? For application mixed with a moisturizer."
+  },
+  "warnings": [
+    "thread declares 32 comments; 22 captured (10 not captured)"
+  ]
+}

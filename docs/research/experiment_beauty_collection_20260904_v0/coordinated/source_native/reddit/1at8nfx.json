@@ -1,0 +1,360 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": false,
+    "captured_matches_declared_total": false,
+    "comments_captured": 25,
+    "comments_not_captured": 13,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 38,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "bacon_socks_",
+      "body_text": "La Mer discontinued my favorite moisturizer, The Moisturizing Cool Gel Cream. So I purchased its “replacement,” The Moisturizing Fresh Cream. It’s currently working its way to me via UPS. So hopefully I’ll be able to write a review next week. It better be good 😭",
+      "comment_id": "kqvixir",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0001",
+      "score_state": "7",
+      "timestamp_state": "2024-02-17T18:41:58.284000+0000"
+    },
+    {
+      "author_state": "notmysuggestedum",
+      "body_text": "UGH I hate reformulations. I wish you luck 😭😭😭😭😭.",
+      "comment_id": "kqvj9s3",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "kqvixir",
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "5",
+      "timestamp_state": "2024-02-17T18:43:46.680000+0000"
+    },
+    {
+      "author_state": "RowanVC",
+      "body_text": "Fun thread! I have some new items: DEFINITE RAVE: Gleanser from Prequel… it’s a glycerin cleanser and it’s so gentle and easy to use. I’m seriously loving it! I mean it’s a cleanser, so it’s not going to impart any radical changes to the skin, but just as far as cleansers go, it’s such a nice, gentle option, especially for a second cleanse after my oil-based first cleanse. And while I know we’re on a lux sub, it’s so affordable ($18)! The container is huge, too — 13.5 oz/400 mL. Really love this stuff. RAVE (I think?): BR Crème Masque Vernix old formulation… Yep, after the discussions here, I also grabbed this from TJ Maxx, and I’ve been using it as a final step at night to seal everything in. I think it’s having a beneficial effect, but admittedly it’s early in the process. I have issues with FOMO and scarcity, so I broke down and purchased 2 more to have on hand since they’re reformulating it. Likely a stupid thing to do, get hooked on a product when it’s going away, but yeah that’s just typical of me. LOL POTENTIAL RAVE (too early): Truth Treatment Systems Transdermal C Serum… just posted about this, it was a GWP with an order from Black Friday. I’ve been trying it out the last couple of days and I’m hoping this can be a C product I actually use and like. I’ve got nothing against SkinCeuticals, I have 3 different versions of their vitamin C trying to find one I like, but for some reason I just haven’t been able to get on board or get excited about them or something. Of course then they oxidize if I sit on them too long and don’t use them up. The Transdermal C seems to be a more stable formulation, and I wanted to try tetrahexyldecyl ascorbate as opposed to LAA. So far the C in the morning and Masque Vernix at night on top of several good layers of hydration has my skin doing pretty well right now. I’m cautiously optimistic! Also, I love Experiment’s Super Saturated! It’s a great hydration layer. I also have Buffer Jelly but haven’t really used it as much. Need to give it a shot.",
+      "comment_id": "kqvujui",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "7",
+      "timestamp_state": "2024-02-17T19:44:08.039000+0000"
+    },
+    {
+      "author_state": "notmysuggestedum",
+      "body_text": "Nice! I've got the Gleanser on my wishlist. Glad to hear you are loving it. It really is a great deal for the price. AliceintheRabbitHole on YouTube said it was similar to the Fresh cleanser so many people love. I want to try several of her products - they look really nice, especially for the price. I got the Truth Treatments sample set a few years ago and liked what was in it. I want to try his Honey Cleanser. Plus the 5% retinol. There was a 1% retinol in the sample kit, and it lit me up, so the 5% might be a good once a week treatment. And YES to Experiment. The Super Saturated is amazing. Really plumping and holds the drying effects of my sunscreen off so well. I can't wait for them to come out with more stuff. They seem similar to Regimen Lab, which I also am a huge fan of (the C.R.E.A.M. is my favorite moisturizer of all time).",
+      "comment_id": "kqvwmgt",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "kqvujui",
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "3",
+      "timestamp_state": "2024-02-17T19:55:23.906000+0000"
+    },
+    {
+      "author_state": "heids1234",
+      "body_text": "Gah, I’ve heard such good things about Prequel and the Gleanser in particular but I can’t get it cause I’m not US based 😩 Hopefully they expand internationally soon.",
+      "comment_id": "kqwcq32",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "kqvujui",
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "4",
+      "timestamp_state": "2024-02-17T21:25:29.547000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "I just got Gleanser last week and love it so so much. My skin feels clean but not dry or tight after cleansing.",
+      "comment_id": "kqwc7y7",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "kqvujui",
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "3",
+      "timestamp_state": "2024-02-17T21:22:38.561000+0000"
+    },
+    {
+      "author_state": "inquiringdoc",
+      "body_text": "BR VERNIX RAVE!!! Hahaha, I too bought the two back up Vernix after a TJ FOMO buy. I really really really love it though. I have used it every night on top of anything I use as the last step. I have it at my bedside to wait til other stuff has sunk in. It has helped my redness which is a major concern. I look overall better. I am going to look into your other mentions now. If you were the person I was discussing the Joanna Czech Vernix alternate -- I bought a travel set that includes it and will see how it goes in case the reformulation happens. I read a joyous comment on some thread that the reform was delayed until April. Part of me hoping they just shit-can it bc it will be so different, but it gives me time to not panic buy more at this moment. RAVE: Osmosis Mango mask: I have used this almost daily since getting it. Love it. Smells amazing, moisturizes and soothes, and I leave it on while I do stuff in the evenings or if working from home use it in the day, I have too many masks, and this and the vernix are by far the two that I feel are really effective (I love many others, but just see a little less clear benefit in terms of moisture and redness and soothing). It is also a nice thing to add to clean skin after LED mask. Dries matte, suede like finish so in theory could be a moisturizer. Has a slight orange color for pale ppl and thus may not work for regular daytime use. RAVE ish: Dr. Loretta as a new brand (I have tried the detox mask, like a lot, the eye gel, pretty nice and very easy, cleanser very nice & mild and some samples that I can't yet say), and recently the hydrating fluid. It is an odd oily yet silicone-y feel, and sinks in and leaves a shine, but not a super slick feel, more silky silicone but not quite. I use it post serums and then maybe HA and then moisturizer. I initially thought it was HA, but then looked at the ingredients--don't think it is.",
+      "comment_id": "kr361w5",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "kqvujui",
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "3",
+      "timestamp_state": "2024-02-19T03:24:14.498000+0000"
+    },
+    {
+      "author_state": "RowanVC",
+      "body_text": "Yep that was me! :) LOL I am trying to control myself and stop with just the 2 backups for now. Interesting news that they have delayed the reformulation. Since you got the Joanna Czech sample, though, keep me posted! I’m still curious about that one. That Osmosis Mango mask sounds interesting as well! I may have to add that to the list of things to check out later. I’m trying desperately (and usually failing, but seriously trying) to not buy for a bit. I keep saying that and not sticking to it, so really trying to be better! It’s so hard with all the interesting products, though.",
+      "comment_id": "kr38r38",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "kr361w5",
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "2",
+      "timestamp_state": "2024-02-19T03:44:18.266000+0000"
+    },
+    {
+      "author_state": "Iusedtobealawyer",
+      "body_text": "Super Saturates is the game changer - especially for us more mature. Everyone comments on my glow and yes, I use a bunch of products, laser, regular facials but really the only thing that has really upped my game is Super Saturated. I like the Regimen Wave Serum, too but it’s a little thinner. I think it’s better for my summertime routine. Agreed about the Jelly Buffer. It doesn’t do it for me. I used it once and had a little bit of congestion. I’ll stick with Vaseline.",
+      "comment_id": "kqxgmvd",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "kqvujui",
+      "parser_warnings": [],
+      "row_id": "comment_0009",
+      "score_state": "2",
+      "timestamp_state": "2024-02-18T01:35:31.769000+0000"
+    },
+    {
+      "author_state": "RowanVC",
+      "body_text": "Yes, I have Regimen Lab’s Wave Serum and I’m a big fan of that one, too! Super Saturated can be a tad sticky, but moisturizer over the top usually resolves that perfectly. I’m really preferring glycerin as a great humectant.",
+      "comment_id": "kqxoivo",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "kqxgmvd",
+      "parser_warnings": [],
+      "row_id": "comment_0010",
+      "score_state": "2",
+      "timestamp_state": "2024-02-18T02:31:54.141000+0000"
+    },
+    {
+      "author_state": "Dafadami",
+      "body_text": "You found Vernix at TJ Max? I received a sample in April, fell in absolute love, and bought two jars before it goes completely out of stock at Rescue Spa. I used the first jar for two weeks and quickly realized I def. need a backup jar for winter. Nothing like it exists and I have tried just about everything. So jealous that you found it at TJs! The Vernix VG version is nice but nothing like the original, IMO. I def. wouldn’t pay $200+ for it like the original. I’ll be crying when I can’t get it but at least my skin will have lived its best life until then.",
+      "comment_id": "l5xns88",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "kqvujui",
+      "parser_warnings": [],
+      "row_id": "comment_0011",
+      "score_state": "2",
+      "timestamp_state": "2024-05-27T20:57:30.444000+0000"
+    },
+    {
+      "author_state": "RowanVC",
+      "body_text": "Yes, at their online site! I’ve posted about it a few times, but check out the TJ Maxx and Marshalls sites regularly. They actually carry some very high-end products at good discounts, but what they get in stock is unpredictable and they can sell out quickly (BR sells out particularly quickly, which isn’t surprising). When you go to the sites, go to the skincare section and sort by price high-to-low. I got Vernix, Crème Dermopurifante and most recently the Acides de Fruits cream. I’ve seen P50V recently as well, and some other products I can’t recall at the moment. But definitely check the sites often and check them both. (Not sure if you’re into fragrance or hair care but if so, check those too! More great deals to be had.) They do have a lot of overlap between them, but there are some differences in what they carry so it pays to check both. I stalk the sites regularly, I have them bookmarked. LOL I might have a problem. 🤫 Vernix old school is so so good!!",
+      "comment_id": "l5xpv3r",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "l5xns88",
+      "parser_warnings": [],
+      "row_id": "comment_0012",
+      "score_state": "2",
+      "timestamp_state": "2024-05-27T21:10:57.687000+0000"
+    },
+    {
+      "author_state": "MusicForAWhile",
+      "body_text": "Love this OP! Thank you for starting 😊 Here are my recent purchases: RAVE: iS Clinical Super Advanced Serum+ Watery and not sticky Vitamin C serum. Hasn’t irritated. Will definitely repurchase. It’s also almost completely colourless on opening (I’ve had the product for over 3 months before I opened it) which leads me to the following rant. RANT: not new product to me (have used several bottles previously) but Skinceuticals CE Ferulic. Dark orange on opening. Granted I had this current one 6 months before I opened the sealed box but I would’ve thought it wouldn’t be so dark if it’s been sealed the whole time. I’ve kept on going back to it over the years because I hadn’t found an L-AA serum to replace it. Now that I’ve found the iS Clinical serum not going to repurchase. NEUTRAL: Biologique Recherche Gel ADN Silkgen and Serum TEWL I love the texture of the Gel ADN Silkgen - it’s a gel which melts immediately into skin. It’s usually not hydrating enough alone on my oily but dehydrated skin though so probably would not repurchase. My BR aesthetician did recommend combining it with another moisturiser. Serum TEWL I’m undecided on. It’s a nice lightweight oil but not sure if it adds much for me. Although it’s summer here and we are in the middle of a heatwave so I might feel differently in winter. RANT: Reformulated Biologique Recherche Lait EV The original was my HG milk cleanser and I also adored the smell. The new one has a weird plasticky smell and seems ok as a cleanser. But I prefer Lait Dermo-S which I think seems gentler but cleanses well for me (I double cleanse with it and remove with damp cotton squares).",
+      "comment_id": "kqxgz5a",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0013",
+      "score_state": "6",
+      "timestamp_state": "2024-02-18T01:37:52.994000+0000"
+    },
+    {
+      "author_state": "notmysuggestedum",
+      "body_text": "Of course! I love hearing what everyone is using. We have such a good community. Thank you for all the work you and the other mods put it! Agreed with BR Lait EV. I think I got the reformulation, and it's not doing it for me. I'll use it up, but otherwise I'm going to stick to my HGs like the Holifrog Tashmoo and Dermalogica Sensitive Cleanser. Maybe I'll try the new Lait VIP 02, but as of now I'm happy with what I have. And have you tried any of the other iS Clinical serums?? I'm really interested in the brand in general.",
+      "comment_id": "kqzuctt",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "kqxgz5a",
+      "parser_warnings": [],
+      "row_id": "comment_0014",
+      "score_state": "5",
+      "timestamp_state": "2024-02-18T14:57:02.440000+0000"
+    },
+    {
+      "author_state": "MusicForAWhile",
+      "body_text": "I haven’t tried any of the other iS Clinical serums yet sorry! The Holifrog Tashmoo cleanser sounds awesome! I’ve added add to wish list to try next",
+      "comment_id": "kr56s1o",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "kqzuctt",
+      "parser_warnings": [],
+      "row_id": "comment_0015",
+      "score_state": "2",
+      "timestamp_state": "2024-02-19T15:00:26.229000+0000"
+    },
+    {
+      "author_state": "LSCKWEEN",
+      "body_text": "I am similar to you! Combo skin-oily and dehydrated. Anything BR recommended for moisturizer in the AM? Just curious :)",
+      "comment_id": "kshxuzn",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "kqxgz5a",
+      "parser_warnings": [],
+      "row_id": "comment_0016",
+      "score_state": "2",
+      "timestamp_state": "2024-02-28T05:56:25.696000+0000"
+    },
+    {
+      "author_state": "MusicForAWhile",
+      "body_text": "My favourite BR day moisturiser is Emulsion Gel Biosensible SR! It’s light but decently hydrating. I also like Creme VIP O2 when I need a bit more moisture.",
+      "comment_id": "ksjpxxx",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "kshxuzn",
+      "parser_warnings": [],
+      "row_id": "comment_0017",
+      "score_state": "2",
+      "timestamp_state": "2024-02-28T15:37:32.507000+0000"
+    },
+    {
+      "author_state": "heids1234",
+      "body_text": "New purchases and (so far) raves: SK-II Cleansing Oil: I’m not usually a fan of cleansing oils, I prefer balms (the very reasonably priced Beauty of Joseon Cleansing Balm is a firm favourite) because I usually don’t like the texture/viscosity of most cleansing oils, and some of them break me out. This one was a winner at first use. Texture is thin, glides smoothly on my face, not thick or sticky, removes makeup/sunscreen, emulsifies well, rinses off cleanly and leaves my face feeling soft and smooth. Importantly, this didn’t break me out. For comparison, I also had Peach and Lily’s cleansing oil in the cupboard which was thick and sticky and broke me out. I immediately gave it away as soon as I discovered SK-II. I have seen reviews comparing this one to what is apparently the HG cleansing oil - Shu Uemera Ultim8 cleansing oil - which I am still yet to try but for now I’m happy with SK-II, I will repurchase. NIOD SDSM2: I had been wanting to try this as it was highly recommended by Gothamista. My skin is combination but leans oily in the summer (which it is now in Australia where I live). I haven’t yet been able to find a Vitamin C serum that I can use in the summer as it’s too rich for my skin and i get too oily. I wanted an antioxidant rich product that I could use in the AM over summer. I tried NIOD Survival 0 which was great but still too rich for me in the morning. Enter NIOD SDSM2. Antioxidant rich and wonderfully hydrating. I spray this on my face, neck and chest as a first step after cleansing and it hydrates wonderfully and keeps me hydrated. Skin is soft and bouncy all day, fine lines are plumped. Bonus is the spray comes in a generously sized bottle so price per ml is very good. Will definitely repurchase and will probably keep this in my routine year round.",
+      "comment_id": "kqvvol9",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0018",
+      "score_state": "4",
+      "timestamp_state": "2024-02-17T19:50:19.137000+0000"
+    },
+    {
+      "author_state": "notmysuggestedum",
+      "body_text": "I've had the NIOD SDSM2 on my wishlist for a long time now. Once I'm out of my Avene spray I think I'll get around to purchasing it. I love the Survival 0, as it seems to have a noticeable anti-inflammatory effect that most products that claim to be anti-inflammatory don't have. Sorry it didn't work for you as a morning serum! And the SK-II cleansing oil sounds similar to the Dermalogica cleansing oil I love so much. What's the scent like?",
+      "comment_id": "kqvx9el",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "kqvvol9",
+      "parser_warnings": [],
+      "row_id": "comment_0019",
+      "score_state": "2",
+      "timestamp_state": "2024-02-17T19:58:56.808000+0000"
+    },
+    {
+      "author_state": "heids1234",
+      "body_text": "All good, Survival 0 is in my PM routine and I have been using it during spring/summer. I’m a big fan of NIOD in general, most products that I’ve tried from NIOD have found a permanent place in my routines. If SK-II has a smell I can’t really detect it? I use the essence (and that one definitely has a yeasty smell) but the cleansing oil is neutral to my nose. Do give the NIOD spray a try, I definitely could feel the effects even by end of day, especially for my neck! I kept marvelling at how soft and hydrated my neck is 😅. I have a HA serum in my AM routine that I’m thinking of dropping because SDSM2 is a good enough humectant. I only use it once a day cause my PM routine is already loaded with products but you could definitely use this twice a day. I haven’t used it all over body yet but I reckon it would be great for that too, especially during winter.",
+      "comment_id": "kqvznve",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "kqvx9el",
+      "parser_warnings": [],
+      "row_id": "comment_0020",
+      "score_state": "2",
+      "timestamp_state": "2024-02-17T20:12:20.027000+0000"
+    },
+    {
+      "author_state": "Senior-Zebra-9281",
+      "body_text": "Rave : Photozyme DNA 🧬 repair serum Like healthy glass skin in the bottle , skin looks healthy and soft silky not heavy plays well with other products Rants : Retin-a cream 0.025% cream absolutely oil slick mess not cosmetically elegant woke up following day with congestion and pimples In the cart 🛒: Glowbiotics calming restorative serum -includes peptides , probiotics , growth factor mimicking ingredients ( starting retinoids again )also hydrinity’s vivid serum would like to try a serum dedicated to hyperpigmentation",
+      "comment_id": "kqwegw1",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0021",
+      "score_state": "6",
+      "timestamp_state": "2024-02-17T21:35:21.411000+0000"
+    },
+    {
+      "author_state": "EcstaticImpression53",
+      "body_text": "Totally agree with that Retin-a assessment. I've never had a cosmetically elegant tretinoin prescription from my derm that plays well with other things. So I purchase mine through Dermatica now and like it a lot better. For my hyperpigmentation I've settled on Skinceuticals discoloration defense serum for now. I really like the results I've had. I've used Lytera 2.0 before too, but I like my skin just likes kojic acid and I like the dropper bottle That glowbiotics sounds super interesting! I'm so tempted now. My rosacea prone skin loves probiotics and peptides",
+      "comment_id": "kqwots3",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "kqwegw1",
+      "parser_warnings": [],
+      "row_id": "comment_0022",
+      "score_state": "2",
+      "timestamp_state": "2024-02-17T22:34:29.986000+0000"
+    },
+    {
+      "author_state": "Senior-Zebra-9281",
+      "body_text": "If you read the description of this product and see the actual pictures on glowbiotics website I think you’d be highly interested considering they made the product for rosacea prone skin Id be utilizing it for the purpose to calm the inflammation from the Retinoids.",
+      "comment_id": "kqwpipv",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "kqwots3",
+      "parser_warnings": [],
+      "row_id": "comment_0023",
+      "score_state": "3",
+      "timestamp_state": "2024-02-17T22:38:26.648000+0000"
+    },
+    {
+      "author_state": "robioladreams",
+      "body_text": "Rave: Eighth Day Regenerative Serum - I’ve only been using a few days but already my skin is calmer, clearer and softer! You can feel the tightening effect.",
+      "comment_id": "kqwoiu0",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0024",
+      "score_state": "5",
+      "timestamp_state": "2024-02-17T22:32:43.560000+0000"
+    },
+    {
+      "author_state": "MusicForAWhile",
+      "body_text": "Glad this works for you! I’ve used a whole bottle and unfortunately it didn’t do anything for me. I’ve had results with Neogenesis Recovery and TNS Advanced.",
+      "comment_id": "kqxhbr6",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "kqwoiu0",
+      "parser_warnings": [],
+      "row_id": "comment_0025",
+      "score_state": "3",
+      "timestamp_state": "2024-02-18T01:40:19.260000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "present": 25
+    },
+    "comments_parsed": 25,
+    "observable_comment_nodes": 25
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "notmysuggestedum",
+    "body_text": "Happy Saturday! Any rants, raves, or new purchases recently? Here's some of mine: RAVE: *Experiment Super Saturated* - Whoosh! Supremely hydrating, leaves skin a bit tacky, but goes away when putting a moisturizer over it. Also 1.35oz vs. the typical 1oz. Fast shipping, too. My sunscreen is drying, and this really helps keep my face from drying out during they day because of it. RAVE: *Holifrog Tashmoo Hydrating Water Lily Milky Face Wash* - Lovely milky wash. Leaves skin feeling hydrated but not like there's an obvious film on the face. Not sure why I hadn't repurchased it in a few years, but I'm glad I did. Would not use it to remove SPF or makeup though, as it's very gentle. Always 15% off with free shipping at LovelySkin.com with code SAVE15 (not affiliated, but IMO LovelySkin is the best \"Dermstore-like\" place to order skincare in the US. They're not owned by The Hut Group, who ruins everything they touch). RANT: *Biologique Recherche Lait Dermo-S and Lait E.V.* - I was hoping these would be similar to the discontinued Lait U, but they're more first cleansers that you tissue off and leave an obvious film. Won't be repurchasing. New Purchase (neutral): *Biologique Recherche Creme Masque Vernix NON-reformulation*: This is a nice cream, though I'm not blown away or anything. I also think it irritates my under eye area. Glad I tried it, and will be finishing it up, but won't be repurchasing. New Purchase (neutral, but may become a rave): *Experiment Buffer Jelly* - This is a thick oil, both very emollient with pretty decent occlusion. I've only used it once, and I liked it, but I think it was a tad bit much. I'm going to try using it mixed in with Super Saturated, like they suggest.",
+    "score_state": "11",
+    "timestamp_state": "2024-02-17T18:29:17.487000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddictionLux/comments/1at8nfx/rants_raves_new_purchases_thread/",
+  "thread": {
+    "permalink": "/r/SkincareAddictionLux/comments/1at8nfx/rants_raves_new_purchases_thread/",
+    "subreddit": "SkincareAddictionLux",
+    "thread_id": "1at8nfx",
+    "title": "Rants, Raves, New Purchases Thread"
+  },
+  "warnings": [
+    "thread declares 38 comments; 25 captured (13 not captured)"
+  ]
+}

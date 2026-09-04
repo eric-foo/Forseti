@@ -1,0 +1,271 @@
+{
+  "schema_version": "consumer_brand_phase2_search_v1",
+  "subject": "Experiment Beauty",
+  "cycle_id": "EXPERIMENT-BEAUTY-UNDERSTANDING-20260905-001",
+  "jobs": [
+    {
+      "job_id": "P2-A01-C",
+      "axis_id": "hydration_barrier_visible_results",
+      "goal": "corroborate_or_segment",
+      "query": "\"Experiment Beauty\" (\"Super Saturated\" OR \"Molecular Mesh\") hydration dry dehydrated climate tretinoin",
+      "executed_at": "2026-09-04T20:37:11Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A01-C"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A01-V",
+      "axis_id": "hydration_barrier_visible_results",
+      "goal": "compare_switch_or_value",
+      "query": "\"Experiment Beauty\" hydration switched OR replaced OR repurchase Dieux Regimen Skinfix",
+      "executed_at": "2026-09-04T20:37:16Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A01-V"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A01-D",
+      "axis_id": "hydration_barrier_visible_results",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Super Saturated\" OR \"Molecular Mesh\" best OR holy grail OR did nothing OR dried",
+      "executed_at": "2026-09-04T20:37:22Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A01-D"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A02-C",
+      "axis_id": "irritation_breakout_active_condition_fit",
+      "goal": "corroborate_or_segment",
+      "query": "\"Experiment Beauty\" breakout burning irritation eczema rosacea sensitive tretinoin",
+      "executed_at": "2026-09-04T20:37:28Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A02-C"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A02-V",
+      "axis_id": "irritation_breakout_active_condition_fit",
+      "goal": "compare_switch_or_value",
+      "query": "\"Super Saturated\" breakout returned switched alternative",
+      "executed_at": "2026-09-04T20:37:35Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A02-V"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A02-D",
+      "axis_id": "irritation_breakout_active_condition_fit",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Experiment Beauty\" soothing sensitive skin no irritation holy grail",
+      "executed_at": "2026-09-04T20:37:42Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A02-D"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A03-C",
+      "axis_id": "texture_finish_layering_routine_fit",
+      "goal": "corroborate_or_segment",
+      "query": "\"Experiment Beauty\" sticky tacky slimy pilling makeup layering absorption",
+      "executed_at": "2026-09-04T20:37:48Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A03-C"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A03-V",
+      "axis_id": "texture_finish_layering_routine_fit",
+      "goal": "compare_switch_or_value",
+      "query": "\"Super Saturated\" texture versus Regimen Wave Summer Fridays switched",
+      "executed_at": "2026-09-04T20:37:54Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A03-V"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A03-D",
+      "axis_id": "texture_finish_layering_routine_fit",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Experiment Beauty\" texture elegant easy to layer OR unusable sticky",
+      "executed_at": "2026-09-04T20:38:01Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A03-D"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A04-C",
+      "axis_id": "packaging_dispensing_durability",
+      "goal": "corroborate_or_segment",
+      "query": "\"Experiment Beauty\" packaging pump nozzle tube ripped broke refill",
+      "executed_at": "2026-09-04T20:38:07Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A04-C"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A04-V",
+      "axis_id": "packaging_dispensing_durability",
+      "goal": "compare_switch_or_value",
+      "query": "\"Experiment Beauty\" packaging returned replacement switched",
+      "executed_at": "2026-09-04T20:38:13Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A04-V"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A04-D",
+      "axis_id": "packaging_dispensing_durability",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Experiment Beauty\" packaging love durable refill easy",
+      "executed_at": "2026-09-04T20:38:19Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A04-D"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A05-C",
+      "axis_id": "price_value_quantity_access",
+      "goal": "corroborate_or_segment",
+      "query": "\"Experiment Beauty\" expensive worth price small bottle quantity refill Canada",
+      "executed_at": "2026-09-04T20:38:26Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A05-C"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A05-V",
+      "axis_id": "price_value_quantity_access",
+      "goal": "compare_switch_or_value",
+      "query": "\"Experiment Beauty\" cheaper alternative dupe switched Aquaphor Dieux",
+      "executed_at": "2026-09-04T20:38:32Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A05-V"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A05-D",
+      "axis_id": "price_value_quantity_access",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Experiment Beauty\" worth every penny repurchase value",
+      "executed_at": "2026-09-04T20:38:39Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A05-D"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A06-C",
+      "axis_id": "formula_consistency_quality_service_trust",
+      "goal": "corroborate_or_segment",
+      "query": "\"Experiment Beauty\" formula changed ingredients smell batch hair contamination customer service",
+      "executed_at": "2026-09-04T20:38:46Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A06-C"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A06-V",
+      "axis_id": "formula_consistency_quality_service_trust",
+      "goal": "compare_switch_or_value",
+      "query": "\"Experiment Beauty\" quality issue returned switched customer service resolution",
+      "executed_at": "2026-09-04T20:38:51Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A06-V"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A06-D",
+      "axis_id": "formula_consistency_quality_service_trust",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Experiment Beauty\" consistent formula excellent customer service resolved",
+      "executed_at": "2026-09-04T20:38:57Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A06-D"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A07-C",
+      "axis_id": "repeat_purchase_switching_destinations",
+      "goal": "corroborate_or_segment",
+      "query": "\"Experiment Beauty\" repurchase returned stopped using buy again",
+      "executed_at": "2026-09-04T20:39:03Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A07-C"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A07-V",
+      "axis_id": "repeat_purchase_switching_destinations",
+      "goal": "compare_switch_or_value",
+      "query": "\"Experiment Beauty\" switched to OR going back to OR replaced with",
+      "executed_at": "2026-09-04T20:39:09Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A07-V"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A07-D",
+      "axis_id": "repeat_purchase_switching_destinations",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Experiment Beauty\" indispensable holy grail never without OR regret buying",
+      "executed_at": "2026-09-04T20:39:15Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A07-D"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A08-C",
+      "axis_id": "portfolio_product_routine_fit",
+      "goal": "corroborate_or_segment",
+      "query": "\"Experiment Beauty\" routine Super Saturated Molecular Mesh Buffer Jelly Plasma Wash Softwear",
+      "executed_at": "2026-09-04T20:39:21Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A08-C"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A08-V",
+      "axis_id": "portfolio_product_routine_fit",
+      "goal": "compare_switch_or_value",
+      "query": "\"Experiment Beauty\" favorite product least favorite switched product",
+      "executed_at": "2026-09-04T20:39:28Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A08-V"
+      ],
+      "selected_target_ids": []
+    },
+    {
+      "job_id": "P2-A08-D",
+      "axis_id": "portfolio_product_routine_fit",
+      "goal": "disconfirm_or_strongest_delight",
+      "query": "\"Experiment Beauty\" full routine best products disappointing products",
+      "executed_at": "2026-09-04T20:39:34Z",
+      "serp_packet_artifact_ids": [
+        "serp-P2-A08-D"
+      ],
+      "selected_target_ids": []
+    }
+  ]
+}

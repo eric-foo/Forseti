@@ -1,0 +1,157 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": null,
+    "captured_matches_declared_total": true,
+    "comments_captured": 8,
+    "comments_not_captured": 0,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 8,
+    "max_captured_depth": 1
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Welcome to r/skincare_addiction! We'd like to take this time to remind you of a few things: Do not ask for a diagnosis/treatment advice for acne or other medical conditions, and do not play doctor What constitutes medical advice? \"What is this?\" This is asking someone to diagnose the issue, and is medical advice. \"What should I do?\" This is asking someone to advise treatment, and is medical advice. \"Should I go to the doctor?\" This is asking if you should seek treatment, and ergo, medical advice. If you would ask the question of your doctor, it falls under this rule and not allowed. As a general rule, asking for medical advice from internet strangers is never a good idea. If you have questions regarding your acne or other medical condition, you are advised to contact your healthcare provider. If you are a medical provider, we would gently remind you that users are not patients, and you should not be offering medical advice to people who are not your patients. I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "oy9ldhq",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2026-07-18T10:40:36.108000+0000"
+    },
+    {
+      "author_state": "AssignmentFull5991",
+      "body_text": "I swear by deuix! I’ll use instant angel on drier days and air Angel on others.",
+      "comment_id": "oyai153",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "1",
+      "timestamp_state": "2026-07-18T14:03:05.062000+0000"
+    },
+    {
+      "author_state": "akkeri16",
+      "body_text": "Thanks!",
+      "comment_id": "oyer930",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "oyai153",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "1",
+      "timestamp_state": "2026-07-19T03:03:03.809000+0000"
+    },
+    {
+      "author_state": "mmmcheezy",
+      "body_text": "i'm obsessed w/ experiment beauty's molecular mesh.",
+      "comment_id": "oyb5ygq",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "1",
+      "timestamp_state": "2026-07-18T15:59:23.314000+0000"
+    },
+    {
+      "author_state": "akkeri16",
+      "body_text": "Thanks!",
+      "comment_id": "oyerayn",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "oyb5ygq",
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "1",
+      "timestamp_state": "2026-07-19T03:03:24.211000+0000"
+    },
+    {
+      "author_state": "redditsaiditreadit",
+      "body_text": "I really like the purito mighty bamboo cream",
+      "comment_id": "oyb6to8",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "1",
+      "timestamp_state": "2026-07-18T16:03:26.477000+0000"
+    },
+    {
+      "author_state": "akkeri16",
+      "body_text": "Thanks!",
+      "comment_id": "oyeqwh8",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "oyb6to8",
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "1",
+      "timestamp_state": "2026-07-19T03:00:45.729000+0000"
+    },
+    {
+      "author_state": "PatsyStonesBun",
+      "body_text": "Maybe Farmacy Honey Milk Hydrating Essence?",
+      "comment_id": "oyixm8s",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "1",
+      "timestamp_state": "2026-07-19T18:46:00.015000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 7
+    },
+    "comments_parsed": 8,
+    "observable_comment_nodes": 8
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "akkeri16",
+    "body_text": "I'm looking for a base-layer hydrator (a light moisturiser or a serum) that is non-greasy and non-occlusive. I have sensitive combination skin that tends oily, so I'm looking for a foundational product that doesn't add oil to my face but rather sinks in and nourishes. Bonus points if it has calming or soothing properties (I am caucasian and prone to inflammatory redness). The closest product I've found is ILIA's The Base Face Milk, which I stumbled upon in a beauty store, but it isn't very hydrating and can create shine if used in large amounts. I'm sure (or, at least, am hoping) there are more appropriate products out there. My current routine also includes Macrene Actives serum and Biologique Recherche Lait EV, so I'm OK with higher price points. Any suggestions would be gratefully received.",
+    "score_state": "1",
+    "timestamp_state": "2026-07-18T10:40:35.922000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/Skincare_Addiction/comments/1uzsje4/seeking_nongreasy_sinkin_hydration_for_sensitive/",
+  "thread": {
+    "permalink": "/r/Skincare_Addiction/comments/1uzsje4/seeking_nongreasy_sinkin_hydration_for_sensitive/",
+    "subreddit": "Skincare_Addiction",
+    "thread_id": "1uzsje4",
+    "title": "Seeking non-greasy, sink-in hydration for sensitive combination skin"
+  },
+  "warnings": []
+}

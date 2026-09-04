@@ -1,0 +1,349 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": false,
+    "captured_matches_declared_total": false,
+    "comments_captured": 24,
+    "comments_not_captured": 7,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 31,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "RowanVC",
+      "body_text": "Yes and I really love it! I am also a huge fan of Gleanser and the Prequel brand in general, but I also love Experiment Beauty. I think the Plasma Wash is a really great product. I’d almost say I like it a tad more than Gleanser, but I’m just not sure. It’s a tough call! I do find it creamier than Gleanser and I personally like that.",
+      "comment_id": "lvantxh",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0001",
+      "score_state": "15",
+      "timestamp_state": "2024-11-04T03:45:33.194000+0000"
+    },
+    {
+      "author_state": "rspring28",
+      "body_text": "I felt like Gleanser didn’t rinse off easily and it drove me crazy, like I had to keep rinsing??? How do the experiences compare? 👀",
+      "comment_id": "m1yp3d8",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "lvantxh",
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "3",
+      "timestamp_state": "2024-12-14T03:04:36.668000+0000"
+    },
+    {
+      "author_state": "RowanVC",
+      "body_text": "Yeah, I think Plasma Wash may feel a bit better in that regard vs. Gleanser (not as slick, better lather), but if you don’t like that feeling, it might just be the nature of glycerin-based cleansers that you might not like. I think they share a certain feel because of the high glycerin content. Plasma Wash specifically is touted to have “moisture depositing” properties, so it’s going to impart some of that glycerin and other good stuff on the skin and have it not rinse off. I don’t find it filmy or anything at all, I love it, but if you’re looking for that squeaky clean feel, it might not satisfy? Not sure I’m making any sense. I don’t want to make it sound like it doesn’t clean, it does! But I just know these glycerin cleansers have a feel that not everyone may like. I love Plasma Wash and I still think it edges out Gleanser for me now, but they’re both really great.",
+      "comment_id": "m1yrutv",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "m1yp3d8",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "6",
+      "timestamp_state": "2024-12-14T03:24:15.277000+0000"
+    },
+    {
+      "author_state": "No_Library4071",
+      "body_text": "No but I LOVE their lip balm- one of the best I’ve tried",
+      "comment_id": "lvat86u",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "11",
+      "timestamp_state": "2024-11-04T04:24:50.037000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "Agree, one of the best",
+      "comment_id": "lvccw7d",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "lvat86u",
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "3",
+      "timestamp_state": "2024-11-04T13:22:00.160000+0000"
+    },
+    {
+      "author_state": "liminal_sojournist",
+      "body_text": "I love the lip balm too! I like it way better than the one from Paula's choice",
+      "comment_id": "lvgrdds",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "lvat86u",
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "3",
+      "timestamp_state": "2024-11-05T03:24:54.415000+0000"
+    },
+    {
+      "author_state": "ninakix",
+      "body_text": "It is fantastic. If you like it you may also like Eadem lip balm for colors for day",
+      "comment_id": "lvhpbco",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "lvat86u",
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "3",
+      "timestamp_state": "2024-11-05T08:05:06.433000+0000"
+    },
+    {
+      "author_state": "No_Library4071",
+      "body_text": "Thank you! I also love the ones from Victoria Beckham’s line. She’s doing a great job with her products.",
+      "comment_id": "lvk5x6e",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "lvhpbco",
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "4",
+      "timestamp_state": "2024-11-05T18:04:49.137000+0000"
+    },
+    {
+      "author_state": "rspring28",
+      "body_text": "Literally life changing.",
+      "comment_id": "m1yp4qz",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "lvat86u",
+      "parser_warnings": [],
+      "row_id": "comment_0009",
+      "score_state": "1",
+      "timestamp_state": "2024-12-14T03:04:53.010000+0000"
+    },
+    {
+      "author_state": "Content_Sherbert7809",
+      "body_text": "I have both as well! I’d say the Experiment cleanser definitely feels creamier, fancier? I do notice the occasional eye sting from the Experiment where I don’t find that with the Gleanser but! I have ridiculously dramatic eyes. I also feel like my rosacea-prone skin just looks happy after using the Experiment. Might be the more moisturizing/creamy texture?",
+      "comment_id": "lvd49po",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0010",
+      "score_state": "9",
+      "timestamp_state": "2024-11-04T15:54:48.335000+0000"
+    },
+    {
+      "author_state": "rspring28",
+      "body_text": "I always felt like Gleanser took a lot of work to rinse and it was frustrating, it felt like it left a film on my skin? Does the Plasma Wash feel the same when rinsing? Or does it rinse more clean?",
+      "comment_id": "m1ypcoy",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "lvd49po",
+      "parser_warnings": [],
+      "row_id": "comment_0011",
+      "score_state": "2",
+      "timestamp_state": "2024-12-14T03:06:28.911000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "",
+      "comment_id": "o7smxk2",
+      "comment_posture": "deleted",
+      "depth": 2,
+      "parent_id": "m1ypcoy",
+      "parser_warnings": [],
+      "row_id": "comment_0012",
+      "score_state": "1",
+      "timestamp_state": "2026-02-28T00:08:33.745000+0000"
+    },
+    {
+      "author_state": "cdv714",
+      "body_text": "Yes! It’s not as slimey as Gleanser and doesn’t foam as much as Gleanser but it does remove makeup better than Gleanser. I feel that hydrating wise/softness wise they are pretty similar",
+      "comment_id": "lvaen8a",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0013",
+      "score_state": "8",
+      "timestamp_state": "2024-11-04T02:44:11.415000+0000"
+    },
+    {
+      "author_state": "cdv714",
+      "body_text": "Will add to say if Gleanser is working for you, I would stick with it since it’s similar and you get double for the same price. I did see that Prequel is releasing an oil cleanser to use with Gleanser so I’m very curious with that.",
+      "comment_id": "lvaf285",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "lvaen8a",
+      "parser_warnings": [],
+      "row_id": "comment_0014",
+      "score_state": "5",
+      "timestamp_state": "2024-11-04T02:46:51.979000+0000"
+    },
+    {
+      "author_state": "tofumeatballcannon",
+      "body_text": "Ooh where did you see that?",
+      "comment_id": "lvbez2b",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "lvaf285",
+      "parser_warnings": [],
+      "row_id": "comment_0015",
+      "score_state": "1",
+      "timestamp_state": "2024-11-04T07:55:19.816000+0000"
+    },
+    {
+      "author_state": "omggponies",
+      "body_text": "Does it smell better than the gleanser?",
+      "comment_id": "lvaevmw",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "lvaen8a",
+      "parser_warnings": [],
+      "row_id": "comment_0016",
+      "score_state": "1",
+      "timestamp_state": "2024-11-04T02:45:40.918000+0000"
+    },
+    {
+      "author_state": "cdv714",
+      "body_text": "There’s no added fragrance so it’s the glycerin smell similar to prequel",
+      "comment_id": "lvafadl",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "lvaevmw",
+      "parser_warnings": [],
+      "row_id": "comment_0017",
+      "score_state": "3",
+      "timestamp_state": "2024-11-04T02:48:19.185000+0000"
+    },
+    {
+      "author_state": "Klutzy_Action_9379",
+      "body_text": "wtf thwire website looks sooo cool",
+      "comment_id": "lve0td7",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0018",
+      "score_state": "5",
+      "timestamp_state": "2024-11-04T18:35:23.959000+0000"
+    },
+    {
+      "author_state": "liminal_sojournist",
+      "body_text": "Its giving the substance lol",
+      "comment_id": "lvgr4jr",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "lve0td7",
+      "parser_warnings": [],
+      "row_id": "comment_0019",
+      "score_state": "1",
+      "timestamp_state": "2024-11-05T03:23:24.200000+0000"
+    },
+    {
+      "author_state": "Klutzy_Action_9379",
+      "body_text": "I wonder how they did it",
+      "comment_id": "lvgr69p",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "lvgr4jr",
+      "parser_warnings": [],
+      "row_id": "comment_0020",
+      "score_state": "1",
+      "timestamp_state": "2024-11-05T03:23:41.938000+0000"
+    },
+    {
+      "author_state": "kermitloki",
+      "body_text": "I know this thread is a bit old but in case you still want feedback. I tried the Gleanser. I didn’t like the film it would leave behind. Also I didn’t think it cleansed my skin properly. But I think the product just wasn’t for me. I tried the Plasma Wash and it replaced my previous cleanser. I love this cleanser. It leaves my face soft without leaving a film behind and I feel that it gets all of my sunscreen off. Also leaves my lips soft even if they were chapped beforehand for some reason. I had used it alongside tretinoin with no problems. I’m on Accutane now and its still working now. It’s a great product but as always YMMV. It’s worth trying out but if you already love Gleanser then it’s okay to stick to that one.",
+      "comment_id": "mir11id",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0021",
+      "score_state": "5",
+      "timestamp_state": "2025-03-20T05:26:12.139000+0000"
+    },
+    {
+      "author_state": "jtrelel",
+      "body_text": "It’s really good at removing sunscreen without having to double cleanse. Life changing",
+      "comment_id": "lvuatei",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0022",
+      "score_state": "2",
+      "timestamp_state": "2024-11-07T03:45:51.574000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "I’ve tried all the skincare products except the mask and they are fantastic. I also think they have great customer service. I have very sensitive dry skin that is also prone to clogged pores and the products work well for me.",
+      "comment_id": "lxcs01a",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0023",
+      "score_state": "2",
+      "timestamp_state": "2024-11-16T00:11:20.986000+0000"
+    },
+    {
+      "author_state": "eonnagata",
+      "body_text": "late to the convo - i bought two bottles of this Plasma wash and just finished using them. i have rosacea so im always looking for gentle products - i'd say this cleanses well BUT it stings my eyes. also i find that the nozzle in the tube is too large - the gel always pools out onto the lid, even though i'm only using the cleanser at home (imo it's not very travel-friendly). I think something that cleanses equally well, doesn't sting my eyes, and is more travel-friendly is Geek & Gorgeous' Jelly Joker, and it's cheaper too! i am based in Singapore and have been using a freight forwarder to buy US brands, so brands like Geek & Gorgeous that ships internationally is just more convenient for me.",
+      "comment_id": "mirb5gw",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0024",
+      "score_state": "1",
+      "timestamp_state": "2025-03-20T07:07:54.763000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "deleted": 1,
+      "present": 23
+    },
+    "comments_parsed": 24,
+    "observable_comment_nodes": 24
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "honeydew_juju",
+    "body_text": "I want to know if this cleanser is non stripping and good on tret/taz skin. I’m currently using my 2nd bottle of Prequel Glenser, still liking it very much. If anyone has any feedback, I’d be appreciated!",
+    "score_state": "22",
+    "timestamp_state": "2024-11-04T02:18:21.147000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddictionLux/comments/1gj3vq4/has_anyone_used_experiment_plasma_wash/",
+  "thread": {
+    "permalink": "/r/SkincareAddictionLux/comments/1gj3vq4/has_anyone_used_experiment_plasma_wash/",
+    "subreddit": "SkincareAddictionLux",
+    "thread_id": "1gj3vq4",
+    "title": "Has anyone used Experiment Plasma Wash?"
+  },
+  "warnings": [
+    "thread declares 31 comments; 24 captured (7 not captured)"
+  ]
+}

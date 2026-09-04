@@ -1,0 +1,193 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": false,
+    "captured_matches_declared_total": false,
+    "comments_captured": 11,
+    "comments_not_captured": 2,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 13,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "AssociateOld1303",
+      "body_text": "For wrinkles: peptides, for dryness: a serum with hyaluronic acid wait 2-3 minutes and then apply an oil 100% jojoba for example.",
+      "comment_id": "oiiya0p",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0001",
+      "score_state": "2",
+      "timestamp_state": "2026-04-27T09:13:40.770000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "",
+      "comment_id": "oil8b88",
+      "comment_posture": "deleted",
+      "depth": 1,
+      "parent_id": "oiiya0p",
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "1",
+      "timestamp_state": "2026-04-27T17:00:17.842000+0000"
+    },
+    {
+      "author_state": "AssociateOld1303",
+      "body_text": "Tetra",
+      "comment_id": "oiwr3hk",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "oil8b88",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "2",
+      "timestamp_state": "2026-04-29T09:44:39.806000+0000"
+    },
+    {
+      "author_state": "Proof-Fix2766",
+      "body_text": "Depends on your skin type and what you’ve tried that you don’t like. Moisturizer was my biggest struggle on the planet because I have sometimes sensitive combo-skin, but luckily little to no acne to contend with. My biggest hate is moisturizer that pills because I don’t wear not a drop of makeup, and I have a simpler skincare routine, so why would my lotion be pilling unless the product sucks lol? I’m currently using this interesting product called Molecular Mesh. It’s different than other things I’ve tried. It locks in moisture well due to being an emollient, but never pills. It’s too thick for daytime use for me personally tho so I just wear it at night. In the daytime I use Byoma milky toner as a moisturizer. It’s the most lightweight thing I could find that provides moisture and wears well under my mineral spf",
+      "comment_id": "oiiioo3",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "1",
+      "timestamp_state": "2026-04-27T06:49:02.665000+0000"
+    },
+    {
+      "author_state": "Wise_Ad_928",
+      "body_text": "My skin. 52yo Female. Dry. Wrinkles Eye bags I have small budget and liver issues. Please help me How do I post a pic?",
+      "comment_id": "oiimaa3",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "1",
+      "timestamp_state": "2026-04-27T07:20:36.893000+0000"
+    },
+    {
+      "author_state": "Wise_Ad_928",
+      "body_text": "My skin is looking terrible. Budget friendly products.",
+      "comment_id": "oiimkdg",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "1",
+      "timestamp_state": "2026-04-27T07:23:09.726000+0000"
+    },
+    {
+      "author_state": "squarahann",
+      "body_text": "A chemical exfoliant can help a lot. Lactic acid is a mild one to start with. Use every few days and make sure to use sunscreen. Other option are azelaic acid, retinols and retinols. The ordinary has a bha/aha mask that you could use weekly. In addition, heavily moisturize. I like La Roche posay cicaplast b5+. This helps remove old skin and moisturize new skin. Also sunscreen.",
+      "comment_id": "oij4c44",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "1",
+      "timestamp_state": "2026-04-27T10:08:29.897000+0000"
+    },
+    {
+      "author_state": "EauRouge___",
+      "body_text": "Use a moisturising toner, then a serum like a peptide or hyaluronic one, then moisturise - if that’s not enough follow up with a barrier cream",
+      "comment_id": "oil07e3",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "1",
+      "timestamp_state": "2026-04-27T16:23:34.533000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "",
+      "comment_id": "oiii4v6",
+      "comment_posture": "deleted",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0009",
+      "score_state": "2",
+      "timestamp_state": "2026-04-27T06:44:18.283000+0000"
+    },
+    {
+      "author_state": "Wise_Ad_928",
+      "body_text": "Which one please? Serum? Dry, aging icky skin",
+      "comment_id": "oiime9p",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "oiii4v6",
+      "parser_warnings": [],
+      "row_id": "comment_0010",
+      "score_state": "1",
+      "timestamp_state": "2026-04-27T07:21:36.333000+0000"
+    },
+    {
+      "author_state": "Ledophile",
+      "body_text": "I’m personally a big fan of the brand Neutrogena. It has reasonably priced items that’ll take care of all the concerns that you’ve listed, plus exceptional sunscreen products. An excellent line of products for dry skin is the HydroBoost line. You can find them in most WallyWorld stores,Walgreen’s,Target and the like………",
+      "comment_id": "oikrjn6",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "oiime9p",
+      "parser_warnings": [],
+      "row_id": "comment_0011",
+      "score_state": "1",
+      "timestamp_state": "2026-04-27T15:43:47.764000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "deleted": 2,
+      "present": 9
+    },
+    "comments_parsed": 11,
+    "observable_comment_nodes": 11
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "Original-Value-704",
+    "body_text": "How to treat dry skin on face, lips and neck? Thanks",
+    "score_state": "4",
+    "timestamp_state": "2026-04-27T05:07:49.230000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/30PlusSkinCare/comments/1swu4a8/dry_skin/",
+  "thread": {
+    "permalink": "/r/30PlusSkinCare/comments/1swu4a8/dry_skin/",
+    "subreddit": "30PlusSkinCare",
+    "thread_id": "1swu4a8",
+    "title": "Dry skin"
+  },
+  "warnings": [
+    "thread declares 13 comments; 11 captured (2 not captured)"
+  ]
+}

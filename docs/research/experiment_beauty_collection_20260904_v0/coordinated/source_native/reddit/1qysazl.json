@@ -1,0 +1,360 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": false,
+    "captured_matches_declared_total": false,
+    "comments_captured": 25,
+    "comments_not_captured": 9,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 34,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "Emergency-Tennis5221",
+      "body_text": "My fave hydrating/plumping serum is SkinCeuticals HA Intensifier Multi-Glycan and I'll never ever swap it out now that I have it in my routine! I was previously using Alastin HA Immerse and this is SO MUCH better, and I liked that one! Also you can order skinbetter directly from skinbeautifulrx without needing to register and they always have sales! I am 39/perimenopause and have an emphasis on anti-aging in my routine.",
+      "comment_id": "o469r37",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0001",
+      "score_state": "15",
+      "timestamp_state": "2026-02-08T00:45:19.080000+0000"
+    },
+    {
+      "author_state": "Living-Assumption272",
+      "body_text": "Another vote for HA Intensifier. If I could drench my entire body in it, I would.",
+      "comment_id": "o498964",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "o469r37",
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "5",
+      "timestamp_state": "2026-02-08T14:25:20.637000+0000"
+    },
+    {
+      "author_state": "bluemalva",
+      "body_text": "HA intensifier is soooo good!",
+      "comment_id": "o46g9jf",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "o469r37",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "3",
+      "timestamp_state": "2026-02-08T01:25:40.119000+0000"
+    },
+    {
+      "author_state": "Emergency-Tennis5221",
+      "body_text": "So so so good. Totally kicked things up a notch.",
+      "comment_id": "o46k4wm",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "o46g9jf",
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "2",
+      "timestamp_state": "2026-02-08T01:50:13.723000+0000"
+    },
+    {
+      "author_state": "Professional_Day6200",
+      "body_text": "Regimen Lab Wave Serum",
+      "comment_id": "o46iku6",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "12",
+      "timestamp_state": "2026-02-08T01:40:21.063000+0000"
+    },
+    {
+      "author_state": "sangueblu03",
+      "body_text": "Arguably the best hydrator on the market, and reasonably priced. I’ve used a few Regimen Lab products and am a huge fan - Wave is next.",
+      "comment_id": "o47khqf",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "o46iku6",
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "7",
+      "timestamp_state": "2026-02-08T06:03:20.443000+0000"
+    },
+    {
+      "author_state": "Unlikely_Creative",
+      "body_text": "Thank you all so much! So many good options to check out!",
+      "comment_id": "o4h5hx7",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "1",
+      "timestamp_state": "2026-02-09T18:32:51.177000+0000"
+    },
+    {
+      "author_state": "aregeeone731",
+      "body_text": "I’m 52. My skin is like the Sahara. My go to for hydration is Hera Signia. Made by Amore Pacific. It’s Korean. Around $250 for the jar. I’ve used everything from skinmedica to Bader to a laundry list. This one is the one I go to for glow.",
+      "comment_id": "o46hwwc",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "5",
+      "timestamp_state": "2026-02-08T01:36:07.630000+0000"
+    },
+    {
+      "author_state": "alpacaapicnic",
+      "body_text": "I love Sisley Hydra Global serum for this",
+      "comment_id": "o46sb8a",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0009",
+      "score_state": "4",
+      "timestamp_state": "2026-02-08T02:41:36.347000+0000"
+    },
+    {
+      "author_state": "Public_Entrance_4214",
+      "body_text": "I love Kate Somerville HydraKate serum, moisturizing and glass skin effect. I also like SkinFix water gel for daytime, their Triple Lipid for PM.",
+      "comment_id": "o46u235",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0010",
+      "score_state": "4",
+      "timestamp_state": "2026-02-08T02:52:45.885000+0000"
+    },
+    {
+      "author_state": "Evening-Tune-500",
+      "body_text": "Le mieuxs serums are formulated with HA as usually the second or third ingredient! I use the tgfb booster and rx complex serum and they keep me super hydrated.",
+      "comment_id": "o4706yj",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0011",
+      "score_state": "3",
+      "timestamp_state": "2026-02-08T03:32:27.910000+0000"
+    },
+    {
+      "author_state": "lorihamlit",
+      "body_text": "Their HA is great for people who shave also. Me and my husband use it after shaving and it’s so soothing!",
+      "comment_id": "o4bsqo5",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "o4706yj",
+      "parser_warnings": [],
+      "row_id": "comment_0012",
+      "score_state": "2",
+      "timestamp_state": "2026-02-08T22:02:36.309000+0000"
+    },
+    {
+      "author_state": "Evening-Tune-500",
+      "body_text": "Oh I never thought to use it as an after shave! Thanks for sharing!",
+      "comment_id": "o4cg0y5",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "o4bsqo5",
+      "parser_warnings": [],
+      "row_id": "comment_0013",
+      "score_state": "2",
+      "timestamp_state": "2026-02-09T00:14:28.510000+0000"
+    },
+    {
+      "author_state": "Missmessc",
+      "body_text": "Le Mieux Tgf-B Booster. Super hydrating with peptides.",
+      "comment_id": "o476a5t",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0014",
+      "score_state": "3",
+      "timestamp_state": "2026-02-08T04:13:30.341000+0000"
+    },
+    {
+      "author_state": "twinkiemarr",
+      "body_text": "I like Elizabeth Arden Prevage Intensive serum. Prevage line has a few other serums too that I like.",
+      "comment_id": "o48kj1o",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0015",
+      "score_state": "2",
+      "timestamp_state": "2026-02-08T11:38:02.079000+0000"
+    },
+    {
+      "author_state": "Dependent_Swim_899",
+      "body_text": "I love Obagi daily hydro drops!",
+      "comment_id": "o4ao48i",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0016",
+      "score_state": "2",
+      "timestamp_state": "2026-02-08T18:42:32.201000+0000"
+    },
+    {
+      "author_state": "Jazzlike_Ostrich_250",
+      "body_text": "Experiment: https://experimentbeauty.com/products/super-saturated So good and so affordable. The texture might be a bit offputting to some but there's nothing nearly as hydrating imo. I layer it under a moisturizer which removes most of the tack. They also have it at Sephora.",
+      "comment_id": "o4ckpsv",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0017",
+      "score_state": "2",
+      "timestamp_state": "2026-02-09T00:40:17.592000+0000"
+    },
+    {
+      "author_state": "IndependentCatch5065",
+      "body_text": "I’ve heard good things about hydrinity ha serum! Next on my list to order lol",
+      "comment_id": "o46p6z8",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0018",
+      "score_state": "1",
+      "timestamp_state": "2026-02-08T02:21:59.584000+0000"
+    },
+    {
+      "author_state": "TalkFlipperToMe",
+      "body_text": "I love Hydrinity. YSS has it at 26% off.",
+      "comment_id": "o49h4qx",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "o46p6z8",
+      "parser_warnings": [],
+      "row_id": "comment_0019",
+      "score_state": "1",
+      "timestamp_state": "2026-02-08T15:14:31.912000+0000"
+    },
+    {
+      "author_state": "dmmge",
+      "body_text": "Environ Focus Care Moisture+ HA Intensive Serum. I’ve being using it for a year now and I love it! my skin is on the oily side but gets dehydrated often from actives. it’s been really effective in getting my skin’s plumpness back",
+      "comment_id": "o46vuz7",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0020",
+      "score_state": "1",
+      "timestamp_state": "2026-02-08T03:04:08.507000+0000"
+    },
+    {
+      "author_state": "Upset-Mushroom4365",
+      "body_text": "I love DRMTLGY's Needle less serum",
+      "comment_id": "o46xy9x",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0021",
+      "score_state": "1",
+      "timestamp_state": "2026-02-08T03:17:40.951000+0000"
+    },
+    {
+      "author_state": "Ok-Ring8800",
+      "body_text": "oh yes this is a nice one for hydration!",
+      "comment_id": "o47e7hy",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "o46xy9x",
+      "parser_warnings": [],
+      "row_id": "comment_0022",
+      "score_state": "1",
+      "timestamp_state": "2026-02-08T05:12:04.719000+0000"
+    },
+    {
+      "author_state": "Sweet-Poet-5292",
+      "body_text": "I LOVE > for daytime > HOP+ Caviplla+O2 Advanced Volumizing Serum, then followed by BR Emulsion Originelle Regenerante. Then finish with either BR Creme MSR-H or Creme Masque Vernix. This is a fabulous regimen for plumping + hydration 🥰",
+      "comment_id": "o4702e4",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0023",
+      "score_state": "1",
+      "timestamp_state": "2026-02-08T03:31:38.956000+0000"
+    },
+    {
+      "author_state": "No_boxed_wine",
+      "body_text": "You may also want to check out the Teoxane RHA Serum, on top of any of the hydration boosters being mentioned so far. The focus of the product is to help skin retain hydration, so is a great complement to any routine. No, I am not sponsored by Teoxane, just not sure how to write this in a way that doesn’t sound like an ad!",
+      "comment_id": "o486a0k",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0024",
+      "score_state": "1",
+      "timestamp_state": "2026-02-08T09:24:21.652000+0000"
+    },
+    {
+      "author_state": "balloontown",
+      "body_text": "I got this duo of samples from a Japanese brand in my Saks advent calendar - Decorté aq meliority intensive revitalizing emulsion + revitalizing lotion. After waking up with THE MOST plump, hydrated, and glowing skin for a few days I just sprung for a kit that has all the full sized bottles.",
+      "comment_id": "o4atmos",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0025",
+      "score_state": "1",
+      "timestamp_state": "2026-02-08T19:08:18.225000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "present": 25
+    },
+    "comments_parsed": 25,
+    "observable_comment_nodes": 25
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "Unlikely_Creative",
+    "body_text": "Hello all, I need to plump up and hydrate my skin in the next 2 months for a big event; my current BR VIP creme 02 is unfortunately not hydrating enough for me and I ran out of Sturm Vitamin C (which didn't really do anything for me). Any recommendations for great HA and/or antioxidant serums and good moisturizers for day? I tried purchasing Skin Better Alto and Trio on their site but was unable to register despite numerous tries, so I've given up on that! What else is great that's out there? I'm open to department store lux brands as well as medspa brands. TIA!",
+    "score_state": "14",
+    "timestamp_state": "2026-02-07T23:03:42.827000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddictionLux/comments/1qysazl/serums_for_hydration/",
+  "thread": {
+    "permalink": "/r/SkincareAddictionLux/comments/1qysazl/serums_for_hydration/",
+    "subreddit": "SkincareAddictionLux",
+    "thread_id": "1qysazl",
+    "title": "Serums for Hydration?"
+  },
+  "warnings": [
+    "thread declares 34 comments; 25 captured (9 not captured)"
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "schema_version": "semantic_source_family_census_v1",
+  "subject": "Experiment Beauty",
+  "cycle_id": "EXPERIMENT-BEAUTY-UNDERSTANDING-20260905-001",
+  "corpus_profile": "phase_a_final_acquisition",
+  "fragments": [
+    {
+      "source_family": "retailer_review",
+      "artifact_id": "semantic-fragment-retailer_review",
+      "row_count": 2309,
+      "sha256": "9fb13a762669fad6e063d338170fc6b19e2455d73a4faddec3ec0dfba26c2f85"
+    },
+    {
+      "source_family": "community_post",
+      "artifact_id": "semantic-fragment-community_post",
+      "row_count": 717,
+      "sha256": "117ff27e08f346867d1825d488c3899c3e6d4a7d9ed1573ae44348f736e88f37"
+    },
+    {
+      "source_family": "creator_authored",
+      "artifact_id": "semantic-fragment-creator_authored",
+      "row_count": 30,
+      "sha256": "f6298f128f9e2c8b9c3f442fe380f63cbbf854ef48de8dcf1498cacbba3c2103"
+    },
+    {
+      "source_family": "editorial",
+      "artifact_id": "semantic-fragment-editorial",
+      "row_count": 14,
+      "sha256": "3dc385c5e9edcd5136315b2beb8b9c30d24c76d0091ad49ecfe91c89fa61be56"
+    },
+    {
+      "source_family": "official_marketing",
+      "artifact_id": "semantic-fragment-official_marketing",
+      "row_count": 111,
+      "sha256": "9b46015da2bf1c92d2222de5528854aae576ccc26a9642be9afabf2cf056ab67"
+    },
+    {
+      "source_family": "measured_test",
+      "artifact_id": "semantic-fragment-measured_test",
+      "row_count": 1,
+      "sha256": "2b8680954334b3762e9369491c93687ace93627f7ae3d04c92d5409c637b40eb"
+    }
+  ],
+  "captured_item_count": 3182,
+  "semantically_assessed_item_count": 3182,
+  "mechanically_excluded_item_count": 0,
+  "blocked_item_count": 0,
+  "corpus_sha256": "8f3acf1b29ea327828f5871f39913a5dbc21e4e510d60a8d3c279182fc2da9f3"
+}

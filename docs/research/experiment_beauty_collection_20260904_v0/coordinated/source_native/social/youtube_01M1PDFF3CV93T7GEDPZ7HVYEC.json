@@ -1,0 +1,234 @@
+{
+  "availability": {
+    "comments_state": "comments_sample_captured",
+    "comments_state_reason": "captured 4 sampled comments via youtubei_next",
+    "video_state": "playable",
+    "video_state_reason": "ytInitialPlayerResponse.playabilityStatus.status=OK"
+  },
+  "capture_schema_version": "youtube_watch_metadata_comments_capture_v1",
+  "capture_timestamp": "2026-09-04T14:34:29.748871Z",
+  "metric_receipts": {
+    "comment_sample_count": {
+      "artifact": "youtube_watch_capture.json",
+      "posture": "observed",
+      "source_path": "youtubei_next.commentEntityPayload",
+      "source_route": "youtubei_next",
+      "value": 4
+    },
+    "like_count": {
+      "artifact": "youtube_watch_capture.json",
+      "posture": "observed",
+      "source_path": "ytInitialPlayerResponse.microformat.playerMicroformatRenderer.likeCount",
+      "source_route": "ytInitialPlayerResponse.microformat",
+      "value": 42
+    },
+    "total_comment_count": {
+      "artifact": "youtube_watch_capture.json",
+      "posture": "observed",
+      "source_path": "ytInitialData.engagementPanels.engagementPanelTitleHeaderRenderer.contextualInfo",
+      "source_route": "ytInitialData",
+      "value": 6
+    },
+    "view_count": {
+      "artifact": "youtube_watch_capture.json",
+      "posture": "observed",
+      "source_path": "ytInitialPlayerResponse.videoDetails.viewCount",
+      "source_route": "ytInitialPlayerResponse.videoDetails",
+      "value": 1513
+    }
+  },
+  "packet": {
+    "availability": {
+      "comments_state": "comments_sample_captured",
+      "comments_state_reason": "captured 4 sampled comments via youtubei_next",
+      "video_state": "playable",
+      "video_state_reason": "ytInitialPlayerResponse.playabilityStatus.status=OK"
+    },
+    "canonical_url": "https://www.youtube.com/watch?v=Leeux-Koeas",
+    "channel": {
+      "author": "Anna Pothier",
+      "channel_id": "UCi28CXvO8Ul_hpDnq1e6ivA"
+    },
+    "comment_capture_coverage": {
+      "continuation_remaining_after_stop": false,
+      "ordering_posture": "source_default_order_as_served",
+      "pages_fetched": 2,
+      "requested_page_limit": 3,
+      "selected_comment_count": 4
+    },
+    "comment_count_text": null,
+    "comment_page_receipts": [
+      {
+        "final_url": "https://www.youtube.com/youtubei/v1/next?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8&prettyPrint=false",
+        "http_status": 200,
+        "page_number": 1,
+        "selected_comment_count": 3,
+        "source_response_byte_size": 111571
+      },
+      {
+        "final_url": "https://www.youtube.com/youtubei/v1/next?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8&prettyPrint=false",
+        "http_status": 200,
+        "page_number": 2,
+        "selected_comment_count": 1,
+        "source_response_byte_size": 9697
+      }
+    ],
+    "comments": [
+      {
+        "author": "@chefpeperoni4214",
+        "author_channel_id": "UCy9scauOCr_13KTQv7t_-hw",
+        "author_is_creator": false,
+        "author_is_verified": false,
+        "comment_id": "UgyEgRyrUcqS_rRYqq14AaABAg",
+        "content_attachment_labels": [
+          "😭"
+        ],
+        "heart_state": "TOOLBAR_HEART_STATE_UNHEARTED",
+        "like_count": "1",
+        "pinned_text": null,
+        "published_time": "6 months ago",
+        "rendering_priority": "RENDERING_PRIORITY_UNKNOWN",
+        "reply_count": "",
+        "reply_level": 0,
+        "source_order_global": 1,
+        "source_order_in_page": 1,
+        "source_page_number": 1,
+        "text": "What does the buffer jelly smell like 😭"
+      },
+      {
+        "author": "@LZiegel",
+        "author_channel_id": "UCcpoKtzznUzKAmS8T_fqx8g",
+        "author_is_creator": false,
+        "author_is_verified": false,
+        "comment_id": "UgzxE3louPaZpDbmqPF4AaABAg",
+        "content_attachment_labels": [
+          "❤"
+        ],
+        "heart_state": "TOOLBAR_HEART_STATE_HEARTED",
+        "like_count": "2",
+        "pinned_text": null,
+        "published_time": "1 year ago",
+        "rendering_priority": "RENDERING_PRIORITY_UNKNOWN",
+        "reply_count": "1",
+        "reply_level": 0,
+        "source_order_global": 2,
+        "source_order_in_page": 2,
+        "source_page_number": 1,
+        "text": "Thank you for this video ❤ I’ve been eyeing this brand for so long and every TikTok seems sponsored so it’s always hard to know what’s honest!"
+      },
+      {
+        "author": "@regresaperry",
+        "author_channel_id": "UCAxprkUiqAEHmAfNffpUFLQ",
+        "author_is_creator": false,
+        "author_is_verified": false,
+        "comment_id": "Ugz1D9TZLhd740vjfXV4AaABAg",
+        "content_attachment_labels": [],
+        "heart_state": "TOOLBAR_HEART_STATE_UNHEARTED",
+        "like_count": "1",
+        "pinned_text": null,
+        "published_time": "1 year ago",
+        "rendering_priority": "RENDERING_PRIORITY_UNKNOWN",
+        "reply_count": "1",
+        "reply_level": 0,
+        "source_order_global": 3,
+        "source_order_in_page": 3,
+        "source_page_number": 1,
+        "text": "this was so helpful tysm!!!🩵"
+      },
+      {
+        "author": "@annapothier",
+        "author_channel_id": "UCi28CXvO8Ul_hpDnq1e6ivA",
+        "author_is_creator": true,
+        "author_is_verified": false,
+        "comment_id": "Ugz1D9TZLhd740vjfXV4AaABAg.AB2LLryMI-YAC0lWJ6PUNW",
+        "content_attachment_labels": [],
+        "heart_state": "TOOLBAR_HEART_STATE_UNHEARTED",
+        "like_count": " ",
+        "pinned_text": null,
+        "published_time": "1 year ago",
+        "rendering_priority": null,
+        "reply_count": "",
+        "reply_level": 1,
+        "source_order_global": 4,
+        "source_order_in_page": 1,
+        "source_page_number": 2,
+        "text": "I'm so glad you found it helpful!! You're welcome!"
+      }
+    ],
+    "comments_panel_count_text": "6",
+    "comments_posture": "comments_sample_captured",
+    "engagement": {
+      "comment_sample_count": 4,
+      "like_count": 42,
+      "like_count_source_path": "ytInitialPlayerResponse.microformat.playerMicroformatRenderer.likeCount",
+      "like_count_text": "42 likes",
+      "total_comment_count": 6,
+      "total_comment_count_source_path": "ytInitialData.engagementPanels.engagementPanelTitleHeaderRenderer.contextualInfo",
+      "view_count": 1513,
+      "view_count_source_path": "ytInitialPlayerResponse.videoDetails.viewCount"
+    },
+    "metadata": {
+      "length_seconds": 1031,
+      "publish_date": "2024-11-11T13:00:14-08:00",
+      "short_description": "Shop Experiment Skincare:\\nhttps://experimentbeauty.com/collections/all\\n\\nShown:\\nPlasma Wash Moisture Depositing Gel Cream Cleanser\\nSuper Saturated 30% Glycerin Barrier Repairing Serum\\nAvant Guard Reusable Sheet Mask\\nBuffer Jelly Oil-Gel Barrier Booster\\nSoftwear Lip Balm Smoothing Lip Treatment\\n\\nExperiment on Socials:\\n@Experimentwrld \\n\\nTikTok:\\nhttps://www.tiktok.com/@anna.ev.pothier\\nInstagram:\\nhttps://www.instagram.com/anna.ev.pothier\\nEmail:\\nanna.ev.pothier@gmail.com\\n\\nLINKS:\\nh",
+      "title": "EXPERIMENT SKINCARE BRAND | REVIEW"
+    },
+    "metric_receipts": {
+      "comment_sample_count": {
+        "artifact": "youtube_watch_capture.json",
+        "posture": "observed",
+        "source_path": "youtubei_next.commentEntityPayload",
+        "source_route": "youtubei_next",
+        "value": 4
+      },
+      "like_count": {
+        "artifact": "youtube_watch_capture.json",
+        "posture": "observed",
+        "source_path": "ytInitialPlayerResponse.microformat.playerMicroformatRenderer.likeCount",
+        "source_route": "ytInitialPlayerResponse.microformat",
+        "value": 42
+      },
+      "total_comment_count": {
+        "artifact": "youtube_watch_capture.json",
+        "posture": "observed",
+        "source_path": "ytInitialData.engagementPanels.engagementPanelTitleHeaderRenderer.contextualInfo",
+        "source_route": "ytInitialData",
+        "value": 6
+      },
+      "view_count": {
+        "artifact": "youtube_watch_capture.json",
+        "posture": "observed",
+        "source_path": "ytInitialPlayerResponse.videoDetails.viewCount",
+        "source_route": "ytInitialPlayerResponse.videoDetails",
+        "value": 1513
+      }
+    },
+    "receipts": {
+      "auth": "logged_out",
+      "extraction": "selected source-visible fields from served_html:ytInitialPlayerResponse + youtubei/v1/next; enclosing response bodies are not persistence inputs",
+      "http_status": 200,
+      "js_executed": false,
+      "retrieval_time_utc": "2026-09-04T14:34:29.748871Z",
+      "source_response_byte_size": 1294329,
+      "source_url": "https://www.youtube.com/watch?v=Leeux-Koeas"
+    },
+    "surface_type": "long_form",
+    "video_id": "Leeux-Koeas",
+    "watch_url": "https://www.youtube.com/watch?v=Leeux-Koeas"
+  },
+  "platform": "youtube",
+  "platform_video_id": "Leeux-Koeas",
+  "selected_observable_policy_version": "youtube_watch_selected_observables_v1",
+  "source_response_retention": {
+    "comment_pages": {
+      "posture": "not_persisted_after_validated_extraction",
+      "received_byte_size": 121268,
+      "received_page_count": 2
+    },
+    "watch_html": {
+      "posture": "not_persisted_after_validated_extraction",
+      "received_byte_size": 1294329
+    }
+  },
+  "watch_url": "https://www.youtube.com/watch?v=Leeux-Koeas"
+}

@@ -1,0 +1,109 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": null,
+    "captured_matches_declared_total": true,
+    "comments_captured": 4,
+    "comments_not_captured": 0,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 4,
+    "max_captured_depth": 1
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Are you brand new to skincare? Don't know how to build a skincare routine? The best place to start is our ScA Routine! You can find even more skincare guide in our wiki!. Your answer might already be in there (and we might remove your post if it is). Everyone is welcome in this community; remember to be kind and assume good faith :) I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "mftia3v",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2025-03-03T18:18:30.047000+0000"
+    },
+    {
+      "author_state": "FarSalad7616",
+      "body_text": "Yall I have no idea how the word job ended up in the title blame my fat thumbs and long nails",
+      "comment_id": "mftigdj",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "2",
+      "timestamp_state": "2025-03-03T18:19:19.170000+0000"
+    },
+    {
+      "author_state": "Live_Rhubarb_7560",
+      "body_text": "But I like waxy feeling lol Anyway, I'm curious what they're up to.",
+      "comment_id": "mftvt32",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "2",
+      "timestamp_state": "2025-03-03T19:22:28.587000+0000"
+    },
+    {
+      "author_state": "FarSalad7616",
+      "body_text": "Lmao fair, I do too.",
+      "comment_id": "mfucmax",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mftvt32",
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "1",
+      "timestamp_state": "2025-03-03T20:42:01.275000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 3
+    },
+    "comments_parsed": 4,
+    "observable_comment_nodes": 4
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "FarSalad7616",
+    "body_text": "I love everything by Experiment except Plasma Wash - I feel like it leaves a weird layer on my skin. However I can’t use the buffer jelly and super saturated alone as a moisturizer as they suggest. So I’m PSYCHED to see if this is a good match for my parched skin!",
+    "score_state": "4",
+    "timestamp_state": "2025-03-03T18:18:23.732000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddiction/comments/1j2pbxw/experiments_new_launch_barrier_repair_job_cream/",
+  "thread": {
+    "permalink": "/r/SkincareAddiction/comments/1j2pbxw/experiments_new_launch_barrier_repair_job_cream/",
+    "subreddit": "SkincareAddiction",
+    "thread_id": "1j2pbxw",
+    "title": "Experiment’s new launch - barrier repair job cream? [misc]"
+  },
+  "warnings": []
+}

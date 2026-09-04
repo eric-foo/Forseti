@@ -16,3 +16,7 @@ forseti-harness/capture_spine/tiktok_creator_discovery_frontier/*.json text eol=
 # so autocrlf (true on Windows) cannot CRLF-inflate the archived bodies/metadata
 # and break that sha256 == bytes invariant. Applies to existing and future cases.
 **/source_captures/** -text
+
+# Coordinated research source-native copies are also byte-faithful evidence.
+# Keep the checked-in bytes stable so their artifact hashes survive checkout.
+docs/research/**/coordinated/source_native/** binary

@@ -1,0 +1,349 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": null,
+    "captured_matches_declared_total": true,
+    "comments_captured": 24,
+    "comments_not_captured": 0,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 24,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Beep boop! Friendly reminder that this is a subreddit geared towards the discussion of higher end and luxury skincare, and we're happy to have you here. To have a good understanding of the types of brands you can discuss here, please consult our Wiki if you haven't already. You're welcome to discuss anything mid-range and up. Note: Circumventing automation filtres and discussing products that are not higher end or luxury may result in a temporary or permanent ban. The mod team asks you to respect our subreddit's rules to keep the space on-topic. If you'd like to discuss affordable products, we kindly ask that you take the discussion to other subs. I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "o2smey4",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2026-01-31T14:36:53.627000+0000"
+    },
+    {
+      "author_state": "assflea",
+      "body_text": "I love them both! Neither are quite hydrating enough for me overnight on their own but they're both great for daytime. Overnight I use super saturated, molecular mesh, and then the barrier jelly and it's probably the best overnight routine I've had.",
+      "comment_id": "o2syqz4",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "22",
+      "timestamp_state": "2026-01-31T15:41:07.205000+0000"
+    },
+    {
+      "author_state": "Fabulous-Analysis-62",
+      "body_text": "Hi! Which barrier jelly are you referencing?",
+      "comment_id": "p7pgchl",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "o2syqz4",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "1",
+      "timestamp_state": "2026-09-04T03:00:48.277000+0000"
+    },
+    {
+      "author_state": "bunnyreads",
+      "body_text": "I’m not a fan of Instant Angel at all. (Don’t downvote me - I promise I’ve given it a fair chance). I doesn’t provide sufficient moisture and smells like the aluminum packaging. Bleh. Its texture is thin and doesn’t sink into the skin. The gel cream from Dieux is nicer, but again, it smells like the aluminum packaging. I adore Experiment’s Molecular Mesh. I have dry, sensitive skin and it’s moisturizing enough for winter (in a cold, dry climate). If you have combo skin, just don’t overdo it with Molecular Mesh. I sometimes squeeze too much out!!! A little goes a LONG way. I like Dieux’s serum and cleanser, but Experiment is fantastic all around. For a good review - see Alex the Cosmetic Chemist on TT. She loves Dieux and Experiment.",
+      "comment_id": "o2vicxw",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "14",
+      "timestamp_state": "2026-01-31T23:07:12.196000+0000"
+    },
+    {
+      "author_state": "Jazzlike_Ostrich_250",
+      "body_text": "Same. Tbh I don't love the smell of either of them but Instant Angel in particular smelled sooo strange to me. Overall though I also felt like Experiment was more hydrating and I love the texture.",
+      "comment_id": "o32lt8w",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "o2vicxw",
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "3",
+      "timestamp_state": "2026-02-02T00:46:33.381000+0000"
+    },
+    {
+      "author_state": "snkethan",
+      "body_text": "I haven't used Instant Angel, but I have heard things about the smell, and that it varies. I really liked using Molecular Mesh, but the batch I used had a pungent smell. My skin didn't react badly, but I did hold my breath a lot while applying it. Also, I should add that my skin only felt hydrated so long as I applied Super Saturated before using Molecular Mesh.",
+      "comment_id": "ogc97i6",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "o32lt8w",
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "1",
+      "timestamp_state": "2026-04-15T15:04:19.110000+0000"
+    },
+    {
+      "author_state": "Special-Bid6373",
+      "body_text": "They’re really similar in texture and performance, and I think both would hold up against a cold climate. Dieux is more expensive, but it has peptides and can help with wrinkles and firmness. Experiment only focuses on hydration and repair. So, if you want the extra benefits that come with Dieux’s peptides, try instant angel. If you only care about hydration and barrier support, go with Experiment. Honestly, they’re both great and I don’t think you can go wrong either way.",
+      "comment_id": "o2ssniz",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "13",
+      "timestamp_state": "2026-01-31T15:10:38.821000+0000"
+    },
+    {
+      "author_state": "eskay913",
+      "body_text": "Molecular mesh is a very interesting product, I haven’t ever used a moisturizer quite like it, it’s kind of thin and bouncy. instant Angel is more of a standard barrier type cream except for a more velvety, plush and elegant texture. I tend to use molecular mesh as a last step at night after my aestura atobarier 365 cream for a kind of slugging-lite. Instant Angel I sometimes use in AM. Neither are enough to use on their own in PM for me but I have dry skin. I like Dieux’s Air Angel moisturizer a lot for AM in spring summer.",
+      "comment_id": "o2u6m7z",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "6",
+      "timestamp_state": "2026-01-31T19:10:16.807000+0000"
+    },
+    {
+      "author_state": "alpacaapicnic",
+      "body_text": "I’ve only tried the Dieux and I think I’m an outlier in not liking it. I tried it as part of a year-long moisturizer trial, and it was unfortunately one of my least favorites. I found that: It sat oily on my skin, didn’t absorb well My skin still felt dry, wasn’t particularly hydrating Didn’t improve the texture of my skin or deliver any notable anti-aging benefits I also didn’t love applying it - the mid weight texture was nice, but the scent was a little medicinal, almost bandage-y But I know a lot of folks love it, so still may be worth trying for you 🤷‍♀️",
+      "comment_id": "o2um0uu",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0009",
+      "score_state": "6",
+      "timestamp_state": "2026-01-31T20:24:58.832000+0000"
+    },
+    {
+      "author_state": "ArtVandelay009",
+      "body_text": "What did you end up liking?",
+      "comment_id": "o2vg0d6",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "o2um0uu",
+      "parser_warnings": [],
+      "row_id": "comment_0010",
+      "score_state": "1",
+      "timestamp_state": "2026-01-31T22:54:46.305000+0000"
+    },
+    {
+      "author_state": "alpacaapicnic",
+      "body_text": "Favorites from the trial were: Skinfix triple lipid Air Repair complexion boosting moisturizer Touch in Sol pretty filter 100% Pure EGCG green tea moisturizer",
+      "comment_id": "o2vzje7",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "o2vg0d6",
+      "parser_warnings": [],
+      "row_id": "comment_0011",
+      "score_state": "4",
+      "timestamp_state": "2026-02-01T00:43:17.227000+0000"
+    },
+    {
+      "author_state": "The_Logicologist",
+      "body_text": "I prefer experiment's molecular mesh but don't find either to be top tier when it comes to getting me through winter.",
+      "comment_id": "o2u2rb5",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0012",
+      "score_state": "2",
+      "timestamp_state": "2026-01-31T18:51:56.986000+0000"
+    },
+    {
+      "author_state": "terpischore761",
+      "body_text": "In the spring/summer I have an oily forehead and normal bottom half of my face. In the late fall/winter, I have a normal forehead and dry bottom of my face. Both are very similar. I found MM had a slightly heavier feel on my skin than instant Angel. Not bad, just different. It’s designed to work well with both Super Saturated and buffer jelly to lock in hydration. It doesn’t thin out as well with water as IA. So there were times when I used too much and it was very heavy on the skin. But my skin was super bouncy in the morning so it was worth it. IA focuses more on barrier support with ceramides and peptides. I prefer it for daytime use because it melts into the skin and plays well with both sunscreen and makeup. I use it with Super Saturated and the Bloomeffects tulip nectar at night to slug If you’re worried about it being too heavy, putting it on a damp face will thin it out a bit while still giving you the same benefits.",
+      "comment_id": "o2ymtln",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0013",
+      "score_state": "2",
+      "timestamp_state": "2026-02-01T12:45:32.300000+0000"
+    },
+    {
+      "author_state": "_finnetic",
+      "body_text": "I also have them both - I liked molecular mesh on initial application and was excited it was a little more affordable, but a few hours later my skin felt dry again and it has begun pilling. YMMV of course, but instant angel is still my favorite.",
+      "comment_id": "o2tfcq3",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0014",
+      "score_state": "3",
+      "timestamp_state": "2026-01-31T17:00:36.715000+0000"
+    },
+    {
+      "author_state": "mizzy319",
+      "body_text": "Agreed!! I also feel the experiment clogs my pores a bit :(",
+      "comment_id": "o3adlqo",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "o2tfcq3",
+      "parser_warnings": [],
+      "row_id": "comment_0015",
+      "score_state": "1",
+      "timestamp_state": "2026-02-03T04:32:17.521000+0000"
+    },
+    {
+      "author_state": "debugmepls",
+      "body_text": "I suppose I’m congestion prone but instant angel gave me tiny pimples/bumps whenever I’d use it. Before I realized this it was really great at barrier repair/moisturizing in both AM and PM. I miss it lol I’m combo, oily in tzone",
+      "comment_id": "o2to1t3",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0016",
+      "score_state": "3",
+      "timestamp_state": "2026-01-31T17:42:58.508000+0000"
+    },
+    {
+      "author_state": "kitkatnapper",
+      "body_text": "Had same experience, and have a similar skin type (though maybe a bit on the drier side these days bc of tret). It hydrates me really well and isn't oily/greasy but I started getting closed comedones after using it for a few days 😭",
+      "comment_id": "o2v12zh",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "o2to1t3",
+      "parser_warnings": [],
+      "row_id": "comment_0017",
+      "score_state": "2",
+      "timestamp_state": "2026-01-31T21:39:25.552000+0000"
+    },
+    {
+      "author_state": "payal1286",
+      "body_text": "What do you use now",
+      "comment_id": "o3ni963",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "o2to1t3",
+      "parser_warnings": [],
+      "row_id": "comment_0018",
+      "score_state": "1",
+      "timestamp_state": "2026-02-05T03:09:04.704000+0000"
+    },
+    {
+      "author_state": "debugmepls",
+      "body_text": "Hi I use Zerafite Skin Brightening Barrier Cream as a barrier repair/pm/tret night moisturizer In the AM I use Skinfix Skin Barrier Restoring Gel Cream for the past few weeks and so far so good! I have tried the triple lipid Skinfix version that many use but I’d get the weird whiteheads/fungal acne/congested prone bumps",
+      "comment_id": "o8fov65",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "o3ni963",
+      "parser_warnings": [],
+      "row_id": "comment_0019",
+      "score_state": "1",
+      "timestamp_state": "2026-03-03T16:38:31.110000+0000"
+    },
+    {
+      "author_state": "Suitable-Blackberry4",
+      "body_text": "What do you use now",
+      "comment_id": "o806u5n",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "o2to1t3",
+      "parser_warnings": [],
+      "row_id": "comment_0020",
+      "score_state": "1",
+      "timestamp_state": "2026-03-01T05:10:36.096000+0000"
+    },
+    {
+      "author_state": "debugmepls",
+      "body_text": "Hi I use Zerafite Skin Brightening Barrier Cream as a barrier repair/pm/tret night moisturizer In the AM I use Skinfix Skin Barrier Restoring Gel Cream for the past few weeks and so far so good! I have tried the triple lipid Skinfix version that many use but I’d get the weird whiteheads/fungal acne/congested prone looks",
+      "comment_id": "o8formc",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "o806u5n",
+      "parser_warnings": [],
+      "row_id": "comment_0021",
+      "score_state": "1",
+      "timestamp_state": "2026-03-03T16:38:03.176000+0000"
+    },
+    {
+      "author_state": "vulylyvu",
+      "body_text": "I use them both! Molecular Mesh feels rly nice but doesn’t have rly any other benefits outside of moisture so I like using it with Instant Angel which does have a lot of other benefits. Both feel great on my very sensitive skin!",
+      "comment_id": "o54uzs1",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0022",
+      "score_state": "1",
+      "timestamp_state": "2026-02-13T09:04:25.354000+0000"
+    },
+    {
+      "author_state": "IndependentOther5023",
+      "body_text": "I like instant angel in the morning, and layering molecular mesh over it in the evening. I still feel like I need moisturization at night, but live in the desert with dry skin.",
+      "comment_id": "o9fikkd",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0023",
+      "score_state": "1",
+      "timestamp_state": "2026-03-09T03:36:02.315000+0000"
+    },
+    {
+      "author_state": "Critical-Reward3206",
+      "body_text": "I find Molecular Mesh to be meh.",
+      "comment_id": "o3upup7",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0024",
+      "score_state": "0",
+      "timestamp_state": "2026-02-06T05:25:08.018000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 23
+    },
+    "comments_parsed": 24,
+    "observable_comment_nodes": 24
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "No_Professor_7487",
+    "body_text": "As someone with combination skin (sensitive in non t zone areas), what are your honest reviews on these products? I am looking for something that is hydrating enough for a cold climate but doesn’t feel overly heavy or greasy",
+    "score_state": "17",
+    "timestamp_state": "2026-01-31T14:36:51.824000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddictionLux/comments/1qs3yv1/dieux_instant_angel_vs_experiment_molecular_mesh/",
+  "thread": {
+    "permalink": "/r/SkincareAddictionLux/comments/1qs3yv1/dieux_instant_angel_vs_experiment_molecular_mesh/",
+    "subreddit": "SkincareAddictionLux",
+    "thread_id": "1qs3yv1",
+    "title": "Dieux Instant Angel vs Experiment Molecular Mesh"
+  },
+  "warnings": []
+}

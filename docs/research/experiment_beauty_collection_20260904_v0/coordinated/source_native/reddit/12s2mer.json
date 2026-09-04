@@ -1,0 +1,123 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": false,
+    "captured_matches_declared_total": false,
+    "comments_captured": 5,
+    "comments_not_captured": 4,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 9,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Hi everyone and welcome to SkincareAddiction! Need skincare guides? Check out our wiki! Everyone is welcome in this community; remember to be kind and assume good faith :) I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "jgwfzq5",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2023-04-19T16:54:02.972000+0000"
+    },
+    {
+      "author_state": "UltraLuminescence",
+      "body_text": "affordable exfoliant options: the ordinary lactic acid 10%, lactic acid 5%, or mandelic acid 10% good molecules overnight exfoliating treatment, good molecules glycolic toner",
+      "comment_id": "jgwlrat",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "1",
+      "timestamp_state": "2023-04-19T17:31:20.533000+0000"
+    },
+    {
+      "author_state": "soohohoh",
+      "body_text": "Thank you! Do you think the Ordinary AHA 30% + BHA 2% Exfoliating Peeling Solution would be too intense for her? I have never been a fan of TO myself but I know a lot of people love it",
+      "comment_id": "jgxlix6",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "jgwlrat",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "1",
+      "timestamp_state": "2023-04-19T21:19:57.463000+0000"
+    },
+    {
+      "author_state": "UltraLuminescence",
+      "body_text": "Honestly I just don’t think it’s a good fit for her. I wouldn’t really call it an anti-aging product and I’d say it’s more suitable for congestion than brightening. The ones I listed are going to be more targeted towards brightening imo.",
+      "comment_id": "jgxm5f4",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "jgxlix6",
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "1",
+      "timestamp_state": "2023-04-19T21:24:01.981000+0000"
+    },
+    {
+      "author_state": "UltraLuminescence",
+      "body_text": "Also I took the liberty of searching the strivectin products to see if they have retinol: Wrinkle serum has no retinol, just peptides: https://whatsinmyjar.com/product/strivectin-wrinkle-recode-line-transforming-melting-serum Same for wrinkle eye concentrate, no retinol, just peptides & other nourishing/hydrating ingredients: https://whatsinmyjar.com/product/strivectin-anti-wrinkle-intensive-eye-concentrate-for-wrinkles-plus Wrinkle cream also has no retinol, it does have a tiny bit of lactic acid, plus peptides & other nourishing/hydrating ingredients (similar ingredient list to the eye cream, plus the lactic acid) https://whatsinmyjar.com/product/strivectin-anti-wrinkle-sd-advanced-plus-intensive-moisturizing-concentrate-for-wrinkles-stretch-marks",
+      "comment_id": "jgxncfw",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "jgxlix6",
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "1",
+      "timestamp_state": "2023-04-19T21:31:51.950000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 4
+    },
+    "comments_parsed": 5,
+    "observable_comment_nodes": 5
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "soohohoh",
+    "body_text": "She has normal, mature skin. Spends a lot of time in the pool/chlorine and looking for a glow. Doesn't have a large budget. The main things I need are an affordable exfoliator and help decoding her current products. Here's what I currently have: AM Cleanse: Either LRP Toleraine Milky Cleanser or LRP Lipikar Wash Vitamin C: Timeless 20% Vitamin C Hydrating Serum: Experiment Super Saturated Serum (purchased for myself. didn't work for me) Cream: Biossance Vitamin C Rose Moisturizer (I was going to get her the Omega cream but I had purchased it and missed my return window so I gave her this to try) SPF: EltaMD UV Elements Tinted PM Makeup Remover: Bioderma Sensibio Micellar Water Cleanse: Either LRP Toleraine Milky Cleanser or LRP Lipikar Wash Exfoliating nights: (2x/wk): ***PLEASE HELP ME FIND AN AFFORDABLE EXFOLIATOR FOR HER*** Experiment Super Saturated Serum Biossance Vitamin C Rose Cream Biossance Squalane Oil Non exfoliating nights: (her current routine) Strivectin Wrinkle Serum Strivectin Wrinkle Eye Cream Strevectin Wrinkle Intensive Moisturizing Concentrate (not sure whether these products have a substantial amount of retinol in them?) Retinol: Encouraging her to try Agency for custom prescription Thank you!",
+    "score_state": "1",
+    "timestamp_state": "2023-04-19T16:54:02.362000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddiction/comments/12s2mer/routine_help_working_on_a_skincare_routine_for_my/",
+  "thread": {
+    "permalink": "/r/SkincareAddiction/comments/12s2mer/routine_help_working_on_a_skincare_routine_for_my/",
+    "subreddit": "SkincareAddiction",
+    "thread_id": "12s2mer",
+    "title": "[routine help] Working on a skincare routine for my mother in her early 70's"
+  },
+  "warnings": [
+    "thread declares 9 comments; 5 captured (4 not captured)"
+  ]
+}

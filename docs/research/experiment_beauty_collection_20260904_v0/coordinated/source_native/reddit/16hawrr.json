@@ -1,0 +1,265 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": null,
+    "captured_matches_declared_total": false,
+    "comments_captured": 17,
+    "comments_not_captured": null,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 16,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "Padfoot_9274",
+      "body_text": "Seconding Experiment and Regimen Labs. I also LOVE Chemist Confessions and Equal Rxn. Chemist Confessions was created by two cosmetic chemists who used to work for L’Oréal. They also have a really interesting podcast that is great.",
+      "comment_id": "k0esb4l",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0001",
+      "score_state": "4",
+      "timestamp_state": "2023-09-13T14:36:43.079000+0000"
+    },
+    {
+      "author_state": "BuddhaAndG",
+      "body_text": "Awesome suggestions thank you!",
+      "comment_id": "k0hxq0c",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "k0esb4l",
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "2",
+      "timestamp_state": "2023-09-14T02:30:18.546000+0000"
+    },
+    {
+      "author_state": "True_Bear343",
+      "body_text": "Experiment Beauty (I don't know if it's an indie or niche, I'm unsure of the cutoff) does an INCREDIBLE glycerin cream. I recommend putting it on right after you shower and then layering moisturizer on top (on a no makeup day). https://experimentbeauty.com/products/super-saturated?variant=43668544061632 Advanced Rejuvenating Concepts also does a phenomenal face wash. It's the only wash that's ever not made my face break out.",
+      "comment_id": "k0ddev1",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "3",
+      "timestamp_state": "2023-09-13T06:17:24.920000+0000"
+    },
+    {
+      "author_state": "BuddhaAndG",
+      "body_text": "Can't wait to order! Thank you for the suggestion!",
+      "comment_id": "k0hxu3f",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "k0ddev1",
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "1",
+      "timestamp_state": "2023-09-14T02:31:10.863000+0000"
+    },
+    {
+      "author_state": "Bratty_Little_Kitten",
+      "body_text": "Chikyu Skincare",
+      "comment_id": "k0ibign",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "5",
+      "timestamp_state": "2023-09-14T04:26:30.427000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "This!!",
+      "comment_id": "k0ihft0",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "k0ibign",
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "3",
+      "timestamp_state": "2023-09-14T05:26:20.977000+0000"
+    },
+    {
+      "author_state": "desertwoman62",
+      "body_text": "Ditto Chikyu!",
+      "comment_id": "khf87q5",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "k0ibign",
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "1",
+      "timestamp_state": "2024-01-11T21:30:01.545000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "",
+      "comment_id": "kw7us6u",
+      "comment_posture": "deleted",
+      "depth": 1,
+      "parent_id": "k0ibign",
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "1",
+      "timestamp_state": "2024-03-23T16:54:31.642000+0000"
+    },
+    {
+      "author_state": "AutoModerator",
+      "body_text": "This submission has been filtered by Automoderator because your account is too new or doesn't meet our comment karma threshold. Please message the mods to have your comments reinstated. I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "kw7us9a",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "kw7us6u",
+      "parser_warnings": [],
+      "row_id": "comment_0009",
+      "score_state": "1",
+      "timestamp_state": "2024-03-23T16:54:32.337000+0000"
+    },
+    {
+      "author_state": "genappe",
+      "body_text": "Probably closer to niche than indie but everything I’ve tried from regimen labs has been great, their wave serum especially but I got all five of their items and love them all. Also super saturated from experiment beauty makes my skin sooooo hydrated! Are there any specific skin concerns you’re trying to hit?",
+      "comment_id": "k0d3d24",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0010",
+      "score_state": "3",
+      "timestamp_state": "2023-09-13T04:31:25.587000+0000"
+    },
+    {
+      "author_state": "tintinabula",
+      "body_text": "Boxwalla for next month features Cipher Skincare, an interesting and science-themed brand you might enjoy",
+      "comment_id": "k0fid6u",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0011",
+      "score_state": "2",
+      "timestamp_state": "2023-09-13T17:14:00.302000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "",
+      "comment_id": "k0d3hte",
+      "comment_posture": "deleted",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0012",
+      "score_state": "unknown_with_reason: score not stated on the comment element",
+      "timestamp_state": "2023-09-13T04:32:43.085000+0000"
+    },
+    {
+      "author_state": "BuddhaAndG",
+      "body_text": "Just got some samples! Thank you!",
+      "comment_id": "k0hxv9u",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "k0d3hte",
+      "parser_warnings": [],
+      "row_id": "comment_0013",
+      "score_state": "2",
+      "timestamp_state": "2023-09-14T02:31:25.897000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "",
+      "comment_id": "k0gn0ho",
+      "comment_posture": "deleted",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0014",
+      "score_state": "unknown_with_reason: score not stated on the comment element",
+      "timestamp_state": "2023-09-13T21:13:32.483000+0000"
+    },
+    {
+      "author_state": "BuddhaAndG",
+      "body_text": "Made a $70 order. Have you noticed if there's a specific day they add their Vit C? I saw they do small batches and I really want to try it",
+      "comment_id": "k0hxnoe",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "k0gn0ho",
+      "parser_warnings": [],
+      "row_id": "comment_0015",
+      "score_state": "1",
+      "timestamp_state": "2023-09-14T02:29:49.087000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "",
+      "comment_id": "k0dkcmz",
+      "comment_posture": "deleted",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0016",
+      "score_state": "3",
+      "timestamp_state": "2023-09-13T07:43:22.899000+0000"
+    },
+    {
+      "author_state": "BuddhaAndG",
+      "body_text": "This looks awesome! Thank you!",
+      "comment_id": "k0hxry2",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "k0dkcmz",
+      "parser_warnings": [],
+      "row_id": "comment_0017",
+      "score_state": "1",
+      "timestamp_state": "2023-09-14T02:30:43.540000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "deleted": 4,
+      "present": 13
+    },
+    "comments_parsed": 17,
+    "observable_comment_nodes": 17
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "BuddhaAndG",
+    "body_text": "Looking for recs for skincare items. I've finished widdled my backlog of mainstream stuff down and in an effort to support more Indies I'm looking to revamp my skincare items. I already use Stratia and Holy Snails. I would like to see more places that have the same type of vibe ( science backed, no use of common irritants etc) Any ideas?",
+    "score_state": "16",
+    "timestamp_state": "2023-09-13T02:31:40.216000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/Indiemakeupandmore/comments/16hawrr/skincare/",
+  "thread": {
+    "permalink": "/r/Indiemakeupandmore/comments/16hawrr/skincare/",
+    "subreddit": "Indiemakeupandmore",
+    "thread_id": "16hawrr",
+    "title": "Skincare"
+  },
+  "warnings": [
+    "captured comment count 17 exceeds the source-declared count 16; completeness is unknown"
+  ]
+}

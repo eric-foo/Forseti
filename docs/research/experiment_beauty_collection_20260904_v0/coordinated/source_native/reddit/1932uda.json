@@ -1,0 +1,145 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": null,
+    "captured_matches_declared_total": true,
+    "comments_captured": 7,
+    "comments_not_captured": 0,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 7,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Hi everyone and welcome to SkincareAddiction! Need skincare guides? Check out our wiki! Everyone is welcome in this community; remember to be kind and assume good faith :) I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "kh6g4tu",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2024-01-10T07:39:39.521000+0000"
+    },
+    {
+      "author_state": "Unfair_Finger5531",
+      "body_text": "Slugging over tret is a good way to get peeling and irritation. You can’t hold in moisture over tret because it has to be applied to dry skin anyway. It is better to use a light moisturizer over it, which will prevent your skin from drying out too much and save the heavy moisturizers for the daytime and slug on nights off from tret.",
+      "comment_id": "khaa8i3",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "2",
+      "timestamp_state": "2024-01-10T23:43:20.050000+0000"
+    },
+    {
+      "author_state": "Lopsided_Key5644",
+      "body_text": "Thank you for this advice! I’m getting conflicted feedback about slugging but I’m definitely not going to chance it by slugging over tret. As you said, it’s supposed to be applied to dry skin. Doesn’t make sense to trap water over it. I’ll try on my off nights with a heavy moisturizer.",
+      "comment_id": "khaksl2",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "khaa8i3",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "2",
+      "timestamp_state": "2024-01-11T00:50:16.935000+0000"
+    },
+    {
+      "author_state": "Unfair_Finger5531",
+      "body_text": "Yes, there’s definitely conflicting advice about it. I suppose all you can do is read up on it, weigh things, and maybe try it and see what your skin says. I realize that some folks slug over it and have great success with it. And sometimes, on rare occasions, I do it. But I am thinking that slugging over tret may be something that people who are used to it may tolerate better. Just a hypothesis, which I cannot support in any way lol.",
+      "comment_id": "khat596",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "khaksl2",
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "2",
+      "timestamp_state": "2024-01-11T01:43:24.067000+0000"
+    },
+    {
+      "author_state": "dubberpuck",
+      "body_text": "If the occlusives break you out, then use a heavier moisturizer if you need something that is more occlusive.",
+      "comment_id": "kh6kbr4",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "3",
+      "timestamp_state": "2024-01-10T08:29:43.277000+0000"
+    },
+    {
+      "author_state": "lgould24",
+      "body_text": "Try out the buffer jelly from Experiment Beauty. I also love their super saturated serum. I have crazy sensitive, dry skin and this duo has yet to do me dirty.",
+      "comment_id": "kh6klw9",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "3",
+      "timestamp_state": "2024-01-10T08:33:15.668000+0000"
+    },
+    {
+      "author_state": "Slovenlyfox",
+      "body_text": "So your tretinoin will need some time to start working. Maybe when it is in full force, you can use ointments. That aside, you can simply choose for heavier moisturizers. They tend to have glycerin or another occlusive as their first ingredient, and water tends to come in the second or even 3rd place on the ingredient list. Try some formulas for dry skin and atopic skin. Personally, I struggle with eczema, but also with an infection in my eczema that causes acne (and I'm on isotretinoin for that). I love the LRP Toleriane Sensitive creme. Just enough moisture to soothe my eczema, and not too much so as to flare up my acne. It might take you a few tries before you find the right product, so don't give up too quickly.",
+      "comment_id": "kh899rv",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "2",
+      "timestamp_state": "2024-01-10T16:56:03.170000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 6
+    },
+    "comments_parsed": 7,
+    "observable_comment_nodes": 7
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "Lopsided_Key5644",
+    "body_text": "",
+    "score_state": "4",
+    "timestamp_state": "2024-01-10T07:39:38.543000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddiction/comments/1932uda/acne_slugging_question_im_new_to_tret_but/",
+  "thread": {
+    "permalink": "/r/SkincareAddiction/comments/1932uda/acne_slugging_question_im_new_to_tret_but/",
+    "subreddit": "SkincareAddiction",
+    "thread_id": "1932uda",
+    "title": "[Acne] Slugging question. I’m new to tret but apparently slugging is a good way to stop dryness and hold in moisture.. BUT ointments break my skin out!? Am I missing something?"
+  },
+  "warnings": []
+}

@@ -1,0 +1,217 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": null,
+    "captured_matches_declared_total": true,
+    "comments_captured": 13,
+    "comments_not_captured": 0,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 13,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Are you brand new to skincare? The best place to start is our ScA Routine! You can find even more skincare guide in our wiki! Everyone is welcome in this community; remember to be kind and assume good faith :) I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "lemeehv",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2024-07-23T22:56:32.568000+0000"
+    },
+    {
+      "author_state": "Agitated_Sweet_9021",
+      "body_text": "Similar skin here. Using the Prequel cleanser successfully - HG here. And I just ordered the Experiment Supersaturated! Unless you’re in low humidity or are super irritated, I think you’ll be ok.",
+      "comment_id": "lemjikr",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "7",
+      "timestamp_state": "2024-07-23T23:27:29.633000+0000"
+    },
+    {
+      "author_state": "Benefit_Human",
+      "body_text": "I'm so glad to hear you've been having great experiences with it! :) I live in Santa Ana (I'm California based) and unfortunately the climate can be a bit dry with low humidity. I think I'll give it a shot though, my skin really needs help :\")",
+      "comment_id": "les5jkb",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "lemjikr",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "3",
+      "timestamp_state": "2024-07-24T22:29:04.749000+0000"
+    },
+    {
+      "author_state": "Live_Rhubarb_7560",
+      "body_text": "Given that Gleanser is a rinse off product, I'm not sure it's going to be a problem. In the winter I sometimes use 15% Glycerin Serum from the Niche Beauty Lab (this one can sting sometimes but I actually suspect amino acids?) followed by a moisturising cream with 20% glycerin and 2% urea with no problems (the cream also contains emollients and occlusives ofc). It can be quite dry in the winter where I live, plus I use tretinoin/tazarotene, and I found it to be one of the most reliable routines that keeps moisture in. So if there's a critical % of glycerin, at least I haven't reached it yet with my 15% followed by 20% of glycerin. Btw this 30% serum must be hella sticky? Did you see Prequel options with 10% and 20% glycerin?",
+      "comment_id": "lemkn20",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "5",
+      "timestamp_state": "2024-07-23T23:34:22.671000+0000"
+    },
+    {
+      "author_state": "Benefit_Human",
+      "body_text": "Thank you so much for telling me your experiences! I'll definitely check out the Prequel options, I'm not quite familiar with the brand so I had no idea they offered serums as well!",
+      "comment_id": "les5pej",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "lemkn20",
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "2",
+      "timestamp_state": "2024-07-24T22:30:14.798000+0000"
+    },
+    {
+      "author_state": "orangepeel_16",
+      "body_text": "What moisturizer are you using?",
+      "comment_id": "lemxn82",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "lemkn20",
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "1",
+      "timestamp_state": "2024-07-24T00:55:11.052000+0000"
+    },
+    {
+      "author_state": "Live_Rhubarb_7560",
+      "body_text": "https://incidecoder.com/products/aco-miniderm-duo It's something that's available locally, and it's a medicinal cream/OTC drug often used for kids with eczema. This is how I found it when other creams were letting me down in the midst of Scandinavian winter. It's not a cosmetically elegant cream but it does the job. I use it mostly at night anyway. I sometimes use La Roche-Posay Lipikar AP+M baume too, which I consider a lighter option.",
+      "comment_id": "lenvobx",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "lemxn82",
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "3",
+      "timestamp_state": "2024-07-24T04:59:46.471000+0000"
+    },
+    {
+      "author_state": "Relevant_Hedgehog_63",
+      "body_text": "the prequel gleanser didn't lead to any irritation for me. it was very hydrating to be honest, and i would have kept using it if it didn't smell so weird.",
+      "comment_id": "len02wi",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "9",
+      "timestamp_state": "2024-07-24T01:10:51.987000+0000"
+    },
+    {
+      "author_state": "Critical-Reward3206",
+      "body_text": "I have the Super Saturated serum and really like it. I use it as a hydrating serum to sort of re-moisten everything on nights I wash my face and do my toner, peptides, and Peach & Lily early in the night and do my Retin-A and moisturizer stuff later right before bed.",
+      "comment_id": "m7ku5dg",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0009",
+      "score_state": "5",
+      "timestamp_state": "2025-01-17T04:31:41.917000+0000"
+    },
+    {
+      "author_state": "tz_us",
+      "body_text": "I also like it",
+      "comment_id": "m8rntd4",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "m7ku5dg",
+      "parser_warnings": [],
+      "row_id": "comment_0010",
+      "score_state": "2",
+      "timestamp_state": "2025-01-23T18:34:59.885000+0000"
+    },
+    {
+      "author_state": "dubberpuck",
+      "body_text": "It depends on the skin. Sometimes too much humectants can dehydrate the skin thus causing some dryness. Also glycerin is a tacky / sticky ingredient.",
+      "comment_id": "len35ut",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0011",
+      "score_state": "3",
+      "timestamp_state": "2024-07-24T01:30:57.019000+0000"
+    },
+    {
+      "author_state": "Unfair_Finger5531",
+      "body_text": "It depends on your climate and the condition of your barrier. That amount could sting on a sensitive or broken barrier. And if you live in a dry climate, that amount of glycerin could dry your skin out terribly. But behind that, I think you’ll be okay.",
+      "comment_id": "lemflp3",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0012",
+      "score_state": "2",
+      "timestamp_state": "2024-07-23T23:03:44.515000+0000"
+    },
+    {
+      "author_state": "Hot-Witness-5991",
+      "body_text": "Oily-Combination and also unfortunately seem to break out from many things. My skin seems to like prequel gleanser prob bc I wash it off but breaks out with Super Saturated but less break outs when I mixed it (diluted it) with an another serum. Bummed bc Super saturated is very hydrating. Want to try Experiment’s molecular mesh moisturizer due to the rave reviews but it has 10% glycerin so that may be risky…",
+      "comment_id": "mn5x8te",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0013",
+      "score_state": "1",
+      "timestamp_state": "2025-04-15T01:39:07.682000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 12
+    },
+    "comments_parsed": 13,
+    "observable_comment_nodes": 13
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "Benefit_Human",
+    "body_text": "Hi friends, I've been looking specifically at the Prequel Glycerin Cleanser (50% glycerin) and Experiment Supersaturated Serum (30% glycerin). Would it be too much for me to use both of these products in the same routine? Both of these look promising, but I'm just worried about any possible irritation! My skin type: Sensitive, combo-dry, acne-prone (also currently very dehydrated)",
+    "score_state": "8",
+    "timestamp_state": "2024-07-23T22:56:31.622000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddiction/comments/1ealr7b/product_question_what_were_your_experiences_with/",
+  "thread": {
+    "permalink": "/r/SkincareAddiction/comments/1ealr7b/product_question_what_were_your_experiences_with/",
+    "subreddit": "SkincareAddiction",
+    "thread_id": "1ealr7b",
+    "title": "[Product Question] What were your experiences with very high concentrations of glycerin in products (30-50%)?"
+  },
+  "warnings": []
+}

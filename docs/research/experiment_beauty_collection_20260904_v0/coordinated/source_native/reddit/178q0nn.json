@@ -1,0 +1,85 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": null,
+    "captured_matches_declared_total": true,
+    "comments_captured": 2,
+    "comments_not_captured": 0,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 2,
+    "max_captured_depth": 0
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Hi everyone and welcome to SkincareAddiction! Need skincare guides? Check out our wiki! Everyone is welcome in this community; remember to be kind and assume good faith :) I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "k518l1c",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2023-10-15T21:47:18.492000+0000"
+    },
+    {
+      "author_state": "sammisamantha",
+      "body_text": "A basic skincare routine will be Cleanse Tone Serums Moisturize Sun protection in the AM If you want to use dove bar soap on your face. Go ahead. Some people will find bar soap too strong and strips the skin. The bliss clarifying toner is weaker in BHA than the Paul's Choice. I would finish the PC bottle you already have before starting a new one. These two \"toners\" have chemical exfoliants in them. They will require you to wear sunscreen. I also find with these toners to splash on your hands then pat into the skin opposed to cotton toner pads. The experiment buffer jelly is meant for \"slugging\". This is for night time purposes. After moisturizing you apply a light layer to \"lock\" in all that good stuff you layered under. Think of it like a top coat. Since it's nice and thick I would use it only for night time purposes or when your skin is acting up and needs some extra moisture. I never recommend adding too many new products into your skin care routine. Finish what you already got and introduce a new product slowly.",
+      "comment_id": "k51aj2d",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "2",
+      "timestamp_state": "2023-10-15T22:00:09.753000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 1
+    },
+    "comments_parsed": 2,
+    "observable_comment_nodes": 2
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "[deleted]",
+    "body_text": "My sister, who is a skincare addict, gave me a bag of stuff today that she feels will help my skin. I have combination skin and, currently, I'm fighting frequent breakouts on my jawline, chin, and chest. Why? I have no idea because I've gone quite a long time without any significant breakouts, certainly nothing cystic like this. I had a hysterectomy back in April, but kept my ovaries, so I don't know if that has anything to do with it. I have endometriosis and was put back on birth control to control pain so maybe that has something to do with it? Idk. Anyway. I have fought extensive whiteheads for a long time so that's why she gave me some of this stuff. I use fragrance free Dove soap for all body parts, including my face because any other special cleansers just end up drying me out/causing breakouts. I started using Paula's Choice BHA and it's helped some with the whiteheads. I use Cerave moisturizing lotion. So anyway. Here's what she gave me: Curel Moisture Facial Lotion Enrich spray Clinique dramatically different moisturizing lotion Experiment super saturated barrier support serum bliss clear genius clarifying toner and serum (I understand this can replace the Paula's Choice) Experiment buffer jelly So what are all these and how/when am I supposed to use them?",
+    "score_state": "1",
+    "timestamp_state": "2023-10-15T21:47:16.384000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddiction/comments/178q0nn/goodie_bag_from_sister_and_not_sure_whathow_to/",
+  "thread": {
+    "permalink": "/r/SkincareAddiction/comments/178q0nn/goodie_bag_from_sister_and_not_sure_whathow_to/",
+    "subreddit": "SkincareAddiction",
+    "thread_id": "178q0nn",
+    "title": "Goodie bag from sister and not sure what/how to use [Product Question]"
+  },
+  "warnings": []
+}

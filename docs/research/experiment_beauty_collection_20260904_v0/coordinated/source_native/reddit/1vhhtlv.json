@@ -1,0 +1,72 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": null,
+    "captured_matches_declared_total": true,
+    "comments_captured": 1,
+    "comments_not_captured": 0,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 1,
+    "max_captured_depth": 0
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Are you brand new to skincare? Don't know how to build a skincare routine? The best place to start is our ScA Routine! You can find even more skincare guides in our wiki!. Your answer might already be in there (and if it is, we might remove your post). Everyone is welcome in this community; remember to be kind and assume good faith :) I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "p25arg6",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2026-08-06T21:48:51.802000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1
+    },
+    "comments_parsed": 1,
+    "observable_comment_nodes": 1
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "tuppence5ash",
+    "body_text": "Just got the Experiment skincare set in the mail today and am super excited, but I had a question for anyone who has used this line--I know the super saturated serum is supposed to be really sticky, but is the moisturizer also usually sticky for a long time or did I just use too much? I decided to change my routine for reasons and chose experiment and a couple of products from prequel (which should show up tomorrow!), and I'm trying to be super responsible and change one thing at a time and test each new product for at least a week but we'll see how that goes...",
+    "score_state": "1",
+    "timestamp_state": "2026-08-06T21:48:51.401000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddiction/comments/1vhhtlv/experiment_molecular_mesh_moisturizer_question/",
+  "thread": {
+    "permalink": "/r/SkincareAddiction/comments/1vhhtlv/experiment_molecular_mesh_moisturizer_question/",
+    "subreddit": "SkincareAddiction",
+    "thread_id": "1vhhtlv",
+    "title": "Experiment Molecular Mesh Moisturizer Question [Product Question]"
+  },
+  "warnings": []
+}

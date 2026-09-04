@@ -1,0 +1,148 @@
+{
+  "availability": {
+    "comments_state": "comments_not_exposed",
+    "comments_state_reason": "comments continuation was reachable but did not expose comment sample rows in this bounded run",
+    "video_state": "playable",
+    "video_state_reason": "ytInitialPlayerResponse.playabilityStatus.status=OK"
+  },
+  "capture_schema_version": "youtube_watch_metadata_comments_capture_v1",
+  "capture_timestamp": "2026-09-04T14:34:44.297749Z",
+  "metric_receipts": {
+    "comment_sample_count": {
+      "artifact": "youtube_watch_capture.json",
+      "posture": "observed",
+      "source_path": "youtubei_next.commentEntityPayload",
+      "source_route": "youtubei_next",
+      "value": 0
+    },
+    "like_count": {
+      "artifact": "youtube_watch_capture.json",
+      "posture": "observed",
+      "source_path": "ytInitialPlayerResponse.microformat.playerMicroformatRenderer.likeCount",
+      "source_route": "ytInitialPlayerResponse.microformat",
+      "value": 26
+    },
+    "total_comment_count": {
+      "posture": "unavailable_with_reason",
+      "reason": "source-native total comment count was not exposed as an exact count in the Comments panel badge or commentsHeaderRenderer.countText",
+      "routes_checked": [
+        "ytInitialData.engagementPanels.engagementPanelTitleHeaderRenderer.contextualInfo",
+        "youtubei_next.commentsHeaderRenderer.countText"
+      ]
+    },
+    "view_count": {
+      "artifact": "youtube_watch_capture.json",
+      "posture": "observed",
+      "source_path": "ytInitialPlayerResponse.videoDetails.viewCount",
+      "source_route": "ytInitialPlayerResponse.videoDetails",
+      "value": 1811
+    }
+  },
+  "packet": {
+    "availability": {
+      "comments_state": "comments_not_exposed",
+      "comments_state_reason": "comments continuation was reachable but did not expose comment sample rows in this bounded run",
+      "video_state": "playable",
+      "video_state_reason": "ytInitialPlayerResponse.playabilityStatus.status=OK"
+    },
+    "canonical_url": "https://www.youtube.com/shorts/ajCuq4buR4k",
+    "channel": {
+      "author": "Jill Lyon Reall",
+      "channel_id": "UCby8Rh6-bs-97R68nfUMLRA"
+    },
+    "comment_capture_coverage": {
+      "continuation_remaining_after_stop": false,
+      "ordering_posture": "source_default_order_as_served",
+      "pages_fetched": 1,
+      "requested_page_limit": 3,
+      "selected_comment_count": 0
+    },
+    "comment_count_text": null,
+    "comment_page_receipts": [
+      {
+        "final_url": "https://www.youtube.com/youtubei/v1/next?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8&prettyPrint=false",
+        "http_status": 200,
+        "page_number": 1,
+        "selected_comment_count": 0,
+        "source_response_byte_size": 81925
+      }
+    ],
+    "comments": [],
+    "comments_panel_count_text": null,
+    "comments_posture": "comments_not_exposed",
+    "engagement": {
+      "comment_sample_count": 0,
+      "like_count": 26,
+      "like_count_source_path": "ytInitialPlayerResponse.microformat.playerMicroformatRenderer.likeCount",
+      "like_count_text": "26 likes",
+      "total_comment_count": null,
+      "total_comment_count_source_path": null,
+      "view_count": 1811,
+      "view_count_source_path": "ytInitialPlayerResponse.videoDetails.viewCount"
+    },
+    "metadata": {
+      "length_seconds": 53,
+      "publish_date": "2025-10-10T12:24:14-07:00",
+      "short_description": "I have nothing but good things to say about it #experimentbeauty #goodreview #molecularmesh #review #experimentbeautymolecularmesh",
+      "title": "I have nothing but good things to say about it #experimentbeauty #goodreview #molecularmesh"
+    },
+    "metric_receipts": {
+      "comment_sample_count": {
+        "artifact": "youtube_watch_capture.json",
+        "posture": "observed",
+        "source_path": "youtubei_next.commentEntityPayload",
+        "source_route": "youtubei_next",
+        "value": 0
+      },
+      "like_count": {
+        "artifact": "youtube_watch_capture.json",
+        "posture": "observed",
+        "source_path": "ytInitialPlayerResponse.microformat.playerMicroformatRenderer.likeCount",
+        "source_route": "ytInitialPlayerResponse.microformat",
+        "value": 26
+      },
+      "total_comment_count": {
+        "posture": "unavailable_with_reason",
+        "reason": "source-native total comment count was not exposed as an exact count in the Comments panel badge or commentsHeaderRenderer.countText",
+        "routes_checked": [
+          "ytInitialData.engagementPanels.engagementPanelTitleHeaderRenderer.contextualInfo",
+          "youtubei_next.commentsHeaderRenderer.countText"
+        ]
+      },
+      "view_count": {
+        "artifact": "youtube_watch_capture.json",
+        "posture": "observed",
+        "source_path": "ytInitialPlayerResponse.videoDetails.viewCount",
+        "source_route": "ytInitialPlayerResponse.videoDetails",
+        "value": 1811
+      }
+    },
+    "receipts": {
+      "auth": "logged_out",
+      "extraction": "selected source-visible fields from served_html:ytInitialPlayerResponse + youtubei/v1/next; enclosing response bodies are not persistence inputs",
+      "http_status": 200,
+      "js_executed": false,
+      "retrieval_time_utc": "2026-09-04T14:34:44.297749Z",
+      "source_response_byte_size": 1291126,
+      "source_url": "https://www.youtube.com/watch?v=ajCuq4buR4k"
+    },
+    "surface_type": "shorts",
+    "video_id": "ajCuq4buR4k",
+    "watch_url": "https://www.youtube.com/watch?v=ajCuq4buR4k"
+  },
+  "platform": "youtube",
+  "platform_video_id": "ajCuq4buR4k",
+  "selected_observable_policy_version": "youtube_watch_selected_observables_v1",
+  "source_response_retention": {
+    "comment_pages": {
+      "posture": "not_persisted_after_validated_extraction",
+      "received_byte_size": 81925,
+      "received_page_count": 1
+    },
+    "watch_html": {
+      "posture": "not_persisted_after_validated_extraction",
+      "received_byte_size": 1291126
+    }
+  },
+  "watch_url": "https://www.youtube.com/watch?v=ajCuq4buR4k"
+}

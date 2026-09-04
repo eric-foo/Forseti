@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="profile" href="https://gmpg.org/xfn/11">
+		
+	<meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+
+	<!-- This site is optimized with the Yoast SEO plugin v28.4 - https://yoast.com/product/yoast-seo-wordpress/ -->
+	<title>Experiment Beauty Review - The Stripe</title><link rel="preload" href="https://thestripe.com/wp-content/themes/thestripe2022/assets/images/arrow.png" as="image" fetchpriority="high"><link rel="preload" href="https://thestripe.com/wp-content/uploads/2025/08/Experiment-Beauty-Review-1024x1535.jpg" as="image" imagesrcset="https://thestripe.com/wp-content/uploads/2025/08/Experiment-Beauty-Review-1024x1536.jpg 1024w, https://thestripe.com/wp-content/uploads/2025/08/Experiment-Beauty-Review-475x712.jpg 475w, https://thestripe.com/wp-content/uploads/2025/08/Experiment-Beauty-Review-200x300.jpg 200w, https://thestripe.com/wp-content/uploads/2025/08/Experiment-Beauty-Review-768x1151.jpg 768w, https://thestripe.com/wp-content/uploads/2025/08/Experiment-Beauty-Review-1366x2048.jpg 1366w, https://thestripe.com/wp-content/uploads/2025/08/Experiment-Beauty-Review.jpg 1500w" imagesizes="(max-width: 1024px) 100vw, 1024px" fetchpriority="high"><link rel="preload" href="https://thestripe.com/wp-content/themes/thestripe2022/assets/fonts/Roslindale-DisplayCondensedRegular.woff2" as="font" type="font/woff2" crossorigin><style id="perfmatters-used-css">.font-select .fs-results li.active{background:#3875d7;color:#fff;cursor:pointer}.font-select .fs-results li.active em{background:transparent}:host,:root{--fa-font-solid:normal 900 1em/1 "Font Awesome 6 Solid";--fa-font-regular:normal 400 1em/1 "Font Awesome 6 Regular";--fa-font-light:normal 300 1em/1 "Font Awesome 6 Light";--fa-font-thin:normal 100 1em/1 "Font Awesome 6 Thin";--fa-font-duotone:normal 900 1em/1 "Font Awesome 6 Duotone";--fa-font-brands:normal 400 1em/1 "Font Awesome 6 Brands"}@-webkit-keyframes fa-beat{0%,90%{-webkit-transform:scale(1);transform:scale(1)}45%{-webkit-transform:scale(var(--fa-beat-scale,1.25));transform:scale(var(--fa-beat-scale,1.25))}}@keyframes fa-beat{0%,90%{-webkit-transform:scale(1);transform:scale(1)}45%{-webkit-transform:scale(var(--fa-beat-scale,1.25));transform:scale(var(--fa-beat-scale,1.25))}}@-webkit-keyframes fa-bounce{0%{-webkit-transform:scale(1) translateY(0);transform:scale(1) translateY(0)}10%{-webkit-transform:scale(var(--fa-bounce-start-scale-x,1.1),var(--fa-bounce-start-scale-y,.9)) translateY(0);transform:scale(var(--fa-bounce-start-scale-x,1.1),var(--fa-bounce-start-scale-y,.9)) translateY(0)}30%{-webkit-transform:scale(var(--fa-bounce-jump-scale-x,.9),var(--fa-bounce-jump-scale-y,1.1)) translateY(var(--fa-bounce-height,-.5em));transform:scale(var(--fa-bounce-jump-scale-x,.9),var(--fa-bounce-jump-scale-y,1.1)) translateY(var(--fa-bounce-height,-.5em))}50%{-webkit-transform:scale(var(--fa-bounce-land-scale-x,1.05),var(--fa-bounce-land-scale-y,.95)) translateY(0);transform:scale(var(--fa-bounce-land-scale-x,1.05),var(--fa-bounce-land-scale-y,.95)) translateY(0)}57%{-webkit-transform:scale(1) translateY(var(--fa-bounce-rebound,-.125em));transform:scale(1) translateY(var(--fa-bounce-rebound,-.125em))}64%{-webkit-transform:scale(1) translateY(0);transform:scale(1) translateY(0)}to{-webkit-transform:scale(1) translateY(0);transform:scale(1) translateY(0)}}@keyframes fa-bounce{0%{-webkit-transform:scale(1) translateY(0);transform:scale(1) translateY(0)}10%{-webkit-transform:scale(var(--fa-bounce-start-scale-x,1.1),var(--fa-bounce-start-scale-y,.9)) translateY(0);transform:scale(var(--fa-bounce-start-scale-x,1.1),var(--fa-bounce-start-scale-y,.9)) translateY(0)}30%{-webkit-transform:scale(var(--fa-bounce-jump-scale-x,.9),var(--fa-bounce-jump-scale-y,1.1)) translateY(var(--fa-bounce-height,-.5em));transform:scale(var(--fa-bounce-jump-scale-x,.9),var(--fa-bounce-jump-scale-y,1.1)) translateY(var(--fa-bounce-height,-.5em))}50%{-webkit-transform:scale(var(--fa-bounce-land-scale-x,1.05),var(--fa-bounce-land-scale-y,.95)) translateY(0);transform:scale(var(--fa-bounce-land-scale-x,1.05),var(--fa-bounce-land-scale-y,.95)) translateY(0)}57%{-webkit-transform:scale(1) translateY(var(--fa-bounce-rebound,-.125em));transform:scale(1) translateY(var(--fa-bounce-rebound,-.125em))}64%{-webkit-transform:scale(1) translateY(0);transform:scale(1) translateY(0)}to{-webkit-transform:scale(1) translateY(0);transform:scale(1) translateY(0)}}@-webkit-keyframes fa-fade{50%{opacity:var(--fa-fade-opacity,.4)}}@keyframes fa-fade{50%{opacity:var(--fa-fade-opacity,.4)}}@-webkit-keyframes fa-beat-fade{0%,to{opacity:var(--fa-beat-fade-opacity,.4);-webkit-transform:scale(1);transform:scale(1)}50%{opacity:1;-webkit-transform:scale(var(--fa-beat-fade-scale,1.125));transform:scale(var(--fa-beat-fade-scale,1.125))}}@keyframes fa-beat-fade{0%,to{opacity:var(--fa-beat-fade-opacity,.4);-webkit-transform:scale(1);transform:scale(1)}50%{opacity:1;-webkit-transform:scale(var(--fa-beat-fade-scale,1.125));transform:scale(var(--fa-beat-fade-scale,1.125))}}@-webkit-keyframes fa-flip{50%{-webkit-transform:rotate3d(var(--fa-flip-x,0),var(--fa-flip-y,1),var(--fa-flip-z,0),var(--fa-flip-angle,-180deg));transform:rotate3d(var(--fa-flip-x,0),var(--fa-flip-y,1),var(--fa-flip-z,0),var(--fa-flip-angle,-180deg))}}@keyframes fa-flip{50%{-webkit-transform:rotate3d(var(--fa-flip-x,0),var(--fa-flip-y,1),var(--fa-flip-z,0),var(--fa-flip-angle,-180deg));transform:rotate3d(var(--fa-flip-x,0),var(--fa-flip-y,1),var(--fa-flip-z,0),var(--fa-flip-angle,-180deg))}}@-webkit-keyframes fa-shake{0%{-webkit-transform:rotate(-15deg);transform:rotate(-15deg)}4%{-webkit-transform:rotate(15deg);transform:rotate(15deg)}8%,24%{-webkit-transform:rotate(-18deg);transform:rotate(-18deg)}12%,28%{-webkit-transform:rotate(18deg);transform:rotate(18deg)}16%{-webkit-transform:rotate(-22deg);transform:rotate(-22deg)}20%{-webkit-transform:rotate(22deg);transform:rotate(22deg)}32%{-webkit-transform:rotate(-12deg);transform:rotate(-12deg)}36%{-webkit-transform:rotate(12deg);transform:rotate(12deg)}40%,to{-webkit-transform:rotate(0deg);transform:rotate(0deg)}}@keyframes fa-shake{0%{-webkit-transform:rotate(-15deg);transform:rotate(-15deg)}4%{-webkit-transform:rotate(15deg);transform:rotate(15deg)}8%,24%{-webkit-transform:rotate(-18deg);transform:rotate(-18deg)}12%,28%{-webkit-transform:rotate(18deg);transform:rotate(18deg)}16%{-webkit-transform:rotate(-22deg);transform:rotate(-22deg)}20%{-webkit-transform:rotate(22deg);transform:rotate(22deg)}32%{-webkit-transform:rotate(-12deg);transform:rotate(-12deg)}36%{-webkit-transform:rotate(12deg);transform:rotate(12deg)}40%,to{-webkit-transform:rotate(0deg);transform:rotate(0deg)}}@-webkit-keyframes fa-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes fa-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@font-face{font-family:jpibfi-font;src:url("https://thestripe.com/wp-content/plugins/jquery-pin-it-button-for-images/css/fonts/jpibfi-font.eot?ifsn2k");src:url("https://thestripe.com/wp-content/plugins/jquery-pin-it-button-for-images/css/fonts/jpibfi-font.eot?ifsn2k#iefix") format("embedded-opentype"),url("https://thestripe.com/wp-content/plugins/jquery-pin-it-button-for-images/css/fonts/jpibfi-font.ttf?ifsn2k") format("truetype"),url("https://thestripe.com/wp-content/plugins/jquery-pin-it-button-for-images/css/fonts/jpibfi-font.woff?ifsn2k") format("woff"),url("https://thestripe.com/wp-content/plugins/jquery-pin-it-button-for-images/css/fonts/jpibfi-font.svg?ifsn2k#jpibfi-font") format("svg");font-weight:400;font-style:normal}[class*=" jpibfi-icon-"],[class^=jpibfi-icon-]{font-family:jpibfi-font !important;speak:none;font-style:normal;font-weight:400;font-variant:normal;text-transform:none;line-height:1;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}body.enable-search-modal .cover-modal.show-modal.search-modal.active{display:none}.screen-reader-text{border:0;clip-path:inset(50%);height:1px;margin:-1px;overflow:hidden;overflow-wrap:normal !important;padding:0;position:absolute;width:1px}@keyframes search-filter-loader-rotate{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,input,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline;outline:none}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}a{text-decoration:none;outline:0}button,input[type="button"],input[type="reset"],input[type="submit"],input[type="text"],input[type="email"],input[type="url"],input[type="password"],input[type="search"],input[type="number"],input[type="tel"],input[type="range"],input[type="date"],input[type="month"],input[type="week"],input[type="time"],input[type="datetime"],input[type="datetime-local"],input[type="color"],textarea{outline:none}h1,h2,h3,h4,h5,h6{line-height:1.25em}.entry-content h1,.entry-content h2,.entry-content h3,.entry-content h4,.entry-content h5,.entry-content h6{margin-bottom:.5em}p{margin-bottom:1.5em}b,strong{font-weight:bold}dfn,cite,em,i{font-style:italic}small{font-size:75%}html{box-sizing:border-box}*,*:before,*:after{box-sizing:inherit}html,body{overflow-x:hidden;margin:0;padding:0}body{background:#fff}ul,ol{margin:0 0 1.5em 3em}ul{list-style:disc}ol{list-style:decimal}li>ul,li>ol{margin-bottom:0;margin-left:1.5em}nav ul,.widget ul,.share,.share ul,ul.flex,ul.no-bullets,ol.comment-list,.comment-list ul{margin:0;list-style:none}img{height:auto;max-width:100%}a{color:#000;-webkit-transition:all .3s ease-in-out;-moz-transition:all .3s ease-in-out;-ms-transition:all .3s ease-in-out;-o-transition:all .3s ease-in-out;transition:all .3s ease-in-out}button,input[type="button"],input[type="reset"],input[type="submit"],.wp-block-button__link,.button{outline:none;cursor:pointer;border:none;border-radius:0;-webkit-transition:all .3s ease-in-out;-moz-transition:all .3s ease-in-out;-ms-transition:all .3s ease-in-out;-o-transition:all .3s ease-in-out;transition:all .3s ease-in-out}.button{display:inline-block}input[type="text"],input[type="email"],input[type="url"],input[type="password"],input[type="search"],input[type="number"],input[type="tel"],input[type="range"],input[type="date"],input[type="month"],input[type="week"],input[type="time"],input[type="datetime"],input[type="datetime-local"],input[type="color"],textarea{color:#000;border-radius:0;box-sizing:border-box;width:100%;border:none;padding:10px;background:#fff}label{display:block;margin-bottom:.5em}::-moz-placeholder{opacity:1}.featured-image a,.featured-image img,.wp-caption img,.wp-block-image img,.wp-block-gallery img{display:block}.wp-block-image,.wp-block-gallery,.wp-block-button,.wp-block-quote,.wp-block-pullquote,.wp-block-separator,.wp-block-media-text{margin-bottom:1.5em}.wp-caption,.wp-block-image,.wp-block-gallery .blocks-gallery-item{position:relative}.screen-reader-text{clip:rect(1px,1px,1px,1px);position:absolute !important;height:1px;width:1px;overflow:hidden}.screen-reader-text:focus{background-color:#f1f1f1;border-radius:3px;box-shadow:0 0 2px 2px rgba(0,0,0,.6);clip:auto !important;color:#21759b;display:block;font-size:14px;font-size:.875rem;font-weight:bold;height:auto;left:5px;line-height:normal;padding:15px 23px 14px;text-decoration:none;top:5px;width:auto;z-index:100000}#content[tabindex="-1"]:focus{outline:0}.sf-menu,.sf-menu *{margin:0;padding:0;list-style:none}.sf-menu li{position:relative}.sf-menu ul{position:absolute;display:none;top:100%;left:50%;width:160px;transform:translateX(-50%);z-index:99;border:2px solid #bdb2a8;background:#fff;text-align:center}.sf-menu li:hover>ul,.sf-menu li.sfHover>ul{display:block}.sf-menu a{display:block;position:relative;padding:10px 0}.sf-menu ul ul{top:0;left:100%}.wrap{max-width:1200px;width:90%;margin:0 auto}.flex{display:flex;justify-content:space-between;flex-wrap:wrap}.animate{-webkit-transition:all .3s ease-in-out;-moz-transition:all .3s ease-in-out;-ms-transition:all .3s ease-in-out;-o-transition:all .3s ease-in-out;transition:all .3s ease-in-out}.full-width-bg:before{content:"";display:block;position:absolute;top:0;bottom:0;width:100vw;margin-left:calc(50% - 50vw);z-index:-1}@media all and (min-width: 768px) and (max-width: 1024px){.hide-tablet,.menu>li.hide-tablet{display:none}}@media all and (max-width: 767px){.hide-mobile,.menu>li.hide-mobile{display:none}}.menu>li{display:inline-block;margin:0 20px}.menu>li:first-of-type{margin-left:0}.menu>li:last-of-type{margin-right:0}@import url("https://fast.fonts.net/lt/1.css?apiType=css&c=7b8fdda4-7ac9-4b81-90e2-a94476c0edc1&fontids=1578305");@font-face{font-family:"MisterK";src:url("https://thestripe.com/wp-content/themes/thestripe2022/assets/fonts/46d6c5aa-512c-45ab-90e2-19b2671f1ef6.woff2") format("woff2"),url("https://thestripe.com/wp-content/themes/thestripe2022/assets/fonts/cf56d749-826c-42cb-994b-1c7e03f8506e.woff") format("woff")}@font-face{src:url("https://thestripe.com/wp-content/themes/thestripe2022/assets/fonts/Roslindale-DisplayCondensedRegular.woff2") format("woff2"),url("https://thestripe.com/wp-content/themes/thestripe2022/assets/fonts/Roslindale-DisplayCondensedRegular.woff") format("woff");font-family:"Roslindale";font-style:normal;font-weight:normal}@font-face{font-family:"Ayer";src:url("https://thestripe.com/wp-content/themes/thestripe2022/assets/fonts/AyerPosterCursive-RegularItalic-Web.woff2") format("woff2"),url("https://thestripe.com/wp-content/themes/thestripe2022/assets/fonts/AyerPosterCursive-RegularItalic-Web.woff") format("woff");font-weight:400;font-style:italic;font-stretch:normal}body,p,div,button,input,select,textarea{color:#000;font:16px/1.5em "niveau-grotesk",sans-serif;letter-spacing:.025em}h1,.type-1,.entry-title,.em-fonts-primary{font:44px/1.25em "Roslindale",serif;letter-spacing:.0125em;text-transform:none}h2,.h2{font:44px/1.25em "Roslindale",serif;letter-spacing:.0125em;text-transform:uppercase}h3,.h3,.em-fonts-secondary{font:12px/2em "sweet-sans-pro",sans-serif;text-transform:uppercase;font-weight:700;letter-spacing:.075em;color:#4f443b}h4,.h4,.em-fonts-tertiary,#em-ig-explore-featured-title{font:64px/1.25em "Ayer",sans-serif;font-style:italic;letter-spacing:.0125em}h5,.h5{font:24px/1.33em "Roslindale",serif;letter-spacing:.0125em}h6,.type-3{font:10px/1.4em "sweet-sans-pro",sans-serif;text-transform:uppercase;font-weight:700;letter-spacing:.1em}.type-2{font:78px/1.25em "Ayer",sans-serif;font-style:italic;letter-spacing:.0125em}.type-4{font:80px/1.5em "MisterK",cursive;letter-spacing:normal;text-transform:lowercase;color:#4f443b}.entry-content a{color:#3b57a0}.entry-content a:hover{color:#0c371d}input,textarea{border:none;padding:10px;background:#fff}button,input[type="button"],input[type="reset"],input[type="submit"],.wp-block-button__link,.button{border:none;padding:15px 25px;background:#fff;color:#4f443b;font:10px/1em "sweet-sans-pro",sans-serif;text-transform:uppercase;font-weight:700;letter-spacing:.1em}button:hover,input[type="button"]:hover,input[type="reset"]:hover,input[type="submit"]:hover,.wp-block-button__link:hover,.button:hover{background:#fff;color:#0c371d}label{font:10px/1em "sweet-sans-pro",sans-serif;text-transform:uppercase;font-weight:700;letter-spacing:.1em;color:#4f443b;margin-bottom:10px}::placeholder{color:#7d6d61;font:10px/1em "sweet-sans-pro",sans-serif;text-transform:uppercase;font-weight:700;letter-spacing:.1em}.entry-content figure{max-width:100%}.wp-caption{margin-bottom:1.5em}.wp-caption-text,.wp-block-image figcaption,.wp-block-gallery .blocks-gallery-item figcaption{position:absolute;bottom:50px;right:0;padding:15px;background:#fff;text-align:left;max-width:160px;font:10px/1.5em "sweet-sans-pro",sans-serif;text-transform:uppercase;font-weight:700;letter-spacing:.1em;color:#4f443b}body{background:#f5f4f1}#masthead:before{content:"";display:block;width:100%;height:14px;background:#0c371d url("https://thestripe.com/wp-content/themes/thestripe2022/assets/images/top-nav-bg.png") center;background-size:cover}#masthead{position:fixed;top:0;left:0;right:0;z-index:10000;height:95px}#masthead-inner{position:relative;background:#c1b66c;z-index:200}#masthead .flex{align-items:center;flex-wrap:nowrap}#content{padding-top:160px}#masthead-left{padding:0 30px}.drawer-open a{display:block;width:40px;margin-right:25px}.drawer-open .line{border-top:1.5px solid #fff;margin:8px 0}.drawer-open a:hover .line{border-color:#fff}#site-branding{width:100%;max-width:94px;margin:auto;position:relative}#site-branding a{display:block}#site-branding span{display:none}#site-branding a:before{content:"";display:block;width:94px;height:36px;background:url("https://thestripe.com/wp-content/themes/thestripe2022/assets/images/the-stripe-logo.svg") top center no-repeat;background-size:contain;margin:0 auto}@media (max-width: 500px){#masthead-left{padding:0 20px}.drawer-open a{display:block;width:30px;margin-right:15px}}#site-navigation{text-align:right}#primary-menu{padding:30px}#primary-menu>li{margin:0;line-height:normal;vertical-align:middle;font-size:11px}#primary-menu>li>a:after{content:"";display:inline-block;vertical-align:middle;width:4px;height:4px;border-radius:50%;background:#f7f2d0;margin:0 15px 2px 15px}#primary-menu>li:last-of-type>a:after{display:none}#primary-menu a{color:#f7f2d0}#primary-menu a:hover{color:#fff}@media (max-width: 500px){#site-navigation{background:#70b2ab}#primary-menu{padding:25px 10px 25px 12px}}#utility{padding:30px;background:#70b2ab;align-self:stretch}@media (max-width: 500px){#utility{display:none}}#secondary-menu>li{margin:0;line-height:normal;vertical-align:middle;font-size:11px}#secondary-menu>li>a:after{content:"";display:inline-block;vertical-align:middle;width:4px;height:4px;border-radius:50%;background:#ceedea;margin:0 15px 2px 15px}#secondary-menu a{color:#ceedea}#secondary-menu a:hover{color:#fff}.search-open a{color:#ceedea;font-size:13px}.search-open a:hover{color:#fff}.search-close{color:#fff;position:absolute;bottom:0;right:0;padding-top:10px;transform:translateY(100%);font-size:8px}#search-dropdown{background:#0c371d;padding:35px 0;position:absolute;bottom:0;left:0;right:0;z-index:-1;opacity:0}#search-dropdown-form{position:relative;padding:0;background:none;border-bottom:1px solid #fff}#search-dropdown-text{order:1;color:#fff;font-size:56px;text-indent:15px}#search-dropdown-submit{order:2;margin-right:0;margin-left:20px}@media (max-width: 480px){#search-dropdown-text{font-size:36px}}#drawer-nav-container{position:fixed;top:0;bottom:0;left:0;z-index:11000;background:#f9f7f3;width:100%;max-width:480px;padding:40px;transform:translateX(-100%);overflow-y:scroll}.drawer-close{position:absolute;top:40px;right:40px}.drawer-close a{display:block;width:27px;height:27px;position:relative}.drawer-close .line{width:35px;border-top:1px solid #bdb2a8;position:absolute;top:50%;left:50%;-moz-transform:translate(-50%,-50%) rotate(45deg);-webkit-transform:translate(-50%,-50%) rotate(45deg);-o-transform:translate(-50%,-50%) rotate(45deg);-ms-transform:translate(-50%,-50%) rotate(45deg);transform:translate(-50%,-50%) rotate(45deg);-moz-transform-origin:center;-webkit-transform-origin:center;-o-transform-origin:center;-ms-transform-origin:center;transform-origin:center}.drawer-close .line:last-of-type{-moz-transform:translate(-50%,-50%) rotate(-45deg);-webkit-transform:translate(-50%,-50%) rotate(-45deg);-o-transform:translate(-50%,-50%) rotate(-45deg);-ms-transform:translate(-50%,-50%) rotate(-45deg);transform:translate(-50%,-50%) rotate(-45deg)}.drawer-close a:hover .line{border-color:#0c371d}#drawer-nav-container .site-title{font-size:78px;text-transform:lowercase;letter-spacing:.005em}#drawer-nav-container .site-title a{display:inline-block;position:relative}@media (min-width: 768px){#drawer-nav-container .site-title a:before{content:"";display:block;width:0;height:4px;background:#f9f7f3;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);-webkit-transition:width .3s ease-in;-moz-transition:width .3s ease-in;-ms-transition:width .3s ease-in;-o-transition:width .3s ease-in;transition:width .3s ease-in}#drawer-nav-container .site-title a:hover:before{width:100%;-webkit-transition:width .3s ease-out;-moz-transition:width .3s ease-out;-ms-transition:width .3s ease-out;-o-transition:width .3s ease-out;transition:width .3s ease-out}}#drawer-main-menu{margin-bottom:30px}#drawer-main-menu>li{display:block;padding:15px 0;border-bottom:1px solid #ede7e0;margin:0;font-size:36px;line-height:normal}#drawer-main-menu>li:last-of-type{border-bottom:none;margin-top:10px}#drawer-main-menu>li a:hover{color:#0c371d}#drawer-main-menu>li:nth-of-type(4n+2) a:hover{color:#d86c7f}#drawer-main-menu>li:nth-of-type(4n+3) a:hover{color:#3b57a0}#drawer-main-menu>li:nth-of-type(4n+4) a:hover{color:#c3984b}#drawer-main-menu .sub-menu{display:none;padding-top:10px}#drawer-main-menu .sub-menu>li{font-size:28px;text-transform:capitalize;margin-left:20px;padding-bottom:10px;border-bottom:1px solid #ede7e0;margin-bottom:10px}#drawer-main-menu .sub-menu>li:last-of-type{padding-bottom:0;border-bottom:none;margin-bottom:0}#drawer-main-menu>li.substack a{display:block;max-width:239px;height:0;padding-top:11.42%;text-indent:-9999em;background:url("https://thestripe.com/wp-content/themes/thestripe2022/assets/images/the-scratch-pad-logo.svg") top center no-repeat;background-size:contain}#drawer-utility{flex-wrap:nowrap;margin-bottom:30px}#drawer-utility-menu>li{display:block;margin:0 0 10px 0}#drawer-utility-menu>li>a{color:#7d6d61}#drawer-utility-menu>li>a:hover{color:#4f443b}#social-menu>li{font-size:17px;margin:0 5px}#social-menu>li>a{color:#7d6d61}#social-menu>li>a:hover{color:#0c371d}#social-menu>li:nth-of-type(4n+2)>a:hover{color:#d86c7f}#social-menu>li:nth-of-type(4n+3)>a:hover{color:#3b57a0}#social-menu>li:nth-of-type(4n+4)>a:hover{color:#c3984b}.search-form-container{margin-bottom:30px}.search-form{padding:20px;background:#fff;flex-wrap:nowrap;align-items:center}.search-form .search-text{order:2;padding:0;background:none;flex-grow:1;color:#4f443b}.search-form .search-submit{order:1;padding:0;margin-right:20px;background:none;color:#7d6d61;font-size:15px}.search-form .search-submit:hover{color:#4f443b}#drawer-legal-menu{text-align:center;font-size:8px}#drawer-legal-menu>li{margin:0 5px;color:#4f443b}#drawer-legal-menu>li>a{color:#4f443b}#drawer-legal-menu>li>a:hover{color:#7d6d61}#footer-featured{padding:40px 0 60px;background:url("https://thestripe.com/wp-content/themes/thestripe2022/assets/images/footer-bg.png") center no-repeat;background-size:cover;margin-top:90px}#footer-featured .wp-block-columns,#footer-featured .wp-block-gallery,#footer-featured .wp-block-image{margin-bottom:0 !important}#footer-featured .site-name{color:#fff;font-size:48px;margin-bottom:10px}#footer-featured .site-byline{text-transform:none;margin-bottom:20px;color:#fff;font-size:48px}#footer-featured p{color:#fff;font-size:13px;line-height:25px}#menu-footer-featured{text-align:center}#menu-footer-featured>li{margin:0;font:10px/1.4em "sweet-sans-pro",sans-serif;text-transform:uppercase;font-weight:700;letter-spacing:.1em;vertical-align:middle}#menu-footer-featured>li:after{content:"";display:inline-block;width:3px;height:3px;border-radius:50%;background:#fff;margin:0 10px;vertical-align:middle}#menu-footer-featured>li:last-of-type:after{display:none}#menu-footer-featured>li>a{color:#fff}@media (min-width: 600px) and (max-width: 781px){.wp-block-columns:not(.is-not-stacked-on-mobile)>.wp-block-column:not(:only-child){flex-basis:100% !important;flex-grow:1}.wp-block-columns:not(.is-not-stacked-on-mobile)>.wp-block-column:nth-child(2n){margin-left:0}}#footer{padding:20px 0}#footer-menu,#site-credits{font-size:8px;color:#4f443b}#footer-menu>li{margin:0 20px 0 0}#footer-menu a,#site-credits a{color:#4f443b}#footer-menu a:hover,#site-credits a:hover{color:#000}@media (max-width: 767px){#footer{padding:10px 0;background:#0c371d;text-align:center;max-width:none;width:100%;justify-content:center}#footer-menu{font-size:6px}#footer-menu>li{margin:0 5px;color:#fff}#footer-menu a{color:#fff}}#newsletter-popup{position:fixed;top:50%;left:50%;z-index:120000;width:90%;max-width:650px;padding:45px 0;background:#0c371d url("https://thestripe.com/wp-content/themes/thestripe2022/assets/images/popup-bg.jpg") center center no-repeat;background-size:cover;text-align:center;transform:translate(-50%,-50%);border:10px solid #fff}#popup-overlay{position:fixed;top:0;left:0;width:100%;height:2000px;z-index:110000;background:rgba(255,255,255,.8)}#newsletter-popup .popup-close{position:absolute;top:-30px;right:-10px;color:#fff;font-size:12px}#newsletter-popup h2{color:#91cbb9;font-size:100px;line-height:1em;margin-bottom:10px;letter-spacing:-.025em}#newsletter-popup .subscription{width:50%;padding:30px;color:#fff}#newsletter-popup .subscription:first-of-type{border-right:3px solid #91cbb9}#newsletter-popup .subscription h3{text-transform:none;max-width:140px;margin:0 auto 20px;color:#fff}#newsletter-popup .subscription h3 em{font-family:"Ayer",serif}#newsletter-popup .subscription h3 em:before{content:"\A";white-space:pre}#newsletter-popup .subscription .description{color:#fff;margin-bottom:20px}#newsletter-popup .subscription .button{background:#c1b66c;color:#fff}#newsletter-popup .subscription .button:hover{background:#91cbb9}@media (max-width: 767px){#newsletter-popup{padding:30px 0}#newsletter-popup h2{margin-bottom:0}#newsletter-popup .subscription{width:100%;padding:10px 30px}#newsletter-popup .subscription:first-of-type{border-right:none}}.single-post #footer-featured{margin-top:0}.post-single:not(.post-single-mini){max-width:750px;margin:0 auto}.post-single:not(.post-single-mini) .entry-header{text-align:center;margin-bottom:30px}.post-single .entry-meta{margin:0 0 20px 0;list-style:none}.post-single .entry-meta li{display:inline-block;margin:0 20px;color:#4f443b}.post-single .entry-meta li:first-of-type{margin-left:0}.post-single .entry-meta li:last-of-type{margin-right:0}.post-single .entry-meta li a{color:#4f443b}.post-single .entry-meta li a:hover{color:#a29284}.post-single .entry-content a,.info-page .entry-content a{font-weight:bold}.post-single .entry-content h2,.info-page .entry-content h2{font:44px/1.25em "Roslindale",serif;letter-spacing:.0125em;text-transform:uppercase}.post-single .entry-content h2 strong,.info-page .entry-content h2 strong{font-weight:normal}.post-single .entry-content h2 em,.info-page .entry-content h2 em{font-style:normal}.post-single .entry-content h2 a,.info-page .entry-content h2 a{color:#000;font-weight:normal}@media (max-width: 767px){.post-single .entry-content h2,.info-page .entry-content h2{font-size:28px}}.post-single .entry-content h3,.info-page .entry-content h3{font:12px/2em "sweet-sans-pro",sans-serif;text-transform:uppercase;font-weight:700;letter-spacing:.075em;color:#4f443b}.post-single .entry-content h3 em,.info-page .entry-content h3 em{font-style:normal}.post-single .entry-content h3 a,.info-page .entry-content h3 a{color:#000;font-weight:normal}.post-single .entry-content h4,.info-page .entry-content h4{font:64px/1.25em "Ayer",sans-serif;font-style:italic;letter-spacing:.0125em;margin-bottom:.025em;margin-top:.4em}.post-single .entry-content h4 strong,.info-page .entry-content h4 strong{font-weight:normal}.post-single .entry-content h4 a,.info-page .entry-content h4 a{color:#000;font-weight:normal}@media (max-width: 767px){.post-single .entry-content h4,.info-page .entry-content h4{font-size:48px}}.post-single .entry-content h6,.info-page .entry-content h6{font:10px/1.4em "sweet-sans-pro",sans-serif;text-transform:uppercase;font-weight:700;letter-spacing:.1em}.post-single .entry-content h6 strong,.info-page .entry-content h6 strong{font-weight:normal}.post-single .entry-content h6 em,.info-page .entry-content h6 em{font-style:normal}.post-single .entry-content h6 a,.info-page .entry-content h6 a{color:#000;font-weight:normal}.post-single:not(.post-single-mini) .entry-footer{margin-top:40px}.post-single .entry-footer>div{width:0;flex-grow:1;text-align:center}.post-single .entry-footer .comments-link a{display:block;padding:10px;background:#0c371d;color:#fff}.post-single .entry-footer .comments-link a:hover{background:#c3984b}.post-single .entry-footer .comments-link a:after{content:"";display:inline-block;width:17px;height:10px;background:url("https://thestripe.com/wp-content/themes/thestripe2022/assets/images/arrow.png") center no-repeat;background-size:contain;vertical-align:middle;margin-left:5px}@media (max-width: 767px){.post-single .entry-footer>div{width:100%}}#respond{padding:50px 0;max-width:750px;margin:0 auto;position:relative}#reply-title{display:none}#comment-form-title{font:85px/1.25em "Ayer",sans-serif;font-style:italic;text-transform:none;letter-spacing:.0125em;color:#000}#commentform input,#commentform textarea{border:2px solid #bdb2a8;padding:20px}#commentform .comment-form-cookies-consent{display:flex;justify-content:flex-start;align-items:center}#commentform .comment-form-cookies-consent input{margin-right:10px}#commentform .comment-form-cookies-consent label{margin:0}#commentform .form-submit{text-align:center}#commentform input[type="submit"]{border:none;padding:15px 30px;background:#a29284;color:#fff}#commentform input[type="submit"]:hover{background:#0c371d}@media (max-width: 767px){#comment-form-title{text-align:center;font-size:48px}}@media (min-width: 768px){body:not(.logged-in) #comment-form-title{position:absolute;top:50px;left:0;max-width:220px;padding:15px 25px}body:not(.logged-in) #commentform{display:grid;grid-template-columns:50% 50%;grid-template-rows:auto auto auto auto auto auto;gap:0px 0px;grid-auto-flow:row;grid-template-areas:". comment-form-author" ". comment-form-email" ". comment-form-url" "comment-form-comment comment-form-comment" "comment-form-cookies-consent comment-form-cookies-consent" "form-submit form-submit"}body:not(.logged-in) .comment-form-author{grid-area:comment-form-author}body:not(.logged-in) .comment-form-email{grid-area:comment-form-email}body:not(.logged-in) .comment-form-url{grid-area:comment-form-url}body:not(.logged-in) .comment-form-comment{grid-area:comment-form-comment}body:not(.logged-in) .comment-form-cookies-consent{grid-area:comment-form-cookies-consent}body:not(.logged-in) .form-submit{grid-area:form-submit}}#comments{max-width:750px;margin:50px auto 0;padding-top:30px;padding-bottom:70px;position:relative}#comments:before{background:#f1eee9}.comments-title{color:#a29284;text-align:center;text-transform:none;margin-bottom:40px}@media (max-width: 767px){.comments-title{font-size:48px}}.comment-list>li{padding:20px;background:#fff;margin-bottom:15px}.comment-list>li:last-of-type{margin-bottom:0}.comment-list .children>li{padding:20px;border:2px solid #ede7e0;margin-top:20px}.comment-author{margin-bottom:10px}.comment-author,.comment-author a{color:#4f443b}.comment-author a:hover{color:#a29284}.comment-text p{font-size:14px;line-height:1.75em}.comment-meta{text-align:right}.comment-meta,.comment-meta a{color:#4f443b}.comment-meta a:hover{color:#a29284}.comment-reply-link{margin-left:10px}.thestripe #pubexchange_below_content{margin-top:50px}@keyframes fadeIn{0%{opacity:0}100%{opacity:1}}</style>
+	<meta name="description" content="Sharing with you my Experiment Beauty Review. This brand is excellent, especially for those of you with dry skin." />
+	<link rel="canonical" href="https://thestripe.com/experiment-beauty-review/" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="Experiment Beauty Review - The Stripe" />
+	<meta property="og:description" content="Sharing with you my Experiment Beauty Review. This brand is excellent, especially for those of you with dry skin." />
+	<meta property="og:url" content="https://thestripe.com/experiment-beauty-review/" />
+	<meta property="og:site_name" content="The Stripe" />
+	<meta property="article:published_time" content="2025-08-26T10:00:00+00:00" />
+	<meta property="article:modified_time" content="2025-08-26T13:45:38+00:00" />
+	<meta property="og:image" content="https://thestripe.com/wp-content/uploads/2025/08/Experiment-Beauty-Review.jpg" />
+	<meta property="og:image:width" content="1500" />
+	<meta property="og:image:height" content="2249" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta name="author" content="grace at the stripe" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:creator" content="@graceatwood" />
+	<meta name="twitter:label1" content="Written by" />
+	<meta name="twitter:data1" content="grace at the stripe" />
+	<meta name="twitter:label2" content="Est. reading time" />
+	<meta name="twitter:data2" content="3 minutes" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https:\/\/schema.org","@graph":[{"@type":"Article","@id":"https:\/\/thestripe.com\/experiment-beauty-review\/#article","isPartOf":{"@id":"https:\/\/thestripe.com\/experiment-beauty-review\/"},"author":{"name":"grace at the stripe","@id":"https:\/\/thestripe.com\/#\/schema\/person\/07b95fd0af7bd664110bffdeef4c7b59"},"headline":"Experiment Beauty Review","datePublished":"2025-08-26T10:00:00+00:00","dateModified":"2025-08-26T13:45:38+00:00","mainEntityOfPage":{"@id":"https:\/\/thestripe.com\/experiment-beauty-review\/"},"wordCount":458,"commentCount":0,"image":{"@id":"https:\/\/thestripe.com\/experiment-beauty-review\/#primaryimage"},"thumbnailUrl":"https:\/\/thestripe.com\/wp-content\/uploads\/2025\/08\/Experiment-Beauty-Review.jpg","keywords":["experiment beauty"],"articleSection":["beauty","skincare"],"inLanguage":"en-US","potentialAction":[{"@type":"CommentAction","name":"Comment","target":["https:\/\/thestripe.com\/experiment-beauty-review\/#respond"]}]},{"@type":"WebPage","@id":"https:\/\/thestripe.com\/experiment-beauty-review\/","url":"https:\/\/thestripe.com\/experiment-beauty-review\/","name":"Experiment Beauty Review - The Stripe","isPartOf":{"@id":"https:\/\/thestripe.com\/#website"},"primaryImageOfPage":{"@id":"https:\/\/thestripe.com\/experiment-beauty-review\/#primaryimage"},"image":{"@id":"https:\/\/thestripe.com\/experiment-beauty-review\/#primaryimage"},"thumbnailUrl":"https:\/\/thestripe.com\/wp-content\/uploads\/2025\/08\/Experiment-Beauty-Review.jpg","datePublished":"2025-08-26T10:00:00+00:00","dateModified":"2025-08-26T13:45:38+00:00","author":{"@id":"https:\/\/thestripe.com\/#\/schema\/person\/07b95fd0af7bd664110bffdeef4c7b59"},"description":"Sharing with you my Experiment Beauty Review. This brand is excellent, especially for those of you with dry skin.","breadcrumb":{"@id":"https:\/\/thestripe.com\/experiment-beauty-review\/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https:\/\/thestripe.com\/experiment-beauty-review\/"]}]},{"@type":"ImageObject","inLanguage":"en-US","@id":"https:\/\/thestripe.com\/experiment-beauty-review\/#primaryimage","url":"https:\/\/thestripe.com\/wp-content\/uploads\/2025\/08\/Experiment-Beauty-Review.jpg","contentUrl":"https:\/\/thestripe.com\/wp-content\/uploads\/2025\/08\/Experiment-Beauty-Review.jpg","width":1500,"height":2249,"caption":"Experiment Beauty Review"},{"@type":"BreadcrumbList","@id":"https:\/\/thestripe.com\/experiment-beauty-review\/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https:\/\/thestripe.com\/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https:\/\/thestripe.com\/blog\/"},{"@type":"ListItem","position":3,"name":"Experiment Beauty Review"}]},{"@type":"WebSite","@id":"https:\/\/thestripe.com\/#website","url":"https:\/\/thestripe.com\/","name":"The Stripe","description":"A lifestyle blog about fashion, beauty, travel, and DIY.","potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https:\/\/thestripe.com\/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"},{"@type":"Person","@id":"https:\/\/thestripe.com\/#\/schema\/person\/07b95fd0af7bd664110bffdeef4c7b59","name":"grace at the stripe","image":{"@type":"ImageObject","inLanguage":"en-US","@id":"https:\/\/secure.gravatar.com\/avatar\/96a41c5e30ec882ed2c4155b66187220f567e7a8ab56ee02239a922affe8f18f?s=96&d=mm&r=g","url":"https:\/\/secure.gravatar.com\/avatar\/96a41c5e30ec882ed2c4155b66187220f567e7a8ab56ee02239a922affe8f18f?s=96&d=mm&r=g","contentUrl":"https:\/\/secure.gravatar.com\/avatar\/96a41c5e30ec882ed2c4155b66187220f567e7a8ab56ee02239a922affe8f18f?s=96&d=mm&r=g","caption":"grace at the stripe"},"sameAs":["https:\/\/thestripe.com","https:\/\/x.com\/graceatwood"]}]}</script>
+	<!-- / Yoast SEO plugin. -->
+
+
+<link rel='dns-prefetch' href='//maxcdn.bootstrapcdn.com' />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel='dns-prefetch' href='//use.typekit.net' />
+<link rel='dns-prefetch' href='//cdn.jsdelivr.net' />
+<link href='//hb.wpmucdn.com' rel='preconnect' />
+<link href="https://use.fontawesome.com" crossorigin='' rel='preconnect' />
+<link rel="alternate" type="application/rss+xml" title="The Stripe &raquo; Feed" href="https://thestripe.com/feed/" />
+<link rel="alternate" type="application/rss+xml" title="The Stripe &raquo; Comments Feed" href="https://thestripe.com/comments/feed/" />
+<link rel="alternate" type="application/rss+xml" title="The Stripe &raquo; Experiment Beauty Review Comments Feed" href="https://thestripe.com/experiment-beauty-review/feed/" />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://thestripe.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fthestripe.com%2Fexperiment-beauty-review%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://thestripe.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fthestripe.com%2Fexperiment-beauty-review%2F&#038;format=xml" />
+<link rel="stylesheet" id="font-awesome-style-css" media="all" data-pmdelayedstyle="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css?ver=7.1">
+<link rel="stylesheet" id="spectrum-style-css" media="all" data-pmdelayedstyle="https://thestripe.com/wp-content/plugins/TapInfluence/spectrum.css?ver=7.1">
+<link rel="stylesheet" id="smart-review-style-css" media="all" data-pmdelayedstyle="https://thestripe.com/wp-content/plugins/TapInfluence/pluginstyle.css?ver=7.1">
+<style id="wp-block-library-inline-css">
+:root{--wp-block-synced-color:#7a00df;--wp-block-synced-color--rgb:122,0,223;--wp-bound-block-color:var(--wp-block-synced-color);--wp-editor-canvas-background:#ddd;--wp-admin-theme-color:#007cba;--wp-admin-theme-color--rgb:0,124,186;--wp-admin-theme-color-darker-10:#006ba1;--wp-admin-theme-color-darker-10--rgb:0,107,160.5;--wp-admin-theme-color-darker-20:#005a87;--wp-admin-theme-color-darker-20--rgb:0,90,135;--wp-admin-border-width-focus:2px}@media (min-resolution:192dpi){:root{--wp-admin-border-width-focus:1.5px}}.wp-element-button{cursor:pointer}:root .has-very-light-gray-background-color{background-color:#eee}:root .has-very-dark-gray-background-color{background-color:#313131}:root .has-very-light-gray-color{color:#eee}:root .has-very-dark-gray-color{color:#313131}:root .has-vivid-green-cyan-to-vivid-cyan-blue-gradient-background{background:linear-gradient(135deg,#00d084,#0693e3)}:root .has-purple-crush-gradient-background{background:linear-gradient(135deg,#34e2e4,#4721fb 50%,#ab1dfe)}:root .has-hazy-dawn-gradient-background{background:linear-gradient(135deg,#faaca8,#dad0ec)}:root .has-subdued-olive-gradient-background{background:linear-gradient(135deg,#fafae1,#67a671)}:root .has-atomic-cream-gradient-background{background:linear-gradient(135deg,#fdd79a,#004a59)}:root .has-nightshade-gradient-background{background:linear-gradient(135deg,#330968,#31cdcf)}:root .has-midnight-gradient-background{background:linear-gradient(135deg,#020381,#2874fc)}:root{--wp--preset--font-size--normal:16px;--wp--preset--font-size--huge:42px}.has-regular-font-size{font-size:1em}.has-larger-font-size{font-size:2.625em}.has-normal-font-size{font-size:var(--wp--preset--font-size--normal)}.has-huge-font-size{font-size:var(--wp--preset--font-size--huge)}:root .has-text-align-center{text-align:center}:root .has-text-align-left{text-align:left}:root .has-text-align-right{text-align:right}.has-fit-text{white-space:nowrap!important}#end-resizable-editor-section{display:none}.aligncenter{clear:both}.items-justified-left{justify-content:flex-start}.items-justified-center{justify-content:center}.items-justified-right{justify-content:flex-end}.items-justified-space-between{justify-content:space-between}.screen-reader-text{word-wrap:normal!important;border:0;clip-path:inset(50%);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;word-break:normal!important}.screen-reader-text:focus{background-color:#ddd;clip-path:none;color:#444;display:block;font-size:1em;height:auto;left:5px;line-height:normal;padding:15px 23px 14px;text-decoration:none;top:5px;width:auto;z-index:100000}html :where(.has-border-color){border-style:solid}html :where([style^=border-color],[style*=";border-color"],[style*="; border-color"]){border-style:solid}html :where([style^=border-top-color],[style*=";border-top-color"],[style*="; border-top-color"]){border-top-style:solid}html :where([style^=border-right-color],[style*=";border-right-color"],[style*="; border-right-color"]){border-right-style:solid}html :where([style^=border-bottom-color],[style*=";border-bottom-color"],[style*="; border-bottom-color"]){border-bottom-style:solid}html :where([style^=border-left-color],[style*=";border-left-color"],[style*="; border-left-color"]){border-left-style:solid}html :where([style^=border-width],[style*=";border-width"],[style*="; border-width"]){border-style:solid}html :where([style^=border-top-width],[style*=";border-top-width"],[style*="; border-top-width"]){border-top-style:solid}html :where([style^=border-right-width],[style*=";border-right-width"],[style*="; border-right-width"]){border-right-style:solid}html :where([style^=border-bottom-width],[style*=";border-bottom-width"],[style*="; border-bottom-width"]){border-bottom-style:solid}html :where([style^=border-left-width],[style*=";border-left-width"],[style*="; border-left-width"]){border-left-style:solid}html :where(img[class*=wp-image-]){height:auto;max-width:100%}:where(figure){margin:0 0 1em}html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:var(--wp-admin--admin-bar--height,0px)}@media screen and (max-width:600px){html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:0px}}
+
+/*# sourceURL=/wp-includes/css/dist/block-library/common.min.css */
+</style>
+<style id="wp-block-heading-inline-css">
+h1:where(.wp-block-heading).has-background,h2:where(.wp-block-heading).has-background,h3:where(.wp-block-heading).has-background,h4:where(.wp-block-heading).has-background,h5:where(.wp-block-heading).has-background,h6:where(.wp-block-heading).has-background{padding:1.25em 2.375em}h1.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h1.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h2.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h2.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h3.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h3.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h4.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h4.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h5.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h5.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h6.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h6.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]){rotate:180deg}
+/*# sourceURL=https://thestripe.com/wp-includes/blocks/heading/style.min.css */
+</style>
+<style id="wp-block-image-inline-css">
+.wp-block-image>a,.wp-block-image>figure>a{display:inline-block}.wp-block-image img{box-sizing:border-box;height:auto;max-width:100%;vertical-align:bottom}@media not (prefers-reduced-motion){.wp-block-image img.hide{visibility:hidden}.wp-block-image img.show{animation:show-content-image .4s}}.wp-block-image[style*=border-radius] img,.wp-block-image[style*=border-radius]>a{border-radius:inherit}.wp-block-image.has-custom-border img{box-sizing:border-box}.wp-block-image.aligncenter{text-align:center}.wp-block-image.alignfull>a,.wp-block-image.alignwide>a{width:100%}.wp-block-image.alignfull img,.wp-block-image.alignwide img{height:auto;width:100%}.wp-block-image .aligncenter,.wp-block-image .alignleft,.wp-block-image .alignright,.wp-block-image.aligncenter,.wp-block-image.alignleft,.wp-block-image.alignright{display:table}.wp-block-image .aligncenter>figcaption,.wp-block-image .alignleft>figcaption,.wp-block-image .alignright>figcaption,.wp-block-image.aligncenter>figcaption,.wp-block-image.alignleft>figcaption,.wp-block-image.alignright>figcaption{caption-side:bottom;display:table-caption}.wp-block-image .alignleft{float:left;margin:.5em 1em .5em 0}.wp-block-image .alignright{float:right;margin:.5em 0 .5em 1em}.wp-block-image .aligncenter{margin-left:auto;margin-right:auto}.wp-block-image :where(figcaption){margin-bottom:1em;margin-top:.5em}.wp-block-image.is-style-circle-mask img{border-radius:9999px}@supports ((-webkit-mask-image:none) or (mask-image:none)) or (-webkit-mask-image:none){.wp-block-image.is-style-circle-mask img{border-radius:0;-webkit-mask-image:url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50"/></svg>');mask-image:url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50"/></svg>');mask-mode:alpha;-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:contain;mask-size:contain}}:root :where(.wp-block-image.is-style-rounded img,.wp-block-image .is-style-rounded img){border-radius:9999px}.wp-block-image figure{margin:0}.wp-lightbox-container{display:flex;flex-direction:column;position:relative}.wp-lightbox-container img{cursor:zoom-in}.wp-lightbox-container img:hover+button{opacity:1}.wp-lightbox-container button{align-items:center;backdrop-filter:blur(16px) saturate(180%);background-color:rgba(90,90,90,.25);border:none;border-radius:4px;cursor:zoom-in;display:flex;height:20px;justify-content:center;opacity:0;padding:0;position:absolute;right:16px;text-align:center;top:16px;width:20px;z-index:100}@media not (prefers-reduced-motion){.wp-lightbox-container button{transition:opacity .2s ease}}.wp-lightbox-container button:focus-visible{outline:3px auto rgba(90,90,90,.25);outline:3px auto -webkit-focus-ring-color;outline-offset:3px}.wp-lightbox-container button:hover{cursor:pointer;opacity:1}.wp-lightbox-container button:focus{opacity:1}.wp-lightbox-container button:focus,.wp-lightbox-container button:hover,.wp-lightbox-container button:not(:hover):not(:active):not(.has-background){background-color:rgba(90,90,90,.25);border:none}.wp-lightbox-overlay{box-sizing:border-box;cursor:zoom-out;height:100vh;left:0;overflow:hidden;position:fixed;top:0;visibility:hidden;width:100%;z-index:100000}.wp-lightbox-overlay .wp-lightbox-close-button{align-items:center;cursor:pointer;display:flex;font-family:inherit;gap:8px;justify-content:center;line-height:1;min-height:40px;min-width:40px;padding:0 4px;position:absolute;right:calc(env(safe-area-inset-right) + 16px);top:calc(env(safe-area-inset-top) + 16px);z-index:5000000}.wp-lightbox-overlay .wp-lightbox-close-button:focus,.wp-lightbox-overlay .wp-lightbox-close-button:hover,.wp-lightbox-overlay .wp-lightbox-close-button:not(:hover):not(:active):not(.has-background){background:none;border:none}.wp-lightbox-overlay .wp-lightbox-close-button:has(.wp-lightbox-close-text:not([hidden])) .wp-lightbox-close-icon svg{height:1em;width:1em}.wp-lightbox-overlay .wp-lightbox-close-icon svg{display:block}.wp-lightbox-overlay .wp-lightbox-navigation-button-next,.wp-lightbox-overlay .wp-lightbox-navigation-button-prev{align-items:center;bottom:16px;cursor:pointer;display:flex;font-family:inherit;gap:4px;justify-content:center;line-height:1;min-height:40px;min-width:40px;padding:0 8px;position:absolute;z-index:2000002}.wp-lightbox-overlay .wp-lightbox-navigation-button-next[hidden],.wp-lightbox-overlay .wp-lightbox-navigation-button-prev[hidden]{display:none}@media (min-width:960px){.wp-lightbox-overlay .wp-lightbox-navigation-button-next,.wp-lightbox-overlay .wp-lightbox-navigation-button-prev{bottom:50%;transform:translateY(-50%)}}.wp-lightbox-overlay .wp-lightbox-navigation-button-next:focus,.wp-lightbox-overlay .wp-lightbox-navigation-button-next:hover,.wp-lightbox-overlay .wp-lightbox-navigation-button-next:not(:hover):not(:active):not(.has-background),.wp-lightbox-overlay .wp-lightbox-navigation-button-prev:focus,.wp-lightbox-overlay .wp-lightbox-navigation-button-prev:hover,.wp-lightbox-overlay .wp-lightbox-navigation-button-prev:not(:hover):not(:active):not(.has-background){background:none;border:none;padding:0 8px}.wp-lightbox-overlay .wp-lightbox-navigation-button-next:has(.wp-lightbox-navigation-text:not([hidden])) .wp-lightbox-navigation-icon svg,.wp-lightbox-overlay .wp-lightbox-navigation-button-prev:has(.wp-lightbox-navigation-text:not([hidden])) .wp-lightbox-navigation-icon svg{display:block;height:1.5em;width:1.5em}.wp-lightbox-overlay .wp-lightbox-navigation-button-prev{left:calc(env(safe-area-inset-left) + 16px)}.wp-lightbox-overlay .wp-lightbox-navigation-button-next{right:calc(env(safe-area-inset-right) + 16px)}.wp-lightbox-overlay .wp-lightbox-navigation-icon svg{vertical-align:middle}.wp-lightbox-overlay .lightbox-image-container{height:var(--wp--lightbox-container-height);left:50%;overflow:hidden;position:absolute;top:50%;transform:translate(-50%,-50%);transform-origin:top left;width:var(--wp--lightbox-container-width);z-index:2000001}.wp-lightbox-overlay .wp-block-image{align-items:center;box-sizing:border-box;display:flex;height:100%;justify-content:center;margin:0;position:relative;transform-origin:0 0;width:100%;z-index:3000000}.wp-lightbox-overlay .wp-block-image img{height:var(--wp--lightbox-image-height);min-height:var(--wp--lightbox-image-height);min-width:var(--wp--lightbox-image-width);width:var(--wp--lightbox-image-width)}.wp-lightbox-overlay .wp-block-image figcaption{display:none}.wp-lightbox-overlay button{background:none;border:none}.wp-lightbox-overlay .scrim{background-color:#fff;height:100%;opacity:.9;position:absolute;width:100%;z-index:2000000}.wp-lightbox-overlay.active{visibility:visible}@media not (prefers-reduced-motion){.wp-lightbox-overlay.active{animation:turn-on-visibility .25s both}.wp-lightbox-overlay.active img{animation:turn-on-visibility .35s both}.wp-lightbox-overlay.show-closing-animation:not(.active){animation:turn-off-visibility .35s both}.wp-lightbox-overlay.show-closing-animation:not(.active) img{animation:turn-off-visibility .25s both}.wp-lightbox-overlay.zoom.active{animation:none;opacity:1;visibility:visible}.wp-lightbox-overlay.zoom.active .lightbox-image-container{animation:lightbox-zoom-in .4s}.wp-lightbox-overlay.zoom.active .lightbox-image-container img{animation:none}.wp-lightbox-overlay.zoom.active .scrim{animation:turn-on-visibility .4s forwards}.wp-lightbox-overlay.zoom.show-closing-animation:not(.active){animation:none}.wp-lightbox-overlay.zoom.show-closing-animation:not(.active) .lightbox-image-container{animation:lightbox-zoom-out .4s}.wp-lightbox-overlay.zoom.show-closing-animation:not(.active) .lightbox-image-container img{animation:none}.wp-lightbox-overlay.zoom.show-closing-animation:not(.active) .scrim{animation:turn-off-visibility .4s forwards}}@keyframes show-content-image{0%{visibility:hidden}99%{visibility:hidden}to{visibility:visible}}@keyframes turn-on-visibility{0%{opacity:0}to{opacity:1}}@keyframes turn-off-visibility{0%{opacity:1;visibility:visible}99%{opacity:0;visibility:visible}to{opacity:0;visibility:hidden}}@keyframes lightbox-zoom-in{0%{transform:translate(calc((-100vw + var(--wp--lightbox-scrollbar-width))/2 + var(--wp--lightbox-initial-left-position)),calc(-50vh + var(--wp--lightbox-initial-top-position))) scale(var(--wp--lightbox-scale))}to{transform:translate(-50%,-50%) scale(1)}}@keyframes lightbox-zoom-out{0%{transform:translate(-50%,-50%) scale(1);visibility:visible}99%{visibility:visible}to{transform:translate(calc((-100vw + var(--wp--lightbox-scrollbar-width))/2 + var(--wp--lightbox-initial-left-position)),calc(-50vh + var(--wp--lightbox-initial-top-position))) scale(var(--wp--lightbox-scale));visibility:hidden}}
+/*# sourceURL=https://thestripe.com/wp-includes/blocks/image/style.min.css */
+</style>
+<style id="wp-block-paragraph-inline-css">
+.is-small-text{font-size:.875em}.is-regular-text{font-size:1em}.is-large-text{font-size:2.25em}.is-larger-text{font-size:3em}.has-drop-cap:not(:focus):first-letter{float:left;font-size:8.4em;font-style:normal;font-weight:100;line-height:.68;margin:.05em .1em 0 0;text-transform:uppercase}body.rtl .has-drop-cap:not(:focus):first-letter{float:none;margin-left:.1em}p.has-drop-cap.has-background{overflow:hidden}:root :where(p.has-background){padding:1.25em 2.375em}:where(p.has-text-color:not(.has-link-color)) a{color:inherit}p.has-text-align-left[style*="writing-mode:vertical-lr"],p.has-text-align-right[style*="writing-mode:vertical-rl"]{rotate:180deg}
+/*# sourceURL=https://thestripe.com/wp-includes/blocks/paragraph/style.min.css */
+</style>
+<style id="wp-block-columns-inline-css">
+.wp-block-columns{box-sizing:border-box;display:flex;flex-wrap:wrap!important}@media (min-width:782px){.wp-block-columns{flex-wrap:nowrap!important}}.wp-block-columns{align-items:normal!important}.wp-block-columns.are-vertically-aligned-top{align-items:flex-start}.wp-block-columns.are-vertically-aligned-center{align-items:center}.wp-block-columns.are-vertically-aligned-bottom{align-items:flex-end}@media (max-width:781px){.wp-block-columns:not(.is-not-stacked-on-mobile)>.wp-block-column{flex-basis:100%!important}}@media (min-width:782px){.wp-block-columns:not(.is-not-stacked-on-mobile)>.wp-block-column{flex-basis:0;flex-grow:1}.wp-block-columns:not(.is-not-stacked-on-mobile)>.wp-block-column[style*=flex-basis]{flex-grow:0}}.wp-block-columns.is-not-stacked-on-mobile{flex-wrap:nowrap!important}.wp-block-columns.is-not-stacked-on-mobile>.wp-block-column{flex-basis:0;flex-grow:1}.wp-block-columns.is-not-stacked-on-mobile>.wp-block-column[style*=flex-basis]{flex-grow:0}:where(.wp-block-columns){margin-bottom:1.75em}:where(.wp-block-columns.has-background){padding:1.25em 2.375em}.wp-block-column{flex-grow:1;min-width:0;overflow-wrap:break-word;word-break:break-word}.wp-block-column.is-vertically-aligned-top{align-self:flex-start}.wp-block-column.is-vertically-aligned-center{align-self:center}.wp-block-column.is-vertically-aligned-bottom{align-self:flex-end}.wp-block-column.is-vertically-aligned-stretch{align-self:stretch}.wp-block-column.is-vertically-aligned-bottom,.wp-block-column.is-vertically-aligned-center,.wp-block-column.is-vertically-aligned-top{width:100%}
+/*# sourceURL=https://thestripe.com/wp-includes/blocks/columns/style.min.css */
+</style>
+
+<style id="classic-theme-styles-inline-css">
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+/*# sourceURL=/wp-includes/css/classic-themes.min.css */
+</style>
+
+<style id="font-awesome-svg-styles-default-inline-css">
+.svg-inline--fa {
+  display: inline-block;
+  height: 1em;
+  overflow: visible;
+  vertical-align: -.125em;
+}
+/*# sourceURL=font-awesome-svg-styles-default-inline-css */
+</style>
+<link rel="stylesheet" id="font-awesome-svg-styles-css" media="all" data-pmdelayedstyle="https://thestripe.com/wp-content/uploads/font-awesome/v6.1.2/css/svg-with-js.css">
+<style id="font-awesome-svg-styles-inline-css">
+   .wp-block-font-awesome-icon svg::before,
+   .wp-rich-text-font-awesome-icon svg::before {content: unset;}
+/*# sourceURL=font-awesome-svg-styles-inline-css */
+</style>
+<link rel="stylesheet" id="font-awesome-official-css" media="all" integrity="sha384-fZCoUih8XsaUZnNDOiLqnby1tMJ0sE7oBbNk2Xxf5x8Z4SvNQ9j83vFMa/erbVrV" crossorigin="anonymous" data-pmdelayedstyle="https://use.fontawesome.com/releases/v6.1.2/css/all.css">
+<link rel="stylesheet" id="font-awesome-official-v4shim-css" media="all" integrity="sha384-iW7MVRJO9Fj06GFbRcMqdZBcVQhjBWlVXUjtY7XCppA+DZUoHBQ7B8VB+EjXUkPV" crossorigin="anonymous" data-pmdelayedstyle="https://use.fontawesome.com/releases/v6.1.2/css/v4-shims.css">
+<style id="global-styles-inline-css">
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #FFF;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--color--green: #0C371D;--wp--preset--color--blue: #3B57A0;--wp--preset--color--pink: #D86C7F;--wp--preset--color--yellow: #C3984B;--wp--preset--color--dkturq: #70B2AB;--wp--preset--color--ltturq: #91CBB9;--wp--preset--color--chartreuse: #C1B66C;--wp--preset--color--brown: #4F443B;--wp--preset--color--mdbrown: #7D6D61;--wp--preset--color--ltbrown: #A29284;--wp--preset--color--beige: #EDE7E0;--wp--preset--color--ivory: #F1EEE9;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgb(252,185,0) 0%,rgb(255,105,0) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgb(255,105,0) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 10px;--wp--preset--font-size--medium: 12px;--wp--preset--font-size--large: 16px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgb(255, 255, 255), 6px 6px rgb(0, 0, 0);--wp--preset--shadow--crisp: 6px 6px 0px rgb(0, 0, 0);}.wp-block-button{--wp--preset--dimension--25: 25%;--wp--preset--dimension--50: 50%;--wp--preset--dimension--75: 75%;--wp--preset--dimension--100: 100%;}:where(body) { margin: 0; }:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}body{padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;}:root :where(.wp-element-button, .wp-block-button__link){background-color: #32373c;border-width: 0;color: #fff;font-family: inherit;font-size: inherit;font-style: inherit;font-weight: inherit;letter-spacing: inherit;line-height: inherit;padding-top: calc(0.667em + 2px);padding-right: calc(1.333em + 2px);padding-bottom: calc(0.667em + 2px);padding-left: calc(1.333em + 2px);text-decoration: none;text-transform: inherit;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-green-color{color: var(--wp--preset--color--green) !important;}.has-blue-color{color: var(--wp--preset--color--blue) !important;}.has-pink-color{color: var(--wp--preset--color--pink) !important;}.has-yellow-color{color: var(--wp--preset--color--yellow) !important;}.has-dkturq-color{color: var(--wp--preset--color--dkturq) !important;}.has-ltturq-color{color: var(--wp--preset--color--ltturq) !important;}.has-chartreuse-color{color: var(--wp--preset--color--chartreuse) !important;}.has-brown-color{color: var(--wp--preset--color--brown) !important;}.has-mdbrown-color{color: var(--wp--preset--color--mdbrown) !important;}.has-ltbrown-color{color: var(--wp--preset--color--ltbrown) !important;}.has-beige-color{color: var(--wp--preset--color--beige) !important;}.has-ivory-color{color: var(--wp--preset--color--ivory) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-green-background-color{background-color: var(--wp--preset--color--green) !important;}.has-blue-background-color{background-color: var(--wp--preset--color--blue) !important;}.has-pink-background-color{background-color: var(--wp--preset--color--pink) !important;}.has-yellow-background-color{background-color: var(--wp--preset--color--yellow) !important;}.has-dkturq-background-color{background-color: var(--wp--preset--color--dkturq) !important;}.has-ltturq-background-color{background-color: var(--wp--preset--color--ltturq) !important;}.has-chartreuse-background-color{background-color: var(--wp--preset--color--chartreuse) !important;}.has-brown-background-color{background-color: var(--wp--preset--color--brown) !important;}.has-mdbrown-background-color{background-color: var(--wp--preset--color--mdbrown) !important;}.has-ltbrown-background-color{background-color: var(--wp--preset--color--ltbrown) !important;}.has-beige-background-color{background-color: var(--wp--preset--color--beige) !important;}.has-ivory-background-color{background-color: var(--wp--preset--color--ivory) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-green-border-color{border-color: var(--wp--preset--color--green) !important;}.has-blue-border-color{border-color: var(--wp--preset--color--blue) !important;}.has-pink-border-color{border-color: var(--wp--preset--color--pink) !important;}.has-yellow-border-color{border-color: var(--wp--preset--color--yellow) !important;}.has-dkturq-border-color{border-color: var(--wp--preset--color--dkturq) !important;}.has-ltturq-border-color{border-color: var(--wp--preset--color--ltturq) !important;}.has-chartreuse-border-color{border-color: var(--wp--preset--color--chartreuse) !important;}.has-brown-border-color{border-color: var(--wp--preset--color--brown) !important;}.has-mdbrown-border-color{border-color: var(--wp--preset--color--mdbrown) !important;}.has-ltbrown-border-color{border-color: var(--wp--preset--color--ltbrown) !important;}.has-beige-border-color{border-color: var(--wp--preset--color--beige) !important;}.has-ivory-border-color{border-color: var(--wp--preset--color--ivory) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}
+/*# sourceURL=global-styles-inline-css */
+</style>
+
+<link rel="stylesheet" id="em-ig-explore-css" media="all" data-pmdelayedstyle="https://thestripe.com/wp-content/plugins/em-ig-explore/public/css/em-ig-explore-public.css?ver=1.0.1">
+<link rel="stylesheet" id="jpibfi-style-css" media="all" data-pmdelayedstyle="https://thestripe.com/wp-content/plugins/jquery-pin-it-button-for-images/css/client.css?ver=3.0.6">
+<link rel="stylesheet" id="jetpack-instant-search-css" media="all" data-pmdelayedstyle="https://thestripe.com/wp-content/plugins/jetpack/jetpack_vendor/automattic/jetpack-search/build/instant-search/jp-search.chunk-main-payload.css?minify=false&#038;ver=e1985dfd1a05046a42d5">
+<link rel="stylesheet" id="search-filter-plugin-styles-css" media="all" data-pmdelayedstyle="https://thestripe.com/wp-content/plugins/search-filter-pro/public/assets/css/search-filter.min.css?ver=2.5.21">
+<link rel="stylesheet" id="thestripe-typekit-css" media="all" data-pmdelayedstyle="https://use.typekit.net/sdw1bjh.css?ver=7.1">
+<link rel="stylesheet" id="font-awesome-css" media="all" data-pmdelayedstyle="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css?ver=7.1">
+<link rel="stylesheet" id="elements-css" media="all" data-pmdelayedstyle="https://thestripe.com/wp-content/themes/thestripe2022/assets/css/elements.css?ver=1.0.0">
+<link rel="stylesheet" id="style-css" media="all" data-pmdelayedstyle="https://thestripe.com/wp-content/themes/thestripe2022/style.css?ver=1749841501">
+<script id="jquery-core-js" src="https://thestripe.com/wp-includes/js/jquery/jquery.min.js?ver=3.7.1"></script>
+<script id="font-select-js-js" src="https://thestripe.com/wp-content/plugins/TapInfluence/jsfiles/font-select.js?ver=7.1" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="spectrum-js-js" src="https://thestripe.com/wp-content/plugins/TapInfluence/jsfiles/spectrum.js?ver=7.1" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="ready-js-js" src="https://thestripe.com/wp-content/plugins/TapInfluence/jsfiles/ready.js?ver=7.1" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="em-ig-explore-js" src="https://thestripe.com/wp-content/plugins/em-ig-explore/public/js/em-ig-explore-public.js?ver=1.0.1" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="oinw_vars-js" src="https://thestripe.com/wp-content/plugins/open-in-new-window-plugin/open_in_new_window_yes.js" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="oinw_methods-js" src="https://thestripe.com/wp-content/plugins/open-in-new-window-plugin/open_in_new_window.js" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="search-filter-plugin-build-js-extra" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">
+var SF_LDATA = {"ajax_url":"https://thestripe.com/wp-admin/admin-ajax.php","home_url":"https://thestripe.com/","extensions":[]};
+//# sourceURL=search-filter-plugin-build-js-extra
+</script>
+<script id="search-filter-plugin-build-js" src="https://thestripe.com/wp-content/plugins/search-filter-pro/public/assets/js/search-filter-build.min.js?ver=2.5.21" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="search-filter-plugin-chosen-js" src="https://thestripe.com/wp-content/plugins/search-filter-pro/public/assets/js/chosen.jquery.min.js?ver=2.5.21"></script>
+<script id="thestripe-scripts-js" src="https://thestripe.com/wp-content/themes/thestripe2022/assets/js/scripts.js?ver=1.0.0" defer></script>
+<script id="superfish-js" src="https://thestripe.com/wp-content/themes/thestripe2022/assets/js/superfish.js?ver=7.1" defer></script>
+
+            <!-- TapInfluence -->
+            <script type="pmdelayedscript" data-perfmatters-type="text/javascript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">
+            ;(function(p,l,o,w,i,n,g){if(!p[i]){p.GlobalSnowplowNamespace=p.GlobalSnowplowNamespace||[];
+            p.GlobalSnowplowNamespace.push(i);p[i]=function(){(p[i].q=p[i].q||[]).push(arguments)
+            };p[i].q=p[i].q||[];n=l.createElement(o);g=l.getElementsByTagName(o)[0];n.async=1;
+            n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script","//a.tapinfluence.com/tap.js","taptracker"));
+            taptracker('newTracker', 'cf', 'c.tapinfluence.com', {appId: 'a35170d6-4d17-11e5-966b-22000af93a2d'});
+            taptracker('crossDomainLinker', function(linkElement) {
+  				return true;
+			});
+            taptracker('trackPageView');
+            </script>
+            <!-- TapInfluence -->
+
+            <script async="async" src="https://www.googletagservices.com/tag/js/gpt.js" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">
+  var googletag = googletag || {};
+  googletag.cmd = googletag.cmd || [];
+</script>
+
+<script type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">
+  googletag.cmd.push(function() {
+    googletag.defineSlot('/107373944/TheStripe_Native', [300, 250], 'div-gpt-ad-1512075957491-0').addService(googletag.pubads());
+googletag.defineSlot('/107373944/TheStripe_Side_Flex', [300, 600], 'div-gpt-ad-1512075865035-0').addService(googletag.pubads());
+googletag.defineSlot('/107373944/TheStripe_Top_Flex', [728, 90], 'div-gpt-ad-1512075757675-0').addService(googletag.pubads());
+    googletag.enableServices();
+  });
+</script>
+
+<script async type="pmdelayedscript" src="https://ssc.shopstyle.com/collective.min.js" data-sc-apikey="uid7025-504705-83" data-perfmatters-type="text/javascript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"> </script>
+
+	<script type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">
+	  (function(w, d, t, h, s, n) {
+		w.FlodeskObject = n;
+		var fn = function() {
+		  (w[n].q = w[n].q || []).push(arguments);
+		};
+		w[n] = w[n] || fn;
+		var f = d.getElementsByTagName(t)[0];
+		var v = '?v=' + Math.floor(new Date().getTime() / (120 * 1000)) * 60;
+		var sm = d.createElement(t);
+		sm.async = true;
+		sm.type = 'module';
+		sm.src = h + s + '.mjs' + v;
+		f.parentNode.insertBefore(sm, f);
+		var sn = d.createElement(t);
+		sn.async = true;
+		sn.noModule = true;
+		sn.src = h + s + '.js' + v;
+		f.parentNode.insertBefore(sn, f);
+	  })(window, document, 'script', 'https://assets.flodesk.com', '/universal', 'fd');
+	</script><style type="text/css">
+	a.pinit-button.custom span {
+	background-image: url("https://thestripe.com/wp-content/uploads/2022/06/pin@2x.png");	}
+
+	.pinit-hover {
+		opacity: 0.7 !important;
+		filter: alpha(opacity=70) !important;
+	}
+	a.pinit-button {
+	border-bottom: 0 !important;
+	box-shadow: none !important;
+	margin-bottom: 0 !important;
+}
+a.pinit-button::after {
+    display: none;
+}</style>
+			<style>img#wpstats{display:none}</style>
+				<!-- Google Analytics tracking code output by Beehive Analytics Pro -->
+				<script async src="https://www.googletagmanager.com/gtag/js?id=G-KDY7CSP789&l=beehiveDataLayer"></script>
+		<script type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">
+						window.beehiveDataLayer = window.beehiveDataLayer || [];
+			function beehive_ga() {beehiveDataLayer.push(arguments);}
+			beehive_ga('js', new Date())
+						beehive_ga('config', 'G-KDY7CSP789', {
+				'anonymize_ip': false,
+				'allow_google_signals': false,
+			})
+					</script>
+		<link rel="icon" href="https://thestripe.com/wp-content/uploads/2022/06/cropped-favicon@512px-300x300.png" sizes="32x32" />
+<link rel="icon" href="https://thestripe.com/wp-content/uploads/2022/06/cropped-favicon@512px-300x300.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://thestripe.com/wp-content/uploads/2022/06/cropped-favicon@512px-300x300.png" />
+<meta name="msapplication-TileImage" content="https://thestripe.com/wp-content/uploads/2022/06/cropped-favicon@512px-300x300.png" />
+<style id="wp-custom-css">
+.wpfi-button--red a {
+	color: #C34B61 !important;
+}
+
+#site-credits a:last-child {
+	pointer-events:none !important;
+}
+</style>
+<style>.perfmatters-lazy-video{position:relative;width:100%;max-width:100%;height:0;padding-bottom:56.23%;overflow:hidden}.perfmatters-lazy-video img{position:absolute;top:0;right:0;bottom:0;left:0;display:block;width:100%;height:100%;max-width:none;margin:0;object-fit:cover;object-position:center;border:none;cursor:pointer;transition:.5s all;-webkit-transition:.5s all;-moz-transition:.5s all}.perfmatters-lazy-video img:hover{-webkit-filter:brightness(75%)}.perfmatters-lazy-video .play{position:absolute;top:50%;left:50%;right:auto;width:68px;height:48px;margin-left:-34px;margin-top:-24px;background:url(https://thestripe.com/wp-content/plugins/perfmatters/img/youtube.svg) no-repeat;background-position:center;background-size:cover;pointer-events:none;filter:grayscale(1)}.perfmatters-lazy-video:hover .play{filter:grayscale(0)}.perfmatters-lazy-video iframe{position:absolute;top:0;left:0;width:100%;height:100%;z-index:99}.wp-block-embed.wp-has-aspect-ratio .wp-block-embed__wrapper:has(.perfmatters-lazy-video)::before{display:none;}.perfmatters-lazy.pmloaded,.perfmatters-lazy.pmloaded>img,.perfmatters-lazy>img.pmloaded,.perfmatters-lazy[data-ll-status=entered]{animation:500ms pmFadeIn}@keyframes pmFadeIn{0%{opacity:0}100%{opacity:1}}</style>	
+<style id="core-block-supports-inline-css">
+.wp-container-core-columns-is-layout-8f761849{flex-wrap:nowrap;}
+/*# sourceURL=core-block-supports-inline-css */
+</style>
+
+</head>
+
+<body class="wp-singular post-template-default single single-post postid-122274 single-format-standard wp-embed-responsive wp-theme-thestripe2022 jps-theme-thestripe2022 thestripe">
+<div id="page" class="site">
+	<a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+
+	
+<div id="drawer-nav-container" class="animate">
+
+	<div class="drawer-close">
+		<a href="#">
+			<div class="line animate"></div>
+			<div class="line animate"></div>
+		</a>
+	</div>
+	
+	<div class="site-title h4">
+		<a href="https://thestripe.com/" rel="home">
+			<span>The Stripe</span>
+		</a>
+	</div>
+	
+	<nav id="drawer-navigation" class="navigation" role="navigation">
+
+		<ul id="drawer-main-menu" class="drawer-menu menu h2"><li id="menu-item-54222" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-54222"><a href="https://thestripe.com/category/style/">style</a>
+<ul class="sub-menu">
+	<li id="menu-item-52235" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-52235"><a href="https://thestripe.com/category/style/outfit/">outfits</a></li>
+	<li id="menu-item-66847" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-66847"><a href="https://thestripe.com/instashop/">Instagram Shop</a></li>
+	<li id="menu-item-88668" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-88668"><a href="https://thestripe.com/category/style/">all style</a></li>
+</ul>
+</li>
+<li id="menu-item-22298" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-has-children menu-item-22298"><a href="https://thestripe.com/category/beauty/">beauty</a>
+<ul class="sub-menu">
+	<li id="menu-item-75309" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-75309"><a href="https://thestripe.com/category/beauty/skincare/">Skincare</a></li>
+	<li id="menu-item-74596" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-74596"><a href="https://thestripe.com/category/beauty/hair/">hair</a></li>
+	<li id="menu-item-74597" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-74597"><a href="https://thestripe.com/category/beauty/makeup/">makeup</a></li>
+	<li id="menu-item-75312" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-75312"><a href="https://thestripe.com/category/beauty/body/">body</a></li>
+	<li id="menu-item-75317" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-75317"><a href="https://thestripe.com/beauty/">The Beauty Hub</a></li>
+	<li id="menu-item-88667" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-88667"><a href="https://thestripe.com/category/beauty/">all beauty</a></li>
+</ul>
+</li>
+<li id="menu-item-54230" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-54230"><a href="https://thestripe.com/category/books/">books</a>
+<ul class="sub-menu">
+	<li id="menu-item-54232" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-54232"><a href="https://thestripe.com/category/books/">Reading Lists</a></li>
+	<li id="menu-item-110260" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-110260"><a href="https://thestripe.com/reads/">The Library</a></li>
+</ul>
+</li>
+<li id="menu-item-86771" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-86771"><a href="https://thestripe.com/category/thoughts/">chats</a></li>
+<li id="menu-item-88669" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-88669"><a href="#">More</a>
+<ul class="sub-menu">
+	<li id="menu-item-86769" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-86769"><a href="https://thestripe.com/category/roundups/">shopping roundups</a></li>
+	<li id="menu-item-88730" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-88730"><a href="https://thestripe.com/category/favorite-things/amazon-finds/">amazon finds</a></li>
+	<li id="menu-item-54227" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-54227"><a href="https://thestripe.com/category/lifestyle/home/">Home</a></li>
+	<li id="menu-item-88728" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-88728"><a href="https://thestripe.com/category/charleston-apartment/">charleston apartment</a></li>
+	<li id="menu-item-89328" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-89328"><a href="https://thestripe.com/category/travel/">travel</a></li>
+	<li id="menu-item-86766" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-86766"><a href="https://thestripe.com/category/favorite-things/art/">art</a></li>
+	<li id="menu-item-88727" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-88727"><a href="https://thestripe.com/category/tv-movies/">TV + Movies</a></li>
+</ul>
+</li>
+<li id="menu-item-120950" class="substack menu-item menu-item-type-custom menu-item-object-custom menu-item-120950"><a href="https://graceatwood.substack.com/">Scratch Pad</a></li>
+</ul>		
+		<div id="drawer-utility" class="flex">
+			
+			<ul id="drawer-utility-menu" class="drawer-menu menu h3"><li id="menu-item-120951" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-120951"><a href="https://thestripe.com/codes/">Codes</a></li>
+<li id="menu-item-88672" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-88672"><a href="https://thestripe.com/about-me/">About Grace</a></li>
+<li id="menu-item-88673" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-88673"><a href="https://thestripe.com/contact/">Contact</a></li>
+<li id="menu-item-88674" class="popup-open menu-item menu-item-type-custom menu-item-object-custom menu-item-88674"><a href="#">Subscribe</a></li>
+</ul>
+			<ul id="social-menu" class="drawer-menu menu"><li id="menu-item-88684" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-88684"><a target="_blank" href="https://www.facebook.com/groups/504698246575512/"><i class="fa-brands fa-facebook-square"></i></a></li>
+<li id="menu-item-88685" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-88685"><a target="_blank" href="https://pinterest.com/thestripeny/"><i class="fa-brands fa-pinterest"></i></a></li>
+<li id="menu-item-88687" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-88687"><a target="_blank" href="https://instagram.com/graceatwood"><i class="fa-brands fa-instagram"></i></a></li>
+</ul>			
+		</div>
+		
+		<div id="drawer-search" class="search-form-container">
+						<form method="get" id="drawer-search-form" class="search-form flex" action="https://thestripe.com/">
+				<input class="search-text type-3" type="text" name="s" id="search-text" value="Search" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;" />
+				<button class="search-submit button" name="submit" type="submit" id="drawer-search-submit"><i class="fas fa-search"></i></button>
+			</form><!-- .search-form -->
+
+		</div><!-- .search -->
+		
+		<ul id="drawer-legal-menu" class="menu type-3">
+			<li><a href="https://thestripe.com/terms-of-use/">Terms of Use</a></li>
+			<li><a href="https://thestripe.com/privacy-policy/">Privacy Policy</a></li>
+			<li>&copy; 2026</li>
+		</ul>
+		
+	</nav><!-- #site-navigation -->
+	
+</div><!-- #drawer-nav-container -->
+		
+	<header id="masthead" class="site-header">
+		
+		<div id="masthead-inner" class="flex">
+						
+			<div id="masthead-left" class="flex">
+
+				<div class="drawer-open">
+					<a href="#">
+						<div class="line animate"></div>
+						<div class="line animate"></div>
+						<div class="line animate"></div>
+					</a>
+				</div>
+
+				<div id="site-branding">
+											<div class="site-title">
+							<a href="https://thestripe.com/" rel="home" title="The Stripe">
+								<span>The Stripe</span>
+							</a>
+						</div>
+									</div><!-- .site-branding -->
+
+			</div><!-- #masthead-left -->
+			
+			<div id="masthead-right" class="flex">
+
+				
+<nav id="site-navigation" class="navigation flex" role="navigation">
+	
+	<ul id="primary-menu" class="primary-menu sf-menu menu type-3"><li id="menu-item-120944" class="popup-open hide-mobile menu-item menu-item-type-custom menu-item-object-custom menu-item-120944"><a href="#">Subscribe</a></li>
+<li id="menu-item-120945" class="hide-mobile menu-item menu-item-type-post_type menu-item-object-page menu-item-120945"><a href="https://thestripe.com/reads/">Find a Book</a></li>
+<li id="menu-item-120946" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-120946"><a href="https://thestripe.com/codes/">Codes</a></li>
+<li id="menu-item-120947" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-120947"><a target="_blank" href="https://shopmy.us/graceatwood/stories-+-grid">ShopMy</a></li>
+</ul>	
+	<div id="utility" class="flex">
+
+		<ul id="secondary-menu" class="secondary-menu sf-menu menu type-3 hide-tablet hide-mobile"><li id="menu-item-120948" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-120948"><a href="https://thestripe.com/about-me/">About</a></li>
+<li id="menu-item-120949" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-120949"><a href="https://thestripe.com/contact/">Contact</a></li>
+</ul>
+		<div class="search-open"><a href="#"><i class="fa-solid fa-magnifying-glass"></i></a></div>
+		
+	</div>
+	
+</nav><!-- #site-navigation -->
+				
+			</div><!-- #masthead-right -->
+			
+		</div><!-- #masthead-inner-->
+		
+		<div id="search-dropdown" class="search animate">
+
+			<form method="get" class="search-form wrap flex" id="search-dropdown-form" action="https://thestripe.com/">
+				<input class="search-text h4" type="text" name="s" id="search-dropdown-text" value="What are you looking for?" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;" />
+				<button class="search-submit button" name="submit" type="submit" id="search-dropdown-submit"><img data-perfmatters-preload src="https://thestripe.com/wp-content/themes/thestripe2022/assets/images/arrow.png" width="41" height="25" alt="The Stripe Search Arrow" fetchpriority="high"></button>
+				<a href="#" class="search-close type-3">X Close</a>
+			</form><!-- .search-form -->
+
+		</div><!-- .search -->	
+		
+	</header><!-- #masthead -->
+	
+	<div id="content" class="site-content">
+		
+		
+	<div id="single-post" class="content-area wrap">
+		<main id="main" class="site-main">
+
+		
+	<article id="post-122274" class="post-single post-122274 post type-post status-publish format-standard has-post-thumbnail hentry category-beauty category-skincare tag-experiment-beauty mustard">
+		<header class="entry-header">
+			<ul class="entry-meta type-3">
+				<li class="entry-date">8.26.25</li>
+				<li class="post-category"><a href="https://thestripe.com/category/beauty/" title="View all posts in beauty" >beauty</a></li>			</ul><!-- .entry-meta -->
+
+			<h1 class="entry-title">Experiment Beauty Review</h1>
+					</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			<input class="jpibfi" type="hidden">
+<figure class="wp-block-image size-large"><img data-perfmatters-preload fetchpriority="high" decoding="async" width="1024" height="1535" src="https://thestripe.com/wp-content/uploads/2025/08/Experiment-Beauty-Review-1024x1535.jpg" alt="Experiment Beauty Review" class="wp-image-122275" title="Experiment Beauty Review" data-jpibfi-post-excerpt="The skincare brand you need to know, especially if you have dry skin. They just launched at Sephora, most of their products are $30 or under, and the products are highly effective and hydrating. " data-jpibfi-post-url="https://thestripe.com/experiment-beauty-review/" data-jpibfi-post-title="Experiment Beauty Review" data-jpibfi-src="https://thestripe.com/wp-content/uploads/2025/08/Experiment-Beauty-Review-1024x1535.jpg" srcset="https://thestripe.com/wp-content/uploads/2025/08/Experiment-Beauty-Review-1024x1536.jpg 1024w, https://thestripe.com/wp-content/uploads/2025/08/Experiment-Beauty-Review-475x712.jpg 475w, https://thestripe.com/wp-content/uploads/2025/08/Experiment-Beauty-Review-200x300.jpg 200w, https://thestripe.com/wp-content/uploads/2025/08/Experiment-Beauty-Review-768x1151.jpg 768w, https://thestripe.com/wp-content/uploads/2025/08/Experiment-Beauty-Review-1366x2048.jpg 1366w, https://thestripe.com/wp-content/uploads/2025/08/Experiment-Beauty-Review.jpg 1500w" sizes="(max-width: 1024px) 100vw, 1024px"></figure>
+
+
+
+<p class="wp-block-paragraph">This sounds silly, but I feel like I am maybe just a little bit clairvoyant when it comes to moisturizer. Really now, I wish I could apply this possible clairvoyance to another area of my life, but it seems like moisturizer is the one area where I can predict what&#8217;s going to be big. </p>
+
+
+
+<p class="wp-block-paragraph">Why do you ask? I was one of the first to fall in love with <a href="https://thestripe.com/dr-augustinus-bader-the-cream-review/" target="_blank" rel="noreferrer noopener">Augustinus Bader</a> when it launched (before it was even at Violet Grey). And then INN Beauty&#8217;s Rich Cream. The next big thing? Experiment Beauty. You have to try this brand! In June, I wrote on Substack that we&#8217;d be seeing them everywhere soon, and boom: looky look, <a href="https://go.shopmy.us/p-23783967" target="_blank" rel="noreferrer noopener">they&#8217;ve just launched at Sephora</a>. This brand is excellent, especially for those of you with dry skin. And the products are . . . highly inexpensive for what they are.</p>
+
+
+
+<h2 class="wp-block-heading has-text-align-center">Experiment beauty review</h2>
+
+
+
+<p class="wp-block-paragraph">So far, I&#8217;ve tried three products (and really like them all). Here are my thoughts!</p>
+
+
+
+<h5 class="wp-block-heading"><a href="https://go.shopmy.us/p-23784318" target="_blank" rel="noreferrer noopener">Plasma Wash</a></h5>
+
+
+
+<p class="wp-block-paragraph">This is an ultra-creamy face wash that almost feels bouncy? It&#8217;s super soothing, and the consistency <em>feels</em> really good. The only other cleanser I have to compare it to is <a href="https://go.shopmy.us/p-23784110" target="_blank" rel="noreferrer noopener">U Beauty&#8217;s Mantle cleanser</a>. If you gave them to me to try blind, I don&#8217;t think I would be able to tell them apart. And the best part? This one is a quarter of the price. Highly recommend if you are looking for a gentle, creamy cleanser that takes off all your makeup without stripping the skin. <strong>Get it on the <a href="https://go.shopmy.us/p-23784318" target="_blank" rel="noreferrer noopener">brand&#8217;s website</a> or at <a href="https://go.shopmy.us/p-23784915" target="_blank" rel="noreferrer noopener">Sephora</a></strong>.</p>
+
+
+
+<h5 class="wp-block-heading"><a href="https://go.shopmy.us/p-23785162" target="_blank" rel="noreferrer noopener">Super Saturated</a></h5>
+
+
+
+<p class="wp-block-paragraph">This is the brand&#8217;s signature item, and it is fabulous. Any time my skin feels parched, I&#8217;ll apply this under my moisturizer, and it is like it brings my skin back to life. This is thanks to Polyglutamic Acid and 30% glycerin. It is not an anti-aging serum, but it is one of the best hydrators I&#8217;ve tried. Makes skin so plump and dewy. You can also use it like a mask. Also: $28! And they sell refills! <strong>Get it on the <a href="https://go.shopmy.us/p-23785162" target="_blank" rel="noreferrer noopener">brand&#8217;s website</a> or at <a href="https://go.shopmy.us/p-23785251" target="_blank" rel="noreferrer noopener">Sephora</a></strong></p>
+
+
+
+<h5 class="wp-block-heading"><a href="https://go.shopmy.us/p-23785424" target="_blank" rel="noreferrer noopener">Molecular Mesh</a></h5>
+
+
+
+<p class="wp-block-paragraph">This is a great basic moisturizer aimed at restoring the skin&#8217;s barrier. Again, it does not have any fancy anti-aging ingredients like Bader or U Beauty <em>but</em> it will hydrate just as well as those moisturizers. I would compare it to <a href="https://go.shopmy.us/p-23785572" target="_blank" rel="noreferrer noopener">Rhode&#8217;s Barrier Restore Cream</a>, which is a very similar price. <strong>Get it on the <a href="https://go.shopmy.us/p-23785424" target="_blank" rel="noreferrer noopener">brand&#8217;s website</a> or at <a href="https://go.shopmy.us/p-23839757" target="_blank" rel="noreferrer noopener">Sephora</a></strong></p>
+
+
+
+<p class="wp-block-paragraph"><em>Disclosure: If you buy something through my links, I may earn an affiliate commission at no cost to you. I only feature things I truly love here. Thanks for your support</em>.</p>
+		</div><!-- .entry-content -->
+
+		
+		<footer class="entry-footer flex">
+
+			<div class="entry-photographer type-3"><p>Photography by Laura Saur.</p>
+</div>
+			<div class="comments-link type-3"><a href="#comments">Let's get to the comments</a></div>
+
+		</footer><!-- .entry-footer -->
+	</article><!-- #post-122274 -->
+
+			
+			<div class="pubexchange_module" id="pubexchange_below_content" data-pubexchange-module-id="3428"></div>
+
+			
+<div id="comments-section" class="comments-area">
+	
+	
+		<div id="respond" class="comment-respond">
+		<h3 id="comment-form-title">Leave a Comment</h3><h3 id="reply-title" class="comment-reply-title">Leave a Comment <small><a  id="cancel-comment-reply-link" href="/experiment-beauty-review/#respond" style="display:none;">Cancel</a></small></h3><form action="https://thestripe.com/wp-comments-post.php" method="post" id="commentform" class="comment-form"><p class="comment-form-author"><input id="author" name="author" type="text" value="" size="30" maxlength="245" required="" placeholder="Name"></p>
+<p class="comment-form-email"><input id="email" name="email" type="email" value="" size="30" maxlength="100" required="" placeholder="Email"></p>
+<p class="comment-form-url"><input id="url" name="url" type="url" value="" size="30" maxlength="200" placeholder="URL"></p>
+<p class="comment-form-comment"><textarea autocomplete="new-password"  id="b2e09e4c0f"  name="b2e09e4c0f"   cols="45" rows="8" maxlength="65525" required="" placeholder="Thoughts?"></textarea><textarea id="comment" aria-label="hp-comment" aria-hidden="true" name="comment" autocomplete="new-password" style="padding:0 !important;clip:rect(1px, 1px, 1px, 1px) !important;position:absolute !important;white-space:nowrap !important;height:1px !important;width:1px !important;overflow:hidden !important;" tabindex="-1"></textarea><script data-noptimize type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">document.getElementById("comment").setAttribute( "id", "ac4da6070a6a737fb1c0f20c2de46767" );document.getElementById("b2e09e4c0f").setAttribute( "id", "comment" );</script></p><p class="comment-form-cookies-consent"><input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes" /> <label for="wp-comment-cookies-consent">Save my name, email, and website in this browser for the next time I comment.</label></p>
+<p class="comment-subscription-form"><input type="checkbox" name="subscribe_comments" id="subscribe_comments" value="subscribe" style="width: auto; -moz-appearance: checkbox; -webkit-appearance: checkbox;" /> <label class="subscribe-label" id="subscribe-label" for="subscribe_comments">Notify me of follow-up comments by email.</label></p><p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="Submit Comment" /> <input type='hidden' name='comment_post_ID' value='122274' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="066c9616be" /></p><p style="display: none !important;" class="akismet-fields-container" data-prefix="ak_"><label>&#916;<textarea name="ak_hp_textarea" cols="45" rows="8" maxlength="100"></textarea></label><input type="hidden" id="ak_js_1" name="ak_js" value="196"/><script type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">
+document.getElementById( "ak_js_1" ).setAttribute( "value", ( new Date() ).getTime() );
+</script>
+</p></form>	</div><!-- #respond -->
+	 
+ 	
+			
+</div><!-- #comments -->
+
+		</main><!-- #main -->
+	</div><!-- #primary -->
+
+
+	</div><!-- #content -->
+
+			<div id="footer-featured">
+			<div class="wrap">
+				<section id="block-6" class="widget widget_block">
+<div class="wp-block-columns is-layout-flex wp-container-core-columns-is-layout-8f761849 wp-block-columns-is-layout-flex">
+<div class="wp-block-column is-vertically-aligned-center is-layout-flow wp-block-column-is-layout-flow" style="flex-basis:55%">
+<figure class="wp-block-image size-full"><img decoding="async" width="1208" height="1050" src="data:image/svg+xml,%3Csvg%20xmlns=&#039;http://www.w3.org/2000/svg&#039;%20width=&#039;1208&#039;%20height=&#039;1050&#039;%20viewBox=&#039;0%200%201208%201050&#039;%3E%3C/svg%3E" alt class="wp-image-88694 perfmatters-lazy" data-src="https://thestripe.com/wp-content/uploads/2022/06/footer.png" data-srcset="https://thestripe.com/wp-content/uploads/2022/06/footer.png 1208w, https://thestripe.com/wp-content/uploads/2022/06/footer-475x413.png 475w, https://thestripe.com/wp-content/uploads/2022/06/footer-1024x890.png 1024w, https://thestripe.com/wp-content/uploads/2022/06/footer-300x261.png 300w, https://thestripe.com/wp-content/uploads/2022/06/footer-768x668.png 768w" data-sizes="(max-width: 1208px) 100vw, 1208px" /></figure>
+</div>
+
+
+
+<div class="wp-block-column is-vertically-aligned-center is-layout-flow wp-block-column-is-layout-flow" style="flex-basis:40%">
+<h2 class="wp-block-heading has-text-align-center h4 site-name" style="text-transform:lowercase">the stripe</h2>
+
+
+
+<h2 class="wp-block-heading has-text-align-center site-byline">by GRACE ATWOOD</h2>
+
+
+
+<p class="has-text-align-center wp-block-paragraph">The Stripe is a lifestyle blog for the stylish bookworm. Since its first post in 2010, it has aimed to be a daily source of inspiration for the modern woman. Written by Grace Atwood, The Stripe aims to leave you feeling like you just had coffee with a great girlfriend: savvier, more confident, and always learning something new.</p>
+
+
+</div>
+</div>
+</section>			</div>
+		</div>
+	
+	<footer id="footer" class="site-footer wrap flex" role="contentinfo">
+		<nav id="footer-navigation" class="navigation" role="navigation">
+			<ul id="footer-menu" class="menu type-3"><li id="menu-item-88676" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-88676"><a href="https://thestripe.com/terms-of-use/">Terms of Use</a></li>
+<li id="menu-item-88675" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-privacy-policy menu-item-88675"><a rel="privacy-policy" href="https://thestripe.com/privacy-policy/">Privacy Policy</a></li>
+<li id="menu-item-88677" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-88677"><a href="https://thestripe.com/disclosures/">Disclosures</a></li>
+<li>Copyright 2026</li><li>All Rights Reserved</li></ul>		</nav><!-- #footer-navigation -->
+		
+		<div id="site-credits" class="type-3 hide-mobile">
+			Built by <a href="https://victoriamcginley.com" target="_blank">VMS</a> + <a href="https://elembee.com" target="_blank">LMB</a>
+		</div>
+	</footer><!-- #footer -->
+</div><!-- #page -->
+
+		
+	<div id="newsletter-popup" style="display: none;">
+		
+		<a href="#" class="popup-close type-3">X Close</a>
+		
+		<div id="newsletter-popup-inner">
+		
+			<h2 class="title type-4">Subscribe</h2>
+
+						
+				<div class="subscriptions flex">
+					
+										
+						<div class="subscription">
+							<h3 class="h5">New Post Notifications</h3>
+							<div class="description">Sign up to receive new blog posts from The Stripe via email.</div>
+							<div class="cta"><a href="https://thestripe.com/subscribe/" target="_blank" class="button">Subscribe to Emails</a></div>
+						</div>
+
+										
+						<div class="subscription">
+							<h3 class="h5">Scratch Pad <em>by</em> The Stripe</h3>
+							<div class="description">Subscribe to Scratch Pad, Grace's Substack newsletter.</div>
+							<div class="cta"><a href="https://graceatwood.substack.com/" target="_blank" class="button">Subscribe to Substack</a></div>
+						</div>
+
+										
+				</div>
+			
+						
+		</div>
+		
+	</div>
+
+	<div id="popup-overlay" style="display: none;"></div>
+		
+
+<!-- FM Tracking Pixel -->
+<script type="pmdelayedscript" src="https://static.fmpub.net/site/Stripes-Sequins" data-perfmatters-type="text/javascript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<!-- FM Tracking Pixel -->
+
+<script type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">(function(w, d, s, id) {
+  w.PUBX=w.PUBX || {pub: "the_stripe", discover: false, lazy: true};
+  var js, pjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "https://main.pubexchange.com/loader.min.js";
+  pjs.parentNode.insertBefore(js, pjs);
+}(window, document, "script", "pubexchange-jssdk"));</script><script type="pmdelayedscript" data-perfmatters-type="text/javascript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">
+bN_cfg = {
+  // Force beacons to this address to resolve SSL certificate issues.
+  b: "b.aol.com",
+  // The "h" parameter whitelists this hostname for beacon initialization.
+  // Note: Can be a string or an array of hostnames. Use "location.hostname" to match URL of current page
+  h: location.hostname
+};
+
+function runOmni()
+{
+	s_265.pfxID="snt";
+	s_265.pageName=document.title;
+	s_265.channel="us.stripesequin";
+	s_265.linkInternalFilters="javascript:";
+	s_265.prop1="";
+	s_265.prop2="";
+	s_265.prop54="wordpress";
+	s_265.mmxgo=true;
+	var s_code=s_265.t();
+}
+s_265_account ="aolsvc";
+(function(){
+    var d = document, s = d.createElement('script');
+    s.type = 'text/javascript';
+    s.src = (location.protocol == 'https:' ? 'https://s' : 'http://o') + '.aolcdn.com/os_merge/?file=/aol/beacon.min.js&file=/aol/omniture.min.js';
+    d.getElementsByTagName('head')[0].appendChild(s);
+})();
+</script>
+		<div class="jetpack-instant-search__widget-area" style="display: none">
+							<div id="jetpack-search-filters-1" class="widget jetpack-filters widget_search">			<div id="jetpack-search-filters-1-wrapper" class="jetpack-instant-search-wrapper">
+		</div></div>					</div>
+		<script id="thickbox-js-extra" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">
+var thickboxL10n = {"next":"Next \u003E","prev":"\u003C Prev","image":"Image","of":"of","close":"Close","noiframes":"This feature requires inline frames. You have iframes disabled or your browser does not support them.","loadingAnimation":"https://thestripe.com/wp-includes/js/thickbox/loadingAnimation.gif"};
+//# sourceURL=thickbox-js-extra
+</script>
+<script id="thickbox-js" src="https://thestripe.com/wp-includes/js/thickbox/thickbox.js?ver=3.1-20121105" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="underscore-js" src="https://thestripe.com/wp-includes/js/underscore.min.js?ver=1.13.8" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="shortcode-js" src="https://thestripe.com/wp-includes/js/shortcode.min.js?ver=7.1" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="media-upload-js" src="https://thestripe.com/wp-admin/js/media-upload.min.js?ver=7.1" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="jpibfi-script-js-extra" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">
+var jpibfi_options = {"hover":{"siteTitle":"The Stripe","image_selector":".post .entry-content img","disabled_classes":"nopin;wp-smiley;no-pin","enabled_classes":"","min_image_height":0,"min_image_height_small":0,"min_image_width":0,"min_image_width_small":0,"show_on":"[front],[single],[page],[category],[archive],[search],[home]","disable_on":"39752,41323,42289,43945,44597,45297,45656,45722,45837,48245,51609,51507,51610,51611,51735,51696,51736,51781,51782,51783,51785,51786,51787,51839,51840,51842,51852,51858,52197,52019,52273,53155,53104,53157,54245,54206,54246,54333","show_button":"hover","button_margin_bottom":20,"button_margin_top":28,"button_margin_left":20,"button_margin_right":0,"button_position":"top-right","description_option":["img_title","img_alt","post_title"],"transparency_value":0.3,"pin_image":"custom","pin_image_button":"square","pin_image_icon":"circle","pin_image_size":"normal","custom_image_url":"https://thestripe.com/wp-content/uploads/2022/06/pin@2x.png","scale_pin_image":false,"pin_linked_url":true,"pinImageWidth":80,"pinImageHeight":35,"scroll_selector":"","support_srcset":false}};
+//# sourceURL=jpibfi-script-js-extra
+</script>
+<script id="jpibfi-script-js" src="https://thestripe.com/wp-content/plugins/jquery-pin-it-button-for-images/js/jpibfi.client.js?ver=3.0.6" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="flot-js" src="https://thestripe.com/wp-content/plugins/wp-yearendstats/assets/js/vendor/flot/jquery.flot.min.js?ver=0.8.3" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="wp-hooks-js" src="https://thestripe.com/wp-includes/js/dist/hooks.min.js?ver=f0f188028580e8dc1255" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="wp-i18n-js" src="https://thestripe.com/wp-includes/js/dist/i18n.min.js?ver=1dfe7db3940c23ea9216" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="wp-i18n-js-after" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">
+wp.i18n.setLocaleData( { 'text direction\u0004ltr': [ 'ltr' ] } );
+wp.i18n.setLocaleData( { 'text direction\u0004ltr': [ 'ltr' ] } );
+//# sourceURL=wp-i18n-js-after
+</script>
+<script id="wp-jp-i18n-loader-js" src="https://thestripe.com/wp-content/plugins/jetpack/jetpack_vendor/automattic/jetpack-assets/build/i18n-loader.js?minify=true&#038;ver=5ba5dddc04be2306aaf0" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="wp-jp-i18n-loader-js-after" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">
+wp.jpI18nLoader.state = {"baseUrl":"https://thestripe.com/wp-content/languages/","locale":"en_US","domainMap":{"jetpack-account-protection":"plugins/jetpack","jetpack-activity-log":"plugins/jetpack","jetpack-admin-ui":"plugins/jetpack","jetpack-agents-manager":"plugins/jetpack","jetpack-assets":"plugins/jetpack","jetpack-backup-pkg":"plugins/jetpack","jetpack-blaze":"plugins/jetpack","jetpack-block-delimiter":"plugins/jetpack","jetpack-boost-core":"plugins/jetpack","jetpack-boost-speed-score":"plugins/jetpack","jetpack-classic-theme-helper":"plugins/jetpack","jetpack-compat":"plugins/jetpack","jetpack-config":"plugins/jetpack","jetpack-connection":"plugins/jetpack","jetpack-explat":"plugins/jetpack","jetpack-external-connections":"plugins/jetpack","jetpack-external-media":"plugins/jetpack","jetpack-forms":"plugins/jetpack","jetpack-image-cdn":"plugins/jetpack","jetpack-import":"plugins/jetpack","jetpack-ip":"plugins/jetpack","jetpack-jitm":"plugins/jetpack","jetpack-jwt":"plugins/jetpack","jetpack-licensing":"plugins/jetpack","jetpack-masterbar":"plugins/jetpack","jetpack-menu-badges":"plugins/jetpack","jetpack-my-jetpack":"plugins/jetpack","jetpack-newsletter":"plugins/jetpack","jetpack-password-checker":"plugins/jetpack","jetpack-paypal-payments":"plugins/jetpack","jetpack-plugins-installer":"plugins/jetpack","jetpack-podcast":"plugins/jetpack","jetpack-post-list":"plugins/jetpack","jetpack-post-media":"plugins/jetpack","jetpack-premium-analytics-pkg":"plugins/jetpack","jetpack-protect-models":"plugins/jetpack","jetpack-protect-status":"plugins/jetpack","jetpack-publicize-pkg":"plugins/jetpack","jetpack-scan-page":"plugins/jetpack","jetpack-search-pkg":"plugins/jetpack","jetpack-seo":"plugins/jetpack","jetpack-stats-admin":"plugins/jetpack","jetpack-stats-pkg":"plugins/jetpack","jetpack-sync":"plugins/jetpack","jetpack-videopress-pkg":"plugins/jetpack","jetpack-waf":"plugins/jetpack","jetpack-wp-abilities":"plugins/jetpack","jetpack-wp-build-polyfills":"plugins/jetpack"},"domainPaths":{"jetpack-account-protection":"jetpack_vendor/automattic/jetpack-account-protection/","jetpack-activity-log":"jetpack_vendor/automattic/jetpack-activity-log/","jetpack-admin-ui":"jetpack_vendor/automattic/jetpack-admin-ui/","jetpack-agents-manager":"jetpack_vendor/automattic/jetpack-agents-manager/","jetpack-assets":"jetpack_vendor/automattic/jetpack-assets/","jetpack-backup-pkg":"jetpack_vendor/automattic/jetpack-backup/","jetpack-blaze":"jetpack_vendor/automattic/jetpack-blaze/","jetpack-block-delimiter":"jetpack_vendor/automattic/block-delimiter/","jetpack-boost-core":"jetpack_vendor/automattic/jetpack-boost-core/","jetpack-boost-speed-score":"jetpack_vendor/automattic/jetpack-boost-speed-score/","jetpack-classic-theme-helper":"jetpack_vendor/automattic/jetpack-classic-theme-helper/","jetpack-compat":"jetpack_vendor/automattic/jetpack-compat/","jetpack-config":"jetpack_vendor/automattic/jetpack-config/","jetpack-connection":"jetpack_vendor/automattic/jetpack-connection/","jetpack-explat":"jetpack_vendor/automattic/jetpack-explat/","jetpack-external-connections":"jetpack_vendor/automattic/jetpack-external-connections/","jetpack-external-media":"jetpack_vendor/automattic/jetpack-external-media/","jetpack-forms":"jetpack_vendor/automattic/jetpack-forms/","jetpack-image-cdn":"jetpack_vendor/automattic/jetpack-image-cdn/","jetpack-import":"jetpack_vendor/automattic/jetpack-import/","jetpack-ip":"jetpack_vendor/automattic/jetpack-ip/","jetpack-jitm":"jetpack_vendor/automattic/jetpack-jitm/","jetpack-jwt":"jetpack_vendor/automattic/jetpack-jwt/","jetpack-licensing":"jetpack_vendor/automattic/jetpack-licensing/","jetpack-masterbar":"jetpack_vendor/automattic/jetpack-masterbar/","jetpack-menu-badges":"jetpack_vendor/automattic/jetpack-menu-badges/","jetpack-my-jetpack":"jetpack_vendor/automattic/jetpack-my-jetpack/","jetpack-newsletter":"jetpack_vendor/automattic/jetpack-newsletter/","jetpack-password-checker":"jetpack_vendor/automattic/jetpack-password-checker/","jetpack-paypal-payments":"jetpack_vendor/automattic/jetpack-paypal-payments/","jetpack-plugins-installer":"jetpack_vendor/automattic/jetpack-plugins-installer/","jetpack-podcast":"jetpack_vendor/automattic/jetpack-podcast/","jetpack-post-list":"jetpack_vendor/automattic/jetpack-post-list/","jetpack-post-media":"jetpack_vendor/automattic/jetpack-post-media/","jetpack-premium-analytics-pkg":"jetpack_vendor/automattic/jetpack-premium-analytics/","jetpack-protect-models":"jetpack_vendor/automattic/jetpack-protect-models/","jetpack-protect-status":"jetpack_vendor/automattic/jetpack-protect-status/","jetpack-publicize-pkg":"jetpack_vendor/automattic/jetpack-publicize/","jetpack-scan-page":"jetpack_vendor/automattic/jetpack-scan-page/","jetpack-search-pkg":"jetpack_vendor/automattic/jetpack-search/","jetpack-seo":"jetpack_vendor/automattic/jetpack-seo/","jetpack-stats-admin":"jetpack_vendor/automattic/jetpack-stats-admin/","jetpack-stats-pkg":"jetpack_vendor/automattic/jetpack-stats/","jetpack-sync":"jetpack_vendor/automattic/jetpack-sync/","jetpack-videopress-pkg":"jetpack_vendor/automattic/jetpack-videopress/","jetpack-waf":"jetpack_vendor/automattic/jetpack-waf/","jetpack-wp-abilities":"jetpack_vendor/automattic/jetpack-wp-abilities/","jetpack-wp-build-polyfills":"jetpack_vendor/automattic/jetpack-wp-build-polyfills/"}};
+//# sourceURL=wp-jp-i18n-loader-js-after
+</script>
+<script id="wp-polyfill-js" src="https://thestripe.com/wp-includes/js/dist/vendor/wp-polyfill.min.js?ver=3.15.0" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="wp-url-js" src="https://thestripe.com/wp-includes/js/dist/url.min.js?ver=7b0de086d4ae11d55704" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="jetpack-instant-search-js-before" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">
+var JetpackInstantSearchOptions={"overlayOptions":{"colorTheme":"light","enableInfScroll":true,"enableFilteringOpensOverlay":true,"enablePostDate":true,"enableProductPrice":true,"enableSort":true,"highlightColor":"#FFC","overlayTrigger":"submit","resultFormat":"expanded","showPoweredBy":true,"defaultSort":"relevance","excludedPostTypes":[],"fallbackImageUrl":"","enableFallbackImage":false},"homeUrl":"https://thestripe.com","locale":"en-US","postsPerPage":5,"siteId":82867280,"searchSuggestionsEnabled":false,"postTypes":{"post":{"singular_name":"Post","name":"Posts"},"page":{"singular_name":"Page","name":"Pages"},"attachment":{"singular_name":"Media","name":"Media"},"finds":{"singular_name":"Stripe Find","name":"Stripe Finds"},"reads":{"singular_name":"Book","name":"Books"},"travel":{"singular_name":"Travel Guide","name":"Travel Guides"}},"webpackPublicPath":"https://thestripe.com/wp-content/plugins/jetpack/jetpack_vendor/automattic/jetpack-search/build/instant-search/","isPhotonEnabled":false,"isFreePlan":false,"apiRoot":"https://thestripe.com/wp-json/","apiNonce":"14739d44c6","isPrivateSite":false,"isWpcom":false,"hasOverlayWidgets":true,"widgets":[{"filters":[{"name":"Post Types","type":"post_type","count":5,"widget_id":"jetpack-search-filters-1","filter_id":"post_type_0"},{"name":"DIY Project Types","type":"taxonomy","taxonomy":"project_type","count":5,"widget_id":"jetpack-search-filters-1","filter_id":"taxonomy_1"},{"name":"DIY Difficulties","type":"taxonomy","taxonomy":"difficulty","count":5,"widget_id":"jetpack-search-filters-1","filter_id":"taxonomy_2"},{"name":"Finds Categories","type":"taxonomy","taxonomy":"finds_category","count":5,"widget_id":"jetpack-search-filters-1","filter_id":"taxonomy_3"},{"name":"Categories","type":"taxonomy","taxonomy":"category","count":5,"widget_id":"jetpack-search-filters-1","filter_id":"taxonomy_4"},{"name":"Tags","type":"taxonomy","taxonomy":"post_tag","count":5,"widget_id":"jetpack-search-filters-1","filter_id":"taxonomy_5"},{"name":"Year","type":"date_histogram","count":5,"field":"post_date","interval":"year","widget_id":"jetpack-search-filters-1","filter_id":"date_histogram_6"}],"widget_id":"jetpack-search-filters-1"}],"widgetsOutsideOverlay":[],"hasNonSearchWidgets":false,"preventTrackingCookiesReset":false,"disableTracking":false,"aiAnswersEnabled":false};
+//# sourceURL=jetpack-instant-search-js-before
+</script>
+<script id="jetpack-instant-search-js" src="https://thestripe.com/wp-content/plugins/jetpack/jetpack_vendor/automattic/jetpack-search/build/instant-search/jp-search.js?minify=false&#038;ver=e1985dfd1a05046a42d5" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="jp-tracks-js" src="//stats.wp.com/w.js?ver=202636" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="jquery-ui-core-js-before" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">
+jQuery.uiBackCompat = true;
+jQuery.uiBackCompat = true;
+//# sourceURL=jquery-ui-core-js-before
+</script>
+<script id="jquery-ui-core-js" src="https://thestripe.com/wp-includes/js/jquery/ui/core.min.js?ver=1.14.2" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="jquery-ui-datepicker-js" src="https://thestripe.com/wp-includes/js/jquery/ui/datepicker.min.js?ver=1.14.2" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="jquery-ui-datepicker-js-after" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">
+jQuery(function(jQuery){jQuery.datepicker.setDefaults({"closeText":"Close","currentText":"Today","monthNames":["January","February","March","April","May","June","July","August","September","October","November","December"],"monthNamesShort":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"nextText":"Next","prevText":"Previous","dayNames":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"dayNamesShort":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],"dayNamesMin":["S","M","T","W","T","F","S"],"dateFormat":"mm.d.y","firstDay":1,"isRTL":false});});
+//# sourceURL=jquery-ui-datepicker-js-after
+</script>
+<script async data-wp-strategy="async" fetchpriority="low" id="comment-reply-js" src="https://thestripe.com/wp-includes/js/comment-reply.min.js?ver=7.1" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="perfmatters-lazy-load-js-before">
+window.lazyLoadOptions={elements_selector:"img[data-src],.perfmatters-lazy,.perfmatters-lazy-css-bg",thresholds:"0px 0px",class_loading:"pmloading",class_loaded:"pmloaded",callback_loaded:function(element){if(element.tagName==="IFRAME"){if(element.classList.contains("pmloaded")){if(typeof window.jQuery!="undefined"){if(jQuery.fn.fitVids){jQuery(element).parent().fitVids()}}}}}};window.addEventListener("LazyLoad::Initialized",function(e){var lazyLoadInstance=e.detail.instance;var target=document.querySelector("body");var observer=new MutationObserver(function(mutations){lazyLoadInstance.update()});var config={childList:!0,subtree:!0};observer.observe(target,config);});function perfmattersLazyLoadVideo(e){var t=document.createElement("iframe"),r="ID?";r+=0===e.dataset.query.length?"":e.dataset.query+"&",r+="autoplay=1",t.setAttribute("src",r.replace("ID",e.dataset.src)),e.dataset.referrerpolicy && t.setAttribute("referrerpolicy",e.dataset.referrerpolicy),t.setAttribute("frameborder","0"),t.setAttribute("allowfullscreen","1"),t.setAttribute("allow","accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"),e.replaceChild(t,e.firstChild)};function perfmattersLazyLoadYouTube(e){perfmattersLazyLoadVideo(e)}
+//# sourceURL=perfmatters-lazy-load-js-before
+</script>
+<script id="perfmatters-lazy-load-js" async src="https://thestripe.com/wp-content/plugins/perfmatters/js/lazyload.min.js?ver=2.6.3"></script>
+<script id="jetpack-stats-js-before" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">
+_stq = window._stq || [];
+_stq.push([ "view", {"v":"ext","blog":"82867280","post":"122274","tz":"-4","srv":"thestripe.com","j":"1:16.1.3"} ]);
+_stq.push([ "clickTrackerInit", "82867280", "122274" ]);
+//# sourceURL=jetpack-stats-js-before
+</script>
+<script data-wp-strategy="defer" defer fetchpriority="low" id="jetpack-stats-js" src="https://stats.wp.com/e-202636.js" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="bigscoots-bfcache-js-extra" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">
+var bfcache = {"cookie_name":"bs_bfcache_auth","is_logged_in":"","pending_operation":"","cookie_path":"/","cookie_domain":""};
+//# sourceURL=bigscoots-bfcache-js-extra
+</script>
+<script data-wp-strategy="defer" defer id="bigscoots-bfcache-js" src="https://thestripe.com/wp-content/plugins/bigscoots-cache/assets/js/bfcache-invalidation.min.js?ver=4.3.1" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script defer id="akismet-frontend-js" src="https://thestripe.com/wp-content/plugins/akismet/_inc/akismet-frontend.js?ver=1787149745" type="pmdelayedscript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1"></script>
+<script id="bs-cache-speculation-rules" type="speculationrules">
+{"prerender":[{"source":"document","where":{"and":[{"href_matches":"\/*"},{"not":{"href_matches":["\/*.php","\/wp-json\/*","\/wp-admin\/*","\/wp-content\/*","\/wp-content\/plugins\/*","\/wp-content\/uploads\/*","\/wp-content\/themes\/*","\/cart*","\/cart\/*","\/checkout*","\/checkout\/*","\/checkouts\/*","\/my-account\/*","\/logout\/*","\/*\/delete\/*","\/*\/print\/*","\/wprm_print\/*","\/*\\?*(^|&)(_wpnonce|ac|add-to-cart|add_to_cart|add-to-checkout|attachment_id|cart|download_id|download_media_file|edd_action|edd_options|media_file|media_type|wlmapi|wc-api|wc-ajax)=*"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prerender, .no-prerender a"}}]},"eagerness":"moderate"}]}
+</script>
+<script id="bs-cache-instant-prefetch-invoker-js" type="pmdelayedscript" data-perfmatters-type="text/javascript" data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1">
+document.addEventListener("DOMContentLoaded",function(){if(!(typeof HTMLScriptElement !== "undefined" && typeof HTMLScriptElement.supports === "function" && HTMLScriptElement.supports && HTMLScriptElement.supports("speculationrules"))) {document.querySelectorAll('script[type="speculationrules"]').forEach(script => script.remove());var bs_cache_instant_prefetch_script_element = document.createElement("script");bs_cache_instant_prefetch_script_element.id = "bs-cache-instant-prefetch-js", bs_cache_instant_prefetch_script_element.type = "module", bs_cache_instant_prefetch_script_element.src = "https://thestripe.com/wp-content/plugins/bigscoots-cache/assets/js/bs-cache-instant-prefetch-page.min.js", document.body.appendChild(bs_cache_instant_prefetch_script_element)}})
+</script>
+
+<script id="perfmatters-delayed-scripts-js">(function(){window.pmDC=0;window.pmDT=15;if(window.pmDT){var e=setTimeout(d,window.pmDT*1e3)}const t=["keydown","mousedown","mousemove","wheel","touchmove","touchstart","touchend"];const n={normal:[],defer:[],async:[]};const o=[];const i=[];var r=false;var a="";window.pmIsClickPending=false;t.forEach(function(e){window.addEventListener(e,d,{passive:true})});if(window.pmDC){window.addEventListener("touchstart",b,{passive:true});window.addEventListener("mousedown",b)}function d(){if(typeof e!=="undefined"){clearTimeout(e)}t.forEach(function(e){window.removeEventListener(e,d,{passive:true})});if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",s)}else{s()}}async function s(){c();u();f();m();await w(n.normal);await w(n.defer);await w(n.async);await p();document.querySelectorAll("link[data-pmdelayedstyle]").forEach(function(e){e.setAttribute("href",e.getAttribute("data-pmdelayedstyle"))});window.dispatchEvent(new Event("perfmatters-allScriptsLoaded")),E().then(()=>{h()})}function c(){let o={};function e(t,e){function n(e){return o[t].delayedEvents.indexOf(e)>=0?"perfmatters-"+e:e}if(!o[t]){o[t]={originalFunctions:{add:t.addEventListener,remove:t.removeEventListener},delayedEvents:[]};t.addEventListener=function(){arguments[0]=n(arguments[0]);o[t].originalFunctions.add.apply(t,arguments)};t.removeEventListener=function(){arguments[0]=n(arguments[0]);o[t].originalFunctions.remove.apply(t,arguments)}}o[t].delayedEvents.push(e)}function t(t,n){const e=t[n];Object.defineProperty(t,n,{get:!e?function(){}:e,set:function(e){t["perfmatters"+n]=e}})}e(document,"DOMContentLoaded");e(window,"DOMContentLoaded");e(window,"load");e(document,"readystatechange");t(document,"onreadystatechange");t(window,"onload")}function u(){let n=window.jQuery;Object.defineProperty(window,"jQuery",{get(){return n},set(t){if(t&&t.fn&&!o.includes(t)){t.fn.ready=t.fn.init.prototype.ready=function(e){if(r){e.bind(document)(t)}else{document.addEventListener("perfmatters-DOMContentLoaded",function(){e.bind(document)(t)})}};const e=t.fn.on;t.fn.on=t.fn.init.prototype.on=function(){if(this[0]===window){function t(e){e=e.split(" ");e=e.map(function(e){if(e==="load"||e.indexOf("load.")===0){return"perfmatters-jquery-load"}else{return e}});e=e.join(" ");return e}if(typeof arguments[0]=="string"||arguments[0]instanceof String){arguments[0]=t(arguments[0])}else if(typeof arguments[0]=="object"){Object.keys(arguments[0]).forEach(function(e){delete Object.assign(arguments[0],{[t(e)]:arguments[0][e]})[e]})}}return e.apply(this,arguments),this};o.push(t)}n=t}})}function f(){document.querySelectorAll("script[type=pmdelayedscript]").forEach(function(e){if(e.hasAttribute("src")){if(e.hasAttribute("defer")&&e.defer!==false){n.defer.push(e)}else if(e.hasAttribute("async")&&e.async!==false){n.async.push(e)}else{n.normal.push(e)}}else{n.normal.push(e)}})}function m(){var o=document.createDocumentFragment();[...n.normal,...n.defer,...n.async].forEach(function(e){var t=e.getAttribute("src");if(t){var n=document.createElement("link");n.href=t;if(e.getAttribute("data-perfmatters-type")=="module"){n.rel="modulepreload"}else{n.rel="preload";n.as="script"}o.appendChild(n)}});document.head.appendChild(o)}async function w(e){var t=e.shift();if(t){await l(t);return w(e)}return Promise.resolve()}async function l(t){await v();return new Promise(function(e){const n=document.createElement("script");[...t.attributes].forEach(function(e){let t=e.nodeName;if(t!=="type"){if(t==="data-perfmatters-type"){t="type"}n.setAttribute(t,e.nodeValue)}});if(t.hasAttribute("src")){n.addEventListener("load",e);n.addEventListener("error",e)}else{n.text=t.text;e()}t.parentNode?t.parentNode.replaceChild(n,t):e()})}async function p(){r=true;await v();document.dispatchEvent(new Event("perfmatters-DOMContentLoaded"));await v();window.dispatchEvent(new Event("perfmatters-DOMContentLoaded"));await v();document.dispatchEvent(new Event("perfmatters-readystatechange"));await v();if(document.perfmattersonreadystatechange){document.perfmattersonreadystatechange()}await v();window.dispatchEvent(new Event("perfmatters-load"));await v();if(window.perfmattersonload){window.perfmattersonload()}await v();o.forEach(function(e){e(window).trigger("perfmatters-jquery-load")})}async function v(){return new Promise(function(e){requestAnimationFrame(e)})}function h(){window.removeEventListener("touchstart",b,{passive:true});window.removeEventListener("mousedown",b);i.forEach(e=>{if(e.target.outerHTML===a){e.target.dispatchEvent(new MouseEvent("click",{view:e.view,bubbles:true,cancelable:true}))}})}function E(){return new Promise(e=>{window.pmIsClickPending?g=e:e()})}function y(){window.pmIsClickPending=true}function g(){window.pmIsClickPending=false}function L(e){e.target.removeEventListener("click",L);C(e.target,"pm-onclick","onclick");i.push(e),e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();g()}function b(e){if(e.target.tagName!=="HTML"){if(!a){a=e.target.outerHTML}window.addEventListener("touchend",A);window.addEventListener("mouseup",A);window.addEventListener("touchmove",k,{passive:true});window.addEventListener("mousemove",k);e.target.addEventListener("click",L);C(e.target,"onclick","pm-onclick");y()}}function k(e){window.removeEventListener("touchend",A);window.removeEventListener("mouseup",A);window.removeEventListener("touchmove",k,{passive:true});window.removeEventListener("mousemove",k);e.target.removeEventListener("click",L);C(e.target,"pm-onclick","onclick");g()}function A(e){window.removeEventListener("touchend",A);window.removeEventListener("mouseup",A);window.removeEventListener("touchmove",k,{passive:true});window.removeEventListener("mousemove",k)}function C(e,t,n){if(e.hasAttribute&&e.hasAttribute(t)){event.target.setAttribute(n,event.target.getAttribute(t));event.target.removeAttribute(t)}}})();</script><script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a35fcfddad0c8349',t:'MTc4ODU1NDQ1NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+<!--
+Performance optimized by Redis Object Cache. Learn more: https://wprediscache.com
+
+Retrieved 3533 objects (855 KB) from Redis using PhpRedis (v6.3.0).
+-->
