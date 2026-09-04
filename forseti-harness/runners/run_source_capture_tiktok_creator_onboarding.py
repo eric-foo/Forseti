@@ -75,6 +75,12 @@ from source_capture.tiktok.creator_onboarding import (
 )
 from source_capture.tiktok.grid_packet import write_tiktok_grid_packet
 from runners.run_tiktok_creator_onboarding_coordinator import prepare_onboarding
+from tiktok_creator_metronome import (
+    activate_metronome,
+    active_metronome,
+    deactivate_metronome,
+    open_direct_run_metronome,
+)
 SUMMARY_PREFIX = "tiktok_creator_onboarding_summary_json="
 PROGRESS_PREFIX = "tiktok_creator_onboarding_progress_json="
 BLOCKER_PREFIX = "tiktok_creator_onboarding_blocker_json="
@@ -249,6 +255,48 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    journal = open_direct_run_metronome(
+        args.output_dir,
+        creator_handle=args.creator_handle,
+    )
+    if journal is None:
+        return _run_main(parser, args)
+
+    token = activate_metronome(journal)
+    journal.record(
+        "run_started",
+        details={
+            "run_kind": "direct_creator_runner",
+            "creator_intent": args.creator_intent,
+            "creator_handles": (
+                [args.creator_handle.strip().lstrip("@").lower()]
+                if args.creator_handle
+                else []
+            ),
+        },
+    )
+    try:
+        exit_code = _run_main(parser, args)
+    except SystemExit as exc:
+        raw_code = exc.code
+        exit_code = raw_code if isinstance(raw_code, int) else 1
+        journal.close_for_exit_code(exit_code)
+        raise
+    except BaseException:
+        journal.close(
+            status="failed",
+            terminal_reason="unhandled_exception",
+            counters={"exit_code": 3},
+        )
+        raise
+    else:
+        journal.close_for_exit_code(exit_code)
+        return exit_code
+    finally:
+        deactivate_metronome(token)
+
+
+def _run_main(parser: argparse.ArgumentParser, args: argparse.Namespace) -> int:
     if (args.cadence_min_gap_seconds is None) != (
         args.cadence_max_gap_seconds is None
     ):
@@ -707,70 +755,66 @@ def main(argv: Sequence[str] | None = None) -> int:
     browser_lifecycle = receipt.get("browser_lifecycle")
     if not isinstance(browser_lifecycle, dict):
         browser_lifecycle = {}
-    print(
-        SUMMARY_PREFIX
-        + json.dumps(
-            {
-                "status": receipt["status"],
-                "capture_scope": capture_scope,
-                "creator_handle": receipt["creator_handle"],
-                "session_profile": receipt["session_profile"],
-                "window_size": receipt["window_size"],
-                "selection_count": receipt["selection_count"],
-                "window_cap": receipt["window_cap"],
-                "creator_intent": args.creator_intent,
-                "registry_preflight_path": str(preflight_path),
-                "selected_count": receipt["selected_count"],
-                "completed_deep_capture_count": receipt[
-                    "completed_deep_capture_count"
-                ],
-                "suggested_accounts_status": receipt.get(
-                    "suggested_accounts_status_or_none"
-                ),
-                "suggested_outer_ui_route": receipt.get(
-                    "suggested_outer_ui_route_or_none"
-                ),
-                "page_acquisition_policy": browser_lifecycle.get(
-                    "page_acquisition_policy"
-                ),
-                "initial_platform_match_count": browser_lifecycle.get(
-                    "initial_platform_match_count"
-                ),
-                "initial_exact_match_count": browser_lifecycle.get(
-                    "initial_exact_match_count"
-                ),
-                "page_adoption_count": browser_lifecycle.get(
-                    "page_adoption_count"
-                ),
-                "page_creation_count": browser_lifecycle.get(
-                    "page_creation_count"
-                ),
-                "page_navigation_count": browser_lifecycle.get(
-                    "page_navigation_count"
-                ),
-                "same_url_navigation_suppression_count": browser_lifecycle.get(
-                    "same_url_navigation_suppression_count"
-                ),
-                "humanized_input_preset": browser_lifecycle.get(
-                    "humanized_input_preset"
-                ),
-                "initial_deep_capture_wait": receipt.get(
-                    "initial_deep_capture_wait_or_none"
-                ),
-                "grid_deep_entry": receipt.get("grid_deep_entry_or_none"),
-                "output_dir": str(args.output_dir),
-                "admitted_path_or_none": admitted_path,
-                "prior_capture_pointer_or_none": args.prior_capture_pointer,
-                "profile_refresh_packet_or_none": (
-                    admitted_path if capture_scope == "profile_refresh" else None
-                ),
-                "suggested_frontier_path_or_none": frontier_path,
-                "suggested_frontier_queue_or_none": frontier_queue,
-                "audience_queue_job_or_none": audience_queue_result,
-                "registry_projection_refresh_or_none": registry_projection_refresh,
-            },
-            sort_keys=True,
-        )
+    _emit_summary(
+        {
+            "status": receipt["status"],
+            "capture_scope": capture_scope,
+            "creator_handle": receipt["creator_handle"],
+            "session_profile": receipt["session_profile"],
+            "window_size": receipt["window_size"],
+            "selection_count": receipt["selection_count"],
+            "window_cap": receipt["window_cap"],
+            "creator_intent": args.creator_intent,
+            "registry_preflight_path": str(preflight_path),
+            "selected_count": receipt["selected_count"],
+            "completed_deep_capture_count": receipt[
+                "completed_deep_capture_count"
+            ],
+            "suggested_accounts_status": receipt.get(
+                "suggested_accounts_status_or_none"
+            ),
+            "suggested_outer_ui_route": receipt.get(
+                "suggested_outer_ui_route_or_none"
+            ),
+            "page_acquisition_policy": browser_lifecycle.get(
+                "page_acquisition_policy"
+            ),
+            "initial_platform_match_count": browser_lifecycle.get(
+                "initial_platform_match_count"
+            ),
+            "initial_exact_match_count": browser_lifecycle.get(
+                "initial_exact_match_count"
+            ),
+            "page_adoption_count": browser_lifecycle.get(
+                "page_adoption_count"
+            ),
+            "page_creation_count": browser_lifecycle.get(
+                "page_creation_count"
+            ),
+            "page_navigation_count": browser_lifecycle.get(
+                "page_navigation_count"
+            ),
+            "same_url_navigation_suppression_count": browser_lifecycle.get(
+                "same_url_navigation_suppression_count"
+            ),
+            "humanized_input_preset": browser_lifecycle.get(
+                "humanized_input_preset"
+            ),
+            "initial_deep_capture_wait": receipt.get(
+                "initial_deep_capture_wait_or_none"
+            ),
+            "grid_deep_entry": receipt.get("grid_deep_entry_or_none"),
+            "output_dir": str(args.output_dir),
+            "admitted_path_or_none": admitted_path,
+            "prior_capture_pointer_or_none": args.prior_capture_pointer,
+            "profile_refresh_packet_or_none": (
+                admitted_path if capture_scope == "profile_refresh" else None
+            ),
+            "suggested_frontier_path_or_none": frontier_path,
+            "suggested_frontier_queue_or_none": frontier_queue,
+            "audience_queue_job_or_none": audience_queue_result,
+            "registry_projection_refresh_or_none": registry_projection_refresh,
+        }
     )
     return 0
 
@@ -964,6 +1008,9 @@ def _registry_tiktok_states(registry: dict[str, object]) -> dict[str, str]:
 
 
 def _emit_progress(event: str, fields: dict[str, object]) -> None:
+    journal = active_metronome()
+    if journal is not None:
+        journal.record_progress(event, fields)
     print(
         PROGRESS_PREFIX
         + json.dumps({"event": event, **fields}, sort_keys=True),
@@ -972,12 +1019,35 @@ def _emit_progress(event: str, fields: dict[str, object]) -> None:
 
 
 def _emit_blocker(code: str, phase: str, *, recovery: str | None = None) -> None:
+    journal = active_metronome()
+    if journal is not None:
+        journal.record_blocker(code, phase)
     payload = {"code": code, "phase": phase}
     if recovery is not None:
         payload["recovery"] = recovery
     print(
         BLOCKER_PREFIX
         + json.dumps(payload, sort_keys=True),
+        flush=True,
+    )
+
+
+def _emit_summary(payload: dict[str, object]) -> None:
+    journal = active_metronome()
+    if journal is not None:
+        journal.record(
+            "runner_summary",
+            details={
+                "status": str(payload.get("status") or ""),
+                "capture_scope": str(payload.get("capture_scope") or ""),
+                "creator_intent": str(payload.get("creator_intent") or ""),
+                "completed_deep_capture_count": int(
+                    payload.get("completed_deep_capture_count") or 0
+                ),
+            },
+        )
+    print(
+        SUMMARY_PREFIX + json.dumps(payload, sort_keys=True),
         flush=True,
     )
 
