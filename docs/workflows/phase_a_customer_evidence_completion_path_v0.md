@@ -24,12 +24,36 @@ reviews as unrelated summaries. It does not produce a market conclusion.
 
 The semantic leaf assessment, atomic evidence structuring, meaning-based
 reconciliation, and evidence-packet projection together form the named
-**Evidence Consolidation** stage. It begins only after acquisition has produced
-an immutable, completely accounted corpus and ends only when the final corpus
-hash has a complete, reproducible evidence packet or a visible unresolved
+**Evidence Consolidation** stage. It runs inside Acquire & Seal after a bounded
+Capture handoff and may iterate with the provisional maturity scan and targeted
+delta acquisition required to close the corpus. It ends only when the final
+corpus hash has a complete, reproducible evidence packet or a visible unresolved
 failure. This is a conceptual and completion boundary between acquisition and
 Deliver, not a new globally numbered phase: historical Phase A, Phase B, Turn
 B, Understanding, and Deliver vocabulary is not renumbered or migrated.
+
+At this boundary, a current passing `phase_acquisition_seal_v3` whose
+validator-backed depth ledger closes the material-saturation test is required
+before Synthesize or Deliver may consume the completed Evidence Consolidation
+output. The seal is not a precondition for the pre-seal semantic integration
+that the current Acquire & Seal route itself requires to construct and validate
+that seal. A Capture batch or collection handoff receipt, even one whose planned
+URLs and packets are fully reconciled, cannot claim a terminal corpus, authorize
+Synthesize or Deliver, or substitute for the seal. While the seal is absent or
+blocked, acquisition-stage coding and semantic integration, the lightweight
+provisional maturity scan, and targeted delta acquisition may proceed; their
+outputs remain pre-delivery and cannot carry terminal readiness. The owning
+gate and validator are
+`forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md`
+and `forseti-harness/runners/run_phase_acquisition_seal_validation.py`.
+
+For a multi-packet Capture handoff, the first acquisition-stage consumer starts
+from the Capture handoff's machine-readable packet inventory required by the
+Capture obligation contract, not from packet IDs reconstructed out of narrative
+prose. It verifies those immutable packets, then produces one provisional axis
+inventory and one gap-only maturity scan. Those artifacts route coding and
+targeted acquisition; they do not become a parallel final evidence view or
+inherit terminal authority.
 
 For new cross-company authoring, use `phase_a_semantic_integration_run_v10`
 (integration method v12, verifier v11). The supplied `CURRENT_AXES` inventory

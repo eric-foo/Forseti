@@ -65,6 +65,29 @@ CONSUMER_BRAND_UNDERSTANDING_FLOORS = {
     "external_context_independent_origins": 12,
     "reddit_forum_threads": 40,
 }
+PROVISIONAL_MATURITY_SCAN_VERSION = "consumer_brand_provisional_maturity_scan_v2"
+_PROVISIONAL_SCAN_STATUSES = {
+    "OPEN_TARGETED_ACQUISITION_REQUIRED",
+    "OPEN_ROUTE_BLOCKED",
+    "READY_FOR_SEAL_BUILD",
+}
+_PROVISIONAL_ROUTE_STATUSES = {
+    "not_started",
+    "planned",
+    "in_progress",
+    "complete",
+    "terminally_unresolved",
+}
+_SEARCH_INTEREST_ROUTE_ID = "category_benchmark_search_interest"
+_SEARCH_INTEREST_STATUSES = {
+    "captured",
+    "unresolved_category_terms_unbound",
+    "unresolved_anchor_unbound",
+}
+_SEARCH_INTEREST_UNRESOLVED_REASONS = {
+    "unresolved_category_terms_unbound": "unresolved — category terms unbound",
+    "unresolved_anchor_unbound": "unresolved — anchor unbound",
+}
 
 _EXTERNAL_CONTEXT_SOURCE_TYPES = {
     "corporate_or_transaction",
@@ -222,6 +245,7 @@ MANDATORY_ROUTE_PHASES = {
     "reddit_weekly_lake": "co3",
     "reddit_community_scout": "co3",
     "serp_phase2": "serp_phase2",
+    _SEARCH_INTEREST_ROUTE_ID: "category_benchmark",
     # Required only when the seal records route version 1.1.0 or later; it
     # joins the required set via the conditional-route mechanism, not
     # MANDATORY_ROUTE_IDS.
@@ -241,8 +265,10 @@ UNDERSTANDING_ROUTE_VERSIONS = {
     "1.5.0",
     "1.6.0",
     "1.7.0",
+    "1.8.0",
+    "1.9.0",
 }
-CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.7.0"
+CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.9.0"
 CAMPAIGN_EVIDENCE_VIEW_VERSION = "campaign_evidence_view_v1"
 SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION_V1 = (
     "semantic_evidence_integration_view_v1"
@@ -279,9 +305,18 @@ _CAMPAIGN_INTEGRATION_ROUTE_VERSIONS = {
     "1.5.0",
     "1.6.0",
     "1.7.0",
+    "1.8.0",
+    "1.9.0",
 }
 _SEMANTIC_INTEGRATION_ROUTE_ID = "semantic_evidence_integration"
-_SEMANTIC_INTEGRATION_ROUTE_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0"}
+_SEMANTIC_INTEGRATION_ROUTE_VERSIONS = {
+    "1.4.0",
+    "1.5.0",
+    "1.6.0",
+    "1.7.0",
+    "1.8.0",
+    "1.9.0",
+}
 # Route 1.1.0 introduced comparator closure, campaign-evidence integration,
 # conditional verification, and retailer-state accounting together, so a
 # historical audit of a 1.1.0 seal still owes all of them. Pre-fanout
@@ -295,6 +330,8 @@ _ROUTE_REVISION_1_1_OBLIGATION_VERSIONS = {
     "1.5.0",
     "1.6.0",
     "1.7.0",
+    "1.8.0",
+    "1.9.0",
 }
 _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {
     "1.2.0",
@@ -303,12 +340,41 @@ _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {
     "1.5.0",
     "1.6.0",
     "1.7.0",
+    "1.8.0",
+    "1.9.0",
 }
-_ROUTE_REVISION_1_3_OBLIGATION_VERSIONS = {"1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0"}
-_ROUTE_REVISION_1_4_OBLIGATION_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0"}
-_ROUTE_REVISION_1_5_OBLIGATION_VERSIONS = {"1.5.0", "1.6.0", "1.7.0"}
-_ROUTE_REVISION_1_6_OBLIGATION_VERSIONS = {"1.6.0", "1.7.0"}
-_ROUTE_REVISION_1_7_OBLIGATION_VERSIONS = {"1.7.0"}
+_ROUTE_REVISION_1_3_OBLIGATION_VERSIONS = {
+    "1.3.0",
+    "1.4.0",
+    "1.5.0",
+    "1.6.0",
+    "1.7.0",
+    "1.8.0",
+    "1.9.0",
+}
+_ROUTE_REVISION_1_4_OBLIGATION_VERSIONS = {
+    "1.4.0",
+    "1.5.0",
+    "1.6.0",
+    "1.7.0",
+    "1.8.0",
+    "1.9.0",
+}
+_ROUTE_REVISION_1_5_OBLIGATION_VERSIONS = {
+    "1.5.0",
+    "1.6.0",
+    "1.7.0",
+    "1.8.0",
+    "1.9.0",
+}
+_ROUTE_REVISION_1_6_OBLIGATION_VERSIONS = {
+    "1.6.0",
+    "1.7.0",
+    "1.8.0",
+    "1.9.0",
+}
+_ROUTE_REVISION_1_7_OBLIGATION_VERSIONS = {"1.7.0", "1.8.0", "1.9.0"}
+_ROUTE_REVISION_1_9_OBLIGATION_VERSIONS = {"1.9.0"}
 _CAMPAIGN_SOURCE_ROLES = {
     "owned_post",
     "paid_ad",
@@ -469,6 +535,220 @@ def _is_enum_value(value: Any, allowed: set[str]) -> bool:
     return isinstance(value, str) and value in allowed
 
 
+def _load_json_mapping(path: Path) -> Mapping[str, Any]:
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, dict):
+        raise ValueError("expected a JSON object")
+    return value
+
+
+def _referenced_depth_profile_id(
+    seal: Mapping[str, Any], *, repo_root: Path
+) -> str | None:
+    reference = seal.get("evidence_depth_ledger")
+    if not isinstance(reference, dict):
+        return None
+    locator = reference.get("locator")
+    if not isinstance(locator, str) or not locator:
+        return None
+    path = Path(locator)
+    if not path.is_absolute():
+        path = repo_root / path
+    try:
+        return str(_load_json_mapping(path).get("profile_id"))
+    except (OSError, ValueError, json.JSONDecodeError):
+        return None
+
+
+def validate_consumer_brand_provisional_maturity_scan(
+    *, scan_path: Path, repo_root: Path
+) -> list[str]:
+    """Validate that an early consumer-brand acquisition scan is executable.
+
+    This is deliberately a planning-completeness gate, not a maturity or seal
+    validator. An honest OPEN scan passes when every required route is
+    structured and its gaps remain visible.
+    """
+    scan = _load_json_mapping(scan_path)
+    findings: list[str] = []
+    if scan.get("schema_version") != PROVISIONAL_MATURITY_SCAN_VERSION:
+        findings.append("invalid_provisional_maturity_scan_version")
+    for field in ("subject", "cycle_id"):
+        if not isinstance(scan.get(field), str) or not scan.get(field):
+            findings.append(f"missing_provisional_scan_{field}")
+    if scan.get("active_profile_id") != CONSUMER_BRAND_UNDERSTANDING_PROFILE:
+        findings.append("invalid_provisional_scan_profile")
+    if not _is_enum_value(scan.get("scan_status"), _PROVISIONAL_SCAN_STATUSES):
+        findings.append("invalid_provisional_scan_status")
+    for field in (
+        "material_saturation_proven",
+        "phase_acquisition_seal_present",
+        "synthesize_or_deliver_authorized",
+    ):
+        if scan.get(field) is not False:
+            findings.append(f"provisional_scan_cannot_assert_{field}")
+
+    for field in ("input_axis_inventory", "capture_packet_inventory"):
+        reference = scan.get(field)
+        if not isinstance(reference, dict):
+            findings.append(f"missing_provisional_scan_{field}")
+            continue
+        _verify_artifact(
+            reference.get("locator"),
+            reference.get("sha256"),
+            repo_root=repo_root,
+            code=f"provisional_scan_{field}",
+            findings=findings,
+        )
+
+    floor_rows = scan.get("profile_floor_gap_audit")
+    observed_floors: dict[str, Any] = {}
+    if not isinstance(floor_rows, list):
+        findings.append("missing_provisional_scan_floor_audit")
+    else:
+        for row in floor_rows:
+            if not isinstance(row, dict):
+                findings.append("invalid_provisional_scan_floor_row")
+                continue
+            metric = row.get("metric")
+            if not isinstance(metric, str) or not metric or metric in observed_floors:
+                findings.append("invalid_or_duplicate_provisional_scan_floor_metric")
+                continue
+            observed_floors[metric] = row.get("required")
+        if observed_floors != CONSUMER_BRAND_UNDERSTANDING_FLOORS:
+            findings.append("provisional_scan_floor_contract_mismatch")
+
+    axes = scan.get("axes")
+    axis_ids: list[str] = []
+    if not isinstance(axes, list) or not axes:
+        findings.append("missing_provisional_scan_axes")
+        axes = []
+    for axis in axes:
+        if not isinstance(axis, dict):
+            findings.append("invalid_provisional_scan_axis")
+            continue
+        axis_id = axis.get("axis_id")
+        if not isinstance(axis_id, str) or not axis_id or axis_id in axis_ids:
+            findings.append("invalid_or_duplicate_provisional_scan_axis_id")
+            continue
+        axis_ids.append(axis_id)
+        if not _is_enum_value(axis.get("status"), {
+            "open",
+            "provisionally_covered",
+            "source_limited",
+        }):
+            findings.append(f"invalid_provisional_scan_axis_status:{axis_id}")
+        queries = axis.get("next_queries")
+        goals = {
+            row.get("goal")
+            for row in queries
+            if isinstance(row, dict) and isinstance(row.get("goal"), str)
+        } if isinstance(queries, list) else set()
+        if goals != _FOCUSED_SEARCH_GOALS or len(queries or []) != len(
+            _FOCUSED_SEARCH_GOALS
+        ):
+            findings.append(f"provisional_scan_axis_goal_mismatch:{axis_id}")
+        continuation_count = axis.get(
+            "no_material_continuation_families_after_last_addition"
+        )
+        if (
+            not isinstance(continuation_count, int)
+            or isinstance(continuation_count, bool)
+            or continuation_count < 0
+        ):
+            findings.append(f"invalid_provisional_scan_continuation_count:{axis_id}")
+
+    obligations = scan.get("route_obligation_audit")
+    if not isinstance(obligations, dict):
+        findings.append("missing_provisional_scan_route_obligations")
+        return sorted(set(findings))
+    if obligations.get("completion_authority") != SEAL_VERSION:
+        findings.append("invalid_provisional_scan_completion_authority")
+    if obligations.get("target_route_version") != CURRENT_UNDERSTANDING_ROUTE_VERSION:
+        findings.append("invalid_provisional_scan_target_route_version")
+
+    phase1 = obligations.get("serp_phase1")
+    if not isinstance(phase1, dict):
+        findings.append("missing_provisional_scan_serp_phase1")
+    else:
+        if not _is_enum_value(
+            phase1.get("status"), _PROVISIONAL_ROUTE_STATUSES
+        ):
+            findings.append("invalid_provisional_scan_serp_phase1_status")
+        if phase1.get("ordered_family_kinds") != list(
+            _MANDATORY_HIGH_YIELD_FAMILY_ORDER
+        ):
+            findings.append("provisional_scan_serp_phase1_family_order_mismatch")
+        if not isinstance(phase1.get("query_provenance_bound"), bool):
+            findings.append("invalid_provisional_scan_serp_phase1_provenance_state")
+
+    phase2 = obligations.get("serp_phase2")
+    if not isinstance(phase2, dict):
+        findings.append("missing_provisional_scan_serp_phase2")
+    else:
+        if not _is_enum_value(
+            phase2.get("status"), _PROVISIONAL_ROUTE_STATUSES
+        ):
+            findings.append("invalid_provisional_scan_serp_phase2_status")
+        goals_per_axis = phase2.get("goals_per_axis")
+        if (
+            not isinstance(goals_per_axis, list)
+            or any(not isinstance(goal, str) for goal in goals_per_axis)
+            or set(goals_per_axis) != _FOCUSED_SEARCH_GOALS
+        ):
+            findings.append("provisional_scan_serp_phase2_goal_mismatch")
+        planned_axis_ids = phase2.get("planned_axis_ids")
+        if (
+            not isinstance(planned_axis_ids, list)
+            or any(not isinstance(axis_id, str) for axis_id in planned_axis_ids)
+            or set(planned_axis_ids) != set(axis_ids)
+        ):
+            findings.append("provisional_scan_serp_phase2_axis_mismatch")
+        if phase2.get("planned_query_count") != len(axis_ids) * len(
+            _FOCUSED_SEARCH_GOALS
+        ):
+            findings.append("provisional_scan_serp_phase2_query_count_mismatch")
+
+    search_interest = obligations.get(_SEARCH_INTEREST_ROUTE_ID)
+    if not isinstance(search_interest, dict):
+        findings.append("missing_provisional_scan_search_interest")
+    else:
+        if not _is_enum_value(
+            search_interest.get("status"), _PROVISIONAL_ROUTE_STATUSES
+        ):
+            findings.append("invalid_provisional_scan_search_interest_status")
+        if search_interest.get("required") is not True:
+            findings.append("provisional_scan_search_interest_not_required")
+        if search_interest.get("window_years") != 5:
+            findings.append("provisional_scan_search_interest_window_mismatch")
+        if search_interest.get("property") != "web_search":
+            findings.append("provisional_scan_search_interest_property_mismatch")
+        if search_interest.get("worldwide_check_required") is not True:
+            findings.append("provisional_scan_search_interest_worldwide_missing")
+        if not _is_enum_value(search_interest.get("term_derivation_state"), {
+            "unbound",
+            "partially_bound",
+            "bound",
+        }):
+            findings.append("invalid_provisional_scan_term_derivation_state")
+        if not _is_enum_value(
+            search_interest.get("anchor_state"), {"unbound", "bound"}
+        ):
+            findings.append("invalid_provisional_scan_anchor_state")
+
+    continuation = obligations.get("axis_continuation")
+    if not isinstance(continuation, dict):
+        findings.append("missing_provisional_scan_axis_continuation")
+    else:
+        if continuation.get("required_dry_families_per_material_axis") != 2:
+            findings.append("provisional_scan_axis_continuation_count_mismatch")
+        if continuation.get("different_family_kinds_required") is not True:
+            findings.append("provisional_scan_axis_continuation_kind_mismatch")
+        if continuation.get("reset_on_material_addition") is not True:
+            findings.append("provisional_scan_axis_continuation_reset_missing")
+    return sorted(set(findings))
+
+
 def validate_phase_acquisition_seal(
     *,
     seal_path: Path,
@@ -532,6 +812,17 @@ def validate_phase_acquisition_seal(
         conditional_routes = conditional_routes | {
             _SEMANTIC_INTEGRATION_ROUTE_ID
         }
+    if (
+        schema_version == SEAL_VERSION
+        and isinstance(route_block, dict)
+        and _is_enum_value(
+            route_block.get("route_version"),
+            _ROUTE_REVISION_1_9_OBLIGATION_VERSIONS,
+        )
+        and _referenced_depth_profile_id(seal, repo_root=repo_root)
+        == CONSUMER_BRAND_UNDERSTANDING_PROFILE
+    ):
+        conditional_routes = conditional_routes | {_SEARCH_INTEREST_ROUTE_ID}
     _validate_specialist_returns(
         seal, repo_root=repo_root, findings=findings
     )
@@ -696,6 +987,17 @@ def _validate_understanding_evidence_depth(
     artifacts = _validate_depth_artifacts(
         ledger.get("artifacts"), repo_root=repo_root, findings=findings
     )
+    if (
+        current_consumer_brand
+        and route_version in _ROUTE_REVISION_1_9_OBLIGATION_VERSIONS
+    ):
+        _validate_category_benchmark_search_interest(
+            ledger.get(_SEARCH_INTEREST_ROUTE_ID),
+            artifacts=artifacts,
+            route_jobs=_route_job_states(seal),
+            valid_pass=valid_pass,
+            findings=findings,
+        )
     families = ledger.get("families")
     if not isinstance(families, dict):
         findings.append("missing_evidence_depth_families")
@@ -846,6 +1148,99 @@ def _validate_depth_artifacts(
             findings=findings,
         )
     return artifacts
+
+
+def _validate_category_benchmark_search_interest(
+    value: Any,
+    *,
+    artifacts: Mapping[str, Path],
+    route_jobs: Mapping[str, str],
+    valid_pass: bool,
+    findings: list[str],
+) -> None:
+    if not isinstance(value, dict):
+        findings.append("missing_category_benchmark_search_interest")
+        return
+    status = value.get("status")
+    if not _is_enum_value(status, _SEARCH_INTEREST_STATUSES):
+        findings.append("invalid_category_benchmark_search_interest_status")
+    job_id = value.get("route_job_id")
+    if not isinstance(job_id, str) or not job_id:
+        findings.append("missing_category_benchmark_search_interest_job_id")
+    elif job_id not in route_jobs:
+        findings.append("unaccounted_category_benchmark_search_interest_job")
+    elif valid_pass and route_jobs[job_id] != "completed":
+        findings.append("passing_search_interest_job_not_completed")
+
+    if value.get("window_years") != 5:
+        findings.append("search_interest_window_mismatch")
+    if value.get("property") != "web_search":
+        findings.append("search_interest_property_mismatch")
+    if not isinstance(value.get("primary_geo"), str) or not value.get(
+        "primary_geo"
+    ):
+        findings.append("missing_search_interest_primary_geo")
+    if value.get("worldwide_checked") is not True:
+        findings.append("missing_search_interest_worldwide_check")
+    if not isinstance(value.get("subject_brand_term"), str) or not value.get(
+        "subject_brand_term"
+    ):
+        findings.append("missing_search_interest_subject_brand_term")
+
+    category_terms = value.get("category_terms")
+    derivation_rows = value.get("term_derivation")
+    derived_terms: set[str] = set()
+    if not isinstance(derivation_rows, list):
+        findings.append("missing_search_interest_term_derivation")
+        derivation_rows = []
+    for row in derivation_rows:
+        if not isinstance(row, dict):
+            findings.append("invalid_search_interest_term_derivation_row")
+            continue
+        term = row.get("exact_candidate_term")
+        if not isinstance(term, str) or not term or term in derived_terms:
+            findings.append("invalid_or_duplicate_search_interest_category_term")
+            continue
+        derived_terms.add(term)
+        if not isinstance(row.get("product_family"), str) or not row.get(
+            "product_family"
+        ):
+            findings.append("missing_search_interest_product_family")
+        if not isinstance(row.get("source_phrase"), str) or not row.get(
+            "source_phrase"
+        ):
+            findings.append("missing_search_interest_term_source_phrase")
+        if row.get("artifact_id") not in artifacts:
+            findings.append("unresolved_search_interest_term_artifact")
+
+    if status != "unresolved_category_terms_unbound":
+        if (
+            not isinstance(category_terms, list)
+            or not category_terms
+            or any(not isinstance(term, str) or not term for term in category_terms)
+            or set(category_terms) != derived_terms
+        ):
+            findings.append("search_interest_category_term_derivation_mismatch")
+
+    if status != "unresolved_anchor_unbound":
+        for field in ("anchor_query", "anchor_source_phrase"):
+            if not isinstance(value.get(field), str) or not value.get(field):
+                findings.append(f"missing_search_interest_{field}")
+        if value.get("anchor_artifact_id") not in artifacts:
+            findings.append("unresolved_search_interest_anchor_artifact")
+
+    if status == "captured":
+        if value.get("result_artifact_id") not in artifacts:
+            findings.append("unresolved_search_interest_result_artifact")
+        if value.get("unresolved_reason") is not None:
+            findings.append("captured_search_interest_has_unresolved_reason")
+    elif isinstance(status, str) and status in _SEARCH_INTEREST_UNRESOLVED_REASONS:
+        if value.get("unresolved_reason") != _SEARCH_INTEREST_UNRESOLVED_REASONS[
+            status
+        ]:
+            findings.append("search_interest_unresolved_reason_mismatch")
+        if value.get("result_artifact_id") is not None:
+            findings.append("unresolved_search_interest_has_result_artifact")
 
 
 def _valid_depth_rows(
@@ -6396,9 +6791,14 @@ def _artifact_hash(path: Path) -> str:
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Validate a phase_acquisition_seal_v3 YAML block and its hashes."
+        description=(
+            "Validate a phase_acquisition_seal_v3 YAML block or a consumer-brand "
+            "provisional maturity scan."
+        )
     )
-    parser.add_argument("--seal", required=True, type=Path)
+    target = parser.add_mutually_exclusive_group(required=True)
+    target.add_argument("--seal", type=Path)
+    target.add_argument("--maturity-scan", type=Path)
     parser.add_argument(
         "--repo-root",
         type=Path,
@@ -6445,26 +6845,41 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = _parser()
     args = parser.parse_args(argv)
     try:
-        seal_schema_version = _load_seal(args.seal.resolve()).get("schema_version")
-        findings = validate_phase_acquisition_seal(
-            seal_path=args.seal.resolve(),
-            repo_root=args.repo_root.resolve(),
-            allow_legacy_v2=args.allow_legacy_v2,
-            allow_legacy_consumer_v1=args.allow_legacy_consumer_v1,
-            allow_legacy_consumer_v2=args.allow_legacy_consumer_v2,
-            allow_preversion_route=args.allow_preversion_route,
-        )
+        if args.maturity_scan is not None:
+            schema_version = _load_json_mapping(
+                args.maturity_scan.resolve()
+            ).get("schema_version")
+            findings = validate_consumer_brand_provisional_maturity_scan(
+                scan_path=args.maturity_scan.resolve(),
+                repo_root=args.repo_root.resolve(),
+            )
+            validator = PROVISIONAL_MATURITY_SCAN_VERSION
+        else:
+            schema_version = _load_seal(args.seal.resolve()).get("schema_version")
+            findings = validate_phase_acquisition_seal(
+                seal_path=args.seal.resolve(),
+                repo_root=args.repo_root.resolve(),
+                allow_legacy_v2=args.allow_legacy_v2,
+                allow_legacy_consumer_v1=args.allow_legacy_consumer_v1,
+                allow_legacy_consumer_v2=args.allow_legacy_consumer_v2,
+                allow_preversion_route=args.allow_preversion_route,
+            )
+            validator = SEAL_VERSION
     except Exception as exc:  # noqa: BLE001 - controlled validator diagnostic
         parser.exit(
             status=2,
-            message=f"phase acquisition seal validation failed: {type(exc).__name__}: {exc}\n",
+            message=f"acquisition validation failed: {type(exc).__name__}: {exc}\n",
         )
     payload = {
-        "validator": SEAL_VERSION,
-        "seal_schema_version": seal_schema_version,
+        "validator": validator,
         "status": "PASS" if not findings else "FAIL",
         "findings": findings,
     }
+    payload[
+        "maturity_scan_schema_version"
+        if args.maturity_scan is not None
+        else "seal_schema_version"
+    ] = schema_version
     print(json.dumps(payload, indent=2, sort_keys=True))
     return 0 if not findings else 2
 

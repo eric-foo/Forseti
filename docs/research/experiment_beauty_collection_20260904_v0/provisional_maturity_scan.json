@@ -1,0 +1,288 @@
+{
+  "schema_version": "consumer_brand_provisional_maturity_scan_v2",
+  "subject": "Experiment Beauty",
+  "cycle_id": "EXPERIMENT-BEAUTY-UNDERSTANDING-20260905-001",
+  "active_profile_id": "broad_consumer_brand_understanding_v3",
+  "created_at": "2026-09-04T19:53:47.4345247Z",
+  "authority_revision": "1b025e3b33cf59f58ac24d8f4504fd3e49d51cda",
+  "input_axis_inventory": {
+    "locator": "docs/research/experiment_beauty_collection_20260904_v0/consumer_brand_axis_inventory.json",
+    "sha256": "75c1d90c576a11cb6f2b20c5fa9c2d229ae94c66c1d6400f05f4d55f2d084de3"
+  },
+  "capture_packet_inventory": {
+    "locator": "docs/research/experiment_beauty_collection_20260904_v0/capture_packet_inventory.json",
+    "sha256": "2e69fd71a45661dc58388dc30d99c101a8679cfd09b9844a58a2ad1c6d6209c2"
+  },
+  "scan_status": "OPEN_TARGETED_ACQUISITION_REQUIRED",
+  "material_saturation_proven": false,
+  "phase_acquisition_seal_present": false,
+  "synthesize_or_deliver_authorized": false,
+  "corpus_readiness": {
+    "verified_packet_ids": 100,
+    "active_packet_ids": 98,
+    "readable_reddit_post_and_comment_records_observed": 717,
+    "retailer_review_unique_bodies_captured": 308,
+    "retailer_review_non_incentivized_rows_declared_by_provider": 318,
+    "retailer_review_corpora": 1,
+    "retailer_product_contexts": 7,
+    "reddit_known_source_urls": 49,
+    "reddit_structured_threads": 48,
+    "youtube_watch_packets": 8,
+    "notes": [
+      "Counts are capture/accounting observations, not distinct-origin support or prevalence.",
+      "Reddit discovery-query provenance was not preserved, so the 49 URLs cannot establish search exhaustion.",
+      "The current semantic route has not yet produced full-corpus coding, origin adjudication, target reconciliation, or the source-family v3 materializations required by the phase seal."
+    ]
+  },
+  "profile_floor_gap_audit": [
+    {
+      "metric": "external_context_independent_units",
+      "required": 12,
+      "current": "not_adjudicated",
+      "state": "open",
+      "reason": "Owned pages, retailer reviews, community rows, and creator videos have not been converted into independently adjudicated external-context units."
+    },
+    {
+      "metric": "external_context_independent_origins",
+      "required": 12,
+      "current": "not_adjudicated",
+      "state": "open",
+      "reason": "No origin-resolution ledger exists for the Experiment corpus."
+    },
+    {
+      "metric": "retailer_review_unique_rows",
+      "required": 750,
+      "current": 308,
+      "state": "open",
+      "reason": "The bounded Sephora corpus is below the current consumer-brand anti-token floor; ten additional Softwear rows are source-declared but not present in either preserved 100-row window."
+    },
+    {
+      "metric": "retailer_review_corpora",
+      "required": 2,
+      "current": 1,
+      "state": "open",
+      "reason": "Only Sephora has an adapted review-body corpus; Urban Outfitters and TikTok Shop do not yet supply an admitted second corpus."
+    },
+    {
+      "metric": "retailer_review_product_contexts",
+      "required": 5,
+      "current": 7,
+      "state": "nominal_floor_met_not_seal_proven",
+      "reason": "Seven Sephora product contexts are present, but the current route has not yet materialized and reconciled them."
+    },
+    {
+      "metric": "retailer_review_categories",
+      "required": 3,
+      "current": "not_route_coded",
+      "state": "open",
+      "reason": "The capture spans several product types, but category identities have not been bound in the current evidence ledger."
+    },
+    {
+      "metric": "reddit_forum_threads",
+      "required": 40,
+      "current": 49,
+      "state": "nominal_floor_met_not_seal_proven",
+      "reason": "Known-source thread count clears the numeric entry floor, but one thread is raw fallback, the comment corpus is partial, and current-route coding and target reconciliation are absent."
+    },
+    {
+      "metric": "reddit_forum_communities",
+      "required": 4,
+      "current": "at_least_9_named_in_capture_input",
+      "state": "nominal_floor_met_not_seal_proven",
+      "reason": "The URL set spans at least nine named subreddits, but the current evidence ledger has not recomputed the family metric."
+    },
+    {
+      "metric": "reddit_forum_topic_categories",
+      "required": 3,
+      "current": "not_route_coded",
+      "state": "open",
+      "reason": "Thread labels indicate multiple topics, but topic categories have not been formally coded."
+    },
+    {
+      "metric": "native_social_posts",
+      "required": 30,
+      "current": 8,
+      "state": "open",
+      "reason": "Eight YouTube watch packets are present; seven are direct Experiment videos and one is mixed-product."
+    },
+    {
+      "metric": "native_social_creators",
+      "required": 20,
+      "current": "at_most_8_not_identity_adjudicated",
+      "state": "open",
+      "reason": "Creator identities and repeated-origin relationships have not been adjudicated."
+    },
+    {
+      "metric": "native_social_platforms",
+      "required": 2,
+      "current": 1,
+      "state": "open",
+      "reason": "YouTube is the only native social platform with admitted watch packets; TikTok remained logged out."
+    },
+    {
+      "metric": "native_social_perspectives",
+      "required": 2,
+      "current": "not_adjudicated",
+      "state": "open",
+      "reason": "Affiliate and relationship notes were preserved, but independent perspective qualification has not been completed."
+    }
+  ],
+  "shared_unmet_requirements": [
+    "Current-route commission, Phase 1 query-family provenance, and complete job accounting are absent.",
+    "The active packet set has not been fully adapted into source-family v3 fragments and a census-backed semantic work bundle.",
+    "Every claim-bearing retailer, Reddit, YouTube, and GoPicky unit still needs current-route coding or a visible terminal disposition.",
+    "Distinct-origin, echo, syndication, creator-relationship, and comparator-destination adjudication remain open.",
+    "The four mandatory high-yield query families have not been executed in required order under this cycle.",
+    "No axis has two later live continuation families after its last material addition; all continuation counters are zero.",
+    "Every selected target and candidate still needs terminal reconciliation before a phase seal can pass."
+  ],
+  "route_obligation_audit": {
+    "completion_authority": "phase_acquisition_seal_v3",
+    "target_route_version": "1.9.0",
+    "serp_phase1": {
+      "status": "not_started",
+      "ordered_family_kinds": [
+        "balanced_axis_baseline",
+        "behavior_consequence_displacement",
+        "brandless_exact_product",
+        "condition_post_use"
+      ],
+      "query_provenance_bound": false
+    },
+    "serp_phase2": {
+      "status": "planned",
+      "goals_per_axis": [
+        "corroborate_or_segment",
+        "compare_switch_or_value",
+        "disconfirm_or_strongest_delight"
+      ],
+      "planned_axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "texture_finish_layering_routine_fit",
+        "packaging_dispensing_durability",
+        "price_value_quantity_access",
+        "formula_consistency_quality_service_trust",
+        "repeat_purchase_switching_destinations",
+        "portfolio_product_routine_fit"
+      ],
+      "planned_query_count": 24
+    },
+    "category_benchmark_search_interest": {
+      "required": true,
+      "status": "not_started",
+      "window_years": 5,
+      "property": "web_search",
+      "worldwide_check_required": true,
+      "term_derivation_state": "unbound",
+      "anchor_state": "unbound"
+    },
+    "axis_continuation": {
+      "required_dry_families_per_material_axis": 2,
+      "different_family_kinds_required": true,
+      "reset_on_material_addition": true
+    }
+  },
+  "axes": [
+    {
+      "axis_id": "hydration_barrier_visible_results",
+      "status": "open",
+      "unmet_support_requirements": ["distinct_origin_support", "three_usable_non_retailer_units_after_coding", "condition_segmentation", "two_post_addition_no_material_continuation_families"],
+      "next_queries": [
+        {"goal": "corroborate_or_segment", "query": "\"Experiment Beauty\" (\"Super Saturated\" OR \"Molecular Mesh\") hydration dry dehydrated climate tretinoin", "preferred_families": ["reddit_forum", "entitled_community", "consumer_editorial"]},
+        {"goal": "compare_switch_or_value", "query": "\"Experiment Beauty\" hydration switched OR replaced OR repurchase Dieux Regimen Skinfix", "preferred_families": ["reddit_forum", "retailer_reviews", "creator_native_social"]},
+        {"goal": "disconfirm_or_strongest_delight", "query": "\"Super Saturated\" OR \"Molecular Mesh\" best OR holy grail OR did nothing OR dried", "preferred_families": ["reddit_forum", "entitled_community", "independent_creator"]}
+      ],
+      "no_material_continuation_families_after_last_addition": 0
+    },
+    {
+      "axis_id": "irritation_breakout_active_condition_fit",
+      "status": "open",
+      "unmet_support_requirements": ["distinct_origin_support", "product_and_condition_segmentation", "counterevidence", "two_post_addition_no_material_continuation_families"],
+      "next_queries": [
+        {"goal": "corroborate_or_segment", "query": "\"Experiment Beauty\" breakout burning irritation eczema rosacea sensitive tretinoin", "preferred_families": ["reddit_forum", "entitled_community", "retailer_reviews"]},
+        {"goal": "compare_switch_or_value", "query": "\"Super Saturated\" breakout returned switched alternative", "preferred_families": ["retailer_reviews", "reddit_forum", "creator_native_social"]},
+        {"goal": "disconfirm_or_strongest_delight", "query": "\"Experiment Beauty\" soothing sensitive skin no irritation holy grail", "preferred_families": ["reddit_forum", "entitled_community", "independent_creator"]}
+      ],
+      "no_material_continuation_families_after_last_addition": 0
+    },
+    {
+      "axis_id": "texture_finish_layering_routine_fit",
+      "status": "open",
+      "unmet_support_requirements": ["distinct_origin_support", "purchase_consequence", "routine_segmentation", "two_post_addition_no_material_continuation_families"],
+      "next_queries": [
+        {"goal": "corroborate_or_segment", "query": "\"Experiment Beauty\" sticky tacky slimy pilling makeup layering absorption", "preferred_families": ["reddit_forum", "retailer_reviews", "entitled_community"]},
+        {"goal": "compare_switch_or_value", "query": "\"Super Saturated\" texture versus Regimen Wave Summer Fridays switched", "preferred_families": ["reddit_forum", "creator_native_social", "consumer_editorial"]},
+        {"goal": "disconfirm_or_strongest_delight", "query": "\"Experiment Beauty\" texture elegant easy to layer OR unusable sticky", "preferred_families": ["independent_creator", "entitled_community", "retailer_reviews"]}
+      ],
+      "no_material_continuation_families_after_last_addition": 0
+    },
+    {
+      "axis_id": "packaging_dispensing_durability",
+      "status": "open",
+      "unmet_support_requirements": ["independent_recurrence", "product_or_version_specificity", "purchase_consequence", "two_post_addition_no_material_continuation_families"],
+      "next_queries": [
+        {"goal": "corroborate_or_segment", "query": "\"Experiment Beauty\" packaging pump nozzle tube ripped broke refill", "preferred_families": ["retailer_reviews", "reddit_forum", "entitled_community"]},
+        {"goal": "compare_switch_or_value", "query": "\"Experiment Beauty\" packaging returned replacement switched", "preferred_families": ["retailer_reviews", "community_forum", "customer_support_policy"]},
+        {"goal": "disconfirm_or_strongest_delight", "query": "\"Experiment Beauty\" packaging love durable refill easy", "preferred_families": ["creator_native_social", "reddit_forum", "retailer_reviews"]}
+      ],
+      "no_material_continuation_families_after_last_addition": 0
+    },
+    {
+      "axis_id": "price_value_quantity_access",
+      "status": "open",
+      "unmet_support_requirements": ["executed_value_consequence", "second_retailer_corpus", "cross_border_access_effect", "two_post_addition_no_material_continuation_families"],
+      "next_queries": [
+        {"goal": "corroborate_or_segment", "query": "\"Experiment Beauty\" expensive worth price small bottle quantity refill Canada", "preferred_families": ["retailer_reviews", "reddit_forum", "entitled_community"]},
+        {"goal": "compare_switch_or_value", "query": "\"Experiment Beauty\" cheaper alternative dupe switched Aquaphor Dieux", "preferred_families": ["reddit_forum", "retailer_reviews", "consumer_editorial"]},
+        {"goal": "disconfirm_or_strongest_delight", "query": "\"Experiment Beauty\" worth every penny repurchase value", "preferred_families": ["reddit_forum", "independent_creator", "entitled_community"]}
+      ],
+      "no_material_continuation_families_after_last_addition": 0
+    },
+    {
+      "axis_id": "formula_consistency_quality_service_trust",
+      "status": "open",
+      "unmet_support_requirements": ["current_formula_version_resolution", "independent_recurrence", "successful_remediation_counterevidence", "two_post_addition_no_material_continuation_families"],
+      "next_queries": [
+        {"goal": "corroborate_or_segment", "query": "\"Experiment Beauty\" formula changed ingredients smell batch hair contamination customer service", "preferred_families": ["official_owned", "retailer_reviews", "reddit_forum"]},
+        {"goal": "compare_switch_or_value", "query": "\"Experiment Beauty\" quality issue returned switched customer service resolution", "preferred_families": ["retailer_reviews", "entitled_community", "consumer_complaint_surface"]},
+        {"goal": "disconfirm_or_strongest_delight", "query": "\"Experiment Beauty\" consistent formula excellent customer service resolved", "preferred_families": ["reddit_forum", "retailer_reviews", "independent_creator"]}
+      ],
+      "no_material_continuation_families_after_last_addition": 0
+    },
+    {
+      "axis_id": "repeat_purchase_switching_destinations",
+      "status": "open",
+      "unmet_support_requirements": ["executed_destination_resolution", "triggering_tension", "distinct_origin_support", "two_post_addition_no_material_continuation_families"],
+      "next_queries": [
+        {"goal": "corroborate_or_segment", "query": "\"Experiment Beauty\" repurchase returned stopped using buy again", "preferred_families": ["reddit_forum", "retailer_reviews", "entitled_community"]},
+        {"goal": "compare_switch_or_value", "query": "\"Experiment Beauty\" switched to OR going back to OR replaced with", "preferred_families": ["reddit_forum", "retailer_reviews", "creator_native_social"]},
+        {"goal": "disconfirm_or_strongest_delight", "query": "\"Experiment Beauty\" indispensable holy grail never without OR regret buying", "preferred_families": ["reddit_forum", "independent_creator", "entitled_community"]}
+      ],
+      "no_material_continuation_families_after_last_addition": 0
+    },
+    {
+      "axis_id": "portfolio_product_routine_fit",
+      "status": "open",
+      "unmet_support_requirements": ["portfolio_ladder_legibility", "category_specific_evidence", "internal_versus_external_switching", "two_post_addition_no_material_continuation_families"],
+      "next_queries": [
+        {"goal": "corroborate_or_segment", "query": "\"Experiment Beauty\" routine Super Saturated Molecular Mesh Buffer Jelly Plasma Wash Softwear", "preferred_families": ["reddit_forum", "creator_native_social", "entitled_community"]},
+        {"goal": "compare_switch_or_value", "query": "\"Experiment Beauty\" favorite product least favorite switched product", "preferred_families": ["retailer_reviews", "reddit_forum", "independent_creator"]},
+        {"goal": "disconfirm_or_strongest_delight", "query": "\"Experiment Beauty\" full routine best products disappointing products", "preferred_families": ["creator_native_social", "reddit_forum", "consumer_editorial"]}
+      ],
+      "no_material_continuation_families_after_last_addition": 0
+    }
+  ],
+  "next_execution_order": [
+    "Bind this cycle to the current broad_consumer_brand_understanding_v3 Acquire & Seal route and create complete job accounting.",
+    "Load and verify capture_packet_inventory.json from the canonical lake; adapt every active semantic-bearing packet or terminally disposition the unsupported source family.",
+    "Build full-corpus retailer and community coding, origin resolution, target reconciliation, and the source-family v3 fragments; do not use the sampled routing read as final coding.",
+    "Run the four mandatory high-yield query families in order: balanced_axis_baseline, behavior_consequence_displacement, brandless_exact_product, condition_post_use.",
+    "Close the profile floor gaps, prioritizing a second adapted retailer corpus, independent external context, and a second native-social platform. Entitled Facebook groups, Discord servers, or other login-only communities are eligible when a legitimate attached session and relevant venue are available; lack of such a session remains visible rather than being treated as no evidence.",
+    "Run the three listed Phase 2 goals for every still-material axis and record every material addition with its affected axes and decision effect.",
+    "After the last material addition to each axis, run two later live continuation families of genuinely different kinds, queries, and artifacts; reset only the affected axis when a new material addition appears.",
+    "Terminally reconcile all selected targets and candidates, compile the full admitted corpus into the semantic integration view, perform the different-vendor source-native review, and validate phase_acquisition_seal_v3 before Synthesize or Deliver."
+  ],
+  "stop_rule": "Do not stop on elapsed time, packet count, thread count, or agent/subagent limit. Stop acquisition for an axis only after two later live continuation families of different kinds, queries, and artifacts add no material decision value after its last material addition, or after supported route-bounded source exhaustion establishes the weaker claim ceiling.",
+  "claim_ceiling": "This is a pre-seal acquisition-routing scan. It identifies what remains to be tested and does not award corroboration, prevalence, causation, decision maturity, material saturation, or delivery readiness."
+}

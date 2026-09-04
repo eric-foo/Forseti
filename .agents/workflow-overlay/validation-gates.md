@@ -70,6 +70,23 @@ inherit this floor.
   contract files before the full suite. Diff-resolution and launch errors fail
   closed. The adapter adds no test rule and a pass is not full-suite validation,
   readiness, approval, or proof that every CI failure is prevented.
+- Capture-terminal-claim boundary: the existing diff-scoped CSB-first artifact
+  gate targets any YAML Capture marker in the `docs/research/` artifact lane,
+  rejects ambiguous or nested Capture identity, and rejects a receipt whose
+  Capture-owned artifact kind calls itself collection-complete or whose
+  state/status fields anywhere in that receipt claim acquisition or Evidence
+  Consolidation readiness. The check protects the exclusive validator-backed
+  phase acquisition seal transition; it does not prove that material saturation
+  is true.
+- Consumer-brand acquisition-start completeness: a changed provisional
+  maturity scan in `docs/research/` must satisfy
+  `consumer_brand_provisional_maturity_scan_v2` through the shared acquisition
+  validator. The diff-scoped CI and pre-push adapters reject missing packet or
+  profile-floor binding, incomplete mandatory SERP/Phase 2 route structure,
+  an omitted category-benchmark search-interest obligation, absent per-axis
+  continuation mechanics, or a scan that claims saturation/seal/delivery
+  authority. A pass means the OPEN acquisition work unit is executable; only
+  the final phase acquisition seal can prove completion.
 - No software implementation directories are present unless explicitly authorized.
 - `AGENTS.md` and overlay files do not encode `jb` project-specific authority as Forseti rules.
 - Material authority, source-scope, edit-permission, and repository-state checks
@@ -478,6 +495,15 @@ never truth, readiness, or approval. Judgment-based rules (claim discipline,
 scope, lifecycle reasoning) stay resident and must actually fire. The per-rule
 classification and build history live in
 `docs/decisions/overlay_enforcement_placement_classification_v0.md`.
+
+The Capture-terminal-claim check extends the existing CI-only CSB-first artifact
+gate rather than creating a new checker or interactive hook. It inspects only
+changed Markdown artifacts carrying a Capture handoff/completion YAML kind and
+rejects the mechanically recognizable terminal vocabulary. This catches the
+observed free-text completion bypass before merge while leaving the semantic
+question—whether the phase acquisition seal's saturation evidence is true—to
+the owning validator and human judgment. Equivalent prose overclaims remain a
+resident-judgment responsibility.
 
 Active placement instance: `.agents/hooks/check_placement.py --changed --strict`
 runs in CI against the exact event base. It checks added/modified/copied paths

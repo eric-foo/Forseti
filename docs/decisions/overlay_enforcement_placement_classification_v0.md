@@ -29,6 +29,19 @@ Prepare-only **proposal + classification**. It inventories and classifies rules 
 
 Scope guard: this is the **enforcement-placement step only**. Binding the shared distillation doctrine to Orca is a separate later task and is explicitly out of scope here (see § Step 4).
 
+## Update — 2026-09-05: EP-39 Capture terminal-claim boundary
+
+EP-39 extends the existing diff-scoped, CI-only
+`.agents/hooks/check_csb_scanning_artifact.py` gate. A changed Markdown YAML
+receipt whose `artifact_kind` is Capture-owned now fails when it calls itself a
+collection-completion receipt or uses mechanically recognizable terminal
+acquisition / Evidence Consolidation status vocabulary. This is a
+**SUBSTRATE/PARTIAL** placement: it rejects the demonstrated free-text bypass
+at the landing boundary, but it does not prove material saturation, judge the
+truth of a phase acquisition seal, or attempt to classify equivalent prose.
+Those semantic edges remain resident. Reusing the existing gate avoids a new
+checker, pre-push step, or interactive hook.
+
 ## Update — 2026-07-17: interactive hook subtraction and EP-04 relocation
 
 Forseti now uses the lowest-cost boundary that still catches each named defect

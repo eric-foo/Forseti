@@ -43,6 +43,15 @@ SELECTED_GATES = (
     ("hash-pin freshness", (".agents/hooks/check_hash_pin_freshness.py", "--strict")),
     ("prompt contract shape", (".agents/hooks/check_prompt_output_mode.py", "--strict")),
     (
+        "consumer-brand acquisition-start completeness",
+        (
+            ".agents/hooks/check_consumer_brand_maturity_scan.py",
+            "--diff",
+            "origin/main",
+            "--strict",
+        ),
+    ),
+    (
         "review-output provenance",
         (".agents/hooks/check_review_output_provenance.py", "--diff", "origin/main", "--strict"),
     ),
