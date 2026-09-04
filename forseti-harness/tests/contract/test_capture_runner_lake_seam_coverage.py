@@ -71,6 +71,7 @@ EXPECTED_BRONZE_WRITER_RUNNERS = frozenset(
         "run_source_capture_ig_reels_audio_packet.py",
         "run_source_capture_ig_reels_deep_capture.py",
         "run_source_capture_ig_reels_grid_packet.py",
+        "run_source_capture_junip_review_corpus.py",
         "run_source_capture_media_packet.py",
         "run_source_capture_packet.py",
         "run_source_capture_price_payload_packet.py",
