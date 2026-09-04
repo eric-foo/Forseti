@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v115
-effective_date: 2026-09-04
+version: v116
+effective_date: 2026-09-05
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v115
+# Semantic Evidence Integration Contract v116
 
 ## Purpose
 
@@ -36,14 +36,16 @@ Semantic Evidence Integration is the runtime capability inside the named
 completely accounted materialized source and owns semantic leaf triage, atomic
 evidence structuring, meaning-based cross-source reconciliation, and
 evidence-packet projection. `prepare-batches` verifies that the source content
-matches its stored `source_sha256`; it does not ordinarily reopen the
-Collection locators embedded for provenance. Historical unmaterialized sources
-without that stored hash retain their locator verification, and historical
-readers that explicitly rehydrate missing source metadata retain their existing
-fallback. Consolidation's output is the complete evidence retrieval surface
-consumed by the acquisition seal and later Deliver work. This stage boundary
-does not create or rename a globally numbered phase; historical Phase A, Phase
-B, Turn B, Understanding, and Deliver vocabulary remains unchanged.
+matches its stored `source_sha256`; it does not reopen the Collection locators
+embedded for provenance. Current selection consumers likewise keep missing
+publication times unavailable instead of reopening those locators. Historical
+unmaterialized sources without that stored hash retain their locator
+verification, and historical bundles without a materialized-source identity
+retain their existing metadata fallback. Consolidation's output is the complete
+evidence retrieval surface consumed by the acquisition seal and later Deliver
+work. This stage boundary does not create or rename a globally numbered phase;
+historical Phase A, Phase B, Turn B, Understanding, and Deliver vocabulary
+remains unchanged.
 
 It is not a market conclusion, recommendation, sentiment score, representative
 estimate, causal model, custom-trained model, embeddings service, vector store,
@@ -1697,8 +1699,10 @@ adjudicated; deterministic exactness and body identity checks are unchanged.
 Every evidence row carries its source publication time when the preserved
 source exposes one. Reddit post/comment timestamps, Sephora submission times,
 Amazon source dates, and Revolve creation times enter the semantic source and
-flow through packet v3 to the final selection artifact. For completed packets
-whose publication time is absent, the selection consumer may rehydrate it only
+flow through packet v3 to the final selection artifact. For a current bundle
+carrying a valid materialized-source identity, an absent publication time stays
+unavailable and the selection consumer does not reopen Collection artifacts.
+A historical bundle without that identity may rehydrate a missing time only
 from the exact hash-bound source artifact named by the bundle; missing source
 bytes and unsupported legacy source formats remain unavailable, while changed
 bytes fail rather than supplying a date. This is source chronology for later time alignment, not proof that search
@@ -2333,6 +2337,13 @@ new frontier.
 
 ## Changelog
 
+- `v116` / 2026-09-05 — completed the portable Collection-to-Consolidation
+  boundary at the current selection consumer. A v5 bundle carrying a valid
+  materialized v3 source identity now keeps a missing publication time
+  unavailable instead of reopening Collection artifacts. Historical bundles
+  without that identity retain their exact hash-bound metadata fallback. No
+  stored publication time, temporal ordering rule, frozen artifact, schema,
+  provider route, or semantic judgment changed.
 - `v115` / 2026-09-04 — named the existing hash-bound
   `semantic_evidence_source_v3` and matching materialization receipt as
   Collection's final output and made Evidence Consolidation begin from that

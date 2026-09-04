@@ -36,8 +36,10 @@ reconciliation, and evidence-packet projection together form the named
 completely accounted materialized source and ends only when the final corpus
 hash has a complete, reproducible evidence packet or a visible unresolved
 failure. The public preparation runner verifies the source's stored content
-hash without ordinarily reopening its provenance locators. Historical
-unmaterialized inputs and reader fallback keep their existing locator behavior.
+hash without reopening its provenance locators. Current selection consumers
+also keep missing publication times unavailable rather than reopening those
+Collection paths. Historical unmaterialized inputs and bundles without a
+materialized-source identity keep their existing locator behavior.
 This is a conceptual and completion boundary between acquisition and Deliver,
 not a new globally numbered phase: historical Phase A, Phase B, Turn B,
 Understanding, and Deliver vocabulary is not renumbered or migrated.
@@ -2121,9 +2123,11 @@ zero provider calls.
 Preserve the source publication time beside every evidence row when the source
 exposes it. Current semantic-source builders carry Reddit post/comment
 timestamps, Sephora submission times, Amazon review dates, and Revolve review
-creation times into packet v3. A completed packet with a missing time may be
-rehydrated only from the exact source artifact and SHA-256 already bound by its
-bundle; unavailable or unsupported legacy bytes leave the time unavailable and
+creation times into packet v3. For a current bundle bound to a materialized
+source identity, a missing time stays unavailable and the selection consumer
+does not reopen Collection artifacts. A historical bundle without that
+identity may rehydrate a missing time only from its exact hash-bound source
+artifact; unavailable or unsupported bytes leave the time unavailable and
 changed bytes fail.
 Source-relative display labels such as `2 months ago` remain literal in the
 hash-bound source but are not exact publication times. The selection consumer

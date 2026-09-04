@@ -3223,7 +3223,7 @@ def test_preselection_confirmation_reapplies_first_pass_row_guards(
     assert caught.value.boundary == "creator_customer_laundering"
 
 
-def test_missing_packet_publication_time_is_rehydrated_from_hash_bound_reddit_source(
+def test_missing_packet_publication_time_rehydrates_only_without_materialized_source_identity(
     tmp_path: Path,
 ) -> None:
     spec, sources = _write_source(tmp_path, count=1)
@@ -3284,6 +3284,19 @@ def test_missing_packet_publication_time_is_rehydrated_from_hash_bound_reddit_so
     with pytest.raises(EvidenceConsumerError) as caught:
         _candidate_rows(sources, spec)
     assert caught.value.boundary == "publication_time_source_hash"
+
+    bundle["semantic_work_unit_projection"] = {
+        "context_registry": [],
+        "semantic_execution_identity": {
+            "source_schema_version": "semantic_evidence_source_v3",
+            "source_sha256": "a" * 64,
+        },
+    }
+    _reseal(source)
+
+    candidates = _candidate_rows(sources, spec)
+
+    assert candidates[0]["publication_time"] is None
 
 
 def test_hash_bound_unsupported_source_format_leaves_publication_time_unavailable(

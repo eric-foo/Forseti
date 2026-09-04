@@ -1010,7 +1010,12 @@ def test_materialized_source_tampering_fails_before_bundle_outputs(
 ) -> None:
     source = materialize_source_v3(_source_v10(count=2))
     build_bundle(source, max_prompt_bytes=12_000)
-    source["captured_items"][0]["text"] += " tampered"
+    assessable = next(
+        row
+        for row in source["captured_items"]
+        if row.get("accounting_disposition") == "assess"
+    )
+    assessable["text"] += " tampered"
     mismatch = (
         "semantic evidence source content does not match its stored source_sha256"
     )
@@ -1031,6 +1036,35 @@ def test_materialized_source_tampering_fails_before_bundle_outputs(
             max_batch_chars=80_000,
             max_prompt_bytes=12_000,
         )
+    assert not bundle_path.exists()
+    assert not prompt_dir.exists()
+
+
+@pytest.mark.parametrize("stored_hash", [None, "", 12345])
+def test_malformed_materialized_source_hash_fails_before_bundle_outputs(
+    tmp_path: Path,
+    stored_hash: object,
+) -> None:
+    source = materialize_source_v3(_source_v10(count=2))
+    source["source_sha256"] = stored_hash
+    source_path = tmp_path / "malformed-source.json"
+    source_path.write_text(json.dumps(source), encoding="utf-8")
+    bundle_path = tmp_path / "bundle.json"
+    prompt_dir = tmp_path / "prompts"
+
+    with pytest.raises(
+        SemanticIntegrationError,
+        match="semantic evidence source content does not match its stored source_sha256",
+    ):
+        prepare_batches(
+            source_path=source_path,
+            repo_root=tmp_path,
+            bundle_out=bundle_path,
+            prompt_dir=prompt_dir,
+            max_batch_chars=80_000,
+            max_prompt_bytes=12_000,
+        )
+
     assert not bundle_path.exists()
     assert not prompt_dir.exists()
 
