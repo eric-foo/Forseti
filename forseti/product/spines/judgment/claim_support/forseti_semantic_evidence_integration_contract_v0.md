@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v81
-effective_date: 2026-08-31
+version: v114
+effective_date: 2026-09-04
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v81
+# Semantic Evidence Integration Contract v114
 
 ## Purpose
 
@@ -65,6 +65,15 @@ The semantic agent owns only meaning:
 - relate a semantic unit as support, opposition, or adjacent context; and
 - nominate an emerging axis when no existing axis fits honestly.
 
+The intelligence claim-support contract's **Meaning-preserving interpretation
+and useful abstraction** rule governs authoring and review here. Consolidation
+may express a useful common claim without requiring lexically identical or
+equally detailed sources. First-hand preferences and stated intentions may be
+`customer_experience` claims when their meaning stays explicit; `reported_behavior`
+credits `behavior_evidence_refs` and requires the behavior actually reported,
+not a desired or future act. Source-role competence alone does not choose that
+meaning. Do not create a new schema kind or silently relabel a frozen answer.
+
 Deterministic code owns:
 
 - the admitted evidence denominator and exact per-alias accounting;
@@ -78,6 +87,17 @@ Deterministic code owns:
 
 The agent never chooses its own evidence count, independence count, support
 posture, cross-venue credit, or causal strength.
+
+This ownership also applies to `bounded_meaning` prose. Current response-v3
+normal and missing-definition authoring use count-neutral reported wording,
+not a headcount inferred from attached statements or comments: the compact
+candidate view does not expose complete author identities. Keep actual
+source-attributed claims about other people attributed; do not delete them or
+promote them into verified counts. Code still supplies origin/observation
+accounting. Inverse comparisons may express the same fact, but the current node
+shape requires one exact stored subject/comparator orientation; retain opposite
+orientations separately without relabeling child identity. This is a transport
+constraint, not a claim that the meanings differ or represent separate events.
 
 Current authoring uses run v10 / integration method v12 / row-verification
 method v11. `CURRENT_AXES` alone supplies valid output axis IDs. Category names
@@ -98,6 +118,171 @@ source scope. The agent may bind an exact product only from the evidence text
 together with that context. Context establishes what the item is about; it
 does not donate unstated claims to the item's author. If the binding remains
 unclear, the item stays `unresolved` or `out_of_scope`.
+
+### Local reconciliation correction
+
+Current response-v3 generation expresses optional retention as mutually exclusive
+attached/nonempty-unmerged alternatives. Native validation retains the same
+rejection boundary; frozen v1/v2 replay and already valid v3 responses are not
+rewritten. Generation-schema compliance is not a semantic verdict.
+
+When validation or source-aware review identifies a specific reconciliation
+problem, `prepare_reconciliation_repair` binds an explicit nomination (node keys
+and/or candidate refs plus reason) to the exact original response and stage.
+It includes the connected component of all affected candidate/node attachments,
+exact leaf text, parent/product context, and compiler-derived source inventory.
+Inventory is not claim support: one shared identity remains one credited origin,
+but only the established finalizer determines which sources support a claim.
+An allegation is not a verdict; review may retain the original choices.
+
+Before emitting a repair request, preparation reuses the compiler's exact
+product/comparator/version compatibility check across the original response's
+attached groups. If a known incompatible group remains outside the nominated
+connected components, preparation fails and lists every omitted group. The
+operator must nominate a complete scope explicitly; code does not expand it
+silently or choose replacement meanings. This prevents paying for a correction
+whose unchanged identity conflict already guarantees rejection. It does not
+detect prose errors or promise that no other native defect remains. Previously
+valid repair requests and successors retain exact replay; an incomplete request
+that could never yield a valid successor is now rejected before the call.
+
+If the existing repair prompt exceeds the stage's byte limit, preparation tries
+`PACKED_REPAIR_CONTEXT_V1` before rejecting it. This is a lossless layout of the
+same connected component, not a smaller evidence selection: uniform records
+may share identical fields and ordered column headings, with every row retained.
+JSON types, missing-versus-null distinctions, literal text, source identity,
+conditions and ownership remain unchanged. Heterogeneous record shapes remain
+lists. The full uncompressed context still binds the request; the consumer
+rederives both context and prompt before applying any patch. Previously fitting
+requests, response schemas, correction authority and normal authoring remain
+unchanged. A still-oversized packet fails before any provider call. Packing
+adds no semantic judgment, source retrieval or standing provider stage; model
+understanding and correction quality require source-aware assessment.
+
+Use the existing isolated provider route for at most one corrective attempt.
+This is failure/review-only work, never a required extra normal-path stage.
+The response replaces only that component or explicitly refuses. Code never
+infers meaning, chooses a relation, edits upstream facts, or silently supplies
+a definition. The full native consumer must accept the successor; other defects
+may still block it. The repair model cannot emit `opposition_checked`: code
+preserves it only for an exactly unchanged definition and its attachment
+decisions, otherwise invalidates it to false. This withdraws prior clearance;
+it never awards a new check or semantic approval. Changed or regrouped nodes
+therefore remain unchecked for the established relation-closure boundary.
+Unaffected definitions, decisions,
+label assignments, source identities and original bytes remain preserved.
+
+The public runner's `prepare-reconciliation-repair` and
+`submit-reconciliation-repair` commands bind raw input bytes, rederive the
+request, reject scope escape, and verify the durable successor on first write
+and repeat reuse. A context component that exceeds the existing prompt limit
+fails without truncation. Missing definitions alone retain the narrower existing
+definition-recovery route. No standing census, retry loop, prose classifier,
+additional count renderer, or independent review ceremony is installed.
+
+After a current response-v3 validation failure, the read-only
+`diagnose-reconciliation-response` command may inventory every independently
+observable defect in its declared mechanical scope before a repair is nominated.
+The unchanged validator still supplies `primary_validation_error` and remains
+the sole acceptance boundary. The diagnostic reports exact affected candidate
+and node handles for the recurring repair-relevant graph defects: duplicate
+attachments, missing or orphaned definitions, identity incompatibility,
+repeated leaves, and missing effective terminal support. When a malformed
+prerequisite makes a downstream check ambiguous, it records that check as
+skipped instead of guessing another failure. The report is write-once,
+deterministic, current-v3-only, and makes no provider call. It neither selects a
+repair scope nor proves semantic warrant; source-aware judgment and the existing
+bounded repair routes remain unchanged.
+
+Diagnostic v2 makes a repeated-leaf issue actionable without choosing its
+repair. It lists every duplicated `semantic_unit_ref`, then for each leaf lists
+every entering path as the child ref, child-to-node relation, child leaf
+relation, and derived effective relation. The same deterministic structure is
+included in a repeated-leaf local-repair context under
+`duplicate_leaf_conflicts`. It is derived only from already-supplied candidates
+and attachments; it does not select a child to detach, deduplicate a leaf, alter
+a relation, or award semantic warrant. Enumerated paths are always exact, and
+they are complete wherever node ownership is fully observed. Where a malformed
+decision or attachment could still hide an entering child, the diagnostic keeps
+the observed paths and records that node in `skipped_dependent_checks` instead
+of presenting a partial collision as the complete one; the bounded repair route
+never packs a partial collision because it already rejects any malformed
+decision or attachment. Repeated-leaf requests use repair-request
+v2. Clean components keep their prior v1 request bytes, and the composer
+rederives stored v1 requests by their recorded version so historical successors
+remain replayable.
+
+Repair-request v3 is a narrower rendering selected only when the caller supplies
+a diagnostic that exactly rederives from the current bundle, stage and response;
+the response is invalid; every complete diagnostic issue is `duplicate_leaf`;
+the primary native error is covered; no dependent check was skipped; every
+duplicated path crosses distinct child candidates; and the explicit nomination
+covers every diagnosed node and candidate. The request carries only the affected
+already-validated child definitions with bounded statements, conditions, product
+identity and provenance refs; the current affected decisions and parent
+definitions; and deterministic forbidden same-node leaf paths. Raw evidence and
+source-context bodies are omitted, not summarized or presented as read. Source
+roles required by the unchanged schema/consumer remain present as derived
+candidate metadata. A mixed, stale, partial, clean, within-one-child, or
+under-nominated diagnostic fails rather than activating the compact route. A
+convergence-mode stage also fails closed: convergence retains a node only on
+repeated distinct source rows, and this projection carries neither those rows
+nor the compiler count that decides retention, so that failure stays on the
+general repair route rather than reaching the provider blind to its own
+acceptance rule.
+
+The model chooses whether and how to split or regroup the affected meanings.
+Code never selects an attachment to delete, changes a relation, authors prose, or
+accepts the component in isolation. Composition still requires every affected
+candidate, preserves every unaffected node, decision, label assignment and
+carried field, and sends the whole successor through the unchanged native
+validator. A retained or reintroduced repeated leaf therefore fails at that
+native boundary. Omission of `--diagnostic` preserves general repair behavior,
+including v1/v2 request replay and the lossless packed fallback. V3 adds no
+normal provider call, whole-batch retry, raw-source reread, or semantic warrant.
+
+If a scope-correct repair exposes another independent native failure, the
+failure-only composer may persist that exact repair as
+`LOCAL_REPAIR_COMPOSED_NOT_ACCEPTED`. The intermediate remains explicitly
+unaccepted and cannot enter a selection. Its source response, repair request,
+repair patch and intermediate bytes are hash-bound. An operator may pass it to
+the already-existing definition or local-repair preparer for the newly visible
+error; each new semantic edit still requires its own bounded judgment. Code does
+not infer, clear or auto-chain a correction, and the normal path gains no call.
+The same explicitly unaccepted composition is available when a scope-correct
+missing-definition patch reveals a different native defect. Its failed
+response, request, patch and intermediate bytes are likewise hash-bound before
+the next existing bounded repair is prepared.
+
+Current decision-only authoring also constrains terminal status and its claim
+metadata as one schema choice. A nonterminal node requires both `claim_kind`
+and `causal_ceiling` to be null; a terminal node requires both to use their
+existing admitted values and requires `opposition_checked` to be a boolean.
+This is structural compatibility, not proof that opposition was adequately
+reviewed. The unchanged native consumer remains authoritative. Historical v2
+response schemas and replay are unchanged.
+
+Current decision-only prompts require a single relation for each exact
+candidate-and-node pair. A candidate may attach to multiple distinct bounded
+meanings, but it must not attach to the same node once as support and again as
+counterevidence. The native consumer continues to reject duplicate attachment
+keys regardless of relation. This prompt constraint does not mechanically prove
+that the selected relation is semantically correct.
+
+An invalid response that reused one node key for multiple definitions may enter
+the same failure-only local-repair format only when that duplicate key is inside
+the explicit connected nomination. The request carries every duplicate
+definition and every attached candidate/source. The patch must return unique,
+scope-valid replacements; code never chooses a rename or guesses which child
+owned which meaning. Any duplicate outside the connected nomination blocks
+preparation by name.
+
+This is a reusable correction boundary, not prevention of every semantic error.
+The v89 prompt-only dogfood (three fresh batches) still had five headcount
+overstatements and zero initial native accepts. Neither structural acceptance
+nor a locally corrected output establishes unobserved reader quality or
+unattended reliability. Source-aware judgment must assess the new wording itself,
+not assume that a prior source-row review validated a later summary.
 
 ## Admitted evidence and completeness
 
@@ -142,6 +327,27 @@ sale timing or price is expressly a condition of an intended or hypothetical
 purchase, it also carries `value_and_quantity`; an incidental past sale mention
 does not create that judgment.
 Non-claim rows pass through unchanged.
+Whole-row verification and selective repair bind decisions by explicit evidence
+ID, not response-list position. Every assigned ID must occur exactly once;
+missing, duplicate, foreign, and mismatched replacement identities fail.
+Application follows source order, while the actual response order remains in
+raw-response hash lineage. Order tolerance alone does not prove the chosen
+meaning correct or change method or stage identity.
+Current keyed-v3 methods v10, v11 and v12 emit row-review response v2 for both
+verification and selective repair: one required object key per assigned evidence
+ID, with replacements constrained to that same ID. The public preparation
+runners persist each prompt's `.schema.json`; provider execution must use it.
+Native application independently rejects missing/foreign keys and misbound
+replacements. Row ownership is mechanical; correct interpretation is not.
+The source-work stage and its historical partition remain unchanged. Explicit
+library-level response-v1 preparation reproduces historical prompts, and v1
+responses remain replayable alongside v2 responses without rewriting their raw lineage. This adds
+no provider stage, automatic repair, or semantic classification rule.
+Publication and public-runner loading reject duplicate JSON object keys before
+stage validation, including nested keyed decisions. The publisher preserves
+raw response bytes and exact usage on failure; a parsed last-key-wins object
+cannot establish exact participation. This decoder check proves no semantic
+meaning, and valid historical responses remain unchanged.
 Method v5 and v6 remain historical one-pass routes and acquire no retroactive
 verification obligation.
 
@@ -927,11 +1133,13 @@ Different people's opposed preferences do not disprove a particular person's
 private state. Frozen selection spec v1 replay keeps its original scope
 semantics; it is not fresh authoring and gains no default.
 Current scoped specs may carry the completion path's inline
-`phase_a_relation_adjudication_v1` exception input. It preserves an explicit
+`phase_a_relation_adjudication_v2` exception input. It preserves an explicit
 bounded judgment on an unchanged point/source/inventory/policy basis across
-confirmation reruns, retaining the raw answers and all changed labels. The
-semantic finalizer applies only the authored relation/reason to exactly matching
-row-owned ref sets; it does not infer semantic correctness or select refs.
+confirmation reruns, retaining the raw answers, prior binding, replacement
+binding, and all changed labels. The semantic finalizer locates exactly the
+authored prior row-owned ref set, requires the replacement refs to be owned by
+that same evidence row, and then applies only the authored refs,
+relation, and reason. It does not infer semantic correctness or select refs.
 Missing, duplicate, foreign, or stale corrections fail visibly. The builder
 and readers still only preserve and verify attachments, never settle meaning.
 The record travels with the current spec; no machine-local locator or historical
@@ -996,52 +1204,39 @@ Creator-authored material is influence context and is
 deterministically barred from customer support or counter relations; qualified
 creator-audience comments retain their customer role.
 
-Only selected display rows expose their source bodies to the existing external
-quote response. Current v9 authoring presents stable token addresses inside
-each deduplicated body. Every returned row is schema-bound to its selected row
-and body and chooses an inclusive start/end token pair; deterministic code
-copies the original contiguous source characters. Foreign bodies, foreign
-tokens, reversed spans, transcription-shaped responses, and changed bodies fail
-locally. This proves exact row/body transfer, not that a structurally valid span
-is semantically adequate; context completeness remains a bounded quality
-judgment. The bundle is content-verified against its own stored
+Only selected display rows expose their source bodies to the quote finalizer.
+Current v10 authoring makes no quote provider call: it copies each available
+selected row's complete bound source body and rejects any attached quote
+response. This removes model transcription, clipping, and cross-row quote
+transfer from current authoring. It proves complete row/body transfer, not that
+the selected source or judgment-authored relation is semantically adequate.
+The bundle is content-verified against its own stored
 `bundle_sha256` where it enters the trust boundary, and the finalizer follows
 the packet's bundle hash to its literal evidence ID, requires exact
 source-artifact and source-ref equality, and rejects a body whose hash differs
-from the one the quote manifest recorded. An available source body of no more
-than 220 characters must be quoted in full; this deterministic boundary prevents
-a short comment from being clipped before a material qualification or
-countervailing behavior. Under current v9 token addressing, quoted in full means
-that body's first token through its last, because a token address cannot name
-leading or trailing whitespace. Current v9 and historical v8 use that threshold only for short-body copying and
-external-review workload selection, never as a semantic ceiling. A longer
-available quote must be the shortest context-complete contiguous source
-substring that carries the material meaning, with no inserted ellipsis or
-rewriting, and must contain at least two Unicode alphanumeric characters. It may
-exceed 220 characters when the necessary antecedent or qualification requires
-it. The substring must express the display label through either the
-selected normalized meaning or the same-evidence companion meaning that
-justified that label. If no contiguous exact span carries the material meaning,
-the external response returns unavailable instead of a misleading fragment;
-length alone is not an unavailable cause in current v9 or historical v8. No lexical-overlap relevance
-rule is applied. For historical v4/v5/v6/v7/v8 quote manifests, a long-body quote
+from the one the quote manifest recorded. Missing source bodies remain explicit
+as `quote_unavailable` with `source_body_unavailable`; linked parent context is
+separate reading context and never substitutes for or splices into the row body.
+Historical v9 authoring retains its stable row-owned token transport and
+provider response. Historical v9 and v8 use the 220-character threshold only
+for short-body copying and external-review workload selection, never as a
+semantic ceiling. Historical token or text transports retain their exactness,
+substance, relevance, and context-completeness rules under their stamped
+versions. For historical v4/v5/v6/v7/v8 quote manifests, a long-body quote
 that ends in an alphanumeric
 character while the bound source continues with whitespace and another
 alphanumeric character fails at `quote_boundary_incomplete`; this deterministic
 check prevents an exact but mid-phrase span from silently satisfying the
-context-complete contract. Current v9 does not apply that prose heuristic after
+context-complete contract. Historical v9 does not apply that prose heuristic after
 token-span selection: deterministic enforcement owns exact row/body/token
 attachment, while semantic completeness remains explicitly not mechanically
-proven. A typed
-`quote_unavailable` covers two distinct cases: no source body yields
-`source_body_unavailable`, while a present body with no returned exact relevant
-quote yields `no_relevant_exact_quote_returned`. Available quotes carry a null
-cause. Each displayed row also records `source_body_present`, and the
+proven. Historical provider routes retain the distinction between
+`source_body_unavailable` and `no_relevant_exact_quote_returned`. Current v10
+has only the former unavailable cause because every present selected body is
+copied in full. Each displayed row records `source_body_present`, and the
 source-owned normalized meaning and same-evidence companion meanings remain in
-all cases. Full-body enforcement closes context clipping for short sources;
-semantic relevance and context completeness for longer sources remain a
-quality-adjudication obligation outside the deterministic runtime. Both
-prepare/finalize stages make zero provider calls and are deterministic and
+all cases. The current prepare/finalize stage makes zero provider calls and is
+deterministic and
 idempotent.
 
 For a large non-value selection, positional relation transport may be split
@@ -1156,6 +1351,17 @@ or independently writable evidence authority. Exact historical agreement proves
 mechanical reuse eligibility, not semantic truth; bounded review retains the
 right to challenge an old judgment.
 
+When the unresolved prompt exceeds a provider or operator-selected character
+ceiling, `prepare-decision-state-adjudication-batches` greedily packs whole
+evidence groups into deterministic bounded prompts. It never splits one
+evidence group, duplicates a semantic identity, changes the reconciliation
+scope, or adds another judgment pass. Each response remains immutable and
+attempt-specific. `combine-decision-state-adjudication-batches` requires one
+response per batch, exact batch-local identity coverage, and exact combined
+coverage at the unchanged full reconciliation boundary before finalization.
+The ceiling is an execution control, not an evidence or semantic rule; one
+evidence group that cannot fit fails visibly instead of being clipped.
+
 The current point reader projects the exact meanings named by a displayed row's
 `relation_semantic_unit_refs`. A selected row's primary meaning and quote remain
 available as lineage, but they are not presented as the relation-owned meaning
@@ -1165,6 +1371,25 @@ span owned by that exact meaning was captured. This prevents a neighboring
 selected-row quote from visually impersonating the meaning that supports,
 counters, or sits adjacent to the point; it does not decide whether the chosen
 semantic-reference subset is itself warranted.
+
+Current point-reader request v4 also keeps every condition, time, action,
+quantity, attribution, and outcome owned by the exact meaning that states it.
+A literal quote or companion meaning from the same evidence may provide honest
+context, but it cannot lend one observation's fields to a neighboring meaning.
+The reader preserves coexisting observations without fusing them or reducing an
+experienced outcome to intent alone. The display panel remains selected examples
+even when its row count happens to equal the full-pool row count. This is an
+existing-reader instruction correction, not a new checker, provider stage,
+semantic classifier, or deterministic claim that the interpretation is true.
+
+Current point-reader request v5 additionally keeps current use or possession of
+another container distinct from an observed repeat purchase. Only an exact owned
+meaning that records acquisition or repurchase can support the completed action.
+It also distinguishes the analyst's Phase A boundary from the source's speech:
+the reader does not make or infer a Deliver recommendation, but it preserves a
+source-authored recommendation as source-local evidence without adopting it.
+This changes no evidence relation or state upstream and adds no phrase list,
+checker stage, provider call, or deterministic semantic classifier.
 
 Companion-owned semantic fields that the frozen projection does not carry remain
 null and are listed in `unbound_meaning_fields`; they never inherit the selected
@@ -1265,21 +1490,28 @@ first-look queue because retailer reviews are closest to completed purchase;
 community- or qualified-audience-only customer points remain in a separate
 discovery queue and record retailer check-back as open. Retailer is not an
 admission gate. Creator-authored material cannot supply customer support.
+The public packet runner's `--all-propositions` selection derives the complete
+proposition-ID set from the finalized view, avoiding an operating-system command
+line limit without changing packet semantics; it is mutually exclusive with
+axis and explicit proposition selection.
 Points earn investigation through explicit reported customer behavior,
 independent customer recurrence, material source-native engagement, or an
 operator-protected safety/costly lane. Engagement remains comparable only
 inside one role, venue, and metric bucket, and no cross-platform commercial-pull
-score is created. Materializing one admitted proposition produces a v1
+score is created. Materializing one admitted proposition produces a current v2
 selection spec bound to the frontier, source packet, bounded point, candidate-
-admission mode, axis set, transport mode, and literal semantic refs with the
-normal thirteen-origin cap. A non-value point carrying an explicit axis admits
-the same-product axis union plus its literal refs; every row is still judged
-against the exact bounded point, so axis membership grants no relation. Value
-points keep literal-ref admission under their separate value policy. The
+admission mode, transport mode, point subject scope, and literal semantic refs
+with the normal thirteen-origin cap. When the exact frontier relations contain
+more truth origins, current authoring raises and hash-binds the point-local cap
+only to the required count, up to forty; a larger point fails before provider
+work. Current point authoring admits only the complete frontier's exact support,
+counter, and adjacent refs; it does not reopen a whole product-axis pool for
+each point. Historical axis-expanded non-value specs and literal-ref value specs
+retain their stamped replay. The
 frontier changes no packet, source fact, proposition relation, or Deliver
 authority.
 
-At full-axis scale, both relation passes use named batches. The first layer
+When a historical axis-expanded point exceeds one response, both relation passes use named batches. The first layer
 accounts every admitted candidate. The second independently accounts every
 material, protected, or influence row that could reach display, preserving the
 v7 pre-cap correction boundary without one hundreds-row response array. Each
@@ -1289,7 +1521,7 @@ ordinary v7 selector runs. Missing, foreign, transposed, malformed, or partial
 responses fail before quote selection. Historical v6 batching and narrow v7
 single-response replay retain their stamped behavior.
 
-Axis-expanded non-value specs also bind
+Historical axis-expanded non-value specs also bind
 `temporal_presentation_policy=recent_year_coverage_v1`. The latest two literal
 calendar years in the display-eligible pool receive representation across
 available role/venue/native-metric buckets up to half the cap after mandatory
@@ -1456,6 +1688,16 @@ from the exact hash-bound source artifact named by the bundle; missing source
 bytes and unsupported legacy source formats remain unavailable, while changed
 bytes fail rather than supplying a date. This is source chronology for later time alignment, not proof that search
 interest caused the evidence or vice versa.
+Source-relative display labels such as `2 months ago` stay preserved in the
+hash-bound source but do not become exact publication times. The selection
+consumer maps only that narrow relative-label shape to explicit unavailability;
+it never derives a calendar date from the execution date, and other malformed
+date strings continue to fail closed.
+For a multi-product frontier, current point-spec authoring derives and hashes
+the subject-product scope of the exact packet proposition. It does not copy the
+frontier's company-wide product filter into every point. That identity remains
+exact while current selection consumes only the literal point relations;
+historical unscoped bindings retain their replay behavior.
 
 Semantic posture distinguishes first-hand experience, personal agreement,
 attribution or echo, questions, speculation, observable statements, and actor
@@ -1482,27 +1724,119 @@ equivalent and how conditions, negation, and uncertainty should be described.
 Structural completeness is therefore proven; perfect open-world semantic
 recall is not.
 
-Current method-v12 reconciliation explicitly copies every child condition
-verbatim into the node's conditions, deduplicating only identical strings, as
-the existing validator requires. The compiler retains each condition's child
+Current method-v12 reconciliation uses decision-only response v3. The model
+authors bounded nodes, relations, axes, uncertainty and terminal metadata. One
+required keyed decision per candidate names one or more node attachments or an
+allowed unmerged reason, never both. One required keyed assignment per original
+emerging label names a declared label group. Missing, foreign, duplicate,
+orphan and prohibited decisions fail visibly; the compiler never chooses a
+group, inserts a singleton, invents a missing definition or infers prose meaning.
+Normal-mode admitted customer findings must remain nodes; they may remain
+nonterminal when terminal warrant is uncertain. Convergence retention remains
+under the existing source-row rule.
+
+Code carries compatible subject/comparator/version identities (every selected
+child must match; unlike identities are never unioned), exact emerging-label
+unions and polarity composition. Code also carries every literal child
+condition, deduplicating only identical strings. These source-owned fields and
+child_relations are absent from the model-authored node shape, not optional
+copies whose conflicts can be ignored. The compiler retains each condition's child
 lineage; their union does not assert that every condition holds for every
-author. Each supporting child must establish the same bounded meaning: a
-shared brand ID does not make an unnamed item a range-wide claim, generic
-approval is not a particular benefit, and intent, acquisition, use, and
-repurchase are not interchangeable. Distinct scope, conditions, intensity,
-or uncertainty may require separate nodes. This clarifies the existing merge
-boundary, not a new semantic classifier or a target to minimize node count.
+author. At later levels, retain prior-node qualifications as node conditions
+without inventing original-leaf ownership for them. Each supporting child must
+establish the chosen common claim, not every other child's more specific detail.
+Use ordinary context-supported interpretation and informative abstraction under
+the owning claim-support rule. A shared brand ID does not make an unnamed item
+a range-wide claim; generic approval is not a particular benefit. Intent,
+acquisition, use, and repurchase are not interchangeable. Differences in scope,
+conditions, intensity or uncertainty require separate nodes when they change
+the proposed assertion, not by default. Current response-v3 prompts teach both
+valid compression and overstatement limits; historical response-v2 prompt replay
+keeps its original wording. No lexical rule or deterministic semantic classifier
+is added, and neither the fewest nodes nor the most singletons is a success target.
 The prompt also exposes source roles by existing leaf relation, the
 compiler-owned terminal claim-kind competence table, and the compiler's
 existing rule for composing a leaf relation with the chosen child relation, so
 effective support is stated rather than guessed. An observable-statement
 posture alone does not make a community report a directly verified fact.
 Material with no semantically appropriate, source-competent terminal kind
-remains retrievable as unmerged evidence rather than being relabeled to pass.
+remains nonterminal or, where retention permits, retrievable as unmerged
+evidence rather than being relabeled to pass.
 These are derived prompt facts, not new stored authority or relaxed validation.
 Method v11 and earlier prompt replay is unchanged. Existing saved prompts and
 responses remain historical evidence; a changed current prompt is recorded
 as a fresh attempt, never silently substituted into an old receipt.
+Explicit response-v2 preparation remains available for replay. A partially
+completed immutable stage may receive new v3 requests without repartitioning;
+only JSON whitespace may be compacted to retain byte fit. Stored v2 and new v3
+responses share the existing validator and downstream node-compilation-v2
+shape, without replacing raw provider artifacts. No normal-path semantic provider
+stage is added. Mechanical assembly does not prove that chosen meanings belong together.
+
+Normal method-v12 response-v3 preparation now selects
+`exact_identity_namespaces_v2` at the public `prepare-reconciliation-level`
+entrypoint. The separately selected `authoring_revision` is not a response or
+stage schema revision. Each exact tuple of subject, comparator and version
+**sets, with their roles preserved**, gets a code-derived opaque prefix. Every
+candidate's attachment keys must use that prefix; node definitions may use the
+batch's prefixes. Any number of model-authored keys, shared claims and multiple
+attachments remain possible within a class. No identity vocabulary is copied
+into these handles. Matching prefixes establish compatibility, not semantic
+warrant, actual product identity truth, or useful consolidation.
+
+This normal-request-only constraint applies at every reconciliation level and
+mode. V2 also states the existing native repeated-leaf rule before generation:
+one original semantic leaf may enter a node through only one attached child.
+Fresh V2 stages cap a batch at 96 candidates as well as the existing prompt-byte
+limit. The cap bounds output and connected-repair scope; it does not choose a
+meaning, truncate context, weaken the native consumer, or promise provider
+success. New stage packing includes the instruction bytes; immutable resumed
+stages retain their membership and fail visibly if whitespace compaction cannot
+fit the complete prompt. Native identity checks remain unchanged for all
+relations. The restriction removes an incidental signal previously carried by
+attempted incompatible merges; equal upstream-discrepancy discovery sensitivity
+is not claimed. It adds request bytes, not a provider call or a new review stage.
+
+Use `--authoring-revision exact_identity_namespaces_v1` to reproduce the prior
+namespaced normal requests, or `--authoring-revision legacy` to reproduce the
+older unrestricted normal requests.
+The low-level Python preparation APIs retain their historical default for replay;
+current callers explicitly select `RECONCILIATION_AUTHORING_IDENTITY_V2`.
+Explicit response-v2 and older methods retain historical public defaults.
+Missing-definition and local-repair requests use the unchanged historical
+renderer/schema and can preserve existing opaque keys. Accepted work keeps its
+actual original prompt, schema, attempt and correction receipts; newly rendered
+unused requests are never substituted as its provenance. Neither namespace
+compliance nor native acceptance proves source-supported meaning preservation.
+
+Current response-v3 generation requires a nonempty node list when any assigned
+candidate must remain a finding under the existing retention rule. This prevents
+an empty answer, not partial definition omissions. The native consumer reports
+undefined node keys separately as `MissingReconciliationDefinitions`, with their
+exact child/relation assignments. Other malformed assignments still fail; the
+diagnostic does not certify that an undefined key denotes a legitimate claim.
+
+After this failure only, `prepare-reconciliation-definitions` binds the original
+failed response and prepares one corrective judgment request containing only the
+affected candidate groups. One required keyed slot supplies either a complete
+model-authored definition or an explicit cannot-define reason. Keys are opaque
+handles, never evidence of meaning. An unsupported fixed grouping or insufficient
+context remains a visible semantic-judgment blocker; code never selects a meaning,
+redirects an attachment or changes existing definitions. Large missing sets may
+still require substantial provider work; an oversized recovery fails visibly
+without truncation. No automatic repartitioning or unbounded retry is introduced.
+
+`submit-reconciliation-definitions` appends only the missing model-authored nodes
+to a fresh successor, then applies the unchanged native reconciliation consumer.
+An unresolved answer publishes no successor. Original, corrective and successor
+bytes and hashes remain separate; the original failed attempt is not relabeled
+successful. Matching durable successors can be revalidated without another call;
+changed inputs or outputs fail rather than overwrite. The provider execution and
+usage-accounting route is unchanged. Use at most one corrective attempt for a
+failed batch before returning unresolved work to judgment. Successful batches owe
+no corrective call. Historical v2 replay and immutable stage membership stay intact.
+Completeness and unchanged assignments are mechanical claims; semantic warrant
+and improved provider reliability are not proven by successful composition.
 
 Contract v34 adds an opt-in global relation-closure generation after one
 terminal normal-retention frontier. Deterministic block pairs cover every
@@ -1547,6 +1881,51 @@ supported view/output. One-off and unresolved evidence remains explicit; lack
 of v34 closure never becomes `none_observed`. Agents must not run v34, treat it
 as completion, or use it to claim global meaning identity, global opposition
 coverage, or global negative conflict coverage.
+
+A valid normal reconciliation level may temporarily produce more nodes than it
+received candidates when one candidate carries multiple distinct bounded
+meanings. That is zero convergence rather than malformed accounting: the next
+level enters the existing convergence/retention mode, which must resolve the
+frontier without silently dropping a meaning.
+
+Convergence treats each incoming candidate as one already-bounded meaning and
+therefore permits at most one attachment, or one unmerged retrieval reason.
+Meaning splits remain available in normal reconciliation; allowing them again
+in convergence would make partial retention unrepresentable and prevent an
+honest fixed point.
+
+Convergence does not circulate nonterminal placeholders. Every newly authored
+convergence node is terminal. A terminal customer finding supported by repeated
+source rows remains required; a nonterminal candidate must either support one
+terminal bounded node or remain explicitly retrievable as unmerged evidence.
+This retirement changes no leaf disposition and does not turn unresolved
+material into a claim merely to satisfy the fixed-point rule. Historical
+responses remain replayable through the shared validator; the terminal
+finalizer still rejects any nonterminal compilation. The compiler, not the
+provider, carries each prior node's terminal status into the next stage; current
+convergence prompts expose that bit only to apply the retention distinction.
+When a complete convergence pass is one-for-one but still contains nonterminal
+nodes, its next stage also hash-binds and carries the already terminal nodes
+outside the nonterminal nodes' transitive shared-leaf neighborhood unchanged.
+It sends the nonterminal nodes and only their leaf-connected terminal neighbors
+back for bounded judgment. This installs no new semantic choice and prevents
+repeated whole-corpus reads whose only purpose would be to preserve an already
+stable, unrelated terminal majority. A convergence fixed point accounts for
+each input as exactly one surviving terminal node or one explicit unmerged
+candidate; honest retirement therefore does not force another level merely
+because the node count fell.
+
+Axis membership remains compiler-owned lineage. Current decision reconciliation
+derives node `axis_ids` from the exact union of its attached children, and the
+final v3 consumer rederives proposition `axis_ids` from the verified root
+semantic leaves. Provider-authored axis strings carry no authority and cannot
+move a proposition across axes. This is deterministic provenance preservation,
+not semantic axis inference.
+
+If an explicitly unmerged candidate shares a semantic leaf with a surviving
+node, the final leaf disposition is `used`; the same leaf cannot also be emitted
+as unmerged. Candidate-level retirement still participates in fixed-point
+accounting, and the source remains recoverable through the surviving node.
 
 Registry-first global identity, embeddings or top-k retrieval, deterministic
 semantic blocking, and exhaustive all-pairs closure are deferred research
@@ -1933,6 +2312,577 @@ new frontier.
 
 ## Changelog
 
+- `v114` / 2026-09-04 — made point-reader request v5 preserve two neighboring
+  Decision State boundaries exposed by source-complete Dieux dogfood. Current
+  use or possession of another container no longer stands in for an explicitly
+  recorded repeat acquisition, and the analyst's prohibition on making a
+  Deliver recommendation no longer erases advice actually authored by a source.
+  Also advanced the existing inline relation-adjudication record to v2 so an
+  explicit bounded correction can replace, rather than merely relabel, the
+  exact same-evidence meaning set while preserving v1 replay. The changes add
+  no phrase list, checker stage, provider call, automatic relation rewrite, or
+  semantic-proof claim.
+- `v113` / 2026-09-04 — made new point-reader request v4 bind conditions,
+  timing, actions, quantities, attribution, and outcomes to the exact meaning
+  that states them. Same-evidence quotes and companion meanings remain visible
+  context but cannot donate fields to a neighboring observation; coexisting
+  experienced outcomes cannot be reduced to intent alone. Also made explicit
+  that an equal display/full-pool row count does not turn selected examples into
+  the full-pool definition. A source-complete Dieux audit exposed four critical
+  reader distortions across 64 deliberately risk-weighted point-axis readings;
+  this correction adds no checker stage, provider call type, word-pair exception,
+  frozen-output rewrite, or Deliver behavior. A fresh targeted run corrected all
+  four exposed points, preserved one clean Direct Outcome and one clean Decision
+  State canary, compiled all six through the unchanged brief consumer, and a
+  source-complete audit returned no critical or material finding. That bounded
+  rerun is behavioral evidence, not proof over every possible point; semantic
+  warrant remains review-owned.
+- `v112` / 2026-09-04 — made current all-axis Phase A consolidation preserve
+  the packet-bound point-axis membership when one multi-axis point's selected
+  evidence rows carry split axis tags; an axis absent from the exact packet
+  proposition still fails, and historical sparse manifests retain their
+  conservative all-row rule. Aligned provider reason-code schemas with the
+  existing 80-character consumer boundary. Restored the missing mechanically-
+  unproven relation-warrant disclosure on deterministic full-source v10 point
+  artifacts. Added deterministic evidence-group-preserving batching and exact
+  recombination for Decision State deltas that exceed a provider prompt limit;
+  this changes transport only and leaves the full semantic validator intact.
+  The Dieux proof exposed the unbatched 1,114,700-character request at the
+  provider's 1,048,576-character entry limit; the first legal near-limit batch
+  later timed out, so the successful continuation used an explicit lower
+  operating ceiling rather than presenting the hard limit as a latency promise.
+- `v111` / 2026-09-03 — reduced current point authoring from three provider
+  calls to two by retiring only the final quote-shortening call. After the
+  first relation judgment and independent hidden-label confirmation, quote
+  manifest v10 deterministically copies each selected row's complete
+  hash-bound source body and rejects any provider quote attachment. Missing
+  bodies remain explicitly unavailable; relation choice and semantic warrant
+  remain judgment-owned. Historical v9 token-span and earlier quote artifacts
+  retain their exact replay routes. Also made the axis consumer enforce the
+  truth-origin cap sealed in each selection spec instead of a stale global
+  thirteen-origin constant, so current evidence-rich points with a bound cap up
+  to forty remain consumable. Dieux measurement covered 1,092 admitted
+  references: full bodies added a mean 1,693 bytes per point and at most 13,711
+  bytes for one point; these are corpus observations, not universal limits or
+  reader-quality proof. No provider stage, retry loop, semantic classifier,
+  standing canary, frozen rewrite, or Deliver behavior was added.
+- `v110` / 2026-09-03 — made current complete-frontier point selection consume
+  only the exact point-relative support, counter, and adjacent semantic refs
+  already bound by the frontier, instead of reopening a whole product-axis pool
+  for every point. Historical axis-expanded specs retain their stamped replay.
+  Evidence-rich points raise and bind the thirteen-origin display cap only to
+  their exact required frontier-origin count, up to forty, and fail locally
+  above that bound instead of spending provider calls before a predictable cap
+  error.
+  Also scoped multi-product point selection to each
+  exact packet proposition and bound that subject scope against later mutation,
+  removing repeated unrelated-product payload while retaining historical
+  unscoped-spec replay. Also kept source-relative retailer date labels literal in
+  their hash-bound source while making their exact publication time explicitly
+  unavailable at evidence selection. The consumer recognizes only a narrow
+  quantity-plus-unit-plus-`ago` display shape, never calculates a calendar date,
+  and continues to reject other malformed time strings. ISO publication times,
+  frozen artifacts, source hashes, and provider stage count are unchanged.
+- `v109` / 2026-09-03 — ended policy-v2 convergence placeholder circulation:
+  current response-v3 convergence schemas emit terminal nodes only, terminal
+  repeated customer findings remain required, and nonterminal inputs may become
+  a terminal bounded finding or explicit unmerged retrieval evidence. The
+  compiler carries prior terminal status into later convergence stages. The
+  next stage after a one-for-one convergence pass carries terminal nodes outside
+  the nonterminal nodes' transitive shared-leaf neighborhood unchanged and
+  prompts only that bounded neighborhood, avoiding a repeated whole-corpus
+  provider read. Fixed-point accounting now permits one explicit unmerged input
+  candidate in place of one output node. Current compilation and finalization
+  also rederive axis membership from child and verified-leaf lineage rather than
+  trusting provider-authored axis strings. Shared leaves retained by any node
+  receive one `used` disposition rather than contradictory used-and-unmerged
+  output. Added a mutually exclusive `--all-propositions` packet projection for
+  complete-corpus frontier input without per-proposition command-line growth.
+  The shared validator continues to replay historical responses, while
+  finalization still rejects nonterminal compilations. Added no provider stage,
+  semantic classifier, evidence deletion, or Deliver behavior.
+- `v108` / 2026-09-03 — admitted valid normal-level expansion into convergence,
+  made each convergence candidate atomic, required every retained convergence
+  node to keep effective support from at least two distinct source rows, and
+  exposed that failure through deterministic diagnostics. Historical v1/v2
+  replay, semantic judgment ownership, and the terminal fixed-point rule remain
+  unchanged.
+- `v107` / 2026-09-03 — added repair-request v3's diagnostic-gated compact
+  structural rendering for complete cross-child duplicate-leaf-only failures.
+  It reuses the existing nomination, schema, composition and unchanged native
+  validator while omitting raw evidence/context bodies and retaining exact
+  affected candidate meaning, conditions, identities, provenance paths,
+  decisions, parent definitions and deterministic conflicts. Mixed, stale,
+  incomplete, under-scoped, clean and within-one-child diagnostics fail closed,
+  as does a convergence-mode stage whose retention rule this projection cannot
+  expose; v1/v2 repair and normal authoring replay unchanged. The frozen stage
+  below is `normal` mode, so that proof is unaffected by the convergence
+  refusal. Frozen Dieux level-7 Batch
+  21 retry3 measured 327,975 normal and 316,313 existing-packed prompt bytes
+  against the 120,000-byte ceiling. V3 rendered twice at 64,626 bytes with
+  identical stored prompt/schema/request hashes. One `gpt-5.6-sol`/high attempt
+  completed in 87.75 seconds with zero observed retries/fallbacks and reported
+  37,820 input, 4,596 output and 3,704 reasoning tokens. Its exact patch composed
+  to a 95-node/748-unmerged whole response accepted by the unchanged validator
+  (`validation_sha256`
+  `0541b67c0b9b0ed599b97d1c30e532f5eff18f493e428cf5986d9d0ca8dafb32`).
+  All 88 unaffected nodes, 91 unaffected decisions, label/group structures and
+  outer fields compared exactly; an exactly request-pinned seeded recurrence
+  failed at `duplicate_leaf`. This n=1 dogfood proves provider fit and structural
+  enforcement for these frozen inputs, not optimal restructuring, semantic
+  warrant, general provider reliability, attention-overload causality, Phase A
+  completion, or Deliver readiness.
+- `v106` / 2026-09-02 — added a separate fail-closed reconciliation recovery
+  route for a completed structured `agent_message` stranded by a timed-out
+  immutable provider attempt. Normal publication still rejects timed-out
+  executions, and recovery never relabels the attempt. It verifies the start
+  and terminal execution receipts; their prompt, response-schema, event,
+  stderr, and optional response bindings; strict JSONL; one distinct completed
+  message; the exact stored response schema; and the unchanged reconciliation
+  consumer before writing a new no-replace response and recovery receipt.
+  Exact identical retransmissions inside one attempt may collapse. Across
+  eligible retry attempts the earliest bound start time wins without semantic
+  comparison. Missing completed-turn usage remains `UNOBSERVED`; zero or
+  multiple distinct messages, malformed or partial JSON, hash drift, schema or
+  native rejection, and non-timeout outcomes fail closed. Before landing,
+  response, event, receipt, and schema decoding
+  rejects non-finite JSON constants; JSONL records split only on LF so Unicode
+  separators inside string values remain data; and canonical whole-second plus
+  fractional-second UTC starts are compared as parsed instants rather than
+  lexically. These corrections add no provider call, retry, or semantic choice.
+  Read-only dogfood over all 14 frozen Dieux v1/v2 level-4 timeout attempts found 7 recoverable
+  and 7 rejected: 3 had no completed message, 1 had two distinct completed
+  messages, and 3 failed the unchanged native consumer. All 56 source files
+  remained byte-identical. A fresh proof selected the earlier of two distinct
+  schema- and native-valid batch-0025 answers by start time, rejected its
+  zero-message newest retry, preserved usage as unobserved, and passed the
+  current consumer with validation hash
+  `97f28fe84672fc0aaa87402869d0a80e4869a0e77b8b0e50d5baba0a50a73292`.
+  This is transport recovery, not provider-completion evidence, semantic
+  best-of selection, token accounting, provider reliability, Phase A
+  completion, or Deliver work; it adds no provider call or retry loop.
+- `v105` / 2026-09-02 — made repeated-leaf diagnostics and bounded repair
+  contexts enumerate the complete duplicated `semantic_unit_ref` intersection
+  and every child/leaf/effective relation path into the affected node. A
+  two-leaf synthetic collision exercises complete enumeration while the clean
+  fixture retains its prior v1 request hash. Stored v1 repair replay remains
+  byte-identical. On frozen Dieux current-authoring v2 batch
+  `reconcile-0004-0026`, diagnostic v2 deterministically reported all four
+  shared leaf refs through children `node_a853e721919eb5bba8ea` and
+  `node_a9b7375165fae4dd5a1d`; two diagnostic writes were byte-identical. The
+  materially changed repair request grew from 44,923 to 46,781 bytes under the
+  unchanged 120,000-byte ceiling. One `gpt-5.6-sol`/high bounded call produced
+  a scope-valid composition that the unchanged native validator accepted
+  (`validation_sha256`
+  `071358887a99d511add7ca031a1081fd6933b51531a0b4d3dbe6cbb915a79331`).
+  This one outcome does not prove provider reliability or semantic quality;
+  no child choice, automatic deduplication, evidence removal, validator change,
+  provider stage, whole-batch regeneration, frozen mutation, or Deliver claim
+  is added.
+- `v104` / 2026-09-02 — versioned current normal reconciliation authoring to
+  `exact_identity_namespaces_v2`. It states the unchanged native rule that one
+  original semantic leaf may enter a node through only one attached child, and
+  caps fresh current batches at 96 candidates in addition to the existing
+  prompt-byte ceiling. Frozen Dieux level 4 packed 25 of 26 batches at 140–145
+  candidates: 10 were initially accepted, 11 returned structurally invalid
+  responses, and 5 timed out. Repeated-leaf defects appeared in seven initial
+  batches and again after layered recovery; four exact connected repairs then
+  exceeded the unchanged 120,000-byte ceiling, while two full batches timed out
+  twice. The sole 95-candidate tail batch was accepted; this observation binds
+  the containment-oriented cap but does not prove semantic quality or provider
+  reliability. Fresh v2 Dieux level-4 dogfood then accounted all 3,665 candidates
+  exactly once in 39 deterministic batches, each at most 96 candidates; two
+  rebuilds were byte-identical and the largest prompt was 86,060 bytes. The
+  unchanged consumer initially accepted 30, rejected 4 structurally, and saw 5
+  provider failures. All four initial recovery requests fit at 15,927–67,572
+  prompt bytes; none required truncation. Bounded recovery and one explicit
+  retry per failed call raised acceptance to 36 of 39. The three unresolved
+  batches remain visible: one normal batch timed out twice, one repeated-leaf
+  component persisted through three changed repair responses, and one layered
+  orphan/definition response ended in an explicit cannot-define judgment for a
+  fixed key. The explicit repeated-leaf instruction therefore does not prove
+  prevention; the native consumer remains unchanged and fail-closed. Explicit
+  v1 and legacy selection preserve old packing and prompt bytes; accepted
+  artifacts keep their original prompt and receipt provenance. No automatic
+  deduplication, truncation, provider call, retry loop, semantic classifier, or
+  Deliver conclusion is added.
+- `v103` / 2026-09-02 — added a read-only current-response-v3 reconciliation
+  diagnostic so one failed answer can expose all independently observable
+  mechanical defects before the operator commissions a bounded repair. The
+  unchanged validator remains fail-first and authoritative; the diagnostic
+  reports its exact primary error, affected opaque handles, and any dependent
+  checks skipped because their prerequisites are malformed. It never repairs,
+  infers meaning, selects scope, accepts a response, or calls a provider.
+  Frozen Dieux level-3 dogfood over all 28 original completed responses reported
+  3 valid and 25 invalid responses, covered every authoritative primary error,
+  and exposed 79 issue records: 38 duplicate attachments, 40 missing node keys
+  across 17 response-level records, 9 orphan nodes, 7 repeated-leaf nodes, and
+  8 terminal nodes without effective support. All 13 currently selected accepted
+  responses remained clean, and a second 28-response run was byte-identical.
+  These are structural findings, not semantic verdicts or repair authorization;
+  no response, stage, provider attempt, or historical artifact was changed.
+- `v102` / 2026-09-01 — required one relation per exact candidate-and-node
+  pair in current decision-only prompts. Dieux level-2 authoring repeatedly
+  emitted the same node key as both support and counter for one candidate,
+  including inside bounded repairs; the unchanged consumer correctly rejected
+  every occurrence. The prompt now states the already-enforced invariant so the
+  provider is warned before generation. Dieux level-3 dogfood still emitted the
+  invalid shape, so prevention is not proven and the consumer remains the
+  reliable enforcement. No schema or consumer is weakened, no call is added,
+  and historical rendering remains unchanged.
+- `v101` / 2026-09-01 — made the current decision-only terminal schema require
+  a boolean `opposition_checked`, matching the unchanged native invariant.
+  Dieux level-2 definition recovery had produced a terminal node with valid
+  claim kind and causal ceiling but null opposition status; the provider schema
+  admitted it and the consumer rejected it. Nonterminal and historical v2
+  behavior remain unchanged, no call is added, and the boolean does not prove
+  that opposition was adequately reviewed.
+- `v100` / 2026-09-01 — added the symmetric explicitly unaccepted intermediate
+  for a scope-correct missing-definition patch that reveals another native
+  defect. The next existing bounded repair consumes the hash-bound intermediate;
+  no partial response is selected and no automatic repair is introduced.
+- `v99` / 2026-09-01 — allowed the existing failure-only local repair to carry
+  an explicitly nominated duplicate node key, including every duplicate
+  definition and connected owner. Unnominated duplicates still block by name;
+  code does not rename, reattach or infer meaning automatically.
+- `v98` / 2026-09-01 — made current decision-only response schemas reject
+  nonterminal nodes carrying terminal claim metadata, and terminal nodes with
+  either claim field absent. This moves an existing native invariant into the
+  provider-visible schema without changing historical v2 replay or adding a
+  call.
+- `v97` / 2026-09-01 — added an explicitly unaccepted, hash-bound local-repair
+  intermediate so one bounded correction can be preserved when native
+  validation reveals a second independent defect. Existing definition and
+  local-repair preparers consume that intermediate; no response is selected
+  until the unchanged full validator passes. This adds no normal-path call,
+  automatic semantic edit, retry loop or accepted partial-success path.
+- `v96` / 2026-09-01 — versioned the existing targeted benchmark audit method
+  from v1 to v2 so current audits judge source-to-result fidelity at the
+  decision-relevant bounded-finding level rather than by literal vocabulary.
+  The prompt names the consequential boundaries that may change downstream use
+  and treats descriptive-channel detail as non-load-bearing unless the current
+  commission makes it a decision dimension. It contains no word-pair exception,
+  adjacency dictionary, mandatory mirror, repeat-review gate, or change to
+  production consolidation. Historical v1 text remains available and frozen
+  artifacts remain unchanged. The wording was tested uncued on the same 48-row
+  Dieux diagnostic sample: after the response was frozen, the controller-hidden
+  harmless-adjacency and intended-action/completed-action controls both passed.
+  That one-call same-model calibration is behavioral evidence, not semantic
+  truth or a population estimate. Durable report:
+  `C:\tmp\forseti-phase-a-dieux-uncued-bounded-meaning-calibration-20260901-v1\final-report.md`,
+  SHA-256 `4ea934883d5eeb794a907e3feee79025fd1f313c9689de243890a69d8eee5f50`.
+- `v95` / 2026-09-01 — kept the v94 bounded-edit rejection unchanged after a
+  controlled audit-calibration experiment on 48 purposively selected frozen
+  Dieux rows. The candidate rubric applied the existing bounded-proposition
+  rule without a word-pair dictionary: both mirrored positions treated the
+  `looks supple` / `feels supple` difference as harmless for this broad Phase A
+  use and retained the `decided to try` / `bought` action-boundary error.
+  Those exact examples and their intended boundary were stated in the
+  experiment prompt, so the result proves consistent application under an
+  explicit rule, not uncued model generalization. Critical classifications
+  still changed with presentation order for seven unique rows under the prior
+  rubric and eleven under the candidate rubric. The owner accepts that ordering
+  sensitivity as a visible model residual rather than a standing engineering
+  target: no word-pair exception, adjacency dictionary, mandatory mirror,
+  repeat-review gate, or new production/audit machinery is added. A later
+  task may account for finer visual-versus-tactile meaning when that distinction
+  is actually decision-relevant; it does not burden the present broad Phase A
+  consolidation. Durable report:
+  `C:\tmp\forseti-phase-a-dieux-bounded-finding-calibration-20260901-v2\final-report.md`,
+  SHA-256 `f900ea9c78ae532e34e893d2b0744e58d362f60dd04800f46ff5dc830bc2fb79`.
+- `v94` / 2026-09-01 — rejected, and did not promote, the bounded-edit
+  row-verifier experiment nominated by the checker value audit. The prototype
+  made the consumer preserve every unnamed field/unit and allowed only explicit
+  disposition, field, removal and addition operations. A fresh outcome-independent
+  held-out set covered 212 rows in 11 complete batches (110 community, 102
+  retailer) with zero overlap against the prior 96-row audit. All 212 candidate
+  decisions reached a test-only native-valid consumer successor, but the opaque-
+  label same-vendor quality assessment found 80 material-error rows for bounded
+  edits versus 71 for the existing whole-row checker (original extraction: 94).
+  Candidate-only clean rows were 33; whole-row-only clean rows were 42. Both
+  checker variants had one different serious assessed error. Containing output
+  shape therefore did not prevent an intentionally wrong targeted edit and did
+  not beat current machinery. Experimental runtime, runner, tests and normative
+  wording were removed rather than installing a dormant adapter or recurring
+  ceremony. Historical/current behavior remains verifier v11 response v1/v2.
+  Candidate generation observed 807,878 input and 42,233 output tokens across 11
+  successful `gpt-5.5`/high attempts; historical deltas are `NOT_COMPARABLE`
+  because batch/prompt definitions differ. Thirty-three preceding attempts
+  failed with zero reported usage while exposing local-config and structured-
+  output schema incompatibilities. Same-vendor assessment is descriptive, not
+  independent truth or population inference. Durable report:
+  `C:\tmp\forseti-phase-a-dieux-bounded-edit-dogfood-20260901-v3\final-report.md`,
+  SHA-256 `3cb0c4cb20a42204fd2d0e370f961f32bd49a3c63920c3ac8258e2901d772492`;
+  output manifest SHA-256
+  `1da23435b9abf0669d37e3504aaddb13e143f1b9a9817a96fc67cf9dc7da496c`.
+- `v93` / 2026-09-01 — added an oversize-only lossless table layout to the
+  existing local reconciliation repair request. The old renderer still runs
+  first; previously fitting requests and the response schema stay unchanged.
+  Common fields are carried once and remaining values retain named columns,
+  exact JSON types, source text and row order. Heterogeneous key sets remain
+  lists; no absent field becomes null. The canonical full context remains the
+  identity input, and a packet that still exceeds its bound fails visibly.
+  Two formerly blocked Dieux components fit the unchanged 120,000-byte limit:
+  156,535 -> 112,453 bytes and 122,613 -> 87,988 bytes. Both contexts reconstruct
+  exactly; five saved repair requests replay unchanged and a 23,658-byte small
+  control is identical. Focused validation: 355 tests passed; coupling: 18.
+  Two `high` provider attempts (one per case) reached the existing repair
+  consumer and repeated without new calls. Source assessment is deliberately
+  mixed: batch 32 correctly separated stated need from achieved benefit and
+  another reviewer's experience; batch 30 repaired opaque product wording but
+  expanded a continued-use definition to unsupported repeat purchase. That
+  successor remains held; native acceptance is not semantic clearance, and
+  this single attempt does not establish packing as the cause. Outside the
+  nominated components, 166 decisions and 92 definitions remain unchanged.
+  Evidence/accounting: `C:\tmp\forseti-phase-a-repair-packing-20260901-v1\assessment.json`;
+  SHA-256 `02e9f38ea3206c0a119c91fb6733c06138f00c2d9c68bf2d5599eb02b278138d`.
+  Reported trial usage: 96,012 input (2,816 cached included), 12,074 output
+  (1,032 reasoning included), 108,086 logical tokens; zero observed retries or
+  process failures. Historical provider-token/latency deltas are
+  `NOT_COMPARABLE` because the old oversized requests never reached a provider.
+  No corpus selection changed, no provider stage was added, and no whole-batch
+  semantic clearance, long-run reliability or Phase A completion is claimed.
+- `v92` / 2026-09-01 — selected separately versioned, normal-request-only exact
+  identity namespaces after the bounded AO-2 feasibility and recovery work.
+  Public current preparation selects the restriction; explicit legacy selection
+  and shared correction defaults preserve replay. No new decoder, identity
+  authority, semantic provider stage or forced singleton is added. Finite
+  feasibility observations are under
+  `C:\tmp\forseti-phase-a-namespace-feasibility-20260901-v1`: one constrained
+  raw batch had zero incompatible groups but omitted one definition; both it
+  and the baseline had source-meaning errors. Candidate raw logical tokens were
+  64,422 versus 59,125 baseline (n=1 each), not a savings or quality-win claim.
+  Existing definition recovery and four-candidate local correction produced a
+  valid 152-decision successor under
+  `C:\tmp\forseti-phase-a-namespace-recovery-20260901-v1`, adding 40,737 logical
+  tokens in two calls. Four corrected nodes retain `opposition_checked=false`.
+  Current implementation/replay and continuation evidence is under
+  `C:\tmp\forseti-phase-a-namespace-current-20260901-v1`; progress there is not
+  Phase A completion. Three normal calls covering 474 decisions produced zero
+  incompatible-identity groups; one failed on an orphan definition. Source
+  inspection found behavior/intent and single-source plural-wording errors.
+  Three existing local corrections (12/4/12 candidates) recovered the batches,
+  preserving 446 outside decisions and 242 outside definitions. Dieux reached
+  26/54 structurally accepted first-level batches; 28 and downstream work remain.
+  Six calls used 275,365 logical tokens, with no process failure or observed
+  transport retry; 353 focused tests and exact-head CI at `3c5b8aa1` passed
+  (6,037 tests, 25 skipped). This is bounded correction, not autonomous accuracy
+  or a current-versus-historical quality win. Semantic preservation, global reliability, unknown
+  formula compatibility and equal identity-discrepancy discovery remain unproven.
+
+- `v91` / 2026-08-31 — moved the existing exact-identity check into failure-only
+  repair preparation as well as compilation. Separate saved Dieux batches 16,
+  17 and 21 reproduced incompatible product/comparator/version groups. In batch
+  21, correcting the initially nominated groups still left another incompatible
+  refund group untouched, so the full successor failed. Preparation now lists
+  all such omitted groups before a corrective provider call; nomination remains
+  explicit and semantic rewriting remains judgment-owned. No normal-path call,
+  schema, historical adapter, automatic scope expansion or prose classifier is
+  added. The regression tests reach the intended public boundary with honestly
+  repinned product, comparator and version fixtures. All 339 integration tests
+  passed; 21 accepted batches, ten valid repairs and 35 pending requests replayed
+  unchanged. One fresh eight-candidate correction passed the public consumer
+  and bounded source inspection, preserving 149 decisions and 97 definitions;
+  Dieux reached 22/54 structurally accepted batches, not Phase A completion or
+  proven future semantic reliability. Exact accounting and bounded dogfood are under
+  `C:\tmp\forseti-phase-a-dieux-repair-scope-20260831-v1`.
+
+- `v90` / 2026-08-31 — made optional current-generation retention choices
+  exclusive and added source-bound connected-component correction at the public
+  reconciliation consumer. Reuses immutable attempts and existing final
+  accounting; it does not create a second evidence-count authority. Preserves
+  unrelated work and requires explicit judgment/refusal plus full native
+  validation. Changed meaning or attachments invalidate prior opposition
+  clearance in code; the repair model cannot assert that clearance. The v89
+  adherence failure remains evidence, not a closed issue. Ten saved corrections
+  replayed; one fresh final-version repair passed the public consumer and bounded
+  source inspection. Two earlier candidate attempts failed (provider root-schema
+  rejection; model-carried stale clearance), and are preserved. This is n=1 for
+  the final version, not repeat reliability or autonomous semantic detection.
+  Validation, exact attempt accounting and saved Dieux repair dogfood are under
+  `C:\tmp\forseti-phase-a-dieux-local-repair-20260831-v1`.
+
+- `v89` / 2026-08-31 — corrected recurring Dieux comparison and attribution
+  outputs through source-bound adjudication, preserving frozen predecessors.
+  The first 13 returned batches contained three incompatible comparison groups
+  and ten plural-author overstatements; continuation exposed another inverse
+  orientation group and further plural wording. Current response-v3 guidance
+  now carries the existing compiler-owned-count boundary into bounded prose
+  and makes the exact-orientation constraint explicit, in both normal authoring
+  and missing-definition recovery. No new identity payload, provider stage,
+  prose classifier, changed counting logic or relaxed validator. Historical v2
+  prompt replay remains isolated. Prompt delivery is testable; future model
+  adherence and full Dieux completion remain separate observations. Run-local
+  repair, failure and continuation evidence stays under
+  `C:\tmp\forseti-phase-a-dieux-full-corpus-20260831-v1` in
+  `reconciliation-comparison-recovery-20260831-v1`,
+  `reconciliation-attribution-current-20260831-v1` and their recorded successor.
+- `v88` / 2026-08-31 — added failure-only missing-definition recovery at the
+  current reconciliation consumer, plus a conditional nonempty generation guard.
+  Dieux's three saved completed responses omitted 1, 88 and 96 referenced
+  definitions while passing their supplied schemas. An earlier full-answer retry
+  reduced 102 omissions to one, still failing native validation. This motivated
+  exact missing-piece recovery rather than more prompt emphasis or a standing
+  second review. Existing grouping and definitions are immutable; unsupported
+  groups remain unresolved, not mechanically repaired. No new ontology, normal-
+  path provider stage, semantic classifier or historical response mutation.
+  Focused public-consumer tests cover partial omissions, wrong keys, changed
+  assignments/definitions, unresolved groups, byte-bound lineage, durable repeat
+  and consumer rejection. The first bounded dogfood recovered all three saved
+  failures in one corrective attempt each: 185 definitions appended, no prior
+  decisions/definitions changed, and 11 of 54 batches structurally accepted
+  (1,149 nodes, 215 unmerged units). Exact repeat submission used no new provider
+  call. This n=3 observation is not a general reliability rate or semantic review.
+  Run-specific provider outcomes and subsequent continuation live at
+  `C:\tmp\forseti-phase-a-dieux-full-corpus-20260831-v1\reconciliation-definitions-20260831-v1`;
+  their existence or structural success does not establish Phase A completion.
+- `v87` / 2026-08-31 — generalized the owner's skin-change clarification into
+  claim-relative interpretation and useful abstraction in the cycle-wide
+  claim-support authority and current response-v3 reconciliation prompt.
+  Narrow scope is not literal-word equivalence. Sources with different detail
+  may support a genuine common assertion while preserving their leaf-owned
+  distinctions. This supersedes v86's forced-split adjudication for buy/try:
+  expressed product interest is a legitimate shared claim, without credit for
+  a completed action. No phrase whitelist, new provider stage, consensus loop,
+  ontology or relaxed identity/coverage validator was introduced. Historical
+  response-v2 preparation remains unchanged. The prompt-delivery test failed
+  before this correction; the final-view fixture already admitted shared
+  interest without behavior credit, locating the defect in guidance and review,
+  not a missing compiler capability. These tests do not prove provider accuracy.
+  The bounded Dieux adjudication inspected 139 behavior-labeled nodes and checked
+  49 selected nodes against their underlying candidate meanings. It changed
+  only those claim kinds and four broken assignments to already-declared label
+  groups. All wording, relations and original files remain unchanged; the
+  buy/try group stays intact. Four batches (457 nodes, 108 unmerged units) now
+  pass structural validation with explicit controller assistance; 50 of 54
+  remain unattempted at that checkpoint, and the full-stage completeness guard
+  still rejects the partial set. All 54 historical prompts replay exactly;
+  current prompts rebuild identically within the existing ceiling. Evidence:
+  `C:\tmp\forseti-phase-a-dieux-full-corpus-20260831-v1\reconciliation-meaning-adjudicated\proof.json`
+  (SHA-256 `c19552174f6855997df5883ab932fd2f1f27a2efcd259fa7afb03a5b10bf12af`).
+  Subsequent productive provider attempts are recorded separately under that
+  run, not folded into this assisted or deterministic proof. No full-corpus
+  semantic clearance, repeated provider reliability or Phase A completion is
+  claimed.
+- `v86` / 2026-08-31 — adjudicated the different-vendor PR #1530 review of
+  `17b4bb218eae8a9bc788c44898a170ffbf7653a4`. F1 export-list cleanup and F2's
+  unreachable owner branch need no patch. F3's duplicate-key gap is live, not
+  hypothetical: the Dieux controller already publishes keyed row reviews
+  through the shared helper. Five hash-correct malformed fixtures were accepted
+  before the closure and now fail before callback/publication. One shared
+  decoder hook closes the gap; raw answers and usage survive rejection.
+  A bounded scan of all 225 top-level phase response files (8,959,150 bytes)
+  under `C:\tmp\forseti-phase-a-dieux-full-corpus-20260831-v1` found no duplicate
+  keys. This is preventive closure, not a finding of corrupted saved answers;
+  attempt-only and external artifacts were outside that scan. F4 corrects the
+  row-review default's actual v10/v11/v12 gate; reconciliation's v12 gate and
+  explicit historical replay stay unchanged.
+  The F5 forced-split disposition below is superseded by v87's general
+  claim-relative abstraction rule; the historical adjudication had required
+  preserving the separate buy and try intentions rather than
+  counting their disjunctive union as repeated support for one narrow action.
+  Both remain valid first-hand statements of intent, not completed purchase
+  or use. The current terminal `reported_behavior` kind would populate
+  `behavior_evidence_refs`; these statements do not establish that behavior.
+  Correct the affected semantic answer through the existing judgment route,
+  preserving both intentions without inventing observed action; no keyword
+  rule, general ban on intent, or frozen-answer rewrite was added. The owner's
+  accepted `changed my skin` / `visible results` reading remains closed.
+  Progress is three structurally accepted batches, one rejected label-owner
+  batch and 50 unattempted out of 54, not 51 unattempted. Semantic correction
+  remains open; neither this review nor its mechanical closure completes Dieux.
+  Review return SHA-256:
+  `5e4af7ba79c64e2dadd87b528b334ff2bf5610807a716686579fe327b5d8d6dc`;
+  local test receipts: `reconciliation-decisions/review-publication-red.xml`
+  and `reconciliation-decisions/review-publication-final.xml` under that run root.
+- `v85` / 2026-08-31 — replaced current reconciliation's redundant source-fact
+  copying with explicit decision-only response v3 and deterministic assembly.
+  Required candidate and original-label slots address the observed omissions,
+  duplicate group membership and prohibited unmerging; child facts retain their
+  original ownership. Historical v2 transport and downstream compilation remain
+  supported. No provider stage, auto-repair or semantic classifier was added.
+  The owner accepted the earlier `changed my skin` / `visible results` wording
+  in context; that allegation is no longer a blocker, and this is owner
+  adjudication rather than mechanical semantic proof. Real-data dogfood and
+  completion status are recorded under
+  `C:\tmp\forseti-phase-a-dieux-full-corpus-20260831-v1\reconciliation-decisions`;
+  structural acceptance alone does not complete Dieux Phase A.
+  The first wave made four provider attempts for three batches: two responses
+  passed structural validation; the label owner timed out once, then returned
+  four assignments to undeclared groups and failed the intended boundary.
+  No later batch launched. Inspection of the two accepted batches' multi-child
+  groups left a buy-versus-try merge finding for adjudication; this is not an
+  allegation of observed purchase. A next-level fixture exposed and then
+  verified preservation of historical node qualifications alongside leaf
+  conditions. A run-local display error after durable acceptance was corrected
+  without another provider call. Shared schema definitions then reduced the
+  54 sidecars from 9,977,865 to 1,933,635 bytes with exact expanded-constraint
+  equality; those final sidecars were not re-sent to the provider, so no token
+  savings or latency improvement is claimed. The timed-out attempt has no
+  complete usage measurement; aggregate historical token delta is
+  `NOT_COMPARABLE`. Evidence: `assessment.json`, `shared-schema-proof.json`,
+  `condition-carry-replay.json`, and `accounting-decision-consolidation.json`
+  (the accounting file is at the parent run root).
+- `v84` / 2026-08-31 — Dieux full-corpus reconciliation exposed three
+  cause-visible first-level failures: one answer invented a child identifier;
+  the emerging-axis owner omitted five exact labels and invented one; and one
+  node reinterpreted mixed child polarity from agreeable wording. Current
+  method-v12 reconciliation preparation now carries its existing response-v2
+  transport as a schema sidecar whose child references and level-owned original
+  labels are constrained to the assigned inventories. The public preparer
+  persists that sidecar. Native validation still enforces exact cross-group
+  label coverage, polarity composition and source competence; semantic adequacy
+  remains judgment-owned. This adds no provider stage. Historical prompt bytes
+  and method-v11-and-earlier preparation remain unchanged. This machinery
+  result does not by itself complete Dieux consolidation or prove unattended
+  semantic accuracy.
+  The constrained corrective run completed three calls and accepted none:
+  one assigned `price transparency` to two emerging-label groups, one unmerged
+  an admitted first-hand formula-interest finding in normal-retention mode,
+  and one omitted the adjacent child's `when it warms up` condition. All were
+  rejected by their intended native boundary with current hashes; no later
+  batch was launched. Across the first-level run, seven calls covered four of
+  54 batches, with one structurally accepted batch and 50 unattempted batches.
+  Bounded inspection of that accepted batch also left a `visible results`
+  wording allegation open. Current enumeration constraints therefore remove
+  invented handles, not the wider preservation/repeatability problem. Evidence:
+  `C:\tmp\forseti-phase-a-dieux-full-corpus-20260831-v1\reconciliation-constrained\proof.json`,
+  `reconciliation-constrained/corrective-result.json`, and
+  `accounting-consolidation-paused.json`. Full Phase A remains incomplete.
+- `v83` / 2026-08-31 — Dieux verify-0036 returned 25 decisions but duplicated
+  one ID and omitted another; a corrective retry repeated that ID five times
+  and omitted four others. Array length was not exact row participation.
+  Current verification/repair producers now emit evidence-ID-keyed response v2
+  with exact required slots and same-ID replacements; both public runners
+  persist the constrained schema. Native application accepts explicit v1/v2
+  transports while retaining the original source-work stage and raw response
+  hashes. Completed answers need no regeneration. This prevents structural
+  omission/substitution, not incorrect meanings inside valid slots; semantic
+  repair and Dieux completion remain separate obligations.
+  The full-corpus run subsequently completed all 111 verification batches:
+  38 accepted v1 responses were retained and 73 keyed v2 responses were accepted,
+  including the formerly failing batch. Four selective-repair batches and four
+  corrective attempts also passed row participation. Source inspection still
+  required six explicit controller-authored row corrections, including a false
+  Air Angel agreement inferred from a Prequel comment and an Aestura-only
+  statement attached to Skin Mercy. These are reviewer-assisted semantic
+  judgments, not evidence of unattended accuracy or a new runtime classifier.
+  The repaired 6,908-row ledger retains 141 unresolved rows and 8,416 meanings;
+  its native replay is byte-identical. The bounded evidence is under
+  `C:\tmp\forseti-phase-a-dieux-full-corpus-20260831-v1` in
+  `repair-adjudicated/adjudication.json` and `repair-dogfood.json`.
+  Consolidation and final axis-reader completion remain unclaimed at this
+  checkpoint; structural acceptance does not clear semantic truth.
+- `v82` / 2026-08-31 — full-corpus Dieux verification returned all 27 assigned
+  decisions exactly once, but in a different order. Verification and selective
+  repair now bind decisions by evidence ID rather than list position. Missing,
+  duplicate, foreign, and mismatched replacement identities still fail; source
+  order controls application and raw response order remains hash-bound lineage.
+  Prompt, schema, method, and stage identities are unchanged. Publication can
+  recover a completed response after callback rejection only when the existing
+  usage receipt equals the exact rederived bytes; it neither restamps usage nor
+  replaces a canonical response. This removes unnecessary provider repetition,
+  not semantic review: row-meaning issues and full-corpus completion remain open.
 - `v81` / 2026-08-31 — the corrected 87-row Dieux trial reached reconciliation
   with 156 meanings. One provider answer produced 98 nodes; 18 changed or
   omitted literal child conditions, and bounded inspection also found

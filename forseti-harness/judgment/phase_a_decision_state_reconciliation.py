@@ -37,6 +37,9 @@ DECISION_STATE_RECONCILIATION_MANIFEST_VERSION = (
     "phase_a_decision_state_reconciliation_manifest_v1"
 )
 DECISION_STATE_ADJUDICATION_VERSION = "phase_a_decision_state_adjudication_v1"
+DECISION_STATE_ADJUDICATION_BATCH_SET_VERSION = (
+    "phase_a_decision_state_adjudication_batch_set_v1"
+)
 
 
 def _load_object(path: Path, *, boundary: str) -> dict[str, Any]:
@@ -636,6 +639,192 @@ def _prompt(
         "are allegations to adjudicate, not votes.\n\nUNRESOLVED_EVIDENCE_GROUPS:\n"
         + payload
     )
+
+
+def prepare_phase_a_decision_state_adjudication_batches(
+    manifest: Mapping[str, Any], *, max_prompt_characters: int
+) -> dict[str, Any]:
+    """Split one reconciliation workload without splitting an evidence group."""
+
+    boundary = "decision_state_reconciliation_batching"
+    if isinstance(max_prompt_characters, bool) or not isinstance(
+        max_prompt_characters, int
+    ) or max_prompt_characters <= 0:
+        raise EvidenceConsumerError(
+            boundary, "max_prompt_characters must be a positive integer"
+        )
+    if manifest.get("schema_version") != DECISION_STATE_RECONCILIATION_MANIFEST_VERSION:
+        raise EvidenceConsumerError(boundary, "unsupported reconciliation manifest version")
+    expected_hash = manifest.get("manifest_sha256")
+    unhashed = dict(manifest)
+    unhashed.pop("manifest_sha256", None)
+    if not isinstance(expected_hash, str) or _canonical_json_sha256(unhashed) != expected_hash:
+        raise EvidenceConsumerError(boundary, "reconciliation manifest identity changed")
+    groups = manifest.get("unresolved_evidence_groups")
+    if not isinstance(groups, list) or not groups:
+        raise EvidenceConsumerError(boundary, "reconciliation has no unresolved workload")
+    scope_sha256 = _required_string(
+        manifest, "reconciliation_scope_sha256", boundary=boundary
+    )
+
+    grouped_batches: list[list[Mapping[str, Any]]] = []
+    current: list[Mapping[str, Any]] = []
+    for group in groups:
+        if not isinstance(group, Mapping):
+            raise EvidenceConsumerError(boundary, "unresolved evidence group is invalid")
+        candidate = [*current, group]
+        candidate_prompt = _prompt(
+            candidate, reconciliation_scope_sha256=scope_sha256
+        )
+        if len(candidate_prompt) <= max_prompt_characters:
+            current = candidate
+            continue
+        if not current:
+            evidence_id = _required_string(group, "evidence_id", boundary=boundary)
+            raise EvidenceConsumerError(
+                boundary,
+                f"one evidence group exceeds max_prompt_characters: {evidence_id}",
+            )
+        grouped_batches.append(current)
+        current = [group]
+        single_prompt = _prompt(current, reconciliation_scope_sha256=scope_sha256)
+        if len(single_prompt) > max_prompt_characters:
+            evidence_id = _required_string(group, "evidence_id", boundary=boundary)
+            raise EvidenceConsumerError(
+                boundary,
+                f"one evidence group exceeds max_prompt_characters: {evidence_id}",
+            )
+    if current:
+        grouped_batches.append(current)
+
+    response_schema = _response_schema(reconciliation_scope_sha256=scope_sha256)
+    batches: list[dict[str, Any]] = []
+    all_item_ids: list[str] = []
+    for index, batch_groups in enumerate(grouped_batches, start=1):
+        item_ids = sorted(
+            _required_string(item, "identity_id", boundary=boundary)
+            for group in batch_groups
+            for item in group.get("items", [])
+            if isinstance(item, Mapping)
+        )
+        expected_count = sum(
+            len(group.get("items", []))
+            for group in batch_groups
+            if isinstance(group.get("items"), list)
+        )
+        if len(item_ids) != expected_count or len(item_ids) != len(set(item_ids)):
+            raise EvidenceConsumerError(boundary, "batch item coverage is invalid")
+        prompt = _prompt(batch_groups, reconciliation_scope_sha256=scope_sha256)
+        batches.append(
+            {
+                "batch_id": f"{index:04d}",
+                "evidence_ids": [
+                    _required_string(group, "evidence_id", boundary=boundary)
+                    for group in batch_groups
+                ],
+                "item_ids": item_ids,
+                "prompt": prompt,
+                "prompt_characters": len(prompt),
+                "response_schema": copy.deepcopy(response_schema),
+            }
+        )
+        all_item_ids.extend(item_ids)
+
+    unresolved_ids = sorted(
+        _required_string(item, "identity_id", boundary=boundary)
+        for group in groups
+        for item in group.get("items", [])
+        if isinstance(item, Mapping)
+    )
+    if sorted(all_item_ids) != unresolved_ids or len(all_item_ids) != len(
+        set(all_item_ids)
+    ):
+        raise EvidenceConsumerError(boundary, "batches do not cover unresolved units exactly")
+    result: dict[str, Any] = {
+        "schema_version": DECISION_STATE_ADJUDICATION_BATCH_SET_VERSION,
+        "source_manifest_sha256": expected_hash,
+        "reconciliation_scope_sha256": scope_sha256,
+        "max_prompt_characters": max_prompt_characters,
+        "batches": batches,
+        "counts": {
+            "batch_count": len(batches),
+            "evidence_group_count": len(groups),
+            "unresolved_semantic_unit_count": len(unresolved_ids),
+        },
+    }
+    result["batch_set_sha256"] = _canonical_json_sha256(result)
+    return result
+
+
+def combine_phase_a_decision_state_adjudication_batches(
+    manifest: Mapping[str, Any],
+    batch_set: Mapping[str, Any],
+    responses: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Combine size-bounded responses and validate the unchanged full boundary."""
+
+    boundary = "decision_state_reconciliation_batch_combination"
+    if batch_set.get("schema_version") != DECISION_STATE_ADJUDICATION_BATCH_SET_VERSION:
+        raise EvidenceConsumerError(boundary, "unsupported adjudication batch-set version")
+    expected_hash = batch_set.get("batch_set_sha256")
+    unhashed = dict(batch_set)
+    unhashed.pop("batch_set_sha256", None)
+    if not isinstance(expected_hash, str) or _canonical_json_sha256(unhashed) != expected_hash:
+        raise EvidenceConsumerError(boundary, "adjudication batch-set identity changed")
+    if batch_set.get("source_manifest_sha256") != manifest.get("manifest_sha256"):
+        raise EvidenceConsumerError(boundary, "adjudication batch set binds another manifest")
+    regenerated = prepare_phase_a_decision_state_adjudication_batches(
+        manifest,
+        max_prompt_characters=batch_set.get("max_prompt_characters"),
+    )
+    if regenerated != batch_set:
+        raise EvidenceConsumerError(boundary, "adjudication batch set changed after preparation")
+    batches = batch_set.get("batches")
+    if not isinstance(batches, list) or len(responses) != len(batches):
+        raise EvidenceConsumerError(boundary, "one response is required for every batch")
+
+    judgments: list[dict[str, Any]] = []
+    for batch, response in zip(batches, responses, strict=True):
+        if not isinstance(response, Mapping):
+            raise EvidenceConsumerError(boundary, "adjudication batch response is invalid")
+        if response.get("schema_version") != DECISION_STATE_ADJUDICATION_VERSION:
+            raise EvidenceConsumerError(boundary, "unsupported adjudication response version")
+        if response.get("reconciliation_scope_sha256") != batch_set.get(
+            "reconciliation_scope_sha256"
+        ):
+            raise EvidenceConsumerError(boundary, "adjudication response scope changed")
+        if set(response) != {
+            "schema_version",
+            "reconciliation_scope_sha256",
+            "judgments",
+        }:
+            raise EvidenceConsumerError(boundary, "adjudication response fields are invalid")
+        response_judgments = response.get("judgments")
+        if not isinstance(response_judgments, list):
+            raise EvidenceConsumerError(boundary, "adjudication judgments are missing")
+        response_item_ids: set[str] = set()
+        for judgment in response_judgments:
+            if not isinstance(judgment, Mapping):
+                raise EvidenceConsumerError(boundary, "adjudication judgment is invalid")
+            response_item_ids.update(
+                _string_list(
+                    judgment.get("item_ids"), field="item_ids", boundary=boundary
+                )
+            )
+            judgments.append(copy.deepcopy(dict(judgment)))
+        if response_item_ids != set(batch["item_ids"]):
+            raise EvidenceConsumerError(
+                boundary,
+                f"adjudication response does not cover batch exactly: {batch['batch_id']}",
+            )
+
+    combined = {
+        "schema_version": DECISION_STATE_ADJUDICATION_VERSION,
+        "reconciliation_scope_sha256": batch_set["reconciliation_scope_sha256"],
+        "judgments": judgments,
+    }
+    _adjudicated_cells(manifest, combined)
+    return combined
 
 
 def prepare_phase_a_decision_state_reconciliation(

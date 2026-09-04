@@ -28,6 +28,39 @@ Cleaning, or Judgment behavior.
 
 ## Unattended Model Attempts
 
+Current method-v12 semantic reconciliation preparation writes each prompt's
+`.schema.json` alongside its `.md` file. Current response v3 requires keyed
+candidate decisions and original-label assignments. The model chooses nodes,
+relations and wording; code carries child-owned identities, literal conditions,
+emerging labels, polarity composition and lineage. Use that exact sidecar.
+Native validation rejects missing, foreign, duplicate or prohibited decisions;
+a schema pass is not semantic proof. `prepare-reconciliation-level
+--existing-stage <stage.json>` resumes unchanged stage membership. Explicit
+`--response-version semantic_evidence_reconciliation_response_v2` preserves
+historical preparation, and stored v2 responses remain consumable unchanged.
+Normal method-v12 response-v3 requests default to
+`--authoring-revision exact_identity_namespaces_v2`: opaque node-key prefixes
+separate exact subject/comparator/version identity classes without choosing
+meanings, the existing repeated-leaf rule is stated before generation, and fresh
+current stages cap each batch at 96 candidates as well as the prompt-byte limit.
+Use `--authoring-revision exact_identity_namespaces_v1` for prior namespaced
+packing or `--authoring-revision legacy` for older normal v3 replay.
+Low-level Python preparation retains legacy defaults; current callers select
+`RECONCILIATION_AUTHORING_IDENTITY_V2` explicitly. Definition recovery and local
+repair keep their previously fitting historical requests and existing keys.
+Oversized local repairs try a lossless table layout before enforcing the same
+byte limit; all sources and connected attachments remain present, and the
+response schema is unchanged. When a freshly rederived diagnostic contains only
+complete cross-child `duplicate_leaf` issues, pass that report with
+`prepare-reconciliation-repair --diagnostic <diagnostic.json>` to use the
+structural repair rendering. It includes the affected validated child meanings,
+identities, conditions, provenance paths, decisions, and parent definitions but
+no raw evidence or source-context bodies. Mixed, stale, incomplete, clean, or
+within-one-child diagnostics fail closed, as does a convergence-mode stage whose
+repeated-source-row retention this projection cannot expose. This adds no
+provider stage or semantic clearance. The semantic-integration contract v107 owns
+this boundary.
+
 For authorized unattended Codex jobs whose retries, elapsed time, or failure
 history matter, use the shared executor rather than a task-local buffered
 subprocess wrapper. It is usable by any intelligence-cycle stage:
@@ -59,9 +92,38 @@ unfinished or unsuccessful executor attempts and changed executor outputs;
 either executor record is enough to hold an attempt to that boundary.
 Receipt checks, usage accounting, stage validation, and publication use one
 captured response/events snapshot; later writes cannot replace the checked answer.
+Publication rejects duplicate JSON object keys at any depth before the caller's
+validator runs, using the same decoder hook as the semantic runner. Raw outputs
+and exact usage remain preserved on rejection; no earlier decision is silently
+replaced by a later key.
+After a stage-validator rejection, publication may reuse that completed answer
+without a new model call only if any saved usage receipt matches the exact
+rederived bytes. Conflicting receipts fail; canonical outputs are never replaced.
 Historical attempts with no executor record retain their existing
-publication behavior. A retry gets a new attempt ID; the executor launches no
+execution-record exemption, not an exemption from duplicate-key rejection.
+A retry gets a new attempt ID; the executor launches no
 automatic retry and never changes prompts, models, or evidence to obtain a pass.
+
+When a timed-out attempt contains a completed structured `agent_message`, do not
+weaken the normal publisher or relabel the attempt. Reconciliation may use the
+separate recovery command with one or more chronological retry candidates:
+
+```powershell
+python runners/run_semantic_evidence_integration.py recover-reconciliation-provider-attempt --bundle <bundle.json> --stage <stage.json> --response-schema <batch.schema.json> --attempt-dir <attempt-1> --attempt-dir <attempt-2> --recovery-dir <new-recovery-dir>
+```
+
+The command verifies the execution start and terminal receipts, their bound
+prompt/schema/output hashes, and a strict complete LF-delimited JSONL stream
+that preserves Unicode separators inside JSON string values. It requires one
+distinct completed `agent_message` per attempt, collapsing only exact identical
+retransmissions, then applies the bound JSON schema and unchanged native
+reconciliation consumer. JSON decoding rejects non-finite constants. Among
+eligible attempts it selects the earliest parsed UTC `started_at`, accepting
+canonical whole-second or fractional-second timestamps; it never compares answer
+quality. Zero or multiple distinct messages, malformed JSON, hash drift, schema or native rejection, and any
+non-timeout outcome fail closed. The new response and recovery receipt are
+no-replace artifacts. Missing completed-turn usage remains `UNOBSERVED`, the
+original attempt remains `TIMED_OUT`, and the command makes no provider call.
 
 The shared runtime lives in `provider_execution.py`; immutable storage and
 publication remain in `provider_attempts.py`. This is not a mandatory wrapper

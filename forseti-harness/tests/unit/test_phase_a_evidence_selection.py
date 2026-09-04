@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 
 import pytest
+from jsonschema import ValidationError, validate
 
 from harness_utils import hash_file
 import judgment.phase_a_evidence_selection as evidence_selection
@@ -26,6 +27,7 @@ from judgment.phase_a_evidence_axis_consolidation import (
 from judgment.phase_a_evidence_consumer import EvidenceConsumerError
 from judgment.phase_a_evidence_selection import (
     BATCHED_QUOTE_MANIFEST_VERSION,
+    DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
     DISPLAY_LABEL_BY_REASON_CODE,
     LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
     PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
@@ -52,7 +54,9 @@ from judgment.phase_a_evidence_selection import (
     _validate_relation_response,
     build_customer_pull_point_frontier,
     finalize_batched_preselection_relation_confirmations_prepare_quotes,
+    finalize_batched_preselection_relation_confirmations_full_source,
     finalize_preselection_relation_confirmation_prepare_quotes,
+    finalize_preselection_relation_confirmation_full_source,
     finalize_batched_relations_prepare_quotes,
     finalize_quotes as _finalize_quotes_runtime,
     finalize_relations_prepare_quotes,
@@ -71,6 +75,7 @@ from runners.run_semantic_evidence_integration import (
     finalize_batched_preselection_relation_confirmation_run,
     finalize_evidence_selection_batches_run,
     finalize_evidence_selection_quotes_run,
+    finalize_preselection_relation_confirmation_full_source_run,
     finalize_evidence_selection_relations_run,
     materialize_customer_pull_point_selection_spec_run as _materialize_frontier_run,
     prepare_evidence_selection_batches_run,
@@ -280,6 +285,7 @@ def _adjudication_fixture(tmp_path: Path, response_mode: str | None = None):
         "schema_version": evidence_selection.RELATION_ADJUDICATION_VERSION,
         "basis_sha256": evidence_selection.relation_adjudication_basis(original, candidates),
         "decisions": [{"source_id": "full-corpus", "evidence_id": "community_post:0",
+                       "prior_relation_semantic_unit_refs": [primary_ref],
                        "relation_semantic_unit_refs": [primary_ref], "relation": "adjacent",
                        "reason_code": "bounded_fixture_meaning",
                        "rationale": "Explicit fixture judgment, not proven semantic truth."}],
@@ -403,11 +409,51 @@ def test_adjudication_missing_binding_fails_not_primary_ref_fallback(tmp_path: P
     spec, sources, record = _adjudication_fixture(tmp_path)
     # Owned but not the exact meaning chosen by the confirmation. This cannot
     # silently apply to a different ref set, even within the same evidence.
-    record["decisions"][0]["relation_semantic_unit_refs"] = ["community_post:0::companion"]
+    record["decisions"][0]["prior_relation_semantic_unit_refs"] = ["community_post:0::companion"]
     with pytest.raises(EvidenceConsumerError) as caught:
         _adjudicated_quote(spec, sources)
     assert caught.value.boundary == "relation_adjudication_binding"
     assert "absent from confirmed rows" in str(caught.value)
+
+
+def test_adjudication_v2_replaces_exact_row_owned_relation_refs(tmp_path: Path) -> None:
+    spec, sources, record = _adjudication_fixture(tmp_path)
+    decision = record["decisions"][0]
+    decision["relation_semantic_unit_refs"] = ["community_post:0::companion"]
+    quote, _ = _adjudicated_quote(spec, sources)
+    target = [
+        row for row in quote["labeled_inventory"]
+        if row["evidence_id"] == "community_post:0"
+    ]
+    assert target
+    assert all(
+        row["relation_semantic_unit_refs"] == ["community_post:0::companion"]
+        for row in target
+    )
+    changes = quote["preselection_relation_confirmation"]["relation_adjudication"]["changes"]
+    assert all(
+        change["prior_relation_semantic_unit_refs"]
+        == ["community_post:0::hydration"]
+        and change["relation_semantic_unit_refs"]
+        == ["community_post:0::companion"]
+        for change in changes
+    )
+
+
+def test_adjudication_v1_replay_keeps_existing_shape(tmp_path: Path) -> None:
+    spec, sources, record = _adjudication_fixture(tmp_path)
+    record["schema_version"] = evidence_selection.PREVIOUS_RELATION_ADJUDICATION_VERSION
+    for decision in record["decisions"]:
+        decision.pop("prior_relation_semantic_unit_refs")
+    quote, _ = _adjudicated_quote(spec, sources)
+    changes = quote["preselection_relation_confirmation"]["relation_adjudication"]["changes"]
+    assert changes
+    assert all("prior_relation_semantic_unit_refs" not in change for change in changes)
+    target = next(
+        row for row in quote["labeled_inventory"]
+        if row["evidence_id"] == "community_post:0"
+    )
+    assert target["relation_semantic_unit_refs"] == ["community_post:0::hydration"]
 
 
 def test_adjudication_record_is_carried_inline_to_quote_consumer(tmp_path: Path) -> None:
@@ -1582,7 +1628,7 @@ def test_customer_pull_frontier_binding_and_materialized_point_spec_fail_closed(
     assert caught.value.boundary == "customer_pull_frontier_accounting"
 
 
-def test_non_value_frontier_point_admits_its_complete_axis_with_bound_recency_policy() -> None:
+def test_fresh_non_value_frontier_point_admits_only_its_literal_relations() -> None:
     packet = _proposition_packet_for_frontier()
     hydration = {
         "proposition_id": "point-hydration",
@@ -1625,19 +1671,13 @@ def test_non_value_frontier_point_admits_its_complete_axis_with_bound_recency_po
         }
     ]
 
-    assert spec["axis_ids"] == ["hydration_and_moisture"]
-    assert spec["relation_response_mode"] == "positional"
-    assert spec["temporal_presentation_policy"] == "recent_year_coverage_v1"
-    assert len(_candidate_rows(sources, spec)) == 10
+    assert spec["axis_ids"] == []
+    assert spec["relation_response_mode"] == "literal_ids"
+    assert "temporal_presentation_policy" not in spec
+    assert len(_candidate_rows(sources, spec)) == 1
 
     tampered = copy.deepcopy(spec)
     tampered["axis_ids"] = ["texture_and_skin_finish"]
-    with pytest.raises(EvidenceConsumerError) as caught:
-        prepare_evidence_selection(tampered, sources)
-    assert caught.value.boundary == "customer_pull_frontier_binding"
-
-    tampered = copy.deepcopy(spec)
-    tampered.pop("temporal_presentation_policy")
     with pytest.raises(EvidenceConsumerError) as caught:
         prepare_evidence_selection(tampered, sources)
     assert caught.value.boundary == "customer_pull_frontier_binding"
@@ -1658,10 +1698,153 @@ def test_non_value_frontier_point_admits_its_complete_axis_with_bound_recency_po
         prepare_evidence_selection(tampered, sources)
     assert caught.value.boundary == "customer_pull_frontier_binding"
 
-    legacy = copy.deepcopy(spec)
-    legacy["customer_pull_frontier_binding"].pop("frontier_relation_display_policy")
-    legacy.pop("frontier_relation_display_policy")
-    _validate_customer_pull_frontier_spec_binding(legacy, sources)
+    historical_axis_expanded = copy.deepcopy(spec)
+    historical_axis_expanded["axis_ids"] = ["hydration_and_moisture"]
+    historical_axis_expanded["relation_response_mode"] = "positional"
+    historical_axis_expanded["temporal_presentation_policy"] = (
+        "recent_year_coverage_v1"
+    )
+    historical_binding = historical_axis_expanded["customer_pull_frontier_binding"]
+    historical_binding["axis_ids_sha256"] = _canonical_hash(
+        ["hydration_and_moisture"]
+    )
+    historical_binding["candidate_admission"] = (
+        "subject_axis_union_with_literal_refs"
+    )
+    historical_binding["relation_response_mode"] = "positional"
+    historical_binding["temporal_presentation_policy"] = (
+        "recent_year_coverage_v1"
+    )
+    historical_binding.pop("subject_product_ids_sha256")
+    historical_binding.pop("truth_group_cap_sha256")
+    _validate_customer_pull_frontier_spec_binding(historical_axis_expanded, sources)
+    assert len(_candidate_rows(sources, historical_axis_expanded)) == 10
+
+
+def test_multi_product_frontier_point_admits_only_its_own_product_rows() -> None:
+    packet = _proposition_packet_for_frontier()
+    hydration = {
+        "proposition_id": "point-hydration",
+        "bounded_proposition": "Customers report that the balm hydrates their lips.",
+        "claim_kind": "customer_experience",
+        "axis_ids": ["hydration_and_moisture"],
+        "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+        "product_version_ids": [],
+        "conditions": [],
+        "evidence_item_counts": {"support": 1, "counter": 0, "adjacent": 0},
+        "evidence_relations": {
+            "support": [["community_post:5", ["community_post:5::hydration"]]],
+            "counter": [],
+            "adjacent": [],
+        },
+    }
+    packet["propositions"].append(hydration)
+    packet["selection"]["axis_ids"].append("hydration_and_moisture")
+    packet["selection"]["proposition_ids"].append("point-hydration")
+    packet["selection_coverage"]["selected_proposition_count"] += 1
+    packet.pop("packet_sha256")
+    packet["packet_sha256"] = _canonical_hash(packet)
+    frontier = build_customer_pull_point_frontier(
+        packet,
+        frontier_id="multi-product-frontier",
+        business_question="Which points merit investigation?",
+        subject_product_ids=[
+            "summer-fridays-lip-butter-balm",
+            "unrelated-company-product",
+        ],
+    )
+
+    spec = selection_spec_from_customer_pull_frontier(
+        frontier, packet, "point-hydration"
+    )
+
+    assert spec["subject_product_ids"] == ["summer-fridays-lip-butter-balm"]
+    assert len(spec["admit_semantic_refs"]) == 1
+    assert spec["customer_pull_frontier_binding"]["subject_product_ids_sha256"] == (
+        _canonical_hash(["summer-fridays-lip-butter-balm"])
+    )
+    tampered = copy.deepcopy(spec)
+    tampered["subject_product_ids"] = ["unrelated-company-product"]
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _validate_customer_pull_frontier_spec_binding(tampered, [])
+    assert caught.value.boundary == "customer_pull_frontier_binding"
+
+    tampered = copy.deepcopy(spec)
+    tampered["truth_group_cap"] += 1
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _validate_customer_pull_frontier_spec_binding(tampered, [])
+    assert caught.value.boundary == "customer_pull_frontier_binding"
+
+
+def test_frontier_point_cap_expands_only_to_fit_its_exact_truth_origins(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    packet, _ = _packet_and_bundle(25)
+    truth_evidence_ids = [
+        f"{source_role}:{index}"
+        for index in range(25)
+        for source_role in [
+            (
+                "community_post",
+                "retailer_review",
+                "retailer_review",
+                "audience_comment",
+                "creator_authored",
+            )[index % 5]
+        ]
+        if source_role != "creator_authored"
+    ][:14]
+    point = {
+        "proposition_id": "point-many-origins",
+        "bounded_proposition": "Many customers report the same bounded outcome.",
+        "claim_kind": "customer_experience",
+        "axis_ids": ["hydration_and_moisture"],
+        "subject_product_ids": ["summer-fridays-lip-butter-balm"],
+        "product_version_ids": [],
+        "conditions": [],
+        "evidence_item_counts": {"support": 14, "counter": 0, "adjacent": 0},
+        "evidence_relations": {
+            "support": [
+                [evidence_id, [f"{evidence_id}::hydration"]]
+                for evidence_id in truth_evidence_ids
+            ],
+            "counter": [],
+            "adjacent": [],
+        },
+    }
+    packet["selection"] = {
+        "mode": "proposition",
+        "axis_ids": ["hydration_and_moisture"],
+        "proposition_ids": [point["proposition_id"]],
+    }
+    packet["selection_coverage"] = {
+        "truncated": False,
+        "selected_proposition_count": 1,
+    }
+    packet["propositions"] = [point]
+    packet.pop("packet_sha256")
+    packet["packet_sha256"] = _canonical_hash(packet)
+    frontier = build_customer_pull_point_frontier(
+        packet,
+        frontier_id="many-origin-frontier",
+        business_question="Which bounded point merits investigation?",
+        subject_product_ids=["summer-fridays-lip-butter-balm"],
+    )
+
+    spec = selection_spec_from_customer_pull_frontier(
+        frontier, packet, point["proposition_id"]
+    )
+
+    assert spec["truth_group_cap"] == 14
+    assert spec["customer_pull_frontier_binding"]["truth_group_cap_sha256"] == (
+        _canonical_hash(14)
+    )
+    monkeypatch.setattr(evidence_selection, "MAX_CONFIGURABLE_TRUTH_GROUPS", 13)
+    with pytest.raises(EvidenceConsumerError) as caught:
+        selection_spec_from_customer_pull_frontier(
+            frontier, packet, point["proposition_id"]
+        )
+    assert caught.value.boundary == "presentation_cap_insufficient"
 
 
 def test_rejected_literal_frontier_relation_stays_accounted_without_forcing_display(
@@ -1736,12 +1919,15 @@ def test_rejected_literal_frontier_relation_stays_accounted_without_forcing_disp
         for row in candidates
         if row["semantic_unit_ref"] == "community_post:5::hydration"
     )
-    response = _positional_relation_response(candidates)
-    for index, candidate in enumerate(candidates):
+    response = _relation_response(candidates)
+    response_rows = {
+        row["candidate_id"]: row for row in response["results"]
+    }
+    for candidate in candidates:
         if candidate["candidate_id"] == rejected_candidate["candidate_id"]:
-            response["results_by_candidate_row"][f"row_{index:04d}"] = "exclude"
+            response_rows[candidate["candidate_id"]]["relation"] = "exclude"
         elif candidate["candidate_id"] == surviving_candidate["candidate_id"]:
-            response["results_by_candidate_row"][f"row_{index:04d}"] = "support"
+            response_rows[candidate["candidate_id"]]["relation"] = "support"
     _, _, quote_manifest = finalize_relations_prepare_quotes(
         manifest, sources, response
     )
@@ -2461,6 +2647,36 @@ def test_year_derivation_matches_admitted_publication_time_shapes() -> None:
     assert _publication_year({"publication_time": "2026-05-13"}) == 2026
     assert _publication_year({"publication_time": None}) is None
     assert _publication_year({"publication_time": "not-a-date"}) is None
+
+
+@pytest.mark.parametrize("value", ["1 year ago", "4 months ago", "an hour ago"])
+def test_source_relative_publication_labels_remain_exact_time_unavailable(value: str) -> None:
+    assert _publication_time_value(value) is None
+
+
+@pytest.mark.parametrize("value", ["last year", "about 1 year ago", "1 year", "2026ish"])
+def test_malformed_publication_times_still_fail_closed(value: str) -> None:
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _publication_time_value(value)
+    assert caught.value.boundary == "publication_time"
+
+
+def test_relative_publication_label_is_not_mutated_or_promoted_to_an_exact_date(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, count=1)
+    source = sources[0]
+    packet = source["packet"]
+    evidence_columns = packet["source_groups"][0]["evidence_columns"]
+    evidence_row = packet["source_groups"][0]["evidence_rows"][0]
+    publication_index = evidence_columns.index("publication_time")
+    evidence_row[publication_index] = "2 months ago"
+    _reseal(source)
+
+    candidates = _candidate_rows(sources, spec)
+
+    assert candidates[0]["publication_time"] is None
+    assert evidence_row[publication_index] == "2 months ago"
 
 
 def test_temporal_display_order_never_reads_unavailable_engagement_as_zero() -> None:
@@ -4077,6 +4293,15 @@ def test_batched_frontier_route_confirms_before_cap_and_replays_exactly(
     artifact = _finalize_quotes_runtime(
         quote_manifest, sources, _quote_response(quote_manifest, sources)
     )
+    full_source_manifest, full_source_artifact = (
+        finalize_batched_preselection_relation_confirmations_full_source(
+            batch_manifest,
+            sources,
+            responses,
+            confirmation_manifest,
+            confirmation_responses,
+        )
+    )
 
     assert quote_manifest["schema_version"] == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
     assert quote_manifest["relation_transport"]["mode"] == "named_positional_batches"
@@ -4084,6 +4309,15 @@ def test_batched_frontier_route_confirms_before_cap_and_replays_exactly(
     assert artifact["candidate_count"] == 20
     assert artifact["point_actor_scope"] == spec["point_actor_scope"]
     assert artifact["timeline"]
+    assert full_source_manifest["schema_version"] == (
+        DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION
+    )
+    assert full_source_artifact["candidate_count"] == 20
+    assert all(
+        row["exact_quote"]
+        for group in full_source_artifact["source_groups"]
+        for row in group["rows"]
+    )
     assert artifact["selection_disclosure"]["temporal_presentation_policy"] == (
         "recent_year_coverage_v1"
     )
@@ -4475,7 +4709,7 @@ def test_relation_batch_runner_writes_and_finalizes_exact_batch_set(
     ).command == "prepare-batched-preselection-relation-confirmation"
 
 
-@pytest.mark.parametrize("cap", [0, 21, "15", True])
+@pytest.mark.parametrize("cap", [0, 41, "15", True])
 def test_selection_spec_rejects_invalid_truth_origin_cap(
     tmp_path: Path, cap: object
 ) -> None:
@@ -4634,6 +4868,8 @@ def test_v9_accepts_relation_binding_v8_replays_and_v7_remains_bounded(
     dubious_artifact = _finalize_quotes_runtime(
         quote_manifest, sources, structurally_exact_but_semantically_dubious
     )
+
+
     assert dubious_artifact["source_groups"][0]["rows"][0]["exact_quote"] == (
         "Goal is to finish this tube because"
     )
@@ -4752,6 +4988,166 @@ def test_v9_accepts_relation_binding_v8_replays_and_v7_remains_bounded(
     with pytest.raises(EvidenceConsumerError) as caught:
         _finalize_quotes_runtime(legacy_manifest, sources, historical_response)
     assert caught.value.boundary == "quote_overlength"
+
+
+def _current_confirmation_response(
+    candidates: list[dict[str, object]],
+    first_pass: dict[str, object],
+    confirmation_manifest: dict[str, object],
+) -> dict[str, object]:
+    relation_by_candidate = {
+        row["candidate_id"]: row for row in first_pass["results"]
+    }
+    semantic_ref_by_candidate = {
+        row["candidate_id"]: row["semantic_unit_ref"] for row in candidates
+    }
+    return {
+        "point_scope": "single_point",
+        "point_scope_reason": "One product state under one condition set.",
+        "relation_checks": [
+            {
+                "confirmation_row_id": row_id,
+                "relation": relation_by_candidate[candidate_id]["relation"],
+                "reason_code": relation_by_candidate[candidate_id]["reason_code"],
+                "relation_semantic_unit_refs": [semantic_ref_by_candidate[candidate_id]],
+            }
+            for row_id, candidate_id in zip(
+                confirmation_manifest["confirmation_row_ids"],
+                confirmation_manifest["confirmation_candidate_ids"],
+                strict=True,
+            )
+        ],
+    }
+
+
+def test_v10_finalizes_full_source_without_a_quote_provider_and_fails_on_attachment(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    body = "Opening qualifier. " + "The balm works in cold weather. " * 20
+    assert len(body) > 220
+    sources[0]["bundle"]["evidence_units"][0]["text"] = body
+    _reseal(sources[0])
+    _, _, selection_manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    first_pass = _relation_response(candidates)
+    _, _, confirmation_manifest = prepare_preselection_relation_confirmation(
+        selection_manifest, sources, first_pass
+    )
+    confirmation_response = _current_confirmation_response(
+        candidates, first_pass, confirmation_manifest
+    )
+
+    quote_manifest, artifact = (
+        finalize_preselection_relation_confirmation_full_source(
+            selection_manifest,
+            sources,
+            first_pass,
+            confirmation_manifest,
+            confirmation_response,
+        )
+    )
+
+    assert quote_manifest["schema_version"] == (
+        DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION
+    )
+    assert "provider_selected_ids" not in quote_manifest
+    assert "quote_transport" not in quote_manifest
+    assert "prompt_sha256" not in quote_manifest
+    row = artifact["source_groups"][0]["rows"][0]
+    assert row["exact_quote"] == body
+    assert row["relation_semantic_unit_refs"]
+    assert any(
+        "relation semantic-unit references are judgment-authored"
+        in boundary
+        for boundary in artifact["output_boundary"]
+    )
+    assert _finalize_quotes_runtime(quote_manifest, sources, {}) == artifact
+    with pytest.raises(EvidenceConsumerError) as caught:
+        _finalize_quotes_runtime(quote_manifest, sources, {"quotes": []})
+    assert caught.value.boundary == "unexpected_quote_response"
+
+
+def test_v10_preserves_missing_source_body_as_explicit_unavailability(
+    tmp_path: Path,
+) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    sources[0]["bundle"]["evidence_units"] = []
+    _reseal(sources[0])
+    _, _, selection_manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    first_pass = _relation_response(candidates)
+    _, _, confirmation_manifest = prepare_preselection_relation_confirmation(
+        selection_manifest, sources, first_pass
+    )
+    confirmation_response = _current_confirmation_response(
+        candidates, first_pass, confirmation_manifest
+    )
+
+    _, artifact = finalize_preselection_relation_confirmation_full_source(
+        selection_manifest,
+        sources,
+        first_pass,
+        confirmation_manifest,
+        confirmation_response,
+    )
+    row = artifact["source_groups"][0]["rows"][0]
+    assert row["quote_status"] == "quote_unavailable"
+    assert row["source_body_present"] is False
+    assert row["quote_unavailable_cause"] == "source_body_unavailable"
+    assert row["exact_quote"] is None
+
+
+def test_full_source_runner_writes_manifest_and_artifact_once(tmp_path: Path) -> None:
+    spec, sources = _write_source(tmp_path, 1)
+    _, _, selection_manifest = prepare_evidence_selection(spec, sources)
+    candidates = _candidate_rows(sources, spec)
+    first_pass = _relation_response(candidates)
+    _, _, confirmation_manifest = prepare_preselection_relation_confirmation(
+        selection_manifest, sources, first_pass
+    )
+    confirmation_response = _current_confirmation_response(
+        candidates, first_pass, confirmation_manifest
+    )
+    inputs = {
+        "selection": selection_manifest,
+        "first": first_pass,
+        "confirmation_manifest": confirmation_manifest,
+        "confirmation_response": confirmation_response,
+    }
+    paths = {}
+    for name, value in inputs.items():
+        path = tmp_path / f"{name}.json"
+        path.write_text(json.dumps(value), encoding="utf-8")
+        paths[name] = path
+    quote_out = tmp_path / "quote-v10.json"
+    artifact_out = tmp_path / "artifact-v3.json"
+
+    result = finalize_preselection_relation_confirmation_full_source_run(
+        selection_manifest_path=paths["selection"],
+        first_response_path=paths["first"],
+        confirmation_manifest_path=paths["confirmation_manifest"],
+        confirmation_response_path=paths["confirmation_response"],
+        quote_manifest_out=quote_out,
+        artifact_out=artifact_out,
+    )
+
+    assert result["model_api_calls"] == 0
+    assert json.loads(quote_out.read_text(encoding="utf-8"))["schema_version"] == (
+        DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION
+    )
+    assert json.loads(artifact_out.read_text(encoding="utf-8"))["schema_version"] == (
+        "phase_a_evidence_selection_artifact_v3"
+    )
+    with pytest.raises(ValueError, match="refusing to overwrite"):
+        finalize_preselection_relation_confirmation_full_source_run(
+            selection_manifest_path=paths["selection"],
+            first_response_path=paths["first"],
+            confirmation_manifest_path=paths["confirmation_manifest"],
+            confirmation_response_path=paths["confirmation_response"],
+            quote_manifest_out=quote_out,
+            artifact_out=artifact_out,
+        )
 
 
 @pytest.mark.parametrize(
@@ -5738,6 +6134,49 @@ def test_value_policy_does_not_turn_time_to_finish_into_quantity_value() -> None
     assert "Time to finish, pan, or empty a product is completed-use evidence" in guidance
     assert "not quantity efficiency" in guidance
     assert "explicitly says it will buy or repurchase again" in guidance
+
+
+def test_relation_schemas_enforce_the_consumer_reason_code_length_limit() -> None:
+    relation_schema = _relation_schema()
+    valid_relation = {
+        "results": [
+            {
+                "candidate_id": "candidate_01",
+                "relation": "support",
+                "reason_code": "a" * 80,
+            }
+        ]
+    }
+    validate(valid_relation, relation_schema)
+    invalid_relation = copy.deepcopy(valid_relation)
+    invalid_relation["results"][0]["reason_code"] = "a" * 81
+    with pytest.raises(ValidationError, match="is too long"):
+        validate(invalid_relation, relation_schema)
+
+    confirmation_schema = (
+        evidence_selection._preselection_relation_confirmation_schema(
+            value_policy=False,
+            include_relation_refs=True,
+            row_relation_bindings=[("row_01", ["semantic::01"])],
+        )
+    )
+    valid_confirmation = {
+        "point_scope": "single_point",
+        "point_scope_reason": "one bounded point",
+        "relation_checks": [
+            {
+                "confirmation_row_id": "row_01",
+                "relation": "support",
+                "reason_code": "a" * 80,
+                "relation_semantic_unit_refs": ["semantic::01"],
+            }
+        ],
+    }
+    validate(valid_confirmation, confirmation_schema)
+    invalid_confirmation = copy.deepcopy(valid_confirmation)
+    invalid_confirmation["relation_checks"][0]["reason_code"] = "a" * 81
+    with pytest.raises(ValidationError, match="is too long"):
+        validate(invalid_confirmation, confirmation_schema)
 
 
 def test_hype_policy_guidance_forbids_laundering_generic_expectations_into_hype() -> None:

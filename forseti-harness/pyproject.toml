@@ -4,9 +4,11 @@ version = "0.14.0"
 description = "Deterministic Step A judgment harness rebuild for Forseti"
 requires-python = ">=3.12"
 dependencies = [
+  "jsonschema>=4.23,<5",
   "Pillow>=10,<13",
   "pydantic>=2.13,<3",
   "PyYAML>=6.0,<7",
+  "referencing>=0.35,<1",
 ]
 
 [project.optional-dependencies]

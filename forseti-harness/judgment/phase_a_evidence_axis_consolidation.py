@@ -17,18 +17,20 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 from urllib.parse import urlparse
 
-from harness_utils import hash_file
+from harness_utils import hash_file, sha256_text
 from judgment.phase_a_evidence_consumer import (
     EvidenceConsumerError,
     _canonical_json_sha256,
     _verify_packet,
 )
 from judgment.phase_a_evidence_selection import (
+    DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
     POINT_ACTOR_SCOPE_GUIDANCE,
     PARENT_CONTEXT_POLICY,
     SELECTION_BATCH_MANIFEST_VERSION,
     _candidate_rows,
     _point_actor_scope,
+    _truth_group_cap,
     _validate_actor_relations,
     _verify_bundle,
     load_selection_sources,
@@ -50,7 +52,7 @@ AXIS_READER_MANIFEST_VERSION = "phase_a_evidence_axis_reader_manifest_v2"
 AXIS_READER_ACCOUNTING_VERSION = "phase_a_evidence_axis_reader_accounting_v1"
 POINT_READER_RUN_MANIFEST_VERSION = "phase_a_evidence_point_reader_run_manifest_v2"
 POINT_READER_BRIEF_VERSION = "phase_a_evidence_point_brief_v4"
-POINT_READER_REQUEST_VERSION = "phase_a_evidence_point_reader_request_v3"
+POINT_READER_REQUEST_VERSION = "phase_a_evidence_point_reader_request_v5"
 POINT_READER_AXIS_OUTPUT_VERSION = "phase_a_evidence_point_reader_axis_output_v2"
 POINT_READER_SUBJECT_IDENTITY_VERSION = "phase_a_point_reader_subject_identity_v1"
 NO_FRONTIER_READER_REQUEST_VERSION = "phase_a_evidence_no_frontier_reader_request_v1"
@@ -60,14 +62,24 @@ POINT_READER_METHOD_TEXT = (
     "Use the supplied relation and literal evidence without relabelling either. Preserve "
     "counterevidence and awkward coexistence. For Decision State, distinguish judgment, "
     "intent, observed action, quantity, object, and conditions; never turn intent into "
-    "observed behavior or several purchased units into several repurchases. Do not infer "
-    "prevalence, causation, market representativeness, pricing power, or a Deliver "
-    "recommendation. Treat candidate_pool_accounting as exact captured-pool "
+    "observed behavior or several purchased units into several repurchases. Current use "
+    "or possession of another container does not prove a completed repeat purchase unless "
+    "an exact owned meaning explicitly records the acquisition or repurchase. "
+    "Bind every condition, time, action, quantity, attribution, and outcome only to the "
+    "exact meaning that states it. A quote or companion meaning from the same evidence is "
+    "context, not permission to transfer its fields to a neighboring meaning; preserve "
+    "coexisting observations without fusing them or reducing an experienced outcome to "
+    "intent alone. Do not infer prevalence, causation, market representativeness, or "
+    "pricing power, and do not make or infer an analyst Deliver recommendation. Preserve "
+    "source-authored advice as source-local evidence without adopting it as analyst advice. "
+    "Treat candidate_pool_accounting as exact captured-pool "
     "bookkeeping: distinguish it from selected display examples, and never turn its "
     "row or origin counts into customer prevalence. Read full_candidate_pool before "
     "reading the display panel as the point. State its exact captured support and counter "
     "counts before characterizing direction or balance; never let the displayed examples "
-    "stand in for the full pool. Cite only supplied point-local placement handles."
+    "stand in for the full pool. The display panel remains selected examples even when "
+    "its row count happens to equal the full-pool row count. Cite only supplied "
+    "point-local placement handles."
 )
 POINT_READER_RESPONSE_SCHEMA: dict[str, Any] = {
     "type": "object",
@@ -111,12 +123,12 @@ SOURCE_AXIS_PACK_VERSION = AXIS_PACK_VERSION
 LEGACY_HYDRATION_AXIS_PACK_VERSION = "phase_a_hydration_axis_pack_v2"
 LEGACY_CONSOLIDATION_POLICY = "origin_normalized_surface_separated_v1"
 CONSOLIDATION_POLICY = "point_routed_origin_normalized_surface_separated_v2"
-POINT_TRUTH_ORIGIN_CAP = 13
 SUPPORTED_QUOTE_MANIFEST_VERSIONS = {
     "phase_a_evidence_quote_manifest_v6",
     "phase_a_evidence_quote_manifest_v7",
     "phase_a_evidence_quote_manifest_v8",
     "phase_a_evidence_quote_manifest_v9",
+    DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
 }
 INDEPENDENCE_POSTURES = {
     "credited",
@@ -521,6 +533,73 @@ def _validated_candidate_parent_contexts(
     return contexts
 
 
+def _literal_frontier_axis_is_bound(
+    *,
+    selection_spec: Mapping[str, Any],
+    point_id: str,
+    bounded_point: str,
+    expected_axis: str,
+    candidate_by_id: Mapping[str, Mapping[str, Any]],
+    sources: Sequence[Mapping[str, Any]],
+) -> bool:
+    """Resolve a literal-frontier point's axis without rewriting row tags."""
+
+    frontier_binding = selection_spec.get("customer_pull_frontier_binding")
+    if not (
+        selection_spec.get("axis_ids") == []
+        and selection_spec.get("relation_response_mode") == "literal_ids"
+        and selection_spec.get("relation_policy") == "bounded_point"
+        and isinstance(frontier_binding, Mapping)
+        and frontier_binding.get("proposition_id") == point_id
+        and frontier_binding.get("candidate_admission") == "literal_point_relations"
+    ):
+        return False
+
+    # Historical literal-frontier manifests did not preserve enough point-level
+    # authority to distinguish a cross-axis point from foreign row tags. Keep
+    # their existing conservative all-candidate check unchanged.
+    if selection_spec.get("schema_version") != "phase_a_evidence_selection_spec_v2":
+        return all(
+            isinstance(candidate.get("axis_ids"), list)
+            and expected_axis in candidate["axis_ids"]
+            for candidate in candidate_by_id.values()
+        )
+
+    packet_sha256 = frontier_binding.get("packet_sha256")
+    if (
+        not isinstance(packet_sha256, str)
+        or not packet_sha256
+        or frontier_binding.get("bounded_point_sha256") != sha256_text(bounded_point)
+    ):
+        return False
+    matched_propositions: list[Mapping[str, Any]] = []
+    for source in sources:
+        packet = source.get("packet")
+        if not isinstance(packet, Mapping) or packet.get("packet_sha256") != packet_sha256:
+            continue
+        propositions = packet.get("propositions")
+        if not isinstance(propositions, list):
+            return False
+        matched_propositions.extend(
+            proposition
+            for proposition in propositions
+            if isinstance(proposition, Mapping)
+            and proposition.get("proposition_id") == point_id
+        )
+    if len(matched_propositions) != 1:
+        return False
+    proposition = matched_propositions[0]
+    point_axes = proposition.get("axis_ids")
+    return (
+        proposition.get("bounded_proposition") == bounded_point
+        and isinstance(point_axes, list)
+        and bool(point_axes)
+        and all(isinstance(axis_id, str) and axis_id for axis_id in point_axes)
+        and len(point_axes) == len(set(point_axes))
+        and expected_axis in point_axes
+    )
+
+
 def _validate_point_binding(
     descriptor: Mapping[str, Any], *, expected_axis: str, require_complete_pins: bool
 ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
@@ -620,23 +699,16 @@ def _validate_point_binding(
             f"candidate parent context lacks a linked source policy: {point_id}",
         )
     selection_spec = selection_manifest.get("spec")
-    frontier_binding = (
-        selection_spec.get("customer_pull_frontier_binding")
-        if isinstance(selection_spec, Mapping)
-        else None
-    )
+    sources = load_selection_sources(selection_manifest)
     literal_frontier_axis_binding = (
         isinstance(selection_spec, Mapping)
-        and selection_spec.get("axis_ids") == []
-        and selection_spec.get("relation_response_mode") == "literal_ids"
-        and selection_spec.get("relation_policy") == "bounded_point"
-        and isinstance(frontier_binding, Mapping)
-        and frontier_binding.get("proposition_id") == point_id
-        and frontier_binding.get("candidate_admission") == "literal_point_relations"
-        and all(
-            isinstance(candidate.get("axis_ids"), list)
-            and expected_axis in candidate["axis_ids"]
-            for candidate in candidate_by_id.values()
+        and _literal_frontier_axis_is_bound(
+            selection_spec=selection_spec,
+            point_id=point_id,
+            bounded_point=bounded_point,
+            expected_axis=expected_axis,
+            candidate_by_id=candidate_by_id,
+            sources=sources,
         )
     )
     if (
@@ -647,7 +719,7 @@ def _validate_point_binding(
         )
     ):
         raise EvidenceConsumerError("candidate_access", f"axis binding changed: {point_id}")
-    sources = load_selection_sources(selection_manifest)
+    expected_truth_group_cap = _truth_group_cap(selection_spec)
     for source in sources:
         packet = source.get("packet")
         bundle = source.get("bundle")
@@ -701,9 +773,11 @@ def _validate_point_binding(
         raise EvidenceConsumerError("quote_binding", f"artifact quote binding changed: {point_id}")
 
     if require_complete_pins:
-        if artifact.get("truth_group_cap") != POINT_TRUTH_ORIGIN_CAP:
+        if artifact.get("truth_group_cap") != expected_truth_group_cap:
             raise EvidenceConsumerError(
-                "point_policy", f"truth origin cap must be {POINT_TRUTH_ORIGIN_CAP}: {point_id}"
+                "point_policy",
+                f"truth origin cap must be {expected_truth_group_cap} from the bound "
+                f"selection spec: {point_id}",
             )
         if artifact.get("selection_manifest_sha256") != selection_manifest.get(
             "manifest_sha256"
@@ -749,7 +823,7 @@ def _validate_point_binding(
     }
     if artifact.get("truth_group_count") != len(truth_origins):
         raise EvidenceConsumerError("point_policy", f"truth origin count changed: {point_id}")
-    if len(truth_origins) > POINT_TRUTH_ORIGIN_CAP:
+    if len(truth_origins) > expected_truth_group_cap:
         raise EvidenceConsumerError("point_policy", f"truth origin cap exceeded: {point_id}")
     if require_complete_pins:
         disclosure = artifact.get("selection_disclosure")

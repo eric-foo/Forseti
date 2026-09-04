@@ -8,7 +8,7 @@ from typing import Any, Mapping
 
 import pytest
 
-from harness_utils import hash_file
+from harness_utils import hash_file, sha256_text
 from judgment.phase_a_evidence_axis_consolidation import (
     AXIS_PACK_MANIFEST_VERSION,
     AXIS_PACK_VERSION,
@@ -64,7 +64,10 @@ from judgment.phase_a_evidence_consumer import (
 from judgment.phase_a_decision_state_reconciliation import (
     DECISION_STATE_ADJUDICATION_VERSION,
     DECISION_STATE_RECONCILIATION_PLAN_VERSION,
+    _prompt as _decision_state_prompt,
+    combine_phase_a_decision_state_adjudication_batches,
     finalize_phase_a_decision_state_reconciliation,
+    prepare_phase_a_decision_state_adjudication_batches,
     prepare_phase_a_decision_state_reconciliation,
 )
 from judgment.phase_a_evidence_selection import PARENT_CONTEXT_POLICY
@@ -1846,6 +1849,12 @@ def test_reader_instructions_oblige_pool_counts_before_display_balance(
     assert method_text == POINT_READER_METHOD_TEXT
     assert "before characterizing direction or balance" in method_text
     assert "never let the displayed examples stand in for the full pool" in method_text
+    assert "only to the exact meaning that states it" in method_text
+    assert "context, not permission to transfer its fields" in method_text
+    assert "without fusing them" in method_text
+    assert "does not prove a completed repeat purchase" in method_text
+    assert "Preserve source-authored advice as source-local evidence" in method_text
+    assert "even when its row count happens to equal" in method_text
 
     reader, _ = build_axis_reader_bundle(
         view, source_view_path=view_path, facts_dir=tmp_path / "contract_facts"
@@ -3984,6 +3993,76 @@ def test_axis_pack_rejects_frontier_literal_ref_point_with_foreign_candidate_axi
         build_phase_a_evidence_axis_pack(manifest)
 
 
+def test_current_frontier_point_axis_binding_allows_split_candidate_axis_tags() -> None:
+    point_id = "point_cross_axis"
+    bounded_point = "Skin was reported to feel soft."
+    selection_spec = {
+        "schema_version": "phase_a_evidence_selection_spec_v2",
+        "axis_ids": [],
+        "relation_response_mode": "literal_ids",
+        "relation_policy": "bounded_point",
+        "customer_pull_frontier_binding": {
+            "proposition_id": point_id,
+            "candidate_admission": "literal_point_relations",
+            "packet_sha256": "bound_packet",
+            "bounded_point_sha256": sha256_text(bounded_point),
+        },
+    }
+    candidates = {
+        "candidate_hydration": {"axis_ids": ["hydration"]},
+        "candidate_texture": {"axis_ids": ["texture"]},
+    }
+    sources = [
+        {
+            "packet": {
+                "packet_sha256": "bound_packet",
+                "propositions": [
+                    {
+                        "proposition_id": point_id,
+                        "bounded_proposition": bounded_point,
+                        "axis_ids": ["hydration", "texture"],
+                    }
+                ],
+            }
+        }
+    ]
+
+    assert consolidation_judgment._literal_frontier_axis_is_bound(
+        selection_spec=selection_spec,
+        point_id=point_id,
+        bounded_point=bounded_point,
+        expected_axis="hydration",
+        candidate_by_id=candidates,
+        sources=sources,
+    )
+    assert consolidation_judgment._literal_frontier_axis_is_bound(
+        selection_spec=selection_spec,
+        point_id=point_id,
+        bounded_point=bounded_point,
+        expected_axis="texture",
+        candidate_by_id=candidates,
+        sources=sources,
+    )
+    assert not consolidation_judgment._literal_frontier_axis_is_bound(
+        selection_spec=selection_spec,
+        point_id=point_id,
+        bounded_point=bounded_point,
+        expected_axis="service",
+        candidate_by_id=candidates,
+        sources=sources,
+    )
+    wrong_packet = copy.deepcopy(sources)
+    wrong_packet[0]["packet"]["packet_sha256"] = "other_packet"
+    assert not consolidation_judgment._literal_frontier_axis_is_bound(
+        selection_spec=selection_spec,
+        point_id=point_id,
+        bounded_point=bounded_point,
+        expected_axis="hydration",
+        candidate_by_id=candidates,
+        sources=wrong_packet,
+    )
+
+
 def _repin_literal_frontier_point(
     manifest: dict[str, Any], descriptor: dict[str, Any], selection: dict[str, Any]
 ) -> None:
@@ -4291,6 +4370,46 @@ def test_generic_pack_rejects_a_nonstandard_truth_origin_cap_after_repinning(
     _rehash_manifest(changed)
     with pytest.raises(EvidenceConsumerError, match="truth origin cap must be 13"):
         build_phase_a_evidence_axis_pack(changed)
+
+
+def test_generic_pack_accepts_truth_origin_cap_bound_by_selection_spec(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, _, paths = _generic_fixture(tmp_path, monkeypatch)
+    descriptor = manifest["accepted_points"][0]
+    selection_path = Path(descriptor["selection_manifest_path"])
+    quote_path = Path(descriptor["quote_manifest_path"])
+    artifact_path = Path(descriptor["artifact_path"])
+
+    selection = json.loads(selection_path.read_text(encoding="utf-8"))
+    selection["spec"]["truth_group_cap"] = 20
+    _rehash_manifest(selection)
+    _write(selection_path, selection)
+
+    quote = json.loads(quote_path.read_text(encoding="utf-8"))
+    quote["selection_manifest_sha256"] = selection["manifest_sha256"]
+    quote["truth_group_cap"] = 20
+    _rehash_manifest(quote)
+    _write(quote_path, quote)
+
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    artifact["selection_manifest_sha256"] = selection["manifest_sha256"]
+    artifact["quote_manifest_sha256"] = quote["manifest_sha256"]
+    artifact["truth_group_cap"] = 20
+    _write(artifact_path, artifact)
+
+    descriptor.update(
+        artifact_sha256=hash_file(artifact_path),
+        selection_manifest_file_sha256=hash_file(selection_path),
+        selection_manifest_sha256=selection["manifest_sha256"],
+        quote_manifest_file_sha256=hash_file(quote_path),
+        quote_manifest_sha256=quote["manifest_sha256"],
+    )
+    _rehash_manifest(manifest)
+
+    pack = build_phase_a_evidence_axis_pack(manifest)
+    assert pack["points"][0]["point_id"] == "point_a"
+    assert paths["artifact_point_a"].is_file()
 
 
 def test_non_truth_support_origin_is_displayed_but_never_counted_as_truth(
@@ -5924,6 +6043,98 @@ def test_decision_state_reconciliation_runner_materializes_bound_provider_contra
             prompt_output=tmp_path / "unused_prompt.txt",
             response_schema_output=None,
         )
+
+
+def test_decision_state_reconciliation_batches_without_splitting_evidence(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    plan, _, _, _ = _decision_state_reconciliation_fixture(tmp_path, monkeypatch)
+    plan["prior_specs"] = []
+    manifest = prepare_phase_a_decision_state_reconciliation(plan)
+    groups = manifest["unresolved_evidence_groups"]
+    assert len(groups) > 1
+    scope_sha256 = manifest["reconciliation_scope_sha256"]
+    max_single_group_characters = max(
+        len(
+            _decision_state_prompt(
+                [group], reconciliation_scope_sha256=scope_sha256
+            )
+        )
+        for group in groups
+    )
+    min_single_group_characters = min(
+        len(
+            _decision_state_prompt(
+                [group], reconciliation_scope_sha256=scope_sha256
+            )
+        )
+        for group in groups
+    )
+    with pytest.raises(
+        EvidenceConsumerError, match="one evidence group exceeds"
+    ) as too_small:
+        prepare_phase_a_decision_state_adjudication_batches(
+            manifest,
+            max_prompt_characters=min_single_group_characters - 1,
+        )
+    assert too_small.value.boundary == "decision_state_reconciliation_batching"
+
+    batch_set = prepare_phase_a_decision_state_adjudication_batches(
+        manifest,
+        max_prompt_characters=max_single_group_characters,
+    )
+    repeated = prepare_phase_a_decision_state_adjudication_batches(
+        manifest,
+        max_prompt_characters=max_single_group_characters,
+    )
+    assert batch_set == repeated
+    assert len(batch_set["batches"]) > 1
+    assert all(
+        batch["prompt_characters"] <= max_single_group_characters
+        for batch in batch_set["batches"]
+    )
+    assert all(
+        len(batch["evidence_ids"]) == len(set(batch["evidence_ids"]))
+        for batch in batch_set["batches"]
+    )
+
+    responses = [
+        {
+            "schema_version": DECISION_STATE_ADJUDICATION_VERSION,
+            "reconciliation_scope_sha256": scope_sha256,
+            "judgments": [
+                {
+                    "item_ids": [item_id],
+                    "classification": "context_only",
+                    "state_kind": None,
+                    "commercial_direction": None,
+                    "decision_object": None,
+                    "quantity": None,
+                    "conditions": [],
+                }
+                for item_id in batch["item_ids"]
+            ],
+        }
+        for batch in batch_set["batches"]
+    ]
+    combined = combine_phase_a_decision_state_adjudication_batches(
+        manifest, batch_set, responses
+    )
+    assert {
+        item_id
+        for judgment in combined["judgments"]
+        for item_id in judgment["item_ids"]
+    } == {
+        item["identity_id"] for group in groups for item in group["items"]
+    }
+
+    with pytest.raises(
+        EvidenceConsumerError, match="does not cover batch exactly"
+    ) as caught:
+        combine_phase_a_decision_state_adjudication_batches(
+            manifest, batch_set, list(reversed(responses))
+        )
+    assert caught.value.boundary == "decision_state_reconciliation_batch_combination"
 
 
 def _repin_point_chain(

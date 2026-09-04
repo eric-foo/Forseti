@@ -54,6 +54,13 @@ answer remains preserved, and a corrected prompt uses a fresh attempt over
 the same verified compilation without repeating extraction or verification.
 This is not a semantic-truth guarantee or a full-corpus completion claim.
 
+Whole-row verification and selective repair attach each decision by its explicit
+evidence ID, not response-list position. Every assigned row must occur exactly
+once; missing, duplicate, foreign, and mismatched replacement identities fail.
+Application preserves source order and raw response hashes preserve the actual
+answer order. Contract v82 owns this boundary; it changes no semantic prompt or
+stage identity and does not make a structurally valid answer semantically right.
+
 The existing calibration entry point follows the production-owned
 `SEMANTIC_METHODS_V7_PLUS` set, including current method v12, rather than a
 separate historical allowlist. Primary and cold-repeat evaluation both require
@@ -113,13 +120,14 @@ Test names below resolve in
 | --- | --- | --- | --- |
 | Every accepted point is explicitly routed once to `direct_outcome` or `decision_state`; one axis may mix both. | An axis name silently forces every point through one reading shape, so a result and an actor's choice state become indistinguishable. | This workflow, paragraph beginning `Projection routing is point-level`; `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py` (`_projection_routes`); axis tests `test_v2_projection_routes_require_exactly_one_known_route_per_point` and `test_mixed_projection_routes_keep_direct_and_decision_points_distinct`. | PR [#1513](https://github.com/eric-foo/forseti/pull/1513); commits `55b57dfb`, `9ec2e865`. |
 | Decision State preserves actor, object, state kind/stage, direction, quantity, conditions, relation-bearing meanings, and same-source companion states; direct results can remain explicit context only. | Purchase intent becomes purchase, four units become four repurchases, or regret and intended repurchase collapse into one positive/negative label. | This workflow, paragraphs beginning `The v2 builder implements both` and `The v2 spec carries these facts`; `DECISION_STATE_CONSUMER_CONTRACT` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_decision_state_projects_typed_companion_states_and_rejected_frontier`, `test_decision_state_wrong_cause_transitions_fail_at_semantic_boundary`, `test_decision_state_bindings_require_exact_row_and_semantic_coverage`, and `test_decision_state_retains_direct_result_row_as_explicit_context_only`. | PR [#1513](https://github.com/eric-foo/forseti/pull/1513); commits `a75de28e`, `e92dfc2f`, `9ec2e865`. |
-| Current Decision State authoring reuses an old judgment only when the evidence ID, semantic-unit ref, literal normalized statement, axes, conditions, and polarity are unchanged and every prior observation gives the same complete state bundle; only new, changed, partial, or conflicting meanings return to bounded judgment. | A rebuild copies states by point or row position, so regrouping the same evidence transfers a correct-looking state to the wrong meaning, or every rebuild pays to re-judge already settled evidence. | This workflow, paragraph beginning `When current packs regroup`; `phase_a_decision_state_reconciliation.py`; runner commands `prepare-decision-state-reconciliation` and `finalize-decision-state-reconciliation`; axis tests beginning `test_decision_state_reconciliation_`. | Semantic-integration contract changelog `v67`. The manifest is run-scoped, not a global registry, and historical agreement proves reuse eligibility rather than semantic truth. |
+| Current Decision State authoring reuses an old judgment only when the evidence ID, semantic-unit ref, literal normalized statement, axes, conditions, and polarity are unchanged and every prior observation gives the same complete state bundle; only new, changed, partial, or conflicting meanings return to bounded judgment. Oversized delta work is packed by whole evidence group under an explicit character ceiling and recombined only with exact batch-local and full-manifest coverage. | A rebuild copies states by point or row position, so regrouping the same evidence transfers a correct-looking state to the wrong meaning; every rebuild pays to re-judge already settled evidence; or one all-axis request exceeds the provider entry limit or silently drops an overflow group. | This workflow, paragraph beginning `When current packs regroup`; `phase_a_decision_state_reconciliation.py`; runner commands `prepare-decision-state-reconciliation`, `prepare-decision-state-adjudication-batches`, `combine-decision-state-adjudication-batches`, and `finalize-decision-state-reconciliation`; axis tests beginning `test_decision_state_reconciliation_`. | Semantic-integration contract changelog `v67` and `v112`. The manifest is run-scoped, not a global registry, and historical agreement proves reuse eligibility rather than semantic truth. |
+| A current literal-frontier point takes its axis membership from the exact hash-bound packet proposition, while every selected evidence row remains attached to its own source-native axis tags. Historical sparse manifests still require the conservative all-row match. | One valid multi-axis finding is rejected from an axis merely because its evidence rows divide the finding's axes among themselves, or an unbound axis is admitted by a loose row tag. | `_literal_frontier_axis_is_bound` in `phase_a_evidence_axis_consolidation.py`; axis tests `test_current_frontier_point_axis_binding_allows_split_candidate_axis_tags` and `test_axis_pack_rejects_foreign_axis_candidate`. | Semantic-integration contract changelog `v112`; packet proposition identity remains the authority and no row tag, relation, or frozen artifact is rewritten. |
 | Price concern, value rejection or approval, and source-supported premium quality/positioning remain separate; Phase A does not infer pricing power or a higher-tier recommendation. | "Expensive but worth it" is flattened into poor value, or the word `premium` is invented from price and handed downstream as a recommendation. | This workflow, paragraph beginning `For price-and-value evidence`; `DECISION_STATE_BOUNDARIES` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; `VALUE_RELATION_GUIDANCE`, `_uses_value_policy`, and `_select_value_groups` in `forseti-harness/judgment/phase_a_evidence_selection.py`; axis test `test_decision_state_keeps_price_value_and_premium_meanings_distinct`; selection tests `test_high_spend_buyer_remorse_cannot_be_promoted_to_value_support` and `test_value_policy_does_not_turn_time_to_finish_into_quantity_value`. | Semantic-integration contract changelog `v40`, `v45`, `v46`, and `v48`; commits `5529a646`, `ef791055`; PR [#1513](https://github.com/eric-foo/forseti/pull/1513). |
 | Several matching statements from one origin remain several source observations but add only one independent origin; literal evidence, date, surface, and native engagement stay attached to each observation. | Two statements from one account are reported as two independent people, or the later statement disappears during origin de-duplication. | `forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`, "Independent origins and source observations are different counts"; `EVIDENCE_ACCOUNTING_CONTRACT` and `_same_origin_observation_groups` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_same_origin_repeated_observation_survives_without_adding_origin_credit` and `test_generic_axis_pack_preserves_same_origin_repeated_observation`. | Commit `8442885a`; PR [#1513](https://github.com/eric-foo/forseti/pull/1513). |
 | Every admitted frontier candidate remains accounted; a literal relation rejected for a proved wrong source link stays excluded and cold-resolvable, while counterevidence and the last earning signal cannot be removed. Rejected-only axes require pinned resolution receipts. | A bad literal link is replaced with a nearby quote, or rejected and awkward evidence simply disappears so the axis looks complete. | This workflow, `frontier_relation_rejections` paragraph beginning `That failure removes only`, and rejected-only paragraph beginning `An axis whose entire frontier fails`; `_validate_resolved_frontier_earning` and `_apply_frontier_relation_rejections` in `forseti-harness/judgment/phase_a_evidence_selection.py`; `build_phase_a_evidence_axis_pack` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; selection tests `test_rejected_literal_frontier_relation_stays_accounted_without_forcing_display`, `test_frontier_relation_rejection_cannot_remove_the_last_earning_signal`, and `test_frontier_relation_rejection_cannot_hide_counterevidence`; axis tests `test_rejected_only_axis_requires_and_preserves_cold_resolution_receipt` and `test_decision_state_preserves_mixed_axis_rejected_point_resolution_receipt`. | Commits `9b6dd2ca`, `36a40086`, `3ffe2d4e`; PR [#1515](https://github.com/eric-foo/forseti/pull/1515). |
-| Quote length never decides whether current evidence is truthful. Current v9 authoring returns row-bound source-token addresses and deterministic code copies the exact contiguous span; 220 remains only the short-body copy/review-workload threshold. Historical v7/v8 quote responses retain their stamped text transport and boundary rules. | A long truthful explanation is rejected because it is inconvenient to display, a model transcribes or transfers another row's quote, or historical replay silently changes. | This workflow, paragraph beginning `Every selected row whose literal semantic reference` and quote-stage paragraph beginning `The quote stage reads bodies`; `PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION`, `CURRENT_QUOTE_TRANSPORT`, and historical compatibility branches in `forseti-harness/judgment/phase_a_evidence_selection.py`; selection test `test_v9_accepts_relation_binding_v8_replays_and_v7_remains_bounded`, including foreign-body, foreign-token, reversed-span, and structurally valid but semantically unproven controls. | Semantic-integration contract changelog `v58` and `v66`; commits `54610553`, `ce3e7a61`; PR [#1516](https://github.com/eric-foo/forseti/pull/1516). |
+| Quote length never decides whether current evidence is truthful. Current v10 authoring deterministically copies each selected row's complete bound source body; the model neither transcribes nor shortens it. Historical v7/v8 text and v9 token-span quote responses retain their stamped transports and boundary rules. | A long truthful explanation is rejected because it is inconvenient to display, a model clips or transfers another row's quote, or historical replay silently changes. | This workflow, paragraph beginning `Every selected row whose literal semantic reference` and quote-stage paragraph beginning `The current quote stage`; `DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION` and historical compatibility branches in `forseti-harness/judgment/phase_a_evidence_selection.py`; selection tests `test_v10_finalizes_full_source_without_a_quote_provider_and_fails_on_attachment` and `test_v9_accepts_relation_binding_v8_replays_and_v7_remains_bounded`. | Semantic-integration contract changelog `v58`, `v66`, and `v111`; historical commits `54610553`, `ce3e7a61`; PR [#1516](https://github.com/eric-foo/forseti/pull/1516). |
 | A cold model reads routed v2 evidence through a hash-bound manifest plus one point-local JSONL file containing self-contained displayed facts; route-specific meaning remains inside each fact. | A normalized view or one axis-wide fact stream forces repeated joins or searches, so reading cost becomes unstable or a quote, date, relation, companion meaning, or Decision State is transferred across points. | This workflow, paragraph beginning `When a cold model must read`; `build_axis_reader_bundle` and `validate_axis_reader_bundle` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_axis_reader_bundle_keeps_complete_direct_outcome_facts_local`, `test_axis_reader_bundle_keeps_decision_state_and_mixed_routes_distinct`, and `test_axis_reader_bundle_wrong_cause_reaches_reprojection_boundary`. | The landing revision and review disposition are preserved in Git history; no frozen consolidated-view bytes are changed. |
-| Scalable reader compilation freezes path-independent point identities, lets one worker read one complete point, compiler-attaches exact evidence and Decision State, reuses unchanged briefs, and assembles only exact accepted/rejected membership. | Rebuilding or prompting a whole axis after one point changes wastes work; a compact answer can also look exact while dropping a state, borrowing a quote, or omitting a late worker result. | This workflow, paragraph beginning `For scalable point-at-a-time compilation`; point-reader functions in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py` and `forseti-harness/runners/run_phase_a_evidence_axis_consolidation.py`; axis tests `test_point_reader_compiler_closes_decision_state_at_consumer_boundary`, `test_point_reader_identity_binds_meaning_but_not_storage_path`, `test_point_reader_runner_reuses_valid_points_and_recovers_partial_run`, and `test_point_reader_membership_scales_without_a_whole_axis_schema`. | Semantic-integration contract changelog `v59`; commits `81cad271`, `cb102c6a`, and `3ef82edc`. This route adds generated run bookkeeping, not an evidence authority, global index, hierarchy, or Deliver stage. Frozen v1/v2 outputs remain unchanged. |
+| Scalable reader compilation freezes path-independent point identities, lets one worker read one complete point, compiler-attaches exact evidence and Decision State, reuses unchanged briefs, and assembles only exact accepted/rejected membership. Each condition, time, action, quantity, attribution, and outcome remains owned by the exact meaning that states it; same-evidence quotes and companions may supply context but never lend fields to a neighboring meaning. Current use or possession of another container is not a completed repeat purchase without an exact acquisition meaning. A source's advice remains reportable source-local evidence without becoming analyst advice. | Rebuilding or prompting a whole axis after one point changes wastes work; a compact answer can also look exact while dropping a state, borrowing a quote, attaching one observation's duration to another outcome, reducing experienced failure to intent, converting ongoing use into a completed purchase, erasing source-authored advice, or omitting a late worker result. | This workflow, paragraph beginning `For scalable point-at-a-time compilation`; `POINT_READER_METHOD_TEXT` and point-reader functions in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py` plus the public runner; axis tests `test_point_reader_compiler_closes_decision_state_at_consumer_boundary`, `test_point_reader_identity_binds_meaning_but_not_storage_path`, `test_point_reader_runner_reuses_valid_points_and_recovers_partial_run`, `test_point_reader_membership_scales_without_a_whole_axis_schema`, and `test_reader_instructions_oblige_pool_counts_before_display_balance`. | Semantic-integration contract changelog `v59`, `v113`, and `v114`; commits `81cad271`, `cb102c6a`, and `3ef82edc`. This route adds generated run bookkeeping, not an evidence authority, global index, hierarchy, checker stage, or Deliver stage. Frozen earlier reader requests and outputs remain unchanged. |
 | Every compact reader carries a deterministic full-candidate-pool label beside its selected display examples. Point-bearing labels preserve point-relative relation rows, evidence items, origins, direct-relation overlap, source-role splits, and material-engagement origins; no-frontier labels preserve full candidate shape but make relations explicitly not applicable. Current reader accounting and point-local compilation accept only current-format packs with their complete embedded identity and lineage; the legacy hydration v2 pack remains replayable through its historical consolidated-view route but fails loudly at the current-reader boundary. | A balanced-looking 13-origin display panel hides a materially asymmetric 327-row captured pool, an evidence-rich no-point axis acquires invented support/counter labels merely to obtain a compact summary, or a replay-only legacy pack silently enters the current point reader with reconstructed identity or lineage. | This workflow, paragraph beginning `Before reading selected examples as the axis`; `build_axis_reader_accounting` and `validate_axis_reader_accounting` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; the exact-count-before-characterization duty carried to the consumer in `POINT_READER_METHOD_TEXT` and the `build_axis_reader_bundle` reader rule; tests `test_axis_reader_accounting_keeps_full_candidate_pool_distinct_from_display`, `test_current_reader_rejects_legacy_hydration_pack_but_replay_still_builds`, `test_axis_reader_accounting_rejects_a_coherently_rehashed_false_full_pool`, `test_reader_instructions_oblige_pool_counts_before_display_balance`, and `test_no_frontier_reader_accounting_preserves_shape_without_inventing_relations`. Deterministic validators prove the accounting arrives and reprojects; they cannot read model prose, so a reader that receives the duty and ignores it stays undetectable at every current boundary. | A temporary, independently reviewed legacy bridge was used only for the 12-axis measurement recorded in semantic-integration changelog `v60`, then removed before publication. Frozen point artifacts, axis packs, consolidation specs, and consolidated views retain their bytes. |
 | An evidence-rich axis with no admitted frontier point preserves every exact axis-tagged candidate in a no-frontier v2 pack; its compact reader sends every candidate once in a columnar table, cold-resolves parent context, accepts only in-pool example handles, and recompiles those handles to exact source rows. It invents no point and assigns no support/counter relation. | Zero-proposition axes disappear as apparently complete empties, an operator fabricates a convenient claim merely to retain useful evidence, a displayed sample masquerades as the complete pool, or a cold reader receives the whole verbose pack and accounting payload. | This workflow, paragraph beginning `When an axis has nonempty axis-tagged evidence`; `materialize_phase_a_evidence_no_frontier_axis_manifest`, `_build_no_frontier_axis_pack`, `build_no_frontier_reader_request`, and `compile_no_frontier_reader_output` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; selection tests `test_no_frontier_axis_pack_preserves_every_candidate_and_reprojects`, `test_no_frontier_axis_pack_rejects_repinned_missing_candidate_at_accounting`, `test_no_frontier_axis_pack_rejects_repinned_cross_evidence_attachment`, `test_no_frontier_axis_route_rejects_an_already_admitted_point_at_status_boundary`, `test_no_frontier_axis_pack_never_presents_unresolved_parent_context_as_absent`, and `test_no_frontier_reader_compacts_complete_pool_and_recovers_exact_examples`. | The v2 pack and no-frontier reader are separate consumer shapes. Existing point-bearing v1 packs and routed v1/v2 consolidated views retain their existing bytes and route. |
 | Frozen v1 specs and views rebuild under their original shape and bytes; v2-only routing, Decision State, and evidence-accounting fields never leak backward. | A current improvement quietly restamps historical evidence or makes the compatibility control look reproducible when its bytes changed. | This workflow, paragraph containing `The v1 spec and`; `LEGACY_CONSOLIDATION_SPEC_VERSION`, `LEGACY_CONSOLIDATED_VIEW_VERSION`, and `build_axis_consolidated_view` in `forseti-harness/judgment/phase_a_evidence_axis_consolidation.py`; axis tests `test_v1_spec_remains_deterministic_and_reprojects_without_v2_fields`, `test_v1_rejects_decision_state_spec_residue`, and `test_legacy_v1_does_not_gain_evidence_accounting_fields`. | PR [#1513](https://github.com/eric-foo/forseti/pull/1513); commits `55b57dfb`, `9ec2e865`. Quote-manifest v7/v8 replay is the separate compatibility boundary in semantic-integration contract changelog `v58`. |
@@ -235,13 +243,17 @@ choose the right relation. Historical unscoped replay is not reinterpreted.
 
 An explicit bounded adjudication may settle a repeated exact-binding conflict.
 Attach it once to the current point spec as an inline `relation_adjudication`
-`phase_a_relation_adjudication_v1` record. The record contains
+record. Current `phase_a_relation_adjudication_v2` contains
 `schema_version`, `basis_sha256`, and nonempty `decisions`. Compute the basis
 with `phase_a_evidence_selection.relation_adjudication_basis(manifest,
 candidates)` over the verified current selection and its complete candidate
 inventory. Each authored decision carries `source_id`, `evidence_id`, the
-exact nonempty `relation_semantic_unit_refs`, `relation`, `reason_code`, and a
-source-backed `rationale`. This is an explicit judgment input, not a provider
+exact nonempty prior and replacement `relation_semantic_unit_refs`, `relation`,
+`reason_code`, and a source-backed `rationale`. The prior set locates one exact
+confirmed binding, which may occur on multiple confirmed candidate rows; both
+sets must be nonempty and owned by the same evidence row. V1 remains replayable
+and uses its one ref set only as the locator, leaving the confirmed refs
+unchanged. This is an explicit judgment input, not a provider
 answer, self-certifying approval field, or automatic preference for an older
 label. A changed point/spec, source file, candidate inventory, or judging policy
 invalidates the basis and requires renewed judgment; do not merely rehash it.
@@ -251,16 +263,18 @@ excluded from the basis to avoid a cycle. Because the record travels inside the
 spec, replay does not depend on an authoring machine's filesystem.
 
 Both existing preselection finalizers apply the authored relation and reason
-to every confirmed row with that exact source/evidence/ref-set binding. They
-never choose or change refs. Unmatched or duplicate decisions fail visibly;
-all other rows retain their provider answers and the consistency guard remains
-active. Raw provider responses remain in replay, and the confirmation receipt
-records the embedded correction, every changed candidate and prior label, and
-the mechanically-unproven semantic warrant. The quote consumer revalidates the
-same binding. Historical unscoped specs and pre-confirmation routes cannot
-accept this extension. No default correction, global judgment cache, extra
-provider call, or mandatory review ceremony is introduced. This exception path
-does not remove the existing semantic workload for a genuinely fresh selection.
+to every confirmed row with that exact source/evidence/ref-set binding. V2 also
+applies the authored replacement refs; V1 leaves the confirmed refs unchanged.
+The finalizers do not independently choose either set. Unmatched or duplicate
+decisions fail visibly; all other rows retain their provider answers and the
+consistency guard remains active. Raw provider responses remain in replay, and
+the confirmation receipt records the embedded correction, every changed
+candidate and prior label, and the mechanically-unproven semantic warrant. The
+quote consumer revalidates the same binding. Historical unscoped specs and
+pre-confirmation routes cannot accept this extension. No default correction,
+global judgment cache, extra provider call, or mandatory review ceremony is
+introduced. This exception path does not remove the existing semantic workload
+for a genuinely fresh selection.
 
 The scope survives unchanged into the point artifact, consolidated view,
 structured reader, point-reader request, and compiled brief. Missing or changed
@@ -288,9 +302,8 @@ prepare-evidence-selection
   -> prepare-preselection-relation-confirmation
   -> external hidden-label confirmation over every material, protected, or
      influence row that could reach display
-  -> finalize-preselection-relation-confirmation
-  -> external row-bound quote-span response
-  -> finalize-evidence-selection-quotes (no separate confirmation attachment for v9)
+  -> finalize-preselection-relation-confirmation-full-source
+     (deterministically copies each selected row's complete bound source body)
 ```
 
 When that frontier-bound non-value point expands to a large axis pool, use the
@@ -302,9 +315,8 @@ prepare-evidence-selection-batches
   -> prepare-batched-preselection-relation-confirmation
   -> external named hidden-label confirmation responses over every material,
      protected, or influence row that could reach display
-  -> finalize-batched-preselection-relation-confirmation
-  -> external row-bound quote-span response
-  -> finalize-evidence-selection-quotes (no separate confirmation attachment for v9)
+  -> finalize-batched-preselection-relation-confirmation-full-source
+     (deterministically copies each selected row's complete bound source body)
 ```
 
 Both batch manifests bind contiguous complete row coverage and each response's
@@ -340,6 +352,233 @@ validates the batch-bound response, extracts and preserves the exact completed-
 turn usage, and atomically hard-links the response without replacement. Keep
 every attempt directory after publication or failure.
 
+A completed structured answer stranded inside a timed-out attempt is not a
+normal publication success. For reconciliation only, use
+`recover-reconciliation-provider-attempt` with the exact bundle, immutable
+stage, stored batch schema, every candidate attempt directory, and a new
+recovery directory. The route verifies both execution receipts; the bound
+prompt, schema, events, stderr, and optional response hashes; one distinct
+completed `agent_message`; strict JSON object decoding that rejects non-finite
+constants; LF-delimited JSONL that preserves Unicode separators inside string
+values; the stored response schema; and the unchanged stage-native consumer. Exact identical
+retransmissions inside one attempt may collapse. Across eligible retries the
+earliest bound `started_at` UTC instant wins without comparing answer meaning
+or quality; canonical whole-second and fractional-second timestamps are both
+ordered by parsed time rather than their text representation.
+Zero messages, multiple distinct messages, partial or malformed JSON, changed
+hashes, schema or native rejection, and non-timeout outcomes remain rejected.
+The route writes new no-replace response and recovery-receipt artifacts, never
+changes the attempt, never relabels its `TIMED_OUT` outcome, makes no provider
+call, and records missing completed-turn usage as `UNOBSERVED` rather than
+estimating it. Normal publication remains unchanged and still refuses timed-out
+attempts.
+
+Whole-row verification and repair preparation for current keyed-v3 methods v10,
+v11 and v12 emits response v2 with one required answer slot per assigned evidence ID. Use the
+public preparation runner's accompanying `.schema.json` as the provider output
+schema, not an array-length-only substitute. Native consumers still enforce
+exact coverage and replacement ownership. Explicit library-level v1 prompt
+replay and stored v1 responses remain supported; the source-work stage is unchanged, so accepted
+answers are not regenerated merely to adopt keyed transport. Correct row
+participation does not establish correct interpretation.
+
+Current method-v12 reconciliation preparation persists decision-only response
+v3's schema beside every prompt. Every candidate has one required decision slot
+(one or more node attachments, or an allowed unmerged reason); every original
+emerging label has one required group-assignment slot. Normal-mode admitted
+customer findings cannot be unmerged: an uncertain finding may remain a
+nonterminal singleton. The model owns grouping, relations, bounded wording,
+axes and claim/uncertainty metadata. Code carries exact compatible product,
+comparator and version identities, literal child-owned conditions, original
+emerging labels, polarity composition and lineage. It never authors a missing
+decision or definition; explicit model-authored completion is separate below.
+Native consumers reject missing, foreign,
+duplicate, orphan or prohibited assignments, and incompatible identities.
+Structural exactness does not establish semantic warrant.
+Normal method-v12 response-v3 requests at `prepare-reconciliation-level` select
+`exact_identity_namespaces_v2`: each exact subject/comparator/version set tuple
+gets an opaque prefix and each candidate may attach only to keys in its own
+class. Compatible evidence may share any number of model-authored keys; matching
+identity does not justify merging meanings. The same rule applies at later
+levels and in convergence. V2 also states the native one-leaf/one-child-path
+rule and caps fresh current batches at 96 candidates so output and connected
+repair scope remain bounded without truncation. It adds request bytes, not
+another provider stage.
+New packing includes those bytes; resumed stages keep their frozen membership
+and fail without truncation when they cannot fit.
+Use `--authoring-revision exact_identity_namespaces_v1` for prior namespaced
+replay and `--authoring-revision legacy` for older normal prompt/schema replay;
+low-level Python callers select `RECONCILIATION_AUTHORING_IDENTITY_V2` explicitly
+for current generation. Explicit response-v2 and older-method public defaults,
+missing-definition requests and local repairs keep their historical behavior.
+Preserve each accepted response's actual attempt and correction provenance;
+never rebind it to a newly rendered unused request. The semantic-integration
+contract v104 owns this normal-authoring boundary. Semantic preservation and
+upstream identity truth remain judgment-owned; preventing incompatible attempts
+also removes their incidental discrepancy signal, with no equal-discovery claim.
+Current response-v3 authoring and review apply the intelligence claim-support
+contract's **Meaning-preserving interpretation and useful abstraction** rule.
+Interpret ordinary language in context and consolidate a useful common claim
+when each supporting child establishes it; do not demand the same words or
+identical detail. Keep source-specific detail, conditions and uncertainty with
+their evidence. Shared interest is not completed behavior, and a shared axis is
+not automatically corroboration. The same rule governs review; no growing list
+of phrase-specific owner exemptions or additional provider pass is required.
+The semantic-integration contract's compiler-owned-count boundary also governs
+bounded wording: normal response-v3 and missing-definition prompts request
+count-neutral reported propositions, not inferred author headcounts. Preserve
+source-attributed statements about others as attributed. Oppositely oriented
+comparisons remain separate under the existing exact-identity node shape even
+when they express the same fact; separation does not create extra observations
+or people. These instructions do not make semantic prose mechanically verified.
+
+Use `prepare-reconciliation-level --existing-stage <stage.json>` to render new
+requests for an unchanged partially completed stage. Oversized resumed current
+prompts may compact JSON whitespace without losing content or repartitioning.
+Accepted responses are not regenerated merely to change transport. Explicit
+`--response-version semantic_evidence_reconciliation_response_v2` retains old
+prompt replay; stored v2 responses can coexist with v3 responses at submission.
+The downstream node-compilation shape and normal-path semantic provider-stage
+count stay unchanged. Historical method-v11-and-earlier preparation remains unchanged.
+
+If the current consumer raises `MissingReconciliationDefinitions`, use the shared
+failure-only `prepare-reconciliation-definitions --bundle ... --stage ...
+--failed-response ... --output-dir <fresh-request-directory>` command. It binds
+the failed bytes and requires a definition or explicit cannot-define answer for
+every missing key, using only the affected candidate groups. Run that request
+through the existing isolated provider/usage route, at `high`, keeping each
+attempt immutable. Allow at most one corrective attempt before returning a
+remaining failure to judgment. Successful batches need no extra call.
+
+Before choosing any current response-v3 repair scope, run the no-provider
+`diagnose-reconciliation-response --bundle ... --stage ... --response ...
+--diagnostic-out <fresh-json>` command once on the failed response. It preserves
+the validator's exact first failure while listing the other independently
+observable bookkeeping defects and the candidate/node handles they affect.
+Checks made unknowable by malformed prerequisites are listed as skipped rather
+than guessed. The result is a repair-planning aid only: `valid: false` remains
+unaccepted, the command never edits the response or chooses a correction, and
+structural findings do not prove that any wording or relation is semantically
+wrong. Contract v103 owns this boundary.
+
+Submit with `submit-reconciliation-definitions --bundle ... --stage ...
+--failed-response ... --request <request.json> --patch <corrective-response.json>
+--output-dir <fresh-successor-directory>`. It preserves existing decisions and
+definitions, adds only model-authored missing nodes, and validates the complete
+successor at the normal consumer. Use that successor explicitly at level
+submission; never overwrite the failed response or treat its receipt as a success.
+An unsupported grouping, incomplete patch or other newly exposed defect blocks
+publication. Reuse a matching validated successor without a new provider call.
+The generation schema also forbids an empty definition list when retention
+requires findings; it cannot guarantee every referenced definition exists.
+Exact bindings and completeness do not prove semantic warrant. The semantic-
+integration contract's v88 recovery boundary owns these rules.
+
+For current decision-only requests, the response schema couples terminal status
+to its claim metadata: claim kind and causal ceiling are null for a nonterminal
+node and populated for a terminal node, while a terminal opposition-check flag
+must be a boolean. This prevents provider-visible structural combinations the
+native consumer has always rejected; it does not judge whether the claim itself
+is true or whether opposition was adequately reviewed. Historical v2 schemas
+replay unchanged.
+
+Current decision-only authoring also requires one relation per exact
+candidate-and-node pair. A candidate may attach to multiple distinct bounded
+meanings, but it must not attach to the same node once as support and again as
+counterevidence. The unchanged native consumer rejects that ambiguous duplicate;
+the prompt states the invariant before generation without weakening the
+consumer check. Dieux level-3 dogfood still produced this invalid shape, so the
+consumer remains the reliable enforcement and prompt-level prevention is not
+proven.
+
+For a named grouping, wording, status or attachment defect (including an issue
+found by source-aware review despite structural acceptance), use
+`prepare-reconciliation-repair --bundle ... --stage ... --failed-response ...
+--nomination <json> --output-dir <fresh-request-directory>`. The nomination is
+`{"node_keys": ["..."], "candidate_refs": [], "reason": "source-backed issue"}`;
+either list may be empty but not both. The producer expands to the connected
+component, supplying source-owned meaning, exact evidence/contexts and separate
+source inventory. It does not detect prose errors or award claim support.
+Before writing the request, preparation rejects and names every incompatible
+product/comparator/version group left outside that scope. Explicitly include
+those groups in the nomination before spending the corrective call; code never
+silently broadens the scope or chooses their replacement meanings. Other native
+or semantic defects can still remain, so this is not a complete error census.
+Current optional retention schemas disallow simultaneous attachments and an
+unmerged reason before submission, while native guards remain unchanged.
+
+When that freshly written diagnostic is invalid and its complete issue set is
+exclusively cross-child `duplicate_leaf`, pass the same file as
+`--diagnostic <diagnostic.json>` to `prepare-reconciliation-repair`. This selects
+the compact structural renderer: it supplies only the affected already-validated
+child definitions and their bounded statements, conditions, identities and
+provenance paths; current affected decisions and parent definitions; and the
+deterministic forbidden same-node leaf paths. It omits raw evidence and context
+bodies rather than truncating or claiming to reread them. The provider still
+chooses the semantic restructuring, and the ordinary composer plus unchanged
+whole-response validator remain final. A stale diagnostic, mixed issue class,
+skipped dependent check, omitted diagnosed scope, clean response, or repeated
+leaf confined to one child blocks this mode. A convergence-mode stage also blocks
+it, because convergence retention counts repeated distinct source rows this
+projection does not carry; use the general repair route for that level. Without
+`--diagnostic`, the existing general repair and historical replay path is
+unchanged.
+
+If the native failure is a reused node key, explicitly nominate that key. The
+repair request includes every definition sharing it and every connected
+candidate/source, and the provider must return unique bounded replacements.
+Never rename or redistribute duplicate meanings in code. A duplicate outside
+the connected nomination blocks preparation by name.
+
+Oversized local repairs try the lossless `PACKED_REPAIR_CONTEXT_V1` table layout
+inside the same preparation command. Shared fields and column headings remove
+repetition, not evidence: every source, candidate, context and attachment stays
+in the connected scope. Previously fitting repair requests replay unchanged.
+The same byte limit applies after packing; no truncation, larger limit, extra
+provider call or automatic semantic repair is introduced. The consumer binds
+the full original context and rederives the exact rendered request.
+
+After one bounded corrective attempt through the existing provider/usage route,
+submit with `submit-reconciliation-repair --bundle ... --stage ...
+--failed-response ... --request <request.json> --patch <response.json>
+--output-dir <fresh-successor-directory>`. Use the verified successor explicitly
+in the continuing selection. Refusal, foreign scope, unsupported grouping,
+missing context, over-limit context or another native failure remains blocking.
+Never clear a problem by automatic relabeling or discarding counterevidence.
+The semantic-integration contract v107's **Local reconciliation correction**
+section owns this failure/review-only route and its semantic non-claims; it adds
+no standing provider stage and does not replace source-aware judgment.
+
+When that exact patch is scope-valid but full validation reveals a different
+independent defect, compose it as an explicitly unaccepted intermediate before
+preparing the next existing bounded repair: `compose-reconciliation-repair
+--bundle ... --stage ... --failed-response ... --request <request.json> --patch
+<response.json> --output-dir <fresh-composed-directory>`. Bind the source
+response, request, patch and intermediate hashes. Never place the intermediate
+in the selection or treat composition as validation. This preserves the first
+edit without a whole-batch rerun; it does not authorize automatic repair, an
+unbounded retry loop or another normal-path stage. When the newly visible error
+is a missing definition, `prepare-reconciliation-definitions-after-repair` takes
+the same bound inputs and writes that intermediate plus the existing definition
+request and its chain receipt. Apply the same rule when a missing-definition
+patch reveals the next independent native error: compose its exact unaccepted
+intermediate with `compose-reconciliation-definitions`, then use the existing
+bounded preparer for that error. Both composers report
+`..._COMPOSED_NOT_ACCEPTED` with `accepted: false`, and the chained preparer
+reports `intermediate_accepted: false`; all three make no model call and refuse
+to write into an existing directory. The semantic-integration contract v100 owns
+this layered-failure boundary.
+
+If response validation failed after usage was saved, publication may be retried
+without a new model call. The existing usage receipt must equal the bytes
+rederived from the same response, event stream, and caller schema; changed
+receipts or executor outputs fail. This never overwrites an existing canonical
+response and never promotes a timed-out or unfinished execution.
+Before invoking the caller's validator, publication rejects duplicate JSON
+object keys at every depth using the same decoder hook as the public semantic
+runner. Rejection preserves the raw answer and exact usage; parsed last-key-wins
+objects are not valid evidence of exact decision coverage.
+
 The filesystem behavior lives in `forseti-harness/provider_attempts.py` and
 performs no model call. The Phase A commands above are compatibility adapters:
 they add evidence-selection response validation while reusing the same unique-
@@ -365,8 +604,8 @@ or unconfirmed rows fail closed. Historical v6 quote manifests retain their
 selected-row confirmation route for exact reproduction; they are not silently
 restamped as v7.
 
-Non-value axis-expanded point packs use `recent_year_coverage_v1` as a display
-preference. The latest two calendar years present in the eligible pool receive
+Historical non-value axis-expanded point packs use `recent_year_coverage_v1` as a display
+preference. The latest two calendar years present in that eligible pool receive
 representation across available venue/role/native-metric buckets, up to half
 the thirteen-origin cap after mandatory relation/protection reservations. When
 eligible and space remains, one dated pre-window origin is retained so the
@@ -471,6 +710,11 @@ independence, conditions, behavior, uncertainty, and full-body bundle
 resolution remain available. Operators do not select examples, supply a top-k
 cap, perform a new lookup, or request v3 through an extra flag. Explicit v2 is
 the matched comparison route; v1 is historical reproduction.
+
+Use `--all-propositions` when the downstream customer-pull frontier needs the
+complete finalized view. The runner expands that selection from the view itself
+rather than requiring one command-line argument per proposition; it cannot be
+combined with axis or explicit proposition selection.
 
 ### Adopted token-cost baseline
 
@@ -785,7 +1029,7 @@ alone never establish boundedness.
 
 For a fresh point selection, exact linked parent text travels only with the
 point's explicitly admitted semantic refs. It is deduplicated into a compact
-parent-context table rather than repeated across the axis-wide candidate pool.
+parent-context table.
 Every point-scope confirmation batch receives that same compact table so a
 batch cannot decide scope from a context-stripped point. The table may clarify
 the point, but it does not attach parent meaning to every evidence row: a row
@@ -816,9 +1060,11 @@ support, counter, or adjacent relations under
 `literal_point_relations_display_eligible_v1`; this preserves the evidence that
 actually admitted the point without treating quiet engagement as resonance.
 Every eligible frontier-defining candidate is a mandatory display row and its
-origin is reserved before ordinary cap allocation. If more than thirteen
-distinct frontier origins are required for one point, completion fails at
-`presentation_cap_insufficient` instead of silently skipping quote review.
+origin is reserved before ordinary cap allocation. Fresh complete-frontier
+specs raise the ordinary thirteen-origin cap only to the exact number of bound
+truth origins the point requires, up to forty, and hash-bind that cap. A point
+requiring more than forty fails at `presentation_cap_insufficient` before
+provider work instead of silently skipping quote review.
 Other origins with no operator-protected lane and no material positive
 source-native engagement remain ineligible, and value-first also excludes an
 otherwise material adjacent origin.
@@ -827,18 +1073,15 @@ bounded point passed the separate scope classification; a broad axis or bundled
 claim never reaches a completed point-pack disclosure.
 
 Every selected row whose literal semantic reference helped admit the frontier
-point also enters exact-quote relevance review even when its source body is 220
-characters or shorter. A short body is still quoted in full when relevant, but
-it may no longer become an automatic exact-looking quote for a meaning it does
-not contain. If an available frontier-defining body yields no relevant exact
-quote, point completion fails at `frontier_relation_quote_relevance`; do not
-replace it with parent, child, sibling, or engagement meaning. One narrow case
-is not replacement: when the literal body is a direct terse reply and its
-selected row names one exact hash-bound parent context, the parent may supply
-the omitted premise or referent. Quote review receives only that row-bound
-context, and the returned quote remains one contiguous exact substring of the
-child body. Never copy, splice, or paraphrase parent text into the quote; if the
-exact parent-child pair still leaves any material meaning unstated, reject it.
+point keeps its complete bound source body as the exact quote. Deterministic
+code verifies the packet, evidence identity, source identity, and body hash,
+then copies the original body without asking a model to shorten, transcribe, or
+substitute it. An absent body remains explicitly `quote_unavailable` with cause
+`source_body_unavailable`; no parent, child, sibling, or engagement meaning may
+replace it. Linked parent context remains separately bound reading context and
+is never copied or spliced into the row's exact quote. This proves complete
+row/body transfer, not that the chosen source or relation is semantically
+correct; that remains the responsibility of the two relation judgments.
 
 That failure removes only the affected literal support relation, not
 automatically every other relation attached to the point. Counter and adjacent
@@ -846,10 +1089,9 @@ relations are not eligible for this repair. After checking the bound source, an
 author may rerun the point with a hash-bound `frontier_relation_rejections` row
 using `literal_source_does_not_state_bounded_relation` for a wrong packet link.
 Never substitute a nearby quote that states another product, state, or stage.
-When the source does state the relation, return the shortest context-complete
-contiguous exact span; quote length is not a rejection cause. The 220-character
-threshold only determines whether a short body is copied in full and whether
-external quote review is needed. A truthful span may exceed it. Historical v7
+When the source does state the relation, current v10 authoring keeps its full
+body; quote length is not a rejection cause. Historical v9 token-span authoring
+retains its context-complete span rule and 220-character workload threshold. Historical v7
 specs may retain `no_context_complete_quote_within_display_limit` for exact
 replay, but new authoring must not create that cause. A genuinely rejected
 semantic reference stays admitted and candidate-accounted, must be labeled
@@ -1151,7 +1393,7 @@ the builder's own recomputation. Every field named in this paragraph and the one
 above it, apart from `projection_routes`, is rejected in a v1 spec and in a v2
 spec that routes no `decision_state` point.
 
-New authoring uses `phase_a_evidence_quote_manifest_v9`,
+New authoring uses `phase_a_evidence_quote_manifest_v10`,
 `phase_a_evidence_selection_artifact_v3`, and
 `phase_a_evidence_axis_consolidation_spec_v4`. The existing hidden-label
 preselection confirmation returns, for every confirmed candidate, the relation
@@ -1160,14 +1402,14 @@ companion semantic-unit references that explains it. This is part of the
 existing batched semantic confirmation call; it adds no selected-row review,
 consensus call, whole-axis reread, or other provider stage.
 
-The same v9 quote manifest uses `row_owned_token_span_v1` for its existing quote
-call. The provider selects an inclusive start/end token address only from the
-source body bound to that selected row; deterministic finalization copies the
-original characters between those addresses. Foreign bodies, foreign tokens,
-reversed spans, transcription-shaped responses, and changed source bodies fail
-locally. This prevents mechanical quote transfer or rewriting without a new
-provider stage. It does not prove that a structurally valid selected span is the
-semantically best or complete span; that remains bounded review judgment.
+The v10 quote manifest uses `complete_available_source_body_v1`: after the two
+relation passes, deterministic finalization copies every available selected
+row's complete hash-bound source body and accepts no provider quote response.
+Changed bodies or lineage fail locally; absent bodies remain typed unavailable.
+Historical v9 manifests retain `row_owned_token_span_v1` and replay through
+their original quote-response route. Complete body transfer prevents mechanical
+clipping, transcription, and cross-row quote transfer. It does not prove that
+the selected source or judgment-authored relation is semantically correct.
 
 The v3 selection artifact carries those exact row-owned references. Every
 displayed Direct Outcome and Decision State row in a v4 consolidation spec must
@@ -1802,11 +2044,10 @@ concurrency and 0.963 points to net per-call provider variance; concurrency
 accounts for 98% of the saving, and the residual variance is why the figure is
 reported as observed rather than as a concurrency guarantee.
 
-The quote stage reads bodies only for selected display rows. Ordinary bodies of
-at most 220 characters are copied in full by deterministic code, and absent
-bodies are typed unavailable; neither is sent to the model. Longer bodies and
-short bodies whose literal relation helped admit the point enter the provider
-prompt. Current v9 prompts render each deduplicated body with stable token
+The current quote stage reads bodies only for selected display rows. V10 copies
+every available selected source body in full by deterministic code and types an
+absent body unavailable; no quote provider call is made. Historical v9 prompts
+render each deduplicated body with stable token
 addresses and require each selected row to return only its bound body plus an
 inclusive start/end token pair. Deterministic code, not the model, copies the
 original contiguous characters. Foreign-body, foreign-token, reversed-span,
@@ -1834,10 +2075,10 @@ the complete normalized meaning; quote length alone is not a rejection cause. An
 available source body of at most 220 characters must be quoted in full, so a
 short comment cannot
 be clipped before a material qualification or same-source costly behavior. Under
-current v9 token addressing, quoted in full means that body's first token
+historical v9 token addressing, quoted in full means that body's first token
 through its last: a token address cannot name leading or trailing whitespace, so
 requiring the raw bytes would leave such a row no finalizable answer at all. For
-a longer body, current v9 asks for the shortest context-complete contiguous
+a longer body, historical v9 asks for the shortest context-complete contiguous
 exact substring needed by the meaning, even when it exceeds 220 characters,
 after packet and bundle
 content verification and evidence-ID, artifact-ID, and source-ref verification,
@@ -1851,7 +2092,7 @@ character while the bound source continues with whitespace and another
 alphanumeric character fails at
 `quote_boundary_incomplete`. This catches a literal substring that stops before
 its next source word; it adds no provider retry and makes the incomplete result
-visible instead of publishing it. Current v9 does not apply that prose heuristic:
+visible instead of publishing it. Historical v9 does not apply that prose heuristic:
 its deterministic responsibility is exact row/body/token ownership and transfer,
 while semantic completeness of an otherwise valid span remains explicitly not
 mechanically proven.
@@ -1871,6 +2112,18 @@ creation times into packet v3. A completed packet with a missing time may be
 rehydrated only from the exact source artifact and SHA-256 already bound by its
 bundle; unavailable or unsupported legacy bytes leave the time unavailable and
 changed bytes fail.
+Source-relative display labels such as `2 months ago` remain literal in the
+hash-bound source but are not exact publication times. The selection consumer
+maps only that narrow source-relative shape to explicit unavailability; it does
+not calculate a date from the run date, and other malformed date strings still
+fail closed.
+For a multi-product company frontier, each fresh point selection spec takes its
+subject-product scope from that exact packet proposition, not from the
+company-wide frontier filter. The binding hashes that point-local scope. Axis
+membership remains recoverable from the bound semantic rows, but current
+authoring admits only the frontier's exact point-relative semantic refs instead
+of reopening a product-axis pool for every point. Previously stored unscoped
+and axis-expanded bindings remain replayable.
 The date enables later descriptive alignment with search trends but does not
 establish that either signal caused the other.
 
@@ -2622,9 +2875,49 @@ the policy remains byte-stable; the completed verified method-v7 compilation
 can therefore be replayed under the new reconciliation policy without
 re-extraction or row re-verification.
 
+“Removes less than one percent” includes a valid normal level that temporarily
+expands because one input candidate must attach to multiple distinct bounded
+meanings. That expansion enters convergence; it is not rejected or hidden by
+discarding one of the meanings.
+
+Once convergence begins, each incoming candidate is already one bounded
+meaning. It therefore has one destination: one retained attachment or one
+unmerged retrieval reason. Normal mode remains the place where a compound
+candidate may be split; convergence must not recreate that ambiguity.
+
+Convergence also ends placeholder circulation. Every emitted node is terminal.
+An incoming terminal finding with repeated source-row support remains attached;
+an incoming nonterminal candidate either supports a terminal bounded finding or
+stays recoverable as explicitly unmerged evidence. It must not be relabelled
+merely to finish, and it must not return as another nonterminal placeholder.
+The compiler carries the prior node's terminal status into the next immutable
+stage so the schema can distinguish those two retention duties.
+
+After a complete convergence pass returns one node per input but leaves some
+nonterminal placeholders, the next stage hash-binds and carries the already
+terminal nodes whose leaf evidence is outside the nonterminal candidates'
+transitive overlap neighborhood. Only the nonterminal candidates and terminal
+neighbors connected to them by shared leaf evidence return to the model. This
+is not a new semantic decision: the carried nodes already survived the complete
+fixed-count pass and cannot affect the bounded remainder, while the remaining
+evidence is still accounted as terminal output or explicit unmerged retrieval
+material.
+
+Axis membership is mechanical lineage, not reconciliation judgment. Current
+decision reconciliation derives each node's axis IDs from its attached children,
+and the final consumer rederives them from the verified leaf rows in the root
+batch compilation. A provider-authored axis string cannot add, remove, or move a
+finding between axes.
+
+When an explicitly retired candidate shares a leaf with a surviving finding,
+the leaf's final disposition is `used`, never both `used` and `unmerged`. The
+retired candidate still counts in convergence input accounting; its source row
+remains recoverable through the surviving finding.
+
 A convergence pass is terminal when every surviving candidate remains a
-terminal node and the pass produces exactly as many nodes as it received
-candidates. This fixed-point rule may span multiple prompt-bounded batches:
+terminal node and the pass produces exactly as many nodes plus explicitly
+unmerged input candidates as it received candidates. This fixed-point rule may
+span multiple prompt-bounded batches:
 prompt byte size is a transport constraint, not a semantic requirement to
 invent another merge. Historical reconciliation without policy v2 retains its
 single-batch terminal rule.

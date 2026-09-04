@@ -44,6 +44,10 @@ PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION = (
     "phase_a_evidence_quote_manifest_v8"
 )
 PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v9"
+DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION = (
+    "phase_a_evidence_quote_manifest_v10"
+)
+DETERMINISTIC_SOURCE_BODY_QUOTE_POLICY = "complete_available_source_body_v1"
 BATCHED_QUOTE_MANIFEST_VERSION = QUOTE_MANIFEST_VERSION
 RELATION_CONFIRMATION_MANIFEST_VERSION = (
     "phase_a_evidence_relation_confirmation_manifest_v2"
@@ -61,7 +65,8 @@ PREVIOUS_PRESELECTION_CONFIRMATION_BATCH_MANIFEST_VERSION = (
     "phase_a_evidence_preselection_confirmation_batch_manifest_v1"
 )
 RELATIONS = ("support", "counter", "adjacent", "exclude")
-RELATION_ADJUDICATION_VERSION = "phase_a_relation_adjudication_v1"
+PREVIOUS_RELATION_ADJUDICATION_VERSION = "phase_a_relation_adjudication_v1"
+RELATION_ADJUDICATION_VERSION = "phase_a_relation_adjudication_v2"
 RELATION_REF_INSTRUCTION = (
     "For every row, return relation_semantic_unit_refs as the smallest nonempty "
     "subset of its supplied primary_semantic_unit_ref and "
@@ -87,7 +92,7 @@ POSITIONAL_REASON_CODE_BY_RELATION = {
 TRUTH_ROLES = {"community_post", "retailer_review", "audience_comment"}
 INFLUENCE_ROLES = {"creator_authored"}
 MAX_TRUTH_GROUPS = 13
-MAX_CONFIGURABLE_TRUTH_GROUPS = 20
+MAX_CONFIGURABLE_TRUTH_GROUPS = 40
 MAX_RELATION_BATCH_SIZE = 300
 MAX_INFLUENCE_GROUPS = 3
 SHORT_BODY_QUOTE_CHARACTERS = 220
@@ -106,8 +111,13 @@ VENUE_HOST_SUFFIXES: tuple[tuple[str, tuple[str, ...]], ...] = (
 # A whole numeric token only: a partial parse of "1.2k" or "1,234" would order
 # rows by a value the source never stated.
 ENGAGEMENT_NUMBER_RE = re.compile(r"^\s*(-?[0-9]+(?:\.[0-9]+)?)(?![0-9A-Za-z.,])")
+SOURCE_RELATIVE_PUBLICATION_TIME_RE = re.compile(
+    r"^(?:[0-9]+|a|an)\s+(?:minute|hour|day|week|month|year)s?\s+ago$",
+    re.IGNORECASE,
+)
 INTERNAL_RELATION_LABEL_RE = re.compile(r"\b(?:support|counter|adjacent|exclude)\b", re.IGNORECASE)
 REASON_CODE_RE = re.compile(r"^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$")
+MAX_REASON_CODE_LENGTH = 80
 DISPLAY_LABEL_BY_REASON_CODE = {
     "repurchase_despite_price": "Repurchase intent despite price",
     "explicitly_worth_price": "Explicitly worth the price",
@@ -648,6 +658,30 @@ def selection_spec_from_customer_pull_frontier(
             "customer_pull_frontier_point", "point is not an admitted frontier candidate"
         )
     queue, point = matches[0]
+    packet_propositions = {
+        row.get("proposition_id"): row
+        for row in packet.get("propositions", [])
+        if isinstance(row, Mapping)
+    }
+    packet_point = packet_propositions.get(proposition_id)
+    point_subject_product_ids = sorted(
+        {
+            value
+            for value in (
+                packet_point.get("subject_product_ids", [])
+                if isinstance(packet_point, Mapping)
+                else []
+            )
+            if isinstance(value, str) and value
+        }
+    )
+    if not point_subject_product_ids or not set(point_subject_product_ids) <= set(
+        frontier["subject_product_ids"]
+    ):
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_point",
+            "point subject products are absent from the frontier subject scope",
+        )
     admitted = [
         {"source_id": source_id, "semantic_unit_ref": semantic_ref}
         for source_id, semantic_ref in sorted(
@@ -659,20 +693,39 @@ def selection_spec_from_customer_pull_frontier(
             }
         )
     ]
-    point_axis_ids = sorted(
-        value for value in point.get("axis_ids", []) if isinstance(value, str)
-    )
-    expand_axis = bool(point_axis_ids) and VALUE_AXIS_ID not in point_axis_ids
-    axis_ids = point_axis_ids if expand_axis else []
-    candidate_admission = (
-        "subject_axis_union_with_literal_refs"
-        if expand_axis
-        else "literal_point_relations"
-    )
     normalized_rejections = _normalize_frontier_relation_rejections(
         frontier_relation_rejections,
         admitted_refs={(row["source_id"], row["semantic_unit_ref"]) for row in admitted},
     )
+    rejected_pairs = {
+        (row["source_id"], row["semantic_unit_ref"])
+        for row in normalized_rejections
+    }
+    point_truth_origin_count = len(
+        {
+            relation_row["independence_key"]
+            for relation in ("support", "counter", "adjacent")
+            for relation_row in point["relation_rows"][relation]
+            if relation_row["source_role"] in TRUTH_ROLES
+            and any(
+                (frontier["source_id"], semantic_ref) not in rejected_pairs
+                for semantic_ref in relation_row["semantic_unit_refs"]
+            )
+        }
+    )
+    truth_group_cap = max(MAX_TRUTH_GROUPS, point_truth_origin_count)
+    if truth_group_cap > MAX_CONFIGURABLE_TRUTH_GROUPS:
+        raise EvidenceConsumerError(
+            "presentation_cap_insufficient",
+            "frontier point requires more truth origins than the supported point cap",
+        )
+    # A complete frontier already carries the exact support, counter, and
+    # adjacent semantic refs that own this bounded point. Reopening the whole
+    # product/axis pool for every point repeats unrelated evidence quadratically
+    # and can let later selection silently re-author the frontier. Historical
+    # axis-expanded specs still replay through their stored binding.
+    axis_ids: list[str] = []
+    candidate_admission = "literal_point_relations"
     if normalized_rejections:
         _validate_resolved_frontier_earning(
             packet,
@@ -691,11 +744,13 @@ def selection_spec_from_customer_pull_frontier(
         "bounded_point_sha256": sha256_text(str(point["bounded_point"])),
         "admit_semantic_refs_sha256": _canonical_json_sha256(admitted),
         "axis_ids_sha256": _canonical_json_sha256(axis_ids),
-        "candidate_admission": candidate_admission,
-        "relation_response_mode": "positional" if expand_axis else "literal_ids",
-        "temporal_presentation_policy": (
-            "recent_year_coverage_v1" if expand_axis else None
+        "subject_product_ids_sha256": _canonical_json_sha256(
+            point_subject_product_ids
         ),
+        "truth_group_cap_sha256": _canonical_json_sha256(truth_group_cap),
+        "candidate_admission": candidate_admission,
+        "relation_response_mode": "literal_ids",
+        "temporal_presentation_policy": None,
         "frontier_relation_display_policy": FRONTIER_RELATION_DISPLAY_POLICY,
         "relation_policy": "bounded_point",
     }
@@ -709,19 +764,17 @@ def selection_spec_from_customer_pull_frontier(
         "selection_id": proposition_id,
         "bounded_claim": point["bounded_point"],
         "axis_ids": axis_ids,
-        "subject_product_ids": frontier["subject_product_ids"],
+        "subject_product_ids": point_subject_product_ids,
         "admit_semantic_refs": admitted,
         "protected_evidence_ids": {},
-        "truth_group_cap": MAX_TRUTH_GROUPS,
-        "relation_response_mode": "positional" if expand_axis else "literal_ids",
+        "truth_group_cap": truth_group_cap,
+        "relation_response_mode": "literal_ids",
         "relation_policy": "bounded_point",
         "frontier_relation_display_policy": FRONTIER_RELATION_DISPLAY_POLICY,
         "customer_pull_frontier_binding": binding,
     }
     if normalized_rejections:
         spec["frontier_relation_rejections"] = normalized_rejections
-    if expand_axis:
-        spec["temporal_presentation_policy"] = "recent_year_coverage_v1"
     return spec
 
 
@@ -1148,7 +1201,10 @@ def _load_relation_adjudication(
     if (manifest["spec"].get("schema_version") != SELECTION_SPEC_VERSION
         or not isinstance(binding, Mapping)
         or set(binding) != {"schema_version", "basis_sha256", "decisions"}
-        or binding.get("schema_version") != RELATION_ADJUDICATION_VERSION):
+        or binding.get("schema_version") not in {
+            PREVIOUS_RELATION_ADJUDICATION_VERSION,
+            RELATION_ADJUDICATION_VERSION,
+        }):
         raise EvidenceConsumerError(boundary, "current adjudication requires an inline record")
     record = binding
     if record["basis_sha256"] != relation_adjudication_basis(manifest, candidates):
@@ -1162,35 +1218,67 @@ def _load_relation_adjudication(
     result = {}
     value_policy = _uses_value_policy(manifest["spec"], candidates)
     for decision in decisions:
-        if (not isinstance(decision, dict) or set(decision) != {
+        version = binding["schema_version"]
+        expected_fields = {
             "source_id", "evidence_id", "relation_semantic_unit_refs",
             "relation", "reason_code", "rationale",
-        } or not all(isinstance(decision[key], str) and decision[key].strip()
-                     for key in decision if key != "relation_semantic_unit_refs")):
+        }
+        if version == RELATION_ADJUDICATION_VERSION:
+            expected_fields.add("prior_relation_semantic_unit_refs")
+        list_fields = {
+            "relation_semantic_unit_refs",
+            "prior_relation_semantic_unit_refs",
+        }
+        if (not isinstance(decision, dict) or set(decision) != expected_fields
+            or not all(isinstance(decision[key], str) and decision[key].strip()
+                       for key in decision if key not in list_fields)):
             raise EvidenceConsumerError(boundary, "invalid adjudication decision")
-        refs = decision["relation_semantic_unit_refs"]
-        if (not isinstance(refs, list) or not refs
+        replacement_refs = decision["relation_semantic_unit_refs"]
+        prior_refs = (
+            decision["prior_relation_semantic_unit_refs"]
+            if version == RELATION_ADJUDICATION_VERSION
+            else replacement_refs
+        )
+        if any(
+            not isinstance(refs, list) or not refs
             or not all(isinstance(ref, str) and ref for ref in refs)
-            or len(refs) != len(set(refs))):
+            or len(refs) != len(set(refs))
+            for refs in (prior_refs, replacement_refs)
+        ):
             raise EvidenceConsumerError(boundary, "empty or duplicate adjudicated refs")
-        key = (decision["source_id"], decision["evidence_id"], frozenset(refs))
+        key = (
+            decision["source_id"],
+            decision["evidence_id"],
+            frozenset(prior_refs),
+        )
         if key in result:
             raise EvidenceConsumerError(boundary, "duplicate adjudicated binding")
         owners = rows_by_evidence.get(key[:2], [])
-        if not any(set(refs) <= {row["semantic_unit_ref"], *(
-            item["semantic_unit_ref"] for item in row["same_evidence_companion_meanings"]
-        )} for row in owners):
+        if not any(
+            set(prior_refs) | set(replacement_refs)
+            <= {
+                row["semantic_unit_ref"],
+                *(
+                    item["semantic_unit_ref"]
+                    for item in row["same_evidence_companion_meanings"]
+                ),
+            }
+            for row in owners
+        ):
             raise EvidenceConsumerError(boundary, "adjudication references a foreign row-owned meaning")
         relation, reason = decision["relation"], decision["reason_code"]
         if not value_policy:
             reason = _normalize_reason_code(reason)
-        if (relation not in RELATIONS or len(reason) > 80
+        if (relation not in RELATIONS or len(reason) > MAX_REASON_CODE_LENGTH
             or not REASON_CODE_RE.fullmatch(reason)
             or INTERNAL_RELATION_LABEL_RE.search(reason.replace("_", " "))
             or (value_policy and VALUE_REASON_RELATIONS.get(reason) != relation)):
             raise EvidenceConsumerError(boundary, "invalid adjudicated relation or reason")
         normalized = dict(decision)
         normalized["reason_code"] = reason
+        normalized["_replacement_relation_semantic_unit_refs"] = sorted(
+            replacement_refs
+        )
         result[key] = normalized
     return result
 
@@ -1202,6 +1290,7 @@ def _apply_relation_adjudication(
     decisions = _load_relation_adjudication(manifest, candidates)
     if not decisions:
         return None
+    record = manifest["spec"]["relation_adjudication"]
     matched = set()
     changed = []
     matched_count = 0
@@ -1215,17 +1304,33 @@ def _apply_relation_adjudication(
         matched_count += 1
         if row["layer"] == "influence_context" and decision["relation"] in {"support", "counter"}:
             raise EvidenceConsumerError("creator_customer_laundering", "adjudication cannot promote creator evidence into customer truth")
-        if (row["relation"], row["reason_code"]) != (decision["relation"], decision["reason_code"]):
-            changed.append({"candidate_id": row["candidate_id"],
-                            "prior_relation": row["relation"],
-                            "prior_reason_code": row["reason_code"],
-                            "relation": decision["relation"],
-                            "reason_code": decision["reason_code"]})
+        replacement_refs = (
+            decision["_replacement_relation_semantic_unit_refs"]
+            if record["schema_version"] == RELATION_ADJUDICATION_VERSION
+            else list(row["relation_semantic_unit_refs"])
+        )
+        if (
+            (row["relation"], row["reason_code"])
+            != (decision["relation"], decision["reason_code"])
+            or row.get("relation_semantic_unit_refs") != replacement_refs
+        ):
+            change = {"candidate_id": row["candidate_id"],
+                      "prior_relation": row["relation"],
+                      "prior_reason_code": row["reason_code"],
+                      "relation": decision["relation"],
+                      "reason_code": decision["reason_code"]}
+            if record["schema_version"] == RELATION_ADJUDICATION_VERSION:
+                change["prior_relation_semantic_unit_refs"] = list(
+                    row["relation_semantic_unit_refs"]
+                )
+                change["relation_semantic_unit_refs"] = list(replacement_refs)
+            changed.append(change)
         row["relation"] = decision["relation"]
         row["reason_code"] = decision["reason_code"]
+        if record["schema_version"] == RELATION_ADJUDICATION_VERSION:
+            row["relation_semantic_unit_refs"] = list(replacement_refs)
     if matched != set(decisions):
         raise EvidenceConsumerError("relation_adjudication_binding", "adjudicated binding is absent from confirmed rows; renewed judgment required")
-    record = manifest["spec"]["relation_adjudication"]
     return {"binding": {"schema_version": record["schema_version"],
                         "basis_sha256": record["basis_sha256"],
                         "record_sha256": _canonical_json_sha256(record)},
@@ -1303,6 +1408,12 @@ def _publication_time_value(value: Any) -> str | None:
         )
     normalized = value.strip()
     if normalized.casefold() in {"unknown", "unavailable", "not available"}:
+        return None
+    # Some preserved retailer surfaces expose only a source-relative display
+    # label (for example, ``2 months ago``). It is useful source text but not an
+    # exact publication time: mark the exact time unavailable while the
+    # hash-bound source retains the literal label.
+    if SOURCE_RELATIVE_PUBLICATION_TIME_RE.fullmatch(normalized):
         return None
     try:
         datetime.fromisoformat(normalized.replace("Z", "+00:00"))
@@ -1921,6 +2032,7 @@ def _relation_schema(
         reason_schema: dict[str, Any] = {
             "type": "string",
             "pattern": REASON_CODE_RE.pattern,
+            "maxLength": MAX_REASON_CODE_LENGTH,
         }
         if relation is None:
             relation_schema["enum"] = list(RELATIONS)
@@ -2126,13 +2238,20 @@ def _validate_customer_pull_frontier_spec_binding(
         "temporal_presentation_policy",
     }
     current_keys = expanded_keys | {"frontier_relation_display_policy"}
+    scoped_keys = current_keys | {
+        "subject_product_ids_sha256",
+        "truth_group_cap_sha256",
+    }
     resolved_keys = current_keys | {"frontier_relation_rejections_sha256"}
+    scoped_resolved_keys = scoped_keys | {"frontier_relation_rejections_sha256"}
     binding_keys = frozenset(binding) if isinstance(binding, Mapping) else frozenset()
     if not isinstance(binding, Mapping) or binding_keys not in {
         frozenset(legacy_keys),
         frozenset(expanded_keys),
         frozenset(current_keys),
+        frozenset(scoped_keys),
         frozenset(resolved_keys),
+        frozenset(scoped_resolved_keys),
     }:
         raise EvidenceConsumerError(
             "customer_pull_frontier_binding", "frontier binding shape changed"
@@ -2145,7 +2264,9 @@ def _validate_customer_pull_frontier_spec_binding(
     if binding_keys in {
         frozenset(expanded_keys),
         frozenset(current_keys),
+        frozenset(scoped_keys),
         frozenset(resolved_keys),
+        frozenset(scoped_resolved_keys),
     } and (
         binding.get("axis_ids_sha256")
         != _canonical_json_sha256(spec.get("axis_ids") or [])
@@ -2168,7 +2289,12 @@ def _validate_customer_pull_frontier_spec_binding(
         raise EvidenceConsumerError(
             "customer_pull_frontier_binding", "frontier candidate admission changed"
         )
-    if binding_keys in {frozenset(current_keys), frozenset(resolved_keys)}:
+    if binding_keys in {
+        frozenset(current_keys),
+        frozenset(scoped_keys),
+        frozenset(resolved_keys),
+        frozenset(scoped_resolved_keys),
+    }:
         if (
             binding.get("frontier_relation_display_policy")
             != spec.get("frontier_relation_display_policy")
@@ -2185,7 +2311,22 @@ def _validate_customer_pull_frontier_spec_binding(
         raise EvidenceConsumerError(
             "customer_pull_frontier_binding", "frontier candidate admission changed"
         )
-    if binding_keys == frozenset(resolved_keys):
+    if binding_keys in {
+        frozenset(scoped_keys),
+        frozenset(scoped_resolved_keys),
+    } and (
+        binding.get("subject_product_ids_sha256")
+        != _canonical_json_sha256(spec.get("subject_product_ids") or [])
+        or binding.get("truth_group_cap_sha256")
+        != _canonical_json_sha256(spec.get("truth_group_cap"))
+    ):
+        raise EvidenceConsumerError(
+            "customer_pull_frontier_binding", "frontier point scope or cap changed"
+        )
+    if binding_keys in {
+        frozenset(resolved_keys),
+        frozenset(scoped_resolved_keys),
+    }:
         rejections = _normalize_frontier_relation_rejections(
             spec.get("frontier_relation_rejections"),
             admitted_refs={
@@ -2935,6 +3076,7 @@ def _preselection_relation_confirmation_schema(
         reason_schema: dict[str, Any] = {
             "type": "string",
             "pattern": REASON_CODE_RE.pattern,
+            "maxLength": MAX_REASON_CODE_LENGTH,
         }
         if relation is None:
             relation_schema["enum"] = list(RELATIONS)
@@ -3647,7 +3789,7 @@ def _validate_relation_response(
         if (
             result["relation"] not in RELATIONS
             or not isinstance(result["reason_code"], str)
-            or len(result["reason_code"]) > 80
+            or len(result["reason_code"]) > MAX_REASON_CODE_LENGTH
             or not REASON_CODE_RE.fullmatch(result["reason_code"])
         ):
             raise EvidenceConsumerError("relation_response_shape", "invalid relation result")
@@ -4384,7 +4526,7 @@ def _finalize_preselection_relation_confirmation_prepare_quotes(
         if (
             relation not in RELATIONS
             or not isinstance(reason_code, str)
-            or len(reason_code) > 80
+            or len(reason_code) > MAX_REASON_CODE_LENGTH
             or not REASON_CODE_RE.fullmatch(reason_code)
         ):
             raise EvidenceConsumerError(
@@ -4497,6 +4639,38 @@ def finalize_preselection_relation_confirmation_prepare_quotes(
         confirmation_response,
         quote_manifest_version=PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
     )
+
+
+def _deterministic_source_body_quote_manifest(
+    provider_quote_manifest: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Replace the provider quote transport with bound full-source copying."""
+    if (
+        _verified_quote_manifest_version(provider_quote_manifest)
+        != PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+    ):
+        raise EvidenceConsumerError(
+            "manifest_verification",
+            "deterministic source-body finalization requires a current v9 lineage",
+        )
+    quote_manifest = dict(provider_quote_manifest)
+    quote_manifest.pop("manifest_sha256")
+    for key in (
+        "prompt_sha256",
+        "response_schema_sha256",
+        "provider_selected_ids",
+        "quote_body_ids",
+        "quote_transport",
+    ):
+        quote_manifest.pop(key, None)
+    quote_manifest["schema_version"] = (
+        DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION
+    )
+    quote_manifest["quote_derivation_policy"] = (
+        DETERMINISTIC_SOURCE_BODY_QUOTE_POLICY
+    )
+    quote_manifest["manifest_sha256"] = _canonical_json_sha256(quote_manifest)
+    return quote_manifest
 
 
 def _assemble_batched_relation_response(
@@ -4915,6 +5089,7 @@ def _verified_quote_manifest_version(quote_manifest: Mapping[str, Any]) -> str:
             LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
             PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
             PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+            DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
         }
         or stored != _canonical_json_sha256(payload)
     ):
@@ -5087,6 +5262,16 @@ def finalize_quotes(
     current_token_transport = (
         manifest_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
     )
+    deterministic_source_body = (
+        manifest_version == DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION
+    )
+    if deterministic_source_body and quote_manifest.get(
+        "quote_derivation_policy"
+    ) != DETERMINISTIC_SOURCE_BODY_QUOTE_POLICY:
+        raise EvidenceConsumerError(
+            "manifest_verification",
+            "deterministic source-body quote policy is missing or changed",
+        )
     if current_token_transport and (
         quote_manifest.get("quote_transport") != CURRENT_QUOTE_TRANSPORT
         or not isinstance(quote_manifest.get("quote_body_ids"), Mapping)
@@ -5098,6 +5283,7 @@ def finalize_quotes(
         LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+        DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
     }:
         replay = quote_manifest.get("preselection_replay")
         legacy_replay_keys = {
@@ -5121,26 +5307,48 @@ def finalize_quotes(
                 "manifest_verification", "preselection replay binding missing"
             )
         if replay_keys == frozenset(legacy_replay_keys):
-            _, _, expected_quote_manifest = (
+            _, _, expected_provider_quote_manifest = (
                 _finalize_preselection_relation_confirmation_prepare_quotes(
                     replay["selection_manifest"],
                     sources,
                     replay["first_pass_response"],
                     replay["confirmation_manifest"],
                     replay["confirmation_response"],
-                    quote_manifest_version=manifest_version,
+                    quote_manifest_version=(
+                        PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+                        if deterministic_source_body
+                        else manifest_version
+                    ),
                 )
             )
+            expected_quote_manifest = (
+                _deterministic_source_body_quote_manifest(
+                    expected_provider_quote_manifest
+                )
+                if deterministic_source_body
+                else expected_provider_quote_manifest
+            )
         else:
-            _, _, expected_quote_manifest = (
+            _, _, expected_provider_quote_manifest = (
                 _finalize_batched_preselection_relation_confirmations_prepare_quotes(
                     replay["batch_manifest"],
                     sources,
                     replay["batch_responses"],
                     replay["confirmation_batch_manifest"],
                     replay["confirmation_batch_responses"],
-                    quote_manifest_version=manifest_version,
+                    quote_manifest_version=(
+                        PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+                        if deterministic_source_body
+                        else manifest_version
+                    ),
                 )
+            )
+            expected_quote_manifest = (
+                _deterministic_source_body_quote_manifest(
+                    expected_provider_quote_manifest
+                )
+                if deterministic_source_body
+                else expected_provider_quote_manifest
             )
         if dict(quote_manifest) != expected_quote_manifest:
             raise EvidenceConsumerError(
@@ -5165,8 +5373,17 @@ def finalize_quotes(
             "unexpected_relation_confirmation",
             "historical quote manifests do not accept a confirmation attachment",
         )
-    if set(response) != {"quotes"} or not isinstance(response.get("quotes"), list):
-        raise EvidenceConsumerError("quote_response_shape", "quotes missing")
+    if deterministic_source_body:
+        if dict(response):
+            raise EvidenceConsumerError(
+                "unexpected_quote_response",
+                "deterministic source-body finalization accepts no provider quote response",
+            )
+        quotes: list[Mapping[str, Any]] = []
+    else:
+        if set(response) != {"quotes"} or not isinstance(response.get("quotes"), list):
+            raise EvidenceConsumerError("quote_response_shape", "quotes missing")
+        quotes = response["quotes"]
     selected = quote_manifest["selected_rows"]
     frontier_relation_ids = quote_manifest.get(
         "frontier_relation_candidate_ids", []
@@ -5179,17 +5396,21 @@ def finalize_quotes(
         )
     frontier_relation_candidate_ids = frozenset(frontier_relation_ids)
     expected = (
-        quote_manifest.get("provider_selected_ids")
-        if manifest_version
-        in {
-            PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
-            PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
-            QUOTE_MANIFEST_VERSION,
-            LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
-            PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
-            PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
-        }
-        else [row["selected_id"] for row in selected]
+        []
+        if deterministic_source_body
+        else (
+            quote_manifest.get("provider_selected_ids")
+            if manifest_version
+            in {
+                PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
+                PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
+                QUOTE_MANIFEST_VERSION,
+                LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+            }
+            else [row["selected_id"] for row in selected]
+        )
     )
     if not isinstance(expected, list) or not all(
         isinstance(selected_id, str) for selected_id in expected
@@ -5197,7 +5418,6 @@ def finalize_quotes(
         raise EvidenceConsumerError(
             "manifest_verification", "provider quote ids are invalid"
         )
-    quotes = response["quotes"]
     observed = [row.get("selected_id") for row in quotes if isinstance(row, dict)]
     if len(observed) != len(quotes):
         raise EvidenceConsumerError("quote_response_shape", "invalid quote row")
@@ -5210,7 +5430,7 @@ def finalize_quotes(
         raise EvidenceConsumerError(boundary, "quote result set/order mismatch")
     bodies = _bundle_bodies(sources)
     recorded_body_hashes = quote_manifest["quote_body_sha256"]
-    if manifest_version in {
+    if not deterministic_source_body and manifest_version in {
         PRECONFIRMATION_QUOTE_MANIFEST_VERSION,
         PRECONFIRMATION_BATCHED_QUOTE_MANIFEST_VERSION,
         QUOTE_MANIFEST_VERSION,
@@ -5270,6 +5490,7 @@ def finalize_quotes(
                 LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                 PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                 PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
             }:
                 raise EvidenceConsumerError(
                     "missing_quote_result", "selected row has no quote result"
@@ -5277,7 +5498,7 @@ def finalize_quotes(
             if body is None:
                 status = "quote_unavailable"
                 quote = None
-            elif len(body) <= SHORT_BODY_QUOTE_CHARACTERS:
+            elif deterministic_source_body or len(body) <= SHORT_BODY_QUOTE_CHARACTERS:
                 status = "quote_available"
                 quote = body
             else:
@@ -5346,11 +5567,15 @@ def finalize_quotes(
                 not in {
                     PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                     PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                    DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
                 }
                 and len(quote) > SHORT_BODY_QUOTE_CHARACTERS
             ):
                 raise EvidenceConsumerError("quote_overlength", "quote exceeds 220 characters")
-            if sum(character.isalnum() for character in quote) < 2:
+            if (
+                not deterministic_source_body
+                and sum(character.isalnum() for character in quote) < 2
+            ):
                 raise EvidenceConsumerError(
                     "quote_substance", "available quote has fewer than two alphanumeric characters"
                 )
@@ -5365,8 +5590,10 @@ def finalize_quotes(
                     LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                     PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                     PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                    DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
                 }
                 and not current_token_transport
+                and not deterministic_source_body
                 and not _quote_has_complete_end(body, quote)
             ):
                 raise EvidenceConsumerError(
@@ -5387,6 +5614,7 @@ def finalize_quotes(
                 body is not None
                 and selected_row["candidate_id"]
                 in frontier_relation_candidate_ids
+                and not deterministic_source_body
             ):
                 raise EvidenceConsumerError(
                     "frontier_relation_quote_relevance",
@@ -5427,6 +5655,7 @@ def finalize_quotes(
                         LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                         PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
                         PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                        DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
                     }
                     else {}
                 ),
@@ -5450,7 +5679,10 @@ def finalize_quotes(
                         ]
                     }
                     if manifest_version
-                    == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+                    in {
+                        PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                        DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
+                    }
                     else {}
                 ),
                 "independence_key": selected_row["independence_key"],
@@ -5475,7 +5707,11 @@ def finalize_quotes(
     artifact = {
         "schema_version": (
             "phase_a_evidence_selection_artifact_v3"
-            if manifest_version == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+            if manifest_version
+            in {
+                PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
+            }
             else (
                 "phase_a_evidence_selection_artifact_v2"
                 if manifest_version
@@ -5507,10 +5743,27 @@ def finalize_quotes(
             "not a causal judgment",
             "not a commercial-pull score",
             "creator influence is not customer corroboration",
-            "a source body of 220 characters or fewer is quoted in full to prevent context clipping",
-            "longer exact quotes remain quality-adjudicated for semantic relevance and context completeness",
-            "quote_unavailable with source_body_present true means no quote was produced from an available body",
-            "quote_unavailable_cause names whether the source body was unavailable or returned no relevant exact quote",
+            *(
+                [
+                    "every available selected source body is copied in full without clipping",
+                    "semantic adequacy of the selected source and relation is not mechanically proven",
+                ]
+                if deterministic_source_body
+                else [
+                    "a source body of 220 characters or fewer is quoted in full to prevent context clipping",
+                    "longer exact quotes remain quality-adjudicated for semantic relevance and context completeness",
+                ]
+            ),
+            *(
+                [
+                    "quote_unavailable means the bound source body was unavailable",
+                ]
+                if deterministic_source_body
+                else [
+                    "quote_unavailable with source_body_present true means no quote was produced from an available body",
+                    "quote_unavailable_cause names whether the source body was unavailable or returned no relevant exact quote",
+                ]
+            ),
         ],
         "model_api_calls": 0,
     }
@@ -5524,6 +5777,10 @@ def finalize_quotes(
                 "semantic adequacy of a structurally valid quote span is not mechanically proven",
                 "relation semantic-unit references are judgment-authored and ownership-checked; their semantic warrant is not mechanically proven",
             ]
+        )
+    elif manifest_version == DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION:
+        artifact["output_boundary"].append(
+            "relation semantic-unit references are judgment-authored and ownership-checked; their semantic warrant is not mechanically proven"
         )
     if temporal_policy is not None:
         timeline: dict[int | None, list[str]] = defaultdict(list)
@@ -5546,11 +5803,13 @@ def finalize_quotes(
         LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
         PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+        DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
     }:
         if manifest_version in {
             LEGACY_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
             PREVIOUS_PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
             PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+            DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
         }:
             preselection = quote_manifest.get("preselection_relation_confirmation")
             if (
@@ -5561,7 +5820,10 @@ def finalize_quotes(
                 or not preselection["point_scope_reason"].strip()
                 or (
                     manifest_version
-                    == PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION
+                    in {
+                        PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION,
+                        DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION,
+                    }
                     and preselection.get("relation_binding_status") != "passed"
                 )
             ):
@@ -5730,15 +5992,64 @@ def finalize_quotes(
     return artifact
 
 
+def finalize_preselection_relation_confirmation_full_source(
+    manifest: Mapping[str, Any],
+    sources: Sequence[Mapping[str, Any]],
+    first_pass_response: Mapping[str, Any],
+    confirmation_manifest: Mapping[str, Any],
+    confirmation_response: Mapping[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Finalize a current point with full source bodies and no quote provider call."""
+    _, _, provider_quote_manifest = (
+        finalize_preselection_relation_confirmation_prepare_quotes(
+            manifest,
+            sources,
+            first_pass_response,
+            confirmation_manifest,
+            confirmation_response,
+        )
+    )
+    quote_manifest = _deterministic_source_body_quote_manifest(
+        provider_quote_manifest
+    )
+    return quote_manifest, finalize_quotes(quote_manifest, sources, {})
+
+
+def finalize_batched_preselection_relation_confirmations_full_source(
+    batch_manifest: Mapping[str, Any],
+    sources: Sequence[Mapping[str, Any]],
+    responses: Mapping[str, Mapping[str, Any]],
+    confirmation_batch_manifest: Mapping[str, Any],
+    confirmation_batch_responses: Mapping[str, Mapping[str, Any]],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Finalize a batched current point with no quote provider call."""
+    _, _, provider_quote_manifest = (
+        finalize_batched_preselection_relation_confirmations_prepare_quotes(
+            batch_manifest,
+            sources,
+            responses,
+            confirmation_batch_manifest,
+            confirmation_batch_responses,
+        )
+    )
+    quote_manifest = _deterministic_source_body_quote_manifest(
+        provider_quote_manifest
+    )
+    return quote_manifest, finalize_quotes(quote_manifest, sources, {})
+
+
 __all__ = [
     "CUSTOMER_PULL_FRONTIER_VERSION",
+    "DETERMINISTIC_SOURCE_BODY_QUOTE_MANIFEST_VERSION",
     "PRESELECTION_CONFIRMED_QUOTE_MANIFEST_VERSION",
     "QUOTE_MANIFEST_VERSION",
     "SELECTION_MANIFEST_VERSION",
     "SELECTION_SPEC_VERSION",
     "build_customer_pull_point_frontier",
     "finalize_batched_preselection_relation_confirmations_prepare_quotes",
+    "finalize_batched_preselection_relation_confirmations_full_source",
     "finalize_preselection_relation_confirmation_prepare_quotes",
+    "finalize_preselection_relation_confirmation_full_source",
     "finalize_quotes",
     "finalize_relations_prepare_quotes",
     "load_selection_sources",

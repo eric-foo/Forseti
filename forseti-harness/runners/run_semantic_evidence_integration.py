@@ -13,6 +13,10 @@ if __package__ in {None, ""}:
 
 from judgment.semantic_evidence_integration import (  # noqa: E402
     BUNDLE_VERSION_V4,
+    METHOD_VERSION_V12,
+    RECONCILIATION_AUTHORING_LEGACY,
+    RECONCILIATION_AUTHORING_IDENTITY_V1,
+    RECONCILIATION_AUTHORING_IDENTITY_V2,
     RECONCILIATION_POLICY_VERSION_V2,
     SemanticIntegrationError,
     apply_row_verification,
@@ -22,6 +26,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     build_bundle,
     build_prompt_execution_pack,
     build_reconciliation_prompt,
+    diagnose_reconciliation_response,
     finalize_v3_view,
     finalize_relation_closed_view,
     finalize_view,
@@ -33,6 +38,17 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     project_evidence_packet_v2,
     prepare_targeted_benchmark_audit,
     prepare_reconciliation_stage,
+    prepare_reconciliation_prompts,
+    prepare_reconciliation_definition_recovery,
+    prepare_reconciliation_definition_recovery_after_repair,
+    compose_reconciliation_definition_recovery_intermediate,
+    apply_reconciliation_definition_recovery,
+    prepare_reconciliation_repair,
+    compose_reconciliation_repair_intermediate,
+    apply_reconciliation_repair,
+    RECONCILIATION_RESPONSE_VERSION_V2,
+    RECONCILIATION_RESPONSE_VERSION_V3,
+    _verify_stored_hash,
     prepare_relation_closure_stage,
     prepare_row_repair,
     prepare_row_verification,
@@ -78,8 +94,10 @@ from judgment.phase_a_evidence_selection import (  # noqa: E402
     SELECTION_BATCH_MANIFEST_VERSION,
     build_customer_pull_point_frontier,
     finalize_batched_preselection_relation_confirmations_prepare_quotes,
+    finalize_batched_preselection_relation_confirmations_full_source,
     finalize_batched_relations_prepare_quotes,
     finalize_preselection_relation_confirmation_prepare_quotes,
+    finalize_preselection_relation_confirmation_full_source,
     finalize_quotes,
     finalize_relations_prepare_quotes,
     load_selection_sources,
@@ -95,12 +113,17 @@ from judgment.phase_a_evidence_selection import (  # noqa: E402
 from harness_utils import hash_file  # noqa: E402
 from provider_attempts import (  # noqa: E402
     publish_provider_attempt,
+    recover_timed_out_provider_attempt,
     reserve_provider_attempt,
+    unique_json_object,
 )
 
 
 def _load_object(path: Path) -> dict[str, Any]:
-    value = json.loads(path.read_text(encoding="utf-8-sig"))
+    try:
+        value = json.loads(path.read_text(encoding="utf-8-sig"), object_pairs_hook=unique_json_object)
+    except ValueError as exc:
+        raise ValueError(f"{exc}: {path}") from exc
     if not isinstance(value, dict):
         raise ValueError(f"expected JSON object: {path}")
     return value
@@ -985,6 +1008,62 @@ def validate_reconciliation_response_file(
     }
 
 
+def recover_reconciliation_provider_attempt(
+    *,
+    bundle_path: Path,
+    stage_path: Path,
+    response_schema_path: Path,
+    attempt_dirs: Sequence[Path],
+    recovery_dir: Path,
+) -> dict[str, Any]:
+    """Recover one timeout message through schema and the native consumer."""
+
+    bundle, stage = _load_object(bundle_path), _load_object(stage_path)
+    recovered = recover_timed_out_provider_attempt(
+        attempt_dirs=attempt_dirs,
+        response_schema_path=response_schema_path,
+        recovery_dir=recovery_dir,
+        validate_response=lambda response: validate_one_reconciliation_response(
+            bundle, stage, response
+        ),
+    )
+    return {
+        **recovered,
+        "status": "SEMANTIC_RECONCILIATION_PROVIDER_ATTEMPT_RECOVERED",
+    }
+
+
+def diagnose_reconciliation_response_file(
+    *,
+    bundle_path: Path,
+    stage_path: Path,
+    response_path: Path,
+    diagnostic_out: Path,
+) -> dict[str, Any]:
+    diagnostic = diagnose_reconciliation_response(
+        _load_object(bundle_path),
+        _load_object(stage_path),
+        _load_object(response_path),
+    )
+    _write_json(diagnostic_out, diagnostic)
+    return {
+        "status": (
+            "SEMANTIC_RECONCILIATION_RESPONSE_VALID"
+            if diagnostic["valid"]
+            else "SEMANTIC_RECONCILIATION_RESPONSE_INVALID_DIAGNOSED"
+        ),
+        "valid": diagnostic["valid"],
+        "accepted": diagnostic["accepted"],
+        "batch_id": diagnostic["batch_id"],
+        "issue_count": diagnostic["issue_count"],
+        "primary_validation_error": diagnostic["primary_validation_error"],
+        "primary_error_covered": diagnostic["primary_error_covered"],
+        "diagnostic_sha256": diagnostic["diagnostic_sha256"],
+        "diagnostic_out": str(diagnostic_out),
+        "model_api_calls": 0,
+    }
+
+
 def semantic_run_status(
     *, bundle_path: Path, response_dir: Path
 ) -> dict[str, Any]:
@@ -1044,6 +1123,8 @@ def prepare_row_verification_run(
             prompt_dir / f"{row['batch_id']}.md",
             row["prompt"].encode("utf-8") + b"\n",
         )
+        if "response_schema" in row:
+            _write_json(prompt_dir / f"{row['batch_id']}.schema.json", row["response_schema"])
     return {
         "status": "SEMANTIC_ROW_VERIFICATION_REQUIRED",
         "stage_sha256": stage["stage_sha256"],
@@ -1233,6 +1314,8 @@ def prepare_row_repair_run(
             prompt_dir / f"{row['batch_id']}.md",
             row["prompt"].encode("utf-8") + b"\n",
         )
+        if "response_schema" in row:
+            _write_json(prompt_dir / f"{row['batch_id']}.schema.json", row["response_schema"])
     return {
         "status": "SEMANTIC_ROW_REPAIR_REQUIRED",
         "stage_sha256": stage["stage_sha256"],
@@ -1317,14 +1400,36 @@ def prepare_reconciliation_level(
     stage_out: Path,
     prompt_dir: Path,
     reconciliation_policy_version: str | None = None,
+    response_version: str | None = None,
+    existing_stage_path: Path | None = None,
+    authoring_revision: str | None = None,
 ) -> dict[str, Any]:
     bundle = _load_object(bundle_path)
     compilation = _load_object(compilation_path)
-    stage, prompts = prepare_reconciliation_stage(
-        bundle,
-        compilation,
-        reconciliation_policy_version=reconciliation_policy_version,
-    )
+    if authoring_revision is None:
+        authoring_revision = (
+            RECONCILIATION_AUTHORING_IDENTITY_V2
+            if bundle.get("method_version") == METHOD_VERSION_V12
+            and response_version != RECONCILIATION_RESPONSE_VERSION_V2
+            else RECONCILIATION_AUTHORING_LEGACY
+        )
+    if existing_stage_path is None:
+        stage, prompts = prepare_reconciliation_stage(
+            bundle, compilation, reconciliation_policy_version=reconciliation_policy_version,
+            response_version=response_version,
+            authoring_revision=authoring_revision,
+        )
+    else:
+        stage = _load_object(existing_stage_path)
+        compilation_hash = compilation.get("node_compilation_sha256", compilation.get("compilation_sha256"))
+        hash_field = "node_compilation_sha256" if "node_compilation_sha256" in compilation else "compilation_sha256"
+        _verify_stored_hash(compilation, field=hash_field, label="reconciliation input")
+        if stage["input_compilation_sha256"] != compilation_hash:
+            raise ValueError("existing reconciliation stage has stale input compilation")
+        if reconciliation_policy_version is not None and stage.get("reconciliation_policy_version") != reconciliation_policy_version:
+            raise ValueError("existing reconciliation stage has different policy")
+        prompts = prepare_reconciliation_prompts(bundle, stage, response_version=response_version,
+                                                authoring_revision=authoring_revision)
     if prompt_dir.exists():
         raise ValueError(f"refusing to write into existing prompt directory: {prompt_dir}")
     _write_json(stage_out, stage)
@@ -1334,8 +1439,13 @@ def prepare_reconciliation_level(
             prompt_dir / f"{row['batch_id']}.md",
             row["prompt"].encode("utf-8") + b"\n",
         )
+        if "response_schema" in row:
+            _write_json(
+                prompt_dir / f"{row['batch_id']}.schema.json", row["response_schema"]
+            )
     return {
         "status": "SEMANTIC_RECONCILIATION_LEVEL_JUDGMENT_REQUIRED",
+        "authoring_revision": authoring_revision,
         "stage_sha256": stage["stage_sha256"],
         "level": stage["level"],
         "batch_count": len(prompts),
@@ -1349,6 +1459,202 @@ def prepare_reconciliation_level(
         "prompt_dir": str(prompt_dir),
         "model_api_calls": 0,
     }
+
+
+def prepare_reconciliation_definitions(
+    *, bundle_path: Path, stage_path: Path, failed_response_path: Path, output_dir: Path,
+) -> dict[str, Any]:
+    request = prepare_reconciliation_definition_recovery(
+        _load_object(bundle_path), _load_object(stage_path), _load_object(failed_response_path))
+    if output_dir.exists():
+        raise ValueError(f"refusing to write into existing definition-recovery directory: {output_dir}")
+    record = {"request": request, "input_sha256": {
+        "bundle": hash_file(bundle_path), "stage": hash_file(stage_path),
+        "failed_response": hash_file(failed_response_path)}}
+    _write_json(output_dir / "request.json", record)
+    _write_new(output_dir / "prompt.md", request["prompt"].encode("utf-8") + b"\n")
+    _write_json(output_dir / "response.schema.json", request["response_schema"])
+    return {"status": "MISSING_DEFINITIONS_JUDGMENT_REQUIRED",
+            "missing_definition_count": len(request["missing_bindings"]),
+            "candidate_count": request["candidate_count"],
+            "prompt_utf8_bytes": request["prompt_utf8_bytes"],
+            "output_dir": str(output_dir), "model_api_calls": 0}
+
+
+def submit_reconciliation_definitions(
+    *, bundle_path: Path, stage_path: Path, failed_response_path: Path,
+    request_path: Path, patch_path: Path, output_dir: Path,
+) -> dict[str, Any]:
+    record = _load_object(request_path)
+    inputs = {"bundle": hash_file(bundle_path), "stage": hash_file(stage_path),
+              "failed_response": hash_file(failed_response_path)}
+    if set(record) != {"request", "input_sha256"} or record["input_sha256"] != inputs:
+        raise ValueError("definition recovery source file bytes changed")
+    successor, validation = apply_reconciliation_definition_recovery(
+        _load_object(bundle_path), _load_object(stage_path), _load_object(failed_response_path),
+        record["request"], _load_object(patch_path))
+    data = json.dumps(successor, ensure_ascii=False, indent=2, sort_keys=True).encode("utf-8") + b"\n"
+    # Same serializer as _write_json. Bind bytes as well as semantic identities.
+    import hashlib
+    receipt = {"status": "MISSING_DEFINITIONS_RECOVERED_NOT_SEMANTIC_TRUTH_PROVEN",
+        "input_sha256": inputs, "request_sha256": hash_file(request_path),
+        "patch_sha256": hash_file(patch_path), "successor_sha256": hashlib.sha256(data).hexdigest(),
+        "added_definition_count": len(record["request"]["missing_bindings"]),
+        "unchanged_existing_decisions_and_definitions": True,
+        "validation": validation, "model_api_calls": 0}
+    response_path, receipt_path = output_dir / "response.json", output_dir / "receipt.json"
+    if output_dir.exists():
+        if (not response_path.is_file() or not receipt_path.is_file()
+                or response_path.read_bytes() != data or _load_object(receipt_path) != receipt):
+            raise ValueError("definition recovery existing successor differs or is incomplete")
+    else:
+        _write_new(response_path, data)
+        _write_json(receipt_path, receipt)
+    # Verify the durable consumer target, including on idempotent reuse.
+    if validate_reconciliation_stage(_load_object(bundle_path), _load_object(stage_path),
+            [_load_object(response_path)], require_all=False) != validation:
+        raise ValueError("definition recovery durable successor validation differs")
+    return receipt
+
+
+def compose_reconciliation_definitions(
+    *, bundle_path: Path, stage_path: Path, failed_response_path: Path,
+    request_path: Path, patch_path: Path, output_dir: Path,
+) -> dict[str, Any]:
+    """Persist scope-checked definitions as an explicitly unaccepted intermediate."""
+    record = _load_object(request_path)
+    inputs = {"bundle": hash_file(bundle_path), "stage": hash_file(stage_path),
+              "failed_response": hash_file(failed_response_path)}
+    if set(record) != {"request", "input_sha256"} or record["input_sha256"] != inputs:
+        raise ValueError("definition recovery source file bytes changed")
+    intermediate = compose_reconciliation_definition_recovery_intermediate(
+        _load_object(bundle_path), _load_object(stage_path), _load_object(failed_response_path),
+        record["request"], _load_object(patch_path))
+    if output_dir.exists():
+        raise ValueError(f"refusing to write into existing composed-definition directory: {output_dir}")
+    response_path = output_dir / "intermediate-response.json"
+    _write_json(response_path, intermediate)
+    receipt = {"status": "DEFINITIONS_COMPOSED_NOT_ACCEPTED", "accepted": False,
+        "input_sha256": inputs, "request_sha256": hash_file(request_path),
+        "patch_sha256": hash_file(patch_path),
+        "intermediate_response_sha256": hash_file(response_path), "model_api_calls": 0}
+    _write_json(output_dir / "receipt.json", receipt)
+    return {**receipt, "output_dir": str(output_dir)}
+
+
+def prepare_reconciliation_local_repair(
+    *, bundle_path: Path, stage_path: Path, failed_response_path: Path,
+    nomination_path: Path, output_dir: Path, diagnostic_path: Path | None = None,
+) -> dict[str, Any]:
+    request = prepare_reconciliation_repair(_load_object(bundle_path), _load_object(stage_path),
+        _load_object(failed_response_path), **_load_object(nomination_path),
+        diagnostic=_load_object(diagnostic_path) if diagnostic_path is not None else None)
+    if output_dir.exists():
+        raise ValueError(f"refusing to write into existing local-repair directory: {output_dir}")
+    record = {"request": request, "input_sha256": {
+        "bundle": hash_file(bundle_path), "stage": hash_file(stage_path),
+        "failed_response": hash_file(failed_response_path)}}
+    _write_json(output_dir / "request.json", record)
+    _write_new(output_dir / "prompt.md", request["prompt"].encode("utf-8") + b"\n")
+    _write_json(output_dir / "response.schema.json", request["response_schema"])
+    return {"status": "LOCAL_REPAIR_JUDGMENT_REQUIRED", "candidate_count": len(request["candidate_refs"]),
+            "node_count": len(request["node_keys"]), "prompt_utf8_bytes": request["prompt_utf8_bytes"],
+            "output_dir": str(output_dir), "model_api_calls": 0,
+            **({"diagnostic_source_sha256": hash_file(diagnostic_path),
+                "repair_rendering_mode": request["repair_rendering_mode"]}
+               if diagnostic_path is not None else {})}
+
+
+def compose_reconciliation_local_repair(
+    *, bundle_path: Path, stage_path: Path, failed_response_path: Path,
+    repair_request_path: Path, repair_patch_path: Path, output_dir: Path,
+) -> dict[str, Any]:
+    """Persist one scope-checked repair as an explicitly unaccepted intermediate."""
+    record = _load_object(repair_request_path)
+    inputs = {"bundle": hash_file(bundle_path), "stage": hash_file(stage_path),
+              "failed_response": hash_file(failed_response_path)}
+    if set(record) != {"request", "input_sha256"} or record["input_sha256"] != inputs:
+        raise ValueError("local repair source file bytes changed")
+    intermediate = compose_reconciliation_repair_intermediate(
+        _load_object(bundle_path), _load_object(stage_path), _load_object(failed_response_path),
+        record["request"], _load_object(repair_patch_path))
+    if output_dir.exists():
+        raise ValueError(f"refusing to write into existing composed-repair directory: {output_dir}")
+    response_path = output_dir / "intermediate-response.json"
+    _write_json(response_path, intermediate)
+    receipt = {"status": "LOCAL_REPAIR_COMPOSED_NOT_ACCEPTED", "accepted": False,
+        "input_sha256": inputs, "repair_request_sha256": hash_file(repair_request_path),
+        "repair_patch_sha256": hash_file(repair_patch_path),
+        "intermediate_response_sha256": hash_file(response_path), "model_api_calls": 0}
+    _write_json(output_dir / "receipt.json", receipt)
+    return {**receipt, "output_dir": str(output_dir)}
+
+
+def prepare_reconciliation_definitions_after_local_repair(
+    *, bundle_path: Path, stage_path: Path, failed_response_path: Path,
+    repair_request_path: Path, repair_patch_path: Path, output_dir: Path,
+) -> dict[str, Any]:
+    """Prepare the existing definition recovery from one exact local repair."""
+    record = _load_object(repair_request_path)
+    inputs = {"bundle": hash_file(bundle_path), "stage": hash_file(stage_path),
+              "failed_response": hash_file(failed_response_path)}
+    if set(record) != {"request", "input_sha256"} or record["input_sha256"] != inputs:
+        raise ValueError("local repair source file bytes changed")
+    successor, request = prepare_reconciliation_definition_recovery_after_repair(
+        _load_object(bundle_path), _load_object(stage_path), _load_object(failed_response_path),
+        record["request"], _load_object(repair_patch_path))
+    if output_dir.exists():
+        raise ValueError(f"refusing to write into existing chained-recovery directory: {output_dir}")
+    intermediate_path = output_dir / "intermediate-response.json"
+    _write_json(intermediate_path, successor)
+    definition_inputs = {"bundle": inputs["bundle"], "stage": inputs["stage"],
+                         "failed_response": hash_file(intermediate_path)}
+    _write_json(output_dir / "request.json", {"request": request, "input_sha256": definition_inputs})
+    chain_receipt = {"original_input_sha256": inputs,
+                     "repair_request_sha256": hash_file(repair_request_path),
+                     "repair_patch_sha256": hash_file(repair_patch_path),
+                     "intermediate_response_sha256": definition_inputs["failed_response"]}
+    _write_json(output_dir / "chain-receipt.json", chain_receipt)
+    _write_new(output_dir / "prompt.md", request["prompt"].encode("utf-8") + b"\n")
+    _write_json(output_dir / "response.schema.json", request["response_schema"])
+    return {"status": "LOCAL_REPAIR_COMPOSED_MISSING_DEFINITIONS_JUDGMENT_REQUIRED",
+            "missing_definition_count": len(request["missing_bindings"]),
+            "candidate_count": request["candidate_count"],
+            "prompt_utf8_bytes": request["prompt_utf8_bytes"],
+            "intermediate_accepted": False, "chain_receipt": chain_receipt,
+            "output_dir": str(output_dir), "model_api_calls": 0}
+
+
+def submit_reconciliation_local_repair(
+    *, bundle_path: Path, stage_path: Path, failed_response_path: Path,
+    request_path: Path, patch_path: Path, output_dir: Path,
+) -> dict[str, Any]:
+    record = _load_object(request_path)
+    inputs = {"bundle": hash_file(bundle_path), "stage": hash_file(stage_path),
+              "failed_response": hash_file(failed_response_path)}
+    if set(record) != {"request", "input_sha256"} or record["input_sha256"] != inputs:
+        raise ValueError("local repair source file bytes changed")
+    successor, validation = apply_reconciliation_repair(
+        _load_object(bundle_path), _load_object(stage_path), _load_object(failed_response_path),
+        record["request"], _load_object(patch_path))
+    data = json.dumps(successor, ensure_ascii=False, indent=2, sort_keys=True).encode("utf-8") + b"\n"
+    import hashlib
+    receipt = {"status": "LOCAL_REPAIR_APPLIED_NOT_SEMANTIC_TRUTH_PROVEN", "input_sha256": inputs,
+        "request_sha256": hash_file(request_path), "patch_sha256": hash_file(patch_path),
+        "successor_sha256": hashlib.sha256(data).hexdigest(), "node_keys": record["request"]["node_keys"],
+        "candidate_refs": record["request"]["candidate_refs"], "validation": validation, "model_api_calls": 0}
+    response_path, receipt_path = output_dir / "response.json", output_dir / "receipt.json"
+    if output_dir.exists():
+        if (not response_path.is_file() or not receipt_path.is_file() or response_path.read_bytes() != data
+                or _load_object(receipt_path) != receipt):
+            raise ValueError("local repair existing successor differs or is incomplete")
+    else:
+        _write_new(response_path, data)
+        _write_json(receipt_path, receipt)
+    if validate_reconciliation_stage(_load_object(bundle_path), _load_object(stage_path),
+            [_load_object(response_path)], require_all=False) != validation:
+        raise ValueError("local repair durable successor validation differs")
+    return receipt
 
 
 def submit_reconciliation_level(
@@ -1543,6 +1849,7 @@ def project_evidence_packet_run(
     proposition_ids: list[str],
     packet_out: Path,
     packet_version: str = "v3",
+    all_propositions: bool = False,
 ) -> dict[str, Any]:
     view = _load_object(view_path)
     bundle = _load_object(bundle_path)
@@ -1555,6 +1862,12 @@ def project_evidence_packet_run(
         "v2": project_evidence_packet_v2,
         "v3": project_evidence_packet,
     }[packet_version]
+    if all_propositions:
+        if axis_ids or proposition_ids:
+            raise ValueError(
+                "all-propositions cannot be combined with axis or proposition selection"
+            )
+        proposition_ids = [row["proposition_id"] for row in view["propositions"]]
     packet = projector(
         view,
         bundle,
@@ -1945,6 +2258,40 @@ def finalize_preselection_relation_confirmation_run(
     }
 
 
+def finalize_preselection_relation_confirmation_full_source_run(
+    *,
+    selection_manifest_path: Path,
+    first_response_path: Path,
+    confirmation_manifest_path: Path,
+    confirmation_response_path: Path,
+    quote_manifest_out: Path,
+    artifact_out: Path,
+) -> dict[str, Any]:
+    selection_manifest = _load_object(selection_manifest_path)
+    sources = load_selection_sources(selection_manifest)
+    quote_manifest, artifact = (
+        finalize_preselection_relation_confirmation_full_source(
+            selection_manifest,
+            sources,
+            _load_object(first_response_path),
+            _load_object(confirmation_manifest_path),
+            _load_object(confirmation_response_path),
+        )
+    )
+    for output in (quote_manifest_out, artifact_out):
+        if output.exists():
+            raise ValueError(f"refusing to overwrite existing output: {output}")
+    _write_json(quote_manifest_out, quote_manifest)
+    _write_json(artifact_out, artifact)
+    return {
+        "status": "PHASE_A_CONFIRMED_EVIDENCE_SELECTION_FULL_SOURCE_COMPLETE",
+        "candidate_count": len(quote_manifest["labeled_inventory"]),
+        "selected_row_count": len(quote_manifest["selected_rows"]),
+        "quote_manifest_sha256": quote_manifest["manifest_sha256"],
+        "model_api_calls": 0,
+    }
+
+
 def finalize_evidence_selection_batches_run(
     *,
     batch_manifest_path: Path,
@@ -2123,6 +2470,51 @@ def finalize_batched_preselection_relation_confirmation_run(
         "candidate_count": len(quote_manifest["labeled_inventory"]),
         "relation_batch_count": len(batch_manifest["batches"]),
         "confirmation_batch_count": len(confirmation_batch_manifest["batches"]),
+        "selected_row_count": len(quote_manifest["selected_rows"]),
+        "quote_manifest_sha256": quote_manifest["manifest_sha256"],
+        "model_api_calls": 0,
+    }
+
+
+def finalize_batched_preselection_relation_confirmation_full_source_run(
+    *,
+    batch_manifest_path: Path,
+    response_dir: Path,
+    confirmation_batch_manifest_path: Path,
+    confirmation_response_dir: Path,
+    quote_manifest_out: Path,
+    artifact_out: Path,
+) -> dict[str, Any]:
+    batch_manifest = _load_object(batch_manifest_path)
+    selection_manifest = batch_manifest.get("selection_manifest")
+    if not isinstance(selection_manifest, dict):
+        raise ValueError("selection batch manifest is missing its selection manifest")
+    sources = load_selection_sources(selection_manifest)
+    responses = _load_relation_batch_responses(batch_manifest, response_dir)
+    confirmation_batch_manifest = _load_object(confirmation_batch_manifest_path)
+    confirmation_batch_responses = {
+        batch["batch_id"]: _load_object(
+            confirmation_response_dir / f"{batch['batch_id']}_response.json"
+        )
+        for batch in confirmation_batch_manifest.get("batches", [])
+    }
+    quote_manifest, artifact = (
+        finalize_batched_preselection_relation_confirmations_full_source(
+            batch_manifest,
+            sources,
+            responses,
+            confirmation_batch_manifest,
+            confirmation_batch_responses,
+        )
+    )
+    for output in (quote_manifest_out, artifact_out):
+        if output.exists():
+            raise ValueError(f"refusing to overwrite existing output: {output}")
+    _write_json(quote_manifest_out, quote_manifest)
+    _write_json(artifact_out, artifact)
+    return {
+        "status": "PHASE_A_BATCHED_CONFIRMED_EVIDENCE_SELECTION_FULL_SOURCE_COMPLETE",
+        "candidate_count": len(quote_manifest["labeled_inventory"]),
         "selected_row_count": len(quote_manifest["selected_rows"]),
         "quote_manifest_sha256": quote_manifest["manifest_sha256"],
         "model_api_calls": 0,
@@ -2369,6 +2761,18 @@ def _parser() -> argparse.ArgumentParser:
     reconcile_level.add_argument("--compilation", type=Path, required=True)
     reconcile_level.add_argument("--stage-out", type=Path, required=True)
     reconcile_level.add_argument("--prompt-dir", type=Path, required=True)
+    reconcile_level.add_argument("--existing-stage", type=Path,
+        help="Render requests for an immutable partially completed stage without repartitioning.")
+    reconcile_level.add_argument("--response-version",
+        choices=[RECONCILIATION_RESPONSE_VERSION_V2, RECONCILIATION_RESPONSE_VERSION_V3],
+        help="Defaults to decision-only v3 for method v12; explicit v2 is historical replay.")
+    reconcile_level.add_argument("--authoring-revision",
+        choices=[
+            RECONCILIATION_AUTHORING_LEGACY,
+            RECONCILIATION_AUTHORING_IDENTITY_V1,
+            RECONCILIATION_AUTHORING_IDENTITY_V2,
+        ],
+        help="Normal requests only: defaults to exact identity namespaces for method-v12 response-v3; legacy reproduces historical requests.")
     reconcile_level.add_argument(
         "--reconciliation-policy",
         choices=[RECONCILIATION_POLICY_VERSION_V2],
@@ -2380,11 +2784,42 @@ def _parser() -> argparse.ArgumentParser:
     submit_level.add_argument("--response", type=Path, action="append", required=True)
     submit_level.add_argument("--compilation-out", type=Path, required=True)
 
+    for command in ("prepare-reconciliation-definitions", "submit-reconciliation-definitions",
+                    "compose-reconciliation-definitions", "prepare-reconciliation-repair",
+                    "submit-reconciliation-repair", "compose-reconciliation-repair",
+                    "prepare-reconciliation-definitions-after-repair"):
+        definitions = sub.add_parser(command)
+        definitions.add_argument("--bundle", type=Path, required=True)
+        definitions.add_argument("--stage", type=Path, required=True)
+        definitions.add_argument("--failed-response", type=Path, required=True)
+        definitions.add_argument("--output-dir", type=Path, required=True)
+        if command.startswith(("submit-", "compose-")) or command.endswith("-after-repair"):
+            definitions.add_argument("--request", type=Path, required=True)
+            definitions.add_argument("--patch", type=Path, required=True)
+        if command == "prepare-reconciliation-repair":
+            definitions.add_argument("--nomination", type=Path, required=True)
+            definitions.add_argument("--diagnostic", type=Path)
+
     validate_reconciliation = sub.add_parser("validate-reconciliation-response")
     validate_reconciliation.add_argument("--bundle", type=Path, required=True)
     validate_reconciliation.add_argument("--stage", type=Path, required=True)
     validate_reconciliation.add_argument("--response", type=Path, required=True)
     validate_reconciliation.add_argument("--receipt-out", type=Path)
+
+    recover_reconciliation = sub.add_parser("recover-reconciliation-provider-attempt")
+    recover_reconciliation.add_argument("--bundle", type=Path, required=True)
+    recover_reconciliation.add_argument("--stage", type=Path, required=True)
+    recover_reconciliation.add_argument("--response-schema", type=Path, required=True)
+    recover_reconciliation.add_argument(
+        "--attempt-dir", type=Path, action="append", required=True
+    )
+    recover_reconciliation.add_argument("--recovery-dir", type=Path, required=True)
+
+    diagnose_reconciliation = sub.add_parser("diagnose-reconciliation-response")
+    diagnose_reconciliation.add_argument("--bundle", type=Path, required=True)
+    diagnose_reconciliation.add_argument("--stage", type=Path, required=True)
+    diagnose_reconciliation.add_argument("--response", type=Path, required=True)
+    diagnose_reconciliation.add_argument("--diagnostic-out", type=Path, required=True)
 
     prepare_closure = sub.add_parser("prepare-relation-closure")
     prepare_closure.add_argument("--bundle", type=Path, required=True)
@@ -2443,6 +2878,7 @@ def _parser() -> argparse.ArgumentParser:
     selection = evidence_packet.add_mutually_exclusive_group(required=True)
     selection.add_argument("--axis-id", action="append", default=[])
     selection.add_argument("--proposition-id", action="append", default=[])
+    selection.add_argument("--all-propositions", action="store_true")
     evidence_packet.add_argument("--packet-out", type=Path, required=True)
     evidence_packet.add_argument(
         "--packet-version", choices=("v1", "v2", "v3"), default="v3"
@@ -2565,6 +3001,28 @@ def _parser() -> argparse.ArgumentParser:
         "--quote-manifest-out", type=Path, required=True
     )
 
+    preselection_full_source_finalize = sub.add_parser(
+        "finalize-preselection-relation-confirmation-full-source"
+    )
+    preselection_full_source_finalize.add_argument(
+        "--selection-manifest", type=Path, required=True
+    )
+    preselection_full_source_finalize.add_argument(
+        "--first-response", type=Path, required=True
+    )
+    preselection_full_source_finalize.add_argument(
+        "--confirmation-manifest", type=Path, required=True
+    )
+    preselection_full_source_finalize.add_argument(
+        "--confirmation-response", type=Path, required=True
+    )
+    preselection_full_source_finalize.add_argument(
+        "--quote-manifest-out", type=Path, required=True
+    )
+    preselection_full_source_finalize.add_argument(
+        "--artifact-out", type=Path, required=True
+    )
+
     batched_preselection_confirmation = sub.add_parser(
         "prepare-batched-preselection-relation-confirmation"
     )
@@ -2607,6 +3065,28 @@ def _parser() -> argparse.ArgumentParser:
     )
     batched_preselection_finalize.add_argument(
         "--quote-manifest-out", type=Path, required=True
+    )
+
+    batched_preselection_full_source_finalize = sub.add_parser(
+        "finalize-batched-preselection-relation-confirmation-full-source"
+    )
+    batched_preselection_full_source_finalize.add_argument(
+        "--batch-manifest", type=Path, required=True
+    )
+    batched_preselection_full_source_finalize.add_argument(
+        "--response-dir", type=Path, required=True
+    )
+    batched_preselection_full_source_finalize.add_argument(
+        "--confirmation-batch-manifest", type=Path, required=True
+    )
+    batched_preselection_full_source_finalize.add_argument(
+        "--confirmation-response-dir", type=Path, required=True
+    )
+    batched_preselection_full_source_finalize.add_argument(
+        "--quote-manifest-out", type=Path, required=True
+    )
+    batched_preselection_full_source_finalize.add_argument(
+        "--artifact-out", type=Path, required=True
     )
 
     selection_batch_relations = sub.add_parser(
@@ -2862,7 +3342,36 @@ def main(argv: list[str] | None = None) -> int:
                 stage_out=args.stage_out,
                 prompt_dir=args.prompt_dir,
                 reconciliation_policy_version=args.reconciliation_policy,
+                response_version=args.response_version,
+                existing_stage_path=args.existing_stage,
+                authoring_revision=args.authoring_revision,
             )
+        elif args.command == "prepare-reconciliation-definitions":
+            result = prepare_reconciliation_definitions(bundle_path=args.bundle,
+                stage_path=args.stage, failed_response_path=args.failed_response, output_dir=args.output_dir)
+        elif args.command == "submit-reconciliation-definitions":
+            result = submit_reconciliation_definitions(bundle_path=args.bundle,
+                stage_path=args.stage, failed_response_path=args.failed_response,
+                request_path=args.request, patch_path=args.patch, output_dir=args.output_dir)
+        elif args.command == "prepare-reconciliation-repair":
+            result = prepare_reconciliation_local_repair(bundle_path=args.bundle, stage_path=args.stage,
+                failed_response_path=args.failed_response, nomination_path=args.nomination,
+                output_dir=args.output_dir, diagnostic_path=args.diagnostic)
+        elif args.command == "submit-reconciliation-repair":
+            result = submit_reconciliation_local_repair(bundle_path=args.bundle, stage_path=args.stage,
+                failed_response_path=args.failed_response, request_path=args.request, patch_path=args.patch, output_dir=args.output_dir)
+        elif args.command == "compose-reconciliation-definitions":
+            result = compose_reconciliation_definitions(bundle_path=args.bundle, stage_path=args.stage,
+                failed_response_path=args.failed_response, request_path=args.request,
+                patch_path=args.patch, output_dir=args.output_dir)
+        elif args.command == "compose-reconciliation-repair":
+            result = compose_reconciliation_local_repair(bundle_path=args.bundle, stage_path=args.stage,
+                failed_response_path=args.failed_response, repair_request_path=args.request,
+                repair_patch_path=args.patch, output_dir=args.output_dir)
+        elif args.command == "prepare-reconciliation-definitions-after-repair":
+            result = prepare_reconciliation_definitions_after_local_repair(bundle_path=args.bundle,
+                stage_path=args.stage, failed_response_path=args.failed_response,
+                repair_request_path=args.request, repair_patch_path=args.patch, output_dir=args.output_dir)
         elif args.command == "submit-reconciliation-level":
             result = submit_reconciliation_level(
                 bundle_path=args.bundle,
@@ -2876,6 +3385,21 @@ def main(argv: list[str] | None = None) -> int:
                 stage_path=args.stage,
                 response_path=args.response,
                 receipt_out=args.receipt_out,
+            )
+        elif args.command == "recover-reconciliation-provider-attempt":
+            result = recover_reconciliation_provider_attempt(
+                bundle_path=args.bundle,
+                stage_path=args.stage,
+                response_schema_path=args.response_schema,
+                attempt_dirs=args.attempt_dir,
+                recovery_dir=args.recovery_dir,
+            )
+        elif args.command == "diagnose-reconciliation-response":
+            result = diagnose_reconciliation_response_file(
+                bundle_path=args.bundle,
+                stage_path=args.stage,
+                response_path=args.response,
+                diagnostic_out=args.diagnostic_out,
             )
         elif args.command == "prepare-relation-closure":
             result = prepare_relation_closure_run(
@@ -2937,6 +3461,7 @@ def main(argv: list[str] | None = None) -> int:
                 proposition_ids=args.proposition_id,
                 packet_out=args.packet_out,
                 packet_version=args.packet_version,
+                all_propositions=args.all_propositions,
             )
         elif args.command == "prepare-evidence-consumer-batch":
             result = prepare_evidence_consumer_batch_run(
@@ -3024,6 +3549,18 @@ def main(argv: list[str] | None = None) -> int:
                 quote_schema_out=args.quote_schema_out,
                 quote_manifest_out=args.quote_manifest_out,
             )
+        elif (
+            args.command
+            == "finalize-preselection-relation-confirmation-full-source"
+        ):
+            result = finalize_preselection_relation_confirmation_full_source_run(
+                selection_manifest_path=args.selection_manifest,
+                first_response_path=args.first_response,
+                confirmation_manifest_path=args.confirmation_manifest,
+                confirmation_response_path=args.confirmation_response,
+                quote_manifest_out=args.quote_manifest_out,
+                artifact_out=args.artifact_out,
+            )
         elif args.command == "prepare-batched-preselection-relation-confirmation":
             result = prepare_batched_preselection_relation_confirmation_run(
                 batch_manifest_path=args.batch_manifest,
@@ -3041,6 +3578,18 @@ def main(argv: list[str] | None = None) -> int:
                 quote_prompt_out=args.quote_prompt_out,
                 quote_schema_out=args.quote_schema_out,
                 quote_manifest_out=args.quote_manifest_out,
+            )
+        elif (
+            args.command
+            == "finalize-batched-preselection-relation-confirmation-full-source"
+        ):
+            result = finalize_batched_preselection_relation_confirmation_full_source_run(
+                batch_manifest_path=args.batch_manifest,
+                response_dir=args.response_dir,
+                confirmation_batch_manifest_path=args.confirmation_batch_manifest,
+                confirmation_response_dir=args.confirmation_response_dir,
+                quote_manifest_out=args.quote_manifest_out,
+                artifact_out=args.artifact_out,
             )
         elif args.command == "finalize-evidence-selection-batches":
             result = finalize_evidence_selection_batches_run(
