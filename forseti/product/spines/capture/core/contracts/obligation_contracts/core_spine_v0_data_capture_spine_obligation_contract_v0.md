@@ -508,6 +508,18 @@ Minimum handoff accomplishments:
 - Cleaning can proceed without reconstructing collection history;
 - Judgment can inspect capture limits without Capture making judgment calls.
 
+Capture-owned handoff readiness is readiness of the captured target or batch,
+not acquisition closure. A Capture-authored summary may report that its bounded
+targets are captured and ready for allowed downstream preparation, including
+the lightweight provisional maturity scan, but it must not assert
+`COLLECTION_COMPLETE_READY_FOR_CONSOLIDATION`, `SEALED_READY_FOR_DELIVER`,
+material saturation, or an equivalent terminal state. Those claims belong to
+the current Commission Signal Board phase acquisition seal and its validator.
+A completed URL list, capture job set, agent allocation, or source-access
+allowance cannot substitute for that seal. Any downstream consumer presented
+with such a Capture-only terminal claim must treat it as a non-terminal batch
+handoff and keep acquisition open.
+
 ### 17. Demand-Durability Series Facts (Conditional)
 
 This obligation applies ONLY to a commissioned demand-durability proxy series

@@ -1,11 +1,11 @@
-# Experiment Beauty Collection Completion Receipt v0
+# Experiment Beauty Capture Batch Handoff Receipt v0
 
 ```yaml
-artifact_kind: collection_completion_receipt
+artifact_kind: capture_batch_handoff_receipt
 subject: Experiment Beauty
 decision_use: strengthen the Dieux competitive-intelligence cycle
 geography_posture: US primary; Canada secondary where the source exposes it
-status: COLLECTION_COMPLETE_READY_FOR_CONSOLIDATION
+status: CAPTURE_BATCH_COMPLETE_MATERIAL_SATURATION_NOT_PROVEN
 captured_through_utc: 2026-09-04T15:24:58Z
 authority_boundary: evidence_only_no_cleaning_judgment_or_delivery
 canonical_data_lake_root: F:\forseti-data-lake
@@ -23,10 +23,12 @@ accepted_residuals:
 
 Collect source-native, company-wide Experiment Beauty evidence into the
 canonical lake. Reddit is prioritized, not exclusive; every relevant public
-or legitimately entitled community venue is eligible. Completion is measured
-by inspectable packet manifests, source/route reconciliation, and a handoff a
-downstream consumer can use without reconstructing collection history. It is
-not capped by thread, URL, agent, subagent, or context-window counts.
+or legitimately entitled community venue is eligible. This batch is complete
+when its bounded targets have inspectable packet manifests, source/route
+reconciliation, and a handoff a downstream consumer can use without
+reconstructing capture history. That batch state is not acquisition closure or
+material saturation, and it is not capped by thread, URL, agent, subagent, or
+context-window counts.
 
 The positive signal is a verified, consumer-readable capture ledger covering
 current owned identity and products, retailer review bodies, direct
@@ -43,6 +45,15 @@ Collection preserves observations and limitations. It does not identify
 independent origins, award claim-support posture, infer prevalence or
 causation, adjudicate the current formula from conflicting source content,
 rank the market, or perform Cleaning, Judgment, or Deliver.
+
+This receipt accounts the known-source capture batch only. Because the Reddit
+discovery-query provenance was not preserved, it cannot show that the remaining
+practical community searches would add only immaterial or repetitive evidence.
+The current Commission Signal Board phase acquisition seal must therefore stay
+open until its lightweight maturity scan identifies the material axes and two
+later, genuinely different continuation families add no material decision
+value for each closing axis, or the seal records supported route-bounded source
+exhaustion with the weaker claim ceiling.
 
 ## Owned Identity, Product, And Formula Capture
 
@@ -309,10 +320,12 @@ No unsupported surface is silently promoted to semantic-ready evidence.
 
 ## Handoff
 
-`COLLECTION_COMPLETE_READY_FOR_CONSOLIDATION`.
+`CAPTURE_BATCH_COMPLETE_MATERIAL_SATURATION_NOT_PROVEN`.
 
-The next consumer should ingest the supported Sephora onboarding corpus,
-accept or adapt the structured Reddit records, and preserve all denominator,
-relationship, access, and formula-conflict fields. It must not convert the
-candidate-row counts into independent-origin corroboration without doing the
-claim-support contract's origin resolution.
+The next consumer may ingest the supported Sephora onboarding corpus, accept or
+adapt the structured Reddit records, and preserve all denominator,
+relationship, access, and formula-conflict fields for the lightweight
+provisional maturity scan. It must use that scan to commission the missing
+material-exhaustion work before terminal Evidence Consolidation, and it must
+not convert candidate-row counts into independent-origin corroboration without
+doing the claim-support contract's origin resolution.

@@ -70,6 +70,12 @@ inherit this floor.
   contract files before the full suite. Diff-resolution and launch errors fail
   closed. The adapter adds no test rule and a pass is not full-suite validation,
   readiness, approval, or proof that every CI failure is prevented.
+- Capture-terminal-claim boundary: the existing diff-scoped CSB-first artifact
+  gate rejects a changed Markdown YAML receipt whose Capture-owned artifact
+  kind calls itself collection-complete or whose status claims acquisition or
+  Evidence Consolidation readiness. The check protects the exclusive
+  validator-backed phase acquisition seal transition; it does not prove that
+  material saturation is true.
 - No software implementation directories are present unless explicitly authorized.
 - `AGENTS.md` and overlay files do not encode `jb` project-specific authority as Forseti rules.
 - Material authority, source-scope, edit-permission, and repository-state checks
@@ -478,6 +484,15 @@ never truth, readiness, or approval. Judgment-based rules (claim discipline,
 scope, lifecycle reasoning) stay resident and must actually fire. The per-rule
 classification and build history live in
 `docs/decisions/overlay_enforcement_placement_classification_v0.md`.
+
+The Capture-terminal-claim check extends the existing CI-only CSB-first artifact
+gate rather than creating a new checker or interactive hook. It inspects only
+changed Markdown artifacts carrying a Capture handoff/completion YAML kind and
+rejects the mechanically recognizable terminal vocabulary. This catches the
+observed free-text completion bypass before merge while leaving the semantic
+question—whether the phase acquisition seal's saturation evidence is true—to
+the owning validator and human judgment. Equivalent prose overclaims remain a
+resident-judgment responsibility.
 
 Active placement instance: `.agents/hooks/check_placement.py --changed --strict`
 runs in CI against the exact event base. It checks added/modified/copied paths

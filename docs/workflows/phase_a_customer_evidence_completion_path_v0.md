@@ -31,6 +31,17 @@ failure. This is a conceptual and completion boundary between acquisition and
 Deliver, not a new globally numbered phase: historical Phase A, Phase B, Turn
 B, Understanding, and Deliver vocabulary is not renumbered or migrated.
 
+At this boundary, an immutable, completely accounted corpus requires a current
+passing `phase_acquisition_seal_v3` whose validator-backed depth ledger closes
+the material-saturation test. A Capture batch or collection handoff receipt,
+even one whose planned URLs and packets are fully reconciled, cannot authorize
+Evidence Consolidation or substitute for that seal. When the seal is absent or
+blocked, only the lightweight provisional maturity scan and its targeted delta
+acquisition may proceed; the named Evidence Consolidation stage remains
+unopened. The owning gate and validator are
+`forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md`
+and `forseti-harness/runners/run_phase_acquisition_seal_validation.py`.
+
 For new cross-company authoring, use `phase_a_semantic_integration_run_v10`
 (integration method v12, verifier v11). The supplied `CURRENT_AXES` inventory
 owns output IDs; shared examples describe concepts, never another company's

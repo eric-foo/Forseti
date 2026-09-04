@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate scan-artifact receipt shape and Creator Registry preflight receipts.
+"""Validate scan receipts, Capture handoff boundaries, and Creator Registry receipts.
 
 This is a local/manual checker with a forward-only changed-file mode for CI.
 It does not run retrieval, grade signal quality, validate candidates, bind
@@ -11,6 +11,11 @@ capture-request accounting, bounded candidate closeout, and mechanical
 engagement/resonance overclaim language. For scan artifacts that cite Creator
 Registry match preflight receipts, it also checks the cited receipt file exists
 and that capture-request preflight fields match receipt result rows.
+
+For changed Markdown research artifacts, it also rejects a Capture-owned YAML
+receipt that calls itself a collection-completion receipt or claims terminal
+acquisition / Evidence Consolidation readiness. Capture can close a bounded
+batch; only the validator-backed phase acquisition seal can close acquisition.
 """
 from __future__ import annotations
 
@@ -98,6 +103,23 @@ VALID_ROUTE_BINDING_STATES = {
     "not_applicable",
 }
 AUTO_SCAN_PREFIXES = ("docs/research/",)
+CAPTURE_HANDOFF_ARTIFACT_KINDS = {
+    "capture_batch_handoff_receipt",
+    "collection_completion_receipt",
+}
+CAPTURE_HANDOFF_KIND_RE = re.compile(
+    r"^[ \t]*artifact_kind[ \t]*:[ \t]*['\"]?"
+    r"(?:capture_batch_handoff_receipt|collection_completion_receipt)['\"]?[ \t]*$",
+    re.IGNORECASE | re.MULTILINE,
+)
+FORBIDDEN_CAPTURE_TERMINAL_STATUSES = {
+    "acquisition_complete",
+    "collection_complete",
+    "collection_complete_ready_for_consolidation",
+    "material_saturation_proven",
+    "ready_for_consolidation",
+    "sealed_ready_for_deliver",
+}
 AUTO_SCAN_REQUIRED_MARKERS = (
     "commission_id:",
     "source_context_status:",
@@ -1192,6 +1214,47 @@ def looks_like_csb_first_scan_artifact(relposix: str, text: str) -> bool:
     return explicit_version_marked or (route_marked and current_shape_marked)
 
 
+def _capture_handoff_blocks(blocks: list[Any]) -> list[dict[str, Any]]:
+    return [
+        block
+        for block in blocks
+        if isinstance(block, dict)
+        and _normalize_vocab(block.get("artifact_kind")) in CAPTURE_HANDOFF_ARTIFACT_KINDS
+    ]
+
+
+def looks_like_capture_handoff_receipt(text: str) -> bool:
+    # Raw marker detection keeps malformed YAML inside the fail-loud path;
+    # parsing alone would make an invalid receipt disappear from auto-targeting.
+    return CAPTURE_HANDOFF_KIND_RE.search(text) is not None
+
+
+def _validate_capture_handoff_blocks(blocks: list[Any]) -> list[Finding]:
+    findings: list[Finding] = []
+    for block in _capture_handoff_blocks(blocks):
+        artifact_kind = _normalize_vocab(block.get("artifact_kind"))
+        status = _normalize_vocab(block.get("status"))
+        if artifact_kind == "collection_completion_receipt":
+            findings.append(
+                Finding(
+                    "capture_completion_artifact_kind_forbidden",
+                    "Capture owns bounded batch handoff, not collection or acquisition completion; use `capture_batch_handoff_receipt`.",
+                )
+            )
+        if (
+            status in FORBIDDEN_CAPTURE_TERMINAL_STATUSES
+            or status.startswith("collection_complete_")
+            or status.endswith("_ready_for_consolidation")
+        ):
+            findings.append(
+                Finding(
+                    "capture_handoff_claims_terminal_acquisition",
+                    f"Capture handoff status {block.get('status')!r} claims a terminal state reserved to the validator-backed phase acquisition seal.",
+                )
+            )
+    return findings
+
+
 # Kept local: different contract from _hooklib.to_relposix (never None; falls back to backslash-normalized str).
 def _relposix(root: Path, path: Path) -> str:
     try:
@@ -1204,7 +1267,8 @@ def auto_targets(root: Path, relpaths: Iterable[str]) -> list[Path]:
     targets: list[Path] = []
     for rel in _dedupe(relpaths):
         path = root / rel
-        if not path.is_file():
+        relposix = rel.replace("\\", "/")
+        if not relposix.endswith(".md") or not path.is_file():
             continue
         try:
             text = path.read_text(encoding="utf-8")
@@ -1212,8 +1276,7 @@ def auto_targets(root: Path, relpaths: Iterable[str]) -> list[Path]:
             text = path.read_text(encoding="utf-8", errors="replace")
         except OSError:
             continue
-        relposix = rel.replace("\\", "/")
-        if looks_like_csb_first_scan_artifact(relposix, text) or (
+        if looks_like_capture_handoff_receipt(text) or looks_like_csb_first_scan_artifact(relposix, text) or (
             any(relposix.startswith(prefix) for prefix in AUTO_SCAN_PREFIXES)
             and looks_like_creator_registry_preflight_artifact(relposix, text)
         ):
@@ -1225,6 +1288,11 @@ def validate_artifact_path(root: Path, path: Path) -> list[Finding]:
     text = path.read_text(encoding="utf-8")
     relposix = _relposix(root, path)
     findings: list[Finding] = []
+    if looks_like_capture_handoff_receipt(text):
+        blocks, yaml_findings = _yaml_blocks(text)
+        findings.extend(yaml_findings)
+        findings.extend(_validate_capture_handoff_blocks(blocks))
+        return findings
     if dispatched_receipt_version(text) == LEGACY_SCAN_RECEIPT_VERSION and relposix not in LEGACY_SCAN_RECEIPT_PATHS:
         findings.append(
             Finding(
@@ -1339,17 +1407,74 @@ def selftest() -> int:
                 f"targeted={current_targeted} version={current_version} findings={current_findings}"
             )
 
+    capture_cases = {
+        "batch handoff remains non-terminal": (
+            """```yaml
+artifact_kind: capture_batch_handoff_receipt
+status: CAPTURE_BATCH_COMPLETE_MATERIAL_SATURATION_NOT_PROVEN
+```""",
+            set(),
+        ),
+        "legacy completion receipt is rejected": (
+            """```yaml
+artifact_kind: collection_completion_receipt
+status: COLLECTION_COMPLETE_READY_FOR_CONSOLIDATION
+```""",
+            {
+                "capture_completion_artifact_kind_forbidden",
+                "capture_handoff_claims_terminal_acquisition",
+            },
+        ),
+        "phase acquisition seal keeps terminal authority": (
+            """```yaml
+artifact_kind: phase_acquisition_seal
+seal_state: SEALED_READY_FOR_DELIVER
+```""",
+            set(),
+        ),
+    }
+    for name, (text, expected_codes) in capture_cases.items():
+        blocks, yaml_findings = _yaml_blocks(text)
+        codes = {finding.code for finding in [*yaml_findings, *_validate_capture_handoff_blocks(blocks)]}
+        if codes == expected_codes:
+            print(f"PASS {name}")
+        else:
+            ok = False
+            print(f"FAIL {name}: expected={sorted(expected_codes)} actual={sorted(codes)}")
+
+    malformed_capture = """```yaml
+artifact_kind: capture_batch_handoff_receipt
+status: [
+```"""
+    malformed_blocks, malformed_yaml_findings = _yaml_blocks(malformed_capture)
+    malformed_codes = {
+        finding.code
+        for finding in [
+            *malformed_yaml_findings,
+            *_validate_capture_handoff_blocks(malformed_blocks),
+        ]
+    }
+    if looks_like_capture_handoff_receipt(malformed_capture) and "invalid_yaml_fence" in malformed_codes:
+        print("PASS malformed Capture handoff remains auto-targeted and fails loud")
+    else:
+        ok = False
+        print(
+            "FAIL malformed Capture handoff targeting: "
+            f"targeted={looks_like_capture_handoff_receipt(malformed_capture)} "
+            f"codes={sorted(malformed_codes)}"
+        )
+
     print("SELFTEST", "OK" if ok else "FAILED")
     return 0 if ok else 1
 
 
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(
-        description="Validate CSB-first scan receipt shape and Creator Registry preflight receipt content."
+        description="Validate CSB-first scan receipt shape, Capture handoff boundaries, and Creator Registry preflight receipt content."
     )
     parser.add_argument("paths", nargs="*", help="explicit scan artifact paths")
-    parser.add_argument("--changed", action="store_true", help="auto-check changed docs/research scan artifacts with CSB-first or Creator Registry preflight markers")
-    parser.add_argument("--diff", metavar="BASE", help="auto-check docs/research scan artifacts with CSB-first or Creator Registry preflight markers changed in BASE...HEAD")
+    parser.add_argument("--changed", action="store_true", help="auto-check changed Capture handoffs and docs/research scan artifacts with CSB-first or Creator Registry preflight markers")
+    parser.add_argument("--diff", metavar="BASE", help="auto-check Capture handoffs and docs/research scan artifacts with CSB-first or Creator Registry preflight markers changed in BASE...HEAD")
     parser.add_argument("--strict", action="store_true", help="accepted for CI readability; findings already exit 1")
     parser.add_argument("--selftest", action="store_true", help="run fixture selftest")
     args = parser.parse_args(argv)
@@ -1379,7 +1504,7 @@ def main(argv: list[str]) -> int:
 
     if not paths:
         if args.changed or args.diff:
-            print("check_csb_scanning_artifact: no changed CSB-first or Creator Registry preflight scan artifacts detected")
+            print("check_csb_scanning_artifact: no changed Capture handoff, CSB-first, or Creator Registry preflight artifacts detected")
             return 0
         print(
             "usage: check_csb_scanning_artifact.py [--selftest] [--changed] [--diff BASE] <scan-artifact> [...]",
