@@ -423,6 +423,8 @@ information job supported, contradicted, bounded, or honestly blocked). A
 dedicated completion profile for a new subject class is authored only when
 that class recurs, not speculatively.
 
+##### Acquisition And Seal Sequence
+
 1. Bind `cycle_id`, `commission_id`, canonical phase, phase-specific question,
    intended consumer/use, scope, and the six outcome signals below.
 2. Complete prerequisite and authority checks. Generate and validate the
@@ -1065,48 +1067,14 @@ Contracts"). Operating rules:
   travel together; unequal or non-normalized units remain explicit, and a
   posture that licenses direct comparison cannot span two currencies.
 
-  **Summer Fridays dogfood grounding (historical evidence, not a current
-  competitor verdict).** The p11 Phase 1 ledger selected e.l.f. Glow Reviver
-  Melting Lip Balm and Rhode Peptide Lip Treatment after each appeared in two
-  fresh subject queries. It observed Summer Fridays Lip Butter Balm at USD 24
-  for 15 g, e.l.f. at USD 9 for 0.52 oz, and Rhode at USD 20 for 10 ml; the
-  Rhode comparison correctly remained unnormalized across mass and volume.
-  The same run's Phase 2 kept both brands watch-only because its admitted
-  evidence showed zero first-hand authors, threads, or venues. That was a sound
-  evidence result, but it did not yet explain customer choice.
+  **Optional historical worked example: Summer Fridays p11/p11r7.** Read the
+  [claim-support adjudication](../../../../../docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/intelligence_claim_support_dogfood_20260807_v0.md)
+  for the dated findings and limitations, not a current competitor verdict.
+  Acquisition context remains in the [Phase 1 competitor ledger](../../../../../docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase1/competitor_ledger.json),
+  [Phase 2 decision receipt](../../../../../docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase2/decision_receipt.json),
+  [CO2 retailer return](../../../../../docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co2_retail_portfolio.md), and
+  [community axis coding](../../../../../docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/community_axis_coding.json).
 
-  The later p11r7 customer corpus shows why claim-level support matters more
-  than a label or broad axis count. Fresh claim-support dogfood found the
-  Summer-Fridays-versus-e.l.f. hydration comparison independently repeated but
-  mixed: two low-engagement authors favored Summer Fridays and one favored
-  e.l.f. Three separate Reddit authors reported a wear/reapplication
-  disadvantage versus Ole Henriksen, which supports a repeated community
-  signal but not current-formula certainty or cross-venue corroboration. The
-  single one-point statement that bundled flavors, older formulas, shorter wear,
-  and continued buying remains isolated and cannot establish flavor as a
-  repurchase cause. The dated sticker-price comparison remains a bounded direct
-  observation. The full provenance and claim-support blocks are in
-  `docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/intelligence_claim_support_dogfood_20260807_v0.md`.
-
-  The focal retailer work also shows the difference between phase count and
-  retailer scope: the p11 Summer Fridays CO2 return captured 52 owned Shop All
-  rows, a complete 46-row Sephora brand grid with 44 exact non-bundle PDP
-  baselines, a 96-placement Amazon query window with 26 valid exact baselines,
-  and a blocked Space NK US route that rendered GBP. Under route 1.3.0, a core
-  e.l.f. comparison would not rerun a second Phase A or capture all e.l.f.
-  cosmetics. It would fully capture the exact Glow Reviver Melting Lip Balm
-  across the selected comparable retailers, then map only the relevant e.l.f.
-  lip franchise far enough to establish that product's local role. The
-  Phase 1 “premium anchor versus lower-price dupe surface” is positioning
-  context; the customer rows above test whether that context affects choice.
-
-  Source artifacts for this example:
-  `docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase1/competitor_ledger.json`,
-  `docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/serp_phase2/decision_receipt.json`,
-  `docs/research/summer_fridays_understanding_dogfood_20260731_p11/coordinated/specialists/co2_retail_portfolio.md`, and
-  `docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/community_axis_coding.json`, with the
-  claim-support adjudication in
-  `docs/research/summer_fridays_understanding_dogfood_20260802_p11r7/coordinated/intelligence_claim_support_dogfood_20260807_v0.md`.
 - **Conditional product/claim verification** triggers only on
   reconciled product identity × material axis or contradiction × publicly
   verifiable unresolved claim. It is a conditional adjustment job, never
@@ -1563,54 +1531,12 @@ gate above controls whether the Synthesize turn may begin.
    `docs/workflows/serp_scout_pass_calibration_predeclaration_v0.md` and bind
    its obligations into the commission handoff; remove this constraint when
    that note's adjudication is appended.
-   Bind the following requirements into the role capsules; their execution
-   begins at step 9. Route retail, customer, and claims research first.
-   Before optional deepening, resolve the prompt's small high-yield core through
-   the existing ledgers. A material unresolved core job blocks the acquisition
-   seal; other remainders stay typed gaps and non-claims. When retail is material,
-    commission an owned identity seed, establish the company-owned official
-    retailer board, classify Amazon authorization separately from marketplace
-    presence, resolve Sephora explicitly, and select and attempt at least four
-    company-authorized, target-market, route-admissible third-party retailers
-    when four exist. Favor distinct evidence venues; do not count the
-    company-owned DTC site or fill the floor with an unauthorized, duplicate,
-    or market-unpinned venue. If fewer than four qualify, select all and record
-    `AUTHORIZED_RETAILER_SHORTFALL` with the observed count and reasons. Acquire
-    each selected grid surface,
-    reconcile its listing union with owned candidates, then return to owned
-    evidence to close the denominator. Owned
-   evidence remains canonical identity authority. Attempt one common-floor
-   baseline PDP for every reconciled exact retailer listing and preserve each
-   admitted baseline or typed miss. Apply the prompt's
-    Sephora-primary rule when it is officially named and route-complete,
-    counting Sephora as one of the four rather than in addition to them, but do
-    not let primary status excuse another selected retailer's baseline. Preserve typed route failures without
-   completion credit and retain retailer-native fields when source-visible.
-   A typed non-strategic middle-of-curve miss may be sealed as an accepted
-   residual only under the materiality rule above; strategic, distinct-seam,
-   required-corpus, and route-systemic misses still block. Only after
-   exact-parent PDP breadth is sealed, bind every selected-retailer
-   listing to its observed review-corpus identity and acquire one bounded
-   onboarding window per distinct accessible corpus, or preserve a typed
-   no-review/not-exposed/blocked/unresolved result. Then select expensive
-   interpretive and Q&A depth for category-balanced evidence jobs. Each
-   interpretive deepening needs a named non-duplicative job, there is no fixed
-   interpreted-product count, and retailer counts remain separate rather than
-    becoming sales. Only company-owned authorization lets Amazon count toward
-   the four-retailer floor. A verified-but-not-company-authorized Amazon route
-   may supplement evidence with that limitation attached; an unverified route
-   remains a discovery pointer. Treat Amazon, when selected, as a query-bound
-   ranked-search window, not a guaranteed complete or authorized-only catalog;
-   projection capability never substitutes for route admission. Point-in-time
-   retailer metrics are traction proxies, not sales, share, or trend. Preserve analysis-enablement inputs,
-   stop-or-gap rules, review-
-   volume claim guards, accepted residuals, non-claims, and upgrade trigger. This
-   orders attention; it is a bounded retailer-selection floor, not an
-   all-retailer crawl, proof hierarchy, full historical review crawl,
-   full-SKU-graph requirement, new ledger schema, or Scanning execution
-   instruction. Commission archives, supply, ads/creators,
-   competitors, search trends, and similar deepening only for a named unresolved
-   inference job.
+   Bind the requirements in [Acquisition And Seal Sequence, step 3](#acquisition-and-seal-sequence)
+   and the [conditional company prompt contract](../prompts/forseti_commission_signal_board_prompt_structure_v0.md#conditional-company-competitive-intelligence-output-contract)
+   into the role capsules; their execution begins at step 9. These sources own
+   research priority and the core-before-deepening gate, retailer admission and
+   breadth, Amazon/Sephora treatment, metric claim limits, and the named-job
+   requirement for optional deepening.
 8. For a recurring or actively radarred source family, put a lake-first
    preflight in the downstream request: relevant Silver/current view, then
    packet or catalog inventory, then raw material when necessary. Treat the
