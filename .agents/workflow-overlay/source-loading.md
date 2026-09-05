@@ -514,7 +514,9 @@ Start with:
 - `forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md`
   for compiling Collection's hash-bound materialized source into the
   meaning-aware proposition view; it defers claim-support semantics to the
-  contract above.
+  contract above. Routine reads use the current contract. Follow its companion
+  changelog only for a named version, compatibility exception, or historical
+  decision; do not load the history as part of the normal compilation pack.
 
 Then open only the source that owns the consuming schema or decision. This pack
 does not replace source-family capture rules or the Judgment Spine Evidence

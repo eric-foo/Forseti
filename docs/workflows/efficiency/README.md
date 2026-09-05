@@ -9,6 +9,7 @@ claim that any documented result has been reproduced.
 
 | Need | Open |
 | --- | --- |
+| Inspect semantic-contract history separation, token footprint, compatibility preservation, and cold lookups | `semantic_contract_history_split_dogfood_2026_09_06_v0.md` |
 | Inspect the September bloat retirement, helper consolidation and rejected reading-route experiment | `forseti_bloat_cut_dogfood_2026_09_05_v0.md` |
 | Measure complete tasks and extraction runs, compare matched quality-bound observations, or inspect repository size | `forseti_efficiency_measurement_v0.md` |
 | Compare the five September efficiency changes with their baseline, dogfood results and limits | `forseti_efficiency_implementation_dogfood_2026_09_05_v0.md` |
