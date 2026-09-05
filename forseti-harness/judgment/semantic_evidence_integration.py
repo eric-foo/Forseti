@@ -2492,6 +2492,10 @@ def build_bundle(
         if not _nonempty(source.get(field)):
             raise SemanticIntegrationError(f"missing {field}")
     source_version = source.get("schema_version")
+    if source_version == SOURCE_VERSION_V3 and "source_sha256" in source:
+        _verify_stored_hash(
+            source, field="source_sha256", label="semantic evidence source"
+        )
     if source_version is None:
         bundle_version = BUNDLE_VERSION
         method_version = METHOD_VERSION
@@ -2851,8 +2855,15 @@ def materialize_source_v3(source: Mapping[str, Any]) -> dict[str, Any]:
     # Reuse the source validators without rendering provisional batches. Batch
     # packing is a separate operation and repeatedly renders a growing prompt;
     # doing that here made full-corpus materialization quadratic in practice.
+    # Collection may deliberately rematerialize a transformed source. Its old
+    # materialization hash no longer governs that authoring input; the fresh
+    # normalized output below receives a new hash. Consolidation verifies the
+    # stored hash when it consumes the result through build_bundle directly.
+    validation_source = {
+        key: value for key, value in source.items() if key != "source_sha256"
+    }
     bundle = build_bundle(
-        source,
+        validation_source,
         max_prompt_bytes=1_000_000,
         _pack_batches=False,
         _apply_identity_posture=False,

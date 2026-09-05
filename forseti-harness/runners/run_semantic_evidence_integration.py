@@ -18,6 +18,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     RECONCILIATION_AUTHORING_IDENTITY_V1,
     RECONCILIATION_AUTHORING_IDENTITY_V2,
     RECONCILIATION_POLICY_VERSION_V2,
+    SOURCE_VERSION_V3,
     SemanticIntegrationError,
     apply_row_verification,
     apply_row_repair,
@@ -406,7 +407,11 @@ def prepare_batches(
     max_evidence_per_work_unit: int = 120,
 ) -> dict[str, Any]:
     source = _load_object(source_path)
-    _verify_sources(source, repo_root=repo_root)
+    if (
+        source.get("schema_version") != SOURCE_VERSION_V3
+        or "source_sha256" not in source
+    ):
+        _verify_sources(source, repo_root=repo_root)
     bundle = build_bundle(
         source,
         max_batch_chars=max_batch_chars,

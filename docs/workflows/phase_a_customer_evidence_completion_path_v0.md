@@ -1,7 +1,7 @@
 ---
 retrieval_header_version: 1
 artifact_role: Phase A customer-evidence completion path
-scope: Customer-language semantic integration from full acquisition corpus through cold-agent proof; campaign and Deliver boundaries remain separate
+scope: Customer-language semantic integration from Collection's hash-bound output through cold-agent proof; campaign and Deliver boundaries remain separate
 use_when:
   - Resuming the full Summer Fridays customer-corpus semantic run.
   - Applying the same Reddit/community plus retailer-review method to another company.
@@ -22,14 +22,27 @@ retrievable evidence structure. It prevents a future operator from stopping
 after two or three convenient examples or from treating Reddit and retailer
 reviews as unrelated summaries. It does not produce a market conclusion.
 
-The semantic leaf assessment, atomic evidence structuring, meaning-based
+**Collection** ends by emitting the existing hash-bound
+`semantic_evidence_source_v3` and its matching
+`phase_a_semantic_materialization_receipt_v1`. Collection owns locator and
+source-artifact hash checks, normalization, denominator and product binding,
+and materialization. The materialized source is the complete consumer input;
+the receipt preserves its Collection lineage without becoming another
+Consolidation command argument.
+
+Semantic leaf assessment, atomic evidence structuring, meaning-based
 reconciliation, and evidence-packet projection together form the named
-**Evidence Consolidation** stage. It begins only after acquisition has produced
-an immutable, completely accounted corpus and ends only when the final corpus
+**Evidence Consolidation** stage. It begins from Collection's immutable,
+completely accounted materialized source and ends only when the final corpus
 hash has a complete, reproducible evidence packet or a visible unresolved
-failure. This is a conceptual and completion boundary between acquisition and
-Deliver, not a new globally numbered phase: historical Phase A, Phase B, Turn
-B, Understanding, and Deliver vocabulary is not renumbered or migrated.
+failure. The public preparation runner verifies the source's stored content
+hash without reopening its provenance locators. Current selection consumers
+also keep missing publication times unavailable rather than reopening those
+Collection paths. Historical unmaterialized inputs and bundles without a
+materialized-source identity keep their existing locator behavior.
+This is a conceptual and completion boundary between acquisition and Deliver,
+not a new globally numbered phase: historical Phase A, Phase B, Turn B,
+Understanding, and Deliver vocabulary is not renumbered or migrated.
 
 For new cross-company authoring, use `phase_a_semantic_integration_run_v10`
 (integration method v12, verifier v11). The supplied `CURRENT_AXES` inventory
@@ -626,7 +639,9 @@ SERP map
   -> native customer-evidence acquisition
   -> complete Reddit/community and retailer-review source accounting
   -> run-local stable product identity
-  -> Evidence Consolidation
+  -> Collection materialization
+       -> hash-bound semantic source + matching lineage receipt
+  -> Evidence Consolidation (verify materialized source hash)
        -> semantic leaf assessment
        -> atomic evidence structuring
        -> meaning-based cross-source reconciliation
@@ -2108,9 +2123,11 @@ zero provider calls.
 Preserve the source publication time beside every evidence row when the source
 exposes it. Current semantic-source builders carry Reddit post/comment
 timestamps, Sephora submission times, Amazon review dates, and Revolve review
-creation times into packet v3. A completed packet with a missing time may be
-rehydrated only from the exact source artifact and SHA-256 already bound by its
-bundle; unavailable or unsupported legacy bytes leave the time unavailable and
+creation times into packet v3. For a current bundle bound to a materialized
+source identity, a missing time stays unavailable and the selection consumer
+does not reopen Collection artifacts. A historical bundle without that
+identity may rehydrate a missing time only from its exact hash-bound source
+artifact; unavailable or unsupported bytes leave the time unavailable and
 changed bytes fail.
 Source-relative display labels such as `2 months ago` remain literal in the
 hash-bound source but are not exact publication times. The selection consumer

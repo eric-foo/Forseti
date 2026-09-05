@@ -115,6 +115,7 @@ SOURCE_RELATIVE_PUBLICATION_TIME_RE = re.compile(
     r"^(?:[0-9]+|a|an)\s+(?:minute|hour|day|week|month|year)s?\s+ago$",
     re.IGNORECASE,
 )
+SOURCE_SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 INTERNAL_RELATION_LABEL_RE = re.compile(r"\b(?:support|counter|adjacent|exclude)\b", re.IGNORECASE)
 REASON_CODE_RE = re.compile(r"^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$")
 MAX_REASON_CODE_LENGTH = 80
@@ -1524,6 +1525,31 @@ def _publication_time_from_artifact(
     return None
 
 
+def _has_portable_materialized_source_identity(source: Mapping[str, Any]) -> bool:
+    """Identify current bundles that must remain independent of Collection paths."""
+    bundle = source.get("bundle")
+    if (
+        not isinstance(bundle, Mapping)
+        or bundle.get("schema_version") != "semantic_evidence_bundle_v5"
+    ):
+        return False
+    projection = bundle.get("semantic_work_unit_projection")
+    identity = (
+        projection.get("semantic_execution_identity")
+        if isinstance(projection, Mapping)
+        else None
+    )
+    source_sha256 = (
+        identity.get("source_sha256") if isinstance(identity, Mapping) else None
+    )
+    return (
+        isinstance(identity, Mapping)
+        and identity.get("source_schema_version") == "semantic_evidence_source_v3"
+        and isinstance(source_sha256, str)
+        and SOURCE_SHA256_RE.fullmatch(source_sha256) is not None
+    )
+
+
 def _string_values(value: Any) -> set[str]:
     if isinstance(value, str):
         return {part for part in value.split() if part}
@@ -1745,6 +1771,8 @@ def _candidate_rows(
         stored = _publication_time_value(evidence.get("publication_time"))
         if stored is not None:
             return stored
+        if _has_portable_materialized_source_identity(source):
+            return None
         key = (str(source["source_id"]), evidence_id)
         if key not in publication_time_cache:
             publication_time_cache[key] = _publication_time_from_artifact(

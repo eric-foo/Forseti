@@ -2,20 +2,28 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v114
-effective_date: 2026-09-04
+version: v116
+effective_date: 2026-09-05
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v114
+# Semantic Evidence Integration Contract v116
 
 ## Purpose
 
-Semantic Evidence Integration turns one completed acquisition corpus into a
+Semantic Evidence Integration turns Collection's final output into a
 meaning-aware proposition view before downstream synthesis. It exists because
 a large, well-captured corpus can still be underused, misbound to the wrong
 product or competitor, or summarized from a convenient handful of citations.
+
+**Collection** owns capture and acquisition, locator and source-artifact hash
+verification, normalization, denominator and product binding, merge, and
+materialization. Its final output is the existing hash-bound
+`semantic_evidence_source_v3` plus its matching
+`phase_a_semantic_materialization_receipt_v1`. The source is the complete
+consumer input; the receipt is Collection's lineage record and is not a new
+`prepare-batches` argument.
 
 This is a shared Judgment capability. An acquisition route may invoke it as a
 pre-seal closure job, but does not own or redefine its claim-support semantics.
@@ -24,13 +32,20 @@ support posture, independence, conflict, source-role fitness, and causal
 ceiling.
 
 Semantic Evidence Integration is the runtime capability inside the named
-**Evidence Consolidation** stage. That stage starts from an immutable,
-completely accounted acquisition corpus and owns semantic leaf triage, atomic
+**Evidence Consolidation** stage. That stage starts from Collection's immutable,
+completely accounted materialized source and owns semantic leaf triage, atomic
 evidence structuring, meaning-based cross-source reconciliation, and
-evidence-packet projection. Its output is the complete evidence retrieval
-surface consumed by the acquisition seal and later Deliver work. This stage
-boundary does not create or rename a globally numbered phase; historical Phase
-A, Phase B, Turn B, Understanding, and Deliver vocabulary remains unchanged.
+evidence-packet projection. `prepare-batches` verifies that the source content
+matches its stored `source_sha256`; it does not reopen the Collection locators
+embedded for provenance. Current selection consumers likewise keep missing
+publication times unavailable instead of reopening those locators. Historical
+unmaterialized sources without that stored hash retain their locator
+verification, and historical bundles without a materialized-source identity
+retain their existing metadata fallback. Consolidation's output is the complete
+evidence retrieval surface consumed by the acquisition seal and later Deliver
+work. This stage boundary does not create or rename a globally numbered phase;
+historical Phase A, Phase B, Turn B, Understanding, and Deliver vocabulary
+remains unchanged.
 
 It is not a market conclusion, recommendation, sentiment score, representative
 estimate, causal model, custom-trained model, embeddings service, vector store,
@@ -43,7 +58,8 @@ For broad consumer-brand Understanding:
 ```text
 SERP Phase 1 -> evidence fan-out -> SERP Phase 2 and adaptive returns
 -> all selected acquisition jobs terminal
--> Semantic Evidence Integration
+-> Collection emits materialized source plus receipt
+-> Evidence Consolidation / Semantic Evidence Integration
 -> any affected-axis delta work terminal and integration regenerated
 -> acquisition seal
 -> Synthesize
@@ -77,7 +93,8 @@ meaning. Do not create a new schema kind or silently relabel a frozen answer.
 Deterministic code owns:
 
 - the admitted evidence denominator and exact per-alias accounting;
-- source-artifact resolution and hashes;
+- Collection-time source-artifact resolution and hashes, followed by
+  materialized-source hash verification at the Consolidation boundary;
 - stable batch, semantic-unit, proposition, corpus, and view identity;
 - actor/origin de-duplication and conservative credited-public-origin counts;
 - engagement availability;
@@ -1682,8 +1699,10 @@ adjudicated; deterministic exactness and body identity checks are unchanged.
 Every evidence row carries its source publication time when the preserved
 source exposes one. Reddit post/comment timestamps, Sephora submission times,
 Amazon source dates, and Revolve creation times enter the semantic source and
-flow through packet v3 to the final selection artifact. For completed packets
-whose publication time is absent, the selection consumer may rehydrate it only
+flow through packet v3 to the final selection artifact. For a current bundle
+carrying a valid materialized-source identity, an absent publication time stays
+unavailable and the selection consumer does not reopen Collection artifacts.
+A historical bundle without that identity may rehydrate a missing time only
 from the exact hash-bound source artifact named by the bundle; missing source
 bytes and unsupported legacy source formats remain unavailable, while changed
 bytes fail rather than supplying a date. This is source chronology for later time alignment, not proof that search
@@ -2081,14 +2100,20 @@ Current-route operations are:
    retailer customer-corpus denominators where those Phase A source shapes are
    present.
 5. `materialize-phase-a-v3` merges audited, source-family-produced v3
-   fragments into one final-acquisition source and writes a separate lineage
-   receipt. It never guesses a new source-family adapter.
-6. `materialize-v3` verifies source artifacts and normalizes declared
-   containers/leaves into one hash-bound v3 source; unsupported families or
-   denominator mismatches fail closed. Materialization never renders
-   provisional prompts; prompt packing belongs only to `prepare-batches`.
-7. `prepare-batches` verifies sources, builds the method-bound bundle, proves
-   the work-unit bijection, and writes byte-bounded prompts. Current run v9 also
+   fragments through the existing v3 materializer and emits Collection's final
+   output: one hash-bound `semantic_evidence_source_v3` plus one matching
+   `phase_a_semantic_materialization_receipt_v1`. It never guesses a new
+   source-family adapter.
+6. The lower-level Collection command `materialize-v3` retains source-artifact
+   locator/hash verification and normalizes declared containers/leaves into one
+   hash-bound v3 source; unsupported families or denominator mismatches fail
+   closed. Materialization never renders provisional prompts; prompt packing
+   belongs only to `prepare-batches`.
+7. `prepare-batches` verifies a materialized v3 source against its stored
+   `source_sha256` without reopening Collection locators, then builds the
+   method-bound bundle, proves the work-unit bijection, and writes byte-bounded
+   prompts. Legacy inputs without a stored source hash retain source-artifact
+   locator verification. Current run v9 also
    writes one exact keyed provider-response schema per work unit. Historical v4
    bundles retain their deterministic three-worker assignment manifest; current
    v5 bundles encode no static worker topology.
@@ -2312,6 +2337,22 @@ new frontier.
 
 ## Changelog
 
+- `v116` / 2026-09-05 — completed the portable Collection-to-Consolidation
+  boundary at the current selection consumer. A v5 bundle carrying a valid
+  materialized v3 source identity now keeps a missing publication time
+  unavailable instead of reopening Collection artifacts. Historical bundles
+  without that identity retain their exact hash-bound metadata fallback. No
+  stored publication time, temporal ordering rule, frozen artifact, schema,
+  provider route, or semantic judgment changed.
+- `v115` / 2026-09-04 — named the existing hash-bound
+  `semantic_evidence_source_v3` and matching materialization receipt as
+  Collection's final output and made Evidence Consolidation begin from that
+  source. The core builder and public `prepare-batches` boundary now verify the
+  stored source content hash without reopening Collection locators. Collection
+  locator verification, unmaterialized-source compatibility, historical reader
+  fallback, all semantic batching and reconciliation behavior, axis packing,
+  and readers remain unchanged. Added no corpus schema, package, receipt
+  argument, provider stage, or blind-run claim.
 - `v114` / 2026-09-04 — made point-reader request v5 preserve two neighboring
   Decision State boundaries exposed by source-complete Dieux dogfood. Current
   use or possession of another container no longer stands in for an explicitly
