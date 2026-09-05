@@ -9,7 +9,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
-from typing import Any, BinaryIO, Sequence
+from typing import Any, BinaryIO, Mapping, Sequence
 
 from harness_utils import hash_file, utc_now_z_microseconds
 from provider_attempts import codex_usage_from_events
@@ -62,6 +62,8 @@ def execute_provider_attempt(
     *, command: Sequence[str], prompt_path: Path, attempt_dir: Path,
     timeout_seconds: float, stderr_echo: BinaryIO | None = None,
     response_schema_path: Path | None = None,
+    env: Mapping[str, str] | None = None,
+    launch_metadata: Mapping[str, str] | None = None,
 ) -> dict[str, Any]:
     """Preserve live streams, bound the whole process attempt, and never publish.
 
@@ -94,6 +96,9 @@ def execute_provider_attempt(
         "response_schema_path": str(response_schema_path) if response_schema_path else None,
         "response_schema_sha256": hash_file(response_schema_path) if response_schema_path else None,
     }
+    if launch_metadata is not None:
+        # Caller-supplied, non-secret observations; never serialize env.
+        start["launch_metadata"] = dict(launch_metadata)
     # Exclusive creation is the launch lock when two callers share a reservation.
     _write_new_json(paths["execution_started.json"], start)
     started = time.monotonic()
@@ -124,7 +129,7 @@ def execute_provider_attempt(
                 echo_error = f"{type(exc).__name__}: {exc}"
 
         try:
-            process = subprocess.Popen(list(command), stdin=prompt, stdout=stdout, stderr=stderr, **creation)
+            process = subprocess.Popen(list(command), stdin=prompt, stdout=stdout, stderr=stderr, env=env, **creation)
             while process.poll() is None:
                 mirror()
                 remaining = deadline - time.monotonic()

@@ -66,8 +66,58 @@ history matter, use the shared executor rather than a task-local buffered
 subprocess wrapper. It is usable by any intelligence-cycle stage:
 
 ```powershell
-python runners/run_codex_provider_attempt.py --attempt-root <attempts> --attempt-id <new-id> --prompt-file <prompt.md> --output-schema <schema.json> --worktree <repo> --model <model> --reasoning-effort <effort> --timeout-seconds <seconds>
+python runners/run_codex_provider_attempt.py --codex-executable <absolute-native-codex-path> --require-chatgpt --attempt-root <attempts> --attempt-id <new-id> --prompt-file <prompt.md> --output-schema <schema.json> --worktree <repo> --model <model> --reasoning-effort high --timeout-seconds <seconds>
 ```
+
+Select a compatible installed native executable explicitly (`codex.exe` on
+Windows), including after an installation moves during an update. The runner
+never searches PATH, selects a different installation, or upgrades it. Its local
+version check records the version in the existing execution records; a version
+string alone does not establish that the server supports the requested model.
+
+The standing command above requires file-backed ChatGPT sign-in under
+`CODEX_HOME` (default `~/.codex`). It rejects `OPENAI_API_KEY`, `CODEX_API_KEY`,
+`CODEX_ACCESS_TOKEN`, and `OPENAI_BASE_URL` overrides without printing values.
+The selected executable checks `login status` against the same credential store
+and environment used for generation. A nonzero or unrecognized result stops
+before generation; check access in the real execution context before concluding
+that sign-in is missing. Codex prints that verdict on stderr, the same stream it
+uses for its own notices. Only the reproduced stderr notice beginning
+`WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir `
+and ending with a quoted directory is excluded from the authentication verdict.
+Other warnings, unexpected stdout, duplicate or conflicting verdicts, and nonzero
+exits still stop the launch. `login status` has no
+`--ignore-user-config`, so unlike generation it also loads
+`CODEX_HOME/config.toml`; a file the selected build cannot parse stops the launch
+as a reported configuration fault rather than as an authentication result.
+Keyring-only sign-in is not supported by this mode.
+Codex's native `forced_login_method="chatgpt"` restriction also applies during
+generation: if credentials change to another method after the check, Codex exits
+and may clear that mismatching login. The runner does not copy credentials,
+sign in, modify global configuration, or fall back to API billing. ChatGPT
+sign-in uses subscription access; subscription limits and service failures still
+apply ([OpenAI authentication](https://learn.chatgpt.com/docs/auth)). Omitting
+`--require-chatgpt` leaves authentication caller-managed and requires separate
+authorization if the selected route incurs API charges.
+
+Prepare prompt, schema, and attempt files in an ignored workspace run directory
+readable by the account that will execute the command. Avoid sandbox-private
+temporary directories when execution crosses into another permission context.
+The runner opens the actual inputs and creates the actual attempt records before
+generation; access failures stop locally, without changing ACLs or retrying.
+Keep each attempt ID new, including after a local failure reserves a directory.
+
+For a network-restricted agent shell, launch this command through the harness's
+per-operation network approval route. The outer shell controls the provider's
+connection; the child's `--sandbox read-only` restricts model tools and cannot
+grant that connection. Do not change global sandbox settings to make a run work.
+Use the first required batch to confirm a new installation or execution context
+before expanding to authorized parallel batches; no extra model diagnostic or
+per-batch network probe is required. Permission denials, model/client
+incompatibility, and provider failures retain their real errors in the attempt
+logs. Local version/login checks precede the generation budget, have ten-second
+limits, and make no model call;
+each attempt pays only these local checks and the existing file I/O.
 
 The timeout is one finite, workload-appropriate budget for the entire attempt;
 reconnects and additional client turns do not reset it. Logs go directly to
