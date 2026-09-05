@@ -1113,7 +1113,7 @@ Contracts"). Operating rules:
   (stockout, review velocity, assortment, promotion) never become sales or
   productivity, and refresh is event-commissioned, never a standing monitor.
 
-#### Understanding Acquire & Seal Route Version
+#### Understanding Acquire & Seal Route Version And Changelog
 
 The operating-sequence authority for this route stays in this playbook; do
 not create a parallel Phase A manual. The acquisition seal records the route
@@ -1129,14 +1129,6 @@ understanding_acquire_seal_route:
     major: phase order, authority boundary or seal meaning changes
     minor: required/conditional evidence lane, integration job or closure gate changes
     patch: non-semantic clarification or validation hardening
-```
-
-#### Historical Understanding Route Changelog
-
-This append-only history is reopened under the README's task-specific read
-routes; the current route and version above remain the operating authority.
-
-```yaml
   changelog:
     - version: 1.0.0
       date: 2026-08-07
@@ -1497,9 +1489,7 @@ reviewer to patch, or change the report layout.
 Use this sequence to create the CSB inside Acquire & Seal. The broader cycle
 gate above controls whether the Synthesize turn may begin.
 
-1. Follow **Task-Specific Read Routes** in
-   `forseti/product/spines/commission_signal_board/README.md` for the current
-   task, including all triggered prerequisite and profile-owner reads.
+1. Read the prompt and this playbook.
 2. Preserve `mode: backtest | forward`. Determine `commission_profile`:
    - default a one-company Brand or Org subject, including unresolved Brand/Org
      identity, to `company_competitive_intelligence`;
