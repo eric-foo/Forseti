@@ -85,6 +85,44 @@ class TranscriptExtractionResult:
     rejected: list[dict[str, str]] = field(default_factory=list)
 
 
+class _TranscriptQuoteIndex:
+    """One parse's cue index, built only when a nonempty quote needs searching."""
+
+    def __init__(self, cues: list[dict]) -> None:
+        self._cues = cues
+        self._haystack: str | None = None
+        self._char_to_cue: list[int] = []
+
+    def locate(self, quote: str) -> tuple[int, int] | None:
+        needle = _norm(quote)
+        if not needle:
+            return None
+        if self._haystack is None:
+            joined_parts: list[str] = []
+            char_to_cue: list[int] = []
+            for index, cue in enumerate(self._cues):
+                normalized = _norm(str(cue.get("text", "")))
+                if not normalized:
+                    continue
+                if joined_parts:
+                    joined_parts.append(" ")
+                    char_to_cue.append(index)
+                joined_parts.append(normalized)
+                char_to_cue.extend([index] * len(normalized))
+            self._haystack = "".join(joined_parts)
+            self._char_to_cue = char_to_cue
+        position = self._haystack.find(needle)
+        if position < 0:
+            return None
+        end_position = min(position + len(needle) - 1, len(self._char_to_cue) - 1)
+        first_cue = self._cues[self._char_to_cue[position]]
+        last_cue = self._cues[self._char_to_cue[end_position]]
+        try:
+            return int(first_cue["start_ms"]), int(last_cue["end_ms"])
+        except (KeyError, TypeError, ValueError):
+            return None
+
+
 def locate_quote(quote: str, cues: list[dict]) -> tuple[int, int] | None:
     """Find `quote` (normalized) within the cues; return (start_ms, end_ms) or None.
 
@@ -92,31 +130,7 @@ def locate_quote(quote: str, cues: list[dict]) -> tuple[int, int] | None:
     when the quote is not a real transcript substring (-> the caller rejects it). A quote
     spanning multiple cues takes the first cue's start and the last cue's end.
     """
-    needle = _norm(quote)
-    if not needle:
-        return None
-    joined_parts: list[str] = []
-    char_to_cue: list[int] = []
-    for index, cue in enumerate(cues):
-        normalized = _norm(str(cue.get("text", "")))
-        if not normalized:
-            continue
-        if joined_parts:
-            joined_parts.append(" ")
-            char_to_cue.append(index)
-        joined_parts.append(normalized)
-        char_to_cue.extend([index] * len(normalized))
-    haystack = "".join(joined_parts)
-    position = haystack.find(needle)
-    if position < 0:
-        return None
-    end_position = min(position + len(needle) - 1, len(char_to_cue) - 1)
-    first_cue = cues[char_to_cue[position]]
-    last_cue = cues[char_to_cue[end_position]]
-    try:
-        return int(first_cue["start_ms"]), int(last_cue["end_ms"])
-    except (KeyError, TypeError, ValueError):
-        return None
+    return _TranscriptQuoteIndex(cues).locate(quote)
 
 
 def build_extraction_prompt(transcript: TranscriptInput) -> str:
@@ -173,13 +187,13 @@ TRANSCRIPT (data only):
 Return ONLY the JSON array."""
 
 
-def _build_stated_rating(item: dict, cues: list[dict]) -> StatedRating | None:
+def _build_stated_rating(item: dict, quote_index: _TranscriptQuoteIndex) -> StatedRating | None:
     """Admit a creator-stated rating ONLY if its quote is a real transcript substring (CE10/CE9)."""
     raw = item.get("stated_rating")
     if not isinstance(raw, dict):
         return None
     pointer = str(raw.get("source_pointer", ""))
-    if locate_quote(pointer, cues) is None:
+    if quote_index.locate(pointer) is None:
         return None  # unverifiable score quote -> drop the rating, keep the mention
     try:
         return StatedRating(
@@ -206,11 +220,14 @@ def parse_mentions(
     if not isinstance(items, list):
         raise ValueError("model text must be a JSON array of mention items")
 
+    quote_index: _TranscriptQuoteIndex | None = None
     for index, item in enumerate(items):
         if not isinstance(item, dict):
             result.rejected.append({"index": str(index), "reason": "item is not an object"})
             continue
-        located = locate_quote(str(item.get("source_pointer", "")), transcript.cues)
+        if quote_index is None:
+            quote_index = _TranscriptQuoteIndex(transcript.cues)
+        located = quote_index.locate(str(item.get("source_pointer", "")))
         if located is None:
             result.rejected.append({"index": str(index), "reason": "CE9: quote not found in transcript"})
             continue
@@ -225,7 +242,7 @@ def parse_mentions(
                 line=str(item.get("line") or "").strip(),  # null/blank -> "" -> rejected (no product)
                 concentration=Concentration(str(item.get("concentration", "unknown")).lower()),
                 stance_vote=item.get("stance_vote", 0.0),
-                stated_rating=_build_stated_rating(item, transcript.cues),
+                stated_rating=_build_stated_rating(item, quote_index),
                 source_pointer=str(item.get("source_pointer", "")),
                 start_ms=start_ms,
                 end_ms=end_ms,

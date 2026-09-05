@@ -583,8 +583,18 @@ def run_c2(root: Path, search_roots: list[Path] | None = None) -> tuple[list[Fin
     [forseti/] to reuse this exact predicate over the product corpus WITHOUT
     touching the strict path (frozen predicate = strict-minus-exit-0).
     """
-    findings: list[Finding] = []
-    total_nonresolving = 0
+    c2, count, _, _ = _run_markdown_checks(root, search_roots, inline=False)
+    return c2, count
+
+
+def _run_markdown_checks(root: Path, search_roots: list[Path] | None = None,
+                         *, headers: bool = True, inline: bool = True
+                         ) -> tuple[list[Finding], int, list[Finding], int]:
+    """Read admitted Markdown once, keeping C2/C4 findings and debt separate."""
+    c2: list[Finding] = []
+    c4: list[Finding] = []
+    c2_nonresolving = 0
+    c4_nonresolving = 0
     if search_roots is None:
         search_roots = [root / "docs", root / ".agents"]
 
@@ -603,32 +613,49 @@ def run_c2(root: Path, search_roots: list[Path] | None = None) -> tuple[list[Fin
                     continue
                 fpath = Path(dirpath) / fname
                 try:
-                    # Only read the first 40 lines for the YAML header
                     with open(fpath, encoding="utf-8", errors="replace") as fh:
-                        lines = []
-                        for i, line in enumerate(fh):
-                            if i >= 40:
-                                break
-                            lines.append(line.rstrip("\n"))
-                    header_text = "\n".join(lines)
+                        if inline:
+                            text = fh.read()
+                            # C2 counts physical newline-delimited lines; C4
+                            # retains splitlines()'s broader line boundaries.
+                            header_text = "\n".join(text.split("\n")[:40])
+                            lines = text.splitlines()
+                        else:
+                            lines = []
+                            for i, line in enumerate(fh):
+                                if i >= 40:
+                                    break
+                                lines.append(line.rstrip("\n"))
+                            header_text = "\n".join(lines)
                 except OSError:
                     continue
 
-                entries, nonresolving = parse_open_next(header_text)
-                total_nonresolving += nonresolving
-
-                if not entries:
-                    continue
-
                 rel_source = fpath.relative_to(root).as_posix()
-                for entry in entries:
-                    if not repo_path_exists(entry, root):
-                        findings.append(Finding(
-                            check="C2",
-                            source=rel_source,
-                            detail="open_next path does not exist on disk: %s" % entry,
-                        ))
-    return findings, total_nonresolving
+                if headers:
+                    entries, nonresolving = parse_open_next(header_text)
+                    c2_nonresolving += nonresolving
+                    for entry in entries:
+                        if not repo_path_exists(entry, root):
+                            c2.append(Finding(
+                                check="C2",
+                                source=rel_source,
+                                detail="open_next path does not exist on disk: %s" % entry,
+                            ))
+                if inline:
+                    for line in lines:
+                        if is_exempt_inline_line(line):
+                            continue
+                        for path in extract_inline_links_from_line(line):
+                            if inline_link_is_nonresolving(line, path):
+                                c4_nonresolving += 1
+                                continue
+                            if not inline_link_exists(path, fpath, root):
+                                c4.append(Finding(
+                                    check="C4",
+                                    source=rel_source,
+                                    detail="inline link target does not exist on disk: %s" % path,
+                                ))
+    return c2, c2_nonresolving, c4, c4_nonresolving
 
 
 def run_c3(root: Path, map_text: str, scan_root: Path | None = None,
@@ -688,50 +715,12 @@ def run_c4(root: Path, search_roots: list[Path] | None = None) -> tuple[list[Fin
     Returns (findings, total_nonresolving) where total_nonresolving counts
     links annotated with '# nonresolving:<reason>' (debt, not failures).
 
-    Reuses the same os.walk pass and skip rules as C2 (no second walk).
+    Combined entrypoints share this scan with C2; standalone mode checks C4 only.
     search_roots defaults to [docs/, .agents/] (live strict scope, unchanged);
     the Forseti product report mode passes [forseti/].
     """
-    findings: list[Finding] = []
-    total_nonresolving = 0
-    if search_roots is None:
-        search_roots = [root / "docs", root / ".agents"]
-
-    for search_root in search_roots:
-        if not search_root.is_dir():
-            continue
-        for dirpath, dirnames, filenames in os.walk(search_root):
-            # Prune excluded directories in-place (same rules as C2)
-            dirnames[:] = [
-                d for d in dirnames
-                if d not in ("_scratch", "_inbox", "node_modules")
-                and "_scratch" not in d
-            ]
-            for fname in filenames:
-                if not fname.endswith(".md"):
-                    continue
-                fpath = Path(dirpath) / fname
-                try:
-                    lines = fpath.read_text(encoding="utf-8", errors="replace").splitlines()
-                except OSError:
-                    continue
-
-                rel_source = fpath.relative_to(root).as_posix()
-                for line in lines:
-                    if is_exempt_inline_line(line):
-                        continue
-                    for path in extract_inline_links_from_line(line):
-                        if inline_link_is_nonresolving(line, path):
-                            total_nonresolving += 1
-                            continue
-                        if not inline_link_exists(path, fpath, root):
-                            findings.append(Finding(
-                                check="C4",
-                                source=rel_source,
-                                detail="inline link target does not exist on disk: %s" % path,
-                            ))
-
-    return findings, total_nonresolving
+    _, _, c4, count = _run_markdown_checks(root, search_roots, headers=False)
+    return c4, count
 
 
 def run_c5(root: Path) -> list[Finding]:
@@ -793,7 +782,7 @@ def run_c5(root: Path) -> list[Finding]:
 
 
 def run_all_checks(root: Path) -> tuple[list[Finding], int]:
-    """Single-pass collection of all checks (C1, C2, C3, C4, C5).
+    """Collect all checks, sharing one Markdown read pass between C2 and C4.
 
     Returns (findings, total_nonresolving) where total_nonresolving is the
     combined count of annotated nonresolving entries across C2 and C4
@@ -805,10 +794,9 @@ def run_all_checks(root: Path) -> tuple[list[Finding], int]:
     map_text = load_map_text(map_files)
     findings: list[Finding] = []
     findings.extend(run_c1(root, map_files))
-    c2_findings, c2_nonresolving = run_c2(root)
+    c2_findings, c2_nonresolving, c4_findings, c4_nonresolving = _run_markdown_checks(root)
     findings.extend(c2_findings)
     findings.extend(run_c3(root, map_text))
-    c4_findings, c4_nonresolving = run_c4(root)
     findings.extend(c4_findings)
     findings.extend(run_c5(root))
     total_nonresolving = c2_nonresolving + c4_nonresolving
@@ -860,8 +848,7 @@ def run_report_orca(root: Path) -> int:
 
     roots = [product_root]
     map_text = load_map_text(collect_map_files(root))
-    c2_findings, c2_nr = run_c2(root, search_roots=roots)
-    c4_findings, c4_nr = run_c4(root, search_roots=roots)
+    c2_findings, c2_nr, c4_findings, c4_nr = _run_markdown_checks(root, search_roots=roots)
     cov_findings = run_c3(root, map_text, scan_root=root / "forseti" / "product",
                           min_md=1, check_label="COV")
     findings = c2_findings + c4_findings + cov_findings

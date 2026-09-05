@@ -11,7 +11,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -21,6 +23,7 @@ from data_lake.root import DataLakeRoot, raw_shard
 from harness_utils import generate_ulid
 from source_capture.models import known_fact
 from source_capture.transcript.asr_packet import asr_record_id
+from source_capture.transcript.audio_asr import AudioTranscriber
 from source_capture.transcript.ig_reels_audio_packet import (
     transcribe_committed_ig_audio_packet,
 )
@@ -96,6 +99,32 @@ def _run(root: DataLakeRoot, fn=_fake_ok, policy: dict | None = None) -> list[di
     return catchup.run_catchup(
         data_root=root, transcribe_fn=fn, transcriber_policy=policy or _POLICY
     )
+
+
+def test_reused_session_failure_does_not_burn_record_or_ack(tmp_path, monkeypatch) -> None:
+    root = DataLakeRoot.for_test(tmp_path / "lake")
+    packet_id = _commit_audio_packet(root, tmp_path)
+    constructions = []
+
+    class Model:
+        def __init__(self, *args, **kwargs):
+            constructions.append(self)
+
+        def transcribe(self, *args, **kwargs):
+            if len(constructions) == 1:
+                raise RuntimeError("temporary decoder failure")
+            return iter([SimpleNamespace(start=0, end=1, text="synthetic cue")]), SimpleNamespace(language="en")
+
+    monkeypatch.setitem(sys.modules, "faster_whisper", SimpleNamespace(__version__="fixture", WhisperModel=Model))
+    with AudioTranscriber() as session:
+        failed = _run(root, fn=session)
+        assert [entry["status"] for entry in failed] == ["derive_failed"]
+        assert _acks(root, packet_id) == []
+        assert not _transcript_dir(root, packet_id).exists()
+        recovered = _run(root, fn=session)
+        assert [entry["status"] for entry in recovered] == ["derived"]
+        assert len(_acks(root, packet_id)) == 1
+    assert len(constructions) == 2
 
 
 def test_catchup_discovers_transcribes_and_acks(tmp_path: Path) -> None:

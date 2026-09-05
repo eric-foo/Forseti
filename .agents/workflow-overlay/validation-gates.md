@@ -73,10 +73,10 @@ inherit this floor.
 - No software implementation directories are present unless explicitly authorized.
 - `AGENTS.md` and overlay files do not encode `jb` project-specific authority as Forseti rules.
 - Material authority, source-scope, edit-permission, and repository-state checks
-  occur before repo-aware work. A `forseti_start_preflight` receipt is required
-  only at the durable/cross-lane and portable strict-claim boundaries in
-  `.agents/workflow-overlay/source-loading.md`; missing receipt evidence blocks
-  that portable handoff or claim, not ordinary interactive work.
+  occur before repo-aware work. Require a `forseti_start_preflight` receipt only
+  when the applicable boundary in `.agents/workflow-overlay/source-loading.md`
+  requires it; missing required receipt evidence blocks that portable handoff
+  or claim, not ordinary interactive work.
 - Doctrine-changing source work must carry direction-change propagation
   evidence under `.agents/workflow-overlay/source-of-truth.md` before claiming
   completion. The PR body or final closeout is the default; an inline receipt or

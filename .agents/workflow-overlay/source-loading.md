@@ -55,13 +55,17 @@ implementation authority.
 ## Forseti Start Preflight
 
 Preflight is the act of checking authority, source scope, edit permission, and
-material repository state before work. A receipt is required only when that
-start state must survive the current interaction:
+material repository state before work. For prompts, handoffs, wrappers, reruns,
+and patch prompts, `.agents/workflow-overlay/prompt-orchestration.md` owns the
+applicable depth: full-orchestration prompts require a portable start receipt;
+routine and eligible compact prompts do not. Being durable or cross-lane alone
+does not require a receipt.
 
-- a durable or cross-lane prompt, handoff, wrapper, rerun, or patch prompt;
-- a source capsule or lane transfer another actor will consume; or
-- a portable strict lifecycle/readiness claim intended to survive outside the
-  current chat and whose consumer cannot inspect the originating lane state.
+Other source capsules or lane transfers require a receipt only when their
+consumer needs start-state evidence preserved outside the current interaction.
+A portable strict lifecycle/readiness claim also requires one when its consumer
+cannot inspect the originating lane state. These portability requirements do
+not independently escalate a routine or eligible compact prompt.
 
 Interactive source reads, reviews, bounded edits, source-changing work, and
 ordinary closeouts do not owe a receipt merely because they are repo-aware. Run
@@ -145,8 +149,9 @@ Use this order unless the user gives a narrower source pack:
 Stop when the next file would only add background instead of changing the
 decision, prompt, or artifact.
 
-If more than four target artifacts appear necessary, switch to a source capsule
-or new-thread handoff instead of bulk-reading.
+Use the read-budget targets in "Prompt Source Capsules" below to bound loading,
+and "Expansion Rules" and "Context Boundary" to decide whether to narrow or hand
+off. Artifact counts alone do not require a capsule or new thread.
 
 ## Source Pack Tiers
 

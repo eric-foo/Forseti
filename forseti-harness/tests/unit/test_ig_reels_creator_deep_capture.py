@@ -426,7 +426,7 @@ def test_creator_main_persists_when_forseti_data_root_env_set(
     monkeypatch.setattr(
         creator_runner,
         "_make_capture_fn",
-        lambda _scratch, *, model: (
+        lambda _scratch, *, transcribe_fn: (
             lambda shortcode: ReelDeepCaptureResult(
                 reel_shortcode=shortcode,
                 comments=(),

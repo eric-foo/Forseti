@@ -35,6 +35,7 @@ from __future__ import annotations
 import argparse
 import ast
 import importlib.util
+import os
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -292,12 +293,12 @@ _PRODUCER_DISCOVERY_EXCLUDED_DIRS = frozenset(
 def _producer_files(root: Path) -> list[Path]:
     harness = root / "forseti-harness"
     out: list[Path] = []
-    for path in sorted(harness.rglob("*.py")):
-        relative_parts = set(path.relative_to(harness).parts)
-        if relative_parts.intersection(_PRODUCER_DISCOVERY_EXCLUDED_DIRS):
-            continue
-        out.append(path)
-    return out
+    for dirpath, dirnames, filenames in os.walk(harness):
+        dirnames[:] = [d for d in dirnames if d not in _PRODUCER_DISCOVERY_EXCLUDED_DIRS]
+        # Keep pathlib glob's platform case matching and matching directory entries.
+        out.extend(Path(dirpath) / name for name in (*dirnames, *filenames)
+                   if Path(name).match("*.py"))
+    return sorted(out)
 
 
 def _parse(paths: Iterable[Path]) -> dict[Path, ast.Module]:

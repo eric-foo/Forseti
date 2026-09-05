@@ -23,22 +23,10 @@ Use this contract only when a prompt explicitly references it.
 
 ## Source-Gated Method Use
 
-When a prompt references workflow methods or skills and also requires Forseti
-source context, follow `.agents/workflow-overlay/prompt-orchestration.md`'s
-Source-Gated Method Contract.
-
-- `REFERENCE-LOAD` method instructions before source loading only as procedural
-  guidance.
-- Do not `APPLY` any method to analyze, frame, critique, rank, synthesize,
-  decide, recommend, or produce findings before source readiness.
-- `SOURCE-LOAD` the task sources under the prompt's source pack.
-- Declare `SOURCE_CONTEXT_READY` or `SOURCE_CONTEXT_INCOMPLETE` with material
-  gaps before applying methods.
-- After source readiness, `APPLY` the methods to the loaded source context and
-  verify conclusions against that context.
-
-Avoid vague sequencing such as "use these skills" before source loading. Use
-explicit reference-load and apply wording when method order matters.
+Follow `.agents/workflow-overlay/prompt-orchestration.md`'s Source-Gated Method
+Contract for its trigger, sequence, and compact-path exception. Read material
+sources before applying methods or forming findings even when explicit phases
+and readiness declarations do not apply.
 
 ## Cynefin Routing Layer
 

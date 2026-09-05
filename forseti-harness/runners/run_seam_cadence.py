@@ -105,26 +105,22 @@ class CadenceEntrypoint:
 def _asr_transcribe_fn(ctx: CadenceContext):
     # Lazy: the ASR library loads only on an unskipped --run reaching this
     # entrypoint (mirrors run_asr_transcript_catchup.main).
-    from source_capture.transcript.audio_asr import transcribe_audio
+    from source_capture.transcript.audio_asr import AudioTranscriber
 
-    def transcribe_fn(audio_path: str):
-        return transcribe_audio(
-            audio_path, model_name=ctx.asr_model, compute_type=ctx.asr_compute_type
-        )
-
-    return transcribe_fn
+    return AudioTranscriber(model_name=ctx.asr_model, compute_type=ctx.asr_compute_type)
 
 
 def _asr_run(
     ctx: CadenceContext, scope_packet_ids: Sequence[str] | None
 ) -> list:
-    return _asr.run_catchup(
-        data_root=ctx.data_root,
-        transcribe_fn=_asr_transcribe_fn(ctx),
-        transcriber_policy=ctx.transcriber_policy,
-        scope_packet_ids=scope_packet_ids,
-        reconcile_availability=False,
-    )
+    with _asr_transcribe_fn(ctx) as transcribe_fn:
+        return _asr.run_catchup(
+            data_root=ctx.data_root,
+            transcribe_fn=transcribe_fn,
+            transcriber_policy=ctx.transcriber_policy,
+            scope_packet_ids=scope_packet_ids,
+            reconcile_availability=False,
+        )
 
 
 # The declared cadence surface: every seam catch-up entrypoint, in execution

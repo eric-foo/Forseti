@@ -10,6 +10,7 @@ rest.
 from __future__ import annotations
 
 import dataclasses
+from contextlib import nullcontext
 import hashlib
 import inspect
 import json
@@ -135,7 +136,7 @@ def test_cadence_reconciles_once_and_all_composed_calls_reuse_snapshot(
         )
         or [],
     )
-    monkeypatch.setattr(cadence, "_asr_transcribe_fn", lambda _ctx: object())
+    monkeypatch.setattr(cadence, "_asr_transcribe_fn", lambda _ctx: nullcontext(object()))
 
     modules = (
         cadence._ecr,
