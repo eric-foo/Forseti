@@ -20,3 +20,4 @@ forseti-harness/capture_spine/tiktok_creator_discovery_frontier/*.json text eol=
 # Coordinated research source-native copies are also byte-faithful evidence.
 # Keep the checked-in bytes stable so their artifact hashes survive checkout.
 docs/research/**/coordinated/source_native/** binary
+docs/research/experiment_beauty_collection_20260904_v0/coordinated/different_vendor_semantic_review_and_adjudication.md text eol=lf

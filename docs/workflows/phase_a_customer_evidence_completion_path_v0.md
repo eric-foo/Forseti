@@ -24,13 +24,17 @@ reviews as unrelated summaries. It does not produce a market conclusion.
 
 The semantic leaf assessment, atomic evidence structuring, meaning-based
 reconciliation, and evidence-packet projection together form the named
-**Evidence Consolidation** stage. It runs inside Acquire & Seal after a bounded
-Capture handoff and may iterate with the provisional maturity scan and targeted
-delta acquisition required to close the corpus. It ends only when the final
-corpus hash has a complete, reproducible evidence packet or a visible unresolved
-failure. This is a conceptual and completion boundary between acquisition and
-Deliver, not a new globally numbered phase: historical Phase A, Phase B, Turn
-B, Understanding, and Deliver vocabulary is not renumbered or migrated.
+**Evidence Consolidation** stage. It runs inside Acquire & Seal. Preparatory
+consolidation may begin after a bounded Capture handoff, but a complete
+integration pass begins only after every acquisition job selected for that pass
+is terminal and the current-corpus snapshot is immutable and fully accounted.
+It may then iterate with the provisional maturity scan and targeted delta
+acquisition required to close the corpus. Any changed corpus invalidates the
+prior integration view. The stage ends only when the final corpus hash has a
+complete, reproducible evidence packet or a visible unresolved failure. This is
+a conceptual and completion boundary between acquisition and Deliver, not a new
+globally numbered phase: historical Phase A, Phase B, Turn B, Understanding,
+and Deliver vocabulary is not renumbered or migrated.
 
 At this boundary, a current passing `phase_acquisition_seal_v3` whose
 validator-backed depth ledger closes the material-saturation test is required

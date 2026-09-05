@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v114
-effective_date: 2026-09-04
+version: v115
+effective_date: 2026-09-05
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v114
+# Semantic Evidence Integration Contract v115
 
 ## Purpose
 
@@ -24,13 +24,17 @@ support posture, independence, conflict, source-role fitness, and causal
 ceiling.
 
 Semantic Evidence Integration is the runtime capability inside the named
-**Evidence Consolidation** stage. That stage starts from an immutable,
-completely accounted acquisition corpus and owns semantic leaf triage, atomic
-evidence structuring, meaning-based cross-source reconciliation, and
-evidence-packet projection. Its output is the complete evidence retrieval
-surface consumed by the acquisition seal and later Deliver work. This stage
-boundary does not create or rename a globally numbered phase; historical Phase
-A, Phase B, Turn B, Understanding, and Deliver vocabulary remains unchanged.
+**Evidence Consolidation** stage. Preparatory consolidation may begin after a
+bounded Capture handoff, but each complete integration pass starts only from an
+immutable, completely accounted current-corpus snapshot: every acquisition job
+selected for that pass is terminal and every admitted packet is accounted.
+That snapshot is not a claim that no further acquisition will be needed. The
+stage owns semantic leaf triage, atomic evidence structuring, meaning-based
+cross-source reconciliation, and evidence-packet projection. Its final output
+is the complete evidence retrieval surface consumed by the acquisition seal and
+later Deliver work. This stage boundary does not create or rename a globally
+numbered phase; historical Phase A, Phase B, Turn B, Understanding, and Deliver
+vocabulary remains unchanged.
 
 It is not a market conclusion, recommendation, sentiment score, representative
 estimate, causal model, custom-trained model, embeddings service, vector store,
@@ -42,9 +46,11 @@ For broad consumer-brand Understanding:
 
 ```text
 SERP Phase 1 -> evidence fan-out -> SERP Phase 2 and adaptive returns
--> all selected acquisition jobs terminal
+-> all acquisition jobs currently selected for this pass terminal
+-> freeze and account the current-corpus snapshot
 -> Semantic Evidence Integration
--> any affected-axis delta work terminal and integration regenerated
+-> if a material gap appears: select only the affected-axis delta work
+-> that delta work terminal and integration regenerated from the new snapshot
 -> acquisition seal
 -> Synthesize
 ```
@@ -2312,6 +2318,16 @@ new frontier.
 
 ## Changelog
 
+- `v115` / 2026-09-05 — clarified the acquisition-stage iteration boundary
+  after the Experiment Beauty different-vendor review. Preparatory
+  consolidation may begin after a bounded Capture handoff, while every complete
+  integration pass requires an immutable, fully accounted current-corpus
+  snapshot after all jobs selected for that pass are terminal. A material gap
+  may select affected-axis delta work; changed corpus bytes invalidate the prior
+  view, and the seal consumes only the integration regenerated from the final
+  corpus. This resolves a wording conflict with the Phase A completion workflow
+  without authorizing Synthesize or Deliver before a passing seal, broadening
+  acquisition, or adding a new gate or checker.
 - `v114` / 2026-09-04 — made point-reader request v5 preserve two neighboring
   Decision State boundaries exposed by source-complete Dieux dogfood. Current
   use or possession of another container no longer stands in for an explicitly

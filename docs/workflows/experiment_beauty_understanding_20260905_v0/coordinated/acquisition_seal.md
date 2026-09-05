@@ -3,16 +3,24 @@
 ```yaml
 retrieval_header_version: 1
 artifact_role: Consumer-brand Understanding acquisition seal
-scope: Experiment Beauty Phase A route accounting, material-saturation evidence, and independent-review gate state.
+scope: Final Experiment Beauty Phase A route accounting, material-saturation evidence, and independent-review adjudication.
 use_when:
   - Determining whether a separately commissioned Experiment Beauty Deliver may start.
   - Auditing Phase A collection coverage, source provenance, material saturation, or residual blockers.
 authority_boundary: retrieval_only
 open_next:
+  - docs/research/experiment_beauty_collection_20260904_v0/coordinated/turn_a_consumer_brand_v3_acquisition_record.md
+  - docs/research/experiment_beauty_collection_20260904_v0/coordinated/different_vendor_semantic_review_and_adjudication.md
   - docs/research/experiment_beauty_collection_20260904_v0/coordinated/evidence_depth_ledger.json
   - docs/research/experiment_beauty_collection_20260904_v0/coordinated/semantic_evidence_integration_view.json
   - docs/research/experiment_beauty_collection_20260904_v0/coordinated/semantic_source_family_census.json
 ```
+
+The commissioned different-vendor review returned `PASS_WITH_PATCHES`. Chief
+Architect adjudication kept the two source-location and instruction corrections;
+the owner closed the remaining rule conflict by choosing iterative current-corpus
+snapshots. The retained residuals remain bounded below. Experiment Beauty
+Deliver has not started.
 
 ```yaml
 phase_acquisition_seal:
@@ -21,11 +29,12 @@ phase_acquisition_seal:
   commission_id: OWNER-EXPERIMENT-MATERIAL-SATURATION-20260905-001
   subject: Experiment Beauty
   authority_revision: a5861738c9ebe6a273075189cdf5acafd2e801c0
-  acquisition_gate: blocked
-  seal_state: BLOCKED_ACQUISITION_INCOMPLETE
-  deliver_allowed: false
+  acquisition_gate: pass
+  seal_state: SEALED_READY_FOR_DELIVER
+  deliver_allowed: true
   deliver_started: false
   bound_question_preserved: true
+  acceptance_status: accepted_after_required_cross_vendor_semantic_review_and_chief_architect_adjudication
   controller_placement:
     controller_actor: CO0
     placement: top_level
@@ -377,12 +386,41 @@ phase_acquisition_seal:
       invalid_if:
       - Any pinned evidence body or coding artifact changes bytes.
   independent_semantic_review:
-    status: required_not_executed_courier_prompt_returned
+    status: complete_and_chief_architect_adjudicated
     required_before_acceptance: true
-    review_routing_status: blocked
-    blocker: Forseti requires operator-courier review prompt authoring; this implementation
-      lane may not dispatch or execute the different-vendor semantic review.
-  blocker: Different-vendor source-native semantic review and owner adjudication remain
-    required before acceptance; acquisition evidence and material-saturation accounting
-    are complete.
+    reviewer_vendor_model_family: Anthropic / Claude (exact model unrecorded)
+    report_locator: docs/research/experiment_beauty_collection_20260904_v0/coordinated/different_vendor_semantic_review_and_adjudication.md
+    report_sha256: b52584d684cfd5915afac2f12ca3e430b2ee4000fa8768fe4f654fe4a44217ea
+    reviewer_verdict: PASS_WITH_PATCHES
+    chief_architect_disposition:
+      accepted_patched_findings:
+      - S1
+      - S3
+      accepted_owner_clarified_findings:
+      - S2
+      owner_clarification: >-
+        Preparatory consolidation may begin after a bounded Capture handoff. A
+        complete integration pass requires every job selected for that pass to
+        be terminal and the current-corpus snapshot to be immutable and fully
+        accounted. Material delta acquisition invalidates the prior integration,
+        which must be regenerated from the changed corpus before sealing.
+      residuals:
+      - Ingredient-hash normalization is undocumented; packet-anchored references carry source resolution.
+      - Google Ads and Meta inventories are bounded captures and do not prove complete platform exhaustion.
+      - Reddit discovery-query provenance was not preserved, so the captured URL set does not prove search exhaustion.
+      - The case JSON artifacts have no new standing no-claims checker; add one only after a demonstrated stale-edit defect justifies the recurring cost.
+      independent_gate_limitation: >-
+        The delegate authored the S1 and S3 patches, so those lines did not
+        receive a second independent post-patch semantic review. Chief Architect
+        adjudication and mechanical source, hash, validator, and scope checks
+        close the demonstrated finding classes. S2 is an explicit owner rule
+        choice recorded in the owning Judgment contract.
+  sealed_at: '2026-09-05T07:03:38.6705387Z'
+  blocker: null
 ```
+
+## Seal decision
+
+This seal closes Acquire & Seal only. It does not start Deliver. Any Experiment
+Beauty Deliver remains a separate commission and inherits the captured corpus's
+qualitative, non-prevalence claim ceiling.
