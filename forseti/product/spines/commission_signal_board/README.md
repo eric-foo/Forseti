@@ -28,6 +28,45 @@ stale_if:
 - Current scope: Commission Signal Board plus the docs-only Forseti Intelligence Cycle operating contract.
 - Global docs migration: accepted in direction, staged, not executed here.
 
+## Task-Specific Read Routes
+
+These are retrieval routes, not new execution or synthesis authorization.
+Heading ranges below include their start and stop before their named end.
+Follow current prerequisite/owner pointers in the selected sections when their
+trigger applies; `open_next` is navigation, not a read-all list.
+
+- **Standalone board prompt:** copy the complete fenced text under **Prompt
+  Body** in the Prompt Structure, through `COMMISSION INPUTS FOLLOW:`, then
+  supply the inputs. Keep both conditional output profiles in that body; it is
+  self-contained for the manual chat-only board task.
+- **Repo-aware acquisition commissioning:** read the Prompt Structure from
+  **Dispatcher Use** to **Direction Change Propagation**; in the playbook read
+  **Purpose** to **Historical Understanding Route Changelog**, **Six Outcome
+  Signals** to **Post-Delivery Adversarial Review Handoff**, and **Operating
+  Sequence** to **Direction Change Propagation**. This includes the current
+  route version, capability/Phase 1 dispatch lock, applicable completion
+  profile, semantic integration, source-review and seal requirements. Follow
+  the Scanning/Capture and claim-support owners as required by those sections.
+- **Fresh-context synthesis:** load the commissioned phase's durable acquisition
+  seal and its cited evidence/returns, then read the Prompt Structure from
+  **Dispatcher Use** to **Direction Change Propagation**. In the playbook read
+  **Purpose** to **Turn A — Acquire & Seal**, **Turn B — Synthesize** to
+  **Operating Sequence**, and **Validator Command** to **Direction Change
+  Propagation**. Follow the claim-support contract, semantic-integration
+  contract, applicable output-profile authority, and (for Deliver) the Deliver
+  decision-memorandum method. Verify the seal's stamped-version requirements
+  and required semantic-review disposition against their current owners; open
+  the relevant Acquire & Seal section when that verification needs it. A
+  passing seal only makes synthesis eligible; an explicit synthesis commission
+  remains required, including the governing supplement/seal rules for Deliver.
+
+Routine reads omit **Direction Change Propagation** sections and **Historical
+Understanding Route Changelog**. Reopen them when provenance, an older stamped
+route, migration, an authority conflict, or uncertainty about the current rule
+requires history. Keep dated records and append-only rows unchanged; they are
+not current instructions. When editing an owning contract, inspect the affected
+current sections and their consumers rather than relying on these routes alone.
+
 ## Canonical Artifacts
 
 | Role | Path |

@@ -40,17 +40,19 @@ stale_if:
 
 ## Dispatcher Use
 
-Paste the **Prompt Body** below into a fresh model/agent context, then provide
-the commission inputs under `COMMISSION INPUTS`.
+Use **Task-Specific Read Routes** in
+`forseti/product/spines/commission_signal_board/README.md` for repo-aware
+acquisition commissioning or fresh-context synthesis. For a standalone board,
+paste the complete fenced **Prompt Body** below into a fresh model/agent
+context, then provide the commission inputs under `COMMISSION INPUTS`.
 
 This prompt is intentionally prompt-first and manual-first. It prepares a
 signal board and handoff structure. It does not retrieve sources, scrape
 platforms, build a graph, classify demand, score evidence, forecast outcomes,
 or issue a recommendation.
 
-For repo-aware runs, read
-`forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md` before dispatching the
-prompt. The playbook owns the operating sequence: intake check first, full board
+For repo-aware runs, read the playbook sections selected by that route before
+dispatching the prompt. The playbook owns the operating sequence: intake check first, full board
 generation only after required inputs are supplied, and validator execution only
 against a full board output that contains Section 4 and Section 8. Do not run
 the validator against `NEEDS_COMMISSION_INTAKE` or `NEEDS_CUTOFF_DATE` intake

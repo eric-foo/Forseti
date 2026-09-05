@@ -67,9 +67,7 @@ from cleaning.basenotes_lake import (
 )
 from cleaning.models import CLEANING_CORE_VERSION
 from data_lake.consumption import (
-    PickupItem,
-    append_ack,
-    is_acknowledged,
+    ack_packet,
     pickup,
     reconcile_availability_per_packet,
 )
@@ -125,30 +123,6 @@ def _packet_obligation() -> dict:
         "text_normalization_rule": TEXT_NORMALIZATION_RULE,
         "rating_metric_residual": BASENOTES_RATING_METRIC_RESIDUAL,
     }
-
-
-def _ack_packet(data_root, item: PickupItem, evidence: list[dict]) -> str:
-    """Record the lane-owned completion fact. A create collision (another completer
-    won the race) is fine when the obligation is now acknowledged; anything else is
-    a real ack failure surfaced as a status."""
-    try:
-        append_ack(
-            data_root,
-            raw_anchor=item.raw_anchor,
-            ack_namespace=_ACK_NAMESPACE,
-            obligation=item.obligation,
-            evidence=evidence,
-        )
-    except DataLakeRootError as exc:
-        if is_acknowledged(
-            data_root,
-            raw_anchor=item.raw_anchor,
-            ack_namespace=_ACK_NAMESPACE,
-            obligation=item.obligation,
-        ):
-            return "acked"
-        return f"ack_failed: {type(exc).__name__}: {exc}"[:200]
-    return "acked"
 
 
 def pending_packets(
@@ -252,7 +226,7 @@ def run_catchup(
                     "basis": "known_non_basenotes_source_surface",
                 }
             ]
-            outcome = _ack_packet(data_root, item, evidence)
+            outcome = ack_packet(data_root, item, evidence, ack_namespace=_ACK_NAMESPACE)
             if outcome != "acked":
                 results.append({"packet_id": packet_id, "status": "ack_failed", "error": outcome})
             else:
@@ -292,7 +266,7 @@ def run_catchup(
                 "count": len(derived.silver_records),
             },
         ]
-        outcome = _ack_packet(data_root, item, evidence)
+        outcome = ack_packet(data_root, item, evidence, ack_namespace=_ACK_NAMESPACE)
         if outcome != "acked":
             results.append({"packet_id": packet_id, "status": "ack_failed", "error": outcome})
         else:

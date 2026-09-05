@@ -4,16 +4,16 @@
 retrieval_header_version: 1
 artifact_role: Review prompt
 scope: >
-  Filed prompt for read-only adversarial artifact review of PR #316's Capture
-  spine core migration, using a greppable multi-file review-input packet.
+  Historical filed prompt for PR #316's Capture spine core migration review;
+  recover its packet before inspection and retain its source-context blocker.
 use_when:
-  - Commissioning independent adversarial artifact review of the Capture spine core migration.
+  - Inspecting or recovering the historical Capture spine core migration review commission.
   - Checking whether the migration correctly re-homed current Capture spine docs under `capture/core/`.
   - Checking moved-path correctness, reference rewrites, DCP honesty, and scope containment.
 authority_boundary: retrieval_only
 open_next:
   - docs/review-inputs/capture_spine_core_migration_adversarial_artifact_review_v0/README.md
-  - docs/review-outputs/adversarial-artifact-reviews/capture_spine_core_migration_adversarial_artifact_review_v0.md # nonresolving: expected reviewer output path created by running this prompt
+  - docs/review-outputs/adversarial-artifact-reviews/capture_spine_core_migration_adversarial_artifact_review_v0.md
 input_hashes:
   docs/review-inputs/capture_spine_core_migration_adversarial_artifact_review_v0/diff_u80.patch: 4F2DDD6E5D2AD3C9124BD9E380AD6BBDDB566C2ECAFD1D6173A4B70FB31E3EFB
   docs/review-inputs/capture_spine_core_migration_adversarial_artifact_review_v0/manifest/name_status.tsv: 087D8B18BD2AF27378188E95A2B1F8429C6E94EDE1761583A00FCE88107DF939
@@ -25,6 +25,18 @@ stale_if:
   - The review-input packet is regenerated.
   - A later Capture spine migration review prompt supersedes this prompt.
 ```
+
+## Historical Status — 2026-09-05
+
+The snapshots and patch are retired from the current checkout. Recover them
+through the packet README before historical inspection. All five `input_hashes`
+above fail against both the recovery revision
+`6d62b05aef99d541110b818157ec0ca10b85c305` and original packet commit
+`8df13cbd2ee3b655d94e315dc8cf1e258c3a9c70`; these original claims are preserved,
+not replaced with new pins. This prompt remains `BLOCKED_SOURCE_CONTEXT` under
+its own mismatch rule. Exact restoration of committed bytes does not clear that
+gate. Do not rerun the old instructions or overwrite the historical report as a
+fresh commission; resolve the discrepancy or bind a separate current review.
 
 ## Prompt Authoring Preflight
 
@@ -43,7 +55,7 @@ preflight_defaults: `docs/prompts/templates/shared/orca_preflight_defaults_v0.md
 
 Template source: `docs/prompts/templates/review/adversarial_artifact_review_v0.md` with Orca prompt-orchestration and review-lane overlays applied.
 
-## Paste-Ready Prompt
+## Historical Prompt — Source Context Blocked
 
 You are performing a **read-only adversarial artifact review** for Orca.
 

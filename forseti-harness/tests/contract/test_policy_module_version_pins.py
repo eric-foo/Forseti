@@ -324,7 +324,9 @@ POLICY_MODULE_PINS: dict[str, tuple[tuple[str, ...], str]] = {
         ("EXTRACTOR_RUBRIC_VERSION", "TikTok cue-normalization and packet-obligation policy"),
         # Output-shaping obligation change: record schema version now re-surfaces
         # packets for the envelope migration even when the extraction rubric is unchanged.
-        "054645d4501ed6084197efa3e34620b54dda7bb80e22ab6dda7907e23cc5414e",
+        # Output-neutral: identical acknowledgement handling now uses the shared
+        # consumption helper; namespace, obligation and model policy are unchanged.
+        "dd49b8deb101342017bae17f89bfc684148fe3263706a0bb8e6fa6cf2b93a5fd",
     ),
 }
 
