@@ -99,73 +99,16 @@ postures needed downstream; Synthesize and Deliver may not silently promote an
 isolated or resonance-only observation into independent recurrence,
 cross-venue corroboration, representative prevalence, or causation.
 
-Inside an Understanding Acquire & Seal turn, every company commission uses one
-evidence-acquisition order:
+Use the phase-specific owners below; the playbook remains the operating
+contract. Open the source for the current job rather than loading every owner.
 
-1. bind the question and validate the commission-stage board;
-2. run or validly reuse the SERP Phase 1 competitor scout;
-3. feed its typed outputs into the `CO1`-`CO3` specialist fan-out, where `CO3`
-   owns Reddit/community acquisition;
-4. wait for the specialist terminal returns, then use SERP Phase 2 to explain
-   the observed product choice by shared axis and condition, run only named
-   material delta probes, and derive the terminal comparator role afterward;
-5. after every selected acquisition job is terminal, run the Judgment-owned
-   Semantic Evidence Integration job against the final corpus; reopen only an
-   affected family when it exposes a material gap, then regenerate the view;
-6. write the Understanding seal only after the Phase 2 terminal result and a
-   current, complete semantic-integration view; a
-   material Phase 2 block forces a blocked seal and forbids Deliver.
-
-`SERP Phase 1` and `SERP Phase 2` are internal lane labels, not additional
-Forseti Intelligence Cycle phases.
-
-Acquire & Seal optimizes for decision-useful completeness under the integrity
-floor; compactness, actor count, and token minimization are not its success
-criteria. For consumer brands, each material product axis must therefore carry
-a traceable decision-usefulness synthesis in its existing evidence-ledger row;
-source volume or a `strong` label alone cannot close it. The Synthesize turn
-then applies Smallest Complete Intervention to the human artifact without
-dropping decisive evidence or limitations.
-
-For company Understanding, the playbook binds the default four-evidence-actor
-route: `CO0` plus exactly `CO1`, `CO2`, and mandatory `CO3`. Current US
-consumer-beauty commissions use the playbook's company-core, retail-breadth,
-and customer/community role mapping. `CO3` always owns customer/community and
-selected depth; its depth expands adaptively, but the actor and
-customer-understanding job are not optional.
-
-When product/customer experience is material, consumer brands use the
-playbook's `broad_consumer_brand_understanding_v3` completion profile. Its v4
-depth ledger prevents aggregate family counts from substituting for
-cross-family product-axis evidence, comment- and row-derived customer evidence,
-three-way focused follow-ups, source-native capture, reconciled targets,
-terminal candidate accounting (the 40-thread floor is a minimum, never a
-completion target), proven high-yield query families, and axis-scoped decision
-maturity. Evidence strength stays separate from maturity: source-limited axes
-may close only with bounded-observation claims. Each material axis closes after
-two later, genuinely different live continuation families add no material
-decision change affecting it; useful threads remain visible and need not be
-zero. The prompt-structure authority owns the exact fields, decision-frontier
-rule, and hybrid strength bars.
-
-The same profile gives `CO3` two pipelined discovery lanes: a bounded
-source-neutral corroboration lane and a candid Reddit/community lane. Retailer
-review coding seeds claim-directed checks across the lanes; a material finding
-triggers only its bounded counterpart check, not wholesale query duplication.
-Consumer-native product-name/shorthand probing remains a bounded sampling-bias
-test: hero products by default, with a non-hero product admitted only when
-already captured evidence exposes a material question. It never becomes a
-full-catalog crawl. Search summaries are pointers, DTC pages are official-claim
-evidence rather than independent customer corroboration, and engagement
-snapshots retain dated working provenance even when the final human
-deliverable does not display the date.
-
-Before a broad consumer-brand Phase A seal is accepted for synthesis or landed,
-its final delegated review reads every decision-bearing source-native citation
-and two independent spot checks per material axis. It checks local subject
-anchoring, axis/role fit, competitor-event attribution, and counterevidence,
-then expands only the affected axis unless the authority's systemic-failure
-threshold is met; a full-corpus reread is not the default.
+| Current job | Owning source |
+| --- | --- |
+| Company acquisition order, actor roles, and source routing | [Default Understanding route](workflows/commission_signal_board_playbook_v0.md#default-us-consumer-beauty-understanding-route); [acquisition sequence](workflows/commission_signal_board_playbook_v0.md#acquisition-and-seal-sequence), including retailer breadth in step 3 |
+| Consumer-brand completion, depth, maturity, and final source review | [Intelligence Cycle operating rules](authority/forseti_commission_signal_board_prompt_structure_rules_v0.md#forseti-intelligence-cycle-operating-contract) |
+| Company information jobs, retailer admission, and metric claim limits | [Conditional company prompt contract](prompts/forseti_commission_signal_board_prompt_structure_v0.md#conditional-company-competitive-intelligence-output-contract) |
+| Synthesis gate and Deliver boundaries | [Turn B](workflows/commission_signal_board_playbook_v0.md#turn-b--synthesize) |
+| Commissioned Deliver memorandum | [Deliver decision-memorandum method](workflows/deliver_decision_memorandum_method_v0.md) |
 
 When both turns are explicitly commissioned, two turns are the normal budget,
 not permission to convert a blocked acquisition into apparent completion. The
