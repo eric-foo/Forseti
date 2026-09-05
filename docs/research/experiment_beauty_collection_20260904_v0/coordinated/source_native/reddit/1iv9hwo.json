@@ -1,0 +1,111 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": false,
+    "captured_matches_declared_total": false,
+    "comments_captured": 4,
+    "comments_not_captured": 1,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 5,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Are you brand new to skincare? Don't know how to build a skincare routine? The best place to start is our ScA Routine! You can find even more skincare guide in our wiki!. Your answer might already be in there (and we might remove your post if it is). Everyone is welcome in this community; remember to be kind and assume good faith :) I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "me3s2td",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2025-02-22T03:30:10.884000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "Not exactly a moisturizer, but Experiment Buffer Jelly is made to be the last step in your routine. It has 3% petrolatum, so it locks moisture in without being so occlusive to make your actives more irritating.",
+      "comment_id": "me42oqz",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "1",
+      "timestamp_state": "2025-02-22T04:41:51.540000+0000"
+    },
+    {
+      "author_state": "thegroundsloth",
+      "body_text": "Yeah that’s pretty much what I’m looking for! It’s like they’re marketing directly to me. It’s a bit expensive but I’ll give it a try",
+      "comment_id": "me7h1nh",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "me42oqz",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "2",
+      "timestamp_state": "2025-02-22T18:36:45.626000+0000"
+    },
+    {
+      "author_state": "_cat_tax_collector",
+      "body_text": "Hey! How’s the Buffer Jelly working for you over actives?",
+      "comment_id": "mwrkvlc",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "me7h1nh",
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "1",
+      "timestamp_state": "2025-06-09T02:41:13.245000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 3
+    },
+    "comments_parsed": 4,
+    "observable_comment_nodes": 4
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "thegroundsloth",
+    "body_text": "I have sensitive skin that’s very dry, especially in the winter. The routine that’s been working well to treat my acne is alternating between using actives one night (EpiDuo) and slugging with vaseline the next night. I really like the way my skin feels the morning after slugging. I’m so tempted to do it every night, but I know that’s not wise over strong ingredients. (I tried it once and my skin was PISSED.) Anyway, I am on the hunt for a thicker, greasier (?) moisturizer that feels like slugging but is safe to use over actives.",
+    "score_state": "2",
+    "timestamp_state": "2025-02-22T03:30:09.916000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddiction/comments/1iv9hwo/product_request_nighttime_moisturizer_with_a/",
+  "thread": {
+    "permalink": "/r/SkincareAddiction/comments/1iv9hwo/product_request_nighttime_moisturizer_with_a/",
+    "subreddit": "SkincareAddiction",
+    "thread_id": "1iv9hwo",
+    "title": "[Product Request] Night-time moisturizer with a slugging feel that is safe to use over actives"
+  },
+  "warnings": [
+    "thread declares 5 comments; 4 captured (1 not captured)"
+  ]
+}

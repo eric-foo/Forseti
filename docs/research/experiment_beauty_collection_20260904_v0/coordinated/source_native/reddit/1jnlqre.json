@@ -1,0 +1,151 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": null,
+    "captured_matches_declared_total": true,
+    "comments_captured": 7,
+    "comments_not_captured": 0,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 7,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "Ok-Appearance3478",
+      "body_text": "softwear is truly a holy grail. would LOVE a tinted version from them",
+      "comment_id": "mklh7un",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0001",
+      "score_state": "4",
+      "timestamp_state": "2025-03-30T22:53:23.303000+0000"
+    },
+    {
+      "author_state": "baszilla",
+      "body_text": "Tinted software launches today! So excited!",
+      "comment_id": "nn1sdbo",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0002",
+      "score_state": "1",
+      "timestamp_state": "2025-11-04T13:17:08.849000+0000"
+    },
+    {
+      "author_state": "CelestiJelli",
+      "body_text": "Yes, so excited!! Spawn camping the launch at my laptop as we speak.",
+      "comment_id": "nn2twzg",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "nn1sdbo",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "1",
+      "timestamp_state": "2025-11-04T16:29:20.442000+0000"
+    },
+    {
+      "author_state": "baszilla",
+      "body_text": "Same!",
+      "comment_id": "nn2u1fq",
+      "comment_posture": "collapsed",
+      "depth": 2,
+      "parent_id": "nn2twzg",
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0004",
+      "score_state": "1",
+      "timestamp_state": "2025-11-04T16:29:56.149000+0000"
+    },
+    {
+      "author_state": "thatstotallyrad-",
+      "body_text": "theres 3 tinted shades now!!",
+      "comment_id": "nowfte2",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0005",
+      "score_state": "3",
+      "timestamp_state": "2025-11-15T00:25:46.790000+0000"
+    },
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Thank you for contributing to MUA! If this is your first post, please be sure to check out our rules in the subreddit sidebar. If you are on mobile, they can be viewed by tapping the \"See more\" button under the subreddit description A few quick reminders: • Don't forget your product list in the comments, complete with shade names within 20 minutes of posting. • No photo editing. • Google it first! • Lastly, our Helpful Guides for Navigating MUA in the sidebar explains some of the basics of the community as well as commonly misinterpreted rules. r/MakeupAddiction is looking for new moderators! If you're interested, fill out this form or message the moderators! I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "mkkqwzg",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "1",
+      "timestamp_state": "2025-03-30T20:27:08.657000+0000"
+    },
+    {
+      "author_state": "kinderbuen0o",
+      "body_text": "I came across this mockup on google and got so excited thinking it was the real thing. Gorgeous design! It totally takes me back to the colorful iBooks from the early 2000s. (I would also replace all my lip products if they came out with these shades. Fingers crossed for next summer!)",
+      "comment_id": "n73tkgs",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0007",
+      "score_state": "1",
+      "timestamp_state": "2025-08-05T19:45:21.456000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 4,
+      "present": 3
+    },
+    "comments_parsed": 7,
+    "observable_comment_nodes": 7
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "CelestiJelli",
+    "body_text": "THIS IS A MOCKUP AND NOT A REAL PRODUCT!!! Yet….Literally my holy grail lip product. I would absolutely die if they came out with a tinted version for the summer. It would probably completely replace all my lip products for me. If anyone is still on the hunt for a lip balm, I seriously recommend giving Softwear a try. I also love the brands nostalgic/y2k futuristic aesthetic so I tried to capture that nostalgia with the packaging color scheme :)",
+    "score_state": "7",
+    "timestamp_state": "2025-03-30T20:27:06.378000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/MakeupAddiction/comments/1jnlqre/im_obsessed_with_experiment_beautys_softwear_lip/",
+  "thread": {
+    "permalink": "/r/MakeupAddiction/comments/1jnlqre/im_obsessed_with_experiment_beautys_softwear_lip/",
+    "subreddit": "MakeupAddiction",
+    "thread_id": "1jnlqre",
+    "title": "I’m obsessed with Experiment Beauty’s Softwear lip balm so I made mockups"
+  },
+  "warnings": []
+}

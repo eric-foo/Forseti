@@ -1,0 +1,121 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": null,
+    "captured_matches_declared_total": true,
+    "comments_captured": 5,
+    "comments_not_captured": 0,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 5,
+    "max_captured_depth": 1
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Hi everyone and welcome to SkincareAddiction! Need skincare guides? Check out our wiki! Everyone is welcome in this community; remember to be kind and assume good faith :) I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "khehawe",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2024-01-11T18:58:42.827000+0000"
+    },
+    {
+      "author_state": "Zombieapocalypse8",
+      "body_text": "I believe it’s a 30% glycerin solution, I’ve had great results mixing 1 drop of pure vegetable glycerin into about 3 drops of a water based serum in my hand right before I apply it to my skin. And then follow with a moisturizer. Not exactly the same but it’s the closest I’ve found to the Super Saturated.",
+      "comment_id": "kjvxour",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "5",
+      "timestamp_state": "2024-01-28T01:15:00.562000+0000"
+    },
+    {
+      "author_state": "Accurate_Leather_358",
+      "body_text": "I ended up caving and buying Super Saturated again, but I’ll definitely be trying this next time since I bought pure glycerin not too long ago! I just need to find another serum that doesn’t break me out to use for the glycerin haha. But thanks so much for this! Sounds way cheaper.",
+      "comment_id": "kk1monv",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "kjvxour",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "6",
+      "timestamp_state": "2024-01-29T02:03:39.312000+0000"
+    },
+    {
+      "author_state": "GlitteringEdge5836",
+      "body_text": "100% going to try vegetable glycerin! Found a 1oz bottle on Amazon for less than $4. I love super saturated but find a bottle lasts me a little over a month so having a hard time justifying the price.",
+      "comment_id": "kxlhbab",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "3",
+      "timestamp_state": "2024-04-01T20:24:45.937000+0000"
+    },
+    {
+      "author_state": "TheWorldofScience",
+      "body_text": "I think people would be better able to make suggestions for you if you explain what effect you are seeking from a serum and what the ingredients were in the serum that helped.",
+      "comment_id": "khmwowa",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "2",
+      "timestamp_state": "2024-01-13T06:26:04.131000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 4
+    },
+    "comments_parsed": 5,
+    "observable_comment_nodes": 5
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "Accurate_Leather_358",
+    "body_text": "so i loooove experiment beauty’s super saturated serum, but the only place to get it in canada is urban outfitters and so $39 CAD plus $15 shipping is a lot for me at the moment :( does anyone know of any serums that are like it? it’s so hydrating and doesn’t break me out (it is very sticky but I don’t mind plus it makes sense bc of how much glycerin is in it). i’ve tried many serums before this one but they were never as hydrating as this one is :’) if anyone knows of anything similar that is also a bit cheaper please let me know!! thanks everyone",
+    "score_state": "6",
+    "timestamp_state": "2024-01-11T18:58:41.640000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddiction/comments/1949en7/product_question_are_there_any_serums_similar_to/",
+  "thread": {
+    "permalink": "/r/SkincareAddiction/comments/1949en7/product_question_are_there_any_serums_similar_to/",
+    "subreddit": "SkincareAddiction",
+    "thread_id": "1949en7",
+    "title": "[product question] are there any serums similar to experiment beauty’s super saturated that aren’t as much money?"
+  },
+  "warnings": []
+}

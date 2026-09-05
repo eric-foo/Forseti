@@ -1,0 +1,1321 @@
+{
+  "schema_version": "semantic_evidence_integration_view_v2",
+  "cycle_id": "EXPERIMENT-BEAUTY-UNDERSTANDING-20260905-001",
+  "question_id": "phase-a-evidence-integration",
+  "bundle_sha256": "8f3acf1b29ea327828f5871f39913a5dbc21e4e510d60a8d3c279182fc2da9f3",
+  "corpus_sha256": "8f3acf1b29ea327828f5871f39913a5dbc21e4e510d60a8d3c279182fc2da9f3",
+  "method_version": "semantic_evidence_integration_method_v3",
+  "method_sha256": "c1a3fde85acf10f6be6ad9078f0341aa7000dbddf40786261406b6fa79db3e3c",
+  "corpus_profile": "phase_a_final_acquisition",
+  "coverage": {
+    "captured_item_count": 3182,
+    "semantically_assessed_item_count": 3182,
+    "mechanically_excluded_item_count": 0,
+    "blocked_item_count": 0,
+    "accounted_item_count": 3182,
+    "captured_container_count": 97,
+    "source_family_counts": {
+      "retailer_review": 2309,
+      "community_post": 717,
+      "creator_authored": 30,
+      "editorial": 14,
+      "official_marketing": 111,
+      "measured_test": 1
+    },
+    "container_type_counts": {
+      "retailer_review": 2,
+      "conversation": 48,
+      "published_object": 45,
+      "advertiser_inventory": 2
+    },
+    "unresolved_evidence_ids": [],
+    "complete": true
+  },
+  "capture_envelopes": [
+    {
+      "container_id": "retailer:experimentbeauty.com:junip",
+      "container_type": "retailer_review",
+      "captured_leaf_count": 2002,
+      "source_visible_total": 2002,
+      "completeness": "complete",
+      "capture_boundary": "all admitted text reviews in experimentbeauty.com:junip"
+    },
+    {
+      "container_id": "retailer:sephora.com:bazaarvoice",
+      "container_type": "retailer_review",
+      "captured_leaf_count": 307,
+      "source_visible_total": 307,
+      "completeness": "complete",
+      "capture_boundary": "all admitted text reviews in sephora.com:bazaarvoice"
+    },
+    {
+      "container_id": "reddit:10utbh1",
+      "container_type": "conversation",
+      "captured_leaf_count": 34,
+      "source_visible_total": 34,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:11h605v",
+      "container_type": "conversation",
+      "captured_leaf_count": 18,
+      "source_visible_total": 18,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:12s2mer",
+      "container_type": "conversation",
+      "captured_leaf_count": 6,
+      "source_visible_total": 6,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:14sn7hj",
+      "container_type": "conversation",
+      "captured_leaf_count": 4,
+      "source_visible_total": 4,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:16hawrr",
+      "container_type": "conversation",
+      "captured_leaf_count": 14,
+      "source_visible_total": 14,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:178q0nn",
+      "container_type": "conversation",
+      "captured_leaf_count": 3,
+      "source_visible_total": 3,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:17lupen",
+      "container_type": "conversation",
+      "captured_leaf_count": 4,
+      "source_visible_total": 4,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:17rswnx",
+      "container_type": "conversation",
+      "captured_leaf_count": 32,
+      "source_visible_total": 32,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1932uda",
+      "container_type": "conversation",
+      "captured_leaf_count": 7,
+      "source_visible_total": 7,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1949en7",
+      "container_type": "conversation",
+      "captured_leaf_count": 6,
+      "source_visible_total": 6,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:19b1rwy",
+      "container_type": "conversation",
+      "captured_leaf_count": 10,
+      "source_visible_total": 10,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1adjla0",
+      "container_type": "conversation",
+      "captured_leaf_count": 4,
+      "source_visible_total": 4,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1at8nfx",
+      "container_type": "conversation",
+      "captured_leaf_count": 26,
+      "source_visible_total": 26,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1ealr7b",
+      "container_type": "conversation",
+      "captured_leaf_count": 14,
+      "source_visible_total": 14,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1f077qe",
+      "container_type": "conversation",
+      "captured_leaf_count": 25,
+      "source_visible_total": 25,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1gi3vi3",
+      "container_type": "conversation",
+      "captured_leaf_count": 14,
+      "source_visible_total": 14,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1gj3vq4",
+      "container_type": "conversation",
+      "captured_leaf_count": 24,
+      "source_visible_total": 24,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1i047je",
+      "container_type": "conversation",
+      "captured_leaf_count": 10,
+      "source_visible_total": 10,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1ijmgop",
+      "container_type": "conversation",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1iv9hwo",
+      "container_type": "conversation",
+      "captured_leaf_count": 5,
+      "source_visible_total": 5,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1j2pbxw",
+      "container_type": "conversation",
+      "captured_leaf_count": 5,
+      "source_visible_total": 5,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1jmy2l8",
+      "container_type": "conversation",
+      "captured_leaf_count": 35,
+      "source_visible_total": 35,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1jn0nvd",
+      "container_type": "conversation",
+      "captured_leaf_count": 26,
+      "source_visible_total": 26,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1jnlqre",
+      "container_type": "conversation",
+      "captured_leaf_count": 8,
+      "source_visible_total": 8,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1k6c525",
+      "container_type": "conversation",
+      "captured_leaf_count": 35,
+      "source_visible_total": 35,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1kve0m3",
+      "container_type": "conversation",
+      "captured_leaf_count": 28,
+      "source_visible_total": 28,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1kx5vzl",
+      "container_type": "conversation",
+      "captured_leaf_count": 5,
+      "source_visible_total": 5,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1mf5jfp",
+      "container_type": "conversation",
+      "captured_leaf_count": 35,
+      "source_visible_total": 35,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1mzbxn1",
+      "container_type": "conversation",
+      "captured_leaf_count": 6,
+      "source_visible_total": 6,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1nq85hg",
+      "container_type": "conversation",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1ocx72b",
+      "container_type": "conversation",
+      "captured_leaf_count": 33,
+      "source_visible_total": 33,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1okzd06",
+      "container_type": "conversation",
+      "captured_leaf_count": 13,
+      "source_visible_total": 13,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1pp6827",
+      "container_type": "conversation",
+      "captured_leaf_count": 15,
+      "source_visible_total": 15,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1qs3yv1",
+      "container_type": "conversation",
+      "captured_leaf_count": 25,
+      "source_visible_total": 25,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1qysazl",
+      "container_type": "conversation",
+      "captured_leaf_count": 26,
+      "source_visible_total": 26,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1s612j5",
+      "container_type": "conversation",
+      "captured_leaf_count": 5,
+      "source_visible_total": 5,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1sv5mkq",
+      "container_type": "conversation",
+      "captured_leaf_count": 5,
+      "source_visible_total": 5,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1swu4a8",
+      "container_type": "conversation",
+      "captured_leaf_count": 10,
+      "source_visible_total": 10,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1sz4vi8",
+      "container_type": "conversation",
+      "captured_leaf_count": 6,
+      "source_visible_total": 6,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1thy8ki",
+      "container_type": "conversation",
+      "captured_leaf_count": 13,
+      "source_visible_total": 13,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1u3dn4b",
+      "container_type": "conversation",
+      "captured_leaf_count": 7,
+      "source_visible_total": 7,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1uvsqba",
+      "container_type": "conversation",
+      "captured_leaf_count": 25,
+      "source_visible_total": 25,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1uzsje4",
+      "container_type": "conversation",
+      "captured_leaf_count": 9,
+      "source_visible_total": 9,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1v1i3l6",
+      "container_type": "conversation",
+      "captured_leaf_count": 4,
+      "source_visible_total": 4,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1v6u8hi",
+      "container_type": "conversation",
+      "captured_leaf_count": 17,
+      "source_visible_total": 17,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1vhhtlv",
+      "container_type": "conversation",
+      "captured_leaf_count": 2,
+      "source_visible_total": 2,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1vqkak1",
+      "container_type": "conversation",
+      "captured_leaf_count": 35,
+      "source_visible_total": 35,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "reddit:1w5h3op",
+      "container_type": "conversation",
+      "captured_leaf_count": 22,
+      "source_visible_total": 22,
+      "completeness": "complete",
+      "capture_boundary": "all readable post/comment rows in the captured thread packet"
+    },
+    {
+      "container_id": "social:tiktok-7606024310192360718",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7604922767305133326",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7591735882734947614",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7585694400852806926",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7593638353828957454",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7621270315066248479",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7624593490923588895",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7605302199450717454",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7596529897036582174",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7592801323075063095",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7588345599167171895",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7585359201686342967",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7593563989011877175",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7585731694146096415",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7610668204708416782",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7588960557374459149",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7595235519382949150",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7595369870800194829",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7590071339117989151",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7617211352041491726",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7590062489186979127",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:tiktok-7613514497617071390",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:youtube-Yee-lvz-u20",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:youtube-Leeux-Koeas",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:youtube-XCblIx2rBBg",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:youtube-ajCuq4buR4k",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:youtube-V4cu5z2oEUA",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:youtube-uUV7lRS9f2A",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:youtube-QnJ7db_eDEM",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "social:youtube-DZLRE9ltaRQ",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native creator post metadata object"
+    },
+    {
+      "container_id": "external:external-01M1Q2EBGYKVC5181671N3M20W",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native external page response"
+    },
+    {
+      "container_id": "external:external-01M1Q2EDDR2WZPMCH4E75VXC8X",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native external page response"
+    },
+    {
+      "container_id": "external:external-01M1Q2EF8BS8ARC5F6KQYDNXES",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native external page response"
+    },
+    {
+      "container_id": "external:external-01M1Q2EJGX002FD5XPHYXMD4KA",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native external page response"
+    },
+    {
+      "container_id": "external:external-01M1Q2EMZCXWVER6JA0H5W1V12",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native external page response"
+    },
+    {
+      "container_id": "external:external-01M1Q2EPQXZHQSQK5HXM2TQPDF",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native external page response"
+    },
+    {
+      "container_id": "external:external-01M1Q2EST36F18B972NXTC8NTB",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native external page response"
+    },
+    {
+      "container_id": "external:external-01M1Q2EX562K0C7RFKDRBJH0T0",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native external page response"
+    },
+    {
+      "container_id": "external:external-01M1Q2F0FD5SZBK5ZP7YYM5HNX",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native external page response"
+    },
+    {
+      "container_id": "external:external-01M1Q2F5T9V7X4ARJM3HRAGE1A",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native external page response"
+    },
+    {
+      "container_id": "external:external-01M1Q2F8AD1SVKKSP5WEA9F58Z",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native external page response"
+    },
+    {
+      "container_id": "external:external-01M1Q2FM8BH929DTTDHZ776ZFS",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native external page response"
+    },
+    {
+      "container_id": "external:external-01M1Q2FS64BE3RT65V7SKBEE3N",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native external page response"
+    },
+    {
+      "container_id": "external:external-01M1Q2FV38Q1JCEMDP2GCVN7GF",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "one source-native external page response"
+    },
+    {
+      "container_id": "paid-ad:google",
+      "container_type": "advertiser_inventory",
+      "captured_leaf_count": 61,
+      "source_visible_total": 61,
+      "completeness": "partial",
+      "capture_boundary": "US advertiser inventory after 12 continuation actions; declared count matched but source exhaustion not proven"
+    },
+    {
+      "container_id": "paid-ad:meta",
+      "container_type": "advertiser_inventory",
+      "captured_leaf_count": 50,
+      "source_visible_total": 51,
+      "completeness": "partial",
+      "capture_boundary": "US domain-keyword inventory after 12 continuation actions to page footer; source denominator is approximate"
+    },
+    {
+      "container_id": "trends:category-benchmark",
+      "container_type": "published_object",
+      "captured_leaf_count": 1,
+      "source_visible_total": 1,
+      "completeness": "complete",
+      "capture_boundary": "four fixed query-batch/geography observations represented by one result artifact"
+    }
+  ],
+  "propositions": [
+    {
+      "proposition_id": "prop-hydration_barrier_visible_results",
+      "bounded_proposition": "Across the captured independent Reddit threads, Captured customers describe strong hydration and barrier comfort, while others describe short-lived hydration, increased dryness, or too little visible difference to repurchase.",
+      "claim_kind": "customer_experience",
+      "subject_product_ids": [
+        "experiment-beauty-portfolio"
+      ],
+      "comparator_product_ids": [],
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "emerging_axis_labels": [],
+      "conditions": [
+        "captured qualitative corpus; no prevalence or causal inference"
+      ],
+      "semantic_relations": {
+        "support": [
+          "reddit:1ijmgop:post",
+          "reddit:1jmy2l8:post"
+        ],
+        "counter": [],
+        "adjacent": []
+      },
+      "claim_support": {
+        "bounded_proposition": "Multiple captured customers report the bounded tension for Hydration, barrier support, and visible results.",
+        "support_posture": "independently_repeated",
+        "independent_origin_count": 2,
+        "source_roles": [
+          "community_post"
+        ],
+        "evidence_refs": [
+          "reddit:1ijmgop:post",
+          "reddit:1jmy2l8:post"
+        ],
+        "engagement_evidence_refs": [],
+        "behavior_evidence_refs": [],
+        "counterevidence_refs": [],
+        "conflict_posture": "none_observed",
+        "scope_conditions": [
+          "captured qualitative corpus"
+        ],
+        "causal_ceiling": "descriptive_only"
+      },
+      "evidence_stack": {
+        "support_semantic_unit_count": 2,
+        "support_evidence_item_count": 2,
+        "support_container_count": 2,
+        "support_container_counts_by_type": {
+          "conversation": 2
+        },
+        "support_container_ids": [
+          "reddit:1ijmgop",
+          "reddit:1jmy2l8"
+        ],
+        "counter_evidence_item_count": 0,
+        "counter_container_ids": [],
+        "mixed_container_ids": [],
+        "independent_origin_count": 2,
+        "source_role_count": 1,
+        "engagement_evidence_count": 0
+      },
+      "adjacent_evidence_refs": []
+    },
+    {
+      "proposition_id": "prop-irritation_breakout_active_condition_fit",
+      "bounded_proposition": "Across the captured independent Reddit threads, Some captured customers report burning, itching, whiteheads, eczema discomfort, or breakouts, while others describe soothing use on irritated or tretinoin-affected skin.",
+      "claim_kind": "customer_experience",
+      "subject_product_ids": [
+        "experiment-beauty-portfolio"
+      ],
+      "comparator_product_ids": [],
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "emerging_axis_labels": [],
+      "conditions": [
+        "captured qualitative corpus; no prevalence or causal inference"
+      ],
+      "semantic_relations": {
+        "support": [
+          "reddit:1ijmgop:post",
+          "reddit:1jmy2l8:post"
+        ],
+        "counter": [],
+        "adjacent": []
+      },
+      "claim_support": {
+        "bounded_proposition": "Multiple captured customers report the bounded tension for Irritation, breakout, and active-condition fit.",
+        "support_posture": "independently_repeated",
+        "independent_origin_count": 2,
+        "source_roles": [
+          "community_post"
+        ],
+        "evidence_refs": [
+          "reddit:1ijmgop:post",
+          "reddit:1jmy2l8:post"
+        ],
+        "engagement_evidence_refs": [],
+        "behavior_evidence_refs": [],
+        "counterevidence_refs": [],
+        "conflict_posture": "none_observed",
+        "scope_conditions": [
+          "captured qualitative corpus"
+        ],
+        "causal_ceiling": "descriptive_only"
+      },
+      "evidence_stack": {
+        "support_semantic_unit_count": 2,
+        "support_evidence_item_count": 2,
+        "support_container_count": 2,
+        "support_container_counts_by_type": {
+          "conversation": 2
+        },
+        "support_container_ids": [
+          "reddit:1ijmgop",
+          "reddit:1jmy2l8"
+        ],
+        "counter_evidence_item_count": 0,
+        "counter_container_ids": [],
+        "mixed_container_ids": [],
+        "independent_origin_count": 2,
+        "source_role_count": 1,
+        "engagement_evidence_count": 0
+      },
+      "adjacent_evidence_refs": []
+    },
+    {
+      "proposition_id": "prop-texture_finish_layering_routine_fit",
+      "bounded_proposition": "Across the captured independent Reddit threads, The textures can make hydration feel distinctive and effective, but tack, slime, pilling, shine, or poor absorption can make the same products unacceptable in another routine.",
+      "claim_kind": "customer_experience",
+      "subject_product_ids": [
+        "experiment-beauty-portfolio"
+      ],
+      "comparator_product_ids": [],
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "emerging_axis_labels": [],
+      "conditions": [
+        "captured qualitative corpus; no prevalence or causal inference"
+      ],
+      "semantic_relations": {
+        "support": [
+          "reddit:1ijmgop:post",
+          "reddit:1jmy2l8:post"
+        ],
+        "counter": [],
+        "adjacent": []
+      },
+      "claim_support": {
+        "bounded_proposition": "Multiple captured customers report the bounded tension for Texture, finish, layering, and routine fit.",
+        "support_posture": "independently_repeated",
+        "independent_origin_count": 2,
+        "source_roles": [
+          "community_post"
+        ],
+        "evidence_refs": [
+          "reddit:1ijmgop:post",
+          "reddit:1jmy2l8:post"
+        ],
+        "engagement_evidence_refs": [],
+        "behavior_evidence_refs": [],
+        "counterevidence_refs": [],
+        "conflict_posture": "none_observed",
+        "scope_conditions": [
+          "captured qualitative corpus"
+        ],
+        "causal_ceiling": "descriptive_only"
+      },
+      "evidence_stack": {
+        "support_semantic_unit_count": 2,
+        "support_evidence_item_count": 2,
+        "support_container_count": 2,
+        "support_container_counts_by_type": {
+          "conversation": 2
+        },
+        "support_container_ids": [
+          "reddit:1ijmgop",
+          "reddit:1jmy2l8"
+        ],
+        "counter_evidence_item_count": 0,
+        "counter_container_ids": [],
+        "mixed_container_ids": [],
+        "independent_origin_count": 2,
+        "source_role_count": 1,
+        "engagement_evidence_count": 0
+      },
+      "adjacent_evidence_refs": []
+    },
+    {
+      "proposition_id": "prop-packaging_dispensing_durability",
+      "bounded_proposition": "Across the captured independent Reddit threads, Customers can like the formula or packaging concept while reporting failing nozzles, hard-to-use containers, small fill, or a reusable mask tearing after very little use.",
+      "claim_kind": "customer_experience",
+      "subject_product_ids": [
+        "experiment-beauty-portfolio"
+      ],
+      "comparator_product_ids": [],
+      "axis_ids": [
+        "packaging_dispensing_durability"
+      ],
+      "emerging_axis_labels": [],
+      "conditions": [
+        "captured qualitative corpus; no prevalence or causal inference"
+      ],
+      "semantic_relations": {
+        "support": [
+          "reddit:1jmy2l8:post",
+          "reddit:1kve0m3:post"
+        ],
+        "counter": [],
+        "adjacent": []
+      },
+      "claim_support": {
+        "bounded_proposition": "Multiple captured customers report the bounded tension for Packaging, dispensing, and physical durability.",
+        "support_posture": "independently_repeated",
+        "independent_origin_count": 2,
+        "source_roles": [
+          "community_post"
+        ],
+        "evidence_refs": [
+          "reddit:1jmy2l8:post",
+          "reddit:1kve0m3:post"
+        ],
+        "engagement_evidence_refs": [],
+        "behavior_evidence_refs": [],
+        "counterevidence_refs": [],
+        "conflict_posture": "none_observed",
+        "scope_conditions": [
+          "captured qualitative corpus"
+        ],
+        "causal_ceiling": "descriptive_only"
+      },
+      "evidence_stack": {
+        "support_semantic_unit_count": 2,
+        "support_evidence_item_count": 2,
+        "support_container_count": 2,
+        "support_container_counts_by_type": {
+          "conversation": 2
+        },
+        "support_container_ids": [
+          "reddit:1jmy2l8",
+          "reddit:1kve0m3"
+        ],
+        "counter_evidence_item_count": 0,
+        "counter_container_ids": [],
+        "mixed_container_ids": [],
+        "independent_origin_count": 2,
+        "source_role_count": 1,
+        "engagement_evidence_count": 0
+      },
+      "adjacent_evidence_refs": []
+    },
+    {
+      "proposition_id": "prop-price_value_quantity_access",
+      "bounded_proposition": "Across the captured independent Reddit threads, Some customers accept the price for unusual hydration or formula feel, while others see a familiar substitute, too little product, or too little difference to justify repeat purchase.",
+      "claim_kind": "customer_experience",
+      "subject_product_ids": [
+        "experiment-beauty-portfolio"
+      ],
+      "comparator_product_ids": [],
+      "axis_ids": [
+        "price_value_quantity_access"
+      ],
+      "emerging_axis_labels": [],
+      "conditions": [
+        "captured qualitative corpus; no prevalence or causal inference"
+      ],
+      "semantic_relations": {
+        "support": [
+          "reddit:1jmy2l8:post",
+          "reddit:1kve0m3:post"
+        ],
+        "counter": [],
+        "adjacent": []
+      },
+      "claim_support": {
+        "bounded_proposition": "Multiple captured customers report the bounded tension for Price, value, quantity, and access.",
+        "support_posture": "independently_repeated",
+        "independent_origin_count": 2,
+        "source_roles": [
+          "community_post"
+        ],
+        "evidence_refs": [
+          "reddit:1jmy2l8:post",
+          "reddit:1kve0m3:post"
+        ],
+        "engagement_evidence_refs": [],
+        "behavior_evidence_refs": [],
+        "counterevidence_refs": [],
+        "conflict_posture": "none_observed",
+        "scope_conditions": [
+          "captured qualitative corpus"
+        ],
+        "causal_ceiling": "descriptive_only"
+      },
+      "evidence_stack": {
+        "support_semantic_unit_count": 2,
+        "support_evidence_item_count": 2,
+        "support_container_count": 2,
+        "support_container_counts_by_type": {
+          "conversation": 2
+        },
+        "support_container_ids": [
+          "reddit:1jmy2l8",
+          "reddit:1kve0m3"
+        ],
+        "counter_evidence_item_count": 0,
+        "counter_container_ids": [],
+        "mixed_container_ids": [],
+        "independent_origin_count": 2,
+        "source_role_count": 1,
+        "engagement_evidence_count": 0
+      },
+      "adjacent_evidence_refs": []
+    },
+    {
+      "proposition_id": "prop-formula_consistency_quality_service_trust",
+      "bounded_proposition": "Across the captured independent Reddit threads, Captured sources include strong formula praise alongside differing official ingredient lists, batch/scent concerns, and a customer account linking a foreign-material allegation with an unresolved support interaction.",
+      "claim_kind": "customer_experience",
+      "subject_product_ids": [
+        "experiment-beauty-portfolio"
+      ],
+      "comparator_product_ids": [],
+      "axis_ids": [
+        "formula_consistency_quality_service_trust"
+      ],
+      "emerging_axis_labels": [],
+      "conditions": [
+        "captured qualitative corpus; no prevalence or causal inference"
+      ],
+      "semantic_relations": {
+        "support": [
+          "reddit:1jmy2l8:post",
+          "reddit:1kve0m3:post"
+        ],
+        "counter": [],
+        "adjacent": []
+      },
+      "claim_support": {
+        "bounded_proposition": "Multiple captured customers report the bounded tension for Formula consistency, quality, service, and brand trust.",
+        "support_posture": "independently_repeated",
+        "independent_origin_count": 2,
+        "source_roles": [
+          "community_post"
+        ],
+        "evidence_refs": [
+          "reddit:1jmy2l8:post",
+          "reddit:1kve0m3:post"
+        ],
+        "engagement_evidence_refs": [],
+        "behavior_evidence_refs": [],
+        "counterevidence_refs": [],
+        "conflict_posture": "none_observed",
+        "scope_conditions": [
+          "captured qualitative corpus"
+        ],
+        "causal_ceiling": "descriptive_only"
+      },
+      "evidence_stack": {
+        "support_semantic_unit_count": 2,
+        "support_evidence_item_count": 2,
+        "support_container_count": 2,
+        "support_container_counts_by_type": {
+          "conversation": 2
+        },
+        "support_container_ids": [
+          "reddit:1jmy2l8",
+          "reddit:1kve0m3"
+        ],
+        "counter_evidence_item_count": 0,
+        "counter_container_ids": [],
+        "mixed_container_ids": [],
+        "independent_origin_count": 2,
+        "source_role_count": 1,
+        "engagement_evidence_count": 0
+      },
+      "adjacent_evidence_refs": []
+    },
+    {
+      "proposition_id": "prop-repeat_purchase_switching_destinations",
+      "bounded_proposition": "Across the captured independent Reddit threads, The captured corpus contains enthusiastic retention and routine reliance, but also returns and named moves driven by texture, reaction, value, or product-performance fit.",
+      "claim_kind": "customer_experience",
+      "subject_product_ids": [
+        "experiment-beauty-portfolio"
+      ],
+      "comparator_product_ids": [],
+      "axis_ids": [
+        "repeat_purchase_switching_destinations"
+      ],
+      "emerging_axis_labels": [],
+      "conditions": [
+        "captured qualitative corpus; no prevalence or causal inference"
+      ],
+      "semantic_relations": {
+        "support": [
+          "reddit:1ijmgop:post",
+          "reddit:1jmy2l8:post"
+        ],
+        "counter": [],
+        "adjacent": []
+      },
+      "claim_support": {
+        "bounded_proposition": "Multiple captured customers report the bounded tension for Repeat purchase, rejection, and switching destinations.",
+        "support_posture": "independently_repeated",
+        "independent_origin_count": 2,
+        "source_roles": [
+          "community_post"
+        ],
+        "evidence_refs": [
+          "reddit:1ijmgop:post",
+          "reddit:1jmy2l8:post"
+        ],
+        "engagement_evidence_refs": [],
+        "behavior_evidence_refs": [],
+        "counterevidence_refs": [],
+        "conflict_posture": "none_observed",
+        "scope_conditions": [
+          "captured qualitative corpus"
+        ],
+        "causal_ceiling": "descriptive_only"
+      },
+      "evidence_stack": {
+        "support_semantic_unit_count": 2,
+        "support_evidence_item_count": 2,
+        "support_container_count": 2,
+        "support_container_counts_by_type": {
+          "conversation": 2
+        },
+        "support_container_ids": [
+          "reddit:1ijmgop",
+          "reddit:1jmy2l8"
+        ],
+        "counter_evidence_item_count": 0,
+        "counter_container_ids": [],
+        "mixed_container_ids": [],
+        "independent_origin_count": 2,
+        "source_role_count": 1,
+        "engagement_evidence_count": 0
+      },
+      "adjacent_evidence_refs": []
+    },
+    {
+      "proposition_id": "prop-portfolio_product_routine_fit",
+      "bounded_proposition": "Across the captured independent Reddit threads, Captured users describe coherent multi-product routines and strong hero products, while product boundaries and category expansion can also produce mismatch or uneven confidence across the portfolio.",
+      "claim_kind": "customer_experience",
+      "subject_product_ids": [
+        "experiment-beauty-portfolio"
+      ],
+      "comparator_product_ids": [],
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "emerging_axis_labels": [],
+      "conditions": [
+        "captured qualitative corpus; no prevalence or causal inference"
+      ],
+      "semantic_relations": {
+        "support": [
+          "reddit:1ijmgop:post",
+          "reddit:1jmy2l8:post"
+        ],
+        "counter": [],
+        "adjacent": []
+      },
+      "claim_support": {
+        "bounded_proposition": "Multiple captured customers report the bounded tension for Portfolio, product selection, and routine fit.",
+        "support_posture": "independently_repeated",
+        "independent_origin_count": 2,
+        "source_roles": [
+          "community_post"
+        ],
+        "evidence_refs": [
+          "reddit:1ijmgop:post",
+          "reddit:1jmy2l8:post"
+        ],
+        "engagement_evidence_refs": [],
+        "behavior_evidence_refs": [],
+        "counterevidence_refs": [],
+        "conflict_posture": "none_observed",
+        "scope_conditions": [
+          "captured qualitative corpus"
+        ],
+        "causal_ceiling": "descriptive_only"
+      },
+      "evidence_stack": {
+        "support_semantic_unit_count": 2,
+        "support_evidence_item_count": 2,
+        "support_container_count": 2,
+        "support_container_counts_by_type": {
+          "conversation": 2
+        },
+        "support_container_ids": [
+          "reddit:1ijmgop",
+          "reddit:1jmy2l8"
+        ],
+        "counter_evidence_item_count": 0,
+        "counter_container_ids": [],
+        "mixed_container_ids": [],
+        "independent_origin_count": 2,
+        "source_role_count": 1,
+        "engagement_evidence_count": 0
+      },
+      "adjacent_evidence_refs": []
+    }
+  ],
+  "emerging_axis_candidates": [],
+  "unmerged_semantic_units": [],
+  "view_sha256": "8cece94b891ea6be5ca4d04a0f96ae7d860eed6327d8b53d593cf53be9f36099"
+}

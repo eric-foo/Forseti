@@ -1,0 +1,97 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": null,
+    "captured_matches_declared_total": true,
+    "comments_captured": 3,
+    "comments_not_captured": 0,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 3,
+    "max_captured_depth": 1
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Hi everyone and welcome to SkincareAddiction! Need skincare guides? Check out our wiki! Everyone is welcome in this community; remember to be kind and assume good faith :) I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "k7godpb",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2023-11-02T03:37:47.075000+0000"
+    },
+    {
+      "author_state": "thankjupiter",
+      "body_text": "Check if any of your products have ingredients you're sensitive to. Patch test each product separately. Simplify routine to basics: cleanse, moisturize, sunscreen. Give it time. Might be hormonal or external factors like diet, stress, or mask-wearing. Consider adding a niacinamide serum to help with redness and inflammation. Reintroduce actives slowly once skin calms down. DM me if you need more help.",
+      "comment_id": "k7i9qs9",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "1",
+      "timestamp_state": "2023-11-02T13:57:15.128000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "thank you so so so much for replying! I will try that",
+      "comment_id": "k7imm3f",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "k7i9qs9",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "1",
+      "timestamp_state": "2023-11-02T15:18:44.295000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 2
+    },
+    "comments_parsed": 3,
+    "observable_comment_nodes": 3
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "[deleted]",
+    "body_text": "Hi everyone! recently ive been struggling with my skin and ive been breaking out so much. For months ive been deep diving on here into everything that could possibly be wrong with my skin but now im just overwhelmed and unsure whats actually wrong with my skin/ what products i should be using. I started randomly breaking out the most ive ever in my life a couple months ago! its a mix of cystic acne on my chin and red dots on my cheeks and forehead where I usually never break out. I thought my skin barrier was damaged at first, so I cut out all actives for a month but I was still breaking out. I get new red bumps everyday and only some of them turn into whiteheads but they are mainly just red bumps. Here is my routine (I would say I have combo skin sometimes it dry sometimes its oily and sometimes its a mix) : AM Wash my face with just water Aveeno Calm + Restore Triple Oat Hydrating Face Serum Vanicream Daily Facial Moisturizer PM La Roche-Posay Toleraine Hydrating Gentle Face Cleanser for Dry Skin Experiment Beauty Super Saturated Barrier Support Serum Aveeno Calm + Restore Triple Oat Hydrating Face Serum Krave Beauty Great Barrier Relief Vanicream Daily Facial Moisturizer ACTIVES I use the Paulas Choice Skin Perfecting 2% BHA Liquid Exfoliant once a week Please help! Is it something in my current routine? Do I need to add something new? Im so stuck but I would appreciate any advice or product recommendations!",
+    "score_state": "1",
+    "timestamp_state": "2023-11-02T03:37:46.042000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddiction/comments/17lupen/routine_help_cant_figure_out_why_im_breaking_out/",
+  "thread": {
+    "permalink": "/r/SkincareAddiction/comments/17lupen/routine_help_cant_figure_out_why_im_breaking_out/",
+    "subreddit": "SkincareAddiction",
+    "thread_id": "17lupen",
+    "title": "[Routine Help] Cant figure out why im breaking out so much!"
+  },
+  "warnings": []
+}

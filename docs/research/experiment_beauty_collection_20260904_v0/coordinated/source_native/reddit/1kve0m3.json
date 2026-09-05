@@ -1,0 +1,387 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": false,
+    "captured_matches_declared_total": false,
+    "comments_captured": 27,
+    "comments_not_captured": 9,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 36,
+    "max_captured_depth": 1
+  },
+  "comments": [
+    {
+      "author_state": "KittenaSmittena",
+      "body_text": "I also use a GLP-1 (90 pounds is AMAZING!!!!) and I feel like it’s helped me become less acne prone! Your skin looks amazing and I would have thought you’ve had Botox from the photos. Enjoy!",
+      "comment_id": "mu8ypyc",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0001",
+      "score_state": "73",
+      "timestamp_state": "2025-05-25T22:39:08.215000+0000"
+    },
+    {
+      "author_state": "Shreddy_Spaghett1",
+      "body_text": "Thank you! Never used Botox so I appreciate the compliment",
+      "comment_id": "mu91apf",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mu8ypyc",
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "14",
+      "timestamp_state": "2025-05-25T22:54:46.101000+0000"
+    },
+    {
+      "author_state": "DimbyTime",
+      "body_text": "High insulin contributes to hormonal acne (insulin is a master hormone which can raise estrogen when it’s elevated, which causes acne). Since GLP1s lower insulin, it makes sense less acne would folllow! Glad it’s working for you!",
+      "comment_id": "mua6us5",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mu8ypyc",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "23",
+      "timestamp_state": "2025-05-26T03:17:13.041000+0000"
+    },
+    {
+      "author_state": "digitifera",
+      "body_text": "I also use GLP-1 and my cystic chin acne I had for 20 years if finally gone!",
+      "comment_id": "mubh0rm",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mu8ypyc",
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "6",
+      "timestamp_state": "2025-05-26T10:08:38.200000+0000"
+    },
+    {
+      "author_state": "judgementqueen",
+      "body_text": "I’ve got PCOS too, how do you microdose GLP-1?",
+      "comment_id": "muc65v7",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "3",
+      "timestamp_state": "2025-05-26T13:19:25.284000+0000"
+    },
+    {
+      "author_state": "Shreddy_Spaghett1",
+      "body_text": "You take smaller doses than those typically prescribed for GLP-1s. For example, the highest dose of tirzepatide I used was 7.5mg (which is typically the third month’s dose but I hit 7.5 8 months into using it) and now I’m titrating back down to eventually just take 2mg weekly until I run out of med",
+      "comment_id": "mucu85z",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "muc65v7",
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "3",
+      "timestamp_state": "2025-05-26T15:28:42.827000+0000"
+    },
+    {
+      "author_state": "AccomplishedPie5483",
+      "body_text": "What would you say helped the most with crows feet?",
+      "comment_id": "mu9bir3",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "2",
+      "timestamp_state": "2025-05-25T23:57:27.794000+0000"
+    },
+    {
+      "author_state": "Shreddy_Spaghett1",
+      "body_text": "I use a Cocokind eye cream I really like (I’ve used both they have out) but haven’t really focused on minimizing my crows feet.",
+      "comment_id": "mu9dxx0",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mu9bir3",
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "3",
+      "timestamp_state": "2025-05-26T00:12:18.760000+0000"
+    },
+    {
+      "author_state": "AcanthopterygiiNo0",
+      "body_text": "Omg I was like…I know this person. Followed you on insta since your powerlifting days. Funny how the internet works. Skin looks great!",
+      "comment_id": "mu9ecma",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0009",
+      "score_state": "94",
+      "timestamp_state": "2025-05-26T00:14:52.998000+0000"
+    },
+    {
+      "author_state": "allthehotsauces",
+      "body_text": "Your skin looks great. I am not someone who can be consistent with routines but more power to you that you can do your routines and enjoy them! The difference is noticeable and awesome that you’re finding relief for any pain points. My jaw and chin look similar to your before, so I’ll be stealing some inspiration !",
+      "comment_id": "mu8scuc",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0010",
+      "score_state": "16",
+      "timestamp_state": "2025-05-25T22:00:59.952000+0000"
+    },
+    {
+      "author_state": "UpstairsCan",
+      "body_text": "glp-1s are miracle drugs and anyone judging people taking them (who need them, diabetics or otherwise) can kick rocks",
+      "comment_id": "mucsxlg",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0011",
+      "score_state": "11",
+      "timestamp_state": "2025-05-26T15:22:10.103000+0000"
+    },
+    {
+      "author_state": "Organic_Pattern1856",
+      "body_text": "I love serums.",
+      "comment_id": "mu8t52g",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0012",
+      "score_state": "8",
+      "timestamp_state": "2025-05-25T22:05:36.608000+0000"
+    },
+    {
+      "author_state": "cowrunamuck",
+      "body_text": "I feel like I just read my own story! I started a GLP-1 last year (I’m down 110 lbs) and became obsessed with skincare about eight months ago. I’ve simplified my routine a lot, but I own a lot of the same serums and products as you!! I use Stratia for my moisturizers (Lipid Gold and Interface), but also all these Cocokind (have you tried their lip balms??), Naturium (the Peptide serum is my HG), and Prequel (the Gleanser changed my skin!) products. I also LOVE Experiment Beauty! I use their Super Saturated and love Molecular Mesh. I’m on a sunscreen journey right now. I highly recommend the Byoma chemical one—one of the few that doesn’t burn my cheeks! I’m trying a bunch of mineral ones right now. Still trying to find a fave. Hope things keep going well for you!!",
+      "comment_id": "mu9lmdo",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0013",
+      "score_state": "8",
+      "timestamp_state": "2025-05-26T01:00:32.131000+0000"
+    },
+    {
+      "author_state": "Apothowhat",
+      "body_text": "The Prequel Gleanser is so good. I finally bought the SA version and I love it (& can’t stop recommending it to everyone I know, haha)",
+      "comment_id": "mucn6v4",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mu9lmdo",
+      "parser_warnings": [],
+      "row_id": "comment_0014",
+      "score_state": "2",
+      "timestamp_state": "2025-05-26T14:52:58.848000+0000"
+    },
+    {
+      "author_state": "Best_Finish3819",
+      "body_text": "What is vanicream like (I’m uk based) thanks",
+      "comment_id": "mud7pi7",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0015",
+      "score_state": "1",
+      "timestamp_state": "2025-05-26T16:36:41.641000+0000"
+    },
+    {
+      "author_state": "Shreddy_Spaghett1",
+      "body_text": "Love vanicream! Great for sensitive skin. I use their vitamin c, their water based cleanser and their lotion.",
+      "comment_id": "mudx8jy",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mud7pi7",
+      "parser_warnings": [],
+      "row_id": "comment_0016",
+      "score_state": "1",
+      "timestamp_state": "2025-05-26T18:43:03.317000+0000"
+    },
+    {
+      "author_state": "Acceptable_Table8357",
+      "body_text": "Your neck on the 10/24 picture looks a little red. I'm dealing with something that looks like that now. It's itchy and driving me crazy. I'm on prednisone for it. I'm wondering if you had the same thing and what treatments worked?",
+      "comment_id": "mufabc2",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0017",
+      "score_state": "1",
+      "timestamp_state": "2025-05-26T23:10:15.725000+0000"
+    },
+    {
+      "author_state": "Shreddy_Spaghett1",
+      "body_text": "Yeah I still have 0 clue what was going on with that! It was there for like a week and then disappeared. I think I ended up just putting aquaphor on it and leaving it be",
+      "comment_id": "mufikko",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mufabc2",
+      "parser_warnings": [],
+      "row_id": "comment_0018",
+      "score_state": "2",
+      "timestamp_state": "2025-05-26T23:59:23.244000+0000"
+    },
+    {
+      "author_state": "nightskyzzz",
+      "body_text": "You look amazing!! 😻 I just started Retin-A 0.025mg last week and ai have high hopes for it! May I ask if you're also applying it on to your neck? I've noticed that you had some redness on your neck lines at some point, I also have them when I started using tret.",
+      "comment_id": "mugbf3c",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0019",
+      "score_state": "1",
+      "timestamp_state": "2025-05-27T02:56:27.251000+0000"
+    },
+    {
+      "author_state": "Shreddy_Spaghett1",
+      "body_text": "I started tret this past February, those photos are from prior to starting tret.",
+      "comment_id": "mugcqyr",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mugbf3c",
+      "parser_warnings": [],
+      "row_id": "comment_0020",
+      "score_state": "1",
+      "timestamp_state": "2025-05-27T03:05:04.908000+0000"
+    },
+    {
+      "author_state": "PositiveClock6873",
+      "body_text": "TVHS 💛🖤 - skin is glowing!",
+      "comment_id": "mu9i7wa",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0021",
+      "score_state": "3",
+      "timestamp_state": "2025-05-26T00:39:15.453000+0000"
+    },
+    {
+      "author_state": "5663N",
+      "body_text": "Your skin looks amazing",
+      "comment_id": "mua2hug",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0022",
+      "score_state": "1",
+      "timestamp_state": "2025-05-26T02:48:03.745000+0000"
+    },
+    {
+      "author_state": "WAFFLE_FUCKER",
+      "body_text": "Commenting to read later!",
+      "comment_id": "mub79ls",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0023",
+      "score_state": "1",
+      "timestamp_state": "2025-05-26T08:30:39.699000+0000"
+    },
+    {
+      "author_state": "pantema",
+      "body_text": "So curious how you microdose a GLP-1, would you mind sharing which one and how much? You look great btw!",
+      "comment_id": "mud269n",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0024",
+      "score_state": "1",
+      "timestamp_state": "2025-05-26T16:08:28.612000+0000"
+    },
+    {
+      "author_state": "imawife4life",
+      "body_text": "Great job! Your skin definitely looks brighter and more lovely.",
+      "comment_id": "muehjcd",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0025",
+      "score_state": "1",
+      "timestamp_state": "2025-05-26T20:29:38.949000+0000"
+    },
+    {
+      "author_state": "Thin_General4322",
+      "body_text": ".",
+      "comment_id": "mu9ytqv",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0026",
+      "score_state": "-13",
+      "timestamp_state": "2025-05-26T02:24:23.008000+0000"
+    },
+    {
+      "author_state": "Shreddy_Spaghett1",
+      "body_text": "No?",
+      "comment_id": "mua2r7s",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mu9ytqv",
+      "parser_warnings": [],
+      "row_id": "comment_0027",
+      "score_state": "7",
+      "timestamp_state": "2025-05-26T02:49:42.396000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 26
+    },
+    "comments_parsed": 27,
+    "observable_comment_nodes": 27
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "Shreddy_Spaghett1",
+    "body_text": "34F in Utah. Outside constantly year round. Skin is technically normal but I treat it like it’s dry because I live in the desert. In fall 2024, I got tired of constant ingrown chin hairs and started spironolactone. I added finasteride for hair loss in February 2025. I also use minoxidil on my brows nightly and dye them every other week since hypothyroidism thinned them out. I started microdosing a GLP-1 for PCOS in 2024 and have lost 90 pounds. I’m no longer prediabetic or hypertensive, and all my labs (TSH, cholesterol, hormones, LFTs) are normal for the first time ever. There’s a lot of judgment around GLP-1 use, but it’s helped me a lot. My family has always had clear skin. My mom used one night cream and that was it. I didn’t even realize I needed more than a water rinse in the shower until a couple years ago. I’ve never worn foundation, so I never had to worry about removing it either. Before: wash with CeraVe and done. Occasionally a hormonal breakout, but nothing major until I feel like I hit second puberty when I turned 32. Now: AM Splash water Vitamin C (Vanicream, Naturium, or Bubble) Milky toner Azelaic acid (usually Naturium) Barrier support Peptide cream Moisturizer (Cocokind Water Cream or Bubble Power Wave) Chemical sunscreen PM Oil cleanse, then water-based cleanser (prequel) Rotate: • Tretinoin • Recovery night (azelaic acid and extra moisture) • Exfoliation night (Prequel Milk Peel) Then: BYOMA phyto mucin Barrier serum (Anua or Naturium) Peptides (Naturium, Prequel, or Bubble) Heavy moisturizer (BYOMA or Bubble) Am I doing too much? Probably. But I enjoy it and I’m enjoying the routine. Fave brands Vanicream, Naturium, Cocokind, Prequel, Bubble (I judged them at first, thought they were marketing to kids primarily but their newer stuff is great) Sunscreens I like Face: Cocokind mineral, Naked Sundays Cabana Clear, Naturium Whoa Glow (I mix 1 pump tinted with 5 pumps clear), CeraVe Hydrating Sheer, La Roche-Posay Melt-in Milk, Trader Joe’s chemical, Innisfree UV Defense Body: Up&Up Sport, Trader Joe’s body SPF Sunscreens I want to try Bubble mineral SPFs First Aid Beauty Hydrating Milk Vacation Shake Shake BYOMA SPF Tower 28 SOS Versed Krave Beet the Sun Other stuff I’m eyeing Krave Great Barrier Relief and Oil La La Bubble’s upcoming milky essence Experiment Beauty’s serums and their molecular mesh I know K-beauty has great UV filters, but I like what I use and it works well for me. I stopped wearing makeup and threw out all the expired stuff. It feels good to like my skin. Still have some chin hairs, but they grow back way slower now. Photos attached. Proud of how far it’s come.",
+    "score_state": "448",
+    "timestamp_state": "2025-05-25T21:48:00.893000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/30PlusSkinCare/comments/1kve0m3/never_owned_foundation_now_i_own_47_serums/",
+  "thread": {
+    "permalink": "/r/30PlusSkinCare/comments/1kve0m3/never_owned_foundation_now_i_own_47_serums/",
+    "subreddit": "30PlusSkinCare",
+    "thread_id": "1kve0m3",
+    "title": "Never owned foundation, now I own 47 serums"
+  },
+  "warnings": [
+    "thread declares 36 comments; 27 captured (9 not captured)"
+  ]
+}

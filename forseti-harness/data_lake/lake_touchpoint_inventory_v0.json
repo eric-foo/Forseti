@@ -690,6 +690,15 @@
       {
         "a2_fork_impact": "manifest_shape",
         "identity_binding": {
+          "mechanism": "before packet write, the products response must expose remote product identities; every review must carry an embedded product remote_id; and the complete paginated review set must expose exactly the caller-bound expected store name and URL",
+          "status": "bound"
+        },
+        "kind": "direct_packet_writer",
+        "runner": "run_source_capture_junip_review_corpus.py"
+      },
+      {
+        "a2_fork_impact": "manifest_shape",
+        "identity_binding": {
           "reason": "subjects are the explicit asset URLs: each slice preserves the served final_url and per-asset metadata; the optional --source-locator is recorded as an operator declaration, not a verified subject",
           "status": "not_applicable"
         },

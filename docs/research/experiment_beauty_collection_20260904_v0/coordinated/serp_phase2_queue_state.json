@@ -1,0 +1,227 @@
+{
+  "schema_version": "google_serp_queue_state_v1",
+  "status": "complete",
+  "jobs": [
+    {
+      "job_id": "P2-A01-C"
+    },
+    {
+      "job_id": "P2-A01-V"
+    },
+    {
+      "job_id": "P2-A01-D"
+    },
+    {
+      "job_id": "P2-A02-C"
+    },
+    {
+      "job_id": "P2-A02-V"
+    },
+    {
+      "job_id": "P2-A02-D"
+    },
+    {
+      "job_id": "P2-A03-C"
+    },
+    {
+      "job_id": "P2-A03-V"
+    },
+    {
+      "job_id": "P2-A03-D"
+    },
+    {
+      "job_id": "P2-A04-C"
+    },
+    {
+      "job_id": "P2-A04-V"
+    },
+    {
+      "job_id": "P2-A04-D"
+    },
+    {
+      "job_id": "P2-A05-C"
+    },
+    {
+      "job_id": "P2-A05-V"
+    },
+    {
+      "job_id": "P2-A05-D"
+    },
+    {
+      "job_id": "P2-A06-C"
+    },
+    {
+      "job_id": "P2-A06-V"
+    },
+    {
+      "job_id": "P2-A06-D"
+    },
+    {
+      "job_id": "P2-A07-C"
+    },
+    {
+      "job_id": "P2-A07-V"
+    },
+    {
+      "job_id": "P2-A07-D"
+    },
+    {
+      "job_id": "P2-A08-C"
+    },
+    {
+      "job_id": "P2-A08-V"
+    },
+    {
+      "job_id": "P2-A08-D"
+    }
+  ],
+  "completed_job_ids": [
+    "P2-A01-C",
+    "P2-A01-V",
+    "P2-A01-D",
+    "P2-A02-C",
+    "P2-A02-V",
+    "P2-A02-D",
+    "P2-A03-C",
+    "P2-A03-V",
+    "P2-A03-D",
+    "P2-A04-C",
+    "P2-A04-V",
+    "P2-A04-D",
+    "P2-A05-C",
+    "P2-A05-V",
+    "P2-A05-D",
+    "P2-A06-C",
+    "P2-A06-V",
+    "P2-A06-D",
+    "P2-A07-C",
+    "P2-A07-V",
+    "P2-A07-D",
+    "P2-A08-C",
+    "P2-A08-V",
+    "P2-A08-D"
+  ],
+  "failed_job_ids": [],
+  "attempt_history": [
+    {
+      "job_id": "P2-A01-C",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A01-C.json"
+    },
+    {
+      "job_id": "P2-A01-V",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A01-V.json"
+    },
+    {
+      "job_id": "P2-A01-D",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A01-D.json"
+    },
+    {
+      "job_id": "P2-A02-C",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A02-C.json"
+    },
+    {
+      "job_id": "P2-A02-V",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A02-V.json"
+    },
+    {
+      "job_id": "P2-A02-D",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A02-D.json"
+    },
+    {
+      "job_id": "P2-A03-C",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A03-C.json"
+    },
+    {
+      "job_id": "P2-A03-V",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A03-V.json"
+    },
+    {
+      "job_id": "P2-A03-D",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A03-D.json"
+    },
+    {
+      "job_id": "P2-A04-C",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A04-C.json"
+    },
+    {
+      "job_id": "P2-A04-V",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A04-V.json"
+    },
+    {
+      "job_id": "P2-A04-D",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A04-D.json"
+    },
+    {
+      "job_id": "P2-A05-C",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A05-C.json"
+    },
+    {
+      "job_id": "P2-A05-V",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A05-V.json"
+    },
+    {
+      "job_id": "P2-A05-D",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A05-D.json"
+    },
+    {
+      "job_id": "P2-A06-C",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A06-C.json"
+    },
+    {
+      "job_id": "P2-A06-V",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A06-V.json"
+    },
+    {
+      "job_id": "P2-A06-D",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A06-D.json"
+    },
+    {
+      "job_id": "P2-A07-C",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A07-C.json"
+    },
+    {
+      "job_id": "P2-A07-V",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A07-V.json"
+    },
+    {
+      "job_id": "P2-A07-D",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A07-D.json"
+    },
+    {
+      "job_id": "P2-A08-C",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A08-C.json"
+    },
+    {
+      "job_id": "P2-A08-V",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A08-V.json"
+    },
+    {
+      "job_id": "P2-A08-D",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P2-A08-D.json"
+    }
+  ]
+}

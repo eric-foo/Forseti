@@ -1,0 +1,121 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": null,
+    "captured_matches_declared_total": true,
+    "comments_captured": 5,
+    "comments_not_captured": 0,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 5,
+    "max_captured_depth": 1
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Are you brand new to skincare? Don't know how to build a skincare routine? The best place to start is our ScA Routine! You can find even more skincare guides in our wiki!. Your answer might already be in there (and if it is, we might remove your post). Everyone is welcome in this community; remember to be kind and assume good faith :) I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "oiz17z9",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2026-04-29T17:05:41.653000+0000"
+    },
+    {
+      "author_state": "Philsmypharmacist",
+      "body_text": "I’d use the salicylic acid first, then the glycerin serum after. Salicylic acid works best when it can contact the skin directly, so putting a heavy humectant layer underneath can reduce how well it penetrates. Since Super Saturated is meant for barrier support, think of it as the “recovery step” after your active. On nights you use the Paula’s Choice 2%, apply it to clean, dry skin first, let it sit for a few minutes, then apply the glycerin serum on slightly damp hands or lightly misted skin if needed, followed by moisturizer if your skin likes it. That way you keep the exfoliant effective while still protecting the barrier.",
+      "comment_id": "oiz4ygx",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "1",
+      "timestamp_state": "2026-04-29T17:22:09.533000+0000"
+    },
+    {
+      "author_state": "awesome_yay",
+      "body_text": "thanks for the thorough explanation!! i will be doing this!!",
+      "comment_id": "oiz60wv",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "oiz4ygx",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "1",
+      "timestamp_state": "2026-04-29T17:26:49.096000+0000"
+    },
+    {
+      "author_state": "ReaLitTea",
+      "body_text": "PC BHA first then Experiment serum or use them in different routines. You do not have to apply the Experiment serum on damp skin",
+      "comment_id": "oiz3iih",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "2",
+      "timestamp_state": "2026-04-29T17:15:47.252000+0000"
+    },
+    {
+      "author_state": "No-Idea-1657",
+      "body_text": "Salicylic acid is best applied on clean, dry skin first since it’s pH-dependent, so using it before the glycerin serum would be more effective. The Super Saturated serum is mainly for hydration and barrier support, so it fits better after the acid rather than before. Applying it on damp skin is fine, just not before your exfoliant if you want full efficacy.",
+      "comment_id": "oiz6kqg",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "1",
+      "timestamp_state": "2026-04-29T17:29:13.535000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 4
+    },
+    "comments_parsed": 5,
+    "observable_comment_nodes": 5
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "awesome_yay",
+    "body_text": "hi there! I just purchased Experiment’s Super Saturated 30% glycerin barrier serum and I’m wondering how i should incorporate with my Paula’s choice 2% salicylic acid (used every other night). the Super Saturated barrier serum is best applied on damp skin, so how would i use it alongside salicylic acid? would it be ok to be applied before the salicylic acid? or would it disrupt the pH and the efficacy of the acid?? Thank you!!",
+    "score_state": "2",
+    "timestamp_state": "2026-04-29T17:05:40.631000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddiction/comments/1sz4vi8/routine_help_experiments_super_saturated_and/",
+  "thread": {
+    "permalink": "/r/SkincareAddiction/comments/1sz4vi8/routine_help_experiments_super_saturated_and/",
+    "subreddit": "SkincareAddiction",
+    "thread_id": "1sz4vi8",
+    "title": "[routine help] Experiment’s Super Saturated and salicylic acid"
+  },
+  "warnings": []
+}

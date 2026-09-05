@@ -1,0 +1,54 @@
+{
+  "schema_version": "experiment_beauty_serp_phase1_ledger_v1",
+  "subject": "Experiment Beauty",
+  "cycle_id": "EXPERIMENT-BEAUTY-UNDERSTANDING-20260905-001",
+  "status": "terminal",
+  "required_order": [
+    "balanced_axis_baseline",
+    "behavior_consequence_displacement",
+    "brandless_exact_product",
+    "condition_post_use"
+  ],
+  "jobs": [
+    {
+      "job_id": "P1-BALANCED",
+      "family_kind": "balanced_axis_baseline",
+      "query": "Experiment Beauty review hydration texture value",
+      "packet_id": "01M1Q25GS9QK2FPZ3R2KFQ1V30",
+      "serp_packet_artifact_ids": [
+        "serp-P1-BALANCED"
+      ],
+      "executed_at": "2026-09-04T20:36:07Z"
+    },
+    {
+      "job_id": "P1-BEHAVIOR",
+      "family_kind": "behavior_consequence_displacement",
+      "query": "Experiment Beauty returned stopped switched repurchase",
+      "packet_id": "01M1Q260RCW6C95P1RKQ07A6MT",
+      "serp_packet_artifact_ids": [
+        "serp-P1-BEHAVIOR"
+      ],
+      "executed_at": "2026-09-04T20:36:23Z"
+    },
+    {
+      "job_id": "P1-BRANDLESS",
+      "family_kind": "brandless_exact_product",
+      "query": "Super Saturated Molecular Mesh Buffer Jelly review",
+      "packet_id": "01M1Q267GQYQYBPNF499TW1522",
+      "serp_packet_artifact_ids": [
+        "serp-P1-BRANDLESS"
+      ],
+      "executed_at": "2026-09-04T20:36:30Z"
+    },
+    {
+      "job_id": "P1-CONDITION",
+      "family_kind": "condition_post_use",
+      "query": "Experiment Beauty after use sensitive dry acne tretinoin",
+      "packet_id": "01M1Q26DNJ70N4T0ZSAG9234BQ",
+      "serp_packet_artifact_ids": [
+        "serp-P1-CONDITION"
+      ],
+      "executed_at": "2026-09-04T20:36:36Z"
+    }
+  ]
+}

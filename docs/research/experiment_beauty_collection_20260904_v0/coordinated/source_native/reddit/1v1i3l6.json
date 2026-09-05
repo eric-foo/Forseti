@@ -1,0 +1,108 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": false,
+    "captured_matches_declared_total": false,
+    "comments_captured": 4,
+    "comments_not_captured": 2,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 6,
+    "max_captured_depth": 0
+  },
+  "comments": [
+    {
+      "author_state": "Skincare_Addiction-ModTeam",
+      "body_text": "Moderators reserve the right to make decisions in the best interests of the sub. Posts that are low effort, repetitive, or have insufficient detail (i.e., just a photo) may be removed. Discussion of brands suspected of unethical advertising may be removed. Attempting to evade filters for any reason is a bannable offense.",
+      "comment_id": "oynmvcl",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2026-07-20T11:54:28.660000+0000"
+    },
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Welcome to r/skincare_addiction! We'd like to take this time to remind you of a few things: Do not ask for a diagnosis/treatment advice for acne or other medical conditions, and do not play doctor What constitutes medical advice? \"What is this?\" This is asking someone to diagnose the issue, and is medical advice. \"What should I do?\" This is asking someone to advise treatment, and is medical advice. \"Should I go to the doctor?\" This is asking if you should seek treatment, and ergo, medical advice. If you would ask the question of your doctor, it falls under this rule and not allowed. As a general rule, asking for medical advice from internet strangers is never a good idea. If you have questions regarding your acne or other medical condition, you are advised to contact your healthcare provider. If you are a medical provider, we would gently remind you that users are not patients, and you should not be offering medical advice to people who are not your patients. I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "oyndi4p",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "1",
+      "timestamp_state": "2026-07-20T10:52:07.904000+0000"
+    },
+    {
+      "author_state": "CandyMandy15",
+      "body_text": "Aloe Vera. I am truly amazed",
+      "comment_id": "oynj307",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "1",
+      "timestamp_state": "2026-07-20T11:30:10.788000+0000"
+    },
+    {
+      "author_state": "rare_star100",
+      "body_text": "For me, it’s Experiment’s Molecular Mesh. It’s a nice barrier lotion. I use it every night as the last step in my routine to seal everything in. It glides on nicely and I love how it makes my skin feel. Other creams would cause breakouts or just didn’t deliver on moisture. It’s become an HG for me.",
+      "comment_id": "oynjlvn",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "1",
+      "timestamp_state": "2026-07-20T11:33:40.557000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "present": 4
+    },
+    "comments_parsed": 4,
+    "observable_comment_nodes": 4
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "Every_Health_1298",
+    "body_text": "",
+    "score_state": "1",
+    "timestamp_state": "2026-07-20T10:52:07.730000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/Skincare_Addiction/comments/1v1i3l6/removed_by_moderator/",
+  "thread": {
+    "permalink": "/r/Skincare_Addiction/comments/1v1i3l6/removed_by_moderator/",
+    "subreddit": "Skincare_Addiction",
+    "thread_id": "1v1i3l6",
+    "title": "[ Removed by moderator ]"
+  },
+  "warnings": [
+    "thread declares 6 comments; 4 captured (2 not captured)"
+  ]
+}

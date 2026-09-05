@@ -1,0 +1,204 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": false,
+    "captured_matches_declared_total": false,
+    "comments_captured": 12,
+    "comments_not_captured": 1,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 13,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "smileekid",
+      "body_text": "Experiment!! I never knew hydration until I tried this serum",
+      "comment_id": "omqeva3",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0001",
+      "score_state": "4",
+      "timestamp_state": "2026-05-19T19:54:13.094000+0000"
+    },
+    {
+      "author_state": "nada425",
+      "body_text": "+1 on Experiment serum",
+      "comment_id": "omqtd7b",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "omqeva3",
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "2",
+      "timestamp_state": "2026-05-19T20:58:51.111000+0000"
+    },
+    {
+      "author_state": "PatsyStonesBun",
+      "body_text": "Avene Thermal Spring Water. I used to balk at buying \"water in a can\", but Avene has dozens (maybe more) clinical studies showing that the specific thermal water they source for this product is genuinely soothing in a unique way. You can read about it on their site. My one complaint is that I wish the atomizer were a little more precise. I wish it were an ultra-fine cloud-like mist instead of just a fine spray.",
+      "comment_id": "omr0tt3",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "4",
+      "timestamp_state": "2026-05-19T21:34:11.183000+0000"
+    },
+    {
+      "author_state": "VividPublic",
+      "body_text": "Estée Lauder Advanced Night Repair. Better deals/rewards when purchasing directly from EL’s site.",
+      "comment_id": "omqkn1h",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "1",
+      "timestamp_state": "2026-05-19T20:20:22.735000+0000"
+    },
+    {
+      "author_state": "UnluckySituation5662",
+      "body_text": "try the sungboon editor collagen cream in serum. lays so beautifully under makeup. i'm acne prone as well and i have not had any issues. (i dont think you can get this at sephora, i got mine at ulta)",
+      "comment_id": "omqvr63",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "1",
+      "timestamp_state": "2026-05-19T21:10:01.870000+0000"
+    },
+    {
+      "author_state": "Plenty_Drummer_9139",
+      "body_text": "I have sensitive, acne prone oily skin that just went through a damaged skin barrier/dehydrated peeling skin. I used the Dieux Air Angel moisturizer during the day and the Dieux Instant Angel moisturizer (which is a lot heavier for my skin type) at night. Both of these moisturizers, coupled with using a gentle cleanser, helped to restore my dehydrated/damaged skin barrier. Hope that helps!",
+      "comment_id": "omqz799",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "1",
+      "timestamp_state": "2026-05-19T21:26:13.576000+0000"
+    },
+    {
+      "author_state": "NewMexicoNaiad",
+      "body_text": "Try the Aestura Hydro Soothing Cream! It’s amazing. It’s way lighter than the regular version. It sinks right into my skin, and moisturizes really nicely without being heavy or greasy at all. I wear it daily under my SPF and makeup. I have the same skin type as you.",
+      "comment_id": "omshtlo",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "1",
+      "timestamp_state": "2026-05-20T02:28:54.410000+0000"
+    },
+    {
+      "author_state": "domicanica",
+      "body_text": "does this apply to the OG or the reformulation?",
+      "comment_id": "omtxmid",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "omshtlo",
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "1",
+      "timestamp_state": "2026-05-20T09:06:47.935000+0000"
+    },
+    {
+      "author_state": "NewMexicoNaiad",
+      "body_text": "Oh wow, I wasn’t aware they had reformulated! I’ve been using the original version in the blue bottle, which is still the one being sold at my local Sephora. I’m really disappointed to see this reformulation.",
+      "comment_id": "omu97io",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "omtxmid",
+      "parser_warnings": [],
+      "row_id": "comment_0009",
+      "score_state": "1",
+      "timestamp_state": "2026-05-20T10:41:54.028000+0000"
+    },
+    {
+      "author_state": "saltandvinegarchip7",
+      "body_text": "This is drugstore but the Vanicream sensitive skin moisturizer is one of the few formulas that feels like it actually sinks into my skin and doesn’t form a greasy film on top of it. I had a weird winter where everything felt like it just skated on the top layer of my skin and it felt balmy and greasy but underneath, my skin still felt tight and dry. This Vanicream one feels like it meshes into my skin and hydrates deeply and it leaves my skin feeling clean and refreshed because there’s no sticky or dewy feeling, it just sinks right into the skin I’ve gone through at least 6 tubes of this stuff",
+      "comment_id": "omth4n5",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0010",
+      "score_state": "1",
+      "timestamp_state": "2026-05-20T06:41:11.770000+0000"
+    },
+    {
+      "author_state": "domicanica",
+      "body_text": "the ordinary's NMF + beta glucan moisturiser dieux air angel paula's choice advanced nourishing toner",
+      "comment_id": "omtxrdg",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0011",
+      "score_state": "1",
+      "timestamp_state": "2026-05-20T09:07:59.589000+0000"
+    },
+    {
+      "author_state": "ShelterElectrical840",
+      "body_text": "I use Prequel’s hypoclorous spray. Then hydrate with Clinique’s clear hydrating gel. Then moisturize with Dieux air angel gel/cream.",
+      "comment_id": "omuiudq",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0012",
+      "score_state": "1",
+      "timestamp_state": "2026-05-20T11:47:04.860000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "present": 12
+    },
+    "comments_parsed": 12,
+    "observable_comment_nodes": 12
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "Beneficial-Soft-8290",
+    "body_text": "Hi! Looking for new products recommendations! As stated above, I have dehydrated, acne-prone, sensitive skin and I'm really looking for products that sink into the skin. I detest the feeling of a layer of tacky dewiness sitting on top of my face and find that products like that increase the chance of breakouts. My skin LOVES the LRP Cicaplast B5 cream which I use every time after DDG extra strength peel pads. My nighttime products are locked in and work well, but I'm having a tough time figuring out what to do for the daytime. Products I'm interested in but cautious of: Rhode's Glazing Milk - heard acne-prone people breaking out Experiement's Super Saturated Serum- heard it's like the most hydrating product around town but people sensitive to niacinimide break out Products that didn't work for me (and I always make sure to have damp skin to help absorption but these were still a no-go for me): Laneige's spray cream milky toner - just sat on top of my skin Innbeauty Extreme Cream- lovely texture but too heavy for my skin and again just sat on top AESTURA -365 Cream Moisturizer- wayyy too heavy for my skin type Any recommendations would be amazing! Thank you!",
+    "score_state": "11",
+    "timestamp_state": "2026-05-19T19:51:38.936000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/Sephora/comments/1thy8ki/daytime_serumsmistsmoisturizers_for_dehydrated/",
+  "thread": {
+    "permalink": "/r/Sephora/comments/1thy8ki/daytime_serumsmistsmoisturizers_for_dehydrated/",
+    "subreddit": "Sephora",
+    "thread_id": "1thy8ki",
+    "title": "Daytime serums/mists/moisturizers for dehydrated, acne-prone, sensitive skin which really sink into the skin and don't sit on top?"
+  },
+  "warnings": [
+    "thread declares 13 comments; 12 captured (1 not captured)"
+  ]
+}

@@ -1,0 +1,364 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": false,
+    "captured_matches_declared_total": false,
+    "comments_captured": 25,
+    "comments_not_captured": 5,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 30,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Are you brand new to skincare? Don't know how to build a skincare routine? The best place to start is our ScA Routine! You can find even more skincare guides in our wiki!. Your answer might already be in there (and if it is, we might remove your post). Everyone is welcome in this community; remember to be kind and assume good faith :) I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "oxdntsf",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2026-07-14T00:04:59.893000+0000"
+    },
+    {
+      "author_state": "canarycolors",
+      "body_text": "Not necessarily high-end, but recently I’ve been looking to brands specifically founded/run by chemists, dermatologists, or people who otherwise really know their stuff when it comes to specific ingredients and formulations. Brands that come to mind are Experiment Beauty, Sofie Pavitt Face, Geek & Gorgeous, and Prequel.",
+      "comment_id": "oxerc5c",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "9",
+      "timestamp_state": "2026-07-14T03:53:23.547000+0000"
+    },
+    {
+      "author_state": "Lushemet",
+      "body_text": "That’s a good idea, thanks!",
+      "comment_id": "oxfpyct",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "oxerc5c",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "1",
+      "timestamp_state": "2026-07-14T08:23:17.869000+0000"
+    },
+    {
+      "author_state": "emilyleyl",
+      "body_text": "Stratia! Small women-owned company out of LA that is very science-based. I've liked everything I've tried from them.",
+      "comment_id": "oxgmcyg",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "6",
+      "timestamp_state": "2026-07-14T12:17:54.488000+0000"
+    },
+    {
+      "author_state": "Hi_Tech_Architect",
+      "body_text": "Shiseido, Timeless, Beauty of Joseon Shiseido has been the mvp in my routine and is frequently available on Costco. Beauty of Joseon is also affordable and has quality ingredients. Timeless for the vitamin c and other serums. Cle de peau sunscreen from Yami or other Korean/Japanese retailer for the abroad UV filters.",
+      "comment_id": "oxf8bbz",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "3",
+      "timestamp_state": "2026-07-14T05:58:20.893000+0000"
+    },
+    {
+      "author_state": "CommunicationDear648",
+      "body_text": "Isn't Shiseido just as big of a conglomerate as the ones OP mentioned?",
+      "comment_id": "oxfg6h9",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "oxf8bbz",
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "6",
+      "timestamp_state": "2026-07-14T07:01:39.864000+0000"
+    },
+    {
+      "author_state": "Beth21286",
+      "body_text": "Shiseido are a parent company for brands like Laura Mercier and Drunk Elephant.",
+      "comment_id": "oxj4wnm",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "oxfg6h9",
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "2",
+      "timestamp_state": "2026-07-14T18:56:57.740000+0000"
+    },
+    {
+      "author_state": "bigmaik420",
+      "body_text": "don't get me wrong, i do love the Shiseido products i own/have tried, especially their makeup. but i'd still look at the ingredients in their skincare if i was someone with very sensitive skin. their creams do have a lot of alcohol in them, which doesn't bother me and i like that they absorb so fast due to that, but some people could be sensitive to those. it also bothers me to no end that they don't have their Pureness foam anymore, i now use their Deep Cleansing Foam and try to pick out the little particles because i don't like that kind of physical exfoliation...",
+      "comment_id": "oxfj1up",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "oxf8bbz",
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "1",
+      "timestamp_state": "2026-07-14T07:25:09.645000+0000"
+    },
+    {
+      "author_state": "dindyspice",
+      "body_text": "Dieux has been a savior for my sensitive dry skin, especially while I use tretinoin. Basically anything I've used by them is good, but my favorites are Dieux Instant Angel moisturizer and Ethereal Oil cleanser. I will always splurge on these! Cocokind, Good Molecules, Hanni for body care, Eadam, Topicals, Peach + Lily, Experiment - these are all brands that I love and aren't owned by larger corporations that I know of yet. Pretty sure they're all women founded too.",
+      "comment_id": "oxh8ivv",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0009",
+      "score_state": "2",
+      "timestamp_state": "2026-07-14T14:08:53.087000+0000"
+    },
+    {
+      "author_state": "Kind_Ad_3697",
+      "body_text": "Evolve beauty Nuori As a skincare fanatic, can vouch for both.",
+      "comment_id": "oxfd802",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0010",
+      "score_state": "1",
+      "timestamp_state": "2026-07-14T06:37:48.890000+0000"
+    },
+    {
+      "author_state": "gweasley",
+      "body_text": "Two Derma-founded brands I love: Prequel (faves are the gleanser, moisturizers, lip sunscreens, ointment), and Remedy (the rich moisturizer is amazing). Medik8 is a higher-end British brand that has fantastic moisturizers, peptide serums, and retinols. They’re a b-corp, too!",
+      "comment_id": "oxfir14",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0011",
+      "score_state": "1",
+      "timestamp_state": "2026-07-14T07:22:40.166000+0000"
+    },
+    {
+      "author_state": "Beth21286",
+      "body_text": "Medik8 is now majority owned by L'Oreal.",
+      "comment_id": "oxj50vs",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "oxfir14",
+      "parser_warnings": [],
+      "row_id": "comment_0012",
+      "score_state": "2",
+      "timestamp_state": "2026-07-14T18:57:26.366000+0000"
+    },
+    {
+      "author_state": "PassionateParrots",
+      "body_text": "I’m a convert to a brand called this is silk because of their clinical studies but I’m in London. I’m trying to keep away from the big conglomerates too. It is hard to find good independent skincare that hasn’t been made on someone’s kitchen table. Caudalie is a nice French brand. Sometimes I do find a good niche product, but I hate anything that feels really hand made and I have no idea why.",
+      "comment_id": "oxfk4jz",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0013",
+      "score_state": "1",
+      "timestamp_state": "2026-07-14T07:33:59.670000+0000"
+    },
+    {
+      "author_state": "Calisson",
+      "body_text": "i also recommend Prequel and Remedy",
+      "comment_id": "oxgddxt",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0014",
+      "score_state": "1",
+      "timestamp_state": "2026-07-14T11:24:18.625000+0000"
+    },
+    {
+      "author_state": "kaya-jamtastic",
+      "body_text": "Last I checked, Drunk Elephant, Farmacy, and Sunday Riley were independently owned",
+      "comment_id": "oxgs2oy",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0015",
+      "score_state": "1",
+      "timestamp_state": "2026-07-14T12:48:46.521000+0000"
+    },
+    {
+      "author_state": "Responsible_Bar8185",
+      "body_text": "Caudalie and clay theory both simple skincare brands doing great work.",
+      "comment_id": "oxh020v",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0016",
+      "score_state": "1",
+      "timestamp_state": "2026-07-14T13:28:45.761000+0000"
+    },
+    {
+      "author_state": "tipyourwaitresstoo",
+      "body_text": "Maelove",
+      "comment_id": "oxh4koz",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0017",
+      "score_state": "1",
+      "timestamp_state": "2026-07-14T13:50:28.014000+0000"
+    },
+    {
+      "author_state": "pet-all-cats",
+      "body_text": "Venn and Sweet Chemistry probably have the best research, but you might like Sachi as well. And Dermwell, Cool as a Cucumber, and Authentic Ego all have acne-focused products. Educated Mess gets good reviews as well.",
+      "comment_id": "oxh74og",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0018",
+      "score_state": "1",
+      "timestamp_state": "2026-07-14T14:02:25.035000+0000"
+    },
+    {
+      "author_state": "BechPlease",
+      "body_text": "Venn is great and if you can afford the upfront price, the girls lasts forever since a little this a long way.",
+      "comment_id": "p15gget",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "oxh74og",
+      "parser_warnings": [],
+      "row_id": "comment_0019",
+      "score_state": "1",
+      "timestamp_state": "2026-08-01T22:32:50.612000+0000"
+    },
+    {
+      "author_state": "Mobile-Caramel-1824",
+      "body_text": "My favorite serum is Elixir no. 1 by Holy Grail Skin Co. It is a small company founded by two women/friends who couldn't find the product they wanted. All of the ingredients are science-backed and clean, and it has done wonders for my skin! Bonus is the bottle is so pretty. Seriously- I haven't seen any other skincare product like it, and it's refillable. They also donate proceeds to a charity that helps women. Definitely look into it!",
+      "comment_id": "oxhancq",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0020",
+      "score_state": "1",
+      "timestamp_state": "2026-07-14T14:18:34.745000+0000"
+    },
+    {
+      "author_state": "Royreye3008",
+      "body_text": "How about some brand that can be easily be bought here in Europe?",
+      "comment_id": "oxigexg",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0021",
+      "score_state": "1",
+      "timestamp_state": "2026-07-14T17:15:48.821000+0000"
+    },
+    {
+      "author_state": "Material_Dirt_6349",
+      "body_text": "Most of my skincare’s is kbeauty or japanese try those out!",
+      "comment_id": "oxisa3c",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0022",
+      "score_state": "1",
+      "timestamp_state": "2026-07-14T18:04:16.240000+0000"
+    },
+    {
+      "author_state": "Beth21286",
+      "body_text": "Inkey List is a good basic option as is Byoma.",
+      "comment_id": "oxj4e9w",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0023",
+      "score_state": "1",
+      "timestamp_state": "2026-07-14T18:54:49.640000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "",
+      "comment_id": "oxdommf",
+      "comment_posture": "deleted",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0024",
+      "score_state": "4",
+      "timestamp_state": "2026-07-14T00:09:15.937000+0000"
+    },
+    {
+      "author_state": "Lushemet",
+      "body_text": "Thank you so much!",
+      "comment_id": "oxe7rt8",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "oxdommf",
+      "parser_warnings": [],
+      "row_id": "comment_0025",
+      "score_state": "1",
+      "timestamp_state": "2026-07-14T01:55:34.241000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "deleted": 1,
+      "present": 23
+    },
+    "comments_parsed": 25,
+    "observable_comment_nodes": 25
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "Lushemet",
+    "body_text": "Just like in title. I want to stop supporting multi trillionaire businesses destroying the planet, but I still want to use skincare that’s well researched and throughly tested, and is not just some honey + olive oil indie concoction made in someone’s basement (I’m okay with using that on my body but not on my face, I’m prone to acne). I’m okay with something more expensive, I’m currently using Guerlain abeille royale, I would like it to have a nice texture.",
+    "score_state": "13",
+    "timestamp_state": "2026-07-14T00:04:59.464000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddiction/comments/1uvsqba/product_request_what_are_some_good_and_well/",
+  "thread": {
+    "permalink": "/r/SkincareAddiction/comments/1uvsqba/product_request_what_are_some_good_and_well/",
+    "subreddit": "SkincareAddiction",
+    "thread_id": "1uvsqba",
+    "title": "[Product Request] What are some good and well tested skincare brands that are not a part of a huge conglomerate like LMVH or L'Oréal?"
+  },
+  "warnings": [
+    "thread declares 30 comments; 25 captured (5 not captured)"
+  ]
+}

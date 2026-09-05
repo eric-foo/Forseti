@@ -1,0 +1,252 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": false,
+    "captured_matches_declared_total": false,
+    "comments_captured": 16,
+    "comments_not_captured": 7,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 23,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "Erialcatteyy",
+      "body_text": "I think you could just buy glycerin and add a few drops to your regular moisturizer if you want to keep it super simple",
+      "comment_id": "oztep5q",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0001",
+      "score_state": "7",
+      "timestamp_state": "2026-07-26T05:58:26.393000+0000"
+    },
+    {
+      "author_state": "mortyrenee16",
+      "body_text": "I bought glycerin from Whole Foods but wasn’t sure if I could just do that! I might try it, thank you.",
+      "comment_id": "ozwuh34",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "oztep5q",
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "3",
+      "timestamp_state": "2026-07-26T18:26:53.806000+0000"
+    },
+    {
+      "author_state": "Erialcatteyy",
+      "body_text": "I haven’t tried it yet, but if you do I’d recommend just adding some to your hand and mixing the moisturizer in instead of mixing the glycerin into the lotion bottle. Just in case it messes with the texture/consistency in an undesirable way!",
+      "comment_id": "p04s6og",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "ozwuh34",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "2",
+      "timestamp_state": "2026-07-27T20:28:23.212000+0000"
+    },
+    {
+      "author_state": "Disirregardlessly",
+      "body_text": "You could do a few drops of moisturizer on wet hands and make your own sort of \"serum\". Just dont pre-mix without some sort of preservative. A little glycerin goes a long way, so start with way less than you think you need.",
+      "comment_id": "ozv6icf",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "3",
+      "timestamp_state": "2026-07-26T13:48:37.817000+0000"
+    },
+    {
+      "author_state": "mortyrenee16",
+      "body_text": "thank you!! I saw some people in here added it to distilled water in a spray bottle but that would be sans preservatives so not a good idea?",
+      "comment_id": "ozwulz4",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "ozv6icf",
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "1",
+      "timestamp_state": "2026-07-26T18:27:30.772000+0000"
+    },
+    {
+      "author_state": "Disirregardlessly",
+      "body_text": "I wouldnt do it, personally. But I have such reactive skin that I don't take any risks. If you try that idea, id make enough for maybe a few days. After that, any germs on the bottle or sprayer can be growing. See how that goes before making a big batch!",
+      "comment_id": "ozya921",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "ozwulz4",
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "2",
+      "timestamp_state": "2026-07-26T22:33:46.871000+0000"
+    },
+    {
+      "author_state": "bloodhail_v2",
+      "body_text": "experiment super saturated serum is glycerin based",
+      "comment_id": "oztbejs",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "2",
+      "timestamp_state": "2026-07-26T05:32:30.218000+0000"
+    },
+    {
+      "author_state": "mortyrenee16",
+      "body_text": "thank you! Sadly I can’t use bisabolol or niacinamide :/ I just need something very basic.",
+      "comment_id": "oztc8p8",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "oztbejs",
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "1",
+      "timestamp_state": "2026-07-26T05:39:00.828000+0000"
+    },
+    {
+      "author_state": "bloodhail_v2",
+      "body_text": "Maybe the Iunik beta glucan serum could work? Very simple and basically a glycerin serum. ingredients: Water, Glycerin, 1,2-Hexanediol, Butylene Glycol, Adenosine, Tromethamine, Sodium PCA, Carbomer, Beta- Glucan (160,000 ppb), Sodium Polyacrylate",
+      "comment_id": "oztcwh4",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "oztc8p8",
+      "parser_warnings": [],
+      "row_id": "comment_0009",
+      "score_state": "1",
+      "timestamp_state": "2026-07-26T05:44:10.845000+0000"
+    },
+    {
+      "author_state": "dogmom_123",
+      "body_text": "There's a prequel hydration mist and also a serum, I think they don't contain niacinamide!",
+      "comment_id": "ozthxeh",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "oztc8p8",
+      "parser_warnings": [],
+      "row_id": "comment_0010",
+      "score_state": "1",
+      "timestamp_state": "2026-07-26T06:24:19.564000+0000"
+    },
+    {
+      "author_state": "Obubblegumpink",
+      "body_text": "Do you live in a dry climate?",
+      "comment_id": "ozwt7uh",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0011",
+      "score_state": "1",
+      "timestamp_state": "2026-07-26T18:21:10.986000+0000"
+    },
+    {
+      "author_state": "mortyrenee16",
+      "body_text": "no I live in a humid city but I have hashimotos and it made my combo skin dry",
+      "comment_id": "ozwudnj",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "ozwt7uh",
+      "parser_warnings": [],
+      "row_id": "comment_0012",
+      "score_state": "1",
+      "timestamp_state": "2026-07-26T18:26:27.248000+0000"
+    },
+    {
+      "author_state": "Obubblegumpink",
+      "body_text": "Was asking because I’m in a dry climate and glycerin makes dryness worse for me. Have you tried an occlusive barrier like Aquaphor?",
+      "comment_id": "ozx34fl",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "ozwudnj",
+      "parser_warnings": [],
+      "row_id": "comment_0013",
+      "score_state": "1",
+      "timestamp_state": "2026-07-26T19:06:26.892000+0000"
+    },
+    {
+      "author_state": "theacearrow",
+      "body_text": "If you can, I would recommend aquafor instead of something like glycerin. It does a very good job of helping with acne and locking in moisture. I live in a very arid environment and aquafor is always my go-to moisturizer in the winter.",
+      "comment_id": "p00dans",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0014",
+      "score_state": "2",
+      "timestamp_state": "2026-07-27T06:19:48.782000+0000"
+    },
+    {
+      "author_state": "beast_of_production",
+      "body_text": "Yeah I just buy glycerin from the drug store. It is 85% glycerin, the rest is water. It is sold for craft purposes and as a laxative, but it's great for skin. I just have to decant it into a little pump bottle for easy application. I think it might become less available in physical stores so I will have to order online. I know a couple of soap and candle craft online stores in my country that stock cosmetics grade glycerin. They sell it in bigger containers for cheaper too.",
+      "comment_id": "p023fb5",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0015",
+      "score_state": "2",
+      "timestamp_state": "2026-07-27T13:34:36.777000+0000"
+    },
+    {
+      "author_state": "Comfortable-Iron-250",
+      "body_text": "Undefined Beauty R&R Hydro Jelly is my go to. First ingredient is glycerin. Like is much more than Experiment Super Saturated Serum.",
+      "comment_id": "p0gt8j3",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0016",
+      "score_state": "1",
+      "timestamp_state": "2026-07-29T13:37:49.216000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "present": 16
+    },
+    "comments_parsed": 16,
+    "observable_comment_nodes": 16
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "mortyrenee16",
+    "body_text": "Does anyone use a basic serum with glycerin? My moisturizer isn’t enough in winter so I’ve been adding hyaluronic acid and squalane oil but I have one patch of stubborn dry skin on my face. I’ve read that glycerin is better than hyaluronic acid so I’d like to try a glycerin serum. I use avene moisturizer that has glycerin in it already but maybe an additional serum would help more? My skin is super reactive so I would like to try a product that is as few ingredients as possible. Has anyone tried the Ordinary’s multi-active delivery essence? Thanks!",
+    "score_state": "6",
+    "timestamp_state": "2026-07-26T05:02:53.045000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/FragranceFreeBeauty/comments/1v6u8hi/glycerin_serum/",
+  "thread": {
+    "permalink": "/r/FragranceFreeBeauty/comments/1v6u8hi/glycerin_serum/",
+    "subreddit": "FragranceFreeBeauty",
+    "thread_id": "1v6u8hi",
+    "title": "Glycerin serum"
+  },
+  "warnings": [
+    "thread declares 23 comments; 16 captured (7 not captured)"
+  ]
+}

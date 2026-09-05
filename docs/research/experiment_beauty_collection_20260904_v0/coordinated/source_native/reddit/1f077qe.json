@@ -1,0 +1,361 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": false,
+    "captured_matches_declared_total": false,
+    "comments_captured": 25,
+    "comments_not_captured": 15,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 40,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "torontogal85",
+      "body_text": "What’s wrp?",
+      "comment_id": "ljpuqty",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0001",
+      "score_state": "9",
+      "timestamp_state": "2024-08-24T15:36:22.589000+0000"
+    },
+    {
+      "author_state": "notmysuggestedum",
+      "body_text": "Will repurchase",
+      "comment_id": "ljpvmid",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "ljpuqty",
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "4",
+      "timestamp_state": "2024-08-24T15:41:13.857000+0000"
+    },
+    {
+      "author_state": "torontogal85",
+      "body_text": "Thank you! I tried so hard to figure it out",
+      "comment_id": "ljpwudi",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "ljpvmid",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "12",
+      "timestamp_state": "2024-08-24T15:48:01.280000+0000"
+    },
+    {
+      "author_state": "JPwhatever",
+      "body_text": "Can I ask about the experiment beauty super saturated? I’ve been trying this but I think I may be using too much. It’s very sticky and I feel like it’s adding a big film onto my face. How much do you use when you wear it?",
+      "comment_id": "ljpsol9",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "6",
+      "timestamp_state": "2024-08-24T15:24:45.563000+0000"
+    },
+    {
+      "author_state": "notmysuggestedum",
+      "body_text": "Yeah it's goopy/sticky. It's basically a \"add as much hydration regardless of skin feel\" serum. I only use one pump and it's still goopy and sticky. Regimen Lab's Wave Serum would be a good dupe as far as hydration levels go that is more elegant.",
+      "comment_id": "ljptfag",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "ljpsol9",
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "7",
+      "timestamp_state": "2024-08-24T15:28:57.075000+0000"
+    },
+    {
+      "author_state": "JPwhatever",
+      "body_text": "Good to know. I’ll check out the regimen lab! I plan to finish up the super saturated but I’m not sure about repurchasing.",
+      "comment_id": "ljpusfc",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "ljptfag",
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "5",
+      "timestamp_state": "2024-08-24T15:36:37.445000+0000"
+    },
+    {
+      "author_state": "RowanVC",
+      "body_text": "Oh interesting, mixing the Buffer Jelly with Masque Vernix! How does that work out, do you find that to be a good combo? I see that you don’t think you’ll repurchase Buffer Jelly. I am obsessed with Vernix and I have Buffer Jelly, but candidly I haven’t really used it much yet. Never thought to combine them. If you ditch the Buffer Jelly when it’s done, are you going to try mixing something else with Vernix? Edit: I guess that last question is kind of pointless since the OG Vernix is discontinued. Do you have something else planned in its place?",
+      "comment_id": "ljpxkt0",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "3",
+      "timestamp_state": "2024-08-24T15:52:05.724000+0000"
+    },
+    {
+      "author_state": "notmysuggestedum",
+      "body_text": "Yes, I like the combo, as it adds both lanolin and petrolatum to my routine, and I love both haha. And since the Vernix is discontinued, I would be repurchasing. I have a sample of the new version, but I don't see any decent occlusives in it, so I won't be buying the full size. And I have a trial size of the Josh Rosebrook Advanced Hydrating Mask, so for now that seems like it'll be my replacement, though I haven't used it yet. It has a shea butter base, so it should be occlusive enough. My face is already so greasy after everything I use that the buffer jelly just becomes too much. It's still a great product, though. Also loving their lip balm that I believe you recommended to me!",
+      "comment_id": "ljpz8g5",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "ljpxkt0",
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "3",
+      "timestamp_state": "2024-08-24T16:01:19.860000+0000"
+    },
+    {
+      "author_state": "RowanVC",
+      "body_text": "Haha, that’s awesome, glad you are liking the Softwear lip balm! Experiment is a great little brand, I think. I remember now, you are the oh-so-blessed soul who got all the May Lindstrom products!! LOL That was such a great windfall. Hope you’re enjoying them still! I’ve also never looked into Josh Rosebrook and you’ve got me curious there. Will have to check that out. Great routine though! Thanks for sharing. :)",
+      "comment_id": "ljq1lce",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "ljpz8g5",
+      "parser_warnings": [],
+      "row_id": "comment_0009",
+      "score_state": "4",
+      "timestamp_state": "2024-08-24T16:14:37.887000+0000"
+    },
+    {
+      "author_state": "SamanthaJo15",
+      "body_text": "I posted mine in recent post but will add here too. I am looking for a new eye cream once my SB is gone. I love seeing the everyone’s routines and hearing about new products. No gate keeping here 💕 AM - 1)cleanse w/ Face Reality Gentle Barrier Creamy Cleanser 2) BR p50 1970 3) Acwell 55 Toner toner ( to balance ph prior to actives 4) Skin Ceuticals Vit C (let this sit and absorb 10-15 min. I do other things during this time.) 5)Medik8 Oxy-r Peptides (resveratrol antioxidant used as pigment inhibitor and to combat PIE) 6)spray with Avene thermal water to make skin damp -medik8 liquid peptides (the humectants in the formula need moisture to fully absorb into the skin. Just like when you apply hyaluronic acid) 7)SK-ii essence ( 1 100% notice when I take a break from this product 8) Skin Better interfuse eye serum (WNRP) 9) Le Mieux essence moisturize (HG) 10) Purito Daily Spft Touch SPF PM: double cleanse (Elemis balm and Face reality) 2)Acwell toner 3)neogenesis recovery / osmosis MD stem (alternate nights) 4)NIOD copper peptides 3:1:1 - Taz.01 (4x p week) sk-ii essence 7)Le Mieux moisturizer Skin B. Eye cream 9)Maya Chia Pressed Serum ( HG product. Won’t go without. I use it as an occlusive to seal everything in.) Forgot to add that 2x a week (non Tazarotene nights) I use HEDO Glow Pads. Think Dr. Dennis peel pads, but better IMO.",
+      "comment_id": "ljr6j6d",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0010",
+      "score_state": "5",
+      "timestamp_state": "2024-08-24T20:05:01.852000+0000"
+    },
+    {
+      "author_state": "notmysuggestedum",
+      "body_text": "Have you used any other Maya Chia products? Been looking at them for a while now",
+      "comment_id": "ljs49oh",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "ljr6j6d",
+      "parser_warnings": [],
+      "row_id": "comment_0011",
+      "score_state": "1",
+      "timestamp_state": "2024-08-24T23:35:23.970000+0000"
+    },
+    {
+      "author_state": "Dismal_Investment_78",
+      "body_text": "Do you use blue cocoon under taz? I have it and struggle to fit it in my routine.",
+      "comment_id": "ljpuefz",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0012",
+      "score_state": "2",
+      "timestamp_state": "2024-08-24T15:34:25.548000+0000"
+    },
+    {
+      "author_state": "notmysuggestedum",
+      "body_text": "Yes I use it as my oil step. I like to follow the cleansers/toner(or mist)/serums/oil/moisturizer/tazorac/overnight mask type of routine.",
+      "comment_id": "ljpvc9n",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "ljpuefz",
+      "parser_warnings": [],
+      "row_id": "comment_0013",
+      "score_state": "3",
+      "timestamp_state": "2024-08-24T15:39:39.134000+0000"
+    },
+    {
+      "author_state": "Dismal_Investment_78",
+      "body_text": "Thanks. I'll give it a try this way",
+      "comment_id": "ljpw66b",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "ljpvc9n",
+      "parser_warnings": [],
+      "row_id": "comment_0014",
+      "score_state": "2",
+      "timestamp_state": "2024-08-24T15:44:16.545000+0000"
+    },
+    {
+      "author_state": "Katamali",
+      "body_text": "Great routine! Except I am wondering if your Tret gets through all these heavy layers? They definitely create a strong barrier 🤔 Also, RE Saturated - I was just looking at this serum, could you pls describe why you like and what results do you see? TIA:)",
+      "comment_id": "ljrqzcx",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0015",
+      "score_state": "2",
+      "timestamp_state": "2024-08-24T22:09:08.528000+0000"
+    },
+    {
+      "author_state": "notmysuggestedum",
+      "body_text": "Oh it does lol if I get it too close to my under eye area it get's super irritated. Tret/Taz can get through pretty much anything. And the Super Saturated is is suuuuuuper hydrating, and I like its goopy texture. Helps plump up the skin a bit and makes it easier to use drying SPFs",
+      "comment_id": "ljs40ri",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "ljrqzcx",
+      "parser_warnings": [],
+      "row_id": "comment_0016",
+      "score_state": "4",
+      "timestamp_state": "2024-08-24T23:33:46.205000+0000"
+    },
+    {
+      "author_state": "hedgehogwart",
+      "body_text": "Mine is less lux right now. Neutrogena Gentle Cleanser Azelaic acid (10-20%) SK-II Essence VT PDRN 100 Essence (very recent addition) Experiment Super Saturated Vanicream Daily Facial Moisturizer Manyo Galactomy Essence Cream Skin1004 Sun Serum (morning) or Experiment Buffer Jelly (night, either layered on top or mixed with my moisturizer). I am not super happy with my routine. I quit tretinoin in late June and have been experimenting a bit with other actives with mixed results. Currently just researching and saving money to spend on BF/CM sales.",
+      "comment_id": "ljqsgh7",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0017",
+      "score_state": "11",
+      "timestamp_state": "2024-08-24T18:43:54.131000+0000"
+    },
+    {
+      "author_state": "SamanthaJo15",
+      "body_text": "How do you like the VT PDRN? PDRN is such a powerful anti-aging ingredient that’s been used in Korean products for years. I hope it becomes more mainstream in US products as well.",
+      "comment_id": "ljr76p2",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "ljqsgh7",
+      "parser_warnings": [],
+      "row_id": "comment_0018",
+      "score_state": "7",
+      "timestamp_state": "2024-08-24T20:08:54.422000+0000"
+    },
+    {
+      "author_state": "hedgehogwart",
+      "body_text": "I have only used it a few times so I don’t have a strong opinion on it yet. I don’t love the consistency/how it feels on the skin. It feel almost feels powdery. If it has any good effect on my skin, I am very willing to over look that.",
+      "comment_id": "ljrfg73",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "ljr76p2",
+      "parser_warnings": [],
+      "row_id": "comment_0019",
+      "score_state": "3",
+      "timestamp_state": "2024-08-24T20:57:21.547000+0000"
+    },
+    {
+      "author_state": "Hairy-Ad-1346",
+      "body_text": "Ok so I’m still getting g everything g dialed in but here’s what I’ve come up with so far: AM: Sulwhasoo foam cleanser NIOD SDSM2 mist Obagi Vitamin C Caudalie Resveratrol Lift Laura Mercier oil free tinted PM: Sulwhasoo oil cleanser Sulwhasoo Foam cleanser NIOD SDSM2 mist Skinmedica TNS Recovery DDG Fill+Repair serum Either La Mer or Sulwhasoo emulsion or AB The Cream Light",
+      "comment_id": "ljrp2kd",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0020",
+      "score_state": "10",
+      "timestamp_state": "2024-08-24T21:56:50.225000+0000"
+    },
+    {
+      "author_state": "Hairy-Ad-1346",
+      "body_text": "Forgot to add Tret after emulsion/moisturizer",
+      "comment_id": "ljrpjre",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "ljrp2kd",
+      "parser_warnings": [],
+      "row_id": "comment_0021",
+      "score_state": "4",
+      "timestamp_state": "2024-08-24T21:59:53.187000+0000"
+    },
+    {
+      "author_state": "crusty-guava",
+      "body_text": "I love peeking into others’ routines hehe. This is mine, normal to oily acne prone skin, 24F: AM Splash with water or Niche Beauty Lab Acnenmy Cleanser (MRP) Guerlain Abeille Royale Lotion (WNRP) or Numbuzin No. 3 Toner (MRP) SkinCeuticals Phloretin (WNRP only because I want to try Silymarin!) Niche Beauty Lab Theramid Azelaic Acid (HG, WRP) SK-II RNA Power Eye Cream (WNRP) SkinCeuticals Phyto Gel (HG, WRP) 6.5. Sometimes I’ll mix in a skin booster with my moisturiser, especially if I’m not wearing makeup that day. Currently I’m trying the 111Skin Rose Gold Booster (MRP) and the Votary Tan Drops (MRP). Depending on the UV rating, Purito Sunscreen (WRP), Scinic Sunscreen (WRP), La Roche Posay Oil Control UVMune sunscreen (WRP, but I’m tempted to try the gel version next) PM Dear Klairs Gentle Black Oil Cleanser (WNRP, have the Then I Met You Balm lined up to replace this!) Omorovicza Cleansing Foam (WNRP, have the Tata Harper Softening Cleanser lined up to replace this!) Sulwhasoo First Care Activator (WNRP) Altreno (MRP, may switch to Taz), or every two days Herbivore Milky Way AHA Serum (WNRP) NIOD CAIS3 (WRP) Theramid Ceramide Serum (WRP) and/or Skin1004 Centella Serum (WNRP) Medik8 Crystal Retinal 3 Eye Serum (WRP) Omorovicza Balancing Moisturiser (WNRP) There’s quite a few WNRPs in my PM routine, but I’ve got some replacements that I want to try so I’m looking forward to that. My acne is still pretty meh around my jaw line, despite throwing tret, BHA, AHA, Azelaic Acid, and niacinamide at it, so I’m starting to suspect it’s hormonal. I might see if I can get some topical Clindamycin for it… Otherwise, I think my current goals are to find some better serums that I can rotate into my routine depending on my skin’s condition, potentially add an essence, and to find my HG PM moisturiser.",
+      "comment_id": "ljrj3gd",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0022",
+      "score_state": "5",
+      "timestamp_state": "2024-08-24T21:19:29.815000+0000"
+    },
+    {
+      "author_state": "Equivalent-Apple-66",
+      "body_text": "AM: Instree Yam root cleanser milky toner spray numbuzin serum 6 (HA) Ranavat saffron serum neocutis firme riche eye creme + silk peony eye cream tatcha SPF (rotate between a few types) PM: April Skin carrotene cleansing balm Isntree Yam root cleanser milky toner spray numbuzin serum 6 (HA) Ranavat saffron serum caudalie premier cru, la crème riche neocutis firme riche eye creme + silk peony eye cream tatcha Medicines: spironolactone, low dose accutane",
+      "comment_id": "lka3s5q",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0023",
+      "score_state": "2",
+      "timestamp_state": "2024-08-28T02:32:00.699000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "",
+      "comment_id": "lju65yk",
+      "comment_posture": "deleted",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0024",
+      "score_state": "3",
+      "timestamp_state": "2024-08-25T10:24:57.885000+0000"
+    },
+    {
+      "author_state": "notmysuggestedum",
+      "body_text": "Interesting! How do you choose which routine you will be doing?",
+      "comment_id": "ljx6ohl",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "lju65yk",
+      "parser_warnings": [],
+      "row_id": "comment_0025",
+      "score_state": "2",
+      "timestamp_state": "2024-08-25T21:47:25.750000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "deleted": 1,
+      "present": 24
+    },
+    "comments_parsed": 25,
+    "observable_comment_nodes": 25
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "notmysuggestedum",
+    "body_text": "Here's mine: AM: Vivant Cleansing Milk - WRP may become HG Avene Thermal Spring Water - WRP, but I'm liking the Caudalie Grape Water more Skinceuticals Resveratrol BE - HG WRP as long as I can afford it. Josh Rosebrook Hydration Boost Concentrate - WNRP though will gladly use it if it comes in a kit or as a GWP Experiment Super Saturated - HG WRP Josh Rosebrook Ultra Peptide Cream - WRP may become an HG, though too soon to tell. Eucerin Oil-Control SPF 50+ (Euro version) - HG WRP PM: Transparent Lab Oil-Based Cleanser mixed with May Lindstrom The Pendulum Potion - WRP may become HG Josh Rosebrook Complete Moisture Cleanser - WRP may become HG Josh Rosebrook Hydrating Accelerator - WRP may become HG Skinceuticals Resveratrol BE - see above Josh Rosebrook Hydration Boost Concentrate - see above May Lindstrom Blue Cocoon + The Youth Dew - WRP may become HG Blue Cocoon, not sure sure about The Youth Dew yet, though would definitely use up if it was a GWP. May Lindstrom The Jasmine Garden - WNRP Josh Rosebrook Vital Balm Cream - WRP may become HG Tazorac - HG WRP Biologique Recherche Masque Vernix (RIP) mixed w/ Experiment Buffer Jelly (WNRP) 2-3 times a week: May Lindstrom The Problem Solver mixed with The Honey Mud, or just The Honey Mud by itself - HG WRP May Lindstrom The Clean Dirt - WRP may become HG Shea Terra Organics Rosehips and Chocolate Face Mask - HG WRP Overall really liking it. Could see several new purchases becoming HG products. Let me know if you have any questions about particular products.",
+    "score_state": "22",
+    "timestamp_state": "2024-08-24T14:56:53.187000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddictionLux/comments/1f077qe/what_is_you_current_skincare_routine_and_how_are/",
+  "thread": {
+    "permalink": "/r/SkincareAddictionLux/comments/1f077qe/what_is_you_current_skincare_routine_and_how_are/",
+    "subreddit": "SkincareAddictionLux",
+    "thread_id": "1f077qe",
+    "title": "What is you current skincare routine, and how are you liking it?"
+  },
+  "warnings": [
+    "thread declares 40 comments; 25 captured (15 not captured)"
+  ]
+}

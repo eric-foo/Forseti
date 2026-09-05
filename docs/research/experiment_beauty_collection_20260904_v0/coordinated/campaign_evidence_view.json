@@ -1,0 +1,3104 @@
+{
+  "schema_version": "campaign_evidence_view_v1",
+  "subject": "Experiment Beauty",
+  "cycle_id": "EXPERIMENT-BEAUTY-UNDERSTANDING-20260905-001",
+  "units": [
+    {
+      "unit_id": "campaign-tiktok-7606024310192360718",
+      "source_role": "creator_authored",
+      "publisher_identity": "Adaleta Avdić",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1R8CB045G0FEEHZFAQP4K"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:28:52Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:adaleta avdić",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7604922767305133326",
+      "source_role": "creator_authored",
+      "publisher_identity": "alex",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1RA244BAYSPMDKB9ASSMZ"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:28:54Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:alex",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7591735882734947614",
+      "source_role": "creator_authored",
+      "publisher_identity": "dewydayswithash",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1RBTHNXTWRWV27TJPH0P5"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:28:56Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:dewydayswithash",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7585694400852806926",
+      "source_role": "creator_authored",
+      "publisher_identity": "Babzy531",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1RDB3NZB4APS7AKZCAYGX"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:28:57Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:babzy531",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7593638353828957454",
+      "source_role": "creator_authored",
+      "publisher_identity": "its.taylortharp",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1RF0EDZN1WRWS6HV41CJY"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:28:59Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:its.taylortharp",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7621270315066248479",
+      "source_role": "creator_authored",
+      "publisher_identity": "Carly",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1RGJTSDJDBRB1XTRF7MQT"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:29:00Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:carly",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7624593490923588895",
+      "source_role": "creator_authored",
+      "publisher_identity": "Cassandra Bankson",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1RJ3QZXMSCGPQ50BVBEP7"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:29:02Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:cassandra bankson",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7605302199450717454",
+      "source_role": "creator_authored",
+      "publisher_identity": "Christine | Beauty Creator",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1RKP5E27M7A1ZKQ0ERYM2"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:29:04Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:christine | beauty creator",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7596529897036582174",
+      "source_role": "creator_authored",
+      "publisher_identity": "Desiree Gray• Sensitive Skin",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1RN6PJVJNQKYVB31R2XDW"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:29:05Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:desiree gray• sensitive skin",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7592801323075063095",
+      "source_role": "creator_authored",
+      "publisher_identity": "danielle 🍒🤍✨",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1RPSQQRDANXFFGZ1XH5H9"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:29:07Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:danielle 🍒🤍✨",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7588345599167171895",
+      "source_role": "creator_authored",
+      "publisher_identity": "Christine | @frag_analysis",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1RR9VPWCV3M658XA6VJVB"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:29:08Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:christine | @frag_analysis",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7585359201686342967",
+      "source_role": "creator_authored",
+      "publisher_identity": "girlwithadoge",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1RSW5J1Y8K3VFW1G8FX4H"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:29:10Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:girlwithadoge",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7593563989011877175",
+      "source_role": "creator_authored",
+      "publisher_identity": "Glory.Jefa🗝️",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1RVECG1YTCZ0G5436RBKC"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:29:12Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:glory.jefa🗝️",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7585731694146096415",
+      "source_role": "creator_authored",
+      "publisher_identity": "hannahleigh🩷📲",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1RX1778PQDRBG7RMCCSK0"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:29:13Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:hannahleigh🩷📲",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7610668204708416782",
+      "source_role": "creator_authored",
+      "publisher_identity": "HDP Travel",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1RYMR3K3KVYQSM7FSGQHS"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:29:15Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:hdp travel",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7588960557374459149",
+      "source_role": "creator_authored",
+      "publisher_identity": "Abby Does Beauty 35+",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1S05SC05FK1HRDT8VC955"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:29:16Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:abby does beauty 35+",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7595235519382949150",
+      "source_role": "creator_authored",
+      "publisher_identity": "🫧 Ellie| Overshares & Glows ✨",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1S1PN5AHFJ3S3NDT3S796"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:29:18Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:🫧 ellie| overshares & glows ✨",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7595369870800194829",
+      "source_role": "creator_authored",
+      "publisher_identity": "JADE soft life, strong perfume",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1S39KNY9XXNF8295SJWGY"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:29:20Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:jade soft life, strong perfume",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7590071339117989151",
+      "source_role": "creator_authored",
+      "publisher_identity": "GlowBackWithJalikah",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1S4TWK3BCBKVZBXYNMTVA"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:29:21Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:glowbackwithjalikah",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7617211352041491726",
+      "source_role": "creator_authored",
+      "publisher_identity": "Laurenbliss",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1S6D2HKGEHWWZVZXQN3SQ"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:29:23Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:laurenbliss",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7590062489186979127",
+      "source_role": "creator_authored",
+      "publisher_identity": "Paige Lovelady Stone",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1S7ZEWXE9ZH98QQJEXB5J"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:29:24Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:paige lovelady stone",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-tiktok-7613514497617071390",
+      "source_role": "creator_authored",
+      "publisher_identity": "Madison Krohn",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "tiktok",
+      "source_refs": [
+        "packet:01M1Q1S9FMH281ANX1ADSV4SDY"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T20:29:26Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:madison krohn",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-youtube-Yee-lvz-u20",
+      "source_role": "creator_authored",
+      "publisher_identity": "alex greyson",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "youtube",
+      "source_refs": [
+        "packet:01M1PCY5JJA59G8VX37NGFK8NG"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T14:25:06Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:alex greyson",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-youtube-Leeux-Koeas",
+      "source_role": "creator_authored",
+      "publisher_identity": "Anna Pothier",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "youtube",
+      "source_refs": [
+        "packet:01M1PDFF3CV93T7GEDPZ7HVYEC"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T14:34:32Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:anna pothier",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-youtube-XCblIx2rBBg",
+      "source_role": "creator_authored",
+      "publisher_identity": "alex greyson",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "youtube",
+      "source_refs": [
+        "packet:01M1PDFQ535S4WAQMB04ZEZ1SF"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T14:34:41Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:alex greyson",
+      "independent_origin_credit": false,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-youtube-ajCuq4buR4k",
+      "source_role": "creator_authored",
+      "publisher_identity": "Jill Lyon Reall",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "youtube",
+      "source_refs": [
+        "packet:01M1PDFZHCBSPTC6J4KSYGZEF5"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T14:34:49Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:jill lyon reall",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-youtube-V4cu5z2oEUA",
+      "source_role": "creator_authored",
+      "publisher_identity": "Hannah Fosbenner",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "youtube",
+      "source_refs": [
+        "packet:01M1PDG6WB0R0J6QGQQPG2TVPY"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T14:34:57Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:hannah fosbenner",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-youtube-uUV7lRS9f2A",
+      "source_role": "creator_authored",
+      "publisher_identity": "Dr. Scott Walter MD",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "youtube",
+      "source_refs": [
+        "packet:01M1PDGDY2KYT376GDSKDEW0A2"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T14:35:04Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:dr. scott walter md",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-youtube-QnJ7db_eDEM",
+      "source_role": "creator_authored",
+      "publisher_identity": "Jessica Rae",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "youtube",
+      "source_refs": [
+        "packet:01M1PDGM2NG485CVY3BY146CXA"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T14:35:10Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:jessica rae",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-youtube-DZLRE9ltaRQ",
+      "source_role": "creator_authored",
+      "publisher_identity": "Hannah Louise Poston",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [],
+      "source_surface": "youtube",
+      "source_refs": [
+        "packet:01M1PDGTW2H6YA71GT33YHNGFT"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T14:35:17Z",
+      "relationship_posture": "apparently_independent",
+      "linkage_posture": "unknown",
+      "independent_origin_key": "creator:hannah louise poston",
+      "independent_origin_credit": true,
+      "claim_ceiling": "single creator perspective; relationship posture follows visible disclosure only"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR14941696562810585089",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR14941696562810585089"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR13077864546587115521",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR13077864546587115521"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR11718850299002093569",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR11718850299002093569"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR10960415287060463617",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR10960415287060463617"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR09451003018620174337",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR09451003018620174337"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR12276153066213867521",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR12276153066213867521"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR11437317529211502593",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR11437317529211502593"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR10682249161744580609",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR10682249161744580609"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR17647247611050065921",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR17647247611050065921"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR03586228165229412353",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR03586228165229412353"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR12110073372436594689",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR12110073372436594689"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR15233207469342720001",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR15233207469342720001"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR09047326146345041921",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR09047326146345041921"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR03368329321658712065",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR03368329321658712065"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR12106431076960829441",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR12106431076960829441"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR08768874319804628993",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR08768874319804628993"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR00951484866954788865",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR00951484866954788865"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR00103710824404615169",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR00103710824404615169"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR17899973305041944577",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR17899973305041944577"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR05711994250967646209",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR05711994250967646209"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR07350757104568762369",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR07350757104568762369"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR11887512642513797121",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR11887512642513797121"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR10435080313620135937",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR10435080313620135937"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR13367134914709815297",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR13367134914709815297"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR11639976703534563329",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR11639976703534563329"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR16118321227419877377",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR16118321227419877377"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR14194902389709864961",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR14194902389709864961"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR12799770155815010305",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR12799770155815010305"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR06871179681907867649",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR06871179681907867649"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR08301251500525486081",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR08301251500525486081"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR06216363599250587649",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR06216363599250587649"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR01356999435476795393",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR01356999435476795393"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR14549479084187975681",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR14549479084187975681"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR03676504520910700545",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR03676504520910700545"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR07552228454146506753",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR07552228454146506753"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR17539619510183526401",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR17539619510183526401"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR07981705392537206785",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR07981705392537206785"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR09107904366542585857",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR09107904366542585857"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR10550370026257383425",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR10550370026257383425"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR16148015188195409921",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR16148015188195409921"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR12734308669471064065",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR12734308669471064065"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR06076470260947484673",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR06076470260947484673"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR12184390127862153217",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR12184390127862153217"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR01828408448815988737",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR01828408448815988737"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR01301305967484338177",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR01301305967484338177"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR01214663772610756609",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR01214663772610756609"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR18200203828408614913",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR18200203828408614913"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR07645133578921050113",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR07645133578921050113"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR13606510252617891841",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR13606510252617891841"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR08802343041437270017",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR08802343041437270017"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR11647696821349777409",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR11647696821349777409"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR18394770451122356225",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR18394770451122356225"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR12384691562708205569",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR12384691562708205569"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR02573360630702538753",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR02573360630702538753"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR08034659788086312961",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR08034659788086312961"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR04522860193461043201",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR04522860193461043201"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR06286840095567773697",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR06286840095567773697"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR17892137437858103297",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR17892137437858103297"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR09674303316141539329",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR09674303316141539329"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR04962295520333660161",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR04962295520333660161"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-google-ad:CR13146713731335454721",
+      "source_role": "paid_ad",
+      "publisher_identity": "Doing Experiments, Inc.",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "google",
+      "source_refs": [
+        "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR13146713731335454721"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:24:00Z",
+      "relationship_posture": "owned",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:google",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:4009869765973241",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:4009869765973241"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1366286158427208",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "irritation_breakout_active_condition_fit",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1366286158427208"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1401285881970526",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1401285881970526"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:2900146623669430",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2900146623669430"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1073469775062089",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "packaging_dispensing_durability",
+        "price_value_quantity_access",
+        "formula_consistency_quality_service_trust",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1073469775062089"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:2511440792658289",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2511440792658289"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:2089537391650947",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_durability",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2089537391650947"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1662841339180199",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_durability",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1662841339180199"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1084742027450222",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1084742027450222"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1955910278379544",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1955910278379544"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:961046027011530",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:961046027011530"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1857177688585147",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1857177688585147"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:3602684919872278",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:3602684919872278"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1936367943714336",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1936367943714336"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1576991590789579",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1576991590789579"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:975621372212946",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:975621372212946"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:2133383964275342",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_durability",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2133383964275342"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:27926222633712863",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:27926222633712863"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1211638981136065",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1211638981136065"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:3047893045409651",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:3047893045409651"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1543534167512488",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1543534167512488"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1364671995723622",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1364671995723622"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:2105329013741165",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2105329013741165"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:2189447351624928",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2189447351624928"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1022448717455916",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1022448717455916"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:986031771163113",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:986031771163113"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1595196488977477",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_durability",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1595196488977477"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1375725890734506",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1375725890734506"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1766267914691352",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1766267914691352"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:2187589371808065",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2187589371808065"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:2220009825238950",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2220009825238950"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1682622692803751",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1682622692803751"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:3447251875456585",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_durability",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:3447251875456585"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:2270454927034343",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2270454927034343"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:967845303006819",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:967845303006819"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1732246041350083",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1732246041350083"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1458689159432912",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1458689159432912"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1034755692783051",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_durability",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1034755692783051"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:4003057999996847",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:4003057999996847"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:4743879489231694",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:4743879489231694"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:938072115280623",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:938072115280623"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:2501003157047557",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2501003157047557"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1110069405223174",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1110069405223174"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1023500807283400",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1023500807283400"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1804592804041468",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1804592804041468"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:2175968376293187",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2175968376293187"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1907550463537854",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1907550463537854"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:2099910554227212",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2099910554227212"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:885302694406715",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:885302694406715"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    },
+    {
+      "unit_id": "campaign-meta-ad:1828231675232515",
+      "source_role": "paid_ad",
+      "publisher_identity": "Experiment Beauty",
+      "brand_binding": "Experiment Beauty",
+      "product_bindings": [],
+      "claim_bindings": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_surface": "meta",
+      "source_refs": [
+        "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1828231675232515"
+      ],
+      "published_at": null,
+      "observed_at": "2026-09-04",
+      "captured_at": "2026-09-04T21:25:08Z",
+      "relationship_posture": "relationship_unknown",
+      "linkage_posture": "direct",
+      "independent_origin_key": "brand-owned:meta",
+      "independent_origin_credit": false,
+      "claim_ceiling": "brand-authored campaign evidence; not independent customer proof, prevalence, reach, spend, or performance"
+    }
+  ],
+  "clusters": []
+}

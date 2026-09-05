@@ -323,6 +323,14 @@ RUNNER_IDENTITY_BINDINGS: dict[str, dict[str, str]] = {
             "fails closed with a distinct diagnostic and no packet write"
         ),
     },
+    "run_source_capture_junip_review_corpus.py": {
+        "status": "bound",
+        "mechanism": (
+            "before packet write, the products response must expose remote product identities; "
+            "every review must carry an embedded product remote_id; and the complete paginated "
+            "review set must expose exactly the caller-bound expected store name and URL"
+        ),
+    },
     "run_source_capture_media_packet.py": {
         "status": "not_applicable",
         "reason": (

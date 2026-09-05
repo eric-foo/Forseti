@@ -1,0 +1,171 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": false,
+    "captured_matches_declared_total": false,
+    "comments_captured": 9,
+    "comments_not_captured": 1,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 10,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Are you brand new to skincare? The best place to start is our ScA Routine! You can find even more skincare guide in our wiki! Everyone is welcome in this community; remember to be kind and assume good faith :) I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "m6uxzhi",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2025-01-13T02:50:44.758000+0000"
+    },
+    {
+      "author_state": "Weird_Put_9514",
+      "body_text": "its basically just glycerin so any serum that has it as the first or second ingredient will work the same.",
+      "comment_id": "m6vgknd",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "2",
+      "timestamp_state": "2025-01-13T04:50:16.081000+0000"
+    },
+    {
+      "author_state": "No_Maintenance495",
+      "body_text": "I think you are thinking of Super Saturated…",
+      "comment_id": "mkw7wgi",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "m6vgknd",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "5",
+      "timestamp_state": "2025-04-01T18:14:25.425000+0000"
+    },
+    {
+      "author_state": "Weird_Put_9514",
+      "body_text": "i am 🤦",
+      "comment_id": "mkwbroq",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "mkw7wgi",
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "2",
+      "timestamp_state": "2025-04-01T18:34:16.883000+0000"
+    },
+    {
+      "author_state": "youlldancetoanything",
+      "body_text": "I know this is old, but did you ever find one? I love this stuff. In particular it stays on without making my sheets or hair gross. I like it on my lips The bottle is just so small. I have tried using the aquaphor stick but but I prefer this. Just the price is awful",
+      "comment_id": "ngfgufc",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "2",
+      "timestamp_state": "2025-09-27T04:36:11.010000+0000"
+    },
+    {
+      "author_state": "LasVegasGirlx0x0",
+      "body_text": "I'm waiting to try this product but I've not had a chance to buy it yet - so idk if it's a dupe BUT Beekman1802 makes this wondermilk jelly, it's a petroleum free alternative to Aquaphor. The consistency is like apple sauce and it melts quickly in your hands for thin application. I have REALLY dry skin so aquaphor does the trick for me but I really like this product as well!",
+      "comment_id": "odw7dl6",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "ngfgufc",
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "1",
+      "timestamp_state": "2026-04-02T14:56:41.237000+0000"
+    },
+    {
+      "author_state": "yayitssunny",
+      "body_text": "I personally dn't think it's a dupe for wondermilk. I finally gave mine away...I liked it..but always left everything I touched (or heck, even thought about touching) with residue/oil-looking spots.",
+      "comment_id": "ok05n4z",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "odw7dl6",
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "1",
+      "timestamp_state": "2026-05-05T05:02:39.223000+0000"
+    },
+    {
+      "author_state": "yellowsunshine2002",
+      "body_text": "Hi, did you ever find one? Thanks!",
+      "comment_id": "nylpzx9",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "1",
+      "timestamp_state": "2026-01-09T14:41:46.686000+0000"
+    },
+    {
+      "author_state": "LasVegasGirlx0x0",
+      "body_text": "I'm waiting to try this product but I've not had a chance to buy it yet - so idk if it's a dupe BUT Beekman1802 makes this wondermilk jelly, it's a petroleum free alternative to Aquaphor. The consistency is like apple sauce and it melts quickly in your hands for thin application. I have REALLY dry skin so aquaphor does the trick for me but I really like this product as well!",
+      "comment_id": "odw8szf",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "nylpzx9",
+      "parser_warnings": [],
+      "row_id": "comment_0009",
+      "score_state": "1",
+      "timestamp_state": "2026-04-02T15:03:16.557000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 8
+    },
+    "comments_parsed": 9,
+    "observable_comment_nodes": 9
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "Opposite-Wheel491",
+    "body_text": "I love this product but hoping to find a micro-slugging oil/gel at a lower price point. I put the main ingredients in the photo. I'm 40 with dry winter skin but also acne prone. I'm using RetinA daily.",
+    "score_state": "7",
+    "timestamp_state": "2025-01-13T02:50:43.980000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddiction/comments/1i047je/product_question_experiment_buffer_jelly/",
+  "thread": {
+    "permalink": "/r/SkincareAddiction/comments/1i047je/product_question_experiment_buffer_jelly/",
+    "subreddit": "SkincareAddiction",
+    "thread_id": "1i047je",
+    "title": "[Product question] Experiment Buffer Jelly alternative"
+  },
+  "warnings": [
+    "thread declares 10 comments; 9 captured (1 not captured)"
+  ]
+}

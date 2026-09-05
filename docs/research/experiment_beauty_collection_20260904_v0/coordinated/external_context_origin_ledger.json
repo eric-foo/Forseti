@@ -1,0 +1,148 @@
+{
+  "schema_version": "external_context_origin_ledger_v1",
+  "subject": "Experiment Beauty",
+  "cycle_id": "EXPERIMENT-BEAUTY-UNDERSTANDING-20260905-001",
+  "units": [
+    {
+      "unit_id": "external-01M1Q2EBGYKVC5181671N3M20W",
+      "origin_id": "the-stripe.com",
+      "artifact_id": "external-01M1Q2EBGYKVC5181671N3M20W",
+      "independence": "independent_origin",
+      "echo_group_id": "origin:the-stripe.com",
+      "source_type": "consumer_editorial",
+      "relationship": "apparently_independent",
+      "packet_id": "01M1Q2EBGYKVC5181671N3M20W"
+    },
+    {
+      "unit_id": "external-01M1Q2EDDR2WZPMCH4E75VXC8X",
+      "origin_id": "alittlebitetc.com",
+      "artifact_id": "external-01M1Q2EDDR2WZPMCH4E75VXC8X",
+      "independence": "independent_origin",
+      "echo_group_id": "origin:alittlebitetc.com",
+      "source_type": "consumer_editorial",
+      "relationship": "apparently_independent",
+      "packet_id": "01M1Q2EDDR2WZPMCH4E75VXC8X"
+    },
+    {
+      "unit_id": "external-01M1Q2EF8BS8ARC5F6KQYDNXES",
+      "origin_id": "whowhatwear.com",
+      "artifact_id": "external-01M1Q2EF8BS8ARC5F6KQYDNXES",
+      "independence": "independent_origin",
+      "echo_group_id": "origin:whowhatwear.com",
+      "source_type": "consumer_editorial",
+      "relationship": "apparently_independent",
+      "packet_id": "01M1Q2EF8BS8ARC5F6KQYDNXES"
+    },
+    {
+      "unit_id": "external-01M1Q2EJGX002FD5XPHYXMD4KA",
+      "origin_id": "theunwash.com",
+      "artifact_id": "external-01M1Q2EJGX002FD5XPHYXMD4KA",
+      "independence": "independent_origin",
+      "echo_group_id": "origin:theunwash.com",
+      "source_type": "consumer_editorial",
+      "relationship": "apparently_independent",
+      "packet_id": "01M1Q2EJGX002FD5XPHYXMD4KA"
+    },
+    {
+      "unit_id": "external-01M1Q2EMZCXWVER6JA0H5W1V12",
+      "origin_id": "nationaleczema.org",
+      "artifact_id": "external-01M1Q2EMZCXWVER6JA0H5W1V12",
+      "independence": "independent_origin",
+      "echo_group_id": "origin:nationaleczema.org",
+      "source_type": "other_external",
+      "relationship": "apparently_independent",
+      "packet_id": "01M1Q2EMZCXWVER6JA0H5W1V12"
+    },
+    {
+      "unit_id": "external-01M1Q2EPQXZHQSQK5HXM2TQPDF",
+      "origin_id": "glooshi.com",
+      "artifact_id": "external-01M1Q2EPQXZHQSQK5HXM2TQPDF",
+      "independence": "independent_origin",
+      "echo_group_id": "origin:glooshi.com",
+      "source_type": "consumer_editorial",
+      "relationship": "apparently_independent",
+      "packet_id": "01M1Q2EPQXZHQSQK5HXM2TQPDF"
+    },
+    {
+      "unit_id": "external-01M1Q2EST36F18B972NXTC8NTB",
+      "origin_id": "jarxi.com",
+      "artifact_id": "external-01M1Q2EST36F18B972NXTC8NTB",
+      "independence": "independent_origin",
+      "echo_group_id": "origin:jarxi.com",
+      "source_type": "consumer_editorial",
+      "relationship": "apparently_independent",
+      "packet_id": "01M1Q2EST36F18B972NXTC8NTB"
+    },
+    {
+      "unit_id": "external-01M1Q2EX562K0C7RFKDRBJH0T0",
+      "origin_id": "skincarisma.com",
+      "artifact_id": "external-01M1Q2EX562K0C7RFKDRBJH0T0",
+      "independence": "independent_origin",
+      "echo_group_id": "origin:skincarisma.com",
+      "source_type": "other_external",
+      "relationship": "apparently_independent",
+      "packet_id": "01M1Q2EX562K0C7RFKDRBJH0T0"
+    },
+    {
+      "unit_id": "external-01M1Q2F0FD5SZBK5ZP7YYM5HNX",
+      "origin_id": "incidecoder.com",
+      "artifact_id": "external-01M1Q2F0FD5SZBK5ZP7YYM5HNX",
+      "independence": "independent_origin",
+      "echo_group_id": "origin:incidecoder.com",
+      "source_type": "other_external",
+      "relationship": "apparently_independent",
+      "packet_id": "01M1Q2F0FD5SZBK5ZP7YYM5HNX"
+    },
+    {
+      "unit_id": "external-01M1Q2F5T9V7X4ARJM3HRAGE1A",
+      "origin_id": "beautydesignawards.com",
+      "artifact_id": "external-01M1Q2F5T9V7X4ARJM3HRAGE1A",
+      "independence": "independent_origin",
+      "echo_group_id": "origin:beautydesignawards.com",
+      "source_type": "consumer_editorial",
+      "relationship": "apparently_independent",
+      "packet_id": "01M1Q2F5T9V7X4ARJM3HRAGE1A"
+    },
+    {
+      "unit_id": "external-01M1Q2F8AD1SVKKSP5WEA9F58Z",
+      "origin_id": "thebeautybrains.com",
+      "artifact_id": "external-01M1Q2F8AD1SVKKSP5WEA9F58Z",
+      "independence": "independent_origin",
+      "echo_group_id": "origin:thebeautybrains.com",
+      "source_type": "consumer_editorial",
+      "relationship": "apparently_independent",
+      "packet_id": "01M1Q2F8AD1SVKKSP5WEA9F58Z"
+    },
+    {
+      "unit_id": "external-01M1Q2FM8BH929DTTDHZ776ZFS",
+      "origin_id": "totalbeauty.com",
+      "artifact_id": "external-01M1Q2FM8BH929DTTDHZ776ZFS",
+      "independence": "independent_origin",
+      "echo_group_id": "origin:totalbeauty.com",
+      "source_type": "consumer_editorial",
+      "relationship": "apparently_independent",
+      "packet_id": "01M1Q2FM8BH929DTTDHZ776ZFS"
+    },
+    {
+      "unit_id": "external-01M1Q2FS64BE3RT65V7SKBEE3N",
+      "origin_id": "allure.com",
+      "artifact_id": "external-01M1Q2FS64BE3RT65V7SKBEE3N",
+      "independence": "independent_origin",
+      "echo_group_id": "origin:allure.com",
+      "source_type": "consumer_editorial",
+      "relationship": "apparently_independent",
+      "packet_id": "01M1Q2FS64BE3RT65V7SKBEE3N"
+    },
+    {
+      "unit_id": "external-01M1Q2FV38Q1JCEMDP2GCVN7GF",
+      "origin_id": "comgateway.com",
+      "artifact_id": "external-01M1Q2FV38Q1JCEMDP2GCVN7GF",
+      "independence": "independent_origin",
+      "echo_group_id": "origin:comgateway.com",
+      "source_type": "corporate_or_transaction",
+      "relationship": "apparently_independent",
+      "packet_id": "01M1Q2FV38Q1JCEMDP2GCVN7GF"
+    }
+  ],
+  "relationship_limit": "Publisher independence from Experiment Beauty is apparently independent unless the captured page visibly states an affiliate relationship; no prevalence credit is implied."
+}

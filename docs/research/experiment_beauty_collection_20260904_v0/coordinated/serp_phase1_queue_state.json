@@ -1,0 +1,47 @@
+{
+  "schema_version": "google_serp_queue_state_v1",
+  "status": "complete",
+  "jobs": [
+    {
+      "job_id": "P1-BALANCED"
+    },
+    {
+      "job_id": "P1-BEHAVIOR"
+    },
+    {
+      "job_id": "P1-BRANDLESS"
+    },
+    {
+      "job_id": "P1-CONDITION"
+    }
+  ],
+  "completed_job_ids": [
+    "P1-BALANCED",
+    "P1-BEHAVIOR",
+    "P1-BRANDLESS",
+    "P1-CONDITION"
+  ],
+  "failed_job_ids": [],
+  "attempt_history": [
+    {
+      "job_id": "P1-BALANCED",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P1-BALANCED.json"
+    },
+    {
+      "job_id": "P1-BEHAVIOR",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P1-BEHAVIOR.json"
+    },
+    {
+      "job_id": "P1-BRANDLESS",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P1-BRANDLESS.json"
+    },
+    {
+      "job_id": "P1-CONDITION",
+      "outcome": "success",
+      "packet_locator": "C:\\Users\\vmon7\\.codex\\worktrees\\6fec\\orca\\docs\\research\\experiment_beauty_collection_20260904_v0\\coordinated\\source_native\\serp\\P1-CONDITION.json"
+    }
+  ]
+}

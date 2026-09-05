@@ -1,0 +1,121 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": null,
+    "captured_matches_declared_total": true,
+    "comments_captured": 5,
+    "comments_not_captured": 0,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 5,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Are you brand new to skincare? Don't know how to build a skincare routine? The best place to start is our ScA Routine! You can find even more skincare guides in our wiki!. Your answer might already be in there (and if it is, we might remove your post). Everyone is welcome in this community; remember to be kind and assume good faith :) I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "nai3dv0",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2025-08-25T00:13:21.704000+0000"
+    },
+    {
+      "author_state": "Far-Profit2622",
+      "body_text": "Would u be interested in a completely different routine?",
+      "comment_id": "nai5e43",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "1",
+      "timestamp_state": "2025-08-25T00:25:57.563000+0000"
+    },
+    {
+      "author_state": "TrainingAd2121",
+      "body_text": "Potentially!",
+      "comment_id": "nai5n3o",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "nai5e43",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "2",
+      "timestamp_state": "2025-08-25T00:27:30.447000+0000"
+    },
+    {
+      "author_state": "Far-Profit2622",
+      "body_text": "Great! Here is a routine that i think is more fit toward aging as well as hydration boost :). AM: Water rinse NIOD survival 0, a lightweight antioxidant serum that you can layer with vit C if you want. This offer much better antioxidant protection than skinceuticals CEF :). Azelaic acid 15% on the whole face if you can, For melasma on your lips i would recommend the niche beauty lab lip spf as well as eucerin anti-pigment dual serum :). Experiment beauty molecular mesh: a medium-weight consistency cream, should offer long lasting hydration. If you prefer a lighter one then Prequel half and half may fit you :). your sunscreen of choice PM: if you use mineral sunscreen, you should double cleanse to get rid of it, i recommend the krave beauty cleansing duo. this is the most important change, instead of using tretinoin cream/gel 0.025 tube, opt for altreno/arazlo or tretinoin microsphere, this will siginificantly help with the dryness. Experiment beauty super saturated: your hydrating and barrier serum, a thick, snail-mucin like texture Experiment beauty molecular mess to end it off. Hope it helps!! Also, here is some worthy splurge brand you may consider i guess :). Peach and Lily (particularly their power exosome serum) Regimen lab (particularly their azelaic acid and their level serum) Niche beauty lab Dieux (you can think of instant angel as a better molecular mesh :). Sunday rilies/bloomeffect",
+      "comment_id": "naicw4z",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "nai5n3o",
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "1",
+      "timestamp_state": "2025-08-25T01:12:58.318000+0000"
+    },
+    {
+      "author_state": "ReaLitTea",
+      "body_text": "Don’t think you need a completely different routine but I would add a moisturizer before your spf. Mineral sunscreens can feel drying",
+      "comment_id": "nakplxz",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "1",
+      "timestamp_state": "2025-08-25T12:46:12.656000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 4
+    },
+    "comments_parsed": 5,
+    "observable_comment_nodes": 5
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "TrainingAd2121",
+    "body_text": "Need your help skin gurus! While I have a pretty good routine going, I’m finding my skin during the day to be on the dry side, and even a bit flakey at times. 45F with no major issues or acne, but certainly visible signs of aging and sun damage. Here’s the routine: A.M.: Rinse with water SkinCeuticals CE Ferulic Azelaic Acid 15% lips only (to treat melasma, which doesn’t seem to be doing much) Naked Sundays SPF 50 Tinted Moisturizer & Mineral Sunscreen Rarely do I wear makeup during the day except for mascara and maybe eye shadow / lip gloss. P.M.: Jan Marini Bioglycolic Face Cleanser Trentinoin .025% La Roche-Posay Toleriane Double Repair Face Moisturizer After my evening routine my skin feels amazing. The La Roche moisturizer feels heaven sent at the end of the day. Should I switch to a different daytime moisturizer? I LOVE the way Naked Sunday feels and looks, but reapplying feels like I would be loading up mass amounts of zinc oxide on my face throughout the day.",
+    "score_state": "2",
+    "timestamp_state": "2025-08-25T00:13:19.497000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddiction/comments/1mzbxn1/routine_help_skin_feels_dry_throughout_the_day/",
+  "thread": {
+    "permalink": "/r/SkincareAddiction/comments/1mzbxn1/routine_help_skin_feels_dry_throughout_the_day/",
+    "subreddit": "SkincareAddiction",
+    "thread_id": "1mzbxn1",
+    "title": "[Routine help] Skin feels dry throughout the day"
+  },
+  "warnings": []
+}

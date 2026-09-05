@@ -1,0 +1,264 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": false,
+    "captured_matches_declared_total": false,
+    "comments_captured": 17,
+    "comments_not_captured": 2,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 19,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "[deleted]",
+      "body_text": "Experiment Beauty Super Saturated Serum!! Has 30% glycerin and 2% niacinamide",
+      "comment_id": "jatp5oi",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0001",
+      "score_state": "9",
+      "timestamp_state": "2023-03-04T00:10:04.282000+0000"
+    },
+    {
+      "author_state": "goldendoodlemom19",
+      "body_text": "Second this and I also love Regimen Lab Wave Serum",
+      "comment_id": "jau0261",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "jatp5oi",
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "5",
+      "timestamp_state": "2023-03-04T01:36:44.687000+0000"
+    },
+    {
+      "author_state": "fullspectrumactivity",
+      "body_text": "<blockquote> Second this and I also love Regimen Lab Wave Serum </blockquote> How would you compare Super Saturated to Wave?",
+      "comment_id": "jax1bpi",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "jau0261",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "5",
+      "timestamp_state": "2023-03-04T18:56:32.947000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "Yes I second this it’s AMAZING! I also LOVE the moon dust serum.",
+      "comment_id": "jatz7hf",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "jatp5oi",
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "4",
+      "timestamp_state": "2023-03-04T01:29:46.373000+0000"
+    },
+    {
+      "author_state": "elianna7",
+      "body_text": "My skin has been dehydrated and dry for years. I have used sooooo many hydrating serums but a combo of two particular ones completely got rid of my dehydration, like even my aesthetician was shocked at how much more hydrated my skin was! Consonant Hydrextreme and Darphin Intral Serum. Dream team for me!",
+      "comment_id": "jau3e4r",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "7",
+      "timestamp_state": "2023-03-04T02:03:08.381000+0000"
+    },
+    {
+      "author_state": "bronwensaurus",
+      "body_text": "I'd never heard of Consonant Hydrextreme before and it looks really good. Thanks for the recommendation!",
+      "comment_id": "jc8ey1v",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "jau3e4r",
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "2",
+      "timestamp_state": "2023-03-15T01:08:32.273000+0000"
+    },
+    {
+      "author_state": "I_CRE8",
+      "body_text": "I’ve had really good luck keeping my skin hydrated in a dry, harsh winter climate using MZ Skin Hyaluronic Acid and Skinceuticals CE Ferulic. I also use Biossance and La Mer for moisturizers, Lancer Omega Hydrating Oil and BR Masque Vernix",
+      "comment_id": "jaso28h",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "5",
+      "timestamp_state": "2023-03-03T19:53:13.439000+0000"
+    },
+    {
+      "author_state": "FatPurpleBuffalo",
+      "body_text": "Do you like MZ skin? The line has placenta serum that I want to try to replace BR with.",
+      "comment_id": "jassopb",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "jaso28h",
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "5",
+      "timestamp_state": "2023-03-03T20:23:25.972000+0000"
+    },
+    {
+      "author_state": "I_CRE8",
+      "body_text": "That’s the only product I’ve tried of theirs, but it’s the only hyaluronic acid serum I’ve tried that actually seems to work. A little bit really goes a long way with it, so I’m getting to the end of the bottle after a little over four months.",
+      "comment_id": "jaun6pb",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "jassopb",
+      "parser_warnings": [],
+      "row_id": "comment_0009",
+      "score_state": "1",
+      "timestamp_state": "2023-03-04T04:56:03.325000+0000"
+    },
+    {
+      "author_state": "baystreetgirlfriend",
+      "body_text": "The rest and revive? I had a mini and it broke me out slightly so I didn’t open the full size. I have their entire product line so will likely give it a second go at some point 😁",
+      "comment_id": "jaupnc4",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "jassopb",
+      "parser_warnings": [],
+      "row_id": "comment_0010",
+      "score_state": "1",
+      "timestamp_state": "2023-03-04T05:21:17.464000+0000"
+    },
+    {
+      "author_state": "blueddit30",
+      "body_text": "Forlle’d P-effect line",
+      "comment_id": "jauua1a",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0011",
+      "score_state": "4",
+      "timestamp_state": "2023-03-04T06:11:17.704000+0000"
+    },
+    {
+      "author_state": "baystreetgirlfriend",
+      "body_text": "I like Bioeffect, my skin has never felt so hydrated",
+      "comment_id": "jauppu4",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0012",
+      "score_state": "3",
+      "timestamp_state": "2023-03-04T05:21:59.714000+0000"
+    },
+    {
+      "author_state": "khaluaverse",
+      "body_text": "Future 5 elements Beauty Drops 2",
+      "comment_id": "jauo7y8",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0013",
+      "score_state": "2",
+      "timestamp_state": "2023-03-04T05:06:31.525000+0000"
+    },
+    {
+      "author_state": "[deleted]",
+      "body_text": "ORAIA by Sircuit Skin",
+      "comment_id": "jauq2jz",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0014",
+      "score_state": "2",
+      "timestamp_state": "2023-03-04T05:25:36.755000+0000"
+    },
+    {
+      "author_state": "fullspectrumactivity",
+      "body_text": "What’s helped my dry and dehydrated skin the most this winter is actually layering a gel cream under my usual moisturiser. I found this a lot more than any serum I’ve tried.",
+      "comment_id": "jav742w",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0015",
+      "score_state": "2",
+      "timestamp_state": "2023-03-04T09:00:11.558000+0000"
+    },
+    {
+      "author_state": "illumiee",
+      "body_text": "For super dry flaky skin, I layer like 1-5 layers of any watery toners, then a serum or essence (usually something plumping like a propolis ampoule), a good moisturizer with ceramides (dr jart ceramidin, holika good cera, or watery gel), then optionally slug with a small amount of aquaphor. No matter how I’ve overexfoliated to red peeling flaky skin it resets in 1-3 days. I’ve been wanting to try Dr. Shereene Idriss’ (a derm who posts on IG/YT) diy glycerin rosewater though. Link 50 ml distilled water / 50 ml rosewater / 30 ml (2 tbsp) 100% glycerin, which results in a 25% glycerin solution for the final serum.",
+      "comment_id": "jaye7u3",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0016",
+      "score_state": "2",
+      "timestamp_state": "2023-03-05T00:52:12.568000+0000"
+    },
+    {
+      "author_state": "Substantial-Plant-99",
+      "body_text": "Hydrexeme I think by Consonant",
+      "comment_id": "jb1u7da",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0017",
+      "score_state": "2",
+      "timestamp_state": "2023-03-05T20:06:30.329000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "present": 17
+    },
+    "comments_parsed": 17,
+    "observable_comment_nodes": 17
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "[deleted]",
+    "body_text": "What is your favorite for super dry skin? Like some heavy duty stuff.",
+    "score_state": "16",
+    "timestamp_state": "2023-03-03T17:04:26.756000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/SkincareAddictionLux/comments/11h605v/most_hydrating_serum/",
+  "thread": {
+    "permalink": "/r/SkincareAddictionLux/comments/11h605v/most_hydrating_serum/",
+    "subreddit": "SkincareAddictionLux",
+    "thread_id": "11h605v",
+    "title": "Most hydrating serum?"
+  },
+  "warnings": [
+    "thread declares 19 comments; 17 captured (2 not captured)"
+  ]
+}

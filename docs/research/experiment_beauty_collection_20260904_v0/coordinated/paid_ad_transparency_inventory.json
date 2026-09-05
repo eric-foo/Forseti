@@ -1,0 +1,1473 @@
+{
+  "schema_version": "experiment_beauty_paid_ad_inventory_v1",
+  "subject": "Experiment Beauty",
+  "cycle_id": "EXPERIMENT-BEAUTY-UNDERSTANDING-20260905-001",
+  "authority_boundary": "brand_authored_campaign_evidence_only",
+  "routes": [
+    {
+      "route_id": "google_ads_transparency",
+      "packet_id": "01M1Q4X6Q58DYVJ1NWVTF8C739",
+      "advertiser_name": "Doing Experiments, Inc.",
+      "advertiser_id": "AR02943652455897890817",
+      "region": "US",
+      "source_visible_declared_ad_count": 61,
+      "observed_distinct_creative_id_count": 61,
+      "continuation_actions": 12,
+      "capture_posture": "declared_count_matched_after_bounded_continuation",
+      "source_inventory_exhaustion_status": "NOT_PROVEN",
+      "residual": "The source exposed no machine-adjudicable exhaustion signal even though the 61-ad header matched 61 distinct captured creative IDs."
+    },
+    {
+      "route_id": "meta_ads_library",
+      "packet_id": "01M1Q4Z9H0V7S8T5ZR53GZ6TCP",
+      "page_identity": "Experiment Beauty / experimentwrld",
+      "region": "US",
+      "query": "experimentbeauty.com",
+      "source_visible_approximate_result_count": 51,
+      "observed_distinct_library_id_count": 50,
+      "continuation_actions": 12,
+      "capture_posture": "bounded_continuation_reached_page_footer",
+      "source_inventory_exhaustion_status": "NOT_PROVEN",
+      "residual": "Meta displayed an approximate result count; 50 distinct source-visible library IDs were captured before the page footer and no exact denominator is claimed."
+    }
+  ],
+  "units": [
+    {
+      "evidence_id": "google-ad:CR14941696562810585089",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR14941696562810585089",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR14941696562810585089"
+    },
+    {
+      "evidence_id": "google-ad:CR13077864546587115521",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR13077864546587115521",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR13077864546587115521"
+    },
+    {
+      "evidence_id": "google-ad:CR11718850299002093569",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR11718850299002093569",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR11718850299002093569"
+    },
+    {
+      "evidence_id": "google-ad:CR10960415287060463617",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR10960415287060463617",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR10960415287060463617"
+    },
+    {
+      "evidence_id": "google-ad:CR09451003018620174337",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR09451003018620174337",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR09451003018620174337"
+    },
+    {
+      "evidence_id": "google-ad:CR12276153066213867521",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR12276153066213867521",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR12276153066213867521"
+    },
+    {
+      "evidence_id": "google-ad:CR11437317529211502593",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR11437317529211502593",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR11437317529211502593"
+    },
+    {
+      "evidence_id": "google-ad:CR10682249161744580609",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR10682249161744580609",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR10682249161744580609"
+    },
+    {
+      "evidence_id": "google-ad:CR17647247611050065921",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR17647247611050065921",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR17647247611050065921"
+    },
+    {
+      "evidence_id": "google-ad:CR03586228165229412353",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR03586228165229412353",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR03586228165229412353"
+    },
+    {
+      "evidence_id": "google-ad:CR12110073372436594689",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR12110073372436594689",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR12110073372436594689"
+    },
+    {
+      "evidence_id": "google-ad:CR15233207469342720001",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR15233207469342720001",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR15233207469342720001"
+    },
+    {
+      "evidence_id": "google-ad:CR09047326146345041921",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR09047326146345041921",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR09047326146345041921"
+    },
+    {
+      "evidence_id": "google-ad:CR03368329321658712065",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR03368329321658712065",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR03368329321658712065"
+    },
+    {
+      "evidence_id": "google-ad:CR12106431076960829441",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR12106431076960829441",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR12106431076960829441"
+    },
+    {
+      "evidence_id": "google-ad:CR08768874319804628993",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR08768874319804628993",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR08768874319804628993"
+    },
+    {
+      "evidence_id": "google-ad:CR00951484866954788865",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR00951484866954788865",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR00951484866954788865"
+    },
+    {
+      "evidence_id": "google-ad:CR00103710824404615169",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR00103710824404615169",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR00103710824404615169"
+    },
+    {
+      "evidence_id": "google-ad:CR17899973305041944577",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR17899973305041944577",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR17899973305041944577"
+    },
+    {
+      "evidence_id": "google-ad:CR05711994250967646209",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR05711994250967646209",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR05711994250967646209"
+    },
+    {
+      "evidence_id": "google-ad:CR07350757104568762369",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR07350757104568762369",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR07350757104568762369"
+    },
+    {
+      "evidence_id": "google-ad:CR11887512642513797121",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR11887512642513797121",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR11887512642513797121"
+    },
+    {
+      "evidence_id": "google-ad:CR10435080313620135937",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR10435080313620135937",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR10435080313620135937"
+    },
+    {
+      "evidence_id": "google-ad:CR13367134914709815297",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR13367134914709815297",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR13367134914709815297"
+    },
+    {
+      "evidence_id": "google-ad:CR11639976703534563329",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR11639976703534563329",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR11639976703534563329"
+    },
+    {
+      "evidence_id": "google-ad:CR16118321227419877377",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR16118321227419877377",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR16118321227419877377"
+    },
+    {
+      "evidence_id": "google-ad:CR14194902389709864961",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR14194902389709864961",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR14194902389709864961"
+    },
+    {
+      "evidence_id": "google-ad:CR12799770155815010305",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR12799770155815010305",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR12799770155815010305"
+    },
+    {
+      "evidence_id": "google-ad:CR06871179681907867649",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR06871179681907867649",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR06871179681907867649"
+    },
+    {
+      "evidence_id": "google-ad:CR08301251500525486081",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR08301251500525486081",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR08301251500525486081"
+    },
+    {
+      "evidence_id": "google-ad:CR06216363599250587649",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR06216363599250587649",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR06216363599250587649"
+    },
+    {
+      "evidence_id": "google-ad:CR01356999435476795393",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR01356999435476795393",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR01356999435476795393"
+    },
+    {
+      "evidence_id": "google-ad:CR14549479084187975681",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR14549479084187975681",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR14549479084187975681"
+    },
+    {
+      "evidence_id": "google-ad:CR03676504520910700545",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR03676504520910700545",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR03676504520910700545"
+    },
+    {
+      "evidence_id": "google-ad:CR07552228454146506753",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR07552228454146506753",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR07552228454146506753"
+    },
+    {
+      "evidence_id": "google-ad:CR17539619510183526401",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR17539619510183526401",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR17539619510183526401"
+    },
+    {
+      "evidence_id": "google-ad:CR07981705392537206785",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR07981705392537206785",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR07981705392537206785"
+    },
+    {
+      "evidence_id": "google-ad:CR09107904366542585857",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR09107904366542585857",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR09107904366542585857"
+    },
+    {
+      "evidence_id": "google-ad:CR10550370026257383425",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR10550370026257383425",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR10550370026257383425"
+    },
+    {
+      "evidence_id": "google-ad:CR16148015188195409921",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR16148015188195409921",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR16148015188195409921"
+    },
+    {
+      "evidence_id": "google-ad:CR12734308669471064065",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR12734308669471064065",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR12734308669471064065"
+    },
+    {
+      "evidence_id": "google-ad:CR06076470260947484673",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR06076470260947484673",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR06076470260947484673"
+    },
+    {
+      "evidence_id": "google-ad:CR12184390127862153217",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR12184390127862153217",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR12184390127862153217"
+    },
+    {
+      "evidence_id": "google-ad:CR01828408448815988737",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR01828408448815988737",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR01828408448815988737"
+    },
+    {
+      "evidence_id": "google-ad:CR01301305967484338177",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR01301305967484338177",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR01301305967484338177"
+    },
+    {
+      "evidence_id": "google-ad:CR01214663772610756609",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR01214663772610756609",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR01214663772610756609"
+    },
+    {
+      "evidence_id": "google-ad:CR18200203828408614913",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR18200203828408614913",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR18200203828408614913"
+    },
+    {
+      "evidence_id": "google-ad:CR07645133578921050113",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR07645133578921050113",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR07645133578921050113"
+    },
+    {
+      "evidence_id": "google-ad:CR13606510252617891841",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR13606510252617891841",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR13606510252617891841"
+    },
+    {
+      "evidence_id": "google-ad:CR08802343041437270017",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR08802343041437270017",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR08802343041437270017"
+    },
+    {
+      "evidence_id": "google-ad:CR11647696821349777409",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR11647696821349777409",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR11647696821349777409"
+    },
+    {
+      "evidence_id": "google-ad:CR18394770451122356225",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR18394770451122356225",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR18394770451122356225"
+    },
+    {
+      "evidence_id": "google-ad:CR12384691562708205569",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR12384691562708205569",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR12384691562708205569"
+    },
+    {
+      "evidence_id": "google-ad:CR02573360630702538753",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR02573360630702538753",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR02573360630702538753"
+    },
+    {
+      "evidence_id": "google-ad:CR08034659788086312961",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR08034659788086312961",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR08034659788086312961"
+    },
+    {
+      "evidence_id": "google-ad:CR04522860193461043201",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR04522860193461043201",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR04522860193461043201"
+    },
+    {
+      "evidence_id": "google-ad:CR06286840095567773697",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR06286840095567773697",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR06286840095567773697"
+    },
+    {
+      "evidence_id": "google-ad:CR17892137437858103297",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR17892137437858103297",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR17892137437858103297"
+    },
+    {
+      "evidence_id": "google-ad:CR09674303316141539329",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR09674303316141539329",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR09674303316141539329"
+    },
+    {
+      "evidence_id": "google-ad:CR04962295520333660161",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR04962295520333660161",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR04962295520333660161"
+    },
+    {
+      "evidence_id": "google-ad:CR13146713731335454721",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:google",
+      "platform": "google",
+      "creative_id": "CR13146713731335454721",
+      "relationship": "brand_owned",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4X6Q58DYVJ1NWVTF8C739:creative:CR13146713731335454721"
+    },
+    {
+      "evidence_id": "meta-ad:4009869765973241",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "4009869765973241",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:4009869765973241",
+      "excerpt": "Library ID: 4009869765973241 Started running on 25 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Our best-selling 30% glycerin serum just got supersized. 2x the amount of Super Saturated for $46 ($56 value). ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:1366286158427208",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1366286158427208",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1366286158427208",
+      "excerpt": "Library ID: 1366286158427208 Started running on 14 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored ATTN ECZEMA BADDIES 🫪 We’re so delighted to announce that Super Saturated has been granted the Seal of Approval by the @nationaleczema Association! 0:00 / 1:01 EXPERIMENTBEAUTY.COM Experiment Beauty Shop now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:1401285881970526",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1401285881970526",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1401285881970526",
+      "excerpt": "Library ID: 1401285881970526 Started running on 25 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Our best-selling 30% glycerin serum just got supersized. 2x the amount of Super Saturated for $46 ($56 value). ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:2900146623669430",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "2900146623669430",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2900146623669430",
+      "excerpt": "Library ID: 2900146623669430 Started running on 25 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Rudi Berry with Experiment Beauty Sponsored That’s right yall the @experimentwrld Super Saturated Serum now comes in a J U M B O size! 🗣️🩵 you can grab it only on experimentbeauty.com + use code RUDI15 for 15% off! #ad #experimentbeauty #supersaturated #supersaturatedserum #experimentjumbo 0:00 / 1:01 EXPERIMENTBEAUTY.COM Rudi Berry Shop now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:1073469775062089",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1073469775062089",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "irritation_breakout_active_condition_fit",
+        "packaging_dispensing_durability",
+        "price_value_quantity_access",
+        "formula_consistency_quality_service_trust",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1073469775062089",
+      "excerpt": "Library ID: 1073469775062089 Started running on 25 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored HYDRATION JUST GOT BIGGER: MEET JUMBO SUPER SATURATED 💦 Our bestselling 30% glycerin serum just got supersized! The same juicy, ultra-hydrating formula you love, now 100% bigger so your glow goes further. Comment JUMBO for the 🔗 delivered to your DMs ONE GOO, MANY BENEFITS 🐬 Super Saturated harnesses the power of glycerin at an unusually high percentage to d"
+    },
+    {
+      "evidence_id": "meta-ad:2511440792658289",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "2511440792658289",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2511440792658289",
+      "excerpt": "Library ID: 2511440792658289 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Act"
+    },
+    {
+      "evidence_id": "meta-ad:2089537391650947",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "2089537391650947",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_durability",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2089537391650947",
+      "excerpt": "Library ID: 2089537391650947 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored \"I can't go without this serum. It is THE most hydrating serum I've ever used. I use 2-3 pumps for my face & neck every night. I'm on my 6th bottle!!\" - Riley C 0:00 / 1:13 EXPERIMENTBEAUTY.COM The Future of Hydration Shop now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:1662841339180199",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1662841339180199",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_durability",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1662841339180199",
+      "excerpt": "Library ID: 1662841339180199 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored \"I can't go without this serum. It is THE most hydrating serum I've ever used. I use 2-3 pumps for my face & neck every night. I'm on my 6th bottle!!\" - Riley C 0:00 / 0:13 EXPERIMENTBEAUTY.COM The Future of Hydration Shop now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:1084742027450222",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1084742027450222",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1084742027450222",
+      "excerpt": "Library ID: 1084742027450222 Started running on 14 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored all set for summer with Super Saturated 💦🐬 with 30% glycerin for plump, dewy skin that stays quenched all day long... through blasted AC and blazing heat ☀️ EXPERIMENTBEAUTY.COM Experiment | Futuristic Skin Essentials Shop Now 0:00 / 0:09 EXPERIMENTBEAUTY.COM Shop Now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:1955910278379544",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1955910278379544",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1955910278379544",
+      "excerpt": "Library ID: 1955910278379544 Started running on 14 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored why waste time use lot product when few product do trick?? 🤯🧪 0:00 / 1:39 EXPERIMENTBEAUTY.COM Experiment Beauty Shop now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:961046027011530",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "961046027011530",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:961046027011530",
+      "excerpt": "Library ID: 961046027011530 Started running on 25 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Our best-selling 30% glycerin serum just got supersized. 2x the amount of Super Saturated for $46 ($56 value). ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:1857177688585147",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1857177688585147",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1857177688585147",
+      "excerpt": "Library ID: 1857177688585147 Started running on 14 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored finally addressing those niacinamide comments 👀🧪 0:00 / 1:20 EXPERIMENTBEAUTY.COM Experiment Beauty Shop now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:3602684919872278",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "3602684919872278",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:3602684919872278",
+      "excerpt": "Library ID: 3602684919872278 Started running on 14 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored are you ready for your most hydrated summer yet? 👀☀️🌊 0:00 / 0:16 EXPERIMENTBEAUTY.COM Experiment Beauty Shop now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:1936367943714336",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1936367943714336",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1936367943714336",
+      "excerpt": "Library ID: 1936367943714336 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Act"
+    },
+    {
+      "evidence_id": "meta-ad:1576991590789579",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1576991590789579",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1576991590789579",
+      "excerpt": "Library ID: 1576991590789579 Started running on 25 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Our best-selling 30% glycerin serum just got supersized. 2x the amount of Super Saturated for $46 ($56 value). ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:975621372212946",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "975621372212946",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:975621372212946",
+      "excerpt": "Library ID: 975621372212946 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Acti"
+    },
+    {
+      "evidence_id": "meta-ad:2133383964275342",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "2133383964275342",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_durability",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2133383964275342",
+      "excerpt": "Library ID: 2133383964275342 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details lisagrrera with Experiment Beauty Sponsored \"I can't go without this serum. It is THE most hydrating serum I've ever used. I use 2-3 pumps for my face & neck every night. I'm on my 6th bottle!!\" - Riley C 0:00 / 0:09 EXPERIMENTBEAUTY.COM The Future of Hydration Shop now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:27926222633712863",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "27926222633712863",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:27926222633712863",
+      "excerpt": "Library ID: 27926222633712863 Started running on 25 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Our best-selling 30% glycerin serum just got supersized. 2x the amount of Super Saturated for $46 ($56 value). ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:1211638981136065",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1211638981136065",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1211638981136065",
+      "excerpt": "Library ID: 1211638981136065 Started running on 17 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored great skincare doesn’t actually have to come at a premium 💸👀🫖 0:00 / 0:57 EXPERIMENTBEAUTY.COM Experiment Beauty Shop now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:3047893045409651",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "3047893045409651",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:3047893045409651",
+      "excerpt": "Library ID: 3047893045409651 Started running on 31 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. 0:00 / 0:58 EXPERIMENTBEAUTY.COM ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop now ​ Ac"
+    },
+    {
+      "evidence_id": "meta-ad:1543534167512488",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1543534167512488",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1543534167512488",
+      "excerpt": "Library ID: 1543534167512488 Started running on 14 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored if you want ✨GLOW✨ but not necessarily glitter... listen up 🗣️ 0:00 / 1:37 EXPERIMENTBEAUTY.COM Experiment Beauty Shop now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:1364671995723622",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1364671995723622",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1364671995723622",
+      "excerpt": "Library ID: 1364671995723622 Started running on 31 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. 0:00 / 0:37 EXPERIMENTBEAUTY.COM ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop now ​ Ac"
+    },
+    {
+      "evidence_id": "meta-ad:2105329013741165",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "2105329013741165",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2105329013741165",
+      "excerpt": "Library ID: 2105329013741165 Started running on 25 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Our best-selling 30% glycerin serum just got supersized. 2x the amount of Super Saturated for $46 ($56 value). ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:2189447351624928",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "2189447351624928",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2189447351624928",
+      "excerpt": "Library ID: 2189447351624928 Started running on 25 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Our best-selling 30% glycerin serum just got supersized. 2x the amount of Super Saturated for $46 ($56 value). ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:1022448717455916",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1022448717455916",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1022448717455916",
+      "excerpt": "Library ID: 1022448717455916 Started running on 25 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Our best-selling 30% glycerin serum just got supersized. 2x the amount of Super Saturated for $46 ($56 value). ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:986031771163113",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "986031771163113",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:986031771163113",
+      "excerpt": "Library ID: 986031771163113 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Acti"
+    },
+    {
+      "evidence_id": "meta-ad:1595196488977477",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1595196488977477",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_durability",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1595196488977477",
+      "excerpt": "Library ID: 1595196488977477 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored \"I can't go without this serum. It is THE most hydrating serum I've ever used. I use 2-3 pumps for my face & neck every night. I'm on my 6th bottle!!\" - Riley C 0:00 / 0:11 EXPERIMENTBEAUTY.COM The Future of Hydration Shop now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:1375725890734506",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1375725890734506",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1375725890734506",
+      "excerpt": "Library ID: 1375725890734506 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Act"
+    },
+    {
+      "evidence_id": "meta-ad:1766267914691352",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1766267914691352",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1766267914691352",
+      "excerpt": "Library ID: 1766267914691352 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Act"
+    },
+    {
+      "evidence_id": "meta-ad:2187589371808065",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "2187589371808065",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2187589371808065",
+      "excerpt": "Library ID: 2187589371808065 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Act"
+    },
+    {
+      "evidence_id": "meta-ad:2220009825238950",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "2220009825238950",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2220009825238950",
+      "excerpt": "Library ID: 2220009825238950 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Act"
+    },
+    {
+      "evidence_id": "meta-ad:1682622692803751",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1682622692803751",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1682622692803751",
+      "excerpt": "Library ID: 1682622692803751 Started running on 31 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. 0:00 / 0:42 EXPERIMENTBEAUTY.COM ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop now ​ Ac"
+    },
+    {
+      "evidence_id": "meta-ad:3447251875456585",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "3447251875456585",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_durability",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:3447251875456585",
+      "excerpt": "Library ID: 3447251875456585 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored \"I can't go without this serum. It is THE most hydrating serum I've ever used. I use 2-3 pumps for my face & neck every night. I'm on my 6th bottle!!\" - Riley C 0:00 / 0:43 EXPERIMENTBEAUTY.COM The Future of Hydration Shop now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:2270454927034343",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "2270454927034343",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2270454927034343",
+      "excerpt": "Library ID: 2270454927034343 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Act"
+    },
+    {
+      "evidence_id": "meta-ad:967845303006819",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "967845303006819",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:967845303006819",
+      "excerpt": "Library ID: 967845303006819 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Acti"
+    },
+    {
+      "evidence_id": "meta-ad:1732246041350083",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1732246041350083",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1732246041350083",
+      "excerpt": "Library ID: 1732246041350083 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. 0:00 / 0:52 ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Sh"
+    },
+    {
+      "evidence_id": "meta-ad:1458689159432912",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1458689159432912",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1458689159432912",
+      "excerpt": "Library ID: 1458689159432912 Started running on 31 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. 0:00 / 0:34 EXPERIMENTBEAUTY.COM ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop now ​ Ac"
+    },
+    {
+      "evidence_id": "meta-ad:1034755692783051",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1034755692783051",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "packaging_dispensing_durability",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1034755692783051",
+      "excerpt": "Library ID: 1034755692783051 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored \"I can't go without this serum. It is THE most hydrating serum I've ever used. I use 2-3 pumps for my face & neck every night. I'm on my 6th bottle!!\" - Riley C 0:00 / 0:47 EXPERIMENTBEAUTY.COM The Future of Hydration Shop now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:4003057999996847",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "4003057999996847",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:4003057999996847",
+      "excerpt": "Library ID: 4003057999996847 Started running on 31 Aug 2026 Platforms ​ ​ ​ ​ ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. 0:00 / 0:37 EXPERIMENTBEAUTY.COM ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop now ​ Ac"
+    },
+    {
+      "evidence_id": "meta-ad:4743879489231694",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "4743879489231694",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:4743879489231694",
+      "excerpt": "Library ID: 4743879489231694 Started running on 25 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Our best-selling 30% glycerin serum just got supersized. 2x the amount of Super Saturated for $46 ($56 value). ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:938072115280623",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "938072115280623",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:938072115280623",
+      "excerpt": "Library ID: 938072115280623 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Acti"
+    },
+    {
+      "evidence_id": "meta-ad:2501003157047557",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "2501003157047557",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2501003157047557",
+      "excerpt": "Library ID: 2501003157047557 Started running on 25 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Our best-selling 30% glycerin serum just got supersized. 2x the amount of Super Saturated for $46 ($56 value). ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:1110069405223174",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1110069405223174",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1110069405223174",
+      "excerpt": "Library ID: 1110069405223174 Started running on 25 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Our best-selling 30% glycerin serum just got supersized. 2x the amount of Super Saturated for $46 ($56 value). ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Inactive"
+    },
+    {
+      "evidence_id": "meta-ad:1023500807283400",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1023500807283400",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1023500807283400",
+      "excerpt": "Library ID: 1023500807283400 18 Jun 2026 - 1 Jul 2026 Platforms ​ ​ ​ ​ ​ Categories ​ 2 ads use this creative and text Open Drop-down ​ See summary details Experiment Beauty Sponsored This ad ran without a required disclaimer. ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:1804592804041468",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1804592804041468",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1804592804041468",
+      "excerpt": "Library ID: 1804592804041468 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Act"
+    },
+    {
+      "evidence_id": "meta-ad:2175968376293187",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "2175968376293187",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "price_value_quantity_access",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2175968376293187",
+      "excerpt": "Library ID: 2175968376293187 Started running on 25 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Our best-selling 30% glycerin serum just got supersized. 2x the amount of Super Saturated for $46 ($56 value). ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Active"
+    },
+    {
+      "evidence_id": "meta-ad:1907550463537854",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1907550463537854",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1907550463537854",
+      "excerpt": "Library ID: 1907550463537854 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Act"
+    },
+    {
+      "evidence_id": "meta-ad:2099910554227212",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "2099910554227212",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:2099910554227212",
+      "excerpt": "Library ID: 2099910554227212 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Act"
+    },
+    {
+      "evidence_id": "meta-ad:885302694406715",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "885302694406715",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:885302694406715",
+      "excerpt": "Library ID: 885302694406715 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. ⭐ ⭐ ⭐ ⭐ ⭐ IT’S OUT OF THIS WORLD Shop Now ​ Acti"
+    },
+    {
+      "evidence_id": "meta-ad:1828231675232515",
+      "source_family": "official_marketing",
+      "container_id": "paid-ad:meta",
+      "platform": "meta",
+      "library_id": "1828231675232515",
+      "relationship": "brand_owned_or_disclosed_collaboration",
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "source_ref": "packet:01M1Q4Z9H0V7S8T5ZR53GZ6TCP:library_id:1828231675232515",
+      "excerpt": "Library ID: 1828231675232515 Started running on 21 Aug 2026 Platforms ​ ​ ​ ​ ​ Impressions: <100 This ad has multiple versions ​ Open Drop-down ​ See ad details Experiment Beauty Sponsored Want instant saturation? Meet Super Saturated. Super Saturated is a barrier serum with 30% glycerin. So replenishing and soothing. Includes multi-weight humectants and soothers like bisabolol, prickly pear extract, and niacinamide. Clinically boosts skin resilience and hydration. Low impression count 0:00 / 0"
+    }
+  ],
+  "claim_ceiling": "Official or disclosed-collaboration campaign messaging only; not independent experience, prevalence, spend, reach, targeting, or performance evidence."
+}

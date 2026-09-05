@@ -1,0 +1,207 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": false,
+    "captured_matches_declared_total": false,
+    "comments_captured": 12,
+    "comments_not_captured": 1,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 13,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "AutoModerator",
+      "body_text": "Moderator Announcement Read More » Welcome to r/skincare_addiction! We'd like to take this time to remind you of a few things: Do not ask for a diagnosis/treatment advice for acne or other medical conditions, and do not play doctor What constitutes medical advice? \"What is this?\" This is asking someone to diagnose the issue, and is medical advice. \"What should I do?\" This is asking someone to advise treatment, and is medical advice. \"Should I go to the doctor?\" This is asking if you should seek treatment, and ergo, medical advice. If you would ask the question of your doctor, it falls under this rule and not allowed. As a general rule, asking for medical advice from internet strangers is never a good idea. If you have questions regarding your acne or other medical condition, you are advised to contact your healthcare provider. If you are a medical provider, we would gently remind you that users are not patients, and you should not be offering medical advice to people who are not your patients. I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+      "comment_id": "nme9kh2",
+      "comment_posture": "collapsed",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [
+        "comment body carried as collapsed"
+      ],
+      "row_id": "comment_0001",
+      "score_state": "1",
+      "timestamp_state": "2025-10-31T16:33:28.116000+0000"
+    },
+    {
+      "author_state": "SuitablyFakeUsername",
+      "body_text": "Stop all actives (vitamin c, retinoid etc) Stop all exfoliating (AHA, BHA, scrubs) Eliminate all fragrance/essential oil Proceed with only cleanser, moisturizer and SPF using extremely gentle products. La Roche Posay, Avene, Cera Ve and Vanicream make great products for this. Be patient. This could take a couple of weeks or several. You need to restore your skin barrier. After a couple of weeks, try adding back your usual stuff, one thing at a time to make sure you are doing no damage. Start out with the things least likely to harm such as a hyaluronic acid serum or maybe a niacinamide serum, azalaic acid etc. If that goes smooth, try a gentle BHA and so on. Build back slowly and back off the minute you experience any irritation. Absolutely nothing should hurt, tingle etc. After you have experienced this, your skin may become more sensitized going forward. Be on the lookout and repeat this process however often is required. Good luck!",
+      "comment_id": "nmeqp9l",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "13",
+      "timestamp_state": "2025-10-31T17:58:02.616000+0000"
+    },
+    {
+      "author_state": "frugalocd",
+      "body_text": "Yes this, La roche Posay cicaplast baume thick, throughout the day too really helped me. It improved within a week! Good luck",
+      "comment_id": "nmi3g4b",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "nmeqp9l",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "2",
+      "timestamp_state": "2025-11-01T08:01:32.304000+0000"
+    },
+    {
+      "author_state": "gw8074",
+      "body_text": "Avene Cicalfate Restorative Cream. This is the one thing that truly helped heal my skin barrier after I destroyed it with going to fast with tret.",
+      "comment_id": "nmfqrqc",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "5",
+      "timestamp_state": "2025-10-31T21:08:12.785000+0000"
+    },
+    {
+      "author_state": "Downstream_Occlusion",
+      "body_text": "Experiment Beauty's Molecular Mesh moisturizer!! ☝️ allows me to use tazarotene, benzoyl peroxide, and azelaic acid 15% (2x daily) leaving my skin bouncy & glowing...literally a life saver, elegant formula, reasonable price, and is now at Sephora (they're currently having their sale!)",
+      "comment_id": "nmgekvu",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "1",
+      "timestamp_state": "2025-10-31T23:36:58.665000+0000"
+    },
+    {
+      "author_state": "Newholland60",
+      "body_text": "I'm coming back to say THANK YOU! I purchased it right from the site and got it on the 8th, its now the 10th and my chin/jaw line peeling and texture are GONE. Purchasing direct was actually cheaper than Sephora.",
+      "comment_id": "no3xeru",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "nmgekvu",
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "2",
+      "timestamp_state": "2025-11-10T14:15:10.611000+0000"
+    },
+    {
+      "author_state": "Downstream_Occlusion",
+      "body_text": "Ooo so happy to hear this! It was literally a game changer for me (and I tried everything under the moon prior!). They just started selling at Sephora, so I hope it becomes more well known for the sake of everyone's skin barrier!! Thank you for replying as it's so good to know you found something that works well (and so fast!) 😊",
+      "comment_id": "no4m0cg",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "no3xeru",
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "1",
+      "timestamp_state": "2025-11-10T16:21:28.383000+0000"
+    },
+    {
+      "author_state": "Newholland60",
+      "body_text": "I’ll have to check this out! My skin during the winter becomes very sensitive, often having to stop actives.",
+      "comment_id": "nmrfmty",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "nmgekvu",
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "1",
+      "timestamp_state": "2025-11-02T20:12:54.366000+0000"
+    },
+    {
+      "author_state": "icodethingz",
+      "body_text": "I messed up my skin barrier recently and started using the Dr. Jart Ceramidin cream, it’s honestly amazing! I get what you mean about greasiness, but this one doesn’t feel greasy at all. My skin feels like a baby’s butt the next morning.",
+      "comment_id": "nmf781w",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0009",
+      "score_state": "1",
+      "timestamp_state": "2025-10-31T19:23:12.798000+0000"
+    },
+    {
+      "author_state": "Dez2011",
+      "body_text": "Cosrx Balencium Ceramide Cool Comfort Gel Cream saved me when I got too aggressive with tretinoin. I've compared it with moisturizers and soothing creams and it always calms irritation best. Edit- I'd wash with just water or a hydrating gentle cleanser. I hear the Gleanser is good, the one without SA. Some derms say it's ok to skip sunscreen when your barrier is bad if you're not going to be outside other than driving to work. Others say to use zinc sunscreens. I'd stop everything else.",
+      "comment_id": "nmi4aku",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0010",
+      "score_state": "1",
+      "timestamp_state": "2025-11-01T08:10:49.034000+0000"
+    },
+    {
+      "author_state": "InternationalBend310",
+      "body_text": "Your skin is looking amazing 🫶🫶",
+      "comment_id": "nmmbui6",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0011",
+      "score_state": "1",
+      "timestamp_state": "2025-11-01T23:58:59.876000+0000"
+    },
+    {
+      "author_state": "kay7448",
+      "body_text": "Ultracuticals moisturiser it repaired my skin after laser damage",
+      "comment_id": "nn1c61p",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0012",
+      "score_state": "1",
+      "timestamp_state": "2025-11-04T10:29:50.216000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "collapsed": 1,
+      "present": 11
+    },
+    "comments_parsed": 12,
+    "observable_comment_nodes": 12
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "Newholland60",
+    "body_text": "Two days ago I used a Dr Dennis gross peel pad and then applied the medik8 peptide product right after, totally unaware that it contained glycolic/lactic acid, it’s a new product for me. Honestly upset it’s not listed as an active bc now my face is irritated. I’m stopping the peptide for now but what else can I use to calm down this texture and irritation? Pictured is my routine morning and nite, in that order.",
+    "score_state": "8",
+    "timestamp_state": "2025-10-31T16:33:27.801000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/Skincare_Addiction/comments/1okzd06/damaged_skin_barrier_recs_please/",
+  "thread": {
+    "permalink": "/r/Skincare_Addiction/comments/1okzd06/damaged_skin_barrier_recs_please/",
+    "subreddit": "Skincare_Addiction",
+    "thread_id": "1okzd06",
+    "title": "Damaged skin barrier, recs please!"
+  },
+  "warnings": [
+    "thread declares 13 comments; 12 captured (1 not captured)"
+  ]
+}

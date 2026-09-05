@@ -1,0 +1,360 @@
+{
+  "comment_completeness": {
+    "basis": "shreddit-comment-tree[totalcomments]",
+    "capture_is_complete": false,
+    "captured_matches_declared_total": false,
+    "comments_captured": 25,
+    "comments_not_captured": 10,
+    "continuation_links_not_followed": 0,
+    "continuation_reason": null,
+    "declared_total_comments": 35,
+    "max_captured_depth": 2
+  },
+  "comments": [
+    {
+      "author_state": "wastedspacex",
+      "body_text": "Ok I kid you not that I put it on under my makeup for the first time ever today and on a date with my husband he goes “did you do something different with your face? It looks extra good”",
+      "comment_id": "mkgaez1",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0001",
+      "score_state": "11",
+      "timestamp_state": "2025-03-30T01:38:19.262000+0000"
+    },
+    {
+      "author_state": "wastedspacex",
+      "body_text": "No fragrance. It is definitely a bit sticky/tacky, but I don’t mind it and it sits beautifully under makeup, (wait 10-15 mins after applying) which is when I’m mainly using it right now. I use it in the winter underneath my moisturizer 1-2 times a day. I’ve been using it for years, but kind of forgot about it. Started using it again recently and now I’m like oh ya I love this stuff!",
+      "comment_id": "mkg8bb2",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0002",
+      "score_state": "9",
+      "timestamp_state": "2025-03-30T01:25:11.678000+0000"
+    },
+    {
+      "author_state": "isaidnocookies",
+      "body_text": "Good to know it sits well under makeup! Does it help with flaking/peeling from tret/taz?",
+      "comment_id": "mkgaqgu",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mkg8bb2",
+      "parser_warnings": [],
+      "row_id": "comment_0003",
+      "score_state": "4",
+      "timestamp_state": "2025-03-30T01:40:17.151000+0000"
+    },
+    {
+      "author_state": "wastedspacex",
+      "body_text": "I’m sure it would. Glycerin is amazing for moisturizing.",
+      "comment_id": "mq7fn1h",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "mkgaqgu",
+      "parser_warnings": [],
+      "row_id": "comment_0004",
+      "score_state": "1",
+      "timestamp_state": "2025-05-02T14:53:20.821000+0000"
+    },
+    {
+      "author_state": "MarsailiPearl",
+      "body_text": "How quickly are you going through a bottle when you use 1-2 times a day?",
+      "comment_id": "mkvhk3h",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mkg8bb2",
+      "parser_warnings": [],
+      "row_id": "comment_0005",
+      "score_state": "2",
+      "timestamp_state": "2025-04-01T16:00:19.779000+0000"
+    },
+    {
+      "author_state": "wastedspacex",
+      "body_text": "It goes fast but I only use it on special makeup days now. Depends on how many pumps you use. Can prob get away with even just 1 pump of it. I also like that they sell refills.",
+      "comment_id": "mq7f7tt",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "mkvhk3h",
+      "parser_warnings": [],
+      "row_id": "comment_0006",
+      "score_state": "2",
+      "timestamp_state": "2025-05-02T14:51:19.842000+0000"
+    },
+    {
+      "author_state": "sarahbellah1",
+      "body_text": "Wait - who makes this and why have I never heard of it?! Is it by Experiment Beauty?",
+      "comment_id": "mkgpxhn",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0007",
+      "score_state": "5",
+      "timestamp_state": "2025-03-30T03:20:13.061000+0000"
+    },
+    {
+      "author_state": "wastedspacex",
+      "body_text": "Yes!",
+      "comment_id": "mkguxyx",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mkgpxhn",
+      "parser_warnings": [],
+      "row_id": "comment_0008",
+      "score_state": "1",
+      "timestamp_state": "2025-03-30T03:57:38.724000+0000"
+    },
+    {
+      "author_state": "thefuzzyismine",
+      "body_text": "Yes! It's by Experiment! I have their super saturated, softwear, and buffer jelly and love everything I've tried. Solid brand.",
+      "comment_id": "mkgvgjq",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mkgpxhn",
+      "parser_warnings": [],
+      "row_id": "comment_0009",
+      "score_state": "5",
+      "timestamp_state": "2025-03-30T04:01:42.670000+0000"
+    },
+    {
+      "author_state": "sarahbellah1",
+      "body_text": "Thank you!",
+      "comment_id": "mkh1lks",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "mkgvgjq",
+      "parser_warnings": [],
+      "row_id": "comment_0010",
+      "score_state": "2",
+      "timestamp_state": "2025-03-30T04:51:59.614000+0000"
+    },
+    {
+      "author_state": "Unfair_Finger5531",
+      "body_text": "I've been wavering on this for months. Putting it in and out of the cart. Do you think it would be okay for a super-dry climate? Our humidity is averaging 8-13% lately.",
+      "comment_id": "mkhrx0a",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0011",
+      "score_state": "2",
+      "timestamp_state": "2025-03-30T09:25:52.875000+0000"
+    },
+    {
+      "author_state": "FarSalad7616",
+      "body_text": "That’s what it would be perfect for!!",
+      "comment_id": "mkiiv1o",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mkhrx0a",
+      "parser_warnings": [],
+      "row_id": "comment_0012",
+      "score_state": "2",
+      "timestamp_state": "2025-03-30T13:23:48.984000+0000"
+    },
+    {
+      "author_state": "wastedspacex",
+      "body_text": "Yes agree!",
+      "comment_id": "mkji4zz",
+      "comment_posture": "present",
+      "depth": 2,
+      "parent_id": "mkiiv1o",
+      "parser_warnings": [],
+      "row_id": "comment_0013",
+      "score_state": "1",
+      "timestamp_state": "2025-03-30T16:39:26.473000+0000"
+    },
+    {
+      "author_state": "wastedspacex",
+      "body_text": "What do you think?",
+      "comment_id": "mq7fhqa",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mkhrx0a",
+      "parser_warnings": [],
+      "row_id": "comment_0014",
+      "score_state": "1",
+      "timestamp_state": "2025-05-02T14:52:38.640000+0000"
+    },
+    {
+      "author_state": "isaidnocookies",
+      "body_text": "Tell me more, I’ve had this in my cart for a few days. Is it sticky? Do you use it morning and/or night? Where does it fit in your routine? Does it have fragrance?",
+      "comment_id": "mkg2cra",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0015",
+      "score_state": "4",
+      "timestamp_state": "2025-03-30T00:48:42.157000+0000"
+    },
+    {
+      "author_state": "FarSalad7616",
+      "body_text": "Not OP but I’m a religious user of super saturated. I use it morning and night, on damp skin (over a hydrating toner usually). That helps it feel less sticky. I follow it up immediately with moisturizer. 10/10 I’m never without and have used for years! If you’re ordering, add their lip balm too. Prob the best balm on the market.",
+      "comment_id": "mkg8r1a",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mkg2cra",
+      "parser_warnings": [],
+      "row_id": "comment_0016",
+      "score_state": "11",
+      "timestamp_state": "2025-03-30T01:27:53.321000+0000"
+    },
+    {
+      "author_state": "elisedee",
+      "body_text": "i second, it’s one of the few skincare items i’ve bought 3+ times.",
+      "comment_id": "mkga8a7",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0017",
+      "score_state": "4",
+      "timestamp_state": "2025-03-30T01:37:09.714000+0000"
+    },
+    {
+      "author_state": "wherehasthisbeen",
+      "body_text": "It seems costly is there a less expensive dupe?",
+      "comment_id": "mkibmku",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0018",
+      "score_state": "1",
+      "timestamp_state": "2025-03-30T12:32:38.512000+0000"
+    },
+    {
+      "author_state": "wastedspacex",
+      "body_text": "If you find one let me know! I’m not gonna lie it goes quickly.",
+      "comment_id": "mkiyklb",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mkibmku",
+      "parser_warnings": [],
+      "row_id": "comment_0019",
+      "score_state": "1",
+      "timestamp_state": "2025-03-30T14:56:33.139000+0000"
+    },
+    {
+      "author_state": "wherehasthisbeen",
+      "body_text": "I just purchased this as someone here said it was a great serum. I do love it but I notice my makeup looked odd over it. Like it made my face so shiny that my powder foundation looked greasy on my face . Any way to avoid this?",
+      "comment_id": "mljanzp",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0020",
+      "score_state": "1",
+      "timestamp_state": "2025-04-05T13:15:48.399000+0000"
+    },
+    {
+      "author_state": "wastedspacex",
+      "body_text": "I wait 10 mins before applying my makeup and do a moisturizer over it. I don’t have that issue but everyone’s skin is different. Also make sure face is a smidge damp.",
+      "comment_id": "mq7f06q",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mljanzp",
+      "parser_warnings": [],
+      "row_id": "comment_0021",
+      "score_state": "2",
+      "timestamp_state": "2025-05-02T14:50:18.232000+0000"
+    },
+    {
+      "author_state": "Acrobatic-Win7822",
+      "body_text": "Has anyone else had irritation/sensitivity from this? I want to love it so badly but my sensitive skin doesn’t seem to like it so far (on day 3). I know it’s not the niacinamide because I use to use that at 5% which is more than what’s in SS. My skin barrier just seems damaged from this. Not sure whether to stick with it or pause.",
+      "comment_id": "mv4htaf",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0022",
+      "score_state": "1",
+      "timestamp_state": "2025-05-30T19:39:43.518000+0000"
+    },
+    {
+      "author_state": "wastedspacex",
+      "body_text": "Don’t ever stick with something that your skin doesn’t tolerate.",
+      "comment_id": "mvcf7ud",
+      "comment_posture": "present",
+      "depth": 1,
+      "parent_id": "mv4htaf",
+      "parser_warnings": [],
+      "row_id": "comment_0023",
+      "score_state": "1",
+      "timestamp_state": "2025-06-01T01:44:58.807000+0000"
+    },
+    {
+      "author_state": "SpecialParticularRS",
+      "body_text": "Is it only for sale from their website? Doesn’t seem to be easy to get in Europe 😞",
+      "comment_id": "mkgxqfn",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0024",
+      "score_state": "2",
+      "timestamp_state": "2025-03-30T04:19:57.228000+0000"
+    },
+    {
+      "author_state": "jell0fiend",
+      "body_text": "I wanted to try this but I’m unsure if I’m sensitive to niacinamide or not 😅",
+      "comment_id": "mkgzp4j",
+      "comment_posture": "present",
+      "depth": 0,
+      "parent_id": null,
+      "parser_warnings": [],
+      "row_id": "comment_0025",
+      "score_state": "1",
+      "timestamp_state": "2025-03-30T04:36:09.912000+0000"
+    }
+  ],
+  "counts": {
+    "comment_postures": {
+      "present": 25
+    },
+    "comments_parsed": 25,
+    "observable_comment_nodes": 25
+  },
+  "limitations": [
+    "www_thread_declared_total_is_not_independent_completeness_oracle"
+  ],
+  "non_claims": [
+    "not validation",
+    "not readiness",
+    "not Reddit source completeness proof",
+    "not live Reddit capture",
+    "not Reddit monitoring",
+    "not source discovery",
+    "not broad crawling",
+    "not storage, database, queue, scheduler, dashboard, or export corpus",
+    "not commercial API behavior",
+    "not source-quality scoring",
+    "not fixture admission",
+    "not canonical source body",
+    "not ECR design",
+    "not Cleaning implementation",
+    "not Judgment scoring or judgment-quality evidence"
+  ],
+  "parser_version": "www-3",
+  "post": {
+    "author_state": "wastedspacex",
+    "body_text": "Dewy glowy skin and saves moisture barrier",
+    "score_state": "26",
+    "timestamp_state": "2025-03-30T00:38:59.965000+0000"
+  },
+  "record_kind": "reddit_thread_content_v0",
+  "source_url": "https://www.reddit.com/r/tretinoin/comments/1jn0nvd/dont_sleep_on_super_saturated_serum/",
+  "thread": {
+    "permalink": "/r/tretinoin/comments/1jn0nvd/dont_sleep_on_super_saturated_serum/",
+    "subreddit": "tretinoin",
+    "thread_id": "1jn0nvd",
+    "title": "Don’t sleep on Super Saturated Serum"
+  },
+  "warnings": [
+    "thread declares 35 comments; 25 captured (10 not captured)"
+  ]
+}
