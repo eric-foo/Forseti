@@ -9,6 +9,7 @@ claim that any documented result has been reproduced.
 
 | Need | Open |
 | --- | --- |
+| Measure complete tasks and extraction runs, compare matched quality-bound observations, or inspect repository size | `forseti_efficiency_measurement_v0.md` |
 | Compare the five September efficiency changes with their baseline, dogfood results and limits | `forseti_efficiency_implementation_dogfood_2026_09_05_v0.md` |
 | Read the 2026-09-05 repository efficiency audit, measured local costs, and revalidated change candidates | `forseti_repo_efficiency_audit_2026_09_05_v0.md` |
 | Follow the active five-fix tool-calling improvement sequence and its dogfood gates | `tool_calling_efficiency_improvement_sequence_2026_07_15_v0.md` |

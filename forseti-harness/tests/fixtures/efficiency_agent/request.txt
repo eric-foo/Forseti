@@ -1,0 +1,6 @@
+This is an isolated, disposable code exercise. Fix only task.py so unique_in_order
+returns first occurrences in input order, supports unhashable values and iterators,
+and leaves its input unchanged. Run python oracle.py and report the result.
+Preserve oracle.py and all other files exactly. Do not delegate, access the network,
+publish, create a branch/worktree, or modify anything outside this exercise directory.
+The exercise ends when this one behavior is correct and its check has passed.

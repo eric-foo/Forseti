@@ -140,15 +140,16 @@ POLICY_MODULE_PINS: dict[str, tuple[tuple[str, ...], str]] = {
     ),
     "cleaning/transcript_product_extractor.py": (
         ("EXTRACTOR_RUBRIC_VERSION",),
-        # Output-neutral lazy per-parse quote-index reuse; rubric, prompt, and output policy unchanged.
-        "e15b92734abbc6764bf996e8566f70d598955b848e58ea188b57febe883f112b",
+        # Output-neutral operational timing/usage sidecars; prompt, rubric and derived bytes unchanged.
+        "45b2ec3700c13c61e91cca7f4ed7e3eb73c14f6bd7bc757baf2dacd40f87b8d2",
     ),
     "cleaning/transcript_product_lake.py": (
         ("EXTRACTOR_RUBRIC_VERSION (cleaning/transcript_product_extractor.py)", "PRODUCT_MENTIONS_RECORD_SCHEMA_VERSION (record-shape token; weak-envelope residual closed)"),
         # Output-shaping: the official Silver envelope is retained, while durable
         # record/completion identity now binds the full policy fingerprint; the
         # PRODUCT_MENTIONS_RECORD_SCHEMA_VERSION bump to v2 re-surfaces V1 records.
-        "6885729bc1b5bee6b250ce2d40f4b3bd7ca66e225fbbc6cc3c6c5649dd1afbef",
+        # Output-neutral operational sidecar and marker readback; versions unchanged.
+        "20e83d91cbfdf31469aefc101e3f077c160daa5ad74b94507cc4ab44b52f1297",
     ),
     "ecr/deriver.py": (
         ("ECR_DERIVER_VERSION",),
