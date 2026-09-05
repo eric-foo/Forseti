@@ -319,8 +319,8 @@ prepare-evidence-selection
      (deterministically copies each selected row's complete bound source body)
 ```
 
-When that frontier-bound non-value point expands to a large axis pool, use the
-named batch route at both model boundaries:
+For complete literal-frontier points as well as historical expanded non-value
+axis pools, use the named batch route at both model boundaries when needed:
 
 ```text
 prepare-evidence-selection-batches
@@ -334,9 +334,15 @@ prepare-evidence-selection-batches
 
 Both batch manifests bind contiguous complete row coverage and each response's
 own batch identity. Batching is transport only: it changes neither candidate
-admission nor the thirteen-origin cap. The second batching step is required at
-full-axis scale; sending hundreds of confirmation rows as one open array would
-recreate the truncation surface that named relation batches closed.
+admission nor the source-bound origin count. Both preparation commands default
+`--max-request-bytes` to 50000 for the actual UTF-8 prompt plus compact response
+schema; `--batch-size` separately bounds required row decisions. Prepare the
+whole current stage before launching its calls. Preparation splits the complete
+inventory and rejects a single row that cannot fit, without truncation. Prepare
+confirmation the same way once its required first-pass decisions exist; it is
+not valid to bound only the first pass. This is not a response-token estimate or
+a guarantee about hidden service context. Finalize the complete confirmations
+through the native full-source reader before claiming the point is complete.
 
 When calls may run concurrently or be retried and their individual outputs or
 token use matter to the run's proof, each call is an immutable attempt. Before
@@ -424,6 +430,11 @@ replay and `--authoring-revision legacy` for older normal prompt/schema replay;
 low-level Python callers select `RECONCILIATION_AUTHORING_IDENTITY_V2` explicitly
 for current generation. Explicit response-v2 and older-method public defaults,
 missing-definition requests and local repairs keep their historical behavior.
+For a verified method-v7 continuation, explicitly request response v3 on a fresh
+stage to use that same decision compiler, source-role guidance and identity-v2
+packing. Preserve the method-v7 input identity and historical attempts. This
+removes exact source copying from the model's work without weakening claim-kind
+competence or pretending that a new prompt was used for an old answer.
 Preserve each accepted response's actual attempt and correction provenance;
 never rebind it to a newly rendered unused request. The semantic-integration
 contract v104 owns this normal-authoring boundary. Semantic preservation and
@@ -1077,9 +1088,12 @@ actually admitted the point without treating quiet engagement as resonance.
 Every eligible frontier-defining candidate is a mandatory display row and its
 origin is reserved before ordinary cap allocation. Fresh complete-frontier
 specs raise the ordinary thirteen-origin cap only to the exact number of bound
-truth origins the point requires, up to forty, and hash-bind that cap. A point
-requiring more than forty fails at `presentation_cap_insufficient` before
-provider work instead of silently skipping quote review.
+truth origins the point requires and hash-bind that cap. A point
+requiring more than forty instead derives its exact complete cap from the bound
+source packet: scope, every admitted relation and origin count must match at
+preparation and source loading. Arbitrary selections retain the ordinary
+ceiling. Bound the provider requests as described above; no source origin is
+dropped merely to fit a request or a historical display ceiling.
 Other origins with no operator-protected lane and no material positive
 source-native engagement remain ineligible, and value-first also excludes an
 otherwise material adjacent origin.

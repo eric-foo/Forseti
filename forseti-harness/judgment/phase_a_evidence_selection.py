@@ -715,11 +715,8 @@ def selection_spec_from_customer_pull_frontier(
         }
     )
     truth_group_cap = max(MAX_TRUTH_GROUPS, point_truth_origin_count)
-    if truth_group_cap > MAX_CONFIGURABLE_TRUTH_GROUPS:
-        raise EvidenceConsumerError(
-            "presentation_cap_insufficient",
-            "frontier point requires more truth origins than the supported point cap",
-        )
+    # Complete points own their evidence cardinality. Preparation rederives
+    # larger caps from the packet instead of imposing the ordinary selection cap.
     # A complete frontier already carries the exact support, counter, and
     # adjacent semantic refs that own this bounded point. Reopening the whole
     # product/axis pool for every point repeats unrelated evidence quadratically
@@ -2026,7 +2023,10 @@ def _relation_schema(
 ) -> dict[str, Any]:
     positional = response_mode == "positional"
     if batch_id is not None and not positional:
-        raise ValueError("only a positional relation schema can bind a batch id")
+        schema = _relation_schema(value_policy=value_policy, response_mode=response_mode, candidate_count=candidate_count)
+        schema["properties"]["batch_id"] = {"type": "string", "enum": [batch_id]}
+        schema["required"].append("batch_id")
+        return schema
     if positional:
         if candidate_count is None or candidate_count < 1:
             raise ValueError("positional relation schema needs a candidate count")
@@ -2421,6 +2421,40 @@ def _validate_customer_pull_frontier_spec_binding(
         )
 
 
+def _validate_complete_frontier_cap(spec, sources):
+    """Ground a complete-point cap in source evidence, not self-stamped hashes."""
+    binding = spec["customer_pull_frontier_binding"]
+    matched = [source for source in sources
+        if source["packet"].get("packet_sha256") == binding.get("packet_sha256")]
+    if len(matched) != 1:
+        raise EvidenceConsumerError("customer_pull_frontier_binding", "complete point needs one exact source")
+    source = matched[0]; packet = source["packet"]; source_id = source["source_id"]
+    points = [row for row in packet.get("propositions", [])
+        if row.get("proposition_id") == binding.get("proposition_id")]
+    if len(points) != 1 or (
+        points[0].get("bounded_proposition") != spec.get("bounded_claim")
+        or set(points[0].get("subject_product_ids") or []) != set(spec.get("subject_product_ids") or [])
+    ):
+        raise EvidenceConsumerError("customer_pull_frontier_binding", "complete point scope differs from source")
+    relations = _relation_rows(packet, binding["proposition_id"])
+    expected = {(source_id, row["semantic_unit_ref"]) for row in relations}
+    admitted = {(row["source_id"], row["semantic_unit_ref"]) for row in spec.get("admit_semantic_refs") or []}
+    if admitted != expected or len(admitted) != len(spec.get("admit_semantic_refs") or []):
+        raise EvidenceConsumerError("customer_pull_frontier_binding", "complete point must admit every exact source relation")
+    rejected = {(row["source_id"], row["semantic_unit_ref"])
+        for row in spec.get("frontier_relation_rejections") or []}
+    evidence, _ = _expand_packet(packet)
+    origins = set()
+    for row in relations:
+        if (source_id, row["semantic_unit_ref"]) in rejected:
+            continue
+        group, item = evidence[row["evidence_id"]]
+        if group["source_role"] in TRUTH_ROLES:
+            origins.add(item.get("independence_key") or row["evidence_id"])
+    if spec["truth_group_cap"] != max(MAX_TRUTH_GROUPS, len(origins)):
+        raise EvidenceConsumerError("customer_pull_frontier_binding", "complete point cap differs from source origins")
+
+
 def _temporal_presentation_policy(spec: Mapping[str, Any]) -> str | None:
     policy = spec.get("temporal_presentation_policy")
     if policy is None:
@@ -2453,6 +2487,8 @@ def prepare_evidence_selection(
             raise EvidenceConsumerError("bundle_verification", "packet/bundle hash mismatch")
         _verify_bundle(bundle)
     _validate_customer_pull_frontier_spec_binding(spec, sources)
+    if spec.get("truth_group_cap", MAX_TRUTH_GROUPS) > MAX_CONFIGURABLE_TRUTH_GROUPS:
+        _validate_complete_frontier_cap(spec, sources)
     candidates = _candidate_rows(sources, spec)
     actor_scope = _point_actor_scope(spec, candidates)
     value_policy = _uses_value_policy(spec, candidates)
@@ -2539,6 +2575,7 @@ def prepare_evidence_selection_batches(
     sources: Sequence[Mapping[str, Any]],
     *,
     batch_size: int,
+    max_request_bytes: int | None = None,
 ) -> tuple[dict[str, Any], list[tuple[str, dict[str, Any]]]]:
     if (
         isinstance(batch_size, bool)
@@ -2550,11 +2587,18 @@ def prepare_evidence_selection_batches(
             "selection_spec",
             f"relation batch size must be an integer from 1 to {MAX_RELATION_BATCH_SIZE}",
         )
-    if _relation_response_mode(spec) != "positional":
+    response_mode = _relation_response_mode(spec)
+    if response_mode != "positional" and not (
+        spec.get("relation_policy") == "bounded_point"
+        and (spec.get("customer_pull_frontier_binding") or {}).get("candidate_admission") == "literal_point_relations"
+    ):
         raise EvidenceConsumerError(
             "selection_spec", "relation batching requires positional response mode"
         )
     _, _, selection_manifest = prepare_evidence_selection(spec, sources)
+    if max_request_bytes is not None and (isinstance(max_request_bytes, bool)
+        or not isinstance(max_request_bytes, int) or max_request_bytes < 1000):
+        raise EvidenceConsumerError("selection_spec", "max_request_bytes must be an integer of at least 1000")
     candidates = _candidate_rows(sources, spec)
     value_policy = _uses_value_policy(spec, candidates)
     if value_policy:
@@ -2569,12 +2613,16 @@ def prepare_evidence_selection_batches(
     # a whole rejected.
     policy_guidance = _policy_guidance(spec, candidates)
     actor_scope = _point_actor_scope(spec, candidates)
-    for batch_index, start in enumerate(range(0, len(candidates), batch_size), start=1):
-        subset = candidates[start : start + batch_size]
+    start = 0
+    count = min(batch_size, len(candidates))
+    while start < len(candidates):
+        batch_index = len(batches) + 1
+        subset = candidates[start : start + count]
         batch_id = f"batch_{batch_index:04d}"
         envelope = _relation_prompt_envelope(spec, subset, batch_id=batch_id, actor_scope=actor_scope)
         prompt = RELATION_PROMPT.format(
-            response_instruction=BATCHED_RELATION_RESPONSE_INSTRUCTION,
+            response_instruction=(BATCHED_RELATION_RESPONSE_INSTRUCTION if response_mode == "positional"
+                else LITERAL_RELATION_RESPONSE_INSTRUCTION + " Return the exact batch_id from the envelope."),
             reason_instruction="",
             relation_definitions=(
                 BOUNDED_POINT_RELATION_DEFINITIONS
@@ -2586,10 +2634,16 @@ def prepare_evidence_selection_batches(
         )
         schema = _relation_schema(
             value_policy=False,
-            response_mode="positional",
+            response_mode=response_mode,
             candidate_count=len(subset),
             batch_id=batch_id,
         )
+        request_bytes = len(prompt.encode("utf-8")) + len(_compact(schema).encode("utf-8"))
+        if max_request_bytes is not None and request_bytes > max_request_bytes:
+            if len(subset) == 1:
+                raise EvidenceConsumerError("request_capacity", "one complete candidate and its schema exceed max_request_bytes; no evidence was truncated")
+            count = max(1, len(subset) // 2)
+            continue
         batches.append(
             {
                 "batch_id": batch_id,
@@ -2603,6 +2657,8 @@ def prepare_evidence_selection_batches(
             }
         )
         prompts_and_schemas.append((prompt, schema))
+        start += len(subset)
+        count = min(batch_size, len(candidates) - start)
     batch_manifest = {
         "schema_version": SELECTION_BATCH_MANIFEST_VERSION,
         "selection_manifest": selection_manifest,
@@ -2615,6 +2671,8 @@ def prepare_evidence_selection_batches(
         "batches": batches,
         "model_api_calls": 0,
     }
+    if max_request_bytes is not None:
+        batch_manifest["max_request_bytes"] = max_request_bytes
     batch_manifest["manifest_sha256"] = _canonical_json_sha256(batch_manifest)
     return batch_manifest, prompts_and_schemas
 
@@ -2696,7 +2754,7 @@ def validate_evidence_selection_batch_response(
         subset,
         response,
         value_policy=False,
-        response_mode="positional",
+        response_mode=_relation_response_mode(selection_manifest["spec"]),
         batch_id=batch_id,
     )
     return {
@@ -2709,11 +2767,18 @@ def validate_evidence_selection_batch_response(
 
 def _truth_group_cap(spec: Mapping[str, Any]) -> int:
     cap = spec.get("truth_group_cap", MAX_TRUTH_GROUPS)
+    binding = spec.get("customer_pull_frontier_binding")
+    complete_point = isinstance(binding, Mapping) and (
+        binding.get("candidate_admission") == "literal_point_relations"
+        and binding.get("truth_group_cap_sha256") == _canonical_json_sha256(cap)
+        and not spec.get("axis_ids")
+        and binding.get("relation_policy") == "bounded_point"
+    )
     if (
         isinstance(cap, bool)
         or not isinstance(cap, int)
         or cap < 1
-        or cap > MAX_CONFIGURABLE_TRUTH_GROUPS
+        or (cap > MAX_CONFIGURABLE_TRUTH_GROUPS and not complete_point)
     ):
         raise EvidenceConsumerError(
             "selection_spec",
@@ -2748,6 +2813,10 @@ def load_selection_sources(manifest: Mapping[str, Any]) -> list[dict[str, Any]]:
         if packet.get("packet_sha256") != row["packet_sha256"] or bundle.get("bundle_sha256") != row["bundle_sha256"]:
             raise EvidenceConsumerError("manifest_verification", "bound source identity changed")
         sources.append({**row, "packet": packet, "bundle": bundle, "packet_path": packet_path, "bundle_path": bundle_path})
+    if manifest["spec"].get("truth_group_cap", MAX_TRUTH_GROUPS) > MAX_CONFIGURABLE_TRUTH_GROUPS:
+        _truth_group_cap(manifest["spec"])
+        _validate_customer_pull_frontier_spec_binding(manifest["spec"], sources)
+        _validate_complete_frontier_cap(manifest["spec"], sources)
     candidates = _candidate_rows_for_manifest(sources, manifest)
     if _canonical_json_sha256(candidates) != manifest.get("candidate_inventory_sha256"):
         raise EvidenceConsumerError("manifest_verification", "candidate inventory changed")
@@ -3796,7 +3865,10 @@ def _validate_relation_response(
                 }
             )
     else:
-        if set(response) != {"results"} or not isinstance(response.get("results"), list):
+        expected_keys = {"results"} if batch_id is None else {"results", "batch_id"}
+        if batch_id is not None and response.get("batch_id") != batch_id:
+            raise EvidenceConsumerError("relation_batch_identity", "relation response carries a different batch identity")
+        if set(response) != expected_keys or not isinstance(response.get("results"), list):
             raise EvidenceConsumerError("relation_response_shape", "results missing")
         results = response["results"]
         observed = [row.get("candidate_id") for row in results if isinstance(row, dict)]
@@ -4752,7 +4824,9 @@ def _assemble_batched_relation_response(
         raise EvidenceConsumerError(
             "missing_relation_batch", "relation batch response set changed"
         )
+    response_mode = _relation_response_mode(selection_manifest["spec"])
     full_results = {}
+    literal_results = []
     expected_start = 0
     for batch in batches:
         batch_id = batch["batch_id"]
@@ -4775,9 +4849,10 @@ def _assemble_batched_relation_response(
             subset,
             responses[batch_id],
             value_policy=False,
-            response_mode="positional",
+            response_mode=response_mode,
             batch_id=batch_id,
         )
+        literal_results.extend({key: row[key] for key in ("candidate_id", "relation", "reason_code")} for row in validated)
         full_results.update(
             {
                 f"row_{start + local_index:04d}": row["relation"]
@@ -4790,7 +4865,7 @@ def _assemble_batched_relation_response(
             "manifest_verification", "relation batch coverage is incomplete"
         )
     transport = {
-        "mode": "named_positional_batches",
+        "mode": "named_positional_batches" if response_mode == "positional" else "named_literal_batches",
         "batch_manifest_sha256": batch_manifest["manifest_sha256"],
         "batch_count": len(batches),
         "batch_response_sha256": {
@@ -4800,7 +4875,7 @@ def _assemble_batched_relation_response(
     }
     return (
         dict(selection_manifest),
-        {"results_by_candidate_row": full_results},
+        {"results_by_candidate_row": full_results} if response_mode == "positional" else {"results": literal_results},
         transport,
     )
 
@@ -4830,6 +4905,7 @@ def prepare_batched_preselection_relation_confirmations(
     *,
     batch_size: int,
     include_relation_refs: bool = True,
+    max_request_bytes: int | None = None,
 ) -> tuple[dict[str, Any], list[tuple[str, dict[str, Any]]]]:
     if (
         isinstance(batch_size, bool)
@@ -4841,6 +4917,9 @@ def prepare_batched_preselection_relation_confirmations(
             "selection_spec",
             f"confirmation batch size must be an integer from 1 to {MAX_RELATION_BATCH_SIZE}",
         )
+    if max_request_bytes is not None and (isinstance(max_request_bytes, bool)
+        or not isinstance(max_request_bytes, int) or max_request_bytes < 1000):
+        raise EvidenceConsumerError("selection_spec", "max_request_bytes must be an integer of at least 1000")
     selection_manifest, first_response, relation_transport = (
         _assemble_batched_relation_response(batch_manifest, sources, responses)
     )
@@ -4858,10 +4937,11 @@ def prepare_batched_preselection_relation_confirmations(
     batches = []
     _, _, point_context_rows = _project_parent_context(candidates)
     actor_scope = _point_actor_scope(selection_manifest["spec"], candidates)
-    for batch_index, start in enumerate(
-        range(0, len(presentation), batch_size), start=1
-    ):
-        subset = presentation[start : start + batch_size]
+    start = 0
+    count = min(batch_size, len(presentation))
+    while start < len(presentation):
+        batch_index = len(batches) + 1
+        subset = presentation[start : start + count]
         confirmation_batch_id = f"confirmation_batch_{batch_index:04d}"
         context_aware, columns, rows, context_rows = _confirmation_prompt_projection(
             subset,
@@ -4913,6 +4993,12 @@ def prepare_batched_preselection_relation_confirmations(
                 else None
             ),
         )
+        request_bytes = len(prompt.encode("utf-8")) + len(_compact(schema).encode("utf-8"))
+        if max_request_bytes is not None and request_bytes > max_request_bytes:
+            if len(subset) == 1:
+                raise EvidenceConsumerError("request_capacity", "one complete confirmation candidate and its schema exceed max_request_bytes; no evidence was truncated")
+            count = max(1, len(subset) // 2)
+            continue
         batches.append(
             {
                 "batch_id": confirmation_batch_id,
@@ -4927,6 +5013,8 @@ def prepare_batched_preselection_relation_confirmations(
             }
         )
         prompts_and_schemas.append((prompt, schema))
+        start += len(subset)
+        count = min(batch_size, len(presentation) - start)
     confirmation_batch_manifest = {
         "schema_version": (
             PRESELECTION_CONFIRMATION_BATCH_MANIFEST_VERSION
@@ -4946,6 +5034,8 @@ def prepare_batched_preselection_relation_confirmations(
     }
     if include_relation_refs:
         confirmation_batch_manifest["relation_binding_required"] = True
+    if max_request_bytes is not None:
+        confirmation_batch_manifest["max_request_bytes"] = max_request_bytes
     confirmation_batch_manifest["manifest_sha256"] = _canonical_json_sha256(
         confirmation_batch_manifest
     )
@@ -4970,6 +5060,7 @@ def _finalize_batched_preselection_relation_confirmations_prepare_quotes(
         responses,
         batch_size=confirmation_batch_manifest.get("batch_size"),
         include_relation_refs=include_relation_refs,
+        max_request_bytes=confirmation_batch_manifest.get("max_request_bytes"),
     )
     if dict(confirmation_batch_manifest) != expected_manifest:
         raise EvidenceConsumerError(

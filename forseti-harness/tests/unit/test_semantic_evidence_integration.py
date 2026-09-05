@@ -2581,6 +2581,47 @@ def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: 
         validate_reconciliation_stage(bundle, stage, response)
 
 
+def test_explicit_v7_decision_authoring_preserves_source_and_legacy_replay():
+    bundle = build_bundle(_source_v7(count=2), max_prompt_bytes=30_000)
+    responses = _v5_responses(bundle, detailed_per_batch=2)
+    compiled = validate_batch_responses(bundle, responses)
+    verification, _ = prepare_row_verification(bundle, compiled)
+    verified = apply_row_verification(bundle, compiled, verification, _row_verification_responses(verification))
+    legacy = prepare_reconciliation_stage(bundle, verified)
+    stage, prompts = prepare_reconciliation_stage(bundle, verified,
+        response_version=semantic_module.RECONCILIATION_RESPONSE_VERSION_V3)
+    assert bundle['method_version'] == METHOD_VERSION_V7
+    assert 'TERMINAL_SOURCE_ROLE_COMPETENCE' in prompts[0]['prompt']
+    assert 'source_roles_by_relation' in prompts[0]['prompt']
+    assert prompts[0]['response_schema']['properties']['schema_version']['const'] == semantic_module.RECONCILIATION_RESPONSE_VERSION_V3
+    old = _singleton_reconciliation_responses(stage)[0]
+    owned = {'subject_product_ids', 'comparator_product_ids', 'product_version_ids',
+        'conditions', 'polarity', 'emerging_axis_labels', 'child_relations'}
+    decisions = {ref: {'attachments': [], 'unmerged_reason': None} for ref in stage['batches'][0]['candidate_refs']}
+    for node in old['semantic_nodes']:
+        for relation in node['child_relations']:
+            decisions[relation['child_ref']]['attachments'].append({
+                'semantic_node_key': node['semantic_node_key'], 'relation': relation['relation']})
+    response = dict(schema_version=semantic_module.RECONCILIATION_RESPONSE_VERSION_V3,
+        stage_sha256=stage['stage_sha256'], batch_id=old['batch_id'],
+        semantic_nodes=[{k:v for k,v in node.items() if k not in owned} for node in old['semantic_nodes']],
+        decisions_by_candidate_ref=decisions,
+        emerging_axis_consolidations=[{k:v for k,v in group.items() if k != 'original_labels'} for group in old['emerging_axis_consolidations']],
+        assignments_by_original_label={label:group['candidate_key'] for group in old['emerging_axis_consolidations'] for label in group['original_labels']})
+    result = validate_reconciliation_stage(bundle, stage, [response])
+    assert result == validate_reconciliation_stage(bundle, stage, [old])
+    assert prepare_reconciliation_stage(bundle, verified) == legacy
+    bad = deepcopy(response)
+    del bad['decisions_by_candidate_ref'][next(iter(decisions))]
+    with pytest.raises(SemanticIntegrationError, match='candidate decisions'):
+        validate_reconciliation_stage(bundle, stage, [bad])
+    bad = deepcopy(response)
+    bad['semantic_nodes'][0].update(terminal_proposition=True, claim_kind='observable_fact',
+        causal_ceiling='descriptive_only', opposition_checked=True)
+    with pytest.raises(SemanticIntegrationError, match='incompetent for observable_fact'):
+        validate_reconciliation_stage(bundle, stage, [bad])
+
+
 def _decision_reconciliation_fixture(count=2):
     source = _source_v10(count=count)
     source["semantic_method_version"] = semantic_module.METHOD_VERSION_V12
