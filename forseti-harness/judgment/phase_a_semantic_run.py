@@ -604,7 +604,13 @@ def prepare_serp_source_frontier_inventory(
         "row_inventory": row_inventory,
         "review_instruction": (
             "A capable agent reads every row by meaning and supplies exactly one "
-            "routed, duplicate, or excluded classification with a reason."
+            "routed or excluded decision with a reason; duplicate routes are derived. "
+            "An exclusion reason names why this exact row cannot change the "
+            "commissioned decision or a named axis. Missing URLs, snippet-only "
+            "status and non-promotion are not exclusion bases: material unresolved "
+            "leads remain routed to capture or locator recovery. No field here is "
+            "checkable evidence that the reading happened; the final semantic "
+            "source review is what tests these reasons against the rows."
         ),
         "model_api_calls": 0,
     }
@@ -733,6 +739,10 @@ def materialize_serp_source_frontier_review(
     review = _load_json_object(review_path, label="SERP source semantic review")
     if inventory.get("schema_version") != "phase_a_serp_source_inventory_v1":
         raise SemanticIntegrationError("SERP source inventory has wrong version")
+    if inventory.get("inventory_sha256") != _canonical_hash(
+        {key: value for key, value in inventory.items() if key != "inventory_sha256"}
+    ):
+        raise SemanticIntegrationError("SERP source inventory has stale content hash")
     if review.get("schema_version") != "phase_a_serp_source_review_v1":
         raise SemanticIntegrationError("SERP source review has wrong version")
     if review.get("inventory_sha256") != inventory.get("inventory_sha256"):
