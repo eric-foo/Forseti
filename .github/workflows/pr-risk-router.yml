@@ -148,14 +148,23 @@ jobs:
             reason_text=$(printf '%s\n' "${reasons[@]}" | sed 's/^/- /')
           fi
 
-          files_text=$(jq -r '.[] | "- `" + .filename + "` (" + .status + ", +" + (.additions|tostring) + "/-" + (.deletions|tostring) + ")"' <<<"$files_json")
+          # Bound presentation only: classification above still consumes every file.
+          summarize_paths() {
+            awk '
+              length($0) + used + 1 <= 4000 { print; used += length($0) + 1; next }
+              { omitted++ }
+              END { if (omitted) printf "- ... %d additional entries; see the full diff.\n", omitted }
+            '
+          }
+
+          files_text=$(jq -r '.[] | "- `" + .filename + "` (" + .status + ", +" + (.additions|tostring) + "/-" + (.deletions|tostring) + ")"' <<<"$files_json" | summarize_paths)
           if [ -n "$protected_files" ]; then
-            protected_text=$(printf '%s\n' "$protected_files" | sed 's/^/- `/; s/$/`/')
+            protected_text=$(printf '%s\n' "$protected_files" | sed 's/^/- `/; s/$/`/' | summarize_paths)
           else
             protected_text="- none"
           fi
           if [ -n "$outside_low_risk" ]; then
-            outside_text=$(printf '%s\n' "$outside_low_risk" | sed 's/^/- `/; s/$/`/')
+            outside_text=$(printf '%s\n' "$outside_low_risk" | sed 's/^/- `/; s/$/`/' | summarize_paths)
           else
             outside_text="- none"
           fi
@@ -198,6 +207,8 @@ jobs:
           **Changed files**
           $files_text
 
+          Path lists are bounded previews. [Full changed-file diff](https://github.com/$REPO/pull/$pr/files).
+
           Boundary: this is deterministic routing, not approval, validation, review acceptance, or a claim that the PR is safe to merge. Unattended auto-merge still requires green CI, mergeability, up-to-date head, same-repo head, non-draft state, \`agent-automerge\`, and \`$AUTO_LABEL\`. A \`$MANUAL_LABEL\` PR remains ineligible for the unattended bot, but the completed lane author may use the separately guarded in-session route after its required completion/review gates close."
 
           case "$decision" in
@@ -218,10 +229,13 @@ jobs:
 
           comment_id=$(gh api --paginate "repos/$REPO/issues/$pr/comments" \
             --jq ".[] | select(.body | startswith(\"$COMMENT_MARKER\")) | .id" | tail -n 1)
+          comment_file=$(mktemp)
+          trap 'rm -f -- "$comment_file"' EXIT
+          printf '%s\n' "$body" >"$comment_file"
           if [ -n "$comment_id" ]; then
-            gh api --method PATCH "repos/$REPO/issues/comments/$comment_id" -f body="$body" >/dev/null
+            gh api --method PATCH "repos/$REPO/issues/comments/$comment_id" -F "body=@$comment_file" >/dev/null
           else
-            gh pr comment "$pr" --repo "$REPO" --body "$body" >/dev/null
+            gh pr comment "$pr" --repo "$REPO" --body-file "$comment_file" >/dev/null
           fi
 
           echo "Routed PR #$pr as $decision"
