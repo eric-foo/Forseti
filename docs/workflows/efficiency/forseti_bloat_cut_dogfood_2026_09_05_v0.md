@@ -18,8 +18,11 @@ maintenance reduction with no claimed overall token or runtime speed gain.
 
 Baseline is `6d62b05aef99d541110b818157ec0ca10b85c305`. The tested reading-route
 candidate is `6371e82fdb873cf41a8b172ac81cf2d3546f8292`. That intermediate commit
-is experimental evidence, not the final accepted route. Final CSB README,
-Prompt Structure and playbook bytes equal baseline. The adjacent
+is experimental evidence, not the final accepted route. Before integrating main, the CSB README, Prompt Structure and playbook were
+restored exactly to the experimental baseline. Main then advanced to
+`70f295561e20e9dc478985041850cf2b5e6bcfc1` with separate collection-completion
+changes. Those were merged unchanged; this lane makes no net change to those
+three route documents against that integration base. The adjacent
 `forseti_bloat_cut_dogfood_2026_09_05_evidence.json` preserves native usage,
 source identities, original checker failures, frozen cases/checker/collector,
 recovery observations and retained behavior hashes. Open it only to inspect
@@ -38,9 +41,11 @@ state belong to the PR containing this record, not this dated report.
 
 Gross retirement is **455 files and 12,474,850 logical bytes**. The code and
 necessary tests remove a further 4,207 LF-normalized bytes (8,071 bytes from
-implementation code alone). Final tracked census, including this report and
-its evidence: **4,059 files / 180,820,074 bytes**, versus **4,512 /
-193,018,389 bytes** at baseline: **12,198,315 bytes (6.32%) net less**.
+implementation code alone). Final tracked census, including this report and its evidence: **4,059 files /
+180,849,895 bytes**, versus **4,512 / 193,047,491 bytes** at the integration base:
+**12,197,596 bytes (6.32%) net less**. The original experimental baseline
+contained 4,512 files / 193,018,389 bytes; the integration-base comparison
+excludes the unrelated changes that landed during this task.
 These are logical Git blob sizes summed by path, not filesystem allocation.
 Git history is retained; identical blob objects were already shared. This
 does not reclaim old Git objects or promise a smaller full-history clone.
@@ -157,8 +162,9 @@ output-neutral policy version. The 47 broader-test warnings were existing
 
 CSB validation observed 109 passing unit tests and a passing validator selftest.
 The complete standalone Prompt Body and append-only changelog content remained
-unchanged during the trial. After rejection, all three route documents match
-baseline and the retained manifest owner anchor resolves. Strict harness
+unchanged during the trial. After rejection, all three route documents matched the experimental
+baseline; after main integration they match the integration base. The retained
+manifest owner anchor resolves. Strict harness
 coupling preflight passed; this is not a full-suite claim. The PR's required
 CI is the broad integration gate and must be read at its actual final head.
 
