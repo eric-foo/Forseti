@@ -15,6 +15,8 @@ helpers, and three authority-mirror cuts. Reject the added CSB reading routes:
 their preparation costs increased in both Understanding cases, and the frozen
 quality checker did not establish equivalent quality. This is a storage and
 maintenance reduction with no claimed overall token or runtime speed gain.
+The retirement also exposed a PR risk-comment overflow; the necessary landing
+repair bounds displayed path lists while preserving complete classification.
 
 Baseline is `6d62b05aef99d541110b818157ec0ca10b85c305`. The tested reading-route
 candidate is `6371e82fdb873cf41a8b172ac81cf2d3546f8292`. That intermediate commit
@@ -36,14 +38,15 @@ state belong to the PR containing this record, not this dated report.
 | Historical migration review payload | Retire 451 normalized snapshots and `diff_u80.patch`: 452 files, 11,108,304 logical bytes. | Keep the packet recovery README, nine manifests, original review prompt and findings. Recover exact committed bytes from the pinned base. |
 | Three duplicate screenshot aliases | Retire 1,366,546 bytes across three `visible_chrome_attempt` images. | Corresponding cited `visible_chrome_before_download` images have identical Git blobs and remain. |
 | Runner acknowledgements | Ten runners use the existing consumption module's shared `ack_packet`. | Lane namespaces, collision/idempotence behavior, failure propagation and persisted acknowledgement bytes remain equivalent. |
+| PR risk-router comment | Bound path previews and send the comment through a file. | Classification still consumes every changed file; exact omission counts and the full-diff link preserve visibility. |
 | Optional-fact parsing | Reuse existing `source_capture.cli_support.build_optional_fact`. | Keep the runner import name/API and existing parser behavior. |
 | Repeated workflow authority | Replace the review-template list, JSG status assertion and CSB acquisition sequence mirror with owner pointers. | Registry owns template IDs; dated JSG owner/conductor resolves state; playbook owns acquisition order. The manifest sequence key stays a list. |
 
 Gross retirement is **455 files and 12,474,850 logical bytes**. The code and
 necessary tests remove a further 4,207 LF-normalized bytes (8,071 bytes from
 implementation code alone). Final tracked census, including this report and its evidence: **4,059 files /
-180,850,472 bytes**, versus **4,512 / 193,047,491 bytes** at the integration base:
-**12,197,019 bytes (6.32%) net less**. The original experimental baseline
+180,853,663 bytes**, versus **4,512 / 193,047,491 bytes** at the integration base:
+**12,193,828 bytes (6.32%) net less**. The original experimental baseline
 contained 4,512 files / 193,018,389 bytes; the integration-base comparison
 excludes the unrelated changes that landed during this task.
 These are logical Git blob sizes summed by path, not filesystem allocation.
@@ -174,6 +177,20 @@ line, and the historical output lacked the explicit review-use boundary.
 The declaration was made inline and the dated notice now states that findings
 are decision input, not approval, validation, mandatory remediation or patch
 authority. The historical findings body and unresolved hash gate stay intact.
+
+The first remote harness run passed **6,342 tests, 25 skipped, 69 warnings**
+against head `c4f834b7d254c7e794e42daf73f2dcf8c0d6204d`. Its separate PR
+risk-router classified the complete diff but failed to post an oversized
+479-path comment (`Argument list too long`). The required landing repair limits
+only displayed lists, states omissions, links the full diff, and uses temporary
+file transport. Independent execution of the actual Bash function preserved
+small input and the classifier prefix; the real diff displayed 26 paths,
+reported 453 omitted, and produced 4,030 bytes including the notice. A
+15,004-byte Unicode entry was omitted correctly, and a later small entry was
+still consumed. YAML/Bash syntax checks passed. This is a tested comment repair,
+not a relaxed classification or merge gate. Later remote results belong to the
+final PR checks; the earlier full-suite result is not relabeled as a final-head
+run.
 
 Direction-change propagation is bounded to three existing owner pointers:
 review registry rather than a duplicate ID list; dated JSG owner/conductor

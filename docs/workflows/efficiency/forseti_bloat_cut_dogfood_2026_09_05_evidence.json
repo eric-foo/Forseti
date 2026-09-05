@@ -129,6 +129,10 @@
     "forseti/product/spines/commission_signal_board/spine.yaml": {
       "base_lf_sha256": "0f78355ee1af260b375c75bd65a2ab1b86333fae6236d4011c3d8758d56f6b1c",
       "retained_lf_sha256": "2c3ba31865649d7defc11c764c42f8371b328bf9a932ed020ab5e72ced6fffb3"
+    },
+    ".github/workflows/pr-risk-router.yml": {
+      "base_lf_sha256": "f2a265f97156e0f95dacd9adc0c6dc7fb0647b4a04a1626c6f634fe740197dce",
+      "retained_lf_sha256": "9e3fc4a00fd1368ff50027e9131b9197d9ce819affde34ca0f3a704a5e2933ed"
     }
   },
   "descriptive_comparison": {
@@ -5172,5 +5176,25 @@
     }
   },
   "reproduction": "Restore frozen UTF-8 files into ignored scratch and verify their hashes. Read only the prompt_template key of the selected case, substitute SOURCE_ROOT with an isolated checkout of base or trial, then dispatch a fresh read-only high-effort leaf. The archived collector binds this historical parent/session day; a new experiment needs its own parent/session identity. Use existing reports.efficiency_codex.collect_desktop_task and reports.efficiency_compare.compare_runs, keeping failed quality attempts. Full historical output bodies remain in the identified local native sessions; this evidence retains output hashes and original checker issues, not a second conversation archive. Do not reuse this overstrict checker as a validated quality oracle.",
-  "integration_base_revision": "70f295561e20e9dc478985041850cf2b5e6bcfc1"
+  "integration_base_revision": "70f295561e20e9dc478985041850cf2b5e6bcfc1",
+  "required_landing_repair": {
+    "failed_run": "https://github.com/eric-foo/forseti/actions/runs/33963779956",
+    "failure": "Risk classification completed but comment publication failed: /usr/bin/gh Argument list too long, exit126.",
+    "scope": "Bound only the three displayed path lists and transport comments via a temporary file; full classification unchanged.",
+    "independent_local_validation": {
+      "classification_before_presentation": "unchanged",
+      "real_diff_paths": 479,
+      "shown": 26,
+      "omitted": 453,
+      "preview_entries_length": 3981,
+      "preview_total_bytes": 4030,
+      "small_input": "unchanged",
+      "long_unicode_input_bytes": 15004,
+      "long_unicode_result": "one omitted entry",
+      "long_then_small": "all input consumed; pass",
+      "bash_syntax": "passed",
+      "yaml_parse": "passed"
+    },
+    "remote_validation_authority": "Read final PR checks; this local record does not certify a later remote run."
+  }
 }
