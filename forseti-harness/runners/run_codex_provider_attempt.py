@@ -25,6 +25,9 @@ AUTH_ROUTE_OVERRIDES = (
     "OPENAI_API_KEY", "CODEX_API_KEY", "CODEX_ACCESS_TOKEN", "OPENAI_BASE_URL",
 )
 CHATGPT_CONFIG = ("cli_auth_credentials_store=\"file\"", "model_provider=\"openai\"")
+# Native marker for a config-load fault; matched, never echoed, since the text
+# quotes the user's configuration file.
+CONFIG_LOAD_FAILURE = "Error loading config"
 
 
 def _local_codex_check(executable: str, arguments: list[str], env: dict[str, str]) -> subprocess.CompletedProcess[str]:
@@ -64,7 +67,8 @@ def main() -> int:
         parser.error("--codex-executable must name an existing absolute executable path; no PATH fallback")
     executable = str(args.codex_executable.resolve())
     # Windows batch shims introduce an extra shell and installation selection.
-    if args.codex_executable.suffix.lower() in (".cmd", ".bat"):
+    # Judge the path that will actually run, not the one named on the command line.
+    if Path(executable).suffix.lower() in (".cmd", ".bat"):
         parser.error("--codex-executable must select the native executable, not a .cmd/.bat shim")
     for label, source in (("prompt", args.prompt_file), ("schema", args.output_schema)):
         try:
@@ -89,7 +93,12 @@ def main() -> int:
         metadata["codex_version"] = version.stdout.strip()
         if args.require_chatgpt:
             status = _local_codex_check(executable, [*config, "login", "status"], env)
-            if status.returncode or (status.stdout + status.stderr).strip() != "Logged in using ChatGPT":
+            observed = (status.stdout + status.stderr).strip()
+            # `login status` has no --ignore-user-config, so unlike generation it also
+            # loads CODEX_HOME/config.toml. A load failure there reports no auth fact.
+            if CONFIG_LOAD_FAILURE in observed:
+                raise ValueError(f"Codex could not load its configuration under CODEX_HOME={env['CODEX_HOME']}; authentication was not determined (no generation launched)")
+            if status.returncode or observed != "Logged in using ChatGPT":
                 raise ValueError("ChatGPT authentication was not verified; check file-backed sign-in in this execution context (no generation launched)")
             metadata["authentication_observed"] = "chatgpt"
             # Enforce again inside Codex to close credential changes after status.
@@ -113,8 +122,8 @@ def main() -> int:
             timeout_seconds=args.timeout_seconds, response_schema_path=args.output_schema,
             env=env, launch_metadata=metadata,
         )
-    except OSError:
-        parser.error(f"execution file access failed; inspect preserved attempt {attempt_dir}; do not retry its ID")
+    except OSError as exc:
+        parser.error(f"execution file access failed ({type(exc).__name__}: {exc}); inspect preserved attempt {attempt_dir}; do not retry its ID")
     print(json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True))
     return 0 if receipt["outcome"] == "PROCESS_COMPLETED" else 1
 

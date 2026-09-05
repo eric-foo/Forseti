@@ -81,7 +81,10 @@ The standing command above requires file-backed ChatGPT sign-in under
 The selected executable checks `login status` against the same credential store
 and environment used for generation. A nonzero or unrecognized result stops
 before generation; check access in the real execution context before concluding
-that sign-in is missing. Keyring-only sign-in is not supported by this mode.
+that sign-in is missing. `login status` has no `--ignore-user-config`, so unlike
+generation it also loads `CODEX_HOME/config.toml`; a file the selected build
+cannot parse stops the launch as a reported configuration fault rather than as an
+authentication result. Keyring-only sign-in is not supported by this mode.
 Codex's native `forced_login_method="chatgpt"` restriction also applies during
 generation: if credentials change to another method after the check, Codex exits
 and may clear that mismatching login. The runner does not copy credentials,

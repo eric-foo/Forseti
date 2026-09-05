@@ -105,6 +105,56 @@ def test_unverified_auth_stops_at_auth_boundary(launch, capsys, status, code):
     assert not launch.launches and not (launch.root / "attempts").exists()
 
 
+def test_config_load_failure_is_not_reported_as_authentication(launch, capsys):
+    # Observed natively: `login status` has no --ignore-user-config, so it loads
+    # CODEX_HOME/config.toml and fails on a file the selected build cannot parse.
+    # That is a configuration fault, not evidence about the sign-in method.
+    launch.status = "Error loading configuration: config.toml:10:1: invalid type SECRET_DO_NOT_PRINT"
+    launch.status_code = 1
+    with pytest.raises(SystemExit) as exc:
+        runner.main()
+    assert exc.value.code == 2
+    output = capsys.readouterr().err
+    assert "could not load its configuration" in output
+    assert "authentication was not verified" not in output
+    assert "SECRET_DO_NOT_PRINT" not in output
+    assert not launch.launches and not (launch.root / "attempts").exists()
+
+
+@pytest.mark.parametrize("suffix", [".cmd", ".BAT"])
+def test_shim_rejection_uses_resolution_without_symlink_privilege(launch, monkeypatch, capsys, suffix):
+    shim = launch.root / ("codex" + suffix)
+    shim.write_text("not executable")
+    original = Path.resolve
+
+    def resolve(path, *args, **kwargs):
+        if path == launch.executable:
+            return shim
+        return original(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "resolve", resolve)
+    with pytest.raises(SystemExit):
+        runner.main()
+    assert ".cmd/.bat shim" in capsys.readouterr().err
+    assert not launch.checks and not launch.launches
+
+
+def test_shim_rejection_judges_the_resolved_executable(launch, capsys):
+    # The guard must inspect the path that actually runs, not the name given.
+    shim = launch.root / "codex.cmd"
+    shim.write_text("not executable")
+    link = launch.root / "codex-link.exe"
+    try:
+        link.symlink_to(shim)
+    except (OSError, NotImplementedError) as exc:  # unprivileged Windows host
+        pytest.skip(f"symlink creation unavailable: {exc}")
+    launch.argv[2] = str(link)
+    with pytest.raises(SystemExit):
+        runner.main()
+    assert ".cmd/.bat shim" in capsys.readouterr().err
+    assert not launch.checks and not launch.launches
+
+
 @pytest.mark.parametrize("kind", ["missing", "relative", "shim", "omitted"])
 def test_executable_never_falls_back_to_path(launch, capsys, kind):
     if kind == "missing":
@@ -166,7 +216,9 @@ def test_output_creation_failure_stops_before_process(launch, monkeypatch, capsy
                         lambda *a, **kw: pytest.fail("must not launch before output creation"))
     with pytest.raises(SystemExit):
         runner.main()
-    assert "execution file access failed" in capsys.readouterr().err
+    error = capsys.readouterr().err
+    assert "execution file access failed" in error
+    assert "PermissionError: output permission denied" in error  # real cause, not a generic label
     assert len(launch.checks) == 2
     assert (launch.root / "attempts/test-001").is_dir()
 
