@@ -29,6 +29,7 @@ from judgment.phase_a_semantic_run import (
     prepare_serp_source_frontier_inventory,
     reconcile_serp_frontier_targets,
     run_status,
+    serp_source_row_sha256,
     validate_one_batch_response,
     validate_one_reconciliation_response,
 )
@@ -1013,12 +1014,12 @@ def test_serp_frontier_review_rejects_bulk_default_or_missing_row_decision(
 ) -> None:
     inventory = {
         "schema_version": "phase_a_serp_source_inventory_v1",
-        "inventory_sha256": "inventory-hash",
         "row_inventory": [
             {"artifact_id": "serp-1", "module_type": "organic", "order_in_module": 1}
         ],
         "search_surfaces": [],
     }
+    inventory["inventory_sha256"] = _canonical(inventory)
     inventory_path = tmp_path / "inventory.json"
     _write_json(inventory_path, inventory)
     review_path = tmp_path / "review.json"
@@ -1026,7 +1027,7 @@ def test_serp_frontier_review_rejects_bulk_default_or_missing_row_decision(
         review_path,
         {
             "schema_version": "phase_a_serp_source_review_v1",
-            "inventory_sha256": "inventory-hash",
+            "inventory_sha256": inventory["inventory_sha256"],
             "review_method": "agent_semantic_judgment",
             "model_api_calls": 0,
             "default_semantic_decision": {"disposition": "routed", "reason": "bulk"},
@@ -1042,7 +1043,7 @@ def test_serp_frontier_review_rejects_bulk_default_or_missing_row_decision(
         review_path.with_name("missing.json"),
         {
             "schema_version": "phase_a_serp_source_review_v1",
-            "inventory_sha256": "inventory-hash",
+            "inventory_sha256": inventory["inventory_sha256"],
             "review_method": "agent_semantic_judgment",
             "model_api_calls": 0,
             "row_decisions": [],
@@ -1052,6 +1053,52 @@ def test_serp_frontier_review_rejects_bulk_default_or_missing_row_decision(
         materialize_serp_source_frontier_review(
             inventory_path=inventory_path, review_path=review_path.with_name("missing.json")
         )
+
+
+@pytest.mark.parametrize("case", ["specific", "generic", "stale_row", "capture_limitation", "recovery"])
+def test_serp_exclusion_is_bound_to_decision_relevance(tmp_path: Path, case: str) -> None:
+    native = {"module_type": "organic", "order_in_module": 1,
+              "title": "Experiment orchestra tickets", "canonical_url": None}
+    digest = serp_source_row_sha256(artifact_id="serp-1", source_row=native)
+    inventory = {"schema_version": "phase_a_serp_source_inventory_v1",
+                 "row_inventory": [{"artifact_id": "serp-1", **native, "source_row_sha256": digest}],
+                 "producer_queue_states": [], "producer_job_packet_inventory": [],
+                 "producer_job_packet_inventory_sha256": _canonical([]),
+                 "search_surfaces": [{"job_id": "P1", "artifact_ids": ["serp-1"]}]}
+    inventory["inventory_sha256"] = _canonical(inventory)
+    decision = {"artifact_id": "serp-1", "module_type": "organic", "order_in_module": 1,
+                "disposition": "excluded", "source_row_sha256": digest,
+                "reason": "Ticket sales concern the orchestra rather than the skincare decision.",
+                "exclusion_basis": {"kind": "decision_irrelevant", "axis_ids": []}}
+    if case == "generic":
+        decision.pop("exclusion_basis")
+        decision["reason"] = "The snippet was not promoted to source-native evidence."
+    elif case == "stale_row":
+        decision["source_row_sha256"] = "0" * 64
+    elif case == "capture_limitation":
+        decision["exclusion_basis"]["kind"] = "canonical_url_unavailable"
+    elif case == "recovery":
+        decision["disposition"] = "routed"
+        decision["reason"] = "A material comparison needs its native source."
+        decision.pop("exclusion_basis")
+    review = {"schema_version": "phase_a_serp_source_review_v1",
+              "inventory_sha256": inventory["inventory_sha256"],
+              "review_method": "agent_semantic_judgment", "model_api_calls": 0,
+              "row_decisions": [decision]}
+    ip, rp = tmp_path / "inventory.json", tmp_path / "review.json"
+    _write_json(ip, inventory)
+    _write_json(rp, review)
+    if case in {"generic", "stale_row", "capture_limitation"}:
+        with pytest.raises(SemanticIntegrationError, match="source-row binding|decision-relevance"):
+            materialize_serp_source_frontier_review(inventory_path=ip, review_path=rp)
+    else:
+        result = materialize_serp_source_frontier_review(inventory_path=ip, review_path=rp)
+        row = result["frontier"]["row_classifications"][0]
+        assert row["disposition"] == ("routed" if case == "recovery" else "excluded")
+        if case == "recovery":
+            assert result["locator_recovery_targets"][0]["locator"] == "serp-locator-recovery:serp-1:organic:1"
+        else:
+            assert row["source_row_sha256"] == digest
 
 
 def test_retailer_census_rejects_a_manifest_declared_review_absent_from_the_source(

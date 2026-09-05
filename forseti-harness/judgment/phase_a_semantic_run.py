@@ -489,6 +489,44 @@ def eligible_serp_source_rows(
     return eligible
 
 
+def serp_source_row_sha256(
+    *, artifact_id: str, source_row: Mapping[str, Any]
+) -> str:
+    """Bind the saved row, including fields omitted from the review display."""
+    return _canonical_hash({"artifact_id": artifact_id, "source_row": dict(source_row)})
+
+
+def validate_serp_source_exclusion(
+    decision: Mapping[str, Any],
+    *,
+    expected_row_sha256: str,
+    axis_ids: set[str] | None = None,
+) -> None:
+    """Validate an exclusion's recorded basis, not its semantic truth."""
+    if (
+        not isinstance(expected_row_sha256, str)
+        or re.fullmatch(r"[0-9a-f]{64}", expected_row_sha256) is None
+        or decision.get("source_row_sha256") != expected_row_sha256
+    ):
+        raise SemanticIntegrationError("SERP exclusion lacks current source-row binding")
+    if decision.get("disposition") != "excluded" or not _nonempty(decision.get("reason")):
+        raise SemanticIntegrationError("SERP exclusion lacks its decision reason")
+    basis = decision.get("exclusion_basis")
+    if not isinstance(basis, Mapping) or basis.get("kind") not in (
+        "decision_irrelevant", "nonmaterial"
+    ):
+        raise SemanticIntegrationError("SERP exclusion lacks decision-relevance basis")
+    scoped_axes = basis.get("axis_ids")
+    if (
+        not isinstance(scoped_axes, list)
+        or any(not _nonempty(item) for item in scoped_axes)
+        or len(set(scoped_axes)) != len(scoped_axes)
+        or (basis["kind"] == "nonmaterial" and not scoped_axes)
+        or (axis_ids is not None and not set(scoped_axes).issubset(axis_ids))
+    ):
+        raise SemanticIntegrationError("SERP exclusion has invalid axis scope")
+
+
 def prepare_serp_source_frontier_inventory(
     *, surface_spec_path: Path
 ) -> dict[str, Any]:
@@ -535,6 +573,9 @@ def prepare_serp_source_frontier_inventory(
                     "artifact_id": source_id,
                     "module_type": module,
                     "order_in_module": order,
+                    "source_row_sha256": serp_source_row_sha256(
+                        artifact_id=source_id, source_row=source_row
+                    ),
                     "title": source_row.get("title"),
                     "snippet": source_row.get("snippet"),
                     "displayed_source": source_row.get("displayed_source"),
@@ -604,7 +645,13 @@ def prepare_serp_source_frontier_inventory(
         "row_inventory": row_inventory,
         "review_instruction": (
             "A capable agent reads every row by meaning and supplies exactly one "
-            "routed, duplicate, or excluded classification with a reason."
+            "routed or excluded decision with a reason; duplicate routes are derived. "
+            "For exclusion, copy source_row_sha256 and supply exclusion_basis "
+            "{kind: decision_irrelevant or nonmaterial, axis_ids: [...]}. "
+            "Nonmaterial requires named axes. Explain why the exact row cannot "
+            "change the commissioned decision or those axes. Missing URLs, "
+            "snippet-only status and non-promotion are not exclusion bases: "
+            "material unresolved leads remain routed to capture or locator recovery."
         ),
         "model_api_calls": 0,
     }
@@ -733,6 +780,10 @@ def materialize_serp_source_frontier_review(
     review = _load_json_object(review_path, label="SERP source semantic review")
     if inventory.get("schema_version") != "phase_a_serp_source_inventory_v1":
         raise SemanticIntegrationError("SERP source inventory has wrong version")
+    if inventory.get("inventory_sha256") != _canonical_hash(
+        {key: value for key, value in inventory.items() if key != "inventory_sha256"}
+    ):
+        raise SemanticIntegrationError("SERP source inventory has stale content hash")
     if review.get("schema_version") != "phase_a_serp_source_review_v1":
         raise SemanticIntegrationError("SERP source review has wrong version")
     if review.get("inventory_sha256") != inventory.get("inventory_sha256"):
@@ -803,7 +854,12 @@ def materialize_serp_source_frontier_review(
             "reason": reason,
         }
         if decision["disposition"] == "excluded":
+            validate_serp_source_exclusion(
+                decision, expected_row_sha256=row.get("source_row_sha256")
+            )
             classification["disposition"] = "excluded"
+            classification["source_row_sha256"] = decision["source_row_sha256"]
+            classification["exclusion_basis"] = dict(decision["exclusion_basis"])
             classifications.append(classification)
             continue
         locator = row.get("canonical_url")

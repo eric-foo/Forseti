@@ -343,6 +343,11 @@ not spend a separate sacrificial query.
       typed material addition reopens its affected axis and only a directly
       adjacent axis when the evidence explains why.
    4. Recompute the scan after each genuinely different continuation family.
+      The collection coordinator owns the stop; provisional consolidation
+      supplies the meanings and gaps. Resolve suspect source/product/role
+      attribution before selecting another search. Under Route 1.7.1, credit
+      execution from `execution_packet_artifact_id` and its preserved capture
+      time, never a later date entered against an older coding file.
       Stop acquisition for an axis only when the Prompt Structure Rules
       authority's closure test is met — two later live continuation families of
       different kinds, queries, and artifacts that add no material addition
@@ -602,7 +607,7 @@ phase_acquisition_seal:
     locator:
     sha256:
   understanding_route:
-    route_version: "1.7.0"
+    route_version: "1.7.1"
     comparator_closure:
       state: phase_a_competitor_context_closed | blocked_open_comparator_candidates
       candidate_frame:
@@ -819,7 +824,13 @@ verified structured references; terminal-return-selected, hash-pinned Phase 1
 and Phase 2 queue-state receipts generate the successful job-to-packet inventory, focused-search records
 own their exact packet sets, and every source-bearing row from those surfaces has one explicit
 row-identified semantic route, duplicate, or exclusion before seal (never a
-bulk/default route);
+bulk/default route); at `1.7.1`, exclusions additionally bind the saved row and
+its decision-relevance basis, credited discovery times come from verified
+capture packets, and the existing final semantic review binds the final ledger,
+view, corpus and citation roles. The review pointer is
+`evidence_depth_ledger.final_source_review`; its exact block and coverage fields
+are owned by the Prompt Structure Rules' final-review paragraph. Do not stamp
+generated coverage as reviewed before the actual review and adjudication;
 verification-request triggers and
 terminal statuses, and the two-observation retailer-movement rule. A seal
 sealed before route versioning began (2026-08-07) carries no stamped version
@@ -1122,7 +1133,7 @@ version unless an explicit migration/restart is applied and recorded.
 
 ```yaml
 understanding_acquire_seal_route:
-  current_version: 1.7.0
+  current_version: 1.7.1
   versioning_started: 2026-08-07
   baseline_revision: 1aa3a833edbb8425a4ca2eee91bd850feec4e32c
   version_semantics:
@@ -1313,6 +1324,23 @@ understanding_acquire_seal_route:
       migration_note: >
         A run started under 1.6.0 retains 1.6.0 unless explicitly restarted.
         Historical seals are never restamped. New runs seal under 1.7.0.
+    - version: 1.7.1
+      date: 2026-09-05
+      owning_change: Experiment Beauty collection completion proof repair
+      changed_behavior: >
+        Enforces decision-relevance evidence for excluded search rows, binds
+        credited discovery times to preserved capture packets that own the
+        cited outputs, and binds the existing final semantic review to final
+        files and all proposition and decision citation roles. Adds no review
+        stage and makes no automated semantic-truth claim.
+      affected_gate: >
+        Current broad consumer-brand passing seals require the final review
+        binding and source-backed execution proof. Route 1.7.1 source-row
+        exclusions require source_row_sha256 and exclusion_basis.
+      migration_note: >
+        New runs use 1.7.1. Earlier stamped routes remain historical-audit-only
+        under allow-preversion-route and owe only their stamped requirements;
+        never rewrite historical evidence or imply a process fix repairs it.
   append_only_rule: >
     Every future semantic route change appends one row with version, date,
     owning change/PR when known, changed behavior, affected gate, and

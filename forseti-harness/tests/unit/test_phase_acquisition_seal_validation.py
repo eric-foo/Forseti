@@ -6,6 +6,8 @@ from pathlib import Path
 
 import pytest
 import yaml
+from judgment.phase_a_semantic_run import load_google_serp_rows, serp_source_row_sha256
+from source_capture.models import SourceCapturePacket
 
 from judgment.semantic_evidence_integration import (
     METHOD_TEXT_V2,
@@ -28,7 +30,9 @@ from runners.run_phase_acquisition_seal_validation import (
     SEMANTIC_EVIDENCE_METHOD_SHA256_V3,
     SEMANTIC_EVIDENCE_METHOD_VERSION_V3,
     _artifact_hash,
+    final_semantic_review_scope,
     _validate_reddit_candidate_frontier,
+    _validate_final_semantic_source_review,
     main,
     validate_phase_acquisition_seal,
 )
@@ -150,7 +154,51 @@ def _depth_ledger(tmp_path: Path) -> dict[str, str]:
     return {"locator": "evidence_depth_ledger.json", "sha256": _artifact_hash(path)}
 
 
-def _consumer_depth_ledger(tmp_path: Path) -> dict[str, str]:
+def _bind_execution_packets(tmp_path: Path, ledger: dict) -> None:
+    """Fixture producer writes independent packet times before ledger mutations."""
+    known = lambda value: {"status": "known", "value": value}
+    unknown = {"status": "unknown_with_reason", "reason": "fixture not supplied"}
+    for job in ledger["reddit_candidate_frontier"]["discovery_jobs"]:
+        source = next(a for a in ledger["artifacts"] if a["artifact_id"] == job["artifact_ids"][0])
+        body = (tmp_path / source["locator"]).read_bytes()
+        directory = tmp_path / "execution" / job["job_id"]
+        directory.mkdir(parents=True, exist_ok=True)
+        raw = directory / "raw.json"
+        raw.write_bytes(body)
+        timing = {"capture_time": known(job["executed_at"]),
+                  "source_publication_or_event": unknown, "source_edit_or_version": unknown,
+                  "recapture_time": unknown, "cutoff_posture": unknown}
+        posture = {"access_posture": known("fixture"), "archive_history_posture": unknown,
+                   "media_modality_posture": unknown, "re_capture_relationship": unknown}
+        packet = SourceCapturePacket.model_validate({
+            "manifest_version": "source_capture_packet_manifest_v1",
+            "obligation_contract_version": "core_spine_v0_data_capture_spine_obligation_contract_v0",
+            "packet_id": job["job_id"], "source_family": "google_serp",
+            "source_surface": "search", "source_locator": known("https://example.com/search"),
+            "requested_decision_context": known(job["query"]), "capture_context": known("fixture"),
+            "actor_audience_context": unknown, "capture_mode": "structured access",
+            "operator_category": "unit_test", "session_identity": job["job_id"],
+            "timing": timing, **posture,
+            "source_slices": [{"slice_id": "results", "locator": known("https://example.com/search"),
+                               "timing": timing, **posture, "preserved_file_ids": ["result"]}],
+            "preserved_files": [{"file_id": "result", "original_path": "raw.json",
+                                 "relative_packet_path": "raw.json", "size_bytes": len(body),
+                                 "sha256": __import__("hashlib").sha256(body).hexdigest(),
+                                 "hash_basis": "raw_stored_bytes"}],
+            "receipt_metadata": {"title": "fixture", "generated_at": job["executed_at"],
+                                 "summary": "fixture", "non_claims": []},
+        })
+        manifest = directory / "manifest.json"
+        manifest.write_text(packet.model_dump_json(indent=2), encoding="utf-8")
+        source.update(locator=raw.relative_to(tmp_path).as_posix(), sha256=_artifact_hash(raw))
+        packet_id = job["job_id"] + "-execution"
+        ledger["artifacts"].append({"artifact_id": packet_id,
+                                  "locator": manifest.relative_to(tmp_path).as_posix(),
+                                  "sha256": _artifact_hash(manifest)})
+        job["execution_packet_artifact_id"] = packet_id
+
+
+def _consumer_depth_ledger(tmp_path: Path) -> dict:
     reference = _depth_ledger(tmp_path)
     path = tmp_path / reference["locator"]
     ledger = json.loads(path.read_text(encoding="utf-8"))
@@ -841,8 +889,148 @@ def _consumer_depth_ledger(tmp_path: Path) -> dict[str, str]:
         "decision_mature_axis_ids": ["packaging_reliability"],
         "open_axis_ids": [],
     }
+    _bind_execution_packets(tmp_path, ledger)
+    for classification in ledger["serp_source_frontier"]["row_classifications"]:
+        if classification["disposition"] == "excluded":
+            source = next(a for a in ledger["artifacts"] if a["artifact_id"] == classification["artifact_id"])
+            native = next(r for r in load_google_serp_rows(tmp_path / source["locator"])
+                          if r["module_type"] == classification["module_type"]
+                          and r["order_in_module"] == classification["order_in_module"])
+            classification["source_row_sha256"] = serp_source_row_sha256(
+                artifact_id=classification["artifact_id"], source_row=native)
+            classification["exclusion_basis"] = {"kind": "decision_irrelevant", "axis_ids": []}
     path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
-    return {"locator": "evidence_depth_ledger.json", "sha256": _artifact_hash(path)}
+    return _review_fixture_inputs(path, ledger)
+
+
+def _set_fixture_packet_time(tmp_path: Path, ledger: dict, job: dict) -> None:
+    artifact = next(a for a in ledger["artifacts"]
+                    if a["artifact_id"] == job["execution_packet_artifact_id"])
+    path = tmp_path / artifact["locator"]
+    packet = json.loads(path.read_text(encoding="utf-8"))
+    packet["timing"]["capture_time"]["value"] = job["executed_at"]
+    for row in packet["source_slices"]:
+        row["timing"]["capture_time"]["value"] = job["executed_at"]
+    packet["receipt_metadata"]["generated_at"] = job["executed_at"]
+    path.write_text(json.dumps(packet), encoding="utf-8")
+    artifact["sha256"] = _artifact_hash(path)
+
+
+@pytest.mark.parametrize("observed_later", [False, True])
+def test_frontier_credit_comes_from_capture_not_ledger_time(tmp_path: Path, observed_later: bool) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    path = tmp_path / reference["locator"]
+    ledger = json.loads(path.read_text(encoding="utf-8"))
+    job = ledger["reddit_candidate_frontier"]["discovery_jobs"][-1]
+    job["executed_at"] = "2026-08-02T00:12:00+00:00"
+    if observed_later:
+        # A new observation may return identical bytes. Novel text is not the oracle.
+        _set_fixture_packet_time(tmp_path, ledger, job)
+    _rewrite_depth_reference(seal, path, ledger)
+    findings = _validate(tmp_path, _make_passing(seal))
+    if observed_later:
+        assert findings == []
+    else:
+        assert findings == ["frontier_execution_time_mismatch:RFD-B-001"]
+
+
+def test_unrelated_recent_packet_cannot_credit_old_discovery_output(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    path = tmp_path / reference["locator"]
+    ledger = json.loads(path.read_text(encoding="utf-8"))
+    jobs = ledger["reddit_candidate_frontier"]["discovery_jobs"]
+    jobs[-1]["execution_packet_artifact_id"] = jobs[-2]["execution_packet_artifact_id"]
+    _rewrite_depth_reference(seal, path, ledger)
+    assert "unproven_frontier_execution:RFD-B-001" in _validate(tmp_path, _make_passing(seal))
+
+
+def test_generic_serp_exclusion_cannot_close_even_after_final_review(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    path = tmp_path / reference["locator"]
+    ledger = json.loads(path.read_text(encoding="utf-8"))
+    for row in ledger["serp_source_frontier"]["row_classifications"]:
+        row["disposition"] = "excluded"
+        row.pop("target_id", None)
+        row["reason"] = "Snippet not promoted to native evidence."
+        artifact = next(a for a in ledger["artifacts"] if a["artifact_id"] == row["artifact_id"])
+        native = load_google_serp_rows(tmp_path / artifact["locator"])[0]
+        row["source_row_sha256"] = serp_source_row_sha256(artifact_id=row["artifact_id"], source_row=native)
+    _rewrite_depth_reference(seal, path, ledger)
+    assert "unsubstantiated_serp_source_exclusion" in _validate(tmp_path, _make_passing(seal))
+
+
+def test_final_review_scope_includes_counter_adjacent_and_decision_roles() -> None:
+    ledger = {"product_axes": [{"axis_id": "wear", "decision_usefulness": {
+        "decision_bearing_support_refs": [{"family": "reddit_forum", "unit_id": "thread",
+                                          "role": "customer_tension"}]}}]}
+    view = {"propositions": [{"proposition_id": "p", "claim_support": {
+        "evidence_refs": ["used-it"], "counterevidence_refs": ["stopped-it"]},
+        "adjacent_evidence_refs": ["wants-to-try"]}]}
+    assert final_semantic_review_scope(ledger, view) == {
+        "reviewed_proposition_refs": [
+            {"proposition_id": "p", "role": "counter", "evidence_id": "stopped-it"},
+            {"proposition_id": "p", "role": "support", "evidence_id": "used-it"},
+            {"proposition_id": "p", "role": "adjacent", "evidence_id": "wants-to-try"}],
+        "reviewed_decision_refs": [{"axis_id": "wear", "family": "reddit_forum",
+                                    "unit_id": "thread", "role": "customer_tension"}]}
+
+
+@pytest.mark.parametrize("mutation", ["current", "missing_review", "old_ledger", "old_view", "missing_final_refs", "not_adjudicated"])
+def test_final_review_binds_actual_consumer_inputs(tmp_path: Path, mutation: str) -> None:
+    seal = _blocked_seal(tmp_path)
+    ref = _consumer_depth_ledger(tmp_path)
+    seal["evidence_depth_ledger"] = ref
+    ledger_path = tmp_path / ref["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    if mutation == "missing_review":
+        ref.pop("final_source_review")
+    elif mutation == "old_ledger":
+        ledger["closure"]["reason"] = "New interpretation requires another look."
+        ledger_path.write_text(json.dumps(ledger), encoding="utf-8")
+        ref["sha256"] = _artifact_hash(ledger_path)
+    elif mutation == "old_view":
+        vr = seal["understanding_route"]["semantic_evidence_integration"]["view"]
+        vp = tmp_path / vr["locator"]
+        view = json.loads(vp.read_text(encoding="utf-8"))
+        view["propositions"][0]["claim_support"]["evidence_refs"][0] = "different-source-leaf"
+        view["view_sha256"] = _sha256({k: v for k, v in view.items() if k != "view_sha256"})
+        vp.write_text(json.dumps(view), encoding="utf-8")
+        vr["sha256"] = _artifact_hash(vp)
+    elif mutation in {"missing_final_refs", "not_adjudicated"}:
+        rp = tmp_path / ref["final_source_review"]["locator"]
+        block = yaml.safe_load(rp.read_text(encoding="utf-8").split("```yaml\n")[1].split("```")[0])
+        review = block["final_semantic_source_review"]
+        if mutation == "missing_final_refs":
+            review["reviewed_proposition_refs"] = []  # Legacy decision refs alone are insufficient.
+        else:
+            review["adjudication_status"] = "pending"
+        rp.write_text("```yaml\n" + yaml.safe_dump(block) + "```\n", encoding="utf-8")
+        ref["final_source_review"]["sha256"] = _artifact_hash(rp)
+    findings = []
+    _validate_final_semantic_source_review(seal, ledger=ledger, repo_root=tmp_path, findings=findings)
+    if mutation == "current":
+        assert findings == []
+    else:
+        assert any(f.startswith("final_semantic_source_review_") for f in findings)
+
+
+def test_route_1_7_historical_audit_does_not_owe_later_completion_proof(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    path = tmp_path / reference["locator"]
+    ledger = json.loads(path.read_text(encoding="utf-8"))
+    for job in ledger["reddit_candidate_frontier"]["discovery_jobs"]:
+        job.pop("execution_packet_artifact_id")
+    _rewrite_depth_reference(seal, path, ledger)
+    seal["evidence_depth_ledger"].pop("final_source_review")
+    seal["understanding_route"]["route_version"] = "1.7.0"
+    _make_passing(seal)
+    assert _validate(tmp_path, seal)  # Cannot present a historical route as current.
+    assert validate_phase_acquisition_seal(seal_path=_write_seal(tmp_path, seal),
+        repo_root=tmp_path, allow_preversion_route=True) == []
 
 
 def _campaign_view(tmp_path: Path) -> dict[str, str]:
@@ -1075,7 +1263,7 @@ def _understanding_route(tmp_path: Path) -> dict:
         _semantic_integration_view(tmp_path)
     )
     return {
-        "route_version": "1.7.0",
+        "route_version": "1.7.1",
         "comparator_closure": {
             "state": "phase_a_competitor_context_closed",
             "candidate_frame": frame,
@@ -1658,6 +1846,24 @@ def _validate(tmp_path: Path, seal: dict) -> list[str]:
     )
 
 
+def _review_fixture_inputs(ledger_path: Path, ledger: dict) -> dict:
+    """Author current review scope; stale-binding tests deliberately bypass this."""
+    root = ledger_path.parent
+    view_path = root / "semantic_evidence_integration_view.json"
+    view = json.loads(view_path.read_text(encoding="utf-8"))
+    ref = {"locator": ledger_path.name, "sha256": _artifact_hash(ledger_path)}
+    review = {"schema_version": "acquisition_final_semantic_source_review_v1",
+              "reviewed_ledger_sha256": ref["sha256"],
+              "reviewed_view_sha256": _artifact_hash(view_path),
+              "corpus_sha256": view["corpus_sha256"],
+              **final_semantic_review_scope(ledger, view),
+              "review_status": "complete", "adjudication_status": "accepted",
+              "unresolved_material_findings": []}
+    ref["final_source_review"] = _artifact(root, "existing_review.md", "```yaml\n" +
+        yaml.safe_dump({"final_semantic_source_review": review}) + "```\n")
+    return ref
+
+
 def _rewrite_depth_reference(
     seal: dict, ledger_path: Path, ledger: dict
 ) -> None:
@@ -1668,6 +1874,8 @@ def _rewrite_depth_reference(
         "locator": ledger_path.name,
         "sha256": _artifact_hash(ledger_path),
     }
+    if ledger.get("profile_id") == CONSUMER_BRAND_UNDERSTANDING_PROFILE:
+        seal["evidence_depth_ledger"] = _review_fixture_inputs(ledger_path, ledger)
 
 
 def _make_passing(seal: dict) -> dict:
@@ -2252,10 +2460,7 @@ def test_consumer_brand_v2_rejects_family_counts_without_axes(
     ledger.pop("product_axes")
     ledger.pop("retailer_axis_coding")
     ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
-    seal["evidence_depth_ledger"] = {
-        "locator": ledger_path.name,
-        "sha256": _artifact_hash(ledger_path),
-    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
 
     findings = _validate(tmp_path, _make_passing(seal))
 
@@ -2274,10 +2479,7 @@ def test_consumer_brand_v2_recomputes_retailer_axis_incidence(
         "axis_mention_count"
     ] = 200
     ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
-    seal["evidence_depth_ledger"] = {
-        "locator": ledger_path.name,
-        "sha256": _artifact_hash(ledger_path),
-    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
 
     findings = _validate(tmp_path, _make_passing(seal))
 
@@ -2305,10 +2507,7 @@ def test_consumer_brand_v2_malformed_axis_codes_break_axis_closure(
         if row["artifact_id"] == "retailer-axis-coding":
             row["sha256"] = _artifact_hash(coding_path)
     ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
-    seal["evidence_depth_ledger"] = {
-        "locator": ledger_path.name,
-        "sha256": _artifact_hash(ledger_path),
-    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
 
     findings = _validate(tmp_path, _make_passing(seal))
 
@@ -2400,10 +2599,7 @@ def test_consumer_brand_v2_keeps_choice_outcomes_on_the_causal_axis(
         if row["artifact_id"] == "retailer-axis-coding"
     )["sha256"] = _artifact_hash(coding_path)
     ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
-    seal["evidence_depth_ledger"] = {
-        "locator": ledger_path.name,
-        "sha256": _artifact_hash(ledger_path),
-    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
 
     assert _validate(tmp_path, _make_passing(seal)) == []
 
@@ -2431,10 +2627,7 @@ def test_consumer_brand_v2_reuses_pinned_unchanged_retailer_coding(
         "reason": "No retailer corpus or coding rule changed in this continuation.",
     }
     ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
-    seal["evidence_depth_ledger"] = {
-        "locator": ledger_path.name,
-        "sha256": _artifact_hash(ledger_path),
-    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
 
     assert _validate(tmp_path, _make_passing(seal)) == []
 
@@ -2456,10 +2649,7 @@ def test_consumer_brand_v2_rejects_unreceipted_retailer_coding_reuse(
         if row["artifact_id"] == "retailer-axis-coding"
     )["sha256"] = _artifact_hash(coding_path)
     ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
-    seal["evidence_depth_ledger"] = {
-        "locator": ledger_path.name,
-        "sha256": _artifact_hash(ledger_path),
-    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
 
     findings = _validate(tmp_path, _make_passing(seal))
 
@@ -2484,10 +2674,7 @@ def test_consumer_brand_v2_rejects_product_context_outside_corpus(
         if row["artifact_id"] == "retailer-axis-coding"
     )["sha256"] = _artifact_hash(coding_path)
     ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
-    seal["evidence_depth_ledger"] = {
-        "locator": ledger_path.name,
-        "sha256": _artifact_hash(ledger_path),
-    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
 
     findings = _validate(tmp_path, _make_passing(seal))
 
@@ -2505,10 +2692,7 @@ def test_consumer_brand_v2_counts_distinct_social_creators_for_strength(
     for row in ledger["families"]["native_social"]["posts"][:3]:
         row["creator_id"] = "one-creator"
     ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
-    seal["evidence_depth_ledger"] = {
-        "locator": ledger_path.name,
-        "sha256": _artifact_hash(ledger_path),
-    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
 
     findings = _validate(tmp_path, _make_passing(seal))
 
@@ -2571,10 +2755,7 @@ def test_consumer_brand_v2_nonconsumer_external_units_do_not_supply_support(
         row["source_type"] = source_type
         row["relationship"] = relationship
     ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
-    seal["evidence_depth_ledger"] = {
-        "locator": ledger_path.name,
-        "sha256": _artifact_hash(ledger_path),
-    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
 
     findings = _validate(tmp_path, _make_passing(seal))
 
@@ -2625,10 +2806,7 @@ def test_consumer_brand_v2_independent_editorial_origins_supply_support(
         },
     ]
     ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
-    seal["evidence_depth_ledger"] = {
-        "locator": ledger_path.name,
-        "sha256": _artifact_hash(ledger_path),
-    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
 
     assert _validate(tmp_path, _make_passing(seal)) == []
 
@@ -2648,10 +2826,7 @@ def test_consumer_brand_v2_owned_post_date_must_be_iso_calendar_date(
         }
     )
     ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
-    seal["evidence_depth_ledger"] = {
-        "locator": ledger_path.name,
-        "sha256": _artifact_hash(ledger_path),
-    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
 
     assert "missing_owned_social_published_at" in _validate(
         tmp_path, _make_passing(seal)
@@ -2674,10 +2849,7 @@ def test_consumer_brand_v2_owned_posts_do_not_supply_independent_support(
             }
         )
     ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
-    seal["evidence_depth_ledger"] = {
-        "locator": ledger_path.name,
-        "sha256": _artifact_hash(ledger_path),
-    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
 
     findings = _validate(tmp_path, _make_passing(seal))
 
@@ -2698,10 +2870,7 @@ def test_consumer_brand_v2_requires_terminal_focused_search(
         "disposition"
     ] = "pending"
     ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
-    seal["evidence_depth_ledger"] = {
-        "locator": ledger_path.name,
-        "sha256": _artifact_hash(ledger_path),
-    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
 
     findings = _validate(tmp_path, _make_passing(seal))
 
@@ -2722,10 +2891,7 @@ def test_consumer_brand_v2_focused_search_disposition_matches_route_state(
         "disposition"
     ] = "blocked_no_route"
     ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
-    seal["evidence_depth_ledger"] = {
-        "locator": ledger_path.name,
-        "sha256": _artifact_hash(ledger_path),
-    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
 
     findings = _validate(tmp_path, _make_passing(seal))
 
@@ -2741,10 +2907,7 @@ def test_consumer_brand_v4_material_counters_require_structured_additions(
     ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
     ledger["closure"]["batches"][-1]["changed_axis_strengths"] = 1
     ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
-    seal["evidence_depth_ledger"] = {
-        "locator": ledger_path.name,
-        "sha256": _artifact_hash(ledger_path),
-    }
+    _rewrite_depth_reference(seal, ledger_path, ledger)
 
     findings = _validate(tmp_path, _make_passing(seal))
 
@@ -3431,6 +3594,7 @@ def test_consumer_brand_rejects_order_exception_after_contract_adoption(
         row["executed_at"] = row["executed_at"].replace(
             "2026-08-02T", "2026-08-05T"
         )
+        _set_fixture_packet_time(tmp_path, ledger, row)
     ledger["reddit_candidate_frontier"]["execution_order_exception"] = {
         "exception_type": "pre_contract_historical_run",
         "cycle_id": ledger["cycle_id"],
@@ -3460,6 +3624,7 @@ def test_consumer_brand_requires_high_yield_family_execution_order(
         if row["job_id"] == "RFD-M2-001"
     )
     job["executed_at"] = "2026-08-02T00:04:00+00:00"
+    _set_fixture_packet_time(tmp_path, ledger, job)
     _rewrite_depth_reference(seal, ledger_path, ledger)
 
     assert "mandatory_high_yield_query_family_out_of_order" in _validate(

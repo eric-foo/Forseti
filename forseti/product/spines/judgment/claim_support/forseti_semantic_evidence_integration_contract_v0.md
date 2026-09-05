@@ -2092,7 +2092,16 @@ Current-route operations are:
    `materialize-serp-source-frontier-review` accepts one explicit agent-authored
    decision for every inventory row (no bulk/default decision), mechanically
    deduplicates repeated locators, and emits recovery targets that target
-   reconciliation must settle. `reconcile-serp-frontier-targets` then binds
+   reconciliation must settle. Current exclusions copy the generated
+   `source_row_sha256` and supply `exclusion_basis` with `kind` equal to
+   `decision_irrelevant` or `nonmaterial`, plus `axis_ids` (nonempty for
+   `nonmaterial`). Their reason explains why this row cannot change the
+   commissioned decision or named axes. Missing URLs, snippet-only status and
+   non-promotion are acquisition/claim limitations, not exclusion grounds;
+   material unresolved leads remain routed. The materializer verifies the
+   inventory hash, and the seal verifies exclusions against actual saved rows.
+   Neither check judges the truth of a stated reason.
+   `reconcile-serp-frontier-targets` then binds
    exact Reddit and native-social object identities already present in the
    evidence ledger and leaves unmatched historical links explicitly
    unavailable; it performs no fresh acquisition.
@@ -2335,8 +2344,19 @@ The semantic-source boundary and complete bounded SERP-row linking enter at
 `1.7.0`. Historical `1.6.0` and earlier seals are immutable and never owe the
 new frontier.
 
+Route `1.7.1` adds source-row-bound exclusion evidence, packet-bound execution
+time for credited continuations, and final-file/citation coverage in the existing
+consumer-brand semantic review. The CSB Prompt Structure Rules own those
+acceptance fields and review mechanics. This does not change the Collection to
+Evidence Consolidation boundary or force structured references into the
+customer-language corpus. Earlier stamped routes retain their original
+requirements under the explicit historical-audit route; new runs use `1.7.1`.
+
 ## Changelog
 
+- `v117` / 2026-09-05 — bound SERP exclusions to the saved row and an explicit
+  decision-relevance basis; documented Route 1.7.1 execution and final-review
+  acceptance proof while retaining the existing Collection/Consolidation boundary.
 - `v116` / 2026-09-05 — completed the portable Collection-to-Consolidation
   boundary at the current selection consumer. A v5 bundle carrying a valid
   materialized v3 source identity now keeps a missing publication time
