@@ -354,7 +354,7 @@ per-ID target cannot support a fabricated closure claim.
 
 | Old group | Current disposition |
 | --- | --- |
-| HOOK-1/2/3/4/5/7/8 | Source repair or retirement confirmed: path normalization, product/map paths, six edit advisories, duplicate CI command and Stop hook are already addressed; dormant full-GT compatibility is retained. |
+| HOOK-1/2/3/4/5/7/8 | Source repair or retirement confirmed: path normalization, product/map paths, six edit advisories, duplicate CI command and Stop hook are already addressed; dormant claim-checker compatibility code remains. |
 | HOOK-6/9/10 | Selftest coverage partial; helper consolidation partial with deliberately differing resolvers; hard-guard isolation retained. |
 | CER-1/3 | Repeated review mechanics and conflicting enum/receipt defaults materially repaired. |
 | CER-4/5/6 | Prompt-family navigation omissions remain low impact; template inventory conflict remains; alias retirement is verification-bound, so calendar deletion is not justified. |
