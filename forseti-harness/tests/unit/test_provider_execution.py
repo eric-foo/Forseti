@@ -32,11 +32,13 @@ def test_provider_runner_high_only_before_reservation_or_launch(
     root = tmp_path / "attempts"
     argv = ["runner", "--attempt-root", str(root), "--attempt-id", "test-001",
             "--prompt-file", str(prompt), "--output-schema", str(schema),
-            "--worktree", str(tmp_path), "--model", "test-model", "--timeout-seconds", "5"]
+            "--worktree", str(tmp_path), "--model", "test-model", "--timeout-seconds", "5",
+            "--codex-executable", sys.executable]
     if effort is not None:
         argv += ["--reasoning-effort", effort]
     monkeypatch.setattr(sys, "argv", argv)
-    monkeypatch.setattr(run_codex_provider_attempt.shutil, "which", lambda _: "test-codex")
+    monkeypatch.setattr(run_codex_provider_attempt, "_local_codex_check",
+                        lambda *args: SimpleNamespace(returncode=0, stdout="codex-cli 0.153.1\n", stderr=""))
     launches = []
 
     def capture(**kwargs):
