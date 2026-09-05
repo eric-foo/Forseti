@@ -35,7 +35,7 @@ transcribe = [
 ]
 
 [tool.setuptools]
-py-modules = ["harness_utils"]
+py-modules = ["harness_utils", "harness_efficiency"]
 
 [tool.setuptools.packages.find]
 include = [

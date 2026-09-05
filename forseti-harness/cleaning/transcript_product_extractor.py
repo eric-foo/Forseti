@@ -20,10 +20,14 @@ Spec: youtube_transcript_product_extraction_spec_v0.md (CE1-CE10 / D1-D8).
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
-from dataclasses import dataclass, field
+from contextlib import contextmanager
+from dataclasses import asdict, dataclass, field
+from time import perf_counter
 from typing import TYPE_CHECKING, Any
+from uuid import uuid4
 
 from pydantic import ValidationError
 
@@ -36,10 +40,12 @@ from cleaning.raw_model_transport import (
     build_headers,
     build_request_body,
     default_endpoint,
-    extract_model_text,
+    extract_model_text_from_response,
+    parse_response_body,
     validate_endpoint,
 )
 from schemas.product_mention_models import Concentration, ProductMention, StatedRating, TranscriptSource
+from harness_efficiency import RunMeasurement, current_measurement, normalize_usage
 
 EXTRACTOR_RUBRIC_VERSION = "0.4"
 _DEFAULT_MAX_TOKENS = 2048
@@ -262,6 +268,26 @@ def parse_mentions(
     return result
 
 
+@contextmanager
+def transcript_measurement(transcript: TranscriptInput, workflow: str, configuration: dict):
+    """Reuse an enclosing extraction boundary; direct callers get one sidecar too."""
+    active = current_measurement()
+    if active is not None:
+        yield active
+        return
+    with RunMeasurement(workflow, f"unknown-{uuid4().hex}", configuration) as measurement:
+        with measurement.stage("input_identity"):
+            try:
+                inputs = asdict(transcript)
+                if transcript.source_lineage is not None:
+                    inputs["source_lineage"] = transcript.source_lineage.model_dump(mode="json")
+                identity = json.dumps(inputs, sort_keys=True).encode("utf-8")
+                measurement.workload_id = hashlib.sha256(identity).hexdigest()
+            except Exception as exc:
+                measurement.error(f"input_identity:{type(exc).__name__}")
+        yield measurement
+
+
 def extract_transcript_products(
     transcript: TranscriptInput,
     *,
@@ -274,11 +300,45 @@ def extract_transcript_products(
     max_tokens: int = _DEFAULT_MAX_TOKENS,
 ) -> TranscriptExtractionResult:
     """Run Pass 1 for one transcript through an injectable transport (offline-testable)."""
-    url = api_url or default_endpoint(provider)
-    validate_endpoint(provider, url)
-    prompt = build_extraction_prompt(transcript)
-    body = build_request_body(provider, model=model, prompt=prompt, max_tokens=max_tokens)
-    headers = build_headers(provider, api_key)
-    raw = transport.post_json(url, headers, body, timeout_seconds)
-    model_text = extract_model_text(provider, raw)
-    return parse_mentions(model_text, transcript, model=model)
+    direct_call = current_measurement() is None
+    with transcript_measurement(transcript, "transcript_extract", {
+        "provider": str(provider), "model": model, "max_tokens": max_tokens,
+        "rubric_version": EXTRACTOR_RUBRIC_VERSION,
+    }) as measurement:
+        with measurement.stage("input_prepare"):
+            url = api_url or default_endpoint(provider)
+            validate_endpoint(provider, url)
+            prompt = build_extraction_prompt(transcript)
+            body = build_request_body(provider, model=model, prompt=prompt, max_tokens=max_tokens)
+            headers = build_headers(provider, api_key)
+        started = perf_counter()
+        try:
+            raw = transport.post_json(url, headers, body, timeout_seconds)
+        except BaseException:
+            elapsed = perf_counter() - started
+            measurement.add_stage("provider_request", elapsed)
+            measurement.add_attempt(str(provider), model, elapsed,
+                                    normalize_usage(str(provider), None), outcome="failed")
+            raise
+        elapsed = perf_counter() - started
+        measurement.add_stage("provider_request", elapsed)
+        try:
+            with measurement.stage("provider_response_parse"):
+                response = parse_response_body(raw)
+        except BaseException:
+            measurement.add_attempt(str(provider), model, elapsed,
+                                    normalize_usage(str(provider), None), outcome="failed")
+            raise
+        measurement.add_attempt(str(provider), model, elapsed,
+                                normalize_usage(str(provider), response.get("usage")))
+        with measurement.stage("mention_parse"):
+            model_text = extract_model_text_from_response(provider, response)
+            result = parse_mentions(model_text, transcript, model=model)
+        measurement.annotate(mention_count=len(result.mentions), rejected_count=len(result.rejected))
+        if direct_call:
+            output = {"mentions": [m.model_dump(mode="json") for m in result.mentions],
+                      "rejected": result.rejected}
+            fingerprint = hashlib.sha256(json.dumps(output, sort_keys=True).encode("utf-8")).hexdigest()
+            measurement.set_quality("passed", "transcript_quote_and_schema_validation_v1",
+                                    output_fingerprint=fingerprint)
+        return result
