@@ -6,7 +6,6 @@ from pathlib import Path
 
 import pytest
 import yaml
-from judgment.phase_a_semantic_run import load_google_serp_rows, serp_source_row_sha256
 from source_capture.models import SourceCapturePacket
 
 from judgment.semantic_evidence_integration import (
@@ -29,8 +28,16 @@ from runners.run_phase_acquisition_seal_validation import (
     SEAL_VERSION,
     SEMANTIC_EVIDENCE_METHOD_SHA256_V3,
     SEMANTIC_EVIDENCE_METHOD_VERSION_V3,
+    UNDERSTANDING_ROUTE_VERSIONS,
+    _ROUTE_REVISION_1_1_OBLIGATION_VERSIONS,
+    _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS,
+    _ROUTE_REVISION_1_3_OBLIGATION_VERSIONS,
+    _ROUTE_REVISION_1_4_OBLIGATION_VERSIONS,
+    _ROUTE_REVISION_1_5_OBLIGATION_VERSIONS,
+    _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS,
+    _ROUTE_REVISION_1_7_OBLIGATION_VERSIONS,
+    _ROUTE_REVISION_1_7_1_OBLIGATION_VERSIONS,
     _artifact_hash,
-    final_semantic_review_scope,
     _validate_reddit_candidate_frontier,
     _validate_final_semantic_source_review,
     main,
@@ -890,17 +897,8 @@ def _consumer_depth_ledger(tmp_path: Path) -> dict:
         "open_axis_ids": [],
     }
     _bind_execution_packets(tmp_path, ledger)
-    for classification in ledger["serp_source_frontier"]["row_classifications"]:
-        if classification["disposition"] == "excluded":
-            source = next(a for a in ledger["artifacts"] if a["artifact_id"] == classification["artifact_id"])
-            native = next(r for r in load_google_serp_rows(tmp_path / source["locator"])
-                          if r["module_type"] == classification["module_type"]
-                          and r["order_in_module"] == classification["order_in_module"])
-            classification["source_row_sha256"] = serp_source_row_sha256(
-                artifact_id=classification["artifact_id"], source_row=native)
-            classification["exclusion_basis"] = {"kind": "decision_irrelevant", "axis_ids": []}
     path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
-    return _review_fixture_inputs(path, ledger)
+    return _review_fixture_inputs(path)
 
 
 def _set_fixture_packet_time(tmp_path: Path, ledger: dict, job: dict) -> None:
@@ -946,7 +944,14 @@ def test_unrelated_recent_packet_cannot_credit_old_discovery_output(tmp_path: Pa
     assert "unproven_frontier_execution:RFD-B-001" in _validate(tmp_path, _make_passing(seal))
 
 
-def test_generic_serp_exclusion_cannot_close_even_after_final_review(tmp_path: Path) -> None:
+def test_bulk_populated_serp_exclusions_still_pass_the_seal(tmp_path: Path) -> None:
+    """Named residual: no seal check detects the demonstrated bulk exclusion.
+
+    Every eligible row can carry the same non-promotion reason and the seal
+    still closes. Route 1.7.1 adds no row field here on purpose: the producing
+    loop fills fields as easily as reasons. The row-identified-decision rule
+    and the final semantic source review own this failure.
+    """
     seal = _blocked_seal(tmp_path)
     reference = _consumer_depth_ledger(tmp_path)
     path = tmp_path / reference["locator"]
@@ -955,30 +960,39 @@ def test_generic_serp_exclusion_cannot_close_even_after_final_review(tmp_path: P
         row["disposition"] = "excluded"
         row.pop("target_id", None)
         row["reason"] = "Snippet not promoted to native evidence."
-        artifact = next(a for a in ledger["artifacts"] if a["artifact_id"] == row["artifact_id"])
-        native = load_google_serp_rows(tmp_path / artifact["locator"])[0]
-        row["source_row_sha256"] = serp_source_row_sha256(artifact_id=row["artifact_id"], source_row=native)
     _rewrite_depth_reference(seal, path, ledger)
-    assert "unsubstantiated_serp_source_exclusion" in _validate(tmp_path, _make_passing(seal))
+
+    assert _validate(tmp_path, _make_passing(seal)) == []
 
 
-def test_final_review_scope_includes_counter_adjacent_and_decision_roles() -> None:
-    ledger = {"product_axes": [{"axis_id": "wear", "decision_usefulness": {
-        "decision_bearing_support_refs": [{"family": "reddit_forum", "unit_id": "thread",
-                                          "role": "customer_tension"}]}}]}
-    view = {"propositions": [{"proposition_id": "p", "claim_support": {
-        "evidence_refs": ["used-it"], "counterevidence_refs": ["stopped-it"]},
-        "adjacent_evidence_refs": ["wants-to-try"]}]}
-    assert final_semantic_review_scope(ledger, view) == {
-        "reviewed_proposition_refs": [
-            {"proposition_id": "p", "role": "counter", "evidence_id": "stopped-it"},
-            {"proposition_id": "p", "role": "support", "evidence_id": "used-it"},
-            {"proposition_id": "p", "role": "adjacent", "evidence_id": "wants-to-try"}],
-        "reviewed_decision_refs": [{"axis_id": "wear", "family": "reddit_forum",
-                                    "unit_id": "thread", "role": "customer_tension"}]}
+def test_every_route_obligation_ladder_stays_upward_closed() -> None:
+    """A newer route version inherits every earlier obligation.
+
+    An equality or bounded-set gate would silently retire a live check the
+    first time a later route version is stamped.
+    """
+    order = lambda version: tuple(int(part) for part in version.split("."))
+    ladders = {
+        "1.1": _ROUTE_REVISION_1_1_OBLIGATION_VERSIONS,
+        "1.2": _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS,
+        "1.3": _ROUTE_REVISION_1_3_OBLIGATION_VERSIONS,
+        "1.4": _ROUTE_REVISION_1_4_OBLIGATION_VERSIONS,
+        "1.5": _ROUTE_REVISION_1_5_OBLIGATION_VERSIONS,
+        "1.6": _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS,
+        "1.7": _ROUTE_REVISION_1_7_OBLIGATION_VERSIONS,
+        "1.7.1": _ROUTE_REVISION_1_7_1_OBLIGATION_VERSIONS,
+    }
+    for name, ladder in ladders.items():
+        assert ladder <= UNDERSTANDING_ROUTE_VERSIONS, name
+        floor = min(order(version) for version in ladder)
+        assert ladder == {
+            version
+            for version in UNDERSTANDING_ROUTE_VERSIONS
+            if order(version) >= floor
+        }, name
 
 
-@pytest.mark.parametrize("mutation", ["current", "missing_review", "old_ledger", "old_view", "missing_final_refs", "not_adjudicated"])
+@pytest.mark.parametrize("mutation", ["current", "missing_review", "old_ledger", "old_view", "stale_corpus", "not_adjudicated"])
 def test_final_review_binds_actual_consumer_inputs(tmp_path: Path, mutation: str) -> None:
     seal = _blocked_seal(tmp_path)
     ref = _consumer_depth_ledger(tmp_path)
@@ -999,18 +1013,19 @@ def test_final_review_binds_actual_consumer_inputs(tmp_path: Path, mutation: str
         view["view_sha256"] = _sha256({k: v for k, v in view.items() if k != "view_sha256"})
         vp.write_text(json.dumps(view), encoding="utf-8")
         vr["sha256"] = _artifact_hash(vp)
-    elif mutation in {"missing_final_refs", "not_adjudicated"}:
+    elif mutation in {"stale_corpus", "not_adjudicated"}:
         rp = tmp_path / ref["final_source_review"]["locator"]
         block = yaml.safe_load(rp.read_text(encoding="utf-8").split("```yaml\n")[1].split("```")[0])
         review = block["final_semantic_source_review"]
-        if mutation == "missing_final_refs":
-            review["reviewed_proposition_refs"] = []  # Legacy decision refs alone are insufficient.
+        if mutation == "stale_corpus":
+            # An earlier corpus was reviewed; the sealed view carries another.
+            review["corpus_sha256"] = "0" * 64
         else:
             review["adjudication_status"] = "pending"
         rp.write_text("```yaml\n" + yaml.safe_dump(block) + "```\n", encoding="utf-8")
         ref["final_source_review"]["sha256"] = _artifact_hash(rp)
     findings = []
-    _validate_final_semantic_source_review(seal, ledger=ledger, repo_root=tmp_path, findings=findings)
+    _validate_final_semantic_source_review(seal, repo_root=tmp_path, findings=findings)
     if mutation == "current":
         assert findings == []
     else:
@@ -1846,7 +1861,7 @@ def _validate(tmp_path: Path, seal: dict) -> list[str]:
     )
 
 
-def _review_fixture_inputs(ledger_path: Path, ledger: dict) -> dict:
+def _review_fixture_inputs(ledger_path: Path) -> dict:
     """Author current review scope; stale-binding tests deliberately bypass this."""
     root = ledger_path.parent
     view_path = root / "semantic_evidence_integration_view.json"
@@ -1856,7 +1871,6 @@ def _review_fixture_inputs(ledger_path: Path, ledger: dict) -> dict:
               "reviewed_ledger_sha256": ref["sha256"],
               "reviewed_view_sha256": _artifact_hash(view_path),
               "corpus_sha256": view["corpus_sha256"],
-              **final_semantic_review_scope(ledger, view),
               "review_status": "complete", "adjudication_status": "accepted",
               "unresolved_material_findings": []}
     ref["final_source_review"] = _artifact(root, "existing_review.md", "```yaml\n" +
@@ -1875,7 +1889,7 @@ def _rewrite_depth_reference(
         "sha256": _artifact_hash(ledger_path),
     }
     if ledger.get("profile_id") == CONSUMER_BRAND_UNDERSTANDING_PROFILE:
-        seal["evidence_depth_ledger"] = _review_fixture_inputs(ledger_path, ledger)
+        seal["evidence_depth_ledger"] = _review_fixture_inputs(ledger_path)
 
 
 def _make_passing(seal: dict) -> dict:

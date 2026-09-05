@@ -345,7 +345,7 @@ not spend a separate sacrificial query.
    4. Recompute the scan after each genuinely different continuation family.
       The collection coordinator owns the stop; provisional consolidation
       supplies the meanings and gaps. Resolve suspect source/product/role
-      attribution before selecting another search. Under Route 1.7.1, credit
+      attribution before selecting another search. From Route 1.7.1 on, credit
       execution from `execution_packet_artifact_id` and its preserved capture
       time, never a later date entered against an older coding file.
       Stop acquisition for an axis only when the Prompt Structure Rules
@@ -824,14 +824,14 @@ verified structured references; terminal-return-selected, hash-pinned Phase 1
 and Phase 2 queue-state receipts generate the successful job-to-packet inventory, focused-search records
 own their exact packet sets, and every source-bearing row from those surfaces has one explicit
 row-identified semantic route, duplicate, or exclusion before seal (never a
-bulk/default route); at `1.7.1`, exclusions additionally bind the saved row and
-its decision-relevance basis, credited discovery times come from verified
-capture packets, and the existing final semantic review binds the final ledger,
-view, corpus and citation roles. The review pointer is
-`evidence_depth_ledger.final_source_review`; its exact block and coverage fields
-are owned by the Prompt Structure Rules' final-review paragraph. Do not stamp
-generated coverage as reviewed before the actual review and adjudication;
-verification-request triggers and
+bulk/default route); from `1.7.1` on, credited discovery times come from
+verified capture packets and the existing final semantic review binds the final
+ledger, view and corpus. The review pointer is
+`evidence_depth_ledger.final_source_review`; its exact block is owned by the
+Prompt Structure Rules' final-review paragraph. No machine check separates a
+genuine row-by-row exclusion from a bulk-filled one, so that reading stays an
+obligation on the collector, tested by the final semantic review rather than by
+a recorded field; verification-request triggers and
 terminal statuses, and the two-observation retailer-movement rule. A seal
 sealed before route versioning began (2026-08-07) carries no stamped version
 and is audited with `--allow-preversion-route`. A seal stamped with a known
@@ -1328,15 +1328,18 @@ understanding_acquire_seal_route:
       date: 2026-09-05
       owning_change: Experiment Beauty collection completion proof repair
       changed_behavior: >
-        Enforces decision-relevance evidence for excluded search rows, binds
-        credited discovery times to preserved capture packets that own the
-        cited outputs, and binds the existing final semantic review to final
-        files and all proposition and decision citation roles. Adds no review
-        stage and makes no automated semantic-truth claim.
+        Binds credited discovery times to preserved capture packets that own
+        the cited outputs, and binds the existing final semantic review to the
+        exact final ledger, view and corpus. Verifies the SERP review
+        inventory's own content hash. Adds no review stage, no row-level
+        exclusion field, and no automated semantic-truth claim. The
+        demonstrated bulk-exclusion shortcut is deliberately left to the
+        existing row-identified-decision rule and the final semantic review:
+        any field a checker could require, the producing loop could fill.
       affected_gate: >
         Current broad consumer-brand passing seals require the final review
-        binding and source-backed execution proof. Route 1.7.1 source-row
-        exclusions require source_row_sha256 and exclusion_basis.
+        binding and source-backed execution proof. Obligations accrue forward:
+        every later route version owes them too.
       migration_note: >
         New runs use 1.7.1. Earlier stamped routes remain historical-audit-only
         under allow-preversion-route and owe only their stamped requirements;

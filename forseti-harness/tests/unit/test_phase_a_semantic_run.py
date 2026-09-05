@@ -29,7 +29,6 @@ from judgment.phase_a_semantic_run import (
     prepare_serp_source_frontier_inventory,
     reconcile_serp_frontier_targets,
     run_status,
-    serp_source_row_sha256,
     validate_one_batch_response,
     validate_one_reconciliation_response,
 )
@@ -1055,32 +1054,18 @@ def test_serp_frontier_review_rejects_bulk_default_or_missing_row_decision(
         )
 
 
-@pytest.mark.parametrize("case", ["specific", "generic", "stale_row", "capture_limitation", "recovery"])
-def test_serp_exclusion_is_bound_to_decision_relevance(tmp_path: Path, case: str) -> None:
+def _serp_review_inputs(
+    tmp_path: Path, decision: dict[str, object], *,
+    title: str = "Experiment orchestra tickets",
+) -> tuple[Path, Path, dict[str, object]]:
     native = {"module_type": "organic", "order_in_module": 1,
-              "title": "Experiment orchestra tickets", "canonical_url": None}
-    digest = serp_source_row_sha256(artifact_id="serp-1", source_row=native)
+              "title": title, "canonical_url": None}
     inventory = {"schema_version": "phase_a_serp_source_inventory_v1",
-                 "row_inventory": [{"artifact_id": "serp-1", **native, "source_row_sha256": digest}],
+                 "row_inventory": [{"artifact_id": "serp-1", **native}],
                  "producer_queue_states": [], "producer_job_packet_inventory": [],
                  "producer_job_packet_inventory_sha256": _canonical([]),
                  "search_surfaces": [{"job_id": "P1", "artifact_ids": ["serp-1"]}]}
     inventory["inventory_sha256"] = _canonical(inventory)
-    decision = {"artifact_id": "serp-1", "module_type": "organic", "order_in_module": 1,
-                "disposition": "excluded", "source_row_sha256": digest,
-                "reason": "Ticket sales concern the orchestra rather than the skincare decision.",
-                "exclusion_basis": {"kind": "decision_irrelevant", "axis_ids": []}}
-    if case == "generic":
-        decision.pop("exclusion_basis")
-        decision["reason"] = "The snippet was not promoted to source-native evidence."
-    elif case == "stale_row":
-        decision["source_row_sha256"] = "0" * 64
-    elif case == "capture_limitation":
-        decision["exclusion_basis"]["kind"] = "canonical_url_unavailable"
-    elif case == "recovery":
-        decision["disposition"] = "routed"
-        decision["reason"] = "A material comparison needs its native source."
-        decision.pop("exclusion_basis")
     review = {"schema_version": "phase_a_serp_source_review_v1",
               "inventory_sha256": inventory["inventory_sha256"],
               "review_method": "agent_semantic_judgment", "model_api_calls": 0,
@@ -1088,17 +1073,61 @@ def test_serp_exclusion_is_bound_to_decision_relevance(tmp_path: Path, case: str
     ip, rp = tmp_path / "inventory.json", tmp_path / "review.json"
     _write_json(ip, inventory)
     _write_json(rp, review)
-    if case in {"generic", "stale_row", "capture_limitation"}:
-        with pytest.raises(SemanticIntegrationError, match="source-row binding|decision-relevance"):
-            materialize_serp_source_frontier_review(inventory_path=ip, review_path=rp)
-    else:
-        result = materialize_serp_source_frontier_review(inventory_path=ip, review_path=rp)
-        row = result["frontier"]["row_classifications"][0]
-        assert row["disposition"] == ("routed" if case == "recovery" else "excluded")
-        if case == "recovery":
-            assert result["locator_recovery_targets"][0]["locator"] == "serp-locator-recovery:serp-1:organic:1"
-        else:
-            assert row["source_row_sha256"] == digest
+    return ip, rp, inventory
+
+
+def test_serp_review_rejects_a_hand_edited_inventory(tmp_path: Path) -> None:
+    """The declared inventory hash must match the inventory's own content."""
+    decision = {"artifact_id": "serp-1", "module_type": "organic",
+                "order_in_module": 1, "disposition": "excluded",
+                "reason": "Ticket sales concern the orchestra, not the skincare decision."}
+    ip, rp, inventory = _serp_review_inputs(tmp_path, decision)
+    inventory["row_inventory"][0]["title"] = "Experiment Beauty hydration review"
+    _write_json(ip, inventory)  # Declared hash now describes the pre-edit rows.
+
+    with pytest.raises(SemanticIntegrationError, match="stale content hash"):
+        materialize_serp_source_frontier_review(inventory_path=ip, review_path=rp)
+
+
+def test_serp_material_lead_routes_to_locator_recovery(tmp_path: Path) -> None:
+    """A missing destination URL is an acquisition limit, never an exclusion."""
+    decision = {"artifact_id": "serp-1", "module_type": "organic",
+                "order_in_module": 1, "disposition": "routed",
+                "reason": "A material comparison needs its native source."}
+    ip, rp, _ = _serp_review_inputs(
+        tmp_path, decision, title="Experiment Beauty vs Dieux moisturizer comparison"
+    )
+
+    result = materialize_serp_source_frontier_review(inventory_path=ip, review_path=rp)
+
+    assert result["frontier"]["row_classifications"][0]["disposition"] == "routed"
+    assert (
+        result["locator_recovery_targets"][0]["locator"]
+        == "serp-locator-recovery:serp-1:organic:1"
+    )
+
+
+def test_serp_generic_exclusion_reason_is_not_machine_detectable(
+    tmp_path: Path,
+) -> None:
+    """Named residual: the demonstrated bulk-exclusion shortcut still passes here.
+
+    Route 1.7.1 deliberately adds no row-level field for this. The producing
+    loop can populate any field it is given, so a field would record the
+    shortcut rather than detect it. The owning controls are the existing
+    row-identified-decision rule and the final semantic source review, which
+    tests each reason against the row it excludes.
+    """
+    decision = {"artifact_id": "serp-1", "module_type": "organic",
+                "order_in_module": 1, "disposition": "excluded",
+                "reason": "The snippet was not promoted to source-native evidence."}
+    ip, rp, _ = _serp_review_inputs(
+        tmp_path, decision, title="Experiment Beauty vs Dieux moisturizer comparison"
+    )
+
+    result = materialize_serp_source_frontier_review(inventory_path=ip, review_path=rp)
+
+    assert result["frontier"]["row_classifications"][0]["disposition"] == "excluded"
 
 
 def test_retailer_census_rejects_a_manifest_declared_review_absent_from_the_source(

@@ -21,8 +21,6 @@ from judgment.phase_a_semantic_run import (  # noqa: E402
     derive_serp_job_packet_inventory,
     eligible_serp_source_rows,
     load_google_serp_rows,
-    serp_source_row_sha256,
-    validate_serp_source_exclusion,
 )
 from source_capture.retail_grid_projection import (  # noqa: E402
     load_verified_source_capture_packet_directory,
@@ -318,6 +316,10 @@ _ROUTE_REVISION_1_4_OBLIGATION_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0", "
 _ROUTE_REVISION_1_5_OBLIGATION_VERSIONS = {"1.5.0", "1.6.0", "1.7.0", "1.7.1"}
 _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS = {"1.6.0", "1.7.0", "1.7.1"}
 _ROUTE_REVISION_1_7_OBLIGATION_VERSIONS = {"1.7.0", "1.7.1"}
+# Like every ladder above, a 1.7.1 obligation accrues to 1.7.1 and every later
+# route. An equality test here would silently drop the completion-proof gate the
+# first time a newer route version is stamped.
+_ROUTE_REVISION_1_7_1_OBLIGATION_VERSIONS = {"1.7.1"}
 _CAMPAIGN_SOURCE_ROLES = {
     "owned_post",
     "paid_ad",
@@ -672,10 +674,13 @@ def _validate_understanding_evidence_depth(
         if isinstance(seal.get("understanding_route"), dict)
         else None
     )
-    proof_contract = route_version == "1.7.1"
+    proof_contract = (
+        isinstance(route_version, str)
+        and route_version in _ROUTE_REVISION_1_7_1_OBLIGATION_VERSIONS
+    )
     if current_consumer_brand and valid_pass and proof_contract:
         _validate_final_semantic_source_review(
-            seal, ledger=ledger, repo_root=repo_root, findings=findings
+            seal, repo_root=repo_root, findings=findings
         )
     serp_link_contract = (
         isinstance(route_version, str)
@@ -766,7 +771,6 @@ def _validate_understanding_evidence_depth(
             current_contract=(previous_consumer_brand or current_consumer_brand),
             decision_contract=current_consumer_brand,
             serp_link_contract=serp_link_contract,
-            proof_contract=proof_contract,
             serp_route_job_ids=serp_route_job_ids,
             findings=findings,
         )
@@ -2023,10 +2027,13 @@ def _validate_serp_source_frontier(
     phase_job_ids: Mapping[str, set[str]],
     focused_searches: Mapping[tuple[str, str], Mapping[str, Any]],
     findings: list[str],
-    axis_ids: set[str] | None = None,
-    require_exclusion_basis: bool = False,
 ) -> bool:
-    """Require one semantic disposition for every bounded source-bearing SERP row."""
+    """Require one semantic disposition for every bounded source-bearing SERP row.
+
+    Row coverage, row identity and target resolution are mechanical. Whether an
+    exclusion reason is true is not checkable here; the final semantic source
+    review owns it.
+    """
     if not isinstance(value, dict):
         findings.append("missing_serp_source_frontier")
         return False
@@ -2238,21 +2245,6 @@ def _validate_serp_source_frontier(
         if not str(row.get("reason", "")).strip():
             findings.append("missing_serp_source_frontier_reason")
             complete = False
-        if disposition == "excluded" and require_exclusion_basis:
-            try:
-                source_row = eligible.get(key)
-                if source_row is None:
-                    raise SemanticIntegrationError("unresolved source row")
-                validate_serp_source_exclusion(
-                    row,
-                    expected_row_sha256=serp_source_row_sha256(
-                        artifact_id=key[0], source_row=source_row
-                    ),
-                    axis_ids=axis_ids,
-                )
-            except SemanticIntegrationError:
-                findings.append("unsubstantiated_serp_source_exclusion")
-                complete = False
         if disposition == "routed":
             target = targets.get(row.get("target_id"))
             if target is None:
@@ -2468,7 +2460,6 @@ def _validate_consumer_brand_product_axes(
     current_contract: bool,
     decision_contract: bool,
     serp_link_contract: bool,
-    proof_contract: bool,
     serp_route_job_ids: Mapping[str, set[str]],
     findings: list[str],
 ) -> bool:
@@ -2647,8 +2638,6 @@ def _validate_consumer_brand_product_axes(
                     phase_job_ids=serp_route_job_ids,
                     focused_searches=search_jobs,
                     findings=findings,
-                    axis_ids=set(axis_rows),
-                    require_exclusion_basis=proof_contract,
                 )
                 and complete
             )
@@ -3232,12 +3221,16 @@ def _validate_reddit_candidate_frontier(
                 findings.append("missing_frontier_discovery_query")
                 complete = False
             executed_at = _parse_iso_datetime(row.get("executed_at"))
+            unproven_execution = False
             if require_complete and decision_contract and execution_contract:
                 try:
                     observed_at = _frontier_observation_time(row, artifacts=artifacts)
                 except (OSError, ValueError):
+                    # The recorded time may be well-formed; what is missing is
+                    # its capture proof. Do not also claim it is malformed.
                     findings.append(f"unproven_frontier_execution:{job_id}")
                     complete = False
+                    unproven_execution = True
                     executed_at = None
                 else:
                     if executed_at != observed_at:
@@ -3245,7 +3238,8 @@ def _validate_reddit_candidate_frontier(
                         complete = False
                     executed_at = observed_at
             if executed_at is None:
-                findings.append("invalid_frontier_discovery_executed_at")
+                if not unproven_execution:
+                    findings.append("invalid_frontier_discovery_executed_at")
                 complete = False
             else:
                 discovery_executed_at[job_id] = executed_at
@@ -4446,14 +4440,17 @@ def _validate_understanding_route(
 
 
 def _validate_final_semantic_source_review(
-    seal: Mapping[str, Any], *, ledger: Mapping[str, Any],
-    repo_root: Path, findings: list[str],
+    seal: Mapping[str, Any], *, repo_root: Path, findings: list[str],
 ) -> None:
-    """Require the existing semantic review to cover the exact final inputs.
+    """Require the existing semantic review to name the exact final inputs.
 
-    This is review scope/freshness proof, not automated semantic entailment.
-    It does not force structured references into the customer-language bundle
-    or make Consolidation reopen Collection's source locators.
+    This is review scope/freshness proof only: it detects a review whose
+    declared inputs are not the ledger, view and corpus the seal actually
+    pins, which is the reviewed-an-earlier-revision failure. It is not
+    automated semantic entailment and is not evidence that a reviewer read
+    anything. It does not force structured references into the
+    customer-language bundle or make Consolidation reopen Collection's
+    source locators.
     """
     prefix = "final_semantic_source_review_"
 
@@ -4503,47 +4500,6 @@ def _validate_final_semantic_source_review(
     ):
         if not expected or review.get(field) != expected:
             findings.append(prefix + field + "_mismatch")
-    expected_scope = final_semantic_review_scope(ledger, view)
-    for field, expected in expected_scope.items():
-        observed = review.get(field)
-        canonical = lambda row: json.dumps(row, sort_keys=True, ensure_ascii=False)
-        if (not isinstance(observed, list) or any(not isinstance(row, dict) for row in observed)
-                or len(observed) != len({canonical(row) for row in observed})
-                or {canonical(row) for row in observed} != {canonical(row) for row in expected}):
-            findings.append(prefix + field + "_mismatch")
-
-
-def final_semantic_review_scope(
-    ledger: Mapping[str, Any], view: Mapping[str, Any]
-) -> dict[str, Any]:
-    """Generate review coverage from final consumers, not an older citation list."""
-    references = []
-    propositions = view.get("propositions")
-    for row in propositions if isinstance(propositions, list) else []:
-        if not isinstance(row, dict):
-            continue  # Owning shape validators retain malformed-input findings.
-        support = row.get("claim_support", {})
-        if not isinstance(support, dict):
-            continue
-        for role, values in (("support", support.get("evidence_refs", [])),
-                ("counter", support.get("counterevidence_refs", [])),
-                ("adjacent", row.get("adjacent_evidence_refs", []))):
-            if isinstance(values, list):
-                references.extend({"proposition_id": row.get("proposition_id"),
-                                   "role": role, "evidence_id": evidence_id}
-                                  for evidence_id in values if isinstance(evidence_id, str))
-    decision_refs = []
-    axes = ledger.get("product_axes")
-    for axis in axes if isinstance(axes, list) else []:
-        usefulness = axis.get("decision_usefulness", {}) if isinstance(axis, dict) else {}
-        refs = usefulness.get("decision_bearing_support_refs", []) if isinstance(usefulness, dict) else []
-        if isinstance(refs, list):
-            decision_refs.extend({"axis_id": axis.get("axis_id"), **{k: r.get(k)
-                                  for k in ("family", "unit_id", "role")}}
-                                 for r in refs if isinstance(r, dict))
-    canonical = lambda row: json.dumps(row, sort_keys=True, ensure_ascii=False)
-    return {"reviewed_proposition_refs": sorted(references, key=canonical),
-            "reviewed_decision_refs": sorted(decision_refs, key=canonical)}
 
 
 def _validate_semantic_evidence_integration(
