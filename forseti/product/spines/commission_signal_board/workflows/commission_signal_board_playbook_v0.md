@@ -343,6 +343,11 @@ not spend a separate sacrificial query.
       typed material addition reopens its affected axis and only a directly
       adjacent axis when the evidence explains why.
    4. Recompute the scan after each genuinely different continuation family.
+      The collection coordinator owns the stop; provisional consolidation
+      supplies the meanings and gaps. Resolve suspect source/product/role
+      attribution before selecting another search. From Route 1.7.1 on, credit
+      execution from `execution_packet_artifact_id` and its preserved capture
+      time, never a later date entered against an older coding file.
       Stop acquisition for an axis only when the Prompt Structure Rules
       authority's closure test is met — two later live continuation families of
       different kinds, queries, and artifacts that add no material addition
@@ -602,7 +607,7 @@ phase_acquisition_seal:
     locator:
     sha256:
   understanding_route:
-    route_version: "1.7.0"
+    route_version: "1.7.1"
     comparator_closure:
       state: phase_a_competitor_context_closed | blocked_open_comparator_candidates
       candidate_frame:
@@ -819,8 +824,14 @@ verified structured references; terminal-return-selected, hash-pinned Phase 1
 and Phase 2 queue-state receipts generate the successful job-to-packet inventory, focused-search records
 own their exact packet sets, and every source-bearing row from those surfaces has one explicit
 row-identified semantic route, duplicate, or exclusion before seal (never a
-bulk/default route);
-verification-request triggers and
+bulk/default route); from `1.7.1` on, credited discovery times come from
+verified capture packets and the existing final semantic review binds the final
+ledger, view and corpus. The review pointer is
+`evidence_depth_ledger.final_source_review`; its exact block is owned by the
+Prompt Structure Rules' final-review paragraph. No machine check separates a
+genuine row-by-row exclusion from a bulk-filled one, so that reading stays an
+obligation on the collector, tested by the final semantic review rather than by
+a recorded field; verification-request triggers and
 terminal statuses, and the two-observation retailer-movement rule. A seal
 sealed before route versioning began (2026-08-07) carries no stamped version
 and is audited with `--allow-preversion-route`. A seal stamped with a known
@@ -1122,7 +1133,7 @@ version unless an explicit migration/restart is applied and recorded.
 
 ```yaml
 understanding_acquire_seal_route:
-  current_version: 1.7.0
+  current_version: 1.7.1
   versioning_started: 2026-08-07
   baseline_revision: 1aa3a833edbb8425a4ca2eee91bd850feec4e32c
   version_semantics:
@@ -1313,6 +1324,26 @@ understanding_acquire_seal_route:
       migration_note: >
         A run started under 1.6.0 retains 1.6.0 unless explicitly restarted.
         Historical seals are never restamped. New runs seal under 1.7.0.
+    - version: 1.7.1
+      date: 2026-09-05
+      owning_change: Experiment Beauty collection completion proof repair
+      changed_behavior: >
+        Binds credited discovery times to preserved capture packets that own
+        the cited outputs, and binds the existing final semantic review to the
+        exact final ledger, view and corpus. Verifies the SERP review
+        inventory's own content hash. Adds no review stage, no row-level
+        exclusion field, and no automated semantic-truth claim. The
+        demonstrated bulk-exclusion shortcut is deliberately left to the
+        existing row-identified-decision rule and the final semantic review:
+        any field a checker could require, the producing loop could fill.
+      affected_gate: >
+        Current broad consumer-brand passing seals require the final review
+        binding and source-backed execution proof. Obligations accrue forward:
+        every later route version owes them too.
+      migration_note: >
+        New runs use 1.7.1. Earlier stamped routes remain historical-audit-only
+        under allow-preversion-route and owe only their stamped requirements;
+        never rewrite historical evidence or imply a process fix repairs it.
   append_only_rule: >
     Every future semantic route change appends one row with version, date,
     owning change/PR when known, changed behavior, affected gate, and
