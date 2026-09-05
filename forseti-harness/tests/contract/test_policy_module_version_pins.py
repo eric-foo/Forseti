@@ -140,8 +140,8 @@ POLICY_MODULE_PINS: dict[str, tuple[tuple[str, ...], str]] = {
     ),
     "cleaning/transcript_product_extractor.py": (
         ("EXTRACTOR_RUBRIC_VERSION",),
-        # Import-only transport relocation; output-shaping rubric is unchanged.
-        "45a1878754192b6cab344fc11d74770851e19c49f46741947e7ac3378136054f",
+        # Output-neutral lazy per-parse quote-index reuse; rubric, prompt, and output policy unchanged.
+        "e15b92734abbc6764bf996e8566f70d598955b848e58ea188b57febe883f112b",
     ),
     "cleaning/transcript_product_lake.py": (
         ("EXTRACTOR_RUBRIC_VERSION (cleaning/transcript_product_extractor.py)", "PRODUCT_MENTIONS_RECORD_SCHEMA_VERSION (record-shape token; weak-envelope residual closed)"),
@@ -309,9 +309,9 @@ POLICY_MODULE_PINS: dict[str, tuple[tuple[str, ...], str]] = {
     ),
     "source_capture/transcript/audio_asr.py": (
         ("transcriber_policy envelope defaults (model/compute/decode params are CLI-enveloped)",),
-        # Pin bumped: added a bounded yt-dlp subprocess timeout (liveness guard). NOT output-shaping
-        # -- only the hang-failure path changes; a successful bestaudio download derives identically.
-        "9e778b107a3e3deec7fee83c0dc06b5cb7dc5a36e71e4d8c48393564abb98b09",
+        # Output-neutral model lifetime change: reuse lazily within each serial batch.
+        # Decode parameters, provenance order, cues, and obligation policy remain unchanged.
+        "8e1e69c4ea624a947d83de78ab350b115e5c80b41063d5a4c1f69607c0370275",
     ),
     "source_capture/transcript/ig_reels_audio_packet.py": (
         ("transcriber_policy envelope (run_asr_transcript_catchup)", "TRANSCRIPT_ASR_RECORD_SCHEMA_VERSION (record-shape token, shared from asr_packet.py; weak-envelope residual closed)"),

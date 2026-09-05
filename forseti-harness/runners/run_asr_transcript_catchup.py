@@ -517,24 +517,20 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(len(pending_packets(data_root=data_root, transcriber_policy=policy)))
         return 0
 
-    from source_capture.transcript.audio_asr import transcribe_audio
-
-    def transcribe_fn(audio_path: str):
-        return transcribe_audio(
-            audio_path, model_name=args.model, compute_type=args.compute_type
-        )
+    from source_capture.transcript.audio_asr import AudioTranscriber
 
     failures = 0
-    for entry in run_catchup(
-        data_root=data_root, transcribe_fn=transcribe_fn, transcriber_policy=policy
-    ):
-        print(json.dumps(entry, ensure_ascii=False, sort_keys=True))
-        if entry["status"] not in {
-            "derived",
-            "acked_existing_transcript",
-            "acked_no_transcribable_audio",
-        }:
-            failures += 1
+    with AudioTranscriber(model_name=args.model, compute_type=args.compute_type) as transcribe_fn:
+        for entry in run_catchup(
+            data_root=data_root, transcribe_fn=transcribe_fn, transcriber_policy=policy
+        ):
+            print(json.dumps(entry, ensure_ascii=False, sort_keys=True))
+            if entry["status"] not in {
+                "derived",
+                "acked_existing_transcript",
+                "acked_no_transcribable_audio",
+            }:
+                failures += 1
     return 1 if failures else 0
 
 

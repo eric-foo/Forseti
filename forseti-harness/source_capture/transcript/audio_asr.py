@@ -54,43 +54,72 @@ def download_audio(video_id: str) -> tuple[bytes, str] | None:
 
 
 def transcribe_audio(audio_path: str, *, model_name: str = "small", compute_type: str = "int8"):
-    """VAD-gated faster-whisper. Returns (posture, cues, model_info).
+    """One-shot compatibility entrypoint; batches use an AudioTranscriber session."""
+    with AudioTranscriber(model_name=model_name, compute_type=compute_type) as transcribe:
+        return transcribe(audio_path)
 
-    `vad_filter=True` is the built-in Silero-VAD speech-gate; zero speech segments ->
-    posture 'no_speech' (never a fabricated/hallucinated transcript). A model-load/decode
-    failure returns posture 'failed' with a bounded failure_message (never raises out of here,
-    so the caller can always record a posture). Cues carry ms timing.
 
-    Provenance honesty (review): `model_repo_id` is the HF repo id; `model_digest` is None with
-    a stated basis because faster-whisper exposes no weights hash at runtime (the field is not a
-    repo id wearing a digest's name).
+class AudioTranscriber:
+    """Lazy model reuse within one serial batch; no process-global model cache.
+
+    Entering the session does not import faster-whisper or load a model. Exiting
+    drops the retained model reference; native memory reclamation is backend-owned.
+    Failed initialization or decoding never leaves a model for the next attempt.
     """
-    import faster_whisper  # lazy: ASR is an optional runtime path (the `transcribe` extra)
 
-    base_info = {
-        "tool": "faster-whisper",
-        "tool_version": faster_whisper.__version__,
-        "model": model_name,
-        "model_repo_id": f"Systran/faster-whisper-{model_name}",
-        "model_digest": None,
-        "model_digest_basis": "not available from the faster-whisper runtime (no weights hash exposed)",
-        "compute_type": compute_type,
-        "decode_params": {"beam_size": 1, "vad_filter": True, "condition_on_previous_text": False},
-        "speech_gate": "faster-whisper builtin Silero VAD (onnx)",
-    }
-    try:
-        model = faster_whisper.WhisperModel(model_name, device="cpu", compute_type=compute_type)
-        segments, info = model.transcribe(
-            audio_path, beam_size=1, vad_filter=True, condition_on_previous_text=False
-        )
-        cues = [
-            {"start_ms": int(s.start * 1000), "end_ms": int(s.end * 1000), "text": s.text.strip()}
-            for s in segments
-            if s.text and s.text.strip()
-        ]
-    except Exception as exc:  # noqa: BLE001 - any model/decode failure -> a `failed` posture, never a raise
-        return "failed", [], {**base_info, "detected_language": None,
-                              "failure_type": type(exc).__name__, "failure_message": str(exc)[:200]}
+    def __init__(self, *, model_name: str = "small", compute_type: str = "int8"):
+        self._model_name = model_name
+        self._compute_type = compute_type
+        self._model = None
 
-    posture = "transcribed" if cues else "no_speech"
-    return posture, cues, {**base_info, "detected_language": getattr(info, "language", None)}
+    def __enter__(self) -> AudioTranscriber:
+        return self
+
+    def __exit__(self, *_exc: object) -> None:
+        self._model = None
+
+    def __call__(self, audio_path: str):
+        """VAD-gated faster-whisper. Returns (posture, cues, model_info).
+
+        `vad_filter=True` is the built-in Silero-VAD speech-gate; zero speech segments ->
+        posture 'no_speech' (never a fabricated/hallucinated transcript). A model-load/decode
+        failure returns posture 'failed' with a bounded failure_message (never raises out of here,
+        so the caller can always record a posture). Cues carry ms timing.
+
+        Provenance honesty (review): `model_repo_id` is the HF repo id; `model_digest` is None with
+        a stated basis because faster-whisper exposes no weights hash at runtime (the field is not a
+        repo id wearing a digest's name).
+        """
+        model_name = self._model_name
+        compute_type = self._compute_type
+        import faster_whisper  # lazy: ASR is an optional runtime path (the `transcribe` extra)
+
+        base_info = {
+            "tool": "faster-whisper",
+            "tool_version": faster_whisper.__version__,
+            "model": model_name,
+            "model_repo_id": f"Systran/faster-whisper-{model_name}",
+            "model_digest": None,
+            "model_digest_basis": "not available from the faster-whisper runtime (no weights hash exposed)",
+            "compute_type": compute_type,
+            "decode_params": {"beam_size": 1, "vad_filter": True, "condition_on_previous_text": False},
+            "speech_gate": "faster-whisper builtin Silero VAD (onnx)",
+        }
+        try:
+            if self._model is None:
+                self._model = faster_whisper.WhisperModel(model_name, device="cpu", compute_type=compute_type)
+            segments, info = self._model.transcribe(
+                audio_path, beam_size=1, vad_filter=True, condition_on_previous_text=False
+            )
+            cues = [
+                {"start_ms": int(s.start * 1000), "end_ms": int(s.end * 1000), "text": s.text.strip()}
+                for s in segments
+                if s.text and s.text.strip()
+            ]
+        except Exception as exc:  # noqa: BLE001 - any model/decode failure -> a `failed` posture, never a raise
+            self._model = None
+            return "failed", [], {**base_info, "detected_language": None,
+                                  "failure_type": type(exc).__name__, "failure_message": str(exc)[:200]}
+
+        posture = "transcribed" if cues else "no_speech"
+        return posture, cues, {**base_info, "detected_language": getattr(info, "language", None)}

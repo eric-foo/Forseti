@@ -71,6 +71,35 @@ def test_producer_discovery_ignores_generated_test_scratch(tmp_path: Path) -> No
     assert discovered == [production]
 
 
+def test_discovery_prunes_before_descent_and_preserves_sorted_membership(tmp_path, monkeypatch):
+    guard = _load_hook()
+    harness = tmp_path / "forseti-harness"
+    for name in ("z.py", "package/a.py", "package/case.PY", "package/test_runs_allowed.py",
+                 "_scratch/deep/hidden.py", "package/tests/deep/hidden.py",
+                 "__pycache__/deep/hidden.py", "_test_runs/deep/hidden.py"):
+        path = harness / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("pass\n", encoding="utf-8")
+    # rglob also admits matching directory names; keep that membership unchanged.
+    (harness / "directory.py").mkdir()
+    expected = [path for path in sorted(harness.rglob("*.py"))
+                if not set(path.relative_to(harness).parts).intersection(
+                    guard._PRODUCER_DISCOVERY_EXCLUDED_DIRS)]
+    real_walk = guard.os.walk
+    visited = []
+
+    def observed_walk(*args, **kwargs):
+        for dirpath, dirnames, filenames in real_walk(*args, **kwargs):
+            visited.append(Path(dirpath))
+            yield dirpath, dirnames, filenames
+
+    monkeypatch.setattr(guard.os, "walk", observed_walk)
+    assert guard._producer_files(tmp_path) == expected
+    assert visited
+    assert all(not set(path.relative_to(harness).parts).intersection(
+        guard._PRODUCER_DISCOVERY_EXCLUDED_DIRS) for path in visited)
+
+
 
 
 def test_strict_mode_fails_unresolved_lane_arguments() -> None:
