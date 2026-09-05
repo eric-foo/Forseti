@@ -42,8 +42,8 @@ state belong to the PR containing this record, not this dated report.
 Gross retirement is **455 files and 12,474,850 logical bytes**. The code and
 necessary tests remove a further 4,207 LF-normalized bytes (8,071 bytes from
 implementation code alone). Final tracked census, including this report and its evidence: **4,059 files /
-180,849,895 bytes**, versus **4,512 / 193,047,491 bytes** at the integration base:
-**12,197,596 bytes (6.32%) net less**. The original experimental baseline
+180,850,472 bytes**, versus **4,512 / 193,047,491 bytes** at the integration base:
+**12,197,019 bytes (6.32%) net less**. The original experimental baseline
 contained 4,512 files / 193,018,389 bytes; the integration-base comparison
 excludes the unrelated changes that landed during this task.
 These are logical Git blob sizes summed by path, not filesystem allocation.
@@ -167,6 +167,13 @@ baseline; after main integration they match the integration base. The retained
 manifest owner anchor resolves. Strict harness
 coupling preflight passed; this is not a full-suite claim. The PR's required
 CI is the broad integration gate and must be read at its actual final head.
+
+The first pre-push attempt was blocked by two legacy document-shape findings:
+the historical prompt put its unchanged `review-report` mode on a separate
+line, and the historical output lacked the explicit review-use boundary.
+The declaration was made inline and the dated notice now states that findings
+are decision input, not approval, validation, mandatory remediation or patch
+authority. The historical findings body and unresolved hash gate stay intact.
 
 Direction-change propagation is bounded to three existing owner pointers:
 review registry rather than a duplicate ID list; dated JSG owner/conductor

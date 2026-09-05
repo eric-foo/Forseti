@@ -36,6 +36,9 @@ the source-context-pass claim below is not reproduced; the old prompt remains
 but does not revalidate this report. Resolve that discrepancy or commission a
 new review with freshly bound inputs before relying on its hash certification.
 
+The preserved findings are decision input, not approval, validation, mandatory
+remediation, or executor-ready patch authority.
+
 ## review_summary
 
 ```yaml

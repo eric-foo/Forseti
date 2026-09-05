@@ -113,11 +113,7 @@ Dirty-state allowance:
 - If the review-input packet hashes do not match the prompt header, return `BLOCKED_SOURCE_CONTEXT`.
 - If the target commit is unavailable and the packet is missing or incomplete, return `BLOCKED_REPO_ACCESS_UNAVAILABLE`.
 
-Output mode:
-
-```text
-review-report
-```
+Output mode: `review-report`
 
 Edit permission:
 
