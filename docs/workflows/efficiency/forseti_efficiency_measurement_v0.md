@@ -21,6 +21,12 @@ The executable owners are `forseti-harness/harness_efficiency.py`, the
 `forseti-harness/runners/run_efficiency.py`. This guide explains their scope;
 existing project validation and product rules remain authoritative.
 
+`provider_attempts.py` and `provider_execution.py` continue to own reserved,
+immutable model-attempt streams, recovery and response publication. Their
+required prompt/response artifacts and publication semantics serve that separate
+consumer. Operational measurements neither replace those receipts nor require
+ordinary validation commands to enter the model-publication lifecycle.
+
 | Surface | Start and finish | Usage and quality boundary |
 | --- | --- | --- |
 | Provider transcript extraction | Transcript identity preparation through model request, parsing, Silver write and marker readback | Automatic metadata sidecar; observed provider usage; validated write and matching persisted hash. This oracle does not prove semantic accuracy. |
