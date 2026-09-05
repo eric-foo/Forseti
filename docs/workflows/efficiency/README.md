@@ -9,6 +9,7 @@ claim that any documented result has been reproduced.
 
 | Need | Open |
 | --- | --- |
+| Read the 2026-09-05 repository efficiency audit, measured local costs, and revalidated change candidates | `forseti_repo_efficiency_audit_2026_09_05_v0.md` |
 | Follow the active five-fix tool-calling improvement sequence and its dogfood gates | `tool_calling_efficiency_improvement_sequence_2026_07_15_v0.md` |
 | Run the fixed cold-agent vendor-admission tool-calling case | `tool_calling_dogfood_case_v0.md` |
 | Review the observed 2026-07-15 three-run baseline and efficiency diagnosis | `tool_calling_dogfood_run_2026_07_15_v0.md` |
