@@ -30,7 +30,7 @@ def launch(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
             "--worktree", str(tmp_path), "--model", "test-model", "--timeout-seconds", "5"]
     monkeypatch.setattr(sys, "argv", argv)
     state = SimpleNamespace(argv=argv, root=tmp_path, executable=executable, checks=[],
-                            launches=[], status="Logged in using ChatGPT\n", status_code=0)
+                            launches=[], status="Logged in using ChatGPT\n", status_code=0, status_stdout="")
 
     def local_check(command, **kwargs):
         state.checks.append((command, kwargs))
@@ -40,7 +40,7 @@ def launch(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         if command[1:] == ["--version"]:
             return SimpleNamespace(returncode=0, stdout="codex-cli 0.153.1\n", stderr="")
         assert command[-2:] == ["login", "status"]
-        return SimpleNamespace(returncode=state.status_code, stdout="", stderr=state.status)
+        return SimpleNamespace(returncode=state.status_code, stdout=state.status_stdout, stderr=state.status)
 
     def execute(**kwargs):
         state.launches.append(kwargs)
@@ -121,6 +121,61 @@ def test_config_load_failure_is_not_reported_as_authentication(launch, capsys):
     assert not launch.launches and not (launch.root / "attempts").exists()
 
 
+# Observed natively from codex-cli 0.153.1: `login status` writes its verdict to
+# stderr, so that stream also carries Codex's own non-fatal notices. A signed-in
+# ChatGPT account still reports exit 0 behind one.
+NATIVE_NOTICE = (
+    "WARNING: proceeding, even though we could not create PATH aliases: Refusing to "
+    'create helper binaries under temporary dir "C:\\\\Temp\\\\"\n'
+)
+
+
+def test_native_nonfatal_notice_does_not_defeat_verified_chatgpt_auth(launch):
+    launch.status = NATIVE_NOTICE + "Logged in using ChatGPT\n"
+    assert runner.main() == 0
+    assert launch.launches[0]["launch_metadata"]["authentication_observed"] == "chatgpt"
+
+
+def test_native_nonfatal_notice_never_admits_a_non_chatgpt_verdict(launch, capsys):
+    # Tolerating the notice must not tolerate the verdict printed behind it.
+    launch.status = NATIVE_NOTICE + "Logged in using an API key: SECRET_DO_NOT_PRINT\n"
+    with pytest.raises(SystemExit) as exc:
+        runner.main()
+    assert exc.value.code == 2
+    output = capsys.readouterr().err
+    assert "ChatGPT authentication was not verified" in output
+    assert "SECRET_DO_NOT_PRINT" not in output
+    assert not launch.launches and not (launch.root / "attempts").exists()
+
+
+@pytest.mark.parametrize("notice", [
+    "WARNING: proceeding, even though authentication could not be verified\n",
+    "WARNING: proceeding, even though we could not create PATH aliases: unknown failure\n",
+])
+def test_unproven_continuation_notice_still_rejects(launch, capsys, notice):
+    launch.status = notice + "Logged in using ChatGPT\n"
+    with pytest.raises(SystemExit):
+        runner.main()
+    assert "ChatGPT authentication was not verified" in capsys.readouterr().err
+    assert not launch.launches and not (launch.root / "attempts").exists()
+
+
+@pytest.mark.parametrize("stdout,stderr,code", [
+    ("", NATIVE_NOTICE, 0),
+    ("", NATIVE_NOTICE + "Logged in using ChatGPT\n", 1),
+    (NATIVE_NOTICE.rstrip(), "Logged in using ChatGPT\n", 0),
+    ("Logged in using an API key", NATIVE_NOTICE + "Logged in using ChatGPT\n", 0),
+    ("Logged in using ChatGPT", NATIVE_NOTICE + "Logged in using ChatGPT\n", 0),
+    ("", NATIVE_NOTICE.rstrip() + " unexpected suffix\nLogged in using ChatGPT", 0),
+])
+def test_notice_cannot_hide_missing_conflicting_or_failed_auth(launch, capsys, stdout, stderr, code):
+    launch.status_stdout, launch.status, launch.status_code = stdout, stderr, code
+    with pytest.raises(SystemExit):
+        runner.main()
+    assert "ChatGPT authentication was not verified" in capsys.readouterr().err
+    assert not launch.launches and not (launch.root / "attempts").exists()
+
+
 @pytest.mark.parametrize("suffix", [".cmd", ".BAT"])
 def test_shim_rejection_uses_resolution_without_symlink_privilege(launch, monkeypatch, capsys, suffix):
     shim = launch.root / ("codex" + suffix)
@@ -171,6 +226,20 @@ def test_executable_never_falls_back_to_path(launch, capsys, kind):
         runner.main()
     assert "--codex-executable" in capsys.readouterr().err
     assert not launch.checks and not launch.launches
+
+
+def test_unrunnable_executable_keeps_its_operating_system_diagnosis(launch, monkeypatch, capsys):
+    # A spawn failure happens before the child exists, so the only detail available
+    # is operating-system text naming why the selected executable cannot run.
+    def broken(command, **kwargs):
+        raise OSError(8, "%1 is not a valid Win32 application")
+
+    monkeypatch.setattr(runner.subprocess, "run", broken)
+    with pytest.raises(SystemExit):
+        runner.main()
+    output = capsys.readouterr().err
+    assert "%1 is not a valid Win32 application" in output
+    assert not launch.launches and not (launch.root / "attempts").exists()
 
 
 @pytest.mark.parametrize("fault", ["timeout", "permission", "bad-version"])

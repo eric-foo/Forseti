@@ -28,6 +28,12 @@ CHATGPT_CONFIG = ("cli_auth_credentials_store=\"file\"", "model_provider=\"opena
 # Native marker for a config-load fault; matched, never echoed, since the text
 # quotes the user's configuration file.
 CONFIG_LOAD_FAILURE = "Error loading config"
+# Only this reproduced stderr notice is unrelated to authentication. A generic
+# "proceeding" warning is not evidence that its remaining text is harmless.
+TEMP_ALIAS_NOTICE_PREFIX = (
+    "WARNING: proceeding, even though we could not create PATH aliases: "
+    "Refusing to create helper binaries under temporary dir "
+)
 
 
 def _local_codex_check(executable: str, arguments: list[str], env: dict[str, str]) -> subprocess.CompletedProcess[str]:
@@ -38,9 +44,32 @@ def _local_codex_check(executable: str, arguments: list[str], env: dict[str, str
             capture_output=True, text=True, encoding="utf-8", errors="replace",
             timeout=10, check=False,
         )
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        # Native diagnostic output can contain credential fragments.
+    except subprocess.TimeoutExpired as exc:
+        # This exception carries captured native output, which can quote credentials.
         raise ValueError(f"Codex local check failed ({type(exc).__name__}); check the selected installation and execution permissions") from None
+    except OSError as exc:
+        # Preserve OS fields, not arbitrary exception args or captured child output.
+        detail = type(exc).__name__
+        code = exc.winerror if getattr(exc, "winerror", None) else exc.errno
+        if code is not None:
+            detail += f" {code}"
+        if exc.strerror:
+            detail += f": {exc.strerror}"
+        raise ValueError(f"Codex local check failed ({detail}); check the selected installation and execution permissions") from None
+
+
+def _auth_verdict(stdout: str, stderr: str) -> str:
+    """Remove only the reproduced temporary-directory notice from stderr.
+
+    Keep stream boundaries, all other nonempty lines, and duplicate verdicts;
+    the caller still requires exit zero and exactly one ChatGPT verdict.
+    """
+    lines = [line.strip() for line in stdout.splitlines()]
+    for raw_line in stderr.splitlines():
+        line = raw_line.strip()
+        if not re.fullmatch(re.escape(TEMP_ALIAS_NOTICE_PREFIX) + r'"[^"\r\n]+"', line):
+            lines.append(line)
+    return "\n".join(line for line in lines if line)
 
 
 def main() -> int:
@@ -93,7 +122,7 @@ def main() -> int:
         metadata["codex_version"] = version.stdout.strip()
         if args.require_chatgpt:
             status = _local_codex_check(executable, [*config, "login", "status"], env)
-            observed = (status.stdout + status.stderr).strip()
+            observed = _auth_verdict(status.stdout, status.stderr)
             # `login status` has no --ignore-user-config, so unlike generation it also
             # loads CODEX_HOME/config.toml. A load failure there reports no auth fact.
             if CONFIG_LOAD_FAILURE in observed:
