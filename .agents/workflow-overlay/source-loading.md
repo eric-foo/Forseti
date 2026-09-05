@@ -492,10 +492,12 @@ Start with:
 
 Then open only the controlling owner doc named by the submap for the current
 claim. Do not bulk-load every ECR/SCR plan or all derived-record code from this
-pack. This is a navigation pointer only; it does not claim ECR/SCR is validated,
-ratified, ready for Evidence-Unit binding, or that JSG-01 is unfrozen (the gate
-stays FROZEN). This pack must not fork the source-loading rule; the submap
-routes, the owner docs decide.
+pack. This navigation pointer claims no ECR/SCR validation, ratification,
+Evidence-Unit readiness, case clearance, or run authorization. Resolve JSG-01
+state from `docs/decisions/jsg01_unfreeze_decision_v0.md` and the current
+conductor at
+`forseti/product/spines/judgment/conductor/judgment_quality_promotion_operating_model_v0.md`.
+The submap routes; the owner sources decide, and runs remain separately gated.
 
 ## Intelligence Claim-Support Read Pack
 

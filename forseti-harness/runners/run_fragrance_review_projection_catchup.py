@@ -60,9 +60,7 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from data_lake.consumption import (
-    PickupItem,
-    append_ack,
-    is_acknowledged,
+    ack_packet,
     pickup,
     reconcile_availability_per_packet,
 )
@@ -145,30 +143,6 @@ def _verified_manifest(data_root, entry: dict) -> dict:
     if not isinstance(manifest, dict):
         raise DataLakeRootError(f"raw manifest is not a JSON object: {relpath}")
     return manifest
-
-
-def _ack_packet(data_root, item: PickupItem, evidence: list[dict]) -> str:
-    """Record the lane-owned completion fact. A create collision (another completer
-    won the race) is fine when the obligation is now acknowledged; anything else is
-    a real ack failure surfaced as a status."""
-    try:
-        append_ack(
-            data_root,
-            raw_anchor=item.raw_anchor,
-            ack_namespace=_ACK_NAMESPACE,
-            obligation=item.obligation,
-            evidence=evidence,
-        )
-    except DataLakeRootError as exc:
-        if is_acknowledged(
-            data_root,
-            raw_anchor=item.raw_anchor,
-            ack_namespace=_ACK_NAMESPACE,
-            obligation=item.obligation,
-        ):
-            return "acked"
-        return f"ack_failed: {type(exc).__name__}: {exc}"[:200]
-    return "acked"
 
 
 def pending_packets(
@@ -300,7 +274,7 @@ def run_catchup(
                 "selected_row_count": len(receipt.selected_row_ids),
             },
         ]
-        outcome = _ack_packet(data_root, item, evidence)
+        outcome = ack_packet(data_root, item, evidence, ack_namespace=_ACK_NAMESPACE)
         if outcome != "acked":
             results.append({"packet_id": packet_id, "status": "ack_failed", "error": outcome})
         else:

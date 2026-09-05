@@ -54,9 +54,7 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from data_lake.consumption import (
-    PickupItem,
-    append_ack,
-    is_acknowledged,
+    ack_packet,
     pickup,
     reconcile_availability_per_packet,
 )
@@ -130,30 +128,6 @@ def _packet_obligation() -> dict:
         ],
         "static_view_count_rule": _STATIC_VIEW_COUNT_NOT_APPLICABLE_REASON,
     }
-
-
-def _ack_packet(data_root, item: PickupItem, evidence: list[dict]) -> str:
-    """Record the lane-owned completion fact. A create collision (another completer
-    won the race) is fine when the obligation is now acknowledged; anything else is
-    a real ack failure surfaced as a status."""
-    try:
-        append_ack(
-            data_root,
-            raw_anchor=item.raw_anchor,
-            ack_namespace=_ACK_NAMESPACE,
-            obligation=item.obligation,
-            evidence=evidence,
-        )
-    except DataLakeRootError as exc:
-        if is_acknowledged(
-            data_root,
-            raw_anchor=item.raw_anchor,
-            ack_namespace=_ACK_NAMESPACE,
-            obligation=item.obligation,
-        ):
-            return "acked"
-        return f"ack_failed: {type(exc).__name__}: {exc}"[:200]
-    return "acked"
 
 
 def _catchup_record_id() -> str:
@@ -262,7 +236,7 @@ def run_catchup(
                     "basis": "known_non_grid_instagram_creator_surface",
                 }
             ]
-            outcome = _ack_packet(data_root, item, evidence)
+            outcome = ack_packet(data_root, item, evidence, ack_namespace=_ACK_NAMESPACE)
             if outcome != "acked":
                 results.append({"packet_id": packet_id, "status": "ack_failed", "error": outcome})
             else:
@@ -304,7 +278,7 @@ def run_catchup(
                 "residual_count": len(projection.residuals),
             },
         ]
-        outcome = _ack_packet(data_root, item, evidence)
+        outcome = ack_packet(data_root, item, evidence, ack_namespace=_ACK_NAMESPACE)
         if outcome != "acked":
             results.append({"packet_id": packet_id, "status": "ack_failed", "error": outcome})
         else:

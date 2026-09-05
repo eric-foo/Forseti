@@ -6,7 +6,7 @@ agent had to learn from adjudication records; this test makes it mechanical:
 
 - every runner that imports ``data_lake.consumption`` is a declared seam
   consumer (explicit audit answer, both directions);
-- consumers use by-key ``pickup`` + ``append_ack`` (no bespoke discovery or
+- consumers use by-key ``pickup`` + ``append_ack``/``ack_packet`` (no bespoke discovery or
   hand-rolled completion facts);
 - availability reconcile is the SHARED per-packet fail-visible helper
   (``reconcile_availability_per_packet``, F-ECR-001 adjudicated shape) — no
@@ -44,7 +44,7 @@ EXPECTED_SEAM_CONSUMER_RUNNERS = frozenset(
     }
 )
 
-_REQUIRED_CONSUMPTION_IMPORTS = {"pickup", "append_ack", "reconcile_availability_per_packet"}
+_REQUIRED_CONSUMPTION_IMPORTS = {"pickup", "reconcile_availability_per_packet"}
 _FORBIDDEN_CONSUMER_CALLS = {"rebuild_availability", "record_availability"}
 _RECONCILE_HELPER = "reconcile_availability_per_packet"
 
@@ -189,6 +189,8 @@ def test_seam_consumers_use_pickup_ack_and_the_shared_reconcile() -> None:
         issues: list[str] = []
         imported = _consumption_imports(tree)
         local_names = _consumption_local_names(tree)
+        if not imported & {"append_ack", "ack_packet"}:
+            issues.append("missing consumption acknowledgement import: append_ack or ack_packet")
         missing = _REQUIRED_CONSUMPTION_IMPORTS - imported
         if missing:
             issues.append(f"missing consumption imports: {sorted(missing)}")

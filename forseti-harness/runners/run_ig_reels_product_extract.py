@@ -60,9 +60,7 @@ from cleaning.transcript_product_lake import (
     mentions_record_id,
 )
 from data_lake.consumption import (
-    PickupItem,
-    append_ack,
-    is_acknowledged,
+    ack_packet,
     pickup,
     reconcile_availability_per_packet,
 )
@@ -248,30 +246,6 @@ def _packet_obligation(data_root, packet_id: str, model: str) -> dict:
             _derived_record_obligation_entries(data_root, packet_id, DEEP_CAPTURE_SET_LANE)
         ),
     }
-
-
-def _ack_packet(data_root, item: PickupItem, evidence: list[dict]) -> str:
-    """Record the lane-owned completion fact. A create collision (another completer
-    won the race) is fine when the obligation is now acknowledged; anything else is
-    a real ack failure surfaced as a status."""
-    try:
-        append_ack(
-            data_root,
-            raw_anchor=item.raw_anchor,
-            ack_namespace=_ACK_NAMESPACE,
-            obligation=item.obligation,
-            evidence=evidence,
-        )
-    except DataLakeRootError as exc:
-        if is_acknowledged(
-            data_root,
-            raw_anchor=item.raw_anchor,
-            ack_namespace=_ACK_NAMESPACE,
-            obligation=item.obligation,
-        ):
-            return "acked"
-        return f"ack_failed: {type(exc).__name__}: {exc}"[:200]
-    return "acked"
 
 
 def _transcripts_for_packet(data_root, packet_id: str) -> list[TranscriptInput]:
@@ -674,7 +648,7 @@ def run_extraction(
                 # the discovery outcome IS the completion evidence. A later ASR record
                 # changes the obligation fingerprint and re-surfaces the packet.
                 evidence = [{"kind": "no_extractable_transcripts", "raw_anchor": packet_id}]
-            outcome = _ack_packet(data_root, item, evidence)
+            outcome = ack_packet(data_root, item, evidence, ack_namespace=_ACK_NAMESPACE)
             if outcome != "acked":
                 results.append({"packet_id": packet_id, "status": "ack_failed", "error": outcome})
     # Historical deep-capture route: shortcode anchors are not committed
