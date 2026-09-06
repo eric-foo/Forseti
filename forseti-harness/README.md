@@ -38,6 +38,12 @@ a schema pass is not semantic proof. `prepare-reconciliation-level
 --existing-stage <stage.json>` resumes unchanged stage membership. Explicit
 `--response-version semantic_evidence_reconciliation_response_v2` preserves
 historical preparation, and stored v2 responses remain consumable unchanged.
+For a verified method-v7 continuation, explicitly select
+`--response-version semantic_evidence_reconciliation_response_v3` on a fresh
+stage to use the same decision compiler and source-role constraints. This
+retains method v7 and its verified inputs; the older-method default and stored
+legacy responses keep their original replay. Explicit v3 also defaults to
+`exact_identity_namespaces_v2`. Never rebind an old answer to this new request.
 Normal method-v12 response-v3 requests default to
 `--authoring-revision exact_identity_namespaces_v2`: opaque node-key prefixes
 separate exact subject/comparator/version identity classes without choosing
@@ -178,6 +184,54 @@ original attempt remains `TIMED_OUT`, and the command makes no provider call.
 The shared runtime lives in `provider_execution.py`; immutable storage and
 publication remain in `provider_attempts.py`. This is not a mandatory wrapper
 around interactive conversations, capture tools, or unrelated processes.
+
+For a standing run that needs bounded automatic recovery, use the job entry
+point over that same executor:
+
+```powershell
+python runners/run_codex_provider_job.py --job-dir <run/jobs/unique-batch-id> --retry-budget-dir <run/retry-budget> --run-retry-limit <total-extra-attempts> --attempt-root <run/attempts> --prompt-file <prompt.md> --output-schema <schema.json> --worktree <repo> --codex-executable <absolute-native-codex-path> --model <model> --reasoning-effort high --timeout-seconds <seconds>
+```
+
+This entry point always requires ChatGPT authentication. Each job freezes its
+input hashes, executable and executor hashes, model, timeout, paths and retry
+policy. Repeating the same command reuses a completed immutable attempt without
+generation; the stage validator and publisher must still accept that answer.
+Jobs sharing a run use the same retry-budget directory and limit. Default
+`--max-retries 1` allows one extra attempt after a ten-second delay, only for
+recognized capacity or connection-reset diagnostics. `--retry-delay-seconds`
+sets a finite delay up to sixty seconds. Concurrent budget claims serialize;
+concurrent execution of the same job fails locally.
+
+An authentication error, changed input, unknown timeout, unknown launch outcome,
+exhausted budget, or semantic rejection remains visible and does not trigger
+automatic generation. A crash after launch intent without a terminal receipt
+requires inspection of the preserved attempt; restarting cannot prove that
+remote work stopped. A recorded launch intent whose attempt directory is missing
+is reported separately. Absence does not prove that no work started; preserve
+the intent and inspect launch diagnostics before deciding how to recover.
+Automatic relaunch remains refused, and an existing retry claim is not returned.
+Retry claims are retained even if usage is missing or a
+subsequent launch fails. Recovery neither edits answers nor changes model,
+credentials or evidence. Completed answer or turn events suppress fresh retries
+even when a timed-out process logged a reconnect warning; use the existing
+validator-owned recovery route where applicable. Token and latency accounting
+stays in the executor's
+per-attempt receipts; missing usage is unknown, and subscription usage is not an
+inferred dollar charge. The recurring cost is local hash/lock/receipt work plus
+only the explicitly budgeted extra provider attempts.
+
+Complete frontier point readers use named relation and preselection-confirmation
+batches when necessary. Both preparation commands accept `--max-request-bytes`
+(CLI default 50000), measured as UTF-8 prompt plus compact JSON response schema,
+and `--batch-size` bounds the required row decisions. Preparation partitions
+contiguous complete inventories; an indivisible oversized row fails
+`request_capacity` before generation. This is a request-size bound, not a claim
+about hidden provider context or response tokens. Literal candidate IDs and
+reasons survive assembly. A source-bound complete point may exceed the ordinary
+configurable origin ceiling only at its exact derived origin count; arbitrary
+selections cannot borrow that exception. Use both bounded preparation stages,
+then `finalize-batched-preselection-relation-confirmation-full-source` to validate
+the complete response set and copy full bound source bodies into the reader.
 
 ## Screening Reads
 

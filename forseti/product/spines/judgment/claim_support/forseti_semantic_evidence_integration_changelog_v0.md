@@ -24,6 +24,12 @@ contract or its linked owning source. This history creates no new review step.
 
 ## Changelog
 
+- `v118` / 2026-09-06 — allowed explicit decision authoring for verified method
+  v7 while retaining legacy replay; grounded complete-frontier origin caps in
+  exact source membership; bounded both literal relation and confirmation
+  requests without reducing evidence; and added immutable subscription jobs
+  with cause-specific finite recovery and shared retry budgets. Individual
+  dogfood does not establish full-corpus proof or eliminate semantic failures.
 - `v117` / 2026-09-05 — documented Route 1.7.1 packet-bound execution proof and
   the final-review input binding, and verified the SERP review inventory's own
   content hash, while retaining the existing Collection/Consolidation boundary.

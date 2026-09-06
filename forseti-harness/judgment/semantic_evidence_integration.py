@@ -6475,8 +6475,8 @@ def prepare_reconciliation_stage(
     }
     agreement_origin_rule = bundle.get("method_version") in SEMANTIC_METHODS_V7_PLUS
     # Clarify current authoring without rewriting v11-and-earlier prompt replay.
-    preserve_child_scope = bundle.get("method_version") == METHOD_VERSION_V12
     decision_only = _reconciliation_decision_only(bundle, response_version)
+    preserve_child_scope = decision_only or bundle.get("method_version") == METHOD_VERSION_V12
     identity_namespaces = _identity_authoring_enabled(decision_only, authoring_revision)
     max_batch_candidates = (
         RECONCILIATION_IDENTITY_V2_MAX_BATCH_CANDIDATES
@@ -6606,7 +6606,10 @@ def _reconciliation_decision_only(bundle, response_version):
         return bundle.get("method_version") == METHOD_VERSION_V12
     if response_version == RECONCILIATION_RESPONSE_VERSION_V2:
         return False
-    if response_version == RECONCILIATION_RESPONSE_VERSION_V3 and bundle.get("method_version") == METHOD_VERSION_V12:
+    # An explicit decision-authoring request can reuse verified v7 evidence.
+    # This changes representation, not its extraction/verification method or
+    # historical default authoring. Never translate a failed stored v2 answer.
+    if response_version == RECONCILIATION_RESPONSE_VERSION_V3 and bundle.get("method_version") in {METHOD_VERSION_V7, METHOD_VERSION_V12}:
         return True
     raise SemanticIntegrationError("unsupported reconciliation authoring response version")
 
@@ -6662,7 +6665,7 @@ def prepare_reconciliation_prompts(bundle, stage, *, response_version=None, auth
     batches = stage["batches"]
     evidence_index = _unit_index(bundle)
     compact_lineage = bundle.get("schema_version") in {BUNDLE_VERSION_V4, BUNDLE_VERSION_V5}
-    preserve_child_scope = bundle.get("method_version") == METHOD_VERSION_V12
+    preserve_child_scope = decision_only or bundle.get("method_version") == METHOD_VERSION_V12
     current_emerging_labels = sorted({label for row in stage["candidates"] for label in row["emerging_axis_labels"]}
         - {label for row in stage["carried_emerging_axis_consolidations"] for label in row["original_labels"]})
     prompts: list[dict[str, Any]] = []
@@ -7406,8 +7409,8 @@ def validate_reconciliation_stage(
             raise SemanticIntegrationError("unknown or duplicate reconciliation batch")
         allowed = set(expected_batches[batch_id]["candidate_refs"])
         if response["schema_version"] == RECONCILIATION_RESPONSE_VERSION_V3:
-            if bundle.get("method_version") != METHOD_VERSION_V12:
-                raise SemanticIntegrationError("decision reconciliation requires current method v12")
+            if bundle.get("method_version") not in {METHOD_VERSION_V7, METHOD_VERSION_V12}:
+                raise SemanticIntegrationError("decision reconciliation requires verified method v7 or current method v12")
             original_labels = level_emerging_labels if batch_id == emerging_axis_owner_batch_id else set()
             response = _assemble_decision_reconciliation(
                 response, stage, expected_batches[batch_id], original_labels, candidate_index, evidence_index)

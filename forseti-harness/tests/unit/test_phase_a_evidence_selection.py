@@ -1776,13 +1776,14 @@ def test_multi_product_frontier_point_admits_only_its_own_product_rows() -> None
     assert caught.value.boundary == "customer_pull_frontier_binding"
 
 
+@pytest.mark.parametrize("origin_count", [14, 127])
 def test_frontier_point_cap_expands_only_to_fit_its_exact_truth_origins(
-    monkeypatch: pytest.MonkeyPatch,
+    monkeypatch: pytest.MonkeyPatch, origin_count: int, tmp_path: Path,
 ) -> None:
-    packet, _ = _packet_and_bundle(25)
+    packet, bundle = _packet_and_bundle(200)
     truth_evidence_ids = [
         f"{source_role}:{index}"
-        for index in range(25)
+        for index in range(200)
         for source_role in [
             (
                 "community_post",
@@ -1793,7 +1794,7 @@ def test_frontier_point_cap_expands_only_to_fit_its_exact_truth_origins(
             )[index % 5]
         ]
         if source_role != "creator_authored"
-    ][:14]
+    ][:origin_count]
     point = {
         "proposition_id": "point-many-origins",
         "bounded_proposition": "Many customers report the same bounded outcome.",
@@ -1802,7 +1803,7 @@ def test_frontier_point_cap_expands_only_to_fit_its_exact_truth_origins(
         "subject_product_ids": ["summer-fridays-lip-butter-balm"],
         "product_version_ids": [],
         "conditions": [],
-        "evidence_item_counts": {"support": 14, "counter": 0, "adjacent": 0},
+        "evidence_item_counts": {"support": origin_count, "counter": 0, "adjacent": 0},
         "evidence_relations": {
             "support": [
                 [evidence_id, [f"{evidence_id}::hydration"]]
@@ -1835,16 +1836,49 @@ def test_frontier_point_cap_expands_only_to_fit_its_exact_truth_origins(
         frontier, packet, point["proposition_id"]
     )
 
-    assert spec["truth_group_cap"] == 14
+    assert spec["truth_group_cap"] == origin_count
     assert spec["customer_pull_frontier_binding"]["truth_group_cap_sha256"] == (
-        _canonical_hash(14)
+        _canonical_hash(origin_count)
     )
     monkeypatch.setattr(evidence_selection, "MAX_CONFIGURABLE_TRUTH_GROUPS", 13)
-    with pytest.raises(EvidenceConsumerError) as caught:
-        selection_spec_from_customer_pull_frontier(
-            frontier, packet, point["proposition_id"]
-        )
-    assert caught.value.boundary == "presentation_cap_insufficient"
+    assert evidence_selection._truth_group_cap(spec) == origin_count
+    sources = [{"source_id": frontier["source_id"], "packet": packet}]
+    evidence_selection._validate_complete_frontier_cap(spec, sources)
+    forged = copy.deepcopy(spec)
+    forged["truth_group_cap"] += 1
+    forged["customer_pull_frontier_binding"]["truth_group_cap_sha256"] = _canonical_hash(forged["truth_group_cap"])
+    with pytest.raises(EvidenceConsumerError, match="cap differs from source origins"):
+        evidence_selection._validate_complete_frontier_cap(forged, sources)
+    omitted = copy.deepcopy(spec)
+    omitted["admit_semantic_refs"].pop()
+    omitted["customer_pull_frontier_binding"]["admit_semantic_refs_sha256"] = _canonical_hash(omitted["admit_semantic_refs"])
+    with pytest.raises(EvidenceConsumerError, match="every exact source relation"):
+        evidence_selection._validate_complete_frontier_cap(omitted, sources)
+    with pytest.raises(EvidenceConsumerError, match="truth_group_cap"):
+        evidence_selection._truth_group_cap({"truth_group_cap": origin_count})
+    pp, bp = tmp_path / 'packet.json', tmp_path / 'bundle.json'
+    pp.write_text(json.dumps(packet), encoding='utf-8')
+    bp.write_text(json.dumps(bundle), encoding='utf-8')
+    sources[0].update(bundle=bundle, packet_path=pp, bundle_path=bp)
+    batches, requests = evidence_selection.prepare_evidence_selection_batches(
+        spec, sources, batch_size=127, max_request_bytes=20000)
+    assert sum(b['candidate_count'] for b in batches['batches']) == batches['candidate_count']
+    assert all(len(p.encode()) + len(evidence_selection._compact(s).encode()) <= 20000 for p,s in requests)
+    candidates = evidence_selection._candidate_rows_for_manifest(sources, batches['selection_manifest'])
+    answers = {}
+    for batch in batches['batches']:
+        subset = candidates[batch['start_index']:batch['start_index']+batch['candidate_count']]
+        answer = dict(batch_id=batch['batch_id'], results=[dict(candidate_id=c['candidate_id'],relation='support',reason_code='matching_customer_experience') for c in subset])
+        evidence_selection.validate_evidence_selection_batch_response(batches,sources,batch_id=batch['batch_id'],response=answer)
+        answers[batch['batch_id']] = answer
+    _, assembled, _ = evidence_selection._assemble_batched_relation_response(batches,sources,answers)
+    assert [row['candidate_id'] for row in assembled['results']] == [c['candidate_id'] for c in candidates]
+    missing = dict(answers); missing.pop(next(iter(missing)))
+    with pytest.raises(EvidenceConsumerError, match='response set changed'):
+        evidence_selection._assemble_batched_relation_response(batches,sources,missing)
+    with pytest.raises(EvidenceConsumerError) as too_large:
+        evidence_selection.prepare_evidence_selection_batches(spec,sources,batch_size=127,max_request_bytes=1000)
+    assert too_large.value.boundary == 'request_capacity'
 
 
 def test_rejected_literal_frontier_relation_stays_accounted_without_forcing_display(
@@ -4173,8 +4207,9 @@ def test_provider_attempt_reservation_and_publication_preserve_every_attempt(
     assert (malformed_dir / "usage.json").is_file()
 
 
+@pytest.mark.parametrize("max_request_bytes", [None, 20000])
 def test_batched_frontier_route_confirms_before_cap_and_replays_exactly(
-    tmp_path: Path,
+    tmp_path: Path, max_request_bytes,
 ) -> None:
     spec, sources = _write_source(tmp_path, 20)
     spec["relation_response_mode"] = "positional"
@@ -4193,9 +4228,17 @@ def test_batched_frontier_route_confirms_before_cap_and_replays_exactly(
 
     confirmation_manifest, confirmation_prompts = (
         prepare_batched_preselection_relation_confirmations(
-            batch_manifest, sources, responses, batch_size=5
+            batch_manifest, sources, responses, batch_size=5,
+            max_request_bytes=max_request_bytes,
         )
     )
+    if max_request_bytes:
+        assert all(len(prompt.encode("utf-8")) + len(evidence_selection._compact(schema).encode("utf-8")) <= max_request_bytes
+                   for prompt, schema in confirmation_prompts)
+        with pytest.raises(EvidenceConsumerError) as capacity:
+            prepare_batched_preselection_relation_confirmations(
+                batch_manifest, sources, responses, batch_size=5, max_request_bytes=1000)
+        assert capacity.value.boundary == "request_capacity"
     assert all(
         "Support directly supports the bounded point and every material qualifier"
         in prompt

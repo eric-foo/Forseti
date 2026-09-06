@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v117
-effective_date: 2026-09-05
+version: v118
+effective_date: 2026-09-06
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v117
+# Semantic Evidence Integration Contract v118
 
 ## Purpose
 
@@ -115,6 +115,15 @@ Deterministic code owns:
 
 The agent never chooses its own evidence count, independence count, support
 posture, cross-venue credit, or causal strength.
+
+Verified method-v7 continuations may explicitly select reconciliation response
+v3 on a fresh stage. The decision compiler derives the existing exact child
+conditions and identities and supplies the same source-role competence rules
+that validation enforces. This is an authoring route over the original verified
+method, not a method migration: v7 defaults and historical responses retain their
+original replay. Missing decisions and incompetent claims still fail. The public
+runner uses the current identity-v2 packing for this explicit route; no completed
+legacy answer may be rebound to an unexecuted decision request.
 
 This ownership also applies to `bounded_meaning` prose. Current response-v3
 normal and missing-definition authoring use count-neutral reported wording,
@@ -1545,15 +1554,19 @@ selection spec bound to the frontier, source packet, bounded point, candidate-
 admission mode, transport mode, point subject scope, and literal semantic refs
 with the normal thirteen-origin cap. When the exact frontier relations contain
 more truth origins, current authoring raises and hash-binds the point-local cap
-only to the required count, up to forty; a larger point fails before provider
-work. Current point authoring admits only the complete frontier's exact support,
+only to the required count. Above the ordinary configurable ceiling of forty,
+preparation and source loading rederive the complete point's exact scope,
+relation membership and truth origins from its bound packet; coherent-looking
+self-stamped hashes alone cannot authorize a larger cap. Ordinary selections
+retain their ceiling. Current point authoring admits only the complete frontier's exact support,
 counter, and adjacent refs; it does not reopen a whole product-axis pool for
 each point. Historical axis-expanded non-value specs and literal-ref value specs
 retain their stamped replay. The
 frontier changes no packet, source fact, proposition relation, or Deliver
 authority.
 
-When a historical axis-expanded point exceeds one response, both relation passes use named batches. The first layer
+When a complete literal-frontier point or historical axis-expanded point exceeds
+one response, both relation passes use named batches. The first layer
 accounts every admitted candidate. The second independently accounts every
 material, protected, or influence row that could reach display, preserving the
 v7 pre-cap correction boundary without one hundreds-row response array. Each
@@ -1562,6 +1575,23 @@ batch identity; the complete set is deterministically reassembled before the
 ordinary v7 selector runs. Missing, foreign, transposed, malformed, or partial
 responses fail before quote selection. Historical v6 batching and narrow v7
 single-response replay retain their stamped behavior.
+The preparation CLI bounds each actual UTF-8 prompt plus compact response schema
+at 50,000 bytes by default and separately bounds required row decisions by batch
+size. It splits complete contiguous inventories and rejects an indivisible
+oversized request before generation, without truncating evidence. Literal-ID
+batches preserve candidate IDs and authored reasons through final assembly.
+Confirmation replay retains its bound size policy. Complete source-body quote
+finalization and downstream readers consume the full validated result; splitting
+provider work does not create a smaller evidence denominator. This bounds known
+request work, not hidden provider context or a maximum response-token count.
+
+Standing jobs may use the subscription-only bounded recovery entry point in
+`forseti-harness/README.md`, over the existing immutable attempt executor.
+Recognized capacity/disconnect failures consume finite per-job and shared-run
+retry budgets. Inputs and execution policy remain fixed; completed jobs resume
+without generation. Unknown execution, authentication failures, input drift and
+semantic rejection remain visible failures. A process receipt never substitutes
+for native semantic acceptance, and missing usage remains unknown.
 
 Historical axis-expanded non-value specs also bind
 `temporal_presentation_policy=recent_year_coverage_v1`. The latest two literal
