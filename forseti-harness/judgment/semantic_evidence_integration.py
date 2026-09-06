@@ -4,6 +4,11 @@ The model-facing surface is deliberately subscription-style: this module packs
 bounded evidence and validates returned semantic choices, but never imports or
 calls a model provider.  Meaning belongs to the agent; provenance, coverage,
 identity credit, source-role competence, and stable serialization belong here.
+
+Before proposing or testing a method optimization, read the repo-root source
+forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md
+section "Supported operating route and owner-only reopen boundary". It owns
+the supported route and deferred alternatives; code presence is not adoption.
 """
 from __future__ import annotations
 
