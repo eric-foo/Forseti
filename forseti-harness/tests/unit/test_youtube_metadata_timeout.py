@@ -28,8 +28,31 @@ def test_metadata_child_preserves_unicode_and_track_metadata(tmp_path, monkeypat
                 "assert '--ignore-config' in sys.argv and '--skip-download' in sys.argv\n"
                 "assert '--dump-single-json' in sys.argv and '--no-playlist' in sys.argv\n"
                 "assert sys.argv[-2:] == ['--', 'https://www.youtube.com/watch?v=abcdefghijk']\n"
-                f"sys.stdout.buffer.write({json.dumps(info, ensure_ascii=False).encode('utf-8')!r})\n")
+                # Write through the child's text layer, as yt-dlp does. Writing
+                # pre-encoded bytes to stdout.buffer would bypass the encoding
+                # boundary this test exists to cover.
+                f"print({json.dumps(info, ensure_ascii=False)!r})\n")
     assert captions._extract_info("https://www.youtube.com/watch?v=abcdefghijk") == info
+
+
+def test_metadata_child_stdout_is_utf8_despite_ambient_encoding(tmp_path, monkeypatch):
+    """A non-UTF-8 ambient text layer must not silently truncate metadata.
+
+    yt-dlp encodes its JSON with the stream's own encoding and ``errors='ignore'``
+    (``yt_dlp.utils.write_string``), so characters unsupported by an ambient cp1252 encoding
+    would be dropped before the parent's UTF-8 decode ever runs.
+    """
+    monkeypatch.setenv("PYTHONIOENCODING", "cp1252")
+    _fake_ytdlp(tmp_path, monkeypatch,
+                "import sys, json\n"
+                "enc = sys.stdout.encoding\n"
+                "info = {'id': 'abcdefghijk', 'title': 'Crème 日本', 'child_stdout_encoding': enc}\n"
+                "s = json.dumps(info, ensure_ascii=False)\n"
+                # yt_dlp.utils.write_string: encode with the stream encoding, ignoring losses.
+                "sys.stdout.buffer.write(s.encode(enc, 'ignore'))\n")
+    info = captions._extract_info("https://www.youtube.com/watch?v=abcdefghijk")
+    assert info["child_stdout_encoding"].lower().replace("_", "-") == "utf-8"
+    assert info["title"] == "Crème 日本"
 
 
 def test_hung_metadata_child_is_reaped_and_runner_reports_error_not_asr(tmp_path, monkeypatch, capsys):
