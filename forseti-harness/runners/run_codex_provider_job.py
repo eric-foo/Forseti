@@ -27,7 +27,7 @@ def main():
     parser.add_argument("--max-retries", type=int, default=1)
     parser.add_argument("--retry-delay-seconds", type=float, default=10)
     parser.add_argument("--preload-context", type=Path, action="append", default=[],
-                        help="Required context supplied verbatim to a job without shell tools; repeat per file")
+                        help="Required context supplied verbatim with shell_tool disabled; repeat per file")
     args = parser.parse_args()
     native = HARNESS_ROOT / "runners/run_codex_provider_attempt.py"
     try:

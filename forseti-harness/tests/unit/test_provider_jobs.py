@@ -71,6 +71,60 @@ def test_preloaded_job_receipt_requires_bound_context_and_no_shell(job, mutation
     assert len(calls) == 1
 
 
+@pytest.mark.parametrize('timing', ['initial', 'after_capacity', 'retry_delay'])
+@pytest.mark.parametrize('mutation', ['changed', 'missing'])
+def test_context_drift_has_no_launch_intent_and_restoring_files_resumes(job, timing, mutation):
+    import hashlib
+    args, calls, outcomes, _ = job
+    source = Path(args['binding']['worktree']) / 'authority.md'
+    context = 'bound required context'
+    source.write_text(context, encoding='utf-8')
+    args['binding'].update(
+        preloaded_context_sha256=hashlib.sha256(context.encode()).hexdigest(),
+        preloaded_context_files=[{'path': str(source), 'sha256': hash_file(source)}])
+    outcomes.extend(['PROCESS_COMPLETED'] if timing == 'initial' else ['capacity', 'PROCESS_COMPLETED'])
+    original_launch = args['launch']
+    mutate_enabled = True
+
+    def mutate():
+        if mutate_enabled:
+            if mutation == 'missing':
+                source.unlink()
+            else:
+                source.write_text('changed context', encoding='utf-8')
+
+    def launch(aid):
+        original_launch(aid)
+        path = args['attempt_root'] / aid / 'execution_receipt.json'
+        receipt = json.loads(path.read_text(encoding='utf-8'))
+        receipt['launch_metadata']['preloaded_context_sha256'] = args['binding']['preloaded_context_sha256']
+        receipt['command'] += ['--config', 'developer_instructions=' + json.dumps(context), '--disable', 'shell_tool']
+        path.write_text(json.dumps(receipt), encoding='utf-8')
+        if timing == 'after_capacity' and aid.endswith('-001'):
+            mutate()
+
+    args['launch'] = launch
+    if timing == 'initial':
+        mutate()
+    elif timing == 'retry_delay':
+        args['sleep'] = lambda _: mutate()
+    with pytest.raises(ValueError, match='provider job preloaded context (changed|unavailable)'):
+        run_provider_job(**args)
+    assert len(calls) == (0 if timing == 'initial' else 1)
+    next_index = 1 if timing == 'initial' else 2
+    assert not (args['job_dir'] / f'launch-{next_index:03d}.json').exists()
+    assert len(list(args['retry_budget_dir'].glob('claim-*.json'))) == int(timing == 'retry_delay')
+    # Retain a claim already made before the wait, but do not poison the job
+    # with an intent for a launch that never happened. Restoration is sufficient.
+    source.write_text(context, encoding='utf-8')
+    mutate_enabled = False
+    result = run_provider_job(**args)
+    assert result['status'] == 'PROCESS_COMPLETED_NOT_VALIDATED'
+    assert len(calls) == next_index
+    assert run_provider_job(**args) == result and len(calls) == next_index
+    assert len(list(args['retry_budget_dir'].glob('claim-*.json'))) == int(timing != 'initial')
+
+
 @pytest.mark.parametrize('outcome',['TIMED_OUT','PROCESS_FAILED'])
 def test_unknown_failure_is_not_retried(job,outcome):
     args,calls,outcomes,_=job; outcomes.append(outcome)

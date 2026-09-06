@@ -155,6 +155,30 @@ def test_job_passes_frozen_context_to_the_real_attempt_boundary(launch, monkeypa
     assert '--require-chatgpt' in command
 
 
+def test_completed_attempt_is_reported_on_a_windows_ansi_console(launch, monkeypatch):
+    # The receipt echoes the command, so preloaded context puts document bytes on
+    # this console. A required overlay source starts with a BOM, and losing the
+    # report of a completed, quota-consuming attempt to the encoder would also make
+    # its exit code indistinguishable from a real generation failure.
+    source = launch.root / "authority.md"
+    source.write_bytes("\ufeff# Required rules\r\ncafé 中文\r\n".encode("utf-8"))
+    context, _ = runner.preloaded_context([source])
+    launch.argv += ["--preload-context", str(source), "--expected-context-sha256",
+                    hashlib.sha256(context.encode()).hexdigest()]
+    monkeypatch.setattr(runner, "execute_provider_attempt", lambda **kwargs: {
+        "outcome": "PROCESS_COMPLETED", "command": list(kwargs["command"]),
+        "launch_metadata": dict(kwargs["launch_metadata"])})
+    captured = io.BytesIO()
+    console = io.TextIOWrapper(captured, encoding="cp1252")
+    monkeypatch.setattr(sys, "stdout", console)
+    assert runner.main() == 0
+    console.flush()
+    reported = json.loads(captured.getvalue().decode("cp1252"))
+    setting = next(p for p in reported["command"] if p.startswith("developer_instructions="))
+    assert json.loads(setting.split("=", 1)[1]) == context
+    assert reported["launch_metadata"]["preloaded_context_sha256"] == hashlib.sha256(context.encode()).hexdigest()
+
+
 @pytest.mark.parametrize("name", runner.AUTH_ROUTE_OVERRIDES)
 def test_override_rejected_before_checks_or_reservation(launch, monkeypatch, capsys, name):
     monkeypatch.setenv(name, "SECRET_DO_NOT_PRINT")

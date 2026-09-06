@@ -90,7 +90,14 @@ For reconciliation, the observed required reads are the worktree's
 Pass both explicitly. The launcher reads them before generation and records their
 paths, byte hashes, and combined context hash. The job pins that context across
 retries; drift fails before generation, and a reused receipt must carry the same
-context and shell restriction. Existing prompt/schema bytes and default launches
+context and shell restriction. Context files are checked before launch intent,
+including after a retry delay; drift preserves any existing retry claim without
+creating a false unknown-execution record. Restore the bound files to resume.
+Changing context or launcher code creates a different job binding: use a new job
+identity for new work, and preserve completed results under their original
+bindings rather than relaunching them to update instructions. Disabling
+`shell_tool` does not assert that every other tool feature is unavailable.
+Existing prompt/schema bytes and default launches
 are unchanged. Additional context consumes input tokens (about 20 KB for these
 two files); measure whole-job usage and denied-tool events rather than assuming
 a saving. This opt-in removes repeated blocked reads, not the underlying host

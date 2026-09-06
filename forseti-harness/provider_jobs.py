@@ -126,6 +126,16 @@ def _check_attempt(path, binding):
     return receipt
 
 
+def _check_context_files(binding):
+    for record in binding.get("preloaded_context_files", []):
+        try:
+            unchanged = hash_file(Path(record["path"])) == record["sha256"]
+        except OSError as exc:
+            raise ValueError("provider job preloaded context unavailable") from exc
+        if not unchanged:
+            raise ValueError("provider job preloaded context changed")
+
+
 def _claim_retry(root, limit, job, attempt_id):
     with _lock(root / "budget.lock", wait_seconds=5):
         policy = root / "policy.json"
@@ -176,6 +186,7 @@ def run_provider_job(*, job_dir: Path, attempt_root: Path, binding: dict,
             for kind in ("prompt", "schema"):
                 if hash_file(Path(binding[kind + "_path"])) != binding[kind + "_sha256"]:
                     raise ValueError("provider job input changed")
+            _check_context_files(binding)
             aid = job_dir.name + f"-attempt-{index+1:03d}"
             attempt = attempt_root / aid
             intent = job_dir / f"launch-{index+1:03d}.json"
@@ -201,6 +212,7 @@ def run_provider_job(*, job_dir: Path, attempt_root: Path, binding: dict,
                     for kind in ("prompt", "schema"):
                         if hash_file(Path(binding[kind + "_path"])) != binding[kind + "_sha256"]:
                             raise ValueError("provider job input changed during retry delay")
+                    _check_context_files(binding)
                 _new(intent, {"attempt_id": aid})
                 launch(aid)
                 if not (attempt / "execution_receipt.json").exists():

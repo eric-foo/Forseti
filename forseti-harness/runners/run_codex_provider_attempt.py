@@ -51,7 +51,8 @@ def preloaded_context(paths: list[Path]) -> tuple[str, list[dict[str, str]]]:
         "The launcher has supplied the following required task-context files in full. "
         "Read and apply them here; their presence satisfies reading these exact files. "
         "Project instructions still apply. This job uses only the supplied request and "
-        "context; shell tools are unavailable. Do not attempt to reread the same files "
+        "context. The launcher disables the shell_tool feature. Do not invoke tools "
+        "to reread the same files "
         "or delegate this job. If another required source is missing, report that gap "
         "rather than inventing its contents or claiming completion.\n\n" + "\n".join(sections),
         manifest,
@@ -113,7 +114,7 @@ def main() -> int:
     parser.add_argument("--require-chatgpt", action="store_true",
                         help="Require file-backed ChatGPT sign-in; reject API or unknown authentication before generation")
     parser.add_argument("--preload-context", type=Path, action="append", default=[],
-                        help="Supply a required UTF-8 instruction file verbatim; repeat for multiple files. Disables shell tools for this self-contained job.")
+                        help="Supply a required UTF-8 instruction file verbatim; repeat for multiple files. Disables shell_tool for this self-contained job.")
     parser.add_argument("--expected-context-sha256", help=argparse.SUPPRESS)
     # Owner's standing launch rule; reject before reservation or provider access.
     parser.add_argument("--reasoning-effort", choices=("high",), default="high")
@@ -196,7 +197,11 @@ def main() -> int:
         )
     except OSError as exc:
         parser.error(f"execution file access failed ({type(exc).__name__}: {exc}); inspect preserved attempt {attempt_dir}; do not retry its ID")
-    print(json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True))
+    # The receipt echoes the command, so preloaded context puts BOMs and other
+    # text outside a Windows redirected console's encoding on this stream. JSON
+    # escapes preserve it without discarding a completed attempt's report, and
+    # keep the exit code below distinguishable from a real generation failure.
+    print(json.dumps(receipt, ensure_ascii=True, indent=2, sort_keys=True))
     return 0 if receipt["outcome"] == "PROCESS_COMPLETED" else 1
 
 
