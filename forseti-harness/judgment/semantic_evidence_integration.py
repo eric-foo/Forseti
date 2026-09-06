@@ -77,6 +77,7 @@ RECONCILIATION_DUPLICATE_LEAF_REPAIR_MODE = "duplicate_leaf_structural_v1"
 RECONCILIATION_AUTHORING_LEGACY = "legacy"
 RECONCILIATION_AUTHORING_IDENTITY_V1 = "exact_identity_namespaces_v1"
 RECONCILIATION_AUTHORING_IDENTITY_V2 = "exact_identity_namespaces_v2"
+RECONCILIATION_AUTHORING_IDENTITY_V3 = "exact_identity_namespaces_v3"
 RECONCILIATION_IDENTITY_V2_MAX_BATCH_CANDIDATES = 96
 RELATION_CLOSURE_STAGE_VERSION = "semantic_evidence_relation_closure_stage_v1"
 RELATION_CLOSURE_RESPONSE_VERSION = "semantic_evidence_relation_closure_response_v1"
@@ -6238,9 +6239,22 @@ def _identity_authoring_enabled(decision_only, authoring_revision):
     if authoring_revision in {
         RECONCILIATION_AUTHORING_IDENTITY_V1,
         RECONCILIATION_AUTHORING_IDENTITY_V2,
+        RECONCILIATION_AUTHORING_IDENTITY_V3,
     } and decision_only:
         return True
     raise SemanticIntegrationError("unsupported reconciliation normal-authoring revision for response version")
+
+
+def _reconciliation_source_overlap_groups(candidates):
+    # Each group is one exact shared leaf, not a connected component: A-B and
+    # B-C overlap does not prohibit A-C. Repeated identical groups add no rule.
+    owners = defaultdict(set)
+    for candidate in candidates:
+        for leaf in candidate["leaf_relations"]:
+            owners[leaf["semantic_unit_ref"]].add(candidate["candidate_ref"])
+    return [list(group) for group in sorted({
+        tuple(sorted(refs)) for refs in owners.values() if len(refs) > 1
+    })]
 
 
 def _render_normal_reconciliation_prompt(
@@ -6266,11 +6280,29 @@ def _render_normal_reconciliation_prompt(
             "The same original leaf may enter one node through only one attached child. If two children share a leaf, "
             "keep them out of the same node or split the node without dropping either candidate.\n"
         )
-    return prompt + "\n\nNORMAL_AUTHORING_REVISION: " + revision + "\n" + instruction + json.dumps(
+    if revision == RECONCILIATION_AUTHORING_IDENTITY_V3:
+        instruction += (
+            "Code has checked the original source links for the supplied candidates. "
+            "SOURCE_OVERLAP_GROUPS below lists exact candidate_ref groups sharing an original piece of evidence. "
+            "Each returned node may attach at most one member of each group, regardless of relation. "
+            "Check each group separately; do not combine overlapping groups into a larger prohibition. "
+            "An empty list means no shared-source restrictions within this batch. "
+            "These are structural restrictions only, not evidence that allowed candidates share a meaning. "
+            "Preserve every required finding, using separate nodes where needed. "
+            "Code retains the original source links and independently validates the result; "
+            "you do not need original leaf IDs to apply these supplied restrictions.\n"
+        )
+    result = prompt + "\n\nNORMAL_AUTHORING_REVISION: " + revision + "\n" + instruction + json.dumps(
         _reconciliation_identity_prefixes(kwargs["candidates"]),
         ensure_ascii=False,
         separators=(",", ":"),
     ) + "\n"
+    if revision == RECONCILIATION_AUTHORING_IDENTITY_V3:
+        result += "\nSOURCE_OVERLAP_GROUPS\n" + json.dumps(
+            _reconciliation_source_overlap_groups(kwargs["candidates"]),
+            ensure_ascii=False, separators=(",", ":"),
+        ) + "\n"
+    return result
 
 
 def prepare_reconciliation_stage(
@@ -6480,7 +6512,7 @@ def prepare_reconciliation_stage(
     identity_namespaces = _identity_authoring_enabled(decision_only, authoring_revision)
     max_batch_candidates = (
         RECONCILIATION_IDENTITY_V2_MAX_BATCH_CANDIDATES
-        if authoring_revision == RECONCILIATION_AUTHORING_IDENTITY_V2
+        if authoring_revision in {RECONCILIATION_AUTHORING_IDENTITY_V2, RECONCILIATION_AUTHORING_IDENTITY_V3}
         else None
     )
     current_emerging_labels = sorted(

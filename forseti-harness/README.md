@@ -43,16 +43,24 @@ For a verified method-v7 continuation, explicitly select
 stage to use the same decision compiler and source-role constraints. This
 retains method v7 and its verified inputs; the older-method default and stored
 legacy responses keep their original replay. Explicit v3 also defaults to
-`exact_identity_namespaces_v2`. Never rebind an old answer to this new request.
+`exact_identity_namespaces_v3`. Never rebind an old answer to this new request.
 Normal method-v12 response-v3 requests default to
-`--authoring-revision exact_identity_namespaces_v2`: opaque node-key prefixes
+`--authoring-revision exact_identity_namespaces_v3`: opaque node-key prefixes
 separate exact subject/comparator/version identity classes without choosing
-meanings, the existing repeated-leaf rule is stated before generation, and fresh
+meanings, and code supplies exact groups of candidates sharing original evidence.
+Each output node may use at most one member of each group; overlapping groups
+do not prohibit unrelated combinations. An empty list means no shared-source
+restrictions in that batch. The model need not reconstruct hidden source IDs;
+native validation still rejects duplicate source paths. These restrictions are
+included in the rendered byte budget. Fresh
 current stages cap each batch at 96 candidates as well as the prompt-byte limit.
-Use `--authoring-revision exact_identity_namespaces_v1` for prior namespaced
+Use `--authoring-revision exact_identity_namespaces_v2` for prior capped requests,
+`--authoring-revision exact_identity_namespaces_v1` for prior namespaced
 packing or `--authoring-revision legacy` for older normal v3 replay.
 Low-level Python preparation retains legacy defaults; current callers select
-`RECONCILIATION_AUTHORING_IDENTITY_V2` explicitly. Definition recovery and local
+`RECONCILIATION_AUTHORING_IDENTITY_V3` explicitly. Preserve completed request and
+response bindings; prepare future work separately under the new revision.
+Definition recovery and local
 repair keep their previously fitting historical requests and existing keys.
 Oversized local repairs try a lossless table layout before enforcing the same
 byte limit; all sources and connected attachments remain present, and the
