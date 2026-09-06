@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import json
 import os
 import re
@@ -107,12 +108,32 @@ def _check_attempt(path, binding):
             raise ValueError("provider attempt input binding changed")
     if receipt.get("launch_metadata", {}).get("authentication_observed") != "chatgpt":
         raise ValueError("provider attempt lacks subscription authentication evidence")
+    if "preloaded_context_sha256" in binding:
+        metadata = receipt.get("launch_metadata", {})
+        settings = [command[i+1] for i, part in enumerate(command[:-1]) if part == "--config"]
+        contexts = [value.split("=", 1)[1] for value in settings if value.startswith("developer_instructions=")]
+        disabled = [command[i+1] for i, part in enumerate(command[:-1]) if part == "--disable"]
+        if (metadata.get("preloaded_context_sha256") != binding["preloaded_context_sha256"]
+                or len(contexts) != 1
+                or hashlib.sha256(json.loads(contexts[0]).encode("utf-8")).hexdigest() != binding["preloaded_context_sha256"]
+                or not {"shell_tool"}.issubset(disabled)):
+            raise ValueError("provider attempt preloaded context or shell restriction changed")
     for name, key in (("events.jsonl", "events_sha256"), ("stderr.log", "stderr_sha256")):
         if hash_file(path / name) != receipt.get(key):
             raise ValueError("provider attempt diagnostic bytes changed")
     if receipt.get("outcome") == "PROCESS_COMPLETED" and hash_file(path / "response.json") != receipt.get("response_sha256"):
         raise ValueError("provider response bytes changed")
     return receipt
+
+
+def _check_context_files(binding):
+    for record in binding.get("preloaded_context_files", []):
+        try:
+            unchanged = hash_file(Path(record["path"])) == record["sha256"]
+        except OSError as exc:
+            raise ValueError("provider job preloaded context unavailable") from exc
+        if not unchanged:
+            raise ValueError("provider job preloaded context changed")
 
 
 def _claim_retry(root, limit, job, attempt_id):
@@ -165,6 +186,7 @@ def run_provider_job(*, job_dir: Path, attempt_root: Path, binding: dict,
             for kind in ("prompt", "schema"):
                 if hash_file(Path(binding[kind + "_path"])) != binding[kind + "_sha256"]:
                     raise ValueError("provider job input changed")
+            _check_context_files(binding)
             aid = job_dir.name + f"-attempt-{index+1:03d}"
             attempt = attempt_root / aid
             intent = job_dir / f"launch-{index+1:03d}.json"
@@ -190,6 +212,7 @@ def run_provider_job(*, job_dir: Path, attempt_root: Path, binding: dict,
                     for kind in ("prompt", "schema"):
                         if hash_file(Path(binding[kind + "_path"])) != binding[kind + "_sha256"]:
                             raise ValueError("provider job input changed during retry delay")
+                    _check_context_files(binding)
                 _new(intent, {"attempt_id": aid})
                 launch(aid)
                 if not (attempt / "execution_receipt.json").exists():

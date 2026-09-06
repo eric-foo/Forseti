@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import json
+import hashlib
+import io
 import subprocess
 import sys
 from pathlib import Path
@@ -73,6 +75,108 @@ def test_selected_installation_auth_environment_and_native_restriction(launch, m
         "codex_version": "codex-cli 0.153.1", "authentication_policy": "chatgpt_only",
         "authentication_observed": "chatgpt",
     }
+
+
+def test_required_context_is_verbatim_without_shell_or_prompt_mutation(launch):
+    source = launch.root / "authority.md"
+    original = '# Required rules\r\nPreserve "quoted" meaning, café, and  two spaces.\r\n'
+    source.write_bytes(original.encode("utf-8"))
+    context, manifest = runner.preloaded_context([source])
+    launch.argv += ["--preload-context", str(source), "--expected-context-sha256",
+                    hashlib.sha256(context.encode()).hexdigest()]
+    assert runner.main() == 0
+    call = launch.launches[0]
+    setting = next(p for p in call["command"] if p.startswith("developer_instructions="))
+    assert json.loads(setting.split("=", 1)[1]) == context
+    assert original in context
+    assert call["prompt_path"].read_text(encoding="utf-8") == "exact prompt"
+    disabled = [call["command"][i+1] for i, value in enumerate(call["command"][:-1]) if value == "--disable"]
+    assert {"shell_tool"}.issubset(disabled)
+    assert json.loads(call["launch_metadata"]["preloaded_context_files"]) == manifest
+    assert manifest[0]["sha256"] == hashlib.sha256(source.read_bytes()).hexdigest()
+    assert "project_doc_max_bytes=0" not in call["command"]
+
+
+@pytest.mark.parametrize("mutation", ["changed", "missing", "empty", "invalid_utf8"])
+def test_bad_or_changed_context_fails_before_auth_and_reservation(launch, mutation):
+    source = launch.root / "authority.md"
+    source.write_text("required rule", encoding="utf-8")
+    context, _ = runner.preloaded_context([source])
+    launch.argv += ["--preload-context", str(source), "--expected-context-sha256",
+                    hashlib.sha256(context.encode()).hexdigest()]
+    if mutation == "missing":
+        source.unlink()
+    else:
+        source.write_bytes({"changed": b"different rule", "empty": b"", "invalid_utf8": b"\xff"}[mutation])
+    with pytest.raises(SystemExit) as exc:
+        runner.main()
+    assert exc.value.code == 2
+    assert not launch.checks and not launch.launches
+    assert not (launch.root / "attempts").exists()
+
+
+def test_default_launch_does_not_add_context_or_remove_tools(launch):
+    assert runner.main() == 0
+    command = launch.launches[0]["command"]
+    assert not any(value.startswith("developer_instructions=") for value in command)
+    assert "--disable" not in command
+
+
+def test_job_passes_frozen_context_to_the_real_attempt_boundary(launch, monkeypatch):
+    from runners import run_codex_provider_job as job_runner
+    source = launch.root / "authority.md"
+    source.write_text("required authority", encoding="utf-8")
+    argv = ["job", "--job-dir", str(launch.root / "job"), "--attempt-root", str(launch.root / "attempts"),
+            "--retry-budget-dir", str(launch.root / "budget"), "--run-retry-limit", "1",
+            "--prompt-file", str(launch.root / "prompt.md"), "--output-schema", str(launch.root / "schema.json"),
+            "--worktree", str(launch.root), "--codex-executable", str(launch.executable),
+            "--model", "test-model", "--timeout-seconds", "5", "--preload-context", str(source)]
+    monkeypatch.setattr(sys, "argv", argv)
+    commands = []
+    monkeypatch.setattr(job_runner.subprocess, "run", lambda command, **kwargs: commands.append(command))
+    observed = {}
+
+    def run_job(**kwargs):
+        observed.update(kwargs['binding'])
+        kwargs['launch']('job-attempt-001')
+        return {'status': 'PROCESS_COMPLETED_NOT_VALIDATED', 'context': '\ufeff café 中文'}
+
+    monkeypatch.setattr(job_runner, "run_provider_job", run_job)
+    captured = io.BytesIO()
+    console = io.TextIOWrapper(captured, encoding='cp1252')
+    monkeypatch.setattr(sys, 'stdout', console)
+    assert job_runner.main() == 0
+    console.flush()
+    assert json.loads(captured.getvalue().decode('cp1252'))['context'] == '\ufeff café 中文'
+    command = commands[0]
+    assert command[command.index('--preload-context') + 1] == str(source.resolve())
+    assert command[command.index('--expected-context-sha256') + 1] == observed['preloaded_context_sha256']
+    assert observed['preloaded_context_files'][0]['sha256'] == hashlib.sha256(source.read_bytes()).hexdigest()
+    assert '--require-chatgpt' in command
+
+
+def test_completed_attempt_is_reported_on_a_windows_ansi_console(launch, monkeypatch):
+    # The receipt echoes the command, so preloaded context puts document bytes on
+    # this console. A required overlay source starts with a BOM, and losing the
+    # report of a completed, quota-consuming attempt to the encoder would also make
+    # its exit code indistinguishable from a real generation failure.
+    source = launch.root / "authority.md"
+    source.write_bytes("\ufeff# Required rules\r\ncafé 中文\r\n".encode("utf-8"))
+    context, _ = runner.preloaded_context([source])
+    launch.argv += ["--preload-context", str(source), "--expected-context-sha256",
+                    hashlib.sha256(context.encode()).hexdigest()]
+    monkeypatch.setattr(runner, "execute_provider_attempt", lambda **kwargs: {
+        "outcome": "PROCESS_COMPLETED", "command": list(kwargs["command"]),
+        "launch_metadata": dict(kwargs["launch_metadata"])})
+    captured = io.BytesIO()
+    console = io.TextIOWrapper(captured, encoding="cp1252")
+    monkeypatch.setattr(sys, "stdout", console)
+    assert runner.main() == 0
+    console.flush()
+    reported = json.loads(captured.getvalue().decode("cp1252"))
+    setting = next(p for p in reported["command"] if p.startswith("developer_instructions="))
+    assert json.loads(setting.split("=", 1)[1]) == context
+    assert reported["launch_metadata"]["preloaded_context_sha256"] == hashlib.sha256(context.encode()).hexdigest()
 
 
 @pytest.mark.parametrize("name", runner.AUTH_ROUTE_OVERRIDES)
