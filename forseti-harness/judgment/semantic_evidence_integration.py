@@ -5388,14 +5388,23 @@ def _v3_candidate_from_node(
     return candidate
 
 
+def _mixed_condition_lineage(candidate: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Expose ownership when a condition union would hide different source scopes."""
+    lineage = candidate["condition_lineage"]
+    if len({tuple(sorted(row["conditions"])) for row in lineage}) > 1:
+        return lineage
+    return []
+
+
 def _agent_reconciliation_candidate(
     candidate: Mapping[str, Any],
     *,
     convergence_mode: bool = False,
     evidence_index: Mapping[str, Any] | None = None,
     include_source_roles: bool = False,
+    include_condition_lineage: bool = False,
 ) -> dict[str, Any]:
-    """Hide compiler-owned expanded lineage from reconciliation prompts."""
+    """Hide expanded accounting while retaining decision-bearing source scope."""
     agent_candidate = {
         field: candidate[field]
         for field in (
@@ -5413,6 +5422,8 @@ def _agent_reconciliation_candidate(
     }
     if "evidence_postures" in candidate:
         agent_candidate["evidence_postures"] = candidate["evidence_postures"]
+    if include_condition_lineage and (lineage := _mixed_condition_lineage(candidate)):
+        agent_candidate["condition_lineage"] = lineage
     if convergence_mode and "terminal_proposition" in candidate:
         agent_candidate["terminal_proposition"] = candidate["terminal_proposition"]
     if include_source_roles:
@@ -6020,6 +6031,15 @@ def _render_v3_reconciliation_prompt(
             "behavior_evidence_refs: reserve it for behavior actually reported, not "
             "a desired or future act. "
         )
+    if preserve_child_scope and any(_mixed_condition_lineage(row) for row in candidates):
+        scope_instruction += (
+            "A candidate's conditions array is a union, not a claim that those details "
+            "co-occur or apply to every source. Where source scopes differ, condition_lineage "
+            "maps each semantic_unit_ref to its own conditions, including empty lists. "
+            "Do not combine conditions from different entries into a claim no individual "
+            "source establishes. Keep source-specific details in their lineage when "
+            "writing a shared bounded_meaning. These references are not author counts. "
+        )
     if local_repair is not None:
         if not decision_only or definition_recovery is not None:
             raise SemanticIntegrationError("local repair requires decision-only response v3")
@@ -6122,7 +6142,8 @@ def _render_v3_reconciliation_prompt(
             + "\n\nCANDIDATES\n" + json.dumps([
                 _agent_reconciliation_candidate(row,
                     convergence_mode=reconciliation_mode == "convergence",
-                    evidence_index=evidence_index, include_source_roles=True)
+                    evidence_index=evidence_index, include_source_roles=True,
+                    include_condition_lineage=True)
                 for row in candidates], ensure_ascii=False, separators=(",", ":"))
         )
     result = (
@@ -6153,6 +6174,7 @@ def _render_v3_reconciliation_prompt(
                         convergence_mode=reconciliation_mode == "convergence",
                         evidence_index=evidence_index,
                         include_source_roles=preserve_child_scope,
+                        include_condition_lineage=preserve_child_scope,
                     )
                     for row in candidates
                 ]

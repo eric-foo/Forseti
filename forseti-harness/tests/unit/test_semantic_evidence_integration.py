@@ -4405,6 +4405,55 @@ def test_decision_reconciliation_schema_and_consumer_retention_agree(mode, postu
             validate_reconciliation_stage(bundle, stage, [response])
 
 
+@pytest.mark.parametrize("mode", ["normal", "convergence"])
+@pytest.mark.parametrize("source_conditions,expose", [
+    ([["Brown Sugar"], ["since purchasing it during the last sale"]], True),
+    ([["Vanilla", "recent purchase during the sale"], ["Vanilla"]], True),
+    ([["Hot Cocoa", "missed Birthday Cake release"], ["new hot chocolate option"]], True),
+    ([["when it warms up"], []], True),
+    ([["Vanilla"], ["Vanilla"]], False),
+    ([[], []], False),
+])
+def test_reconciliation_prompt_preserves_mixed_source_conditions(
+    mode, source_conditions, expose,
+):
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    for candidate, conditions in zip(stage["candidates"], source_conditions):
+        candidate["conditions"] = conditions
+        candidate["condition_lineage"][0]["conditions"] = conditions
+    stage["stage_sha256"] = _canonical_hash({
+        key: value for key, value in stage.items() if key != "stage_sha256"
+    })
+    response["stage_sha256"] = stage["stage_sha256"]
+    nodes = validate_reconciliation_stage(bundle, stage, [response])
+    next_stage, _ = prepare_reconciliation_stage(bundle, nodes,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2)
+    next_stage["reconciliation_mode"] = mode
+    next_stage["stage_sha256"] = _canonical_hash({
+        key: value for key, value in next_stage.items() if key != "stage_sha256"
+    })
+    before = deepcopy(next_stage)
+    prompts = semantic_module.prepare_reconciliation_prompts(bundle, next_stage)
+    candidate = next_stage["candidates"][0]
+    rendered = json.JSONDecoder().raw_decode(
+        prompts[0]["prompt"].split("\n\nCANDIDATES\n", 1)[1]
+    )[0][0]
+
+    assert rendered["conditions"] == sorted(set(sum(source_conditions, [])))
+    assert rendered.get("condition_lineage") == (
+        candidate["condition_lineage"] if expose else None
+    )
+    assert ("not a claim that those details co-occur" in prompts[0]["prompt"]) is expose
+    assert '"leaf_relations"' not in prompts[0]["prompt"]
+    assert prompts[0]["prompt_utf8_bytes"] <= next_stage["max_prompt_bytes"]
+    assert next_stage == before
+
+    # Legacy renderers retain their frozen projection rather than inheriting
+    # the current scope policy merely because stored lineage is available.
+    legacy = semantic_module._agent_reconciliation_candidate(candidate)
+    assert "condition_lineage" not in legacy
+
+
 def test_current_reconciliation_role_projection_preserves_relation_orientation() -> None:
     candidate = {
         "candidate_ref": "node", "statement": "bounded", "subject_product_ids": ["product"],
