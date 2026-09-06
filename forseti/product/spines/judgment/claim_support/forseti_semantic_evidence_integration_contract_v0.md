@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v118
+version: v119
 effective_date: 2026-09-06
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v118
+# Semantic Evidence Integration Contract v119
 
 ## Purpose
 
@@ -544,12 +544,29 @@ mechanics, but it is not seal-eligible as a final-acquisition corpus.
 Leaves remain the claim-bearing evidence items. Containers preserve context
 and supply a separate count dimension:
 
-- one Reddit root plus its captured replies is one conversation container;
+- one Reddit root or community-review root plus its captured replies is one
+  conversation container;
 - one creator post plus captured audience comments is one creator-conversation
   container;
 - each retailer review is one retailer-review container; and
 - each PDP, owned post, advertisement, editorial item, or measured object is
   one published-object container.
+
+Community-authored reviews on non-retailer review services use the
+`community_review` source family and existing `community_post` role. Preserve
+the native review identity and any captured reply boundaries; a review service
+is not a retailer or Reddit source merely because it hosts customer reviews.
+A whole visible body does not establish full-thread or full-pool coverage.
+
+For a used acquisition target, `families.community_review.source_artifact_id`
+points to the ledgered, materialized `semantic_evidence_source_v3` for that
+cycle. The seal derives exact assessable `community_review` / `community_post`
+`evidence_id` references from its validated source graph; capture-scoped IDs
+remain valid when a public native ID is unavailable. Its raw native artifacts
+must match the ledger, and the target must name the referenced leaf's actual
+native artifact. Missing, blocked, mismatched, or SERP-only references cannot
+close a used target. This reference registration adds no independent-origin or
+axis-family floor credit and does not change the semantic origin rules below.
 
 Each container records captured-leaf count, source-visible total or
 `unavailable`, completeness posture, capture time, and the exact capture
@@ -2418,6 +2435,18 @@ change the Collection to Evidence Consolidation boundary or force structured
 references into the customer-language corpus. Earlier stamped routes retain
 their original requirements under the explicit historical-audit route; `1.7.1`
 and every later route owe these obligations.
+
+Route `1.8.0` adds current-method seal compatibility without changing the
+semantic view or reader contract. A current seal admits
+`semantic_evidence_integration_view_v2` only with
+`semantic_evidence_integration_method_v12` and canonical method hash
+`4f434ce37d3a93d1af85e7597c5cb61213f4f339eea44e37100c12c82822f72a`.
+It inherits every Route 1.7.1 obligation. Historical Route `1.7.1` audits still
+require the exact method-v3/view-v2 tuple. This current-main route succeeds
+revision `70f295561e20e9dc478985041850cf2b5e6bcfc1`; it is distinct from the
+separately developed original Experiment Beauty Route 1.8/1.9 branch at
+`e85c332bee81b9fb32e9d76e11dcf8a4fa3626b3`. Version-number similarity does
+not establish inheritance, migrate a seal, or make an older artifact pass.
 
 ## Changelog
 
