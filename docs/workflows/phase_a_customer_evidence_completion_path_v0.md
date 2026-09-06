@@ -37,6 +37,13 @@ and materialization. The materialized source is the complete consumer input;
 the receipt preserves its Collection lineage without becoming another
 Consolidation command argument.
 
+For collection's stopping decision, follow the provisional interpretation and
+scan loop in the [acquisition playbook](../../forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md).
+A materialized source or a successful source repair establishes an input, not
+material saturation or a fresh need for acquisition. That loop reassesses the
+affected evidence before choosing more collection; it does not wait for the
+final Evidence Consolidation output described below.
+
 Semantic leaf assessment, atomic evidence structuring, meaning-based
 reconciliation, and evidence-packet projection together form the named
 **Evidence Consolidation** stage. It begins from Collection's immutable,
