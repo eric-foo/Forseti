@@ -287,7 +287,7 @@ def test_persistent_google_route_passes_session_profile_to_cold_start_runner(
         commands.append(command)
         return SimpleNamespace(returncode=0, stdout="ok", stderr="")
 
-    monkeypatch.setattr(pipeline.subprocess, "run", run)
+    monkeypatch.setattr(pipeline, "_run_capture_process", run)
     action = {
         "route": pipeline.PERSISTENT_ROUTE,
         "job": {
@@ -315,8 +315,8 @@ def test_reddit_cdp_connection_refused_is_a_transport_interruption(
     tmp_path: Path, monkeypatch
 ) -> None:
     monkeypatch.setattr(
-        pipeline.subprocess,
-        "run",
+        pipeline,
+        "_run_capture_process",
         lambda *_args, **_kwargs: SimpleNamespace(
             returncode=6,
             stdout="",
@@ -350,8 +350,8 @@ def test_reddit_zero_exit_with_access_block_metadata_opens_challenge_path(
         encoding="utf-8",
     )
     monkeypatch.setattr(
-        pipeline.subprocess,
-        "run",
+        pipeline,
+        "_run_capture_process",
         lambda *_args, **_kwargs: SimpleNamespace(
             returncode=0, stdout=str(output), stderr=""
         ),
@@ -391,8 +391,8 @@ def test_reddit_zero_exit_login_redirect_opens_challenge_even_when_flag_is_false
         encoding="utf-8",
     )
     monkeypatch.setattr(
-        pipeline.subprocess,
-        "run",
+        pipeline,
+        "_run_capture_process",
         lambda *_args, **_kwargs: SimpleNamespace(
             returncode=0, stdout=str(output), stderr=""
         ),
@@ -1391,3 +1391,111 @@ def test_expired_idle_cooldown_is_still_persisted(tmp_path):
                                 lambda: datetime.now(UTC), random.Random(0))
     circuit = pipeline._load_state(paths)["circuits"]["reddit"]
     assert circuit["state"] == "closed" and circuit["cooldown_until"] is None
+
+
+
+def test_capture_deadline_blocks_real_runner_before_late_output(tmp_path, monkeypatch):
+    import time
+    runners = tmp_path / "runners"
+    runners.mkdir()
+    marker = tmp_path / "late-success"
+    script = runners / "run_source_capture_cloakbrowser_packet.py"
+    script.write_text("import time\nfrom pathlib import Path\ntime.sleep(1)\n" +
+                      f"Path({str(marker)!r}).write_text('late')\n", encoding="utf-8")
+    monkeypatch.setattr(pipeline, "_harness_root", lambda: tmp_path)
+    config = _config()
+    config["google_route"]["capture_timeout_seconds"] = 0.2
+    action = {"route": pipeline.AUTOMATED_ROUTE, "job": config["query_families"][0]["jobs"][0]}
+    started = time.monotonic()
+    with pytest.raises(pipeline.PipelineBlocked, match="capture_deadline_exceeded"):
+        pipeline._execute_capture("google", action, config, tmp_path / "out")
+    assert time.monotonic() - started < 5
+    time.sleep(1.1)
+    assert not marker.exists()
+
+
+
+def _sleeping_google_runner(tmp_path, monkeypatch):
+    harness = tmp_path / "fake-harness"
+    runners = harness / "runners"
+    runners.mkdir(parents=True)
+    ready = tmp_path / "capture-started"
+    (runners / "run_source_capture_cloakbrowser_packet.py").write_text(
+        "import time\nfrom pathlib import Path\n" +
+        f"p = Path({str(ready)!r})\np.write_text(p.read_text() + 'x' if p.exists() else 'x')\n" +
+        "time.sleep(15)\n", encoding="utf-8")
+    monkeypatch.setattr(pipeline, "_harness_root", lambda: harness)
+    return ready
+
+
+def test_real_capture_timeout_preserves_claim_and_blocks_blind_resume(tmp_path, monkeypatch):
+    ready = _sleeping_google_runner(tmp_path, monkeypatch)
+    config = _config()
+    config["google_route"]["capture_timeout_seconds"] = 0.5
+    run_root = _init(tmp_path, config=config)
+    result = pipeline.run_pipeline(run_root=run_root)
+    assert result["status"] == "blocked"
+    assert "capture_deadline_exceeded" in result["terminal_reason"]
+    assert result["in_flight"]["google"]["job_id"] == "G001"
+    assert result["google_queue"]["in_flight"]["job_id"] == "G001"
+    assert ready.read_text() == "x"
+    for _ in range(2):
+        with pytest.raises(pipeline.PipelineBlocked, match="BLOCKED_IN_FLIGHT_OUTCOME_UNKNOWN"):
+            pipeline.run_pipeline(run_root=run_root)
+        assert ready.read_text() == "x", "resume launched a duplicate capture"
+    print("resume dogfood: deadline blocked; original claim retained; two resumes blocked; launches=1")
+
+
+@pytest.mark.parametrize("cleanup_fault", [False, True])
+def test_operator_interrupt_waits_for_real_capture_shutdown(tmp_path, monkeypatch, cleanup_fault):
+    import threading
+    import time
+    from source_capture import _capture_process
+    ready = _sleeping_google_runner(tmp_path, monkeypatch)
+    run_root = _init(tmp_path)
+    original_join = threading.Thread.join
+    interrupted = False
+    def interrupt_once(thread, *args, **kwargs):
+        nonlocal interrupted
+        if not interrupted and ready.exists():
+            interrupted = True
+            raise KeyboardInterrupt
+        return original_join(thread, *args, **kwargs)
+    monkeypatch.setattr(threading.Thread, "join", interrupt_once)
+    if cleanup_fault:
+        if pipeline.os.name == "nt":
+            real_stop = _capture_process._WindowsJob.stop
+            def stop_with_fault(job):
+                real_stop(job)
+                raise OSError("injected cleanup uncertainty")
+            monkeypatch.setattr(_capture_process._WindowsJob, "stop", stop_with_fault)
+        else:
+            import provider_execution
+            real_stop = provider_execution._stop_process_tree
+            def stop_with_fault(process):
+                real_stop(process)
+                return "injected cleanup uncertainty"
+            monkeypatch.setattr(provider_execution, "_stop_process_tree", stop_with_fault)
+    started = time.monotonic()
+    result = pipeline.run_pipeline(run_root=run_root)
+    assert interrupted
+    assert time.monotonic() - started < 6
+    assert result["status"] == ("blocked" if cleanup_fault else "interrupted_resumable")
+    if cleanup_fault:
+        assert "cleanup failed" in result["terminal_reason"]
+    else:
+        assert result["terminal_reason"] == "operator_interrupt"
+    assert result["in_flight"]["google"]["job_id"] == "G001"
+    assert not any(t.name.startswith("phase-a-") for t in threading.enumerate())
+    with pipeline._process_run_guard(pipeline.pipeline_paths(run_root)):
+        assert ready.read_text() == "x"
+    print(f"interrupt dogfood: cleanup_fault={cleanup_fault}, status={result['status']}, workers_alive=0, launches=1")
+
+
+@pytest.mark.parametrize("value", [0, -1, float("nan"), float("inf"), True, "300"])
+def test_capture_timeout_rejects_invalid_config_before_run(tmp_path, value):
+    config = _config()
+    config["google_route"]["capture_timeout_seconds"] = value
+    with pytest.raises(pipeline.PipelineError, match="capture_timeout_seconds"):
+        _init(tmp_path, config=config)
+    assert not (tmp_path / "run").exists()

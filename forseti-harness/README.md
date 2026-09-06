@@ -711,3 +711,14 @@ It reports acquisition status, candidate and queue counts, circuits, active work
 and paths to full details. Omit it for the existing full JSON response. Acquisition
 completion does not imply evidence judgment or research readiness. `updated_at`
 records the last state write; unchanged idle polls do not refresh it as a heartbeat.
+
+
+Each Google or Reddit capture has a 300-second outer deadline, including runner
+startup. This backstop allows headroom over the existing navigation, startup,
+settle, and scroll budgets; it is not a new retry budget. An optional finite,
+positive `capture_timeout_seconds` in each route config overrides it (set before
+initialization, since running configurations are hash-bound). Operator interruption
+cancels owned capture processes and waits for the workers before releasing the run
+lock. Retained Chrome is outside the capture process group/job and stays open.
+Timeouts and uncertain cleanup block the run and retain in-flight claims for the
+existing resume inspection; they do not silently retry or credit partial output.

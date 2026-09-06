@@ -9,6 +9,7 @@ releases admitted exact threads to one source-native capture worker.
 from __future__ import annotations
 
 import json
+import math
 import os
 import random
 import re
@@ -26,6 +27,7 @@ from urllib.parse import parse_qs, quote_plus, urlsplit
 
 from harness_utils import as_dict, hash_file, sha256_text, utc_now_z_microseconds
 from runners.serp_egress_cadence import REST_EVERY, REST_SECONDS, cycle_for
+from source_capture._capture_process import CaptureProcessStopped, run_capture_process as _run_capture_process
 from source_capture.google_serp_content import (
     GOOGLE_SERP_CONTENT_RECORD_VERSION,
     GoogleSerpContentAnomaly,
@@ -469,7 +471,6 @@ def _run_pipeline_locked(
                 {"reason": "BLOCKED_ROTATING_IP_ATTESTATION_MISSING"},
             )
         return inspect_pipeline(run_root=run_root)
-    capture_func = capture or _execute_capture
     clock = now or (lambda: datetime.now(UTC))
     rng = random_source or random.SystemRandom()
     _reconcile_in_flight(paths)
@@ -483,6 +484,8 @@ def _run_pipeline_locked(
         _save_state(paths, state)
 
     stop = Event()
+    capture_func = capture or (lambda worker, action, config, output:
+                               _execute_capture(worker, action, config, output, stop=stop))
     # Default waits are interruptible; injected clocks/sleeps remain deterministic in tests.
     worker_wait = stop.wait if sleep is time.sleep else sleep
     errors: list[BaseException] = []
@@ -502,21 +505,33 @@ def _run_pipeline_locked(
             stop.set()
 
     threads = [Thread(target=google_worker, name="phase-a-google-worker"), Thread(target=reddit_worker, name="phase-a-reddit-worker")]
+    interrupted = False
     try:
         for thread in threads:
             thread.start()
-        for thread in threads:
-            thread.join()
     except KeyboardInterrupt:
+        interrupted = True
         stop.set()
-        for thread in threads:
-            thread.join(timeout=10)
+    # Keep the process lock until workers have stopped. Default capture attempts
+    # and waits observe stop; returning after a timed join could allow late writes.
+    while any(thread.is_alive() for thread in threads):
+        try:
+            for thread in threads:
+                if thread.is_alive():
+                    thread.join(timeout=0.1)
+        except KeyboardInterrupt:
+            interrupted = True
+            stop.set()
+    if interrupted:
+        cleanup_fault = next((error for error in errors
+                              if isinstance(error.__cause__, CaptureProcessStopped)
+                              and error.__cause__.cleanup_error), None)
         with _state_guard(paths):
             state = _load_state(paths)
-            state["status"] = "interrupted_resumable"
-            state["terminal_reason"] = "operator_interrupt"
+            state["status"] = "blocked" if cleanup_fault else "interrupted_resumable"
+            state["terminal_reason"] = str(cleanup_fault) if cleanup_fault else "operator_interrupt"
             _save_state(paths, state)
-            _append_event(paths, state, "pipeline_interrupted", {})
+            _append_event(paths, state, "pipeline_interrupted", {"cleanup_failed": cleanup_fault is not None})
         return inspect_pipeline(run_root=run_root)
 
     if errors:
@@ -847,6 +862,7 @@ def _execute_capture(
     action: Mapping[str, Any],
     config: Mapping[str, Any],
     output: Path,
+    *, stop: Event | None = None,
 ) -> CaptureResult:
     output.parent.mkdir(parents=True, exist_ok=True)
     if worker == "google":
@@ -883,8 +899,15 @@ def _execute_capture(
             "--cdp-endpoint", route["cdp_endpoint"], "--persistent-tab-marker", route["persistent_tab_marker"],
             "--scroll-step-px", "700", "--scroll-passes", "2",
         ]
-    flags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
-    completed = subprocess.run(command, capture_output=True, text=True, creationflags=flags, check=False)
+    try:
+        completed = _run_capture_process(
+            command, timeout_seconds=config[f"{worker}_route"].get("capture_timeout_seconds", 300.0),
+            stop=stop,
+        )
+    except CaptureProcessStopped as exc:
+        # Preserve the in-flight claim for inspection; timeout is not a transport
+        # retry or proof that a partial packet is safe to credit.
+        raise PipelineBlocked(f"BLOCKED_{exc}") from exc
     detail = (completed.stderr or completed.stdout).strip()[-2000:]
     if completed.returncode == 0:
         access_block_reason = _packet_access_block_reason(output, worker=worker)
@@ -956,6 +979,11 @@ def _validate_config(config: Mapping[str, Any]) -> None:
         raise PipelineError("Reddit pacing must be exactly the commissioned 44-61 seconds")
     if reddit.get("first_cooldown_seconds") != 1200:
         raise PipelineError("Reddit first cooldown must be 1200 seconds")
+    for worker, route in (("google", google), ("reddit", reddit)):
+        timeout = route.get("capture_timeout_seconds", 300.0)
+        if (isinstance(timeout, bool) or not isinstance(timeout, (int, float))
+                or not math.isfinite(timeout) or timeout <= 0):
+            raise PipelineError(f"{worker}_route.capture_timeout_seconds must be finite and positive")
     reddit_endpoint = _loopback_cdp_endpoint(_required_text(reddit, "cdp_endpoint"))
     _required_text(reddit, "persistent_tab_marker")
     if google.get("persistent_fallback_enabled") is True:
