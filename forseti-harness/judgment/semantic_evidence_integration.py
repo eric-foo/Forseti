@@ -196,6 +196,7 @@ POLARITIES = {"affirmed", "negated", "mixed", "uncertain"}
 EMERGING_AXIS_DISPOSITIONS = {"accepted", "nonmaterial", "blocker"}
 SUPPORTED_V3_SOURCE_FAMILIES = {
     "reddit_community",
+    "community_review",
     "retailer_review",
     "sephora_retailer_reviews",
     "creator_post",

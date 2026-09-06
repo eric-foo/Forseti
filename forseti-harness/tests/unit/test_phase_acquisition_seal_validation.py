@@ -9,11 +9,23 @@ import yaml
 from source_capture.models import SourceCapturePacket
 
 from judgment.semantic_evidence_integration import (
+    METHOD_TEXT_V12,
     METHOD_TEXT_V2,
     METHOD_TEXT_V3,
+    METHOD_VERSION_V12,
     METHOD_VERSION_V2,
     METHOD_VERSION_V3,
+    RECONCILIATION_RESPONSE_VERSION_V2,
+    ROW_VERIFICATION_RESPONSE_VERSION,
+    SOURCE_VERSION_V3,
     _sha256,
+    apply_row_verification,
+    build_bundle,
+    finalize_v3_view,
+    prepare_reconciliation_stage,
+    prepare_row_verification,
+    validate_batch_responses,
+    validate_reconciliation_stage,
 )
 from runners.run_phase_acquisition_seal_validation import (
     BROAD_UNDERSTANDING_PROFILE,
@@ -21,13 +33,16 @@ from runners.run_phase_acquisition_seal_validation import (
     CONSUMER_DEPTH_LEDGER_VERSION,
     CURRENT_SEMANTIC_EVIDENCE_METHOD_SHA256,
     CURRENT_SEMANTIC_EVIDENCE_METHOD_VERSION,
+    CURRENT_UNDERSTANDING_ROUTE_VERSION,
     DEPTH_LEDGER_VERSION,
     LEGACY_SEAL_VERSION,
     PREVIOUS_CONSUMER_BRAND_UNDERSTANDING_PROFILE,
     PREVIOUS_CONSUMER_DEPTH_LEDGER_VERSION,
     SEAL_VERSION,
     SEMANTIC_EVIDENCE_METHOD_SHA256_V3,
+    SEMANTIC_EVIDENCE_METHOD_SHA256_V12,
     SEMANTIC_EVIDENCE_METHOD_VERSION_V3,
+    SEMANTIC_EVIDENCE_METHOD_VERSION_V12,
     UNDERSTANDING_ROUTE_VERSIONS,
     _ROUTE_REVISION_1_1_OBLIGATION_VERSIONS,
     _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS,
@@ -37,7 +52,9 @@ from runners.run_phase_acquisition_seal_validation import (
     _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS,
     _ROUTE_REVISION_1_7_OBLIGATION_VERSIONS,
     _ROUTE_REVISION_1_7_1_OBLIGATION_VERSIONS,
+    _ROUTE_REVISION_1_8_OBLIGATION_VERSIONS,
     _artifact_hash,
+    _validate_semantic_evidence_integration,
     _validate_reddit_candidate_frontier,
     _validate_final_semantic_source_review,
     main,
@@ -981,6 +998,7 @@ def test_every_route_obligation_ladder_stays_upward_closed() -> None:
         "1.6": _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS,
         "1.7": _ROUTE_REVISION_1_7_OBLIGATION_VERSIONS,
         "1.7.1": _ROUTE_REVISION_1_7_1_OBLIGATION_VERSIONS,
+        "1.8": _ROUTE_REVISION_1_8_OBLIGATION_VERSIONS,
     }
     for name, ladder in ladders.items():
         assert ladder <= UNDERSTANDING_ROUTE_VERSIONS, name
@@ -1042,6 +1060,12 @@ def test_route_1_7_historical_audit_does_not_owe_later_completion_proof(tmp_path
     _rewrite_depth_reference(seal, path, ledger)
     seal["evidence_depth_ledger"].pop("final_source_review")
     seal["understanding_route"]["route_version"] = "1.7.0"
+
+    def retain_historical_method(view: dict) -> None:
+        view["method_version"] = METHOD_VERSION_V3
+        view["method_sha256"] = _sha256(METHOD_TEXT_V3)
+
+    _rewrite_semantic_view(tmp_path, seal, retain_historical_method)
     _make_passing(seal)
     assert _validate(tmp_path, seal)  # Cannot present a historical route as current.
     assert validate_phase_acquisition_seal(seal_path=_write_seal(tmp_path, seal),
@@ -1165,8 +1189,8 @@ def _semantic_integration_view(
         "question_id": "phase-a-evidence-integration",
         "bundle_sha256": "2" * 64,
         "corpus_sha256": corpus_sha256,
-        "method_version": METHOD_VERSION_V3,
-        "method_sha256": _sha256(METHOD_TEXT_V3),
+        "method_version": METHOD_VERSION_V12,
+        "method_sha256": _sha256(METHOD_TEXT_V12),
         "corpus_profile": "phase_a_final_acquisition",
         "coverage": {
             "captured_item_count": 2,
@@ -1270,6 +1294,183 @@ def _semantic_integration_view(
     )
 
 
+def _public_finalizer_v12_semantic_view() -> dict:
+    artifact_id = "reddit-thread-1"
+    evidence_id = "reddit:t1:comment-1"
+    catalog = {
+        "schema_version": "product_identity_catalog_v1",
+        "products": [
+            {
+                "stable_product_id": "summer-fridays-lip-butter-balm",
+                "display_name": "Summer Fridays Lip Butter Balm",
+                "source_product_ids": ["sf-lbb"],
+                "aliases": ["Lip Butter Balm"],
+                "authority_artifact_ids": [artifact_id],
+            }
+        ],
+    }
+    catalog["catalog_sha256"] = _sha256(catalog)
+    source = {
+        "schema_version": SOURCE_VERSION_V3,
+        "semantic_method_version": METHOD_VERSION_V12,
+        "cycle_id": "public-finalizer-v12-fixture",
+        "question_id": "phase-a-evidence-integration",
+        "question": "What captured customers report about wear",
+        "corpus_profile": "phase_a_final_acquisition",
+        "corpus_scope": "controlled complete one-leaf corpus",
+        "corpus_cutoff": "2026-09-05T00:00:00Z",
+        "axes": [{"axis_id": "wear", "label": "Wear"}],
+        "source_artifacts": [
+            {
+                "artifact_id": artifact_id,
+                "locator": "thread-1.json",
+                "sha256": _sha256("thread-1\n"),
+            }
+        ],
+        "containers": [
+            {
+                "container_id": "reddit:thread-1",
+                "container_type": "conversation",
+                "source_artifact_id": artifact_id,
+                "captured_leaf_count": 1,
+                "source_visible_total": 1,
+                "completeness": "complete",
+                "captured_at": "2026-09-05T00:00:00Z",
+                "capture_boundary": "controlled complete one-leaf fixture",
+            }
+        ],
+        "captured_items": [
+            {
+                "evidence_id": evidence_id,
+                "container_id": "reddit:thread-1",
+                "source_family": "reddit_community",
+                "source_role": "community_post",
+                "source_artifact_id": artifact_id,
+                "source_ref": "https://reddit.test/t1",
+                "text": "The balm became drying after one week of use.",
+                "accounting_disposition": "assess",
+                "accounting_reason": "captured text leaf inside fixture scope",
+                "product_candidates": ["sf-lbb"],
+                "axis_candidates": ["wear"],
+                "product_context": [
+                    {
+                        "context_type": "thread_title",
+                        "source_artifact_id": artifact_id,
+                        "text": "Summer Fridays Lip Butter Balm wear",
+                        "source_ref": "https://reddit.test/t1",
+                    }
+                ],
+                "independence_posture": "credited",
+                "independence_key": "reddit:actor-1",
+                "engagement": {"material_positive": False},
+                "conversation_depth": 0,
+                "parent_context": [],
+            }
+        ],
+        "product_identity_catalog": catalog,
+    }
+    bundle = build_bundle(source, max_prompt_bytes=30_000)
+    response_version = bundle["semantic_work_unit_projection"][
+        "semantic_execution_identity"
+    ]["response_schema_version"]
+    response = {
+        "schema_version": response_version,
+        "bundle_sha256": bundle["bundle_sha256"],
+        "batch_id": bundle["batches"][0]["batch_id"],
+        "decisions_by_evidence_id": {
+            evidence_id: {
+                "disposition": "claim_bearing",
+                "disposition_reason": "direct first-hand experience",
+                "semantic_units": [
+                    {
+                        "semantic_unit_key": "drying-after-week",
+                        "statement": "The balm became drying after one week of use.",
+                        "subject_product_ids": [
+                            "summer-fridays-lip-butter-balm"
+                        ],
+                        "comparator_product_ids": [],
+                        "product_version_ids": [],
+                        "axis_ids": ["wear"],
+                        "emerging_axis_labels": [],
+                        "conditions": ["after one week of use"],
+                        "polarity": "affirmed",
+                        "evidence_posture": "first_hand",
+                        "uncertainty_posture": "asserted",
+                    }
+                ],
+            }
+        },
+    }
+    compiled = validate_batch_responses(bundle, [response])
+    verification, _ = prepare_row_verification(bundle, compiled)
+    verified = apply_row_verification(
+        bundle,
+        compiled,
+        verification,
+        [
+            {
+                "schema_version": ROW_VERIFICATION_RESPONSE_VERSION,
+                "stage_sha256": verification["stage_sha256"],
+                "batch_id": verification["batches"][0]["batch_id"],
+                "decisions": [
+                    {
+                        "evidence_id": evidence_id,
+                        "decision": "accept",
+                        "reason": "the proposed row is complete and source-supported",
+                        "replacement": None,
+                    }
+                ],
+            }
+        ],
+    )
+    stage, _ = prepare_reconciliation_stage(bundle, verified)
+    candidate = stage["candidates"][0]
+    nodes = validate_reconciliation_stage(
+        bundle,
+        stage,
+        [
+            {
+                "schema_version": RECONCILIATION_RESPONSE_VERSION_V2,
+                "stage_sha256": stage["stage_sha256"],
+                "batch_id": stage["batches"][0]["batch_id"],
+                "semantic_nodes": [
+                    {
+                        "semantic_node_key": "drying-after-week",
+                        "bounded_meaning": candidate["statement"],
+                        "terminal_proposition": True,
+                        "claim_kind": "customer_experience",
+                        "subject_product_ids": candidate["subject_product_ids"],
+                        "comparator_product_ids": candidate[
+                            "comparator_product_ids"
+                        ],
+                        "product_version_ids": candidate["product_version_ids"],
+                        "axis_ids": candidate["axis_ids"],
+                        "emerging_axis_labels": candidate[
+                            "emerging_axis_labels"
+                        ],
+                        "conditions": candidate["conditions"],
+                        "polarity": candidate["polarity"],
+                        "uncertainty_posture": candidate[
+                            "uncertainty_posture"
+                        ],
+                        "child_relations": [
+                            {
+                                "child_ref": candidate["candidate_ref"],
+                                "relation": "support",
+                            }
+                        ],
+                        "opposition_checked": True,
+                        "causal_ceiling": "descriptive_only",
+                    }
+                ],
+                "unmerged_children": [],
+                "emerging_axis_consolidations": [],
+            }
+        ],
+    )
+    return finalize_v3_view(bundle, verified, nodes)
+
+
 def _understanding_route(tmp_path: Path) -> dict:
     frame = _artifact(tmp_path, "serp_phase1_comparator_frame.md")
     adjudicated = _artifact(tmp_path, "serp_phase2_adjudicated_set.md")
@@ -1278,7 +1479,7 @@ def _understanding_route(tmp_path: Path) -> dict:
         _semantic_integration_view(tmp_path)
     )
     return {
-        "route_version": "1.7.1",
+        "route_version": "1.8.0",
         "comparator_closure": {
             "state": "phase_a_competitor_context_closed",
             "candidate_frame": frame,
@@ -2321,6 +2522,68 @@ def test_consumer_brand_v3_rejects_omitted_captured_evidence_unit(
     findings = _validate(tmp_path, _make_passing(seal))
 
     assert "unresolved_consumer_target_evidence_ref:target-1" in findings
+
+
+@pytest.mark.parametrize("registered", [True, False])
+def test_consumer_brand_v3_used_retailer_target_requires_registered_corpus(
+    tmp_path: Path,
+    registered: bool,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    corpus = ledger["families"]["retailer_reviews"]["corpora"][0]
+    target = ledger["target_reconciliation"][0]
+    target.update(
+        source_family="retailer_reviews",
+        native_artifact_id=corpus["artifact_id"],
+        evidence_refs=[
+            {
+                "family": "retailer_reviews",
+                "unit_id": corpus["corpus_id"] if registered else "omitted-corpus",
+            }
+        ],
+    )
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    if registered:
+        assert findings == []
+    else:
+        assert "unresolved_consumer_target_evidence_ref:target-1" in findings
+
+
+def test_consumer_brand_v3_retailer_refs_do_not_add_independent_support(
+    tmp_path: Path,
+) -> None:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["product_axes"][0]["support_refs"] = [
+        {
+            "family": "reddit_forum",
+            "unit_id": f"thread-{index}",
+            "contribution": "corroborates",
+            "choice": "subject",
+        }
+        for index in range(3)
+    ] + [
+        {
+            "family": "retailer_reviews",
+            "unit_id": corpus["corpus_id"],
+            "contribution": "corroborates",
+            "choice": "subject",
+        }
+        for corpus in ledger["families"]["retailer_reviews"]["corpora"]
+    ]
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+
+    findings = _validate(tmp_path, _make_passing(seal))
+
+    assert "product_axis_strength_mismatch:packaging_reliability:signal" in findings
 
 
 def test_consumer_brand_v3_requires_comment_coding_for_each_reddit_thread(
@@ -4963,6 +5226,51 @@ def test_current_route_requires_exact_context_aware_method_hash(tmp_path: Path) 
     assert "invalid_semantic_integration_method_hash" in _validate(tmp_path, seal)
 
 
+def test_current_route_rejects_coherent_historical_method_tuple(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+
+    def mutate(view: dict) -> None:
+        view["method_version"] = METHOD_VERSION_V3
+        view["method_sha256"] = _sha256(METHOD_TEXT_V3)
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    findings = _validate(tmp_path, seal)
+    assert "invalid_semantic_integration_method_version" in findings
+    assert "invalid_semantic_integration_method_hash" in findings
+
+
+def test_historical_route_1_7_1_retains_exact_method_v3_tuple(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"]["route_version"] = "1.7.1"
+
+    def mutate(view: dict) -> None:
+        view["method_version"] = METHOD_VERSION_V3
+        view["method_sha256"] = _sha256(METHOD_TEXT_V3)
+
+    _rewrite_semantic_view(tmp_path, seal, mutate)
+
+    assert validate_phase_acquisition_seal(
+        seal_path=_write_seal(tmp_path, seal),
+        repo_root=tmp_path,
+        allow_preversion_route=True,
+    ) == []
+
+
+def test_historical_route_1_7_1_rejects_current_method_tuple(tmp_path: Path) -> None:
+    seal = _blocked_seal(tmp_path)
+    seal["understanding_route"]["route_version"] = "1.7.1"
+
+    findings = validate_phase_acquisition_seal(
+        seal_path=_write_seal(tmp_path, seal),
+        repo_root=tmp_path,
+        allow_preversion_route=True,
+    )
+
+    assert "invalid_semantic_integration_method_version" in findings
+    assert "invalid_semantic_integration_method_hash" in findings
+
+
 def test_pinned_current_semantic_method_matches_the_judgment_module() -> None:
     # The seal gate pins the canonical method by literal version and digest,
     # while the bundle stamps whatever the judgment module actually emits. Any
@@ -4973,6 +5281,36 @@ def test_pinned_current_semantic_method_matches_the_judgment_module() -> None:
     assert CURRENT_SEMANTIC_EVIDENCE_METHOD_SHA256 == _sha256(METHOD_TEXT_V2)
     assert SEMANTIC_EVIDENCE_METHOD_VERSION_V3 == METHOD_VERSION_V3
     assert SEMANTIC_EVIDENCE_METHOD_SHA256_V3 == _sha256(METHOD_TEXT_V3)
+    assert CURRENT_UNDERSTANDING_ROUTE_VERSION == "1.8.0"
+    assert SEMANTIC_EVIDENCE_METHOD_VERSION_V12 == METHOD_VERSION_V12
+    assert SEMANTIC_EVIDENCE_METHOD_SHA256_V12 == _sha256(METHOD_TEXT_V12)
+
+
+def test_route_1_8_accepts_public_finalizer_method_v12_view(tmp_path: Path) -> None:
+    view = _public_finalizer_v12_semantic_view()
+    path = tmp_path / "public-finalizer-v12-view.json"
+    path.write_text(json.dumps(view, indent=2) + "\n", encoding="utf-8")
+    findings: list[str] = []
+
+    _validate_semantic_evidence_integration(
+        {
+            "status": "completed",
+            "view": {"locator": path.name, "sha256": _artifact_hash(path)},
+            "corpus_sha256": view["corpus_sha256"],
+            "unresolved_material_evidence_ids": [],
+            "emerging_axis_dispositions": [],
+        },
+        seal={},
+        repo_root=tmp_path,
+        valid_pass=False,
+        route_version="1.8.0",
+        findings=findings,
+    )
+
+    assert view["schema_version"] == "semantic_evidence_integration_view_v2"
+    assert view["method_version"] == METHOD_VERSION_V12
+    assert view["method_sha256"] == _sha256(METHOD_TEXT_V12)
+    assert findings == []
 
 
 def test_semantic_integration_rejects_incompetent_source_role(

@@ -245,8 +245,9 @@ UNDERSTANDING_ROUTE_VERSIONS = {
     "1.6.0",
     "1.7.0",
     "1.7.1",
+    "1.8.0",
 }
-CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.7.1"
+CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.8.0"
 CAMPAIGN_EVIDENCE_VIEW_VERSION = "campaign_evidence_view_v1"
 SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION_V1 = (
     "semantic_evidence_integration_view_v1"
@@ -266,6 +267,12 @@ SEMANTIC_EVIDENCE_METHOD_VERSION_V3 = (
 SEMANTIC_EVIDENCE_METHOD_SHA256_V3 = (
     "c1a3fde85acf10f6be6ad9078f0341aa7000dbddf40786261406b6fa79db3e3c"
 )
+SEMANTIC_EVIDENCE_METHOD_VERSION_V12 = (
+    "semantic_evidence_integration_method_v12"
+)
+SEMANTIC_EVIDENCE_METHOD_SHA256_V12 = (
+    "4f434ce37d3a93d1af85e7597c5cb61213f4f339eea44e37100c12c82822f72a"
+)
 # Historical compatibility aliases used by route-1.5 fixtures. New route
 # validation selects an explicit version tuple and never treats these as the
 # route-1.6 current method.
@@ -284,9 +291,17 @@ _CAMPAIGN_INTEGRATION_ROUTE_VERSIONS = {
     "1.6.0",
     "1.7.0",
     "1.7.1",
+    "1.8.0",
 }
 _SEMANTIC_INTEGRATION_ROUTE_ID = "semantic_evidence_integration"
-_SEMANTIC_INTEGRATION_ROUTE_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.7.1"}
+_SEMANTIC_INTEGRATION_ROUTE_VERSIONS = {
+    "1.4.0",
+    "1.5.0",
+    "1.6.0",
+    "1.7.0",
+    "1.7.1",
+    "1.8.0",
+}
 # Route 1.1.0 introduced comparator closure, campaign-evidence integration,
 # conditional verification, and retailer-state accounting together, so a
 # historical audit of a 1.1.0 seal still owes all of them. Pre-fanout
@@ -301,6 +316,7 @@ _ROUTE_REVISION_1_1_OBLIGATION_VERSIONS = {
     "1.6.0",
     "1.7.0",
     "1.7.1",
+    "1.8.0",
 }
 _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {
     "1.2.0",
@@ -310,16 +326,18 @@ _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {
     "1.6.0",
     "1.7.0",
     "1.7.1",
+    "1.8.0",
 }
-_ROUTE_REVISION_1_3_OBLIGATION_VERSIONS = {"1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.7.1"}
-_ROUTE_REVISION_1_4_OBLIGATION_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.7.1"}
-_ROUTE_REVISION_1_5_OBLIGATION_VERSIONS = {"1.5.0", "1.6.0", "1.7.0", "1.7.1"}
-_ROUTE_REVISION_1_6_OBLIGATION_VERSIONS = {"1.6.0", "1.7.0", "1.7.1"}
-_ROUTE_REVISION_1_7_OBLIGATION_VERSIONS = {"1.7.0", "1.7.1"}
+_ROUTE_REVISION_1_3_OBLIGATION_VERSIONS = {"1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.7.1", "1.8.0"}
+_ROUTE_REVISION_1_4_OBLIGATION_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.7.1", "1.8.0"}
+_ROUTE_REVISION_1_5_OBLIGATION_VERSIONS = {"1.5.0", "1.6.0", "1.7.0", "1.7.1", "1.8.0"}
+_ROUTE_REVISION_1_6_OBLIGATION_VERSIONS = {"1.6.0", "1.7.0", "1.7.1", "1.8.0"}
+_ROUTE_REVISION_1_7_OBLIGATION_VERSIONS = {"1.7.0", "1.7.1", "1.8.0"}
 # Like every ladder above, a 1.7.1 obligation accrues to 1.7.1 and every later
 # route. An equality test here would silently drop the completion-proof gate the
 # first time a newer route version is stamped.
-_ROUTE_REVISION_1_7_1_OBLIGATION_VERSIONS = {"1.7.1"}
+_ROUTE_REVISION_1_7_1_OBLIGATION_VERSIONS = {"1.7.1", "1.8.0"}
+_ROUTE_REVISION_1_8_OBLIGATION_VERSIONS = {"1.8.0"}
 _CAMPAIGN_SOURCE_ROLES = {
     "owned_post",
     "paid_ad",
@@ -1232,6 +1250,16 @@ def _consumer_support_registry(
     families: Mapping[str, Any],
 ) -> dict[tuple[str, str], str | None]:
     registry: dict[tuple[str, str], str | None] = {}
+    retailer = families.get("retailer_reviews")
+    if isinstance(retailer, dict) and isinstance(retailer.get("corpora"), list):
+        for row in retailer["corpora"]:
+            if not isinstance(row, dict):
+                continue
+            corpus_id = row.get("corpus_id")
+            if isinstance(corpus_id, str) and corpus_id:
+                # A used target may resolve to its review corpus; this does not
+                # supply independent non-retailer support for an axis.
+                registry[("retailer_reviews", corpus_id)] = None
     external = families.get("external_context")
     if isinstance(external, dict) and isinstance(external.get("units"), list):
         for row in external["units"]:
@@ -4564,7 +4592,10 @@ def _validate_semantic_evidence_integration(
     )
     if view.get("schema_version") != expected_view_version:
         findings.append("invalid_semantic_integration_view_version")
-    if route_version in _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS:
+    if route_version in _ROUTE_REVISION_1_8_OBLIGATION_VERSIONS:
+        expected_method_version = SEMANTIC_EVIDENCE_METHOD_VERSION_V12
+        expected_method_hash = SEMANTIC_EVIDENCE_METHOD_SHA256_V12
+    elif route_version in _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS:
         expected_method_version = SEMANTIC_EVIDENCE_METHOD_VERSION_V3
         expected_method_hash = SEMANTIC_EVIDENCE_METHOD_SHA256_V3
     elif route_version in _ROUTE_REVISION_1_5_OBLIGATION_VERSIONS:
