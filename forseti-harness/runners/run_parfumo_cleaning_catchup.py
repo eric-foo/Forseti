@@ -79,9 +79,7 @@ from cleaning.parfumo_lake import (
     derive_parfumo_cleaning_into_lake,
 )
 from data_lake.consumption import (
-    PickupItem,
-    append_ack,
-    is_acknowledged,
+    ack_packet,
     pickup,
     reconcile_availability_per_packet,
 )
@@ -190,30 +188,6 @@ def _packet_obligation() -> dict:
     }
 
 
-def _ack_packet(data_root, item: PickupItem, evidence: list[dict]) -> str:
-    """Record the lane-owned completion fact. A create collision (another completer
-    won the race) is fine when the obligation is now acknowledged; anything else is
-    a real ack failure surfaced as a status."""
-    try:
-        append_ack(
-            data_root,
-            raw_anchor=item.raw_anchor,
-            ack_namespace=_ACK_NAMESPACE,
-            obligation=item.obligation,
-            evidence=evidence,
-        )
-    except DataLakeRootError as exc:
-        if is_acknowledged(
-            data_root,
-            raw_anchor=item.raw_anchor,
-            ack_namespace=_ACK_NAMESPACE,
-            obligation=item.obligation,
-        ):
-            return "acked"
-        return f"ack_failed: {type(exc).__name__}: {exc}"[:200]
-    return "acked"
-
-
 def pending_packets(
     *,
     data_root,
@@ -316,7 +290,7 @@ def run_catchup(
                     "basis": "known_non_parfumo_source_surface",
                 }
             ]
-            outcome = _ack_packet(data_root, item, evidence)
+            outcome = ack_packet(data_root, item, evidence, ack_namespace=_ACK_NAMESPACE)
             if outcome != "acked":
                 results.append({"packet_id": packet_id, "status": "ack_failed", "error": outcome})
             else:
@@ -350,7 +324,7 @@ def run_catchup(
             # a surface is immutable, so the discovery + access-posture evidence IS
             # the completion evidence (mirrors the known-out-of-scope-surface ack
             # above).
-            outcome = _ack_packet(data_root, item, [blocked_evidence])
+            outcome = ack_packet(data_root, item, [blocked_evidence], ack_namespace=_ACK_NAMESPACE)
             if outcome != "acked":
                 results.append({"packet_id": packet_id, "status": "ack_failed", "error": outcome})
             else:
@@ -388,7 +362,7 @@ def run_catchup(
                 "count": len(derived.silver_records),
             },
         ]
-        outcome = _ack_packet(data_root, item, evidence)
+        outcome = ack_packet(data_root, item, evidence, ack_namespace=_ACK_NAMESPACE)
         if outcome != "acked":
             results.append({"packet_id": packet_id, "status": "ack_failed", "error": outcome})
         else:

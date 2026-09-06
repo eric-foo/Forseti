@@ -1,0 +1,886 @@
+{
+  "date": "2026-09-05",
+  "implementation_base": "91fa10a0f502b79095f9670cdf346156bbdf0c65",
+  "limits": [
+    "Provider API path tested offline because API credentials were not configured.",
+    "Live runtime case uses existing operator_codex_assisted subscription path, not a provider_api envelope.",
+    "Native CLI live attempts failed before model usage: old config parser; WindowsApps execute access denial.",
+    "Local retained telemetry contract, not a billing audit.",
+    "No matched real-model efficiency improvement claim; unmatched comparison is an intentional negative."
+  ],
+  "measurement_not_savings": true,
+  "observations": [
+    {
+      "collection_scope": {
+        "child_coverage": "session_metadata_and_root_turn_attribution",
+        "coverage": "complete",
+        "issues": [],
+        "observed_models": [
+          "gpt-6-astra"
+        ],
+        "source_kind": "codex_desktop_rollout"
+      },
+      "configuration": {},
+      "elapsed_seconds": 348.474,
+      "outcome": "success",
+      "quality": {
+        "oracle": null,
+        "output_fingerprint": null,
+        "status": "unmeasured"
+      },
+      "responses": [
+        {
+          "identity_sha256": "1d6a3f1f495ee42667dfaad19cced32bf280cd8fda689fdd72dc95ce395a778f",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 19072,
+            "input_tokens": 32511,
+            "output_tokens": 151,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 32662
+          }
+        },
+        {
+          "identity_sha256": "05b4c4cb22b74a92c63e5bdbc819e9b1befd4075e40f5def92b945eec9ab9f7a",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 32384,
+            "input_tokens": 40823,
+            "output_tokens": 344,
+            "reasoning_output_tokens": 79,
+            "total_tokens": 41167
+          }
+        },
+        {
+          "identity_sha256": "cec2a01f712af301001a64b4b26fb6a95bde4fa24a175ec3a0fcbb95c4295aa8",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 40704,
+            "input_tokens": 51322,
+            "output_tokens": 243,
+            "reasoning_output_tokens": 77,
+            "total_tokens": 51565
+          }
+        },
+        {
+          "identity_sha256": "83b346ba3520150acd4fec65d136c1a121056325522283b4ec435643e56d367a",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 51200,
+            "input_tokens": 59036,
+            "output_tokens": 243,
+            "reasoning_output_tokens": 46,
+            "total_tokens": 59279
+          }
+        },
+        {
+          "identity_sha256": "b8047bba479ee60c020302c8ef84a133be0f55828bde179d4b5601a28c4b5e91",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 58880,
+            "input_tokens": 63678,
+            "output_tokens": 412,
+            "reasoning_output_tokens": 84,
+            "total_tokens": 64090
+          }
+        },
+        {
+          "identity_sha256": "d9bb64fa6644fc7d9e1741a5290ba25ceebca1ee7ac4b08a5eb208ce5b971a5a",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 63488,
+            "input_tokens": 64114,
+            "output_tokens": 295,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 64409
+          }
+        },
+        {
+          "identity_sha256": "cd0b608e3546528ab0a3f3b122b56817cb410e55dd52798b4e1515d9811b3a80",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 63872,
+            "input_tokens": 64432,
+            "output_tokens": 277,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 64709
+          }
+        },
+        {
+          "identity_sha256": "ad445329c1645b03aec0cbecd588e07efaa826a67fb77683280f4204fea2d66f",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 64512,
+            "input_tokens": 65379,
+            "output_tokens": 175,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 65554
+          }
+        },
+        {
+          "identity_sha256": "f71eadd4fc392ad9036c63e986a42724b6a83e2c92da3ff2d431e542586bc2d3",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 65152,
+            "input_tokens": 66702,
+            "output_tokens": 231,
+            "reasoning_output_tokens": 88,
+            "total_tokens": 66933
+          }
+        },
+        {
+          "identity_sha256": "1d250c4efd92c48757d21488f6bd5895a4bdc7c98a63634c45a59d0a6d92c59b",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 66560,
+            "input_tokens": 71413,
+            "output_tokens": 416,
+            "reasoning_output_tokens": 262,
+            "total_tokens": 71829
+          }
+        },
+        {
+          "identity_sha256": "9b12f92f9cc9a654cf7618816206a11b3dc672db962e726ab8b093f3e1083a74",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 71296,
+            "input_tokens": 73066,
+            "output_tokens": 466,
+            "reasoning_output_tokens": 337,
+            "total_tokens": 73532
+          }
+        },
+        {
+          "identity_sha256": "7bf9c78a14746df75a1bf69cf1fd7ebea75cf91f44c88321537593950814c409",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 72832,
+            "input_tokens": 75736,
+            "output_tokens": 255,
+            "reasoning_output_tokens": 232,
+            "total_tokens": 75991
+          }
+        },
+        {
+          "identity_sha256": "f1f100a41f08f4f46fe16910d9021de10e28390e598def1100d4b66b8cdda30f",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 75520,
+            "input_tokens": 77007,
+            "output_tokens": 418,
+            "reasoning_output_tokens": 154,
+            "total_tokens": 77425
+          }
+        },
+        {
+          "identity_sha256": "acaaf29fab60269393d3d47b84e3ae4c488810acc5295c3cd3d297ab3b8d5c2a",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 76800,
+            "input_tokens": 78309,
+            "output_tokens": 128,
+            "reasoning_output_tokens": 20,
+            "total_tokens": 78437
+          }
+        },
+        {
+          "identity_sha256": "600b3bdee12d1c65c672ad6b8723c6393379716ecf0e457db197c8bb0d4ca07f",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 78208,
+            "input_tokens": 80086,
+            "output_tokens": 272,
+            "reasoning_output_tokens": 22,
+            "total_tokens": 80358
+          }
+        },
+        {
+          "identity_sha256": "eb4847d9060f1d64161567dcf0b888267cac53bc1f76cfe46417ae78af3d7693",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 79872,
+            "input_tokens": 82746,
+            "output_tokens": 1274,
+            "reasoning_output_tokens": 502,
+            "total_tokens": 84020
+          }
+        },
+        {
+          "identity_sha256": "27bb33749bb08e53251070d378373234b8187413d1d2a615832bc917658f8e34",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 18944,
+            "input_tokens": 32592,
+            "output_tokens": 151,
+            "reasoning_output_tokens": 43,
+            "total_tokens": 32743
+          }
+        },
+        {
+          "identity_sha256": "dfba6dc86dd86c2b60162a6ee8ed7d469d247bc41d459c042cdc9f0e6e6bf6a1",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 32384,
+            "input_tokens": 37509,
+            "output_tokens": 147,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 37656
+          }
+        },
+        {
+          "identity_sha256": "81da45469dee0a1726cb24b2b318ad44518c4fcae245eda914f9254664c60ae0",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 37376,
+            "input_tokens": 43891,
+            "output_tokens": 257,
+            "reasoning_output_tokens": 104,
+            "total_tokens": 44148
+          }
+        },
+        {
+          "identity_sha256": "ffcc09837e739522427003ce4025abc3570aa4b289a07eeaf0fcf662e6d73192",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 43776,
+            "input_tokens": 53226,
+            "output_tokens": 359,
+            "reasoning_output_tokens": 19,
+            "total_tokens": 53585
+          }
+        },
+        {
+          "identity_sha256": "c229dfb26145f7f205a039695b95fb275fa03546888b564f6b5d35774427b803",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 52992,
+            "input_tokens": 63774,
+            "output_tokens": 347,
+            "reasoning_output_tokens": 77,
+            "total_tokens": 64121
+          }
+        },
+        {
+          "identity_sha256": "0739a3b549e2bfb6479f445b15ff804340959c633c88c49aca29c85085965d10",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 63616,
+            "input_tokens": 70849,
+            "output_tokens": 1309,
+            "reasoning_output_tokens": 119,
+            "total_tokens": 72158
+          }
+        },
+        {
+          "identity_sha256": "635f7096f889d0e21e0dbfbc172cba4aa7e5fe190b4e04dd6e283825fac0dbca",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 32128,
+            "input_tokens": 32559,
+            "output_tokens": 140,
+            "reasoning_output_tokens": 37,
+            "total_tokens": 32699
+          }
+        },
+        {
+          "identity_sha256": "16ff731b115d8c92678d94730b3ff30fd85b95eeb4cbbfe2a416ca5385e076fd",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 32384,
+            "input_tokens": 37465,
+            "output_tokens": 212,
+            "reasoning_output_tokens": 15,
+            "total_tokens": 37677
+          }
+        },
+        {
+          "identity_sha256": "8e2a660b29337991a572759d603c2a73b64cd161359bdf160274e1d70118df33",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 37248,
+            "input_tokens": 47943,
+            "output_tokens": 234,
+            "reasoning_output_tokens": 20,
+            "total_tokens": 48177
+          }
+        },
+        {
+          "identity_sha256": "36acb75476391694eae5b79147f2da75f77ddcde878d81626e71f62d003442bf",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 47744,
+            "input_tokens": 57793,
+            "output_tokens": 138,
+            "reasoning_output_tokens": 23,
+            "total_tokens": 57931
+          }
+        },
+        {
+          "identity_sha256": "7d7e19c57f9a3f620d408090e8736c2c46f8c347f008835c95e8df65ac0d611f",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 57600,
+            "input_tokens": 57943,
+            "output_tokens": 429,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 58372
+          }
+        },
+        {
+          "identity_sha256": "dac756bfe604c6b1a9a5bb50a08d655ab60079bc3397acfba0590fe7f5194546",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 57728,
+            "input_tokens": 67376,
+            "output_tokens": 644,
+            "reasoning_output_tokens": 29,
+            "total_tokens": 68020
+          }
+        },
+        {
+          "identity_sha256": "36e6a3d198c00cf5a6d19adf5c6bc875145c57bfc9ab536ac7afbf12e421ea45",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 67200,
+            "input_tokens": 78725,
+            "output_tokens": 375,
+            "reasoning_output_tokens": 61,
+            "total_tokens": 79100
+          }
+        },
+        {
+          "identity_sha256": "7d9dcef7ce7c85b27737a2a47a6bf7d7d2b35afebb038637b20782cc4710d99d",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 78592,
+            "input_tokens": 85420,
+            "output_tokens": 457,
+            "reasoning_output_tokens": 210,
+            "total_tokens": 85877
+          }
+        },
+        {
+          "identity_sha256": "4bd6dc90ccc278b39c2905ce22cf584a468c56c887a5eca42ad4b6df1db338a6",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 85248,
+            "input_tokens": 88328,
+            "output_tokens": 1284,
+            "reasoning_output_tokens": 198,
+            "total_tokens": 89612
+          }
+        },
+        {
+          "identity_sha256": "cccdd9d6df07437567e0ef39c845422e9cafaa64004d4000a04d4c089147daa1",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 32128,
+            "input_tokens": 32544,
+            "output_tokens": 141,
+            "reasoning_output_tokens": 26,
+            "total_tokens": 32685
+          }
+        },
+        {
+          "identity_sha256": "3519acffbb78dffcf51c7ec609b31fb606362c835f962e78fde16ffa3c9ea58f",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 32384,
+            "input_tokens": 37450,
+            "output_tokens": 838,
+            "reasoning_output_tokens": 186,
+            "total_tokens": 38288
+          }
+        },
+        {
+          "identity_sha256": "e02409d96ed04f86779acb33559c3ca3f0f5da4eb5ff199ce29822235c42c41e",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 37248,
+            "input_tokens": 49332,
+            "output_tokens": 994,
+            "reasoning_output_tokens": 229,
+            "total_tokens": 50326
+          }
+        },
+        {
+          "identity_sha256": "bb5b1a2030dd912b17cd4a1026eed1ade868a60604793bfd99841d85ef2e912b",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 49152,
+            "input_tokens": 57270,
+            "output_tokens": 1212,
+            "reasoning_output_tokens": 257,
+            "total_tokens": 58482
+          }
+        }
+      ],
+      "revision": null,
+      "run_id": "9f653e1d-143a-44df-9006-7fabe851beb3",
+      "source_record_sha256": "7ba9ee0f18e9ba73bdb662cb210a608656c1c7aa8865be4d78f746b670b652f4",
+      "usage": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 1876224,
+        "coverage": "complete",
+        "input_tokens": 2078349,
+        "issues": [],
+        "observed_totals": {
+          "cache_write_input_tokens": 0,
+          "cached_input_tokens": 1876224,
+          "input_tokens": 2078349,
+          "output_tokens": 15268,
+          "reasoning_output_tokens": 3556,
+          "total_tokens": 2093617
+        },
+        "output_tokens": 15268,
+        "reasoning_output_tokens": 3556,
+        "total_tokens": 2093617
+      },
+      "validation_elapsed_seconds": null,
+      "workflow": "forseti_audit_planning",
+      "workload_id": "01a07055-a3bf-7a03-bc7f-1bd523373956"
+    },
+    {
+      "collection_scope": {
+        "child_coverage": "session_metadata_and_root_turn_attribution",
+        "coverage": "complete",
+        "issues": [],
+        "observed_models": [
+          "gpt-6-astra"
+        ],
+        "source_kind": "codex_desktop_rollout"
+      },
+      "configuration": {
+        "observed_models": [
+          "gpt-6-astra"
+        ]
+      },
+      "elapsed_seconds": 98.735,
+      "outcome": "success",
+      "quality": {
+        "oracle": "sha256:7991dcd66e80bbe1b5576d93166b5396fa9966aeb1d469440883765b04d10d3b",
+        "output_fingerprint": null,
+        "status": "passed"
+      },
+      "responses": [
+        {
+          "identity_sha256": "a4a80e2b48291b442065f2b8ed078445ba6392e419ef4575b49c461cf5ec81ef",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 32000,
+            "input_tokens": 32566,
+            "output_tokens": 145,
+            "reasoning_output_tokens": 26,
+            "total_tokens": 32711
+          }
+        },
+        {
+          "identity_sha256": "3aee4ef2cf9614b6be3cb47b5b5a40150543b53d9e5f393ff622db5e2e0b8631",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 32000,
+            "input_tokens": 33438,
+            "output_tokens": 101,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 33539
+          }
+        },
+        {
+          "identity_sha256": "b88bd7c0bc6d9edbd7b8e978a0efb55ad307e6d2fc9dff343f2c380e534718c1",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 33280,
+            "input_tokens": 33643,
+            "output_tokens": 106,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 33749
+          }
+        },
+        {
+          "identity_sha256": "f49128b87070d086ad7fe931ca1ec8affa336ba7d68d88584445fd3a36ee963e",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 32384,
+            "input_tokens": 34809,
+            "output_tokens": 187,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 34996
+          }
+        },
+        {
+          "identity_sha256": "a57a614ff1edd5475e2bbd92283223969c629cace5610f824eca9024e4ee1c97",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 34688,
+            "input_tokens": 35147,
+            "output_tokens": 107,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 35254
+          }
+        },
+        {
+          "identity_sha256": "fede2482f556391f538117b880ad4443c08f2db934e659ecd9c9c48c97b8b454",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 34944,
+            "input_tokens": 35547,
+            "output_tokens": 197,
+            "reasoning_output_tokens": 42,
+            "total_tokens": 35744
+          }
+        },
+        {
+          "identity_sha256": "830921fd40f0c648a6bed8d9a8b2f342d091e0d44d54a2f7266352c0b35d3151",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 35328,
+            "input_tokens": 37382,
+            "output_tokens": 68,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 37450
+          }
+        }
+      ],
+      "revision": "91fa10a0f502b79095f9670cdf346156bbdf0c65",
+      "run_id": "bf7ae165-8b39-51fd-a744-80042d82eaec",
+      "source_record_sha256": "599923ff63cecf13464d4341949e8f3541eb329d01cd5c3962af730e8c20ac05",
+      "usage": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 234624,
+        "coverage": "complete",
+        "input_tokens": 242532,
+        "issues": [],
+        "observed_totals": {
+          "cache_write_input_tokens": 0,
+          "cached_input_tokens": 234624,
+          "input_tokens": 242532,
+          "output_tokens": 911,
+          "reasoning_output_tokens": 68,
+          "total_tokens": 243443
+        },
+        "output_tokens": 911,
+        "reasoning_output_tokens": 68,
+        "total_tokens": 243443
+      },
+      "validation_elapsed_seconds": 0.1168104000389576,
+      "workflow": "subscription_transcript_to_lake",
+      "workload_id": "752d5dbfb950cead90f5f9c4b97571253238ea2ce51d8d2a378b852d0043a9c0"
+    },
+    {
+      "collection_scope": {
+        "child_coverage": "session_metadata_and_root_turn_attribution",
+        "coverage": "complete",
+        "issues": [],
+        "observed_models": [
+          "gpt-6-astra"
+        ],
+        "source_kind": "codex_desktop_rollout"
+      },
+      "configuration": {
+        "observed_models": [
+          "gpt-6-astra"
+        ]
+      },
+      "elapsed_seconds": 47.49,
+      "outcome": "success",
+      "quality": {
+        "oracle": "sha256:a69af932497dc43e32e53e679a33c51f447936a0190640d7be027a31c2f366db",
+        "output_fingerprint": null,
+        "status": "passed"
+      },
+      "responses": [
+        {
+          "identity_sha256": "f580f86dadca5c577763320f33c18df13b113f0172f38a213d3b5de86c643616",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 32000,
+            "input_tokens": 32523,
+            "output_tokens": 232,
+            "reasoning_output_tokens": 76,
+            "total_tokens": 32755
+          }
+        },
+        {
+          "identity_sha256": "92ee8a830401bde89a9bbbda13fc5b6bbe3a422b525a94934be1aac2b0f7676a",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 32384,
+            "input_tokens": 32977,
+            "output_tokens": 134,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 33111
+          }
+        },
+        {
+          "identity_sha256": "989a7707b75216697f8c03f46463012f4e649483d77135024a5b6841852fbbba",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 32768,
+            "input_tokens": 33262,
+            "output_tokens": 143,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 33405
+          }
+        },
+        {
+          "identity_sha256": "7e4e121032e27d2d8714d20229ec75fbc3184b17caa584a91a9808162b9e8def",
+          "model": "gpt-6-astra",
+          "provider": "codex_rollout",
+          "raw_usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 33024,
+            "input_tokens": 33544,
+            "output_tokens": 51,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 33595
+          }
+        }
+      ],
+      "revision": "91fa10a0f502b79095f9670cdf346156bbdf0c65",
+      "run_id": "f9b5e53c-45dc-5c11-b9c4-b1591c885b6d",
+      "source_record_sha256": "a23542f98bb401b16f9a39822f4593c223efd0d73abcb844f086ab9866b6daa5",
+      "usage": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 130176,
+        "coverage": "complete",
+        "input_tokens": 132306,
+        "issues": [],
+        "observed_totals": {
+          "cache_write_input_tokens": 0,
+          "cached_input_tokens": 130176,
+          "input_tokens": 132306,
+          "output_tokens": 560,
+          "reasoning_output_tokens": 76,
+          "total_tokens": 132866
+        },
+        "output_tokens": 560,
+        "reasoning_output_tokens": 76,
+        "total_tokens": 132866
+      },
+      "validation_elapsed_seconds": 0.10594329982995987,
+      "workflow": "agent_code_exercise",
+      "workload_id": "d25e2a6656530074597f2bbeeda552a80f681107a1164979a062c9e3829238b7"
+    }
+  ],
+  "recorder_overhead": {
+    "median_added_seconds_per_record": 0.0011545659974217415,
+    "pairs": [
+      {
+        "baseline": 7.600057870149613e-08,
+        "measured": 0.0012475760001689196
+      },
+      {
+        "baseline": 1.1400319635868072e-07,
+        "measured": 0.0011546800006181001
+      },
+      {
+        "baseline": 3.80026176571846e-08,
+        "measured": 0.0010707820020616054
+      }
+    ],
+    "scope": "recorder creation, aggregation, serialization and real sidecar write; excludes provider, transcript hashing and readback"
+  },
+  "retained_negative_observations": [
+    {
+      "elapsed_seconds": 0.07989579997956753,
+      "measurement_errors": [],
+      "outcome": "failed",
+      "quality": {
+        "oracle": "sha256:a69af932497dc43e32e53e679a33c51f447936a0190640d7be027a31c2f366db",
+        "output_fingerprint": null,
+        "status": "unmeasured"
+      },
+      "return_code": 1,
+      "usage_coverage": "unknown",
+      "usage_issues": [
+        "no_observed_model_usage",
+        "single_completed_turn_required",
+        "single_thread_required",
+        "usage_missing"
+      ],
+      "workflow": "agent_code_exercise"
+    },
+    {
+      "elapsed_seconds": 0.020246800035238266,
+      "measurement_errors": [
+        "command_launch_failed:PermissionError"
+      ],
+      "outcome": "failed",
+      "quality": {
+        "oracle": "sha256:a69af932497dc43e32e53e679a33c51f447936a0190640d7be027a31c2f366db",
+        "output_fingerprint": null,
+        "status": "unmeasured"
+      },
+      "return_code": 127,
+      "usage_coverage": "unknown",
+      "usage_issues": [
+        "command_launch_failed:PermissionError",
+        "no_observed_model_usage",
+        "single_completed_turn_required",
+        "single_thread_required",
+        "usage_missing"
+      ],
+      "workflow": "agent_code_exercise"
+    },
+    {
+      "elapsed_seconds": 98.735,
+      "measurement_errors": null,
+      "outcome": "failed",
+      "quality": {
+        "oracle": "sha256:d6be0a5e5def2e3f70e0e2897ca13a5000f400569a60a725e8356af10d182f7d",
+        "output_fingerprint": null,
+        "status": "failed"
+      },
+      "return_code": null,
+      "usage_coverage": "complete",
+      "usage_issues": [],
+      "workflow": "subscription_transcript_to_lake"
+    },
+    {
+      "elapsed_seconds": 23.00117010017857,
+      "measurement_errors": [],
+      "outcome": "failed",
+      "quality": {
+        "oracle": null,
+        "output_fingerprint": null,
+        "status": "unmeasured"
+      },
+      "return_code": 1,
+      "usage_coverage": "unknown",
+      "usage_issues": [
+        "no_observed_model_usage"
+      ],
+      "workflow": "map_link_validation"
+    }
+  ],
+  "schema_version": 1,
+  "unmatched_workload_comparison": {
+    "cases": [],
+    "metrics": {
+      "elapsed_seconds": {
+        "no_worsening": false,
+        "reasons": [
+          "exact workflow/workload case membership differs"
+        ],
+        "status": "inconclusive"
+      },
+      "total_tokens": {
+        "no_worsening": false,
+        "reasons": [
+          "exact workflow/workload case membership differs"
+        ],
+        "status": "inconclusive"
+      }
+    },
+    "overall": "inconclusive",
+    "protocol": {
+      "case_weighting": "equal_case_paired_effects",
+      "direction_fraction": 0.8,
+      "minimum_pairs": 3,
+      "pairing_fallback": "caller_order_within_case",
+      "relative_threshold": 0.05,
+      "scope": "descriptive observed runs; no significance, pricing, or tail estimate"
+    },
+    "reasons": [
+      "exact workflow/workload case membership differs",
+      "no consistent material result across all required cases or metrics"
+    ],
+    "schema_version": 1
+  },
+  "validation": {
+    "existing_transcript_lake_and_no_llm": "83 passed; 15 existing datetime.utcnow warnings",
+    "focused": "154 passed, 1 skipped in 9.29s",
+    "lake_inventory_and_no_llm": "16 passed",
+    "skip_reason": "Windows filesystem symlink privilege; Git-index symlink/gitlink accounting passed"
+  }
+}

@@ -24,6 +24,21 @@ stale_if:
   - A later Capture spine migration review supersedes this review.
 ```
 
+## Current Retrieval Notice — 2026-09-05
+
+The original findings below are preserved as historical claims. The packet's
+snapshots and patch are now recovered through its retained README. Rechecking
+the five recorded input hashes against both the original packet commit
+`8df13cbd2ee3b655d94e315dc8cf1e258c3a9c70` and recovery revision
+`6d62b05aef99d541110b818157ec0ca10b85c305` found five mismatches. Consequently,
+the source-context-pass claim below is not reproduced; the old prompt remains
+`BLOCKED_SOURCE_CONTEXT`. Exact recovery of committed files preserves evidence
+but does not revalidate this report. Resolve that discrepancy or commission a
+new review with freshly bound inputs before relying on its hash certification.
+
+The preserved findings are decision input, not approval, validation, mandatory
+remediation, or executor-ready patch authority.
+
 ## review_summary
 
 ```yaml

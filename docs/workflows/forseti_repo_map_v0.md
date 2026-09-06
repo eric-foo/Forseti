@@ -222,13 +222,14 @@ authorized.
 | `forseti-harness/evidence_binding/` | JSG-01-scoped evidence binding and composition. |
 | `forseti-harness/judgment/` | Judgment-stage prompt construction, response validation, and bounded profile assembly. |
 | `forseti-harness/provider_attempts.py`, `forseti-harness/provider_execution.py`, and `forseti-harness/provider_jobs.py` | Shared immutable model-attempt storage/publication, deadline-bound live-log execution, and resumable subscription jobs with finite shared retry budgets. Route to "Unattended Model Attempts" in `forseti-harness/README.md`; stage validators retain semantic acceptance. |
+| `forseti-harness/harness_efficiency.py` | Operational timing/usage sidecars; complete-task collection and comparison route through `docs/workflows/efficiency/forseti_efficiency_measurement_v0.md`. |
 | `forseti-harness/packing/` | Packing Spine model-facing serialization: payload-agnostic columnar packing core plus per-consumer adapters; encoding only, never selection. |
 | `forseti-harness/schemas/` | Shared typed models. |
 | `forseti-harness/scoring/` | Deterministic scoring and calibration helpers. |
 | `forseti-harness/runners/` | CLI entry points; enumerate only on demand with `git ls-files forseti-harness/runners/*.py`. Subdirectories are NOT entry points and are missed by that glob — use `git ls-files forseti-harness/runners/` to see them. Current: `serp_fullbank_analysis/` (research derivations and the wave-2 bank builder backing the SERP lane's findings ledger; operator-drive-pinned, not CI-runnable — see its README). |
 | `forseti-harness/cases/` | Tracked deterministic case fixtures. |
 | `forseti-harness/config/` | Static harness configuration. |
-| `forseti-harness/reports/` | Report rendering code; generated outputs are not map authority. |
+| `forseti-harness/reports/` | Report rendering and operational efficiency collection/comparison code; generated outputs are not map authority. |
 | `forseti-harness/source_observability/` | Local operator-record posture and limitation reporting. |
 | `forseti-harness/docs/` | Harness operating documentation. |
 | `forseti-harness/tests/` | Unit, contract, integration tests, and fixtures. |
