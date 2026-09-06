@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import hashlib
+import io
 import subprocess
 import sys
 from pathlib import Path
@@ -138,10 +139,15 @@ def test_job_passes_frozen_context_to_the_real_attempt_boundary(launch, monkeypa
     def run_job(**kwargs):
         observed.update(kwargs['binding'])
         kwargs['launch']('job-attempt-001')
-        return {'status': 'PROCESS_COMPLETED_NOT_VALIDATED'}
+        return {'status': 'PROCESS_COMPLETED_NOT_VALIDATED', 'context': '\ufeff café 中文'}
 
     monkeypatch.setattr(job_runner, "run_provider_job", run_job)
+    captured = io.BytesIO()
+    console = io.TextIOWrapper(captured, encoding='cp1252')
+    monkeypatch.setattr(sys, 'stdout', console)
     assert job_runner.main() == 0
+    console.flush()
+    assert json.loads(captured.getvalue().decode('cp1252'))['context'] == '\ufeff café 中文'
     command = commands[0]
     assert command[command.index('--preload-context') + 1] == str(source.resolve())
     assert command[command.index('--expected-context-sha256') + 1] == observed['preloaded_context_sha256']

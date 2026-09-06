@@ -56,7 +56,9 @@ def main():
             max_retries=args.max_retries, retry_delay_seconds=args.retry_delay_seconds)
     except (ValueError, OSError) as exc:
         parser.error(str(exc))
-    print(json.dumps(result, ensure_ascii=False, indent=2))
+    # Context can contain BOMs or text outside a Windows redirected console's
+    # encoding. JSON escapes preserve it without failing after model completion.
+    print(json.dumps(result, ensure_ascii=True, indent=2))
     return 0 if result["status"] == "PROCESS_COMPLETED_NOT_VALIDATED" else 1
 
 
