@@ -556,9 +556,12 @@ def _verified_raw_packet(
     if verification_cache is None:
         return data_root.load_raw_packet(packet_id)
     packets = verification_cache.setdefault("raw_packets", {})
-    if packet_id not in packets:
-        packets[packet_id] = data_root.load_raw_packet(packet_id)
-    return packets[packet_id]
+    if packet_id in packets:
+        return packets[packet_id]
+    loaded = data_root.load_raw_packet(packet_id)
+    # A bounded cache may decline this entry; the verified read still succeeds.
+    packets[packet_id] = loaded
+    return loaded
 
 
 def _verify_raw_packet_ref(

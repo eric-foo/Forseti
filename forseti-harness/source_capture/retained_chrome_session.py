@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Callable, Sequence
 from urllib.parse import urlparse
 
+from source_capture._capture_process import RETAINED_BROWSER_BREAKAWAY_ENV
 from source_capture.adapters.browser_session_probe import (
     probe_local_cdp_endpoints,
     select_profile_bound_local_cdp_endpoint,
@@ -169,6 +170,8 @@ def _launch_visible_chrome(
     *, chrome_executable: Path, user_data_dir: Path, port: int, launch_url: str
 ) -> subprocess.Popen[bytes]:
     flags = subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0
+    if os.name == "nt" and os.environ.get(RETAINED_BROWSER_BREAKAWAY_ENV) == "1":
+        flags |= subprocess.CREATE_BREAKAWAY_FROM_JOB
     return subprocess.Popen(
         [
             str(chrome_executable),
@@ -183,6 +186,7 @@ def _launch_visible_chrome(
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
         creationflags=flags,
+        start_new_session=os.name != "nt",
         close_fds=True,
     )
 

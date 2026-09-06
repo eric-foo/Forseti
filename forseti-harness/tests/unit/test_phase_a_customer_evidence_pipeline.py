@@ -287,7 +287,7 @@ def test_persistent_google_route_passes_session_profile_to_cold_start_runner(
         commands.append(command)
         return SimpleNamespace(returncode=0, stdout="ok", stderr="")
 
-    monkeypatch.setattr(pipeline.subprocess, "run", run)
+    monkeypatch.setattr(pipeline, "_run_capture_process", run)
     action = {
         "route": pipeline.PERSISTENT_ROUTE,
         "job": {
@@ -315,8 +315,8 @@ def test_reddit_cdp_connection_refused_is_a_transport_interruption(
     tmp_path: Path, monkeypatch
 ) -> None:
     monkeypatch.setattr(
-        pipeline.subprocess,
-        "run",
+        pipeline,
+        "_run_capture_process",
         lambda *_args, **_kwargs: SimpleNamespace(
             returncode=6,
             stdout="",
@@ -350,8 +350,8 @@ def test_reddit_zero_exit_with_access_block_metadata_opens_challenge_path(
         encoding="utf-8",
     )
     monkeypatch.setattr(
-        pipeline.subprocess,
-        "run",
+        pipeline,
+        "_run_capture_process",
         lambda *_args, **_kwargs: SimpleNamespace(
             returncode=0, stdout=str(output), stderr=""
         ),
@@ -391,8 +391,8 @@ def test_reddit_zero_exit_login_redirect_opens_challenge_even_when_flag_is_false
         encoding="utf-8",
     )
     monkeypatch.setattr(
-        pipeline.subprocess,
-        "run",
+        pipeline,
+        "_run_capture_process",
         lambda *_args, **_kwargs: SimpleNamespace(
             returncode=0, stdout=str(output), stderr=""
         ),
@@ -1279,3 +1279,223 @@ def test_event_log_and_state_never_include_attestation_forbidden_fields(tmp_path
     assert "2026-08-04T12:28:50.331Z" in combined
     for forbidden in ("exit_ip", "vpn_server", "credential", "access_token", "cookie"):
         assert forbidden not in combined.casefold()
+
+
+
+def test_idle_worker_does_not_write_large_unchanged_state(tmp_path, monkeypatch):
+    import random
+    from threading import Event
+    run_root = _init(tmp_path)
+    state, candidate_id = _candidate_state(run_root)
+    paths = pipeline.pipeline_paths(run_root)
+    candidate = state["candidates"][candidate_id]
+    state["candidates"] = {f"candidate_{n}": {**candidate, "candidate_id": f"candidate_{n}"} for n in range(1000)}
+    pipeline._save_state(paths, state)
+    original_bytes = paths.state.read_bytes()
+    writes, syncs, waits = [], [], []
+    atomic = pipeline._atomic_write_json
+    fsync = pipeline.os.fsync
+    def observed_write(path, value):
+        writes.append((str(path), len(pipeline._json_bytes(value))))
+        return atomic(path, value)
+    def observed_sync(fd):
+        syncs.append(fd)
+        return fsync(fd)
+    monkeypatch.setattr(pipeline, "_atomic_write_json", observed_write)
+    monkeypatch.setattr(pipeline.os, "fsync", observed_sync)
+    stop = Event()
+    def wait(seconds):
+        waits.append(seconds)
+        if len(waits) == 20:
+            stop.set()
+    pipeline._run_reddit_worker(paths, _config(), lambda *a: pytest.fail("idle capture"), stop,
+                                wait, lambda: datetime.now(UTC), random.Random(0))
+    print(f"idle dogfood: iterations={len(waits)}, writes={len(writes)}, fsyncs={len(syncs)}, bytes={sum(n for _, n in writes)}")
+    assert not writes and not syncs
+    assert paths.state.read_bytes() == original_bytes
+    assert waits == [0.25] * 20
+
+
+def test_idle_worker_observes_external_admission_and_persists_claim(tmp_path):
+    import random
+    from threading import Event
+    run_root = _init(tmp_path)
+    _, candidate_id = _candidate_state(run_root)
+    paths = pipeline.pipeline_paths(run_root)
+    stop = Event()
+    waits, captured = [], []
+    def wait(seconds):
+        if stop.is_set():
+            return
+        waits.append(seconds)
+        assert len(waits) == 1
+        _import_one(run_root, candidate_id)
+    def capture(worker, action, config, output):
+        persisted = pipeline._load_state(paths)
+        assert persisted["in_flight"]["reddit"]["capture_id"] == action["capture_id"]
+        assert persisted["reddit_queue"][0]["status"] == "in_flight"
+        captured.append(action["capture_id"])
+        stop.set()
+        return pipeline.CaptureResult("success", str(output))
+    pipeline._run_reddit_worker(paths, _config(), capture, stop, wait,
+                                lambda: datetime.now(UTC), random.Random(0))
+    settled = pipeline._load_state(paths)
+    assert waits == [0.25] and len(captured) == 1
+    assert settled["in_flight"]["reddit"] is None
+    assert settled["candidates"][candidate_id]["status"] == "captured"
+
+
+def test_compact_cli_preserves_status_counts_and_exit_codes(tmp_path):
+    import subprocess
+    import sys
+    run_root = _init(tmp_path)
+    state, candidate_id = _candidate_state(run_root)
+    paths = pipeline.pipeline_paths(run_root)
+    candidate = state["candidates"][candidate_id]
+    state["candidates"] = {f"candidate_{n}": {**candidate, "candidate_id": f"candidate_{n}"} for n in range(1000)}
+    command = [sys.executable, str(Path(pipeline_cli.__file__)), "status", "--run-root", str(run_root)]
+    for status in ("initialized", "running", "waiting_for_decisions", "interrupted_resumable", "owner_ping", "blocked", "complete"):
+        state["status"] = status
+        state["terminal_reason"] = "fixture_reason"
+        pipeline._save_state(paths, state)
+        before = paths.state.read_bytes()
+        full = subprocess.run(command, capture_output=True, timeout=10)
+        compact = subprocess.run([*command, "--summary"], capture_output=True, timeout=10)
+        assert full.returncode == compact.returncode == pipeline_cli.EXIT_BY_STATUS.get(status, 0), compact.stderr
+        a, b = json.loads(full.stdout), json.loads(compact.stdout)
+        assert a["status"] == b["status"] == status
+        assert b["candidate_count"] == len(a["candidates"]) == 1000
+        assert sum(b["candidate_status_counts"].values()) == 1000
+        assert b["terminal_reason"] == "fixture_reason"
+        assert b["details_omitted"] is True
+        assert Path(b["paths"]["state"]) == paths.state
+        assert len(compact.stdout) < 8192 < len(full.stdout)
+        assert paths.state.read_bytes() == before
+    print(f"status dogfood: full_bytes={len(full.stdout)}, summary_bytes={len(compact.stdout)}, states=7, candidates=1000")
+
+
+
+def test_expired_idle_cooldown_is_still_persisted(tmp_path):
+    import random
+    from threading import Event
+    run_root = _init(tmp_path)
+    paths = pipeline.pipeline_paths(run_root)
+    state = pipeline._load_state(paths)
+    state["circuits"]["reddit"].update(state="cooldown", cooldown_until="2020-01-01T00:00:00Z")
+    pipeline._save_state(paths, state)
+    google = pipeline.inspect_queue(state_path=paths.google_state)
+    google["status"] = "complete"
+    pipeline._atomic_write_json(paths.google_state, google)
+    pipeline._run_reddit_worker(paths, _config(), lambda *a: pytest.fail("no queued job"), Event(),
+                                lambda _: pytest.fail("terminal idle worker should exit"),
+                                lambda: datetime.now(UTC), random.Random(0))
+    circuit = pipeline._load_state(paths)["circuits"]["reddit"]
+    assert circuit["state"] == "closed" and circuit["cooldown_until"] is None
+
+
+
+def test_capture_deadline_blocks_real_runner_before_late_output(tmp_path, monkeypatch):
+    import time
+    runners = tmp_path / "runners"
+    runners.mkdir()
+    marker = tmp_path / "late-success"
+    script = runners / "run_source_capture_cloakbrowser_packet.py"
+    script.write_text("import time\nfrom pathlib import Path\ntime.sleep(1)\n" +
+                      f"Path({str(marker)!r}).write_text('late')\n", encoding="utf-8")
+    monkeypatch.setattr(pipeline, "_harness_root", lambda: tmp_path)
+    config = _config()
+    config["google_route"]["capture_timeout_seconds"] = 0.2
+    action = {"route": pipeline.AUTOMATED_ROUTE, "job": config["query_families"][0]["jobs"][0]}
+    started = time.monotonic()
+    with pytest.raises(pipeline.PipelineBlocked, match="capture_deadline_exceeded"):
+        pipeline._execute_capture("google", action, config, tmp_path / "out")
+    assert time.monotonic() - started < 5
+    time.sleep(1.1)
+    assert not marker.exists()
+
+
+
+def _sleeping_google_runner(tmp_path, monkeypatch):
+    harness = tmp_path / "fake-harness"
+    runners = harness / "runners"
+    runners.mkdir(parents=True)
+    ready = tmp_path / "capture-started"
+    (runners / "run_source_capture_cloakbrowser_packet.py").write_text(
+        "import time\nfrom pathlib import Path\n" +
+        f"p = Path({str(ready)!r})\np.write_text(p.read_text() + 'x' if p.exists() else 'x')\n" +
+        "time.sleep(15)\n", encoding="utf-8")
+    monkeypatch.setattr(pipeline, "_harness_root", lambda: harness)
+    return ready
+
+
+def test_real_capture_timeout_preserves_claim_and_blocks_blind_resume(tmp_path, monkeypatch):
+    ready = _sleeping_google_runner(tmp_path, monkeypatch)
+    config = _config()
+    config["google_route"]["capture_timeout_seconds"] = 0.5
+    run_root = _init(tmp_path, config=config)
+    result = pipeline.run_pipeline(run_root=run_root)
+    assert result["status"] == "blocked"
+    assert "capture_deadline_exceeded" in result["terminal_reason"]
+    assert result["in_flight"]["google"]["job_id"] == "G001"
+    assert result["google_queue"]["in_flight"]["job_id"] == "G001"
+    assert ready.read_text() == "x"
+    for _ in range(2):
+        with pytest.raises(pipeline.PipelineBlocked, match="BLOCKED_IN_FLIGHT_OUTCOME_UNKNOWN"):
+            pipeline.run_pipeline(run_root=run_root)
+        assert ready.read_text() == "x", "resume launched a duplicate capture"
+    print("resume dogfood: deadline blocked; original claim retained; two resumes blocked; launches=1")
+
+
+@pytest.mark.parametrize("cleanup_fault", [False, True])
+def test_operator_interrupt_waits_for_real_capture_shutdown(tmp_path, monkeypatch, cleanup_fault):
+    import threading
+    import time
+    from source_capture import _capture_process
+    ready = _sleeping_google_runner(tmp_path, monkeypatch)
+    run_root = _init(tmp_path)
+    original_join = threading.Thread.join
+    interrupted = False
+    def interrupt_once(thread, *args, **kwargs):
+        nonlocal interrupted
+        if not interrupted and ready.exists():
+            interrupted = True
+            raise KeyboardInterrupt
+        return original_join(thread, *args, **kwargs)
+    monkeypatch.setattr(threading.Thread, "join", interrupt_once)
+    if cleanup_fault:
+        if pipeline.os.name == "nt":
+            real_stop = _capture_process._WindowsJob.stop
+            def stop_with_fault(job):
+                real_stop(job)
+                raise OSError("injected cleanup uncertainty")
+            monkeypatch.setattr(_capture_process._WindowsJob, "stop", stop_with_fault)
+        else:
+            import provider_execution
+            real_stop = provider_execution._stop_process_tree
+            def stop_with_fault(process):
+                real_stop(process)
+                return "injected cleanup uncertainty"
+            monkeypatch.setattr(provider_execution, "_stop_process_tree", stop_with_fault)
+    started = time.monotonic()
+    result = pipeline.run_pipeline(run_root=run_root)
+    assert interrupted
+    assert time.monotonic() - started < 6
+    assert result["status"] == ("blocked" if cleanup_fault else "interrupted_resumable")
+    if cleanup_fault:
+        assert "cleanup failed" in result["terminal_reason"]
+    else:
+        assert result["terminal_reason"] == "operator_interrupt"
+    assert result["in_flight"]["google"]["job_id"] == "G001"
+    assert not any(t.name.startswith("phase-a-") for t in threading.enumerate())
+    with pipeline._process_run_guard(pipeline.pipeline_paths(run_root)):
+        assert ready.read_text() == "x"
+    print(f"interrupt dogfood: cleanup_fault={cleanup_fault}, status={result['status']}, workers_alive=0, launches=1")
+
+
+@pytest.mark.parametrize("value", [0, -1, float("nan"), float("inf"), True, "300"])
+def test_capture_timeout_rejects_invalid_config_before_run(tmp_path, value):
+    config = _config()
+    config["google_route"]["capture_timeout_seconds"] = value
+    with pytest.raises(pipeline.PipelineError, match="capture_timeout_seconds"):
+        _init(tmp_path, config=config)
+    assert not (tmp_path / "run").exists()

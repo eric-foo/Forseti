@@ -704,3 +704,44 @@ If a generated score already exists for the same `(case_id, run_id,
 contestant_id)` tuple, the runner refuses to write another score unless
 `--allow-duplicate-score` is passed. Commit generated scores only under a
 separate fixture-admission decision.
+
+
+### Compact Phase A acquisition status
+
+For routine operator or agent checks, use:
+
+```powershell
+python runners/run_phase_a_customer_evidence_pipeline.py status --run-root <run-root> --summary
+```
+
+`--summary` is available on every pipeline subcommand and preserves its exit code.
+It reports acquisition status, candidate and queue counts, circuits, active work,
+and paths to full details. Omit it for the existing full JSON response. Acquisition
+completion does not imply evidence judgment or research readiness. `updated_at`
+records the last state write; unchanged idle polls do not refresh it as a heartbeat.
+Idle Reddit workers still read state and queue files, with a minimum 250 ms poll interval.
+
+
+Each Google or Reddit capture has a 300-second outer deadline, including runner
+startup. This backstop allows headroom over the existing navigation, startup,
+settle, and scroll budgets; it is not a new retry budget. An optional finite,
+positive `capture_timeout_seconds` in each route config overrides it (set before
+initialization, since running configurations are hash-bound). Operator interruption
+cancels owned capture processes and waits for the workers before releasing the run
+lock. Retained Chrome is outside the capture process group/job and stays open.
+Timeouts and uncertain cleanup block the run and retain in-flight claims for the
+existing resume inspection; they do not silently retry or credit partial output.
+Capture output goes to temporary files; only the last 2,000 bytes of each stream
+are returned. This bounds the returned output, but temporary disk usage has no
+byte cap before the capture exits or reaches its deadline.
+
+
+### Tombstone verification cost
+
+Public lake reads still inspect the derived tree for tombstones. Within each
+anchor, verification can reuse one raw packet under an 8 MiB retained-object
+budget (body bytes plus manifest objects), not a whole-process memory limit;
+target packets and oversized anchors remain uncached. Every public read creates
+fresh caches and still validates all encountered records. This reduces repeated
+raw reads, not the global directory walk, and does not provide an atomic snapshot
+against concurrent physical tampering.
