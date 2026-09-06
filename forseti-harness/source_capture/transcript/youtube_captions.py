@@ -48,6 +48,9 @@ def _extract_info(url: str) -> dict:
 
     yt-dlp remains optional at import time. Ignore ambient CLI configuration so
     user download/postprocessor settings cannot affect this metadata-only call.
+    Pin the child's text output to UTF-8 to match the decode below. An ambient
+    encoding such as cp1252 can lose characters before the parent receives them
+    or make the child fail while writing metadata.
     """
     try:
         proc = subprocess.run(
@@ -56,6 +59,7 @@ def _extract_info(url: str) -> dict:
              "--socket-timeout", str(_YTDLP_METADATA_SOCKET_TIMEOUT_SECONDS), "--", url],
             capture_output=True, text=True, encoding="utf-8", errors="replace",
             timeout=_YTDLP_METADATA_TIMEOUT_SECONDS,
+            env={**os.environ, "PYTHONIOENCODING": "utf-8"},
         )
     except subprocess.TimeoutExpired as exc:
         raise TimeoutError(

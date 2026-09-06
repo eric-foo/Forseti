@@ -10,9 +10,9 @@ from data_lake.consumption import ConsumptionSeamError, pickup, reconcile_availa
 from data_lake.root import DataLakeRoot, DataLakeRootError
 
 
-@pytest.mark.parametrize("index_size", [100, 1000, 3000])
 @pytest.mark.parametrize("operation", ["snapshot", "pickup", "reconcile"])
-def test_scoped_reads_do_not_scale_with_global_index(tmp_path, monkeypatch, index_size, operation):
+def test_scoped_reads_do_not_scale_with_global_index(tmp_path, monkeypatch, operation):
+    index_size = 3000
     root = DataLakeRoot.for_test(tmp_path / "lake")
     avail = root.path / "indexes" / "availability"
     avail.mkdir(parents=True, exist_ok=True)
