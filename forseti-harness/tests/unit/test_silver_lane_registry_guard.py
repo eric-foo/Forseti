@@ -308,13 +308,15 @@ def test_directory_discovery_failure_is_not_a_clean_scan(tmp_path, monkeypatch, 
     (denied / "producer.py").write_text("pass\n", encoding="utf-8")
     scandir = guard.os.scandir
     def fail_scan(path):
-        if Path(path) == denied:
+        if not isinstance(path, int) and Path(path) == denied:
             raise PermissionError(13, "injected discovery denial", str(denied))
         return scandir(path)
     monkeypatch.setattr(guard, "repo_root", lambda: tmp_path)
     monkeypatch.setattr(guard, "_load_registry", lambda _: registry)
-    monkeypatch.setattr(guard.os, "scandir", fail_scan)
-    assert guard.main([]) == 1
+    # Limit the injected OS fault to the guard; pytest cleanup can use scandir(fd).
+    with monkeypatch.context() as injection:
+        injection.setattr(guard.os, "scandir", fail_scan)
+        assert guard.main([]) == 1
     report = capsys.readouterr().out
     assert "source_discovery_failed" in report and str(denied) in report
     assert "OK (" not in report
