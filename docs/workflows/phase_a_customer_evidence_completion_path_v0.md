@@ -7,6 +7,7 @@ use_when:
   - Applying the same Reddit/community plus retailer-review method to another company.
   - Deciding when customer evidence is ready to hand to Synthesize or Deliver.
   - Building or changing a Phase A commercial point frontier, point evidence pack, relation prompt, or quote-selection consumer.
+  - Proposing an optimization to evidence comparison, retention, or consolidation completion.
 authority_boundary: retrieval_only
 open_next:
   - forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md
@@ -14,6 +15,12 @@ open_next:
 ---
 
 # Phase A customer-evidence completion path v0
+
+Before proposing or testing a consolidation-method optimization, read
+[Supported operating route and owner-only reopen boundary](../../forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md#supported-operating-route-and-owner-only-reopen-boundary).
+That section owns the supported method and deferred alternatives; experimental
+code below or in the harness does not change their status. The transition check
+is owned by `.agents/workflow-overlay/decision-routing.md`.
 
 ## Purpose
 

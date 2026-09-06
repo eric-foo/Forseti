@@ -9,6 +9,7 @@ use_when:
   - The user explicitly asks for Cynefin or uncertainty-regime classification.
   - Recovering a drifting or messy workstream before more agents act.
   - Selecting a writable receiver before delegated or parallel repo-changing work.
+  - Moving from executing or repairing an accepted process to proposing or testing a method change.
 authority_boundary: retrieval_only
 ```
 
@@ -27,6 +28,22 @@ route proceed directly.
 Use the smallest complete router. This is not a full Bayesian planning system,
 audit log, review lane, validation gate, or project-management ritual. It is a
 short preflight that constrains the next move.
+
+## Before Method-Change Proposals Or Experiments
+
+When moving from operating or repairing an accepted process to proposing or
+testing a change to its evidence selection, comparison, retention, or completion
+rules, first read the owning operating contract's supported route and recorded
+rejected or deferred alternatives, including any conditions for reopening them.
+An efficiency proposal or offline experiment crosses this boundary too; code
+availability and run-local observations do not establish an approved method.
+Apply the current user instruction and existing authority without inventing a
+new approval requirement.
+
+Use a targeted read at this transition, not a full-history search or a repeated
+check for every batch. An execution fix that preserves the method follows the
+bounded-change path below. This source check requires no new artifact or full
+Cynefin router when the route is otherwise clear.
 
 ## Trigger Conditions
 
