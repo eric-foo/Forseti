@@ -341,9 +341,14 @@ not spend a separate sacrificial query.
       interpretation or support reconciliation not yet done, and from missing
       stopping proof. A carried-forward `open` label is not a fresh finding that
       more sources are needed. Name the decision each proposed follow-up could
-      change; a personal follow-up or product-identity unknown with no such
-      effect remains an explicit claim limitation. Required route coverage and
-      qualifying continuation evidence still need their own proof. Use the
+      change. If a correction invalidates or downgrades existing support, first
+      revise the affected claim and reassess its remaining valid support against
+      the authority's requirements. Record any resulting unmet requirement even
+      if the competitive conclusion is unchanged; losing a reference alone does
+      not establish a need for more acquisition. A personal follow-up or unknown
+      product identity with neither a decision effect nor an unmet support
+      requirement remains an explicit claim limitation. Required route coverage
+      and qualifying continuation evidence still need their own proof. Use the
       existing scan explanation and next action, not another artifact.
    3. Run only the evidence-floor and targeted material-exhaustion work named
       by the scan. An ordinary corroboration does not reopen other axes. A
