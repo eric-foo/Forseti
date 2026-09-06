@@ -7017,7 +7017,7 @@ def prepare_reconciliation_repair(
     normal-path provider stage and never mutates the original response.
     """
     validate_reconciliation_stage(bundle, stage, [], require_all=False)
-    if (bundle.get("method_version") != METHOD_VERSION_V12
+    if (bundle.get("method_version") not in {METHOD_VERSION_V7, METHOD_VERSION_V12}
             or response.get("schema_version") != RECONCILIATION_RESPONSE_VERSION_V3
             or response.get("stage_sha256") != stage["stage_sha256"]):
         raise SemanticIntegrationError("local repair requires bound current response v3")

@@ -49,6 +49,9 @@ stage to use the same decision compiler and source-role constraints. This
 retains method v7 and its verified inputs; the older-method default and stored
 legacy responses keep their original replay. Explicit v3 also defaults to
 `exact_identity_namespaces_v3`. Never rebind an old answer to this new request.
+The local reconciliation repair route also accepts these verified method-v7
+response-v3 answers, preserving the original method and stage. Historical
+response-v2 answers retain their existing replay and are not admitted as v3 repairs.
 Normal method-v12 response-v3 requests default to
 `--authoring-revision exact_identity_namespaces_v3`: opaque node-key prefixes
 separate exact subject/comparator/version identity classes without choosing

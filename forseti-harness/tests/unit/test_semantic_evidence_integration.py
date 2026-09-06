@@ -2581,7 +2581,7 @@ def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: 
         validate_reconciliation_stage(bundle, stage, response)
 
 
-def test_explicit_v7_decision_authoring_preserves_source_and_legacy_replay():
+def test_explicit_v7_decision_authoring_preserves_source_and_legacy_replay(tmp_path):
     bundle = build_bundle(_source_v7(count=2), max_prompt_bytes=30_000)
     responses = _v5_responses(bundle, detailed_per_batch=2)
     compiled = validate_batch_responses(bundle, responses)
@@ -2620,6 +2620,38 @@ def test_explicit_v7_decision_authoring_preserves_source_and_legacy_replay():
         causal_ceiling='descriptive_only', opposition_checked=True)
     with pytest.raises(SemanticIntegrationError, match='incompetent for observable_fact'):
         validate_reconciliation_stage(bundle, stage, [bad])
+
+    from runners.run_semantic_evidence_integration import (
+        prepare_reconciliation_local_repair, submit_reconciliation_local_repair,
+        _write_json, _load_object)
+    before = deepcopy((bundle, stage, response))
+    key = response['semantic_nodes'][0]['semantic_node_key']
+    nomination = dict(node_keys=[key], reason='Correct the nominated shared claim scope.')
+    for name, value in [('bundle', bundle), ('stage', stage), ('response', response), ('nomination', nomination)]:
+        _write_json(tmp_path / (name + '.json'), value)
+    args = dict(bundle_path=tmp_path / 'bundle.json', stage_path=tmp_path / 'stage.json',
+                failed_response_path=tmp_path / 'response.json')
+    prepare_reconciliation_local_repair(**args, nomination_path=tmp_path / 'nomination.json', output_dir=tmp_path / 'request')
+    request = _load_object(tmp_path / 'request/request.json')['request']
+    replacement = {k: deepcopy(v) for k, v in response['semantic_nodes'][0].items() if k != 'opposition_checked'}
+    replacement['bounded_meaning'] = 'A corrected bounded source report.'
+    patch = dict(request_sha256=request['request_sha256'], correction=dict(cannot_repair_reason=None,
+        replacement=dict(semantic_nodes=[replacement], decisions_by_candidate_ref={
+            ref: response['decisions_by_candidate_ref'][ref] for ref in request['candidate_refs']})))
+    _write_json(tmp_path / 'patch.json', patch)
+    submit_args = dict(**args, request_path=tmp_path / 'request/request.json', patch_path=tmp_path / 'patch.json', output_dir=tmp_path / 'successor')
+    receipt = submit_reconciliation_local_repair(**submit_args)
+    successor = _load_object(tmp_path / 'successor/response.json')
+    assert successor['semantic_nodes'][0]['bounded_meaning'] == replacement['bounded_meaning']
+    assert successor['semantic_nodes'][0]['opposition_checked'] is False
+    assert successor['semantic_nodes'][1:] == response['semantic_nodes'][1:]
+    assert successor['decisions_by_candidate_ref'] == response['decisions_by_candidate_ref']
+    assert submit_reconciliation_local_repair(**submit_args) == receipt
+    assert validate_reconciliation_stage(bundle, stage, [successor])
+    assert (bundle, stage, response) == before
+    assert bundle['method_version'] == METHOD_VERSION_V7
+    with pytest.raises(SemanticIntegrationError, match='bound current response v3'):
+        semantic_module.prepare_reconciliation_repair(bundle, stage, old, **nomination)
 
 
 def _decision_reconciliation_fixture(count=2):
