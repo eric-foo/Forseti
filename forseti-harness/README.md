@@ -722,3 +722,13 @@ cancels owned capture processes and waits for the workers before releasing the r
 lock. Retained Chrome is outside the capture process group/job and stays open.
 Timeouts and uncertain cleanup block the run and retain in-flight claims for the
 existing resume inspection; they do not silently retry or credit partial output.
+
+
+### Tombstone verification cost
+
+Public lake reads still inspect the derived tree for tombstones. Within each
+anchor, verification can reuse one raw packet under an 8 MiB retained-object
+budget (body bytes plus manifest objects); target packets and oversized anchors
+remain uncached. Every public read creates fresh caches and still validates all
+encountered records. This reduces repeated raw reads, not the global directory
+walk, and does not provide an atomic snapshot against concurrent physical tampering.

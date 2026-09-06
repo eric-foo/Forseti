@@ -246,3 +246,92 @@ def not_applicable_fact():
     from source_capture.models import not_applicable
 
     return not_applicable("not applicable")
+
+
+
+def test_tombstone_anchor_reuse_is_bounded_and_fresh_between_reads(tmp_path, monkeypatch):
+    from collections import Counter
+    import data_lake.root as root_module
+    root = DataLakeRoot.for_test(tmp_path / "lake")
+    kept = _reddit_capture(root, tmp_path, body="kept").packet.packet_id
+    targets = []
+    for i in range(10):
+        target = _reddit_capture(root, tmp_path, body=f"target {i}").packet.packet_id
+        targets.append(target)
+        append_raw_packet_tombstone(root, retained_packet_id=kept, tombstoned_packet_id=target,
+                                    captured_at="2026-07-16T15:00:00Z", reason="fixture supersession")
+    # Populated unrelated derived anchors remain part of public discovery.
+    for i in range(200):
+        (root.path / "derived" / "fixture" / f"unrelated_{i}" / "other_lane").mkdir(parents=True)
+    load = root.load_raw_packet
+    calls = []
+    def observed(packet_id):
+        calls.append(packet_id)
+        return load(packet_id)
+    monkeypatch.setattr(root, "load_raw_packet", observed)
+    assert root.tombstoned_packet_ids() == set(targets)
+    print(f"tombstone dogfood: records=10, loads={len(calls)}, anchor_loads={calls.count(kept)}, unrelated_anchors=200")
+    assert len(calls) == 11 and calls.count(kept) == 1
+    assert Counter(calls)[kept] == 1
+    calls.clear()
+    assert root.tombstoned_packet_ids() == set(targets)
+    assert len(calls) == 11 and calls.count(kept) == 1
+    # Oversized entries must fall back to fresh reads, not fail or grow the cache.
+    monkeypatch.setattr(root_module, "_TOMBSTONE_CACHE_MAX_BYTES", 1)
+    calls.clear()
+    assert root.tombstoned_packet_ids() == set(targets)
+    assert len(calls) == 20 and calls.count(kept) == 10
+    monkeypatch.undo()
+    loaded = root.load_raw_packet(kept)
+    raw_file = loaded.container / loaded.manifest["preserved_files"][0]["relative_packet_path"]
+    raw_file.write_bytes(b"tampered anchor")
+    with pytest.raises(DataLakeRootError, match="invalid raw packet tombstone"):
+        root.tombstoned_packet_ids()
+
+
+
+def test_tombstone_cache_memory_does_not_grow_with_target_bodies(tmp_path, monkeypatch):
+    import tracemalloc
+    import weakref
+    import data_lake.root as root_module
+    import data_lake.silver_record as silver
+    root = DataLakeRoot.for_test(tmp_path / "lake")
+    body = "x" * (128 * 1024)
+    kept = _reddit_capture(root, tmp_path, body=body).packet.packet_id
+    targets = []
+    for i in range(40):
+        target = _reddit_capture(root, tmp_path, body=f"{i}:" + body).packet.packet_id
+        targets.append(target)
+        append_raw_packet_tombstone(root, retained_packet_id=kept, tombstoned_packet_id=target,
+                                    captured_at="2026-07-16T15:00:00Z", reason="memory fixture")
+    verify = silver.verify_silver_vault_record_sources
+    cache_refs = []
+    def observe_cache(*args, **kwargs):
+        result = verify(*args, **kwargs)
+        cache = kwargs["verification_cache"]["raw_packets"]
+        assert set(cache) <= {kept}, "one-off target bodies accumulated in the cache"
+        cache_refs.append(weakref.ref(cache))
+        return result
+    monkeypatch.setattr(silver, "verify_silver_vault_record_sources", observe_cache)
+    budget = root_module._TOMBSTONE_CACHE_MAX_BYTES
+    peaks = []
+    for limit in (0, budget):
+        monkeypatch.setattr(root_module, "_TOMBSTONE_CACHE_MAX_BYTES", limit)
+        tracemalloc.start()
+        try:
+            assert root.tombstoned_packet_ids() == set(targets)
+            peaks.append(tracemalloc.get_traced_memory()[1])
+        finally:
+            tracemalloc.stop()
+        assert all(ref() is None for ref in cache_refs), "cache survived the public read"
+    print(f"memory dogfood: targets=40, body_bytes=131072, uncached_peak={peaks[0]}, cached_peak={peaks[1]}")
+    assert peaks[1] < peaks[0] + 1024 * 1024
+
+
+def test_tombstone_cache_budget_counts_manifest_metadata(tmp_path, monkeypatch):
+    import data_lake.root as root_module
+    monkeypatch.setattr(root_module, "_TOMBSTONE_CACHE_MAX_BYTES", 1024)
+    cache = root_module._TombstoneAnchorCache("anchor")
+    loaded = root_module.LoadedRawPacket(tmp_path, {"large_metadata": "x" * 2048}, {})
+    cache["anchor"] = loaded
+    assert not cache
