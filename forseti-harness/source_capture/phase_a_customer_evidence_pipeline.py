@@ -15,6 +15,7 @@ import re
 import subprocess
 import sys
 import time
+from collections import Counter
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
@@ -210,6 +211,38 @@ def inspect_pipeline(*, run_root: Path) -> dict[str, Any]:
     state["google_queue"] = inspect_queue(state_path=paths.google_state)
     state["metrics"] = timing_metrics(state)
     return state
+
+
+
+def summarize_pipeline(state: Mapping[str, Any], *, run_root: Path) -> dict[str, Any]:
+    """A current acquisition-status view; full state remains the detail source."""
+    paths = pipeline_paths(run_root)
+    google = state.get("google_queue") or inspect_queue(state_path=paths.google_state)
+    reason = state.get("terminal_reason")
+    status = state["status"]
+    return {
+        "summary_version": "phase_a_customer_evidence_pipeline_summary_v1",
+        "run_id": state["run_id"], "status": status, "updated_at": state["updated_at"],
+        "terminal_reason": reason[:1024] if isinstance(reason, str) else reason,
+        "terminal_reason_truncated": isinstance(reason, str) and len(reason) > 1024,
+        "candidate_count": len(state["candidates"]),
+        "candidate_status_counts": dict(Counter(row["status"] for row in state["candidates"].values())),
+        "reddit_queue_status_counts": dict(Counter(row["status"] for row in state["reddit_queue"])),
+        "google_queue": {"status": google["status"], "job_count": len(google["jobs"]),
+                         "completed_job_count": len(google.get("completed_job_ids", []))},
+        "in_flight": {worker: ({key: claim.get(key) for key in ("job_id", "capture_id", "started_at", "output")}
+                               if isinstance(claim, dict) else None)
+                      for worker, claim in state["in_flight"].items()},
+        "circuits": {worker: {key: circuit.get(key) for key in ("state", "cooldown_until")}
+                     for worker, circuit in state["circuits"].items()},
+        "metrics": state.get("metrics") or timing_metrics(state),
+        "next_action": {"initialized": "run", "running": "wait",
+                        "waiting_for_decisions": "import-decisions", "resumable": "run",
+                        "interrupted_resumable": "run", "complete": "none"}.get(status, "inspect_blocker"),
+        "details_omitted": True,
+        "paths": {"state": str(paths.state), "google_queue": str(paths.google_state),
+                  "events": str(paths.events)},
+    }
 
 
 def import_decisions(*, run_root: Path, decisions_path: Path) -> dict[str, Any]:
@@ -450,18 +483,20 @@ def _run_pipeline_locked(
         _save_state(paths, state)
 
     stop = Event()
+    # Default waits are interruptible; injected clocks/sleeps remain deterministic in tests.
+    worker_wait = stop.wait if sleep is time.sleep else sleep
     errors: list[BaseException] = []
 
     def google_worker() -> None:
         try:
-            _run_google_worker(paths, config, capture_func, stop, sleep, clock, rng)
+            _run_google_worker(paths, config, capture_func, stop, worker_wait, clock, rng)
         except BaseException as exc:  # preserve worker failure in controller state
             errors.append(exc)
             stop.set()
 
     def reddit_worker() -> None:
         try:
-            _run_reddit_worker(paths, config, capture_func, stop, sleep, clock, rng)
+            _run_reddit_worker(paths, config, capture_func, stop, worker_wait, clock, rng)
         except BaseException as exc:  # preserve worker failure in controller state
             errors.append(exc)
             stop.set()
@@ -732,6 +767,7 @@ def _run_reddit_worker(
     while not stop.is_set():
         with _state_guard(paths):
             state = _load_state(paths)
+            changed = False
             circuit = state["circuits"]["reddit"]
             if circuit["state"] == "owner_ping":
                 return
@@ -743,8 +779,10 @@ def _run_reddit_worker(
                 if cooldown is not None:
                     circuit["state"] = "closed"
                     circuit["cooldown_until"] = None
+                    changed = True
                 job = next((item for item in state["reddit_queue"] if item["status"] == "pending"), None)
                 if job is not None:
+                    changed = True
                     job["status"] = "in_flight"
                     job["started_at"] = _timestamp(clock())
                     state["in_flight"]["reddit"] = {
@@ -753,12 +791,12 @@ def _run_reddit_worker(
                     }
                 wait = 0.0
             google_terminal = inspect_queue(state_path=paths.google_state)["status"] in {"complete", "failed", "owner_ping"}
-            if job is None and google_terminal:
+            if changed:
                 _save_state(paths, state)
+            if job is None and google_terminal:
                 return
-            _save_state(paths, state)
         if job is None:
-            sleep(max(0.05, wait))
+            sleep(max(0.25, wait))
             continue
         output = paths.reddit_packets / job["capture_id"]
         started = clock()

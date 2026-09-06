@@ -1279,3 +1279,115 @@ def test_event_log_and_state_never_include_attestation_forbidden_fields(tmp_path
     assert "2026-08-04T12:28:50.331Z" in combined
     for forbidden in ("exit_ip", "vpn_server", "credential", "access_token", "cookie"):
         assert forbidden not in combined.casefold()
+
+
+
+def test_idle_worker_does_not_write_large_unchanged_state(tmp_path, monkeypatch):
+    import random
+    from threading import Event
+    run_root = _init(tmp_path)
+    state, candidate_id = _candidate_state(run_root)
+    paths = pipeline.pipeline_paths(run_root)
+    candidate = state["candidates"][candidate_id]
+    state["candidates"] = {f"candidate_{n}": {**candidate, "candidate_id": f"candidate_{n}"} for n in range(1000)}
+    pipeline._save_state(paths, state)
+    original_bytes = paths.state.read_bytes()
+    writes, syncs, waits = [], [], []
+    atomic = pipeline._atomic_write_json
+    fsync = pipeline.os.fsync
+    def observed_write(path, value):
+        writes.append((str(path), len(pipeline._json_bytes(value))))
+        return atomic(path, value)
+    def observed_sync(fd):
+        syncs.append(fd)
+        return fsync(fd)
+    monkeypatch.setattr(pipeline, "_atomic_write_json", observed_write)
+    monkeypatch.setattr(pipeline.os, "fsync", observed_sync)
+    stop = Event()
+    def wait(seconds):
+        waits.append(seconds)
+        if len(waits) == 20:
+            stop.set()
+    pipeline._run_reddit_worker(paths, _config(), lambda *a: pytest.fail("idle capture"), stop,
+                                wait, lambda: datetime.now(UTC), random.Random(0))
+    print(f"idle dogfood: iterations={len(waits)}, writes={len(writes)}, fsyncs={len(syncs)}, bytes={sum(n for _, n in writes)}")
+    assert not writes and not syncs
+    assert paths.state.read_bytes() == original_bytes
+    assert waits == [0.25] * 20
+
+
+def test_idle_worker_observes_external_admission_and_persists_claim(tmp_path):
+    import random
+    from threading import Event
+    run_root = _init(tmp_path)
+    _, candidate_id = _candidate_state(run_root)
+    paths = pipeline.pipeline_paths(run_root)
+    stop = Event()
+    waits, captured = [], []
+    def wait(seconds):
+        if stop.is_set():
+            return
+        waits.append(seconds)
+        assert len(waits) == 1
+        _import_one(run_root, candidate_id)
+    def capture(worker, action, config, output):
+        persisted = pipeline._load_state(paths)
+        assert persisted["in_flight"]["reddit"]["capture_id"] == action["capture_id"]
+        assert persisted["reddit_queue"][0]["status"] == "in_flight"
+        captured.append(action["capture_id"])
+        stop.set()
+        return pipeline.CaptureResult("success", str(output))
+    pipeline._run_reddit_worker(paths, _config(), capture, stop, wait,
+                                lambda: datetime.now(UTC), random.Random(0))
+    settled = pipeline._load_state(paths)
+    assert waits == [0.25] and len(captured) == 1
+    assert settled["in_flight"]["reddit"] is None
+    assert settled["candidates"][candidate_id]["status"] == "captured"
+
+
+def test_compact_cli_preserves_status_counts_and_exit_codes(tmp_path):
+    import subprocess
+    import sys
+    run_root = _init(tmp_path)
+    state, candidate_id = _candidate_state(run_root)
+    paths = pipeline.pipeline_paths(run_root)
+    candidate = state["candidates"][candidate_id]
+    state["candidates"] = {f"candidate_{n}": {**candidate, "candidate_id": f"candidate_{n}"} for n in range(1000)}
+    command = [sys.executable, str(Path(pipeline_cli.__file__)), "status", "--run-root", str(run_root)]
+    for status in ("initialized", "running", "waiting_for_decisions", "interrupted_resumable", "owner_ping", "blocked", "complete"):
+        state["status"] = status
+        state["terminal_reason"] = "fixture_reason"
+        pipeline._save_state(paths, state)
+        before = paths.state.read_bytes()
+        full = subprocess.run(command, capture_output=True, timeout=10)
+        compact = subprocess.run([*command, "--summary"], capture_output=True, timeout=10)
+        assert full.returncode == compact.returncode == pipeline_cli.EXIT_BY_STATUS.get(status, 0), compact.stderr
+        a, b = json.loads(full.stdout), json.loads(compact.stdout)
+        assert a["status"] == b["status"] == status
+        assert b["candidate_count"] == len(a["candidates"]) == 1000
+        assert sum(b["candidate_status_counts"].values()) == 1000
+        assert b["terminal_reason"] == "fixture_reason"
+        assert b["details_omitted"] is True
+        assert Path(b["paths"]["state"]) == paths.state
+        assert len(compact.stdout) < 8192 < len(full.stdout)
+        assert paths.state.read_bytes() == before
+    print(f"status dogfood: full_bytes={len(full.stdout)}, summary_bytes={len(compact.stdout)}, states=7, candidates=1000")
+
+
+
+def test_expired_idle_cooldown_is_still_persisted(tmp_path):
+    import random
+    from threading import Event
+    run_root = _init(tmp_path)
+    paths = pipeline.pipeline_paths(run_root)
+    state = pipeline._load_state(paths)
+    state["circuits"]["reddit"].update(state="cooldown", cooldown_until="2020-01-01T00:00:00Z")
+    pipeline._save_state(paths, state)
+    google = pipeline.inspect_queue(state_path=paths.google_state)
+    google["status"] = "complete"
+    pipeline._atomic_write_json(paths.google_state, google)
+    pipeline._run_reddit_worker(paths, _config(), lambda *a: pytest.fail("no queued job"), Event(),
+                                lambda _: pytest.fail("terminal idle worker should exit"),
+                                lambda: datetime.now(UTC), random.Random(0))
+    circuit = pipeline._load_state(paths)["circuits"]["reddit"]
+    assert circuit["state"] == "closed" and circuit["cooldown_until"] is None

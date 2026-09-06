@@ -20,6 +20,7 @@ from source_capture.phase_a_customer_evidence_pipeline import (  # noqa: E402
     inspect_pipeline,
     recover_reddit_host,
     run_pipeline,
+    summarize_pipeline,
 )
 
 
@@ -67,6 +68,9 @@ def _parser() -> argparse.ArgumentParser:
         choices=("operator_changed_egress", "cooldown_elapsed"),
     )
     recovery.add_argument("--operator-attested-at")
+    for command in (init, run, status, decisions, family, recovery):
+        command.add_argument("--summary", action="store_true",
+                             help="Print compact acquisition status with counts and paths to full details.")
     return parser
 
 
@@ -90,6 +94,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 recovery_mode=args.mode,
                 operator_attested_at=args.operator_attested_at,
             )
+        if args.summary:
+            payload = summarize_pipeline(payload, run_root=args.run_root)
     except PipelineBlocked as exc:
         parser.exit(status=6, message=f"phase A customer evidence pipeline blocked: {exc}\n")
     except (PipelineError, OSError, ValueError) as exc:

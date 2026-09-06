@@ -696,3 +696,18 @@ If a generated score already exists for the same `(case_id, run_id,
 contestant_id)` tuple, the runner refuses to write another score unless
 `--allow-duplicate-score` is passed. Commit generated scores only under a
 separate fixture-admission decision.
+
+
+### Compact Phase A acquisition status
+
+For routine operator or agent checks, use:
+
+```powershell
+python runners/run_phase_a_customer_evidence_pipeline.py status --run-root <run-root> --summary
+```
+
+`--summary` is available on every pipeline subcommand and preserves its exit code.
+It reports acquisition status, candidate and queue counts, circuits, active work,
+and paths to full details. Omit it for the existing full JSON response. Acquisition
+completion does not imply evidence judgment or research readiness. `updated_at`
+records the last state write; unchanged idle polls do not refresh it as a heartbeat.
