@@ -225,6 +225,35 @@ def test_config_load_failure_is_not_reported_as_authentication(launch, capsys):
     assert not launch.launches and not (launch.root / "attempts").exists()
 
 
+@pytest.mark.parametrize("stdout,stderr,code,reason", [
+    ("", "WARNING: SECRET_DO_NOT_PRINT\nLogged in using ChatGPT", 0,
+     "unexpected_output_with_chatgpt_verdict"),
+    ("", "Logged in using ChatGPT", 1, "local_check_nonzero_exit"),
+    ("", "Logged in using an API key: SECRET_DO_NOT_PRINT", 0, "chatgpt_verdict_missing"),
+    ("", "Not logged in", 1, "local_check_nonzero_exit"),
+    ("Logged in using ChatGPT", "Logged in using ChatGPT", 0, "chatgpt_verdict_ambiguous"),
+    ("", "", 0, "chatgpt_verdict_missing"),
+    ("", "Error loading config: SECRET_DO_NOT_PRINT", 1, "configuration_load_failed"),
+])
+def test_refused_login_preserves_safe_diagnostic_in_job_log(launch, capsys, stdout, stderr, code, reason):
+    launch.status_stdout, launch.status, launch.status_code = stdout, stderr, code
+    with pytest.raises(SystemExit) as exc:
+        runner.main()
+    assert exc.value.code == 2
+    output = capsys.readouterr().err
+    marker = "FORSETI_CODEX_AUTH_CHECK_FAILED "
+    diagnostic, = [json.loads(line[len(marker):]) for line in output.splitlines() if line.startswith(marker)]
+    assert diagnostic["reason"] == reason
+    assert diagnostic["exit_code"] == code
+    assert diagnostic["generation_started"] is False
+    for name, raw in (("stdout", stdout), ("stderr", stderr)):
+        lines = [line.strip() for line in raw.splitlines() if line.strip()]
+        assert diagnostic["streams"][name]["chatgpt_verdict_count"] == lines.count("Logged in using ChatGPT")
+    assert "SECRET_DO_NOT_PRINT" not in output
+    assert not launch.launches and not (launch.root / "attempts").exists()
+    assert len(launch.checks) == 2  # No retry or change to the authentication guard.
+
+
 # Observed natively from codex-cli 0.153.1: `login status` writes its verdict to
 # stderr, so that stream also carries Codex's own non-fatal notices. A signed-in
 # ChatGPT account still reports exit 0 behind one.

@@ -101,6 +101,40 @@ def _auth_verdict(stdout: str, stderr: str) -> str:
     return "\n".join(line for line in lines if line)
 
 
+def _auth_failure_diagnostic(status: subprocess.CompletedProcess[str]) -> dict:
+    """Explain a refused local check without copying credential-bearing output.
+
+    The job caller already preserves stderr in its launch log. Keep stream and
+    verdict facts there before argparse replaces native output with a generic
+    error. Unknown lines remain opaque fingerprints, never an auth allowlist.
+    """
+    observed = _auth_verdict(status.stdout, status.stderr)
+    lines = observed.splitlines()
+    verdicts = lines.count("Logged in using ChatGPT")
+    if CONFIG_LOAD_FAILURE in observed:
+        reason = "configuration_load_failed"
+    elif status.returncode:
+        reason = "local_check_nonzero_exit"
+    elif not verdicts:
+        reason = "chatgpt_verdict_missing"
+    elif verdicts != 1:
+        reason = "chatgpt_verdict_ambiguous"
+    else:
+        reason = "unexpected_output_with_chatgpt_verdict"
+    streams = {}
+    for name, raw in (("stdout", status.stdout), ("stderr", status.stderr)):
+        stream_lines = [line.strip() for line in raw.splitlines() if line.strip()]
+        streams[name] = {
+            "chatgpt_verdict_count": stream_lines.count("Logged in using ChatGPT"),
+            "not_logged_in_count": stream_lines.count("Not logged in"),
+            "api_key_verdict_count": sum(line.startswith("Logged in using an API key") for line in stream_lines),
+            "other_line_sha256": [hashlib.sha256(line.encode("utf-8")).hexdigest()
+                                  for line in stream_lines if line != "Logged in using ChatGPT"],
+        }
+    return {"reason": reason, "exit_code": status.returncode,
+            "generation_started": False, "streams": streams}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--attempt-root", type=Path, required=True)
@@ -162,6 +196,9 @@ def main() -> int:
         if args.require_chatgpt:
             status = _local_codex_check(executable, [*config, "login", "status"], env)
             observed = _auth_verdict(status.stdout, status.stderr)
+            if status.returncode or observed != "Logged in using ChatGPT":
+                print("FORSETI_CODEX_AUTH_CHECK_FAILED " + json.dumps(
+                    _auth_failure_diagnostic(status), ensure_ascii=True), file=sys.stderr, flush=True)
             # `login status` has no --ignore-user-config, so unlike generation it also
             # loads CODEX_HOME/config.toml. A load failure there reports no auth fact.
             if CONFIG_LOAD_FAILURE in observed:
