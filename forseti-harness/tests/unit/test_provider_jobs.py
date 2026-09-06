@@ -117,3 +117,30 @@ def test_unrelated_job_cannot_adopt_an_existing_attempt(job):
     args['job_dir'] = args['job_dir'].parent/'another-parent'/'job'
     with pytest.raises(ValueError,match='does not belong'): run_provider_job(**args)
     assert len(calls)==1
+
+
+@pytest.mark.parametrize('after_capacity', [False, True])
+def test_refused_launch_is_not_reported_as_a_preserved_unknown_attempt(job, after_capacity):
+    args,calls,outcomes,_=job
+    original_launch = args['launch']
+    if after_capacity:
+        outcomes.append('capacity')
+    def refuse(aid):
+        if after_capacity and aid.endswith('-001'):
+            original_launch(aid)
+        else:
+            calls.append(aid)
+    args['launch']=refuse
+    with pytest.raises(ValueError,match='no execution receipt'): run_provider_job(**args)
+    index = 2 if after_capacity else 1
+    assert not (args['attempt_root']/(args['job_dir'].name+f'-attempt-{index:03d}')).exists()
+    intent = args['job_dir']/f'launch-{index:03d}.json'
+    before_intent = intent.read_bytes()
+    before_claims = {p.name:p.read_bytes() for p in args['retry_budget_dir'].glob('claim-*.json')}
+    with pytest.raises(ValueError,match='launch intent exists but its attempt directory is missing; execution is unconfirmed') as failure:
+        run_provider_job(**args)
+    assert 'clear' not in str(failure.value)
+    assert len(calls)==index
+    assert intent.read_bytes() == before_intent
+    assert len(before_claims) == int(after_capacity)
+    assert {p.name:p.read_bytes() for p in args['retry_budget_dir'].glob('claim-*.json')} == before_claims

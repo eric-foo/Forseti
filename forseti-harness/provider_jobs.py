@@ -173,8 +173,13 @@ def run_provider_job(*, job_dir: Path, attempt_root: Path, binding: dict,
             ):
                 raise ValueError("existing provider attempt does not belong to this job")
             if not (attempt / "execution_receipt.json").exists():
-                if intent.exists() or attempt.exists():
+                if attempt.exists():
                     raise ValueError("provider launch outcome unknown; inspect preserved attempt before recovery")
+                if intent.exists():
+                    # Report absence, not a proven pre-launch refusal: the callable
+                    # or missing artifacts cannot establish that nothing generated.
+                    # Keep the intent and budget claim; never infer safe relaunch.
+                    raise ValueError("provider launch intent exists but its attempt directory is missing; execution is unconfirmed; preserve the launch record and inspect launch diagnostics before recovery")
                 if index:
                     _claim_retry(retry_budget_dir, run_retry_limit, job_dir, aid)
                     sleep(retry_delay_seconds)

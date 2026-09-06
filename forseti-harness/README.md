@@ -206,7 +206,11 @@ An authentication error, changed input, unknown timeout, unknown launch outcome,
 exhausted budget, or semantic rejection remains visible and does not trigger
 automatic generation. A crash after launch intent without a terminal receipt
 requires inspection of the preserved attempt; restarting cannot prove that
-remote work stopped. Retry claims are retained even if usage is missing or a
+remote work stopped. A recorded launch intent whose attempt directory is missing
+is reported separately. Absence does not prove that no work started; preserve
+the intent and inspect launch diagnostics before deciding how to recover.
+Automatic relaunch remains refused, and an existing retry claim is not returned.
+Retry claims are retained even if usage is missing or a
 subsequent launch fails. Recovery neither edits answers nor changes model,
 credentials or evidence. Completed answer or turn events suppress fresh retries
 even when a timed-out process logged a reconnect warning; use the existing
