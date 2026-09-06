@@ -71,6 +71,34 @@ def test_producer_discovery_ignores_generated_test_scratch(tmp_path: Path) -> No
     assert discovered == [production]
 
 
+def test_generated_install_copies_are_pruned_but_new_source_still_fails(tmp_path, monkeypatch):
+    guard = _load_hook()
+    harness = tmp_path / "forseti-harness"
+    source = harness / "new_producer.py"
+    nested_source = harness / "package" / "build" / "producer.py"
+    generated = [harness / ".venv" / "lib" / "producer.py",
+                 harness / "build" / "lib" / "producer.py"]
+    for path in [source, nested_source, *generated]:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("root.append_record(lane='silver__seeded_bypass')\n", encoding="utf-8")
+    real_walk = guard.os.walk
+    visited = []
+
+    def observed_walk(*args, **kwargs):
+        for row in real_walk(*args, **kwargs):
+            visited.append(Path(row[0]))
+            yield row
+
+    monkeypatch.setattr(guard.os, "walk", observed_walk)
+    discovered = guard._producer_files(tmp_path)
+    assert discovered == sorted([source, nested_source])
+    assert not any(path.is_relative_to(harness / name)
+                   for path in visited for name in (".venv", "build"))
+    findings, _ = guard.scan(tmp_path, discovered, _load_registry())
+    assert len(findings) == 2
+    assert all(f.code == "undeclared_silver_lane" for f in findings)
+
+
 def test_discovery_prunes_before_descent_and_preserves_sorted_membership(tmp_path, monkeypatch):
     guard = _load_hook()
     harness = tmp_path / "forseti-harness"

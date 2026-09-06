@@ -295,6 +295,11 @@ def _producer_files(root: Path) -> list[Path]:
     out: list[Path] = []
     for dirpath, dirnames, filenames in os.walk(harness):
         dirnames[:] = [d for d in dirnames if d not in _PRODUCER_DISCOVERY_EXCLUDED_DIRS]
+        if Path(dirpath) == harness:
+            # uv's environment and setuptools' wheel staging contain installed
+            # copies, not producer source. Restrict this exclusion to the
+            # harness root so a source package's build/ directory stays covered.
+            dirnames[:] = [d for d in dirnames if d not in {".venv", "build"}]
         # Keep pathlib glob's platform case matching and matching directory entries.
         out.extend(Path(dirpath) / name for name in (*dirnames, *filenames)
                    if Path(name).match("*.py"))

@@ -31,9 +31,9 @@ _VIDEO_ID = re.compile(r"[A-Za-z0-9_-]{11}")
 # Liveness backstop: a hung `yt-dlp` subprocess would otherwise block the caption capture
 # forever. Generous bound (json3 caption files are tiny); subprocess.run kills the child on timeout.
 _YTDLP_CAPTION_TIMEOUT_SECONDS = 120
-# Per-socket-op bound (yt-dlp native knob) for the IN-PROCESS extract_info() metadata call below, so
-# a stalled connection cannot hang the caption path indefinitely before the bounded subprocess
-# download. (A hard total-wall-time bound would need a subprocess/thread wrap -- deferred residual.)
+# Bound metadata separately: retries and multiple socket operations must not
+# extend this stage indefinitely before the already-bounded caption download.
+_YTDLP_METADATA_TIMEOUT_SECONDS = 120
 _YTDLP_METADATA_SOCKET_TIMEOUT_SECONDS = 30
 
 
@@ -44,15 +44,31 @@ def _ytdlp_version() -> str:
 
 
 def _extract_info(url: str) -> dict:
-    """yt-dlp metadata extraction (no download). Imported lazily so the package + network-free
-    tests don't require yt-dlp; install the `transcribe` extra for real runtime. (Test seam.)"""
-    import yt_dlp
+    """Extract metadata in a killable child; failures are not missing captions.
 
-    with yt_dlp.YoutubeDL(
-        {"quiet": True, "skip_download": True, "no_warnings": True,
-         "socket_timeout": _YTDLP_METADATA_SOCKET_TIMEOUT_SECONDS}
-    ) as ydl:
-        return ydl.extract_info(url, download=False)
+    yt-dlp remains optional at import time. Ignore ambient CLI configuration so
+    user download/postprocessor settings cannot affect this metadata-only call.
+    """
+    try:
+        proc = subprocess.run(
+            [sys.executable, "-m", "yt_dlp", "--ignore-config", "--skip-download",
+             "--no-playlist", "--dump-single-json", "--quiet", "--no-warnings",
+             "--socket-timeout", str(_YTDLP_METADATA_SOCKET_TIMEOUT_SECONDS), "--", url],
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            timeout=_YTDLP_METADATA_TIMEOUT_SECONDS,
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise TimeoutError(
+            f"metadata_timeout: yt-dlp exceeded {_YTDLP_METADATA_TIMEOUT_SECONDS}s"
+        ) from exc
+    if proc.returncode != 0:
+        raise RuntimeError(
+            f"metadata_failed (rc={proc.returncode}): {(proc.stderr or '')[:160]}"
+        )
+    info = json.loads(proc.stdout)
+    if not isinstance(info, dict) or not info.get("id"):
+        raise ValueError("metadata_invalid: expected a video metadata object with an id")
+    return info
 
 
 @dataclass

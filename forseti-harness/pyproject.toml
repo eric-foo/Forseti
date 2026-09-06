@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=77,<83"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "forseti-harness"
 version = "0.14.0"
@@ -35,24 +39,44 @@ transcribe = [
 ]
 
 [tool.setuptools]
-py-modules = ["harness_utils", "harness_efficiency"]
+py-modules = ["harness_utils", "harness_efficiency", "provider_attempts", "provider_execution", "provider_jobs"]
 
 [tool.setuptools.packages.find]
 include = [
   "cleaning",
+  "cleaning.*",
   "data_lake",
+  "data_lake.*",
   "ecr",
+  "ecr.*",
+  "evidence_binding",
+  "evidence_binding.*",
+  "judgment",
+  "judgment.*",
+  "packing",
+  "packing.*",
   "capture_spine",
   "capture_spine.*",
   "reports",
+  "reports.*",
   "runners",
+  "runners.*",
   "schemas",
+  "schemas.*",
   "scoring",
+  "scoring.*",
+  "signal_content",
+  "signal_content.*",
   "source_capture",
   "source_capture.*",
   "source_observability",
+  "source_observability.*",
   "youtube_capture",
+  "youtube_capture.*",
 ]
+
+[dependency-groups]
+test = ["pytest==9.0.3", "pytest-xdist==3.8.0"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

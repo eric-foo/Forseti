@@ -37,7 +37,7 @@ import os
 import re
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath, PureWindowsPath
-from typing import Any
+from typing import Any, Sequence
 
 from harness_utils import generate_ulid, hash_file, utc_now_z
 
@@ -1183,20 +1183,43 @@ class DataLakeRoot:
                     packet_ids.append(packet_id)
         return sorted(packet_ids)
 
-    def snapshot_public_availability(self) -> list[dict]:
+    def snapshot_public_availability(
+        self, *, scope_packet_ids: Sequence[str] | None = None
+    ) -> list[dict]:
         """Read public availability entries once in stable by-key order.
 
         Root identity and tombstones are each checked once, then every
-        availability JSON entry is read at most once. Callers can validate and
-        filter the returned snapshot without racing a second index scan.
+        selected availability JSON entry is read at most once. An explicit
+        scope reads only those keys, without enumerating the global index.
+        Tombstone validation remains global and fail-closed for either mode.
         """
+        selected = None if scope_packet_ids is None else sorted(set(scope_packet_ids))
+        if selected is not None:
+            for packet_id in selected:
+                _validate_packet_id(packet_id)
         tombstoned = self.tombstoned_packet_ids()
         avail = self._path / "indexes" / "availability"
         if not avail.is_dir():
             return []
+        entry_files = (
+            sorted(avail.glob("*.json"))
+            if selected is None
+            else [avail / f"{packet_id}.json" for packet_id in selected]
+        )
         entries: list[dict] = []
-        for entry_file in sorted(avail.glob("*.json")):
-            entry = json.loads(entry_file.read_text(encoding="utf-8"))
+        for entry_file in entry_files:
+            try:
+                entry = json.loads(entry_file.read_text(encoding="utf-8"))
+            except FileNotFoundError:
+                if selected is None:
+                    raise
+                # Callers compare returned keys with their required scope and
+                # report missing entries; other I/O and parse failures propagate.
+                continue
+            if selected is not None and (
+                not isinstance(entry, dict) or entry.get("packet_id") != entry_file.stem
+            ):
+                raise DataLakeRootError(f"availability key mismatch: {entry_file}")
             if entry.get("packet_id") not in tombstoned:
                 entries.append(entry)
         return entries
