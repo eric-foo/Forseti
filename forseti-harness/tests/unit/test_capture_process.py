@@ -118,3 +118,32 @@ def test_job_assignment_failure_never_runs_capture(tmp_path, monkeypatch):
     with pytest.raises(PermissionError, match="job assignment"):
         process_runner.run_capture_process([sys.executable, str(script)], timeout_seconds=1)
     assert not marker.exists()
+
+
+@pytest.mark.parametrize("optimize", [None, "2"])
+def test_launch_handshake_holds_capture_until_the_launcher_releases_it(tmp_path, monkeypatch, optimize):
+    """The ownership window must not depend on assertions the child may not run.
+
+    ``test_job_assignment_failure_never_runs_capture`` can also pass on a kill
+    race, so hold the window open and observe the child directly instead.
+    """
+    marker = tmp_path / "executed"
+    script = tmp_path / "capture.py"
+    script.write_text(f"from pathlib import Path\nPath({str(marker)!r}).touch()\n", encoding="utf-8")
+    if optimize is None:
+        monkeypatch.delenv("PYTHONOPTIMIZE", raising=False)
+    else:
+        monkeypatch.setenv("PYTHONOPTIMIZE", optimize)
+    observed = {}
+    launch = process_runner.subprocess.Popen
+
+    def launch_then_hold(*args, **kwargs):
+        process = launch(*args, **kwargs)
+        time.sleep(1.0)  # the window in which the capture is not yet owned
+        observed["ran_before_release"] = marker.exists()
+        return process
+
+    monkeypatch.setattr(process_runner.subprocess, "Popen", launch_then_hold)
+    result = process_runner.run_capture_process([sys.executable, str(script)], timeout_seconds=20)
+    assert result.returncode == 0 and marker.exists()
+    assert observed["ran_before_release"] is False, "capture ran before the launcher owned it"

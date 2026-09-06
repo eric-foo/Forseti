@@ -100,8 +100,10 @@ def run_capture_process(command: Sequence[str], *, timeout_seconds: float,
         env[RETAINED_BROWSER_BREAKAWAY_ENV] = "1"
     else:
         env.pop(RETAINED_BROWSER_BREAKAWAY_ENV, None)
+    # Deliberately not an assert: -O or PYTHONOPTIMIZE in the inherited environment
+    # strips one, and the child would then run before the job owns it.
     bootstrap = ("import sys, runpy; "
-                 "assert sys.stdin.buffer.read(1) == b'x', 'capture launch handshake failed'; "
+                 "sys.stdin.buffer.read(1) == b'x' or sys.exit('capture launch handshake failed'); "
                  "sys.argv = sys.argv[1:]; runpy.run_path(sys.argv[0], run_name='__main__')")
     process, failure, reason, cleanup = None, None, None, None
     with tempfile.TemporaryFile() as stdout, tempfile.TemporaryFile() as stderr:
