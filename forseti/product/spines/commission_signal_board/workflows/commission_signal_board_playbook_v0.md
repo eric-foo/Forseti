@@ -337,7 +337,14 @@ not spend a separate sacrificial query.
       routing labels with no seal or ledger field: they assign no final decision
       maturity, and `source_limited` does not pre-establish the authority's
       `route_bounded_source_exhaustion` closure basis, which keeps its own
-      evidence requirement.
+      evidence requirement. Distinguish a demonstrated evidence gap from
+      interpretation or support reconciliation not yet done, and from missing
+      stopping proof. A carried-forward `open` label is not a fresh finding that
+      more sources are needed. Name the decision each proposed follow-up could
+      change; a personal follow-up or product-identity unknown with no such
+      effect remains an explicit claim limitation. Required route coverage and
+      qualifying continuation evidence still need their own proof. Use the
+      existing scan explanation and next action, not another artifact.
    3. Run only the evidence-floor and targeted material-exhaustion work named
       by the scan. An ordinary corroboration does not reopen other axes. A
       typed material addition reopens its affected axis and only a directly
@@ -345,7 +352,13 @@ not spend a separate sacrificial query.
    4. Recompute the scan after each genuinely different continuation family.
       The collection coordinator owns the stop; provisional consolidation
       supplies the meanings and gaps. Resolve suspect source/product/role
-      attribution before selecting another search. From Route 1.7.1 on, credit
+      attribution before selecting another search. After a source repair,
+      reassess the affected interpretation and support in the existing scan
+      before choosing further acquisition; a status-only update or an unchanged
+      counter cannot substitute for that judgment. Use captured evidence first
+      and do not wait for the final shared view. Reset stopping credit only
+      where the authority's material-addition test and decision effect warrant
+      it; repair work itself earns no later-family credit. From Route 1.7.1 on, credit
       execution from `execution_packet_artifact_id` and its preserved capture
       time, never a later date entered against an older coding file.
       Stop acquisition for an axis only when the Prompt Structure Rules
