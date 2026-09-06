@@ -40,6 +40,37 @@ def test_capacity_recovers_once_and_restart_does_not_generate_or_recount(job):
     assert result['execution_receipt']['usage'] is None
 
 
+@pytest.mark.parametrize('mutation', ['none', 'wrong_context', 'shell_enabled'])
+def test_preloaded_job_receipt_requires_bound_context_and_no_shell(job, mutation):
+    import hashlib
+    args, calls, outcomes, _ = job
+    outcomes.append('PROCESS_COMPLETED')
+    context = 'verbatim required context'
+    args['binding']['preloaded_context_sha256'] = hashlib.sha256(context.encode()).hexdigest()
+    original_launch = args['launch']
+
+    def launch(aid):
+        original_launch(aid)
+        path = args['attempt_root'] / aid / 'execution_receipt.json'
+        receipt = json.loads(path.read_text(encoding='utf-8'))
+        receipt['launch_metadata']['preloaded_context_sha256'] = args['binding']['preloaded_context_sha256']
+        value = context if mutation != 'wrong_context' else 'different context'
+        receipt['command'] += ['--config', 'developer_instructions=' + json.dumps(value)]
+        if mutation != 'shell_enabled':
+            receipt['command'] += ['--disable', 'shell_tool']
+        path.write_text(json.dumps(receipt), encoding='utf-8')
+
+    args['launch'] = launch
+    if mutation == 'none':
+        result = run_provider_job(**args)
+        assert result['status'] == 'PROCESS_COMPLETED_NOT_VALIDATED'
+        assert run_provider_job(**args) == result
+    else:
+        with pytest.raises(ValueError, match='preloaded context or shell restriction changed'):
+            run_provider_job(**args)
+    assert len(calls) == 1
+
+
 @pytest.mark.parametrize('outcome',['TIMED_OUT','PROCESS_FAILED'])
 def test_unknown_failure_is_not_retried(job,outcome):
     args,calls,outcomes,_=job; outcomes.append(outcome)

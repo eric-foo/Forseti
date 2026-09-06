@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import json
 import os
 import re
@@ -107,6 +108,16 @@ def _check_attempt(path, binding):
             raise ValueError("provider attempt input binding changed")
     if receipt.get("launch_metadata", {}).get("authentication_observed") != "chatgpt":
         raise ValueError("provider attempt lacks subscription authentication evidence")
+    if "preloaded_context_sha256" in binding:
+        metadata = receipt.get("launch_metadata", {})
+        settings = [command[i+1] for i, part in enumerate(command[:-1]) if part == "--config"]
+        contexts = [value.split("=", 1)[1] for value in settings if value.startswith("developer_instructions=")]
+        disabled = [command[i+1] for i, part in enumerate(command[:-1]) if part == "--disable"]
+        if (metadata.get("preloaded_context_sha256") != binding["preloaded_context_sha256"]
+                or len(contexts) != 1
+                or hashlib.sha256(json.loads(contexts[0]).encode("utf-8")).hexdigest() != binding["preloaded_context_sha256"]
+                or not {"shell_tool"}.issubset(disabled)):
+            raise ValueError("provider attempt preloaded context or shell restriction changed")
     for name, key in (("events.jsonl", "events_sha256"), ("stderr.log", "stderr_sha256")):
         if hash_file(path / name) != receipt.get(key):
             raise ValueError("provider attempt diagnostic bytes changed")

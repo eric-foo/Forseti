@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -28,6 +29,33 @@ CHATGPT_CONFIG = ("cli_auth_credentials_store=\"file\"", "model_provider=\"opena
 # Native marker for a config-load fault; matched, never echoed, since the text
 # quotes the user's configuration file.
 CONFIG_LOAD_FAILURE = "Error loading config"
+
+
+def preloaded_context(paths: list[Path]) -> tuple[str, list[dict[str, str]]]:
+    """Load caller-selected authority verbatim, never discover or summarize it."""
+    sections, manifest = [], []
+    for source in paths:
+        path = source.resolve(strict=True)
+        raw = path.read_bytes()
+        value = raw.decode("utf-8")
+        if not value.strip() or "\0" in value:
+            raise ValueError("preloaded context must be nonempty UTF-8 text without NUL")
+        record = {"path": str(path), "sha256": hashlib.sha256(raw).hexdigest()}
+        if record in manifest:
+            raise ValueError("duplicate preloaded context path")
+        manifest.append(record)
+        sections.append(f"SOURCE {path}\nSHA256 {record['sha256']}\n{value}\nEND SOURCE\n")
+    if not sections:
+        return "", []
+    return (
+        "The launcher has supplied the following required task-context files in full. "
+        "Read and apply them here; their presence satisfies reading these exact files. "
+        "Project instructions still apply. This job uses only the supplied request and "
+        "context; shell tools are unavailable. Do not attempt to reread the same files "
+        "or delegate this job. If another required source is missing, report that gap "
+        "rather than inventing its contents or claiming completion.\n\n" + "\n".join(sections),
+        manifest,
+    )
 # Only this reproduced stderr notice is unrelated to authentication. A generic
 # "proceeding" warning is not evidence that its remaining text is harmless.
 TEMP_ALIAS_NOTICE_PREFIX = (
@@ -84,6 +112,9 @@ def main() -> int:
                         help="Absolute path to the selected Codex executable; never search PATH")
     parser.add_argument("--require-chatgpt", action="store_true",
                         help="Require file-backed ChatGPT sign-in; reject API or unknown authentication before generation")
+    parser.add_argument("--preload-context", type=Path, action="append", default=[],
+                        help="Supply a required UTF-8 instruction file verbatim; repeat for multiple files. Disables shell tools for this self-contained job.")
+    parser.add_argument("--expected-context-sha256", help=argparse.SUPPRESS)
     # Owner's standing launch rule; reject before reservation or provider access.
     parser.add_argument("--reasoning-effort", choices=("high",), default="high")
     parser.add_argument("--timeout-seconds", type=float, required=True)
@@ -105,6 +136,13 @@ def main() -> int:
                 handle.read(1)
         except OSError:
             parser.error(f"{label} is unreadable in this execution context; use accessible run files")
+    try:
+        context, context_files = preloaded_context(args.preload_context)
+    except (OSError, ValueError) as exc:
+        parser.error(f"cannot preload task context ({type(exc).__name__}); no generation launched")
+    context_sha = hashlib.sha256(context.encode("utf-8")).hexdigest() if context else None
+    if args.expected_context_sha256 and args.expected_context_sha256 != context_sha:
+        parser.error("preloaded task context changed; no generation launched")
     env = dict(os.environ)
     config: list[str] = []
     metadata = {"authentication_policy": "chatgpt_only" if args.require_chatgpt else "caller_managed"}
@@ -132,6 +170,11 @@ def main() -> int:
             metadata["authentication_observed"] = "chatgpt"
             # Enforce again inside Codex to close credential changes after status.
             config += ["--config", 'forced_login_method="chatgpt"']
+        if context:
+            config += ["--config", "developer_instructions=" + json.dumps(context, ensure_ascii=False),
+                       "--disable", "shell_tool"]
+            metadata["preloaded_context_sha256"] = context_sha
+            metadata["preloaded_context_files"] = json.dumps(context_files, ensure_ascii=False)
         reserved = reserve_provider_attempt(attempt_root=args.attempt_root, attempt_id=args.attempt_id)
     except (ValueError, OSError) as exc:
         parser.error(str(exc))

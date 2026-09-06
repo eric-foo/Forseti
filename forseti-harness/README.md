@@ -75,6 +75,27 @@ subprocess wrapper. It is usable by any intelligence-cycle stage:
 python runners/run_codex_provider_attempt.py --codex-executable <absolute-native-codex-path> --require-chatgpt --attempt-root <attempts> --attempt-id <new-id> --prompt-file <prompt.md> --output-schema <schema.json> --worktree <repo> --model <model> --reasoning-effort high --timeout-seconds <seconds>
 ```
 
+For a self-contained job whose required project reads would otherwise trigger
+blocked shell calls, both the attempt and job runners accept repeatable
+`--preload-context <required-instruction-file>` arguments. The selected UTF-8
+files are supplied verbatim as additional developer context and the native
+`shell_tool` feature is disabled for that job. Project instructions remain
+active; select every required source for the bounded task, and report missing
+context rather than manufacturing an answer. Do not use this mode for a task
+that needs further file discovery or shell execution.
+
+For reconciliation, the observed required reads are the worktree's
+`.agents/workflow-overlay/README.md` and
+`forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`.
+Pass both explicitly. The launcher reads them before generation and records their
+paths, byte hashes, and combined context hash. The job pins that context across
+retries; drift fails before generation, and a reused receipt must carry the same
+context and shell restriction. Existing prompt/schema bytes and default launches
+are unchanged. Additional context consumes input tokens (about 20 KB for these
+two files); measure whole-job usage and denied-tool events rather than assuming
+a saving. This opt-in removes repeated blocked reads, not the underlying host
+policy. API authentication and spend boundaries are unchanged.
+
 Select a compatible installed native executable explicitly (`codex.exe` on
 Windows), including after an installation moves during an update. The runner
 never searches PATH, selects a different installation, or upgrades it. Its local
