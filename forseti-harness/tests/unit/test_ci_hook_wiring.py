@@ -8,6 +8,7 @@ import json
 import re
 import subprocess
 import sys
+import tomllib
 from collections import Counter
 from pathlib import Path
 
@@ -578,7 +579,9 @@ def test_ci_derives_and_verifies_exact_event_base_sha() -> None:
 
 def test_ci_uses_public_runner_cpu_capacity_without_splitting_test_files() -> None:
     ci_text = CI_PATH.read_text(encoding="utf-8")
-    assert '"pytest-xdist==3.8.0"' in ci_text
+    project = tomllib.loads((REPO_ROOT / "forseti-harness" / "pyproject.toml").read_text(encoding="utf-8"))
+    assert "pytest-xdist==3.8.0" in project["dependency-groups"]["test"]
+    assert "uv sync --locked --group test --no-editable" in ci_text
     assert (
         "python -m pytest --durations=50 --durations-min=0.25 "
         "-n 4 --dist=loadfile"

@@ -620,11 +620,11 @@ discipline, not a CI gate, and sets no test-count target.
 
 ## Commands
 
-Run the full suite (parallel; `--dist=loadfile` matches CI's scheduling so a
-file's tests stay on one worker):
+Run the full suite with the committed dependency lock and test group (parallel;
+`--dist=loadfile` matches CI's scheduling so a file's tests stay on one worker):
 
 ```powershell
-python -m pytest -n auto --dist=loadfile
+uv run --locked --group test python -m pytest -n auto --dist=loadfile
 ```
 
 Default validation for a change is the affected test files plus required CI for

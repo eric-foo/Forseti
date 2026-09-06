@@ -112,6 +112,9 @@ def test_raw_packet_tombstone_hides_public_availability_but_retains_raw(
     assert root.read_availability(retained_id) is not None
     assert old_id not in root.list_available(source_family="reddit")
     assert retained_id in root.list_available(source_family="reddit")
+    assert [entry["packet_id"] for entry in root.snapshot_public_availability(
+        scope_packet_ids=[old_id, retained_id]
+    )] == [retained_id]
 
     assert root.rebuild_availability() == 1
     assert not (
@@ -141,6 +144,10 @@ def test_raw_packet_tombstone_reader_fails_closed_on_tampering(
 
     with pytest.raises(DataLakeRootError, match="invalid raw packet tombstone"):
         root.list_available()
+    # Even a scope containing only the retained packet must validate the
+    # tombstone on another anchor; scoping cannot bypass global exclusions.
+    with pytest.raises(DataLakeRootError, match="invalid raw packet tombstone"):
+        root.snapshot_public_availability(scope_packet_ids=[retained.packet.packet_id])
 
 
 def test_record_availability_requires_committed_raw(tmp_path: Path) -> None:

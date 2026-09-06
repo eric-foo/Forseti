@@ -417,7 +417,7 @@ def pickup(
         else:
             first_packet_id = min(scope)
             try:
-                public_entries = root.snapshot_public_availability()
+                public_entries = root.snapshot_public_availability(scope_packet_ids=sorted(scope))
             except Exception as exc:
                 _raise_if_root_unavailable(
                     root, packet_id=first_packet_id, cause=exc
@@ -521,7 +521,7 @@ def reconcile_availability_per_packet(
         if not written_packet_ids:
             return failures
         try:
-            public_entries = root.snapshot_public_availability()
+            public_entries = root.snapshot_public_availability(scope_packet_ids=written_packet_ids)
         except Exception as exc:  # noqa: BLE001 - validation must stay fail-visible
             _raise_if_root_unavailable(
                 root, packet_id=written_packet_ids[0], cause=exc

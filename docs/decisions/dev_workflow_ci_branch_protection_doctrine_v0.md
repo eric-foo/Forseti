@@ -111,8 +111,9 @@ At that historical point, this record did not assert that any server-side gate w
 ## Decision
 
 1. **CI.** A GitHub Actions workflow (`.github/workflows/ci.yml`) runs the forseti-harness test suite
-   on every `pull_request` and on `push` to `main`: Ubuntu, Python 3.12, `pip install -e .`
-   (forseti-harness core dependencies only) plus pinned `pytest` and `pytest-xdist`, then the full
+   on every `pull_request` and on `push` to `main`: Ubuntu, Python 3.12,
+   `uv sync --locked --group test --no-editable` (core dependencies plus the pinned test group
+   from `forseti-harness/uv.lock`), followed by an isolated installed-package import check, then the full
    suite from `forseti-harness/` with slow-test timing and four file-grouped workers. Single target —
    no version matrix, no path-filter, no dependency caching, and no test-selection reduction.
 2. **Branch protection on `main` — adopted configuration.** The server gate requires:
@@ -384,8 +385,10 @@ contract tests assert the adapters import with no `playwright`/`cloakbrowser`/`r
 the snapshot tests drive fake engines rather than the real backends. CI therefore still needs no
 runtime extras; `pytest-xdist==3.8.0` is a test-runner dependency only. A path-filter is deliberately
 avoided because a filtered required check can strand docs-only PRs in a permanent "pending" state
-and block merges. `pytest==9.0.3` and `pytest-xdist==3.8.0` are pinned so upstream releases cannot
-silently change CI overnight. The full suite remains required: `-n 4 --dist=loadfile` matches the
+and block merges. `pytest==9.0.3` and `pytest-xdist==3.8.0` are declared in the `test` dependency
+group; CI uses the committed lockfile and rejects stale dependency metadata. Its non-editable
+install and isolated import check catch runtime modules omitted from the distribution that the
+test suite's source-path setup can hide. The full suite remains required: `-n 4 --dist=loadfile` matches the
 [four-CPU public `ubuntu-latest` runner](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#choosing-github-hosted-runners),
 changes only scheduling, keeps every file's tests on one worker, and preserves failures.
 `--durations=50 --durations-min=0.25` keeps slow-test evidence visible. PR #876's first parallel

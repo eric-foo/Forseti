@@ -270,10 +270,10 @@ def test_scoped_pickup_uses_one_ordered_snapshot_before_family_filter(
     snapshot_calls = 0
     original_snapshot = root.snapshot_public_availability
 
-    def counted_snapshot() -> list[dict]:
+    def counted_snapshot(**kwargs) -> list[dict]:
         nonlocal snapshot_calls
         snapshot_calls += 1
-        return original_snapshot()
+        return original_snapshot(**kwargs)
 
     monkeypatch.setattr(root, "snapshot_public_availability", counted_snapshot)
 
@@ -452,10 +452,10 @@ def test_scoped_reconcile_validates_successful_writes_with_one_snapshot(
     snapshot_calls = 0
     original_snapshot = root.snapshot_public_availability
 
-    def counted_snapshot() -> list[dict]:
+    def counted_snapshot(**kwargs) -> list[dict]:
         nonlocal snapshot_calls
         snapshot_calls += 1
-        return original_snapshot()
+        return original_snapshot(**kwargs)
 
     monkeypatch.setattr(root, "snapshot_public_availability", counted_snapshot)
     monkeypatch.setattr(
@@ -475,7 +475,7 @@ def test_scoped_reconcile_missing_public_write_fails_loud(
 ) -> None:
     root = DataLakeRoot.for_test(tmp_path / "lake")
     selected = _commit_packet(root, tmp_path, "missing-after-write")
-    monkeypatch.setattr(root, "snapshot_public_availability", lambda: [])
+    monkeypatch.setattr(root, "snapshot_public_availability", lambda **kwargs: [])
 
     failures = reconcile_availability_per_packet(
         root, scope_packet_ids=[selected]
@@ -557,7 +557,7 @@ def test_scoped_reconcile_snapshot_promotes_root_loss(
     root = DataLakeRoot.for_test(tmp_path / "lake")
     selected = _commit_packet(root, tmp_path, "snapshot-root-loss")
 
-    def disconnect_during_snapshot() -> list[dict]:
+    def disconnect_during_snapshot(**kwargs) -> list[dict]:
         root.path.rename(tmp_path / "disconnected-snapshot-lake")
         raise OSError(433, "A device which does not exist was specified")
 
