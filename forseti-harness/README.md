@@ -33,6 +33,11 @@ Current method-v12 semantic reconciliation preparation writes each prompt's
 candidate decisions and original-label assignments. The model chooses nodes,
 relations and wording; code carries child-owned identities, literal conditions,
 emerging labels, polarity composition and lineage. Use that exact sidecar.
+Current prompts also expose source-linked conditions when a candidate's sources
+have different condition sets, including empty sets. The combined `conditions`
+list does not establish that its details co-occur: shared wording must preserve
+each source's scope. Ordinary candidates omit this extra lineage. This changes
+newly rendered requests; it does not repair or replace already accepted answers.
 Native validation rejects missing, foreign, duplicate or prohibited decisions;
 a schema pass is not semantic proof. `prepare-reconciliation-level
 --existing-stage <stage.json>` resumes unchanged stage membership. Explicit
