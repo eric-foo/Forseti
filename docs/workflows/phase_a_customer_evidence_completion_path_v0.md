@@ -63,12 +63,15 @@ This is a conceptual and completion boundary between acquisition and Deliver,
 not a new globally numbered phase: historical Phase A, Phase B, Turn B,
 Understanding, and Deliver vocabulary is not renumbered or migrated.
 
-For new cross-company authoring, use `phase_a_semantic_integration_run_v10`
-(integration method v12, verifier v11). The supplied `CURRENT_AXES` inventory
+For new cross-company authoring, use `phase_a_semantic_integration_run_v11`
+(integration method v13, verifier v12). The supplied `CURRENT_AXES` inventory
 owns output IDs; shared examples describe concepts, never another company's
 required IDs. Preserve a supported meaning even when it needs an emerging-axis
 label instead of an existing axis. See the semantic-integration contract v81
-for the owning rule. Historical run v9 / method v11 and earlier artifacts keep
+for the owning rule. Contract v122 adds meaning-boundary guidance to the existing
+producer and verifier and versions new Decision State prompts as manifest v2;
+old v1 manifests retain their original batching prompts. Historical run v10 /
+method v12 and earlier artifacts keep
 their original identity and replay; do not edit frozen outputs or relabel old
 responses as a new-method proof. This correction does not establish the cause
 of Dieux's provider timeout. All new model attempts use `high` under the
@@ -95,14 +98,14 @@ stage identity and does not make a structurally valid answer semantically right.
 
 Frozen verifier-v8 compilations replay unchanged where the current verifier is
 v9, whose change was response transport only. New verification still uses v9;
-methods v11/v12 retain their stricter verifier pairing. The semantic-integration
+methods v11/v12/v13 retain their stricter verifier pairing. The semantic-integration
 contract's v77 replay clarification owns the exact version/hash acceptance and
 unchanged active-row/lineage checks. Replay does not establish current-method
 execution or semantic truth and requires no provider re-verification merely to
 change a version label.
 
 The existing calibration entry point follows the production-owned
-`SEMANTIC_METHODS_V7_PLUS` set, including current method v12, rather than a
+`SEMANTIC_METHODS_V7_PLUS` set, including current method v13, rather than a
 separate historical allowlist. Primary and cold-repeat evaluation both require
 their own exact row-verified compilation for those methods. Contract v79 owns
 this compatibility correction; it neither changes semantic prompts nor makes

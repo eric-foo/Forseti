@@ -6259,6 +6259,56 @@ def test_decision_state_reconciliation_batches_without_splitting_evidence(
     assert caught.value.boundary == "decision_state_reconciliation_batch_combination"
 
 
+@pytest.mark.parametrize("version", ["phase_a_decision_state_reconciliation_manifest_v1", "phase_a_decision_state_reconciliation_manifest_v2"])
+def test_decision_state_versioned_prompts_batch_and_finalize_without_reinterpreting_history(tmp_path, monkeypatch, version):
+    import judgment.phase_a_decision_state_reconciliation as decision_state
+
+    plan, _, _, _ = _decision_state_reconciliation_fixture(tmp_path, monkeypatch)
+    plan["prior_specs"] = []
+    before = {str(path): path.read_bytes() for path in tmp_path.rglob("*.json")}
+    manifest = prepare_phase_a_decision_state_reconciliation(plan)
+    assert manifest["schema_version"] == "phase_a_decision_state_reconciliation_manifest_v2"
+    groups = manifest["unresolved_evidence_groups"]
+    scope = manifest["reconciliation_scope_sha256"]
+    manifest["schema_version"] = version
+    manifest["prompt"] = decision_state._prompt(groups, reconciliation_scope_sha256=scope, manifest_version=version)
+    manifest.pop("manifest_sha256")
+    manifest["manifest_sha256"] = _canonical_json_sha256(manifest)
+    individual = [decision_state._prompt([group], reconciliation_scope_sha256=scope, manifest_version=version) for group in groups]
+    batches = prepare_phase_a_decision_state_adjudication_batches(manifest, max_prompt_characters=max(map(len, individual)))
+    assert [row["prompt"] for row in batches["batches"]] == individual
+    assert len(batches["batches"]) == len(groups) == 3
+    current_guidance = "Being on a numbered tube or reporting current use establishes ongoing_use"
+    for prompt in [manifest["prompt"], *individual]:
+        assert prompt.count(current_guidance) == int(version.endswith("_v2"))
+        if version.endswith("_v2"):
+            assert "Preserve earlier interest even when later trial occurred" in prompt
+            assert "Resolve return by its object" in prompt
+            assert "Do not infer future repurchase from use" in prompt
+    if version.endswith("_v1"):
+        # Original 066be prompt bytes; only normalize the fixture's path-bound scope hash.
+        assert sha256_text(decision_state._prompt([], reconciliation_scope_sha256="a" * 64, manifest_version=version)) == "434369aa1605779c94a4fcd715714b54112d8fb76fcd3e6f96ddde7be39ac973"
+        assert [sha256_text(row["prompt"].replace(scope, "a" * 64)) for row in batches["batches"]] == [
+            "af36436e7308c5c78c85da00d9841116f6773a9a017c2586a1ca4a127533b362",
+            "0fe9b1d7f729f3f7872fa13db4e012cb7859a77cb5b76788cbc376ffe81a9f08",
+            "eef54c817dd5e1f8920ab1f33ec0c97108877426be59e35525b0bfadde77304f",
+        ]
+    responses = [{"schema_version": DECISION_STATE_ADJUDICATION_VERSION, "reconciliation_scope_sha256": scope,
+        "judgments": [{"item_ids": [item], "classification": "context_only", "state_kind": None,
+            "commercial_direction": None, "decision_object": None, "quantity": None, "conditions": []}
+            for item in batch["item_ids"]]} for batch in batches["batches"]]
+    combined = combine_phase_a_decision_state_adjudication_batches(manifest, batches, responses)
+    output = finalize_phase_a_decision_state_reconciliation(manifest, adjudication=combined)
+    assert build_axis_consolidated_view(output["hydration_and_moisture"])
+    assert {str(path): path.read_bytes() for path in tmp_path.rglob("*.json")} == before
+
+
+def test_decision_state_prepare_rejects_unsupported_manifest_version(tmp_path, monkeypatch):
+    plan, _, _, _ = _decision_state_reconciliation_fixture(tmp_path, monkeypatch)
+    with pytest.raises(EvidenceConsumerError, match="unsupported reconciliation manifest version"):
+        prepare_phase_a_decision_state_reconciliation(plan, manifest_version="unknown")
+
+
 def _repin_point_chain(
     descriptor: dict[str, Any],
     artifact: dict[str, Any],

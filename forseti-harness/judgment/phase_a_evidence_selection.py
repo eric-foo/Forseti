@@ -19,6 +19,7 @@ from urllib.parse import urlparse
 from harness_utils import hash_file, sha256_text
 from judgment.claim_meaning import (
     CLAIM_CONFIRMATION_CRITERION, CLAIM_INTERPRETATION_GUIDANCE, CLAIM_MEANING_POLICY,
+    CLAIM_REF_SCOPE_NOTE,
 )
 from judgment.phase_a_evidence_consumer import (
     EvidenceConsumerError,
@@ -331,6 +332,17 @@ def _meaning_prompt(template: str, manifest: Mapping[str, Any], *, confirmation:
     if guidance and confirmation:
         guidance += "\n\n" + CLAIM_CONFIRMATION_CRITERION
     return guidance + "\n\n" + template if guidance else template
+
+
+def _relation_ref_instruction(manifest: Mapping[str, Any]) -> str:
+    """Scope the ref-provenance rule so it does not read as a ban on interpretation.
+
+    Historical manifests keep the unscoped wording their responses were judged
+    under; only manifests carrying the current meaning standard get the note.
+    """
+    if _meaning_guidance(manifest):
+        return RELATION_REF_INSTRUCTION + CLAIM_REF_SCOPE_NOTE
+    return RELATION_REF_INSTRUCTION
 
 
 def _frontier_point_sort_key(row: Mapping[str, Any]) -> tuple[Any, ...]:
@@ -1202,7 +1214,8 @@ def relation_adjudication_basis(
                    PRESELECTION_CONFIRMATION_BATCH_PROMPT,
                    RELATION_REF_INSTRUCTION, POINT_ACTOR_SCOPE_GUIDANCE,
                    _policy_guidance(spec, candidates)] + (
-                       [_meaning_guidance(manifest), CLAIM_CONFIRMATION_CRITERION]
+                       [_meaning_guidance(manifest), CLAIM_CONFIRMATION_CRITERION,
+                        _relation_ref_instruction(manifest)]
                        if _meaning_guidance(manifest) else []
                    ),
         "judgment_projection_columns": {
@@ -4516,7 +4529,7 @@ def prepare_preselection_relation_confirmation(
     if include_relation_refs:
         prompt_template = prompt_template.replace(
             "\n\nThe first-pass relation,",
-            f"\n\n{RELATION_REF_INSTRUCTION}\n\nThe first-pass relation,",
+            f"\n\n{_relation_ref_instruction(manifest)}\n\nThe first-pass relation,",
             1,
         )
     prompt = prompt_template.format(
@@ -5004,7 +5017,7 @@ def prepare_batched_preselection_relation_confirmations(
         if include_relation_refs:
             prompt_template = prompt_template.replace(
                 "\n\nThe first-pass relation,",
-                f"\n\n{RELATION_REF_INSTRUCTION}\n\nThe first-pass relation,",
+                f"\n\n{_relation_ref_instruction(selection_manifest)}\n\nThe first-pass relation,",
                 1,
             )
         prompt = prompt_template.format(

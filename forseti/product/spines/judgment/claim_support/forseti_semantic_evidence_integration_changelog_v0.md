@@ -24,6 +24,20 @@ contract or its linked owning source. This history creates no new review step.
 
 ## Changelog
 
+- `v122` / 2026-09-08 — reconciled producer prevention with versioned shared
+  claim interpretation. Current run v11 binds integration method v13 and
+  verifier v12; public normal reconciliation retains authoring v4 without a
+  duplicate producer preamble. New Decision State manifest v2 selects clarified
+  action/time wording; v1 batching and finalization retain historical behavior.
+  Current selection distinguishes an absent precondition from an incompatible
+  outcome and keeps citation scope separate from interpreting supported meaning.
+  Its development v3 policy basis changes; selection v1/v2 and explicit prior
+  authoring revisions retain replay. Added a date-loss falsifier at the actual
+  portable consumer as well as materialization. The bounded native matrix
+  improved from 63/72 to 67/72 under the unchanged oracle, with no paired
+  regressions; ambiguity and inherited normalization defects remain disclosed.
+  This does not establish all-axis blind proof, remove cross-batch criterion
+  variability, or repair historical source data.
 - `v121` / 2026-09-07 — aligned current claim formation and relation
   interpretation through one shared supported-meaning instruction. Public normal
   authoring now selects identity revision v4, preserving v3 structural groups;

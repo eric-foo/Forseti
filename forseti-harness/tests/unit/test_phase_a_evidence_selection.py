@@ -335,7 +335,7 @@ def test_adjudication_survives_confirmation_and_quote_replay_without_mutating_pr
 
 @pytest.mark.parametrize("mutation", [
     "point", "scope", "source", "meaning", "conditions", "origin", "policy", "claim_meaning_guidance",
-    "claim_confirmation_criterion",
+    "claim_confirmation_criterion", "claim_ref_scope_note",
 ])
 def test_adjudication_rejects_changed_basis_after_honest_repins(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mutation: str) -> None:
     spec, sources, _ = _adjudication_fixture(tmp_path)
@@ -348,6 +348,8 @@ def test_adjudication_rejects_changed_basis_after_honest_repins(tmp_path: Path, 
         monkeypatch.setattr(evidence_selection, "CLAIM_INTERPRETATION_GUIDANCE", "Changed meaning policy.")
     elif mutation == "claim_confirmation_criterion":
         monkeypatch.setattr(evidence_selection, "CLAIM_CONFIRMATION_CRITERION", "Changed confirmation criterion.")
+    elif mutation == "claim_ref_scope_note":
+        monkeypatch.setattr(evidence_selection, "CLAIM_REF_SCOPE_NOTE", " Changed ref scope note.")
     elif mutation == "policy":
         monkeypatch.setattr(evidence_selection, "POINT_ACTOR_SCOPE_GUIDANCE", "A genuinely different actor rule.")
     else:
@@ -3555,7 +3557,10 @@ def _quote_response(quote_manifest: dict, sources: list[dict]) -> dict:
 
 
 def test_current_meaning_guidance_reaches_single_and_batched_native_consumers(tmp_path: Path) -> None:
-    from judgment.claim_meaning import CLAIM_CONFIRMATION_CRITERION, CLAIM_INTERPRETATION_GUIDANCE, CLAIM_MEANING_POLICY
+    from judgment.claim_meaning import (
+        CLAIM_CONFIRMATION_CRITERION, CLAIM_INTERPRETATION_GUIDANCE, CLAIM_MEANING_POLICY,
+        CLAIM_REF_SCOPE_NOTE,
+    )
 
     spec, sources = _write_source(tmp_path, 5)
     spec["relation_response_mode"] = "positional"
@@ -3579,8 +3584,14 @@ def test_current_meaning_guidance_reaches_single_and_batched_native_consumers(tm
     )
     for rendered in [prompt, *(item[0] for item in batches)]:
         assert CLAIM_CONFIRMATION_CRITERION not in rendered
+        assert CLAIM_REF_SCOPE_NOTE not in rendered
+    assert CLAIM_REF_SCOPE_NOTE not in selected_prompt
     for rendered in [confirm_prompt, selected_prompt, *(item[0] for item in confirmation_prompts)]:
         assert rendered.count(CLAIM_CONFIRMATION_CRITERION) == 1
+    # The ref-provenance rule travels with its scope note wherever it is injected,
+    # so it cannot read as a general ban on reading source-supported meaning.
+    for rendered in [confirm_prompt, *(item[0] for item in confirmation_prompts)]:
+        assert rendered.count(evidence_selection.RELATION_REF_INSTRUCTION + CLAIM_REF_SCOPE_NOTE) == 1
     for rendered, bound in [
         (prompt, manifest), (confirm_prompt, confirmation), (selected_prompt, selected_confirmation),
         *((item[0], bound) for item, bound in zip(batches, batch_manifest["batches"], strict=True)),
@@ -3614,7 +3625,7 @@ def test_current_meaning_guidance_reaches_single_and_batched_native_consumers(tm
 
 
 @pytest.mark.parametrize("version", ["phase_a_evidence_selection_manifest_v1", "phase_a_evidence_selection_manifest_v2"])
-@pytest.mark.parametrize("changed_policy", ["CLAIM_INTERPRETATION_GUIDANCE", "CLAIM_CONFIRMATION_CRITERION"])
+@pytest.mark.parametrize("changed_policy", ["CLAIM_INTERPRETATION_GUIDANCE", "CLAIM_CONFIRMATION_CRITERION", "CLAIM_REF_SCOPE_NOTE"])
 def test_historical_selection_meaning_replay_keeps_frozen_prompt_and_basis(tmp_path: Path, monkeypatch, version: str, changed_policy: str) -> None:
     spec, sources = _write_source(tmp_path, 5)
     prompt, _, manifest = prepare_evidence_selection(spec, sources)
@@ -3634,6 +3645,9 @@ def test_historical_selection_meaning_replay_keeps_frozen_prompt_and_basis(tmp_p
     assert evidence_selection.relation_adjudication_basis(portable, candidates) == "97de5cfd58b36d43713f6278bcb17a46c6a34050b3474cc3aaa88507ee69dc30"
     old_confirmation = prepare_preselection_relation_confirmation(manifest, sources, first)
     assert old_confirmation[2]["prompt_sha256"] == "3d25bb6b7fd0b331b5ce9f45ddb73a97483c1ad131153af44efba3ff6ef9820e"
+    # Historical rows were judged under the unscoped ref wording; it stays unscoped.
+    assert evidence_selection.CLAIM_REF_SCOPE_NOTE not in old_confirmation[0]
+    assert evidence_selection.RELATION_REF_INSTRUCTION in old_confirmation[0]
     _, _, quote = finalize_relations_prepare_quotes(manifest, sources, first)
     old_selected = prepare_selected_relation_confirmation(quote)
     assert old_selected[2]["prompt_sha256"] == "ee801e8fe60dbe49ca429cb6a952899767fbb463cd6f1c789ea6040951c3389f"

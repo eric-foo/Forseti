@@ -33,9 +33,16 @@ from judgment.phase_a_evidence_consumer import (
 DECISION_STATE_RECONCILIATION_PLAN_VERSION = (
     "phase_a_decision_state_reconciliation_plan_v1"
 )
-DECISION_STATE_RECONCILIATION_MANIFEST_VERSION = (
+DECISION_STATE_RECONCILIATION_MANIFEST_VERSION_V1 = (
     "phase_a_decision_state_reconciliation_manifest_v1"
 )
+DECISION_STATE_RECONCILIATION_MANIFEST_VERSION = (
+    "phase_a_decision_state_reconciliation_manifest_v2"
+)
+_SUPPORTED_MANIFEST_VERSIONS = {
+    DECISION_STATE_RECONCILIATION_MANIFEST_VERSION_V1,
+    DECISION_STATE_RECONCILIATION_MANIFEST_VERSION,
+}
 DECISION_STATE_ADJUDICATION_VERSION = "phase_a_decision_state_adjudication_v1"
 DECISION_STATE_ADJUDICATION_BATCH_SET_VERSION = (
     "phase_a_decision_state_adjudication_batch_set_v1"
@@ -602,9 +609,21 @@ def _response_schema(*, reconciliation_scope_sha256: str) -> dict[str, Any]:
 
 
 def _prompt(
-    groups: Sequence[Mapping[str, Any]], *, reconciliation_scope_sha256: str
+    groups: Sequence[Mapping[str, Any]], *, reconciliation_scope_sha256: str,
+    manifest_version: str = DECISION_STATE_RECONCILIATION_MANIFEST_VERSION,
 ) -> str:
     payload = json.dumps(groups, ensure_ascii=False, indent=2, sort_keys=True)
+    meaning_guidance = (
+        "use. Being on a numbered tube or reporting current use establishes ongoing_use "
+        "with neutral direction, not observed_repurchase or multi_unit_purchase without "
+        "explicit buying evidence. Preserve earlier interest even when later trial occurred; "
+        "keep both states when separately asserted. Resolve return by its object: merchandise "
+        "refund uses return_intent or observed_return; resuming use is ongoing_use when "
+        "observed, never a merchandise return. Do not infer future repurchase from use. "
+        "Completed use requires explicit finishing, using up, or going through "
+        if manifest_version == DECISION_STATE_RECONCILIATION_MANIFEST_VERSION
+        else "use, and completed use requires explicit finishing, using up, or going through "
+    )
     return (
         "Classify only the unresolved atomic semantic units below for Phase A Decision "
         "State projection. This is bounded evidence packing, not Deliver. For each item, "
@@ -617,8 +636,8 @@ def _prompt(
         "disapproval, or suitability judgment; otherwise keep the attribute or outcome "
         "context_only. Purchase or acquisition requires an explicit observed acquisition; "
         "price and quantity alone do not prove it. Ownership or carrying does not prove "
-        "use, and completed use requires explicit finishing, using up, or going through "
-        "the product. Carrying or keeping a product nearby, without explicit ownership "
+        + meaning_guidance
+        + "the product. Carrying or keeping a product nearby, without explicit ownership "
         "or use, is context_only. Evaluate commercial_direction relative to the returned "
         "decision_object: for an explicit 'prefers A over B' comparison, preserve that "
         "full comparison as the object and use favorable; treat an exact midpoint numeric "
@@ -653,7 +672,7 @@ def prepare_phase_a_decision_state_adjudication_batches(
         raise EvidenceConsumerError(
             boundary, "max_prompt_characters must be a positive integer"
         )
-    if manifest.get("schema_version") != DECISION_STATE_RECONCILIATION_MANIFEST_VERSION:
+    if manifest.get("schema_version") not in _SUPPORTED_MANIFEST_VERSIONS:
         raise EvidenceConsumerError(boundary, "unsupported reconciliation manifest version")
     expected_hash = manifest.get("manifest_sha256")
     unhashed = dict(manifest)
@@ -674,7 +693,8 @@ def prepare_phase_a_decision_state_adjudication_batches(
             raise EvidenceConsumerError(boundary, "unresolved evidence group is invalid")
         candidate = [*current, group]
         candidate_prompt = _prompt(
-            candidate, reconciliation_scope_sha256=scope_sha256
+            candidate, reconciliation_scope_sha256=scope_sha256,
+            manifest_version=manifest["schema_version"],
         )
         if len(candidate_prompt) <= max_prompt_characters:
             current = candidate
@@ -687,7 +707,8 @@ def prepare_phase_a_decision_state_adjudication_batches(
             )
         grouped_batches.append(current)
         current = [group]
-        single_prompt = _prompt(current, reconciliation_scope_sha256=scope_sha256)
+        single_prompt = _prompt(current, reconciliation_scope_sha256=scope_sha256,
+                                manifest_version=manifest["schema_version"])
         if len(single_prompt) > max_prompt_characters:
             evidence_id = _required_string(group, "evidence_id", boundary=boundary)
             raise EvidenceConsumerError(
@@ -714,7 +735,8 @@ def prepare_phase_a_decision_state_adjudication_batches(
         )
         if len(item_ids) != expected_count or len(item_ids) != len(set(item_ids)):
             raise EvidenceConsumerError(boundary, "batch item coverage is invalid")
-        prompt = _prompt(batch_groups, reconciliation_scope_sha256=scope_sha256)
+        prompt = _prompt(batch_groups, reconciliation_scope_sha256=scope_sha256,
+                         manifest_version=manifest["schema_version"])
         batches.append(
             {
                 "batch_id": f"{index:04d}",
@@ -828,11 +850,14 @@ def combine_phase_a_decision_state_adjudication_batches(
 
 
 def prepare_phase_a_decision_state_reconciliation(
-    plan: Mapping[str, Any]
+    plan: Mapping[str, Any], *,
+    manifest_version: str = DECISION_STATE_RECONCILIATION_MANIFEST_VERSION,
 ) -> dict[str, Any]:
     """Prepare one run-scoped, cross-axis delta reconciliation manifest."""
 
     boundary = "decision_state_reconciliation_plan"
+    if manifest_version not in _SUPPORTED_MANIFEST_VERSIONS:
+        raise EvidenceConsumerError(boundary, "unsupported reconciliation manifest version")
     if plan.get("schema_version") != DECISION_STATE_RECONCILIATION_PLAN_VERSION:
         raise EvidenceConsumerError(boundary, "unsupported reconciliation plan version")
     if set(plan) != {"schema_version", "current_axes", "prior_specs"}:
@@ -1063,7 +1088,7 @@ def prepare_phase_a_decision_state_reconciliation(
     )
 
     manifest: dict[str, Any] = {
-        "schema_version": DECISION_STATE_RECONCILIATION_MANIFEST_VERSION,
+        "schema_version": manifest_version,
         "plan": copy.deepcopy(plan),
         "axes": sorted(axes, key=lambda item: item["axis_id"]),
         "rows": sorted(
@@ -1094,6 +1119,7 @@ def prepare_phase_a_decision_state_reconciliation(
             _prompt(
                 groups,
                 reconciliation_scope_sha256=reconciliation_scope_sha256,
+                manifest_version=manifest_version,
             )
             if unresolved_units
             else None
@@ -1254,14 +1280,16 @@ def finalize_phase_a_decision_state_reconciliation(
     """Compile complete current v4 specs and validate the real consumer boundary."""
 
     boundary = "decision_state_reconciliation_manifest"
-    if manifest.get("schema_version") != DECISION_STATE_RECONCILIATION_MANIFEST_VERSION:
+    if manifest.get("schema_version") not in _SUPPORTED_MANIFEST_VERSIONS:
         raise EvidenceConsumerError(boundary, "unsupported reconciliation manifest version")
     expected_hash = manifest.get("manifest_sha256")
     unhashed = dict(manifest)
     unhashed.pop("manifest_sha256", None)
     if not isinstance(expected_hash, str) or _canonical_json_sha256(unhashed) != expected_hash:
         raise EvidenceConsumerError(boundary, "reconciliation manifest identity changed")
-    regenerated = prepare_phase_a_decision_state_reconciliation(manifest["plan"])
+    regenerated = prepare_phase_a_decision_state_reconciliation(
+        manifest["plan"], manifest_version=manifest["schema_version"]
+    )
     if regenerated != manifest:
         raise EvidenceConsumerError(boundary, "reconciliation inputs changed after preparation")
 

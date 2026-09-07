@@ -2539,11 +2539,12 @@ def test_current_reconciliation_preserves_literal_conditions_and_bounded_scope(m
         validate_reconciliation_stage(bundle, stage, wrong_kind)
 
 
-def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: Path) -> None:
+@pytest.mark.parametrize("method", [semantic_module.METHOD_VERSION_V12, semantic_module.METHOD_VERSION_V13])
+def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: Path, method: str) -> None:
     from runners.run_semantic_evidence_integration import prepare_reconciliation_level
 
     source = _source_v10(count=1)
-    source["semantic_method_version"] = semantic_module.METHOD_VERSION_V12
+    source["semantic_method_version"] = method
     bundle = build_bundle(source, max_prompt_bytes=30_000)
     responses = _keyed_responses(bundle)
     evidence_id = bundle["batches"][0]["evidence_ids"][0]
@@ -2560,10 +2561,13 @@ def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: 
     bp, cp = tmp_path / "bundle.json", tmp_path / "compiled.json"
     bp.write_text(json.dumps(bundle), encoding="utf-8")
     cp.write_text(json.dumps(verified), encoding="utf-8")
-    prepare_reconciliation_level(bundle_path=bp, compilation_path=cp,
+    prepared = prepare_reconciliation_level(bundle_path=bp, compilation_path=cp,
         stage_out=tmp_path / "stage.json", prompt_dir=tmp_path / "prompts")
+    assert prepared["authoring_revision"] == semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4
     assert json.loads((tmp_path / "stage.json").read_text()) == stage
     for prompt in prompts:
+        assert prompt["prompt"].count(semantic_module.CLAIM_FORMATION_GUIDANCE) == 1
+        assert semantic_module.MEANING_BOUNDARY_GUIDANCE not in prompt["prompt"]
         path = tmp_path / "prompts" / prompt["batch_id"]
         assert path.with_suffix(".md").read_bytes() == (prompt["prompt"] + "\n").encode("utf-8")
         assert json.loads(path.with_suffix(".schema.json").read_text()) == prompt["response_schema"]
@@ -2654,9 +2658,9 @@ def test_explicit_v7_decision_authoring_preserves_source_and_legacy_replay(tmp_p
         semantic_module.prepare_reconciliation_repair(bundle, stage, old, **nomination)
 
 
-def _decision_reconciliation_fixture(count=2):
+def _decision_reconciliation_fixture(count=2, *, method=semantic_module.METHOD_VERSION_V12):
     source = _source_v10(count=count)
-    source["semantic_method_version"] = semantic_module.METHOD_VERSION_V12
+    source["semantic_method_version"] = method
     bundle = build_bundle(source, max_prompt_bytes=30_000)
     responses = _keyed_responses(bundle)
     n = 0
@@ -3125,6 +3129,38 @@ def test_current_claim_formation_guidance_changes_prompt_only_and_preserves_hist
                for revision, records in historical.items())
     assert validate_reconciliation_stage(bundle, stage, [response]) == accepted
     assert (bundle, compiled, stage, response) == original
+
+
+@pytest.mark.parametrize("revision,prompt_hash,schema_hash", [
+    ("legacy", "d7139c1d88d87c76390f99df2ddb0d472749feb7f794e84d77ab3506a0a1e823", "d0cb6a2ee66eb8bdcc3047244fcf153c744665c79fbfd082853169af779c7267"),
+    ("exact_identity_namespaces_v1", "400c9466cce26cdbbcfcbdd26ae380b9269c93bf4c88b241396a351fa56b98cf", "fce121e97c1c8d62aabf0e486080f860398bd79d9a81461fa481313e5e760c86"),
+    ("exact_identity_namespaces_v2", "539f5008caec8478a9158f9b82deb5a6c37b9a50ee9be85e7ef8515d4166bfe4", "fce121e97c1c8d62aabf0e486080f860398bd79d9a81461fa481313e5e760c86"),
+    ("exact_identity_namespaces_v3", "100768e54bed83d53e02cd4ebe8da2f33cb7c84d0b1406b1d82d3204f19cf6e5", "fce121e97c1c8d62aabf0e486080f860398bd79d9a81461fa481313e5e760c86"),
+])
+def test_v13_explicit_historical_authoring_preserves_reviewed_foreign_prompts(tmp_path, revision, prompt_hash, schema_hash):
+    import hashlib
+    from runners.run_semantic_evidence_integration import prepare_reconciliation_level
+
+    # Digests captured from reviewed 8832adc using this same native v13 fixture.
+    bundle, compiled, stage, _, response = _decision_reconciliation_fixture(method=semantic_module.METHOD_VERSION_V13)
+    paths = {name: tmp_path / f"{name}.json" for name in ("bundle", "compiled", "stage")}
+    for name, value in (("bundle", bundle), ("compiled", compiled), ("stage", stage)):
+        paths[name].write_text(json.dumps(value), encoding="utf-8")
+    before = {name: path.read_bytes() for name, path in paths.items()}
+    result = prepare_reconciliation_level(bundle_path=paths["bundle"], compilation_path=paths["compiled"],
+        existing_stage_path=paths["stage"], stage_out=tmp_path/"out.json", prompt_dir=tmp_path/"prompts",
+        authoring_revision=revision)
+    assert result["authoring_revision"] == revision
+    assert json.loads((tmp_path/"out.json").read_text()) == stage
+    record = semantic_module.prepare_reconciliation_prompts(bundle, stage, authoring_revision=revision)[0]
+    assert hashlib.sha256(record["prompt"].encode()).hexdigest() == prompt_hash
+    assert semantic_module._sha256(record["response_schema"]) == schema_hash
+    assert record["prompt"].startswith(semantic_module.MEANING_BOUNDARY_GUIDANCE + "\n\n")
+    assert semantic_module.CLAIM_FORMATION_GUIDANCE not in record["prompt"]
+    assert (tmp_path/"prompts"/f"{record['batch_id']}.md").read_bytes() == (record["prompt"] + "\n").encode()
+    assert json.loads((tmp_path/"prompts"/f"{record['batch_id']}.schema.json").read_text()) == record["response_schema"]
+    assert validate_reconciliation_stage(bundle, stage, [response])["semantic_nodes"]
+    assert {name: path.read_bytes() for name, path in paths.items()} == before
 
 
 @pytest.mark.parametrize("revision", [
@@ -9460,6 +9496,7 @@ def test_v10_schema_requires_one_subject_without_changing_v9_replay() -> None:
 @pytest.mark.parametrize("method,verifier", [
     (semantic_module.METHOD_VERSION_V11, semantic_module.ROW_VERIFICATION_METHOD_VERSION_V10),
     (semantic_module.METHOD_VERSION_V12, semantic_module.ROW_VERIFICATION_METHOD_VERSION_V11),
+    (semantic_module.METHOD_VERSION_V13, semantic_module.ROW_VERIFICATION_METHOD_VERSION_V12),
 ])
 def test_supplied_axis_vocabulary_reaches_all_current_consumers(axis_id, label, method, verifier) -> None:
     source = _source_v10(count=1)
