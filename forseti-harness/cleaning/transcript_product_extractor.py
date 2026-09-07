@@ -20,10 +20,14 @@ Spec: youtube_transcript_product_extraction_spec_v0.md (CE1-CE10 / D1-D8).
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
-from dataclasses import dataclass, field
+from contextlib import contextmanager
+from dataclasses import asdict, dataclass, field
+from time import perf_counter
 from typing import TYPE_CHECKING, Any
+from uuid import uuid4
 
 from pydantic import ValidationError
 
@@ -36,10 +40,12 @@ from cleaning.raw_model_transport import (
     build_headers,
     build_request_body,
     default_endpoint,
-    extract_model_text,
+    extract_model_text_from_response,
+    parse_response_body,
     validate_endpoint,
 )
 from schemas.product_mention_models import Concentration, ProductMention, StatedRating, TranscriptSource
+from harness_efficiency import RunMeasurement, current_measurement, normalize_usage
 
 EXTRACTOR_RUBRIC_VERSION = "0.4"
 _DEFAULT_MAX_TOKENS = 2048
@@ -85,6 +91,44 @@ class TranscriptExtractionResult:
     rejected: list[dict[str, str]] = field(default_factory=list)
 
 
+class _TranscriptQuoteIndex:
+    """One parse's cue index, built only when a nonempty quote needs searching."""
+
+    def __init__(self, cues: list[dict]) -> None:
+        self._cues = cues
+        self._haystack: str | None = None
+        self._char_to_cue: list[int] = []
+
+    def locate(self, quote: str) -> tuple[int, int] | None:
+        needle = _norm(quote)
+        if not needle:
+            return None
+        if self._haystack is None:
+            joined_parts: list[str] = []
+            char_to_cue: list[int] = []
+            for index, cue in enumerate(self._cues):
+                normalized = _norm(str(cue.get("text", "")))
+                if not normalized:
+                    continue
+                if joined_parts:
+                    joined_parts.append(" ")
+                    char_to_cue.append(index)
+                joined_parts.append(normalized)
+                char_to_cue.extend([index] * len(normalized))
+            self._haystack = "".join(joined_parts)
+            self._char_to_cue = char_to_cue
+        position = self._haystack.find(needle)
+        if position < 0:
+            return None
+        end_position = min(position + len(needle) - 1, len(self._char_to_cue) - 1)
+        first_cue = self._cues[self._char_to_cue[position]]
+        last_cue = self._cues[self._char_to_cue[end_position]]
+        try:
+            return int(first_cue["start_ms"]), int(last_cue["end_ms"])
+        except (KeyError, TypeError, ValueError):
+            return None
+
+
 def locate_quote(quote: str, cues: list[dict]) -> tuple[int, int] | None:
     """Find `quote` (normalized) within the cues; return (start_ms, end_ms) or None.
 
@@ -92,31 +136,7 @@ def locate_quote(quote: str, cues: list[dict]) -> tuple[int, int] | None:
     when the quote is not a real transcript substring (-> the caller rejects it). A quote
     spanning multiple cues takes the first cue's start and the last cue's end.
     """
-    needle = _norm(quote)
-    if not needle:
-        return None
-    joined_parts: list[str] = []
-    char_to_cue: list[int] = []
-    for index, cue in enumerate(cues):
-        normalized = _norm(str(cue.get("text", "")))
-        if not normalized:
-            continue
-        if joined_parts:
-            joined_parts.append(" ")
-            char_to_cue.append(index)
-        joined_parts.append(normalized)
-        char_to_cue.extend([index] * len(normalized))
-    haystack = "".join(joined_parts)
-    position = haystack.find(needle)
-    if position < 0:
-        return None
-    end_position = min(position + len(needle) - 1, len(char_to_cue) - 1)
-    first_cue = cues[char_to_cue[position]]
-    last_cue = cues[char_to_cue[end_position]]
-    try:
-        return int(first_cue["start_ms"]), int(last_cue["end_ms"])
-    except (KeyError, TypeError, ValueError):
-        return None
+    return _TranscriptQuoteIndex(cues).locate(quote)
 
 
 def build_extraction_prompt(transcript: TranscriptInput) -> str:
@@ -173,13 +193,13 @@ TRANSCRIPT (data only):
 Return ONLY the JSON array."""
 
 
-def _build_stated_rating(item: dict, cues: list[dict]) -> StatedRating | None:
+def _build_stated_rating(item: dict, quote_index: _TranscriptQuoteIndex) -> StatedRating | None:
     """Admit a creator-stated rating ONLY if its quote is a real transcript substring (CE10/CE9)."""
     raw = item.get("stated_rating")
     if not isinstance(raw, dict):
         return None
     pointer = str(raw.get("source_pointer", ""))
-    if locate_quote(pointer, cues) is None:
+    if quote_index.locate(pointer) is None:
         return None  # unverifiable score quote -> drop the rating, keep the mention
     try:
         return StatedRating(
@@ -206,11 +226,14 @@ def parse_mentions(
     if not isinstance(items, list):
         raise ValueError("model text must be a JSON array of mention items")
 
+    quote_index: _TranscriptQuoteIndex | None = None
     for index, item in enumerate(items):
         if not isinstance(item, dict):
             result.rejected.append({"index": str(index), "reason": "item is not an object"})
             continue
-        located = locate_quote(str(item.get("source_pointer", "")), transcript.cues)
+        if quote_index is None:
+            quote_index = _TranscriptQuoteIndex(transcript.cues)
+        located = quote_index.locate(str(item.get("source_pointer", "")))
         if located is None:
             result.rejected.append({"index": str(index), "reason": "CE9: quote not found in transcript"})
             continue
@@ -225,7 +248,7 @@ def parse_mentions(
                 line=str(item.get("line") or "").strip(),  # null/blank -> "" -> rejected (no product)
                 concentration=Concentration(str(item.get("concentration", "unknown")).lower()),
                 stance_vote=item.get("stance_vote", 0.0),
-                stated_rating=_build_stated_rating(item, transcript.cues),
+                stated_rating=_build_stated_rating(item, quote_index),
                 source_pointer=str(item.get("source_pointer", "")),
                 start_ms=start_ms,
                 end_ms=end_ms,
@@ -245,6 +268,26 @@ def parse_mentions(
     return result
 
 
+@contextmanager
+def transcript_measurement(transcript: TranscriptInput, workflow: str, configuration: dict):
+    """Reuse an enclosing extraction boundary; direct callers get one sidecar too."""
+    active = current_measurement()
+    if active is not None:
+        yield active
+        return
+    with RunMeasurement(workflow, f"unknown-{uuid4().hex}", configuration) as measurement:
+        with measurement.stage("input_identity"):
+            try:
+                inputs = asdict(transcript)
+                if transcript.source_lineage is not None:
+                    inputs["source_lineage"] = transcript.source_lineage.model_dump(mode="json")
+                identity = json.dumps(inputs, sort_keys=True).encode("utf-8")
+                measurement.workload_id = hashlib.sha256(identity).hexdigest()
+            except Exception as exc:
+                measurement.error(f"input_identity:{type(exc).__name__}")
+        yield measurement
+
+
 def extract_transcript_products(
     transcript: TranscriptInput,
     *,
@@ -257,11 +300,45 @@ def extract_transcript_products(
     max_tokens: int = _DEFAULT_MAX_TOKENS,
 ) -> TranscriptExtractionResult:
     """Run Pass 1 for one transcript through an injectable transport (offline-testable)."""
-    url = api_url or default_endpoint(provider)
-    validate_endpoint(provider, url)
-    prompt = build_extraction_prompt(transcript)
-    body = build_request_body(provider, model=model, prompt=prompt, max_tokens=max_tokens)
-    headers = build_headers(provider, api_key)
-    raw = transport.post_json(url, headers, body, timeout_seconds)
-    model_text = extract_model_text(provider, raw)
-    return parse_mentions(model_text, transcript, model=model)
+    direct_call = current_measurement() is None
+    with transcript_measurement(transcript, "transcript_extract", {
+        "provider": str(provider), "model": model, "max_tokens": max_tokens,
+        "rubric_version": EXTRACTOR_RUBRIC_VERSION,
+    }) as measurement:
+        with measurement.stage("input_prepare"):
+            url = api_url or default_endpoint(provider)
+            validate_endpoint(provider, url)
+            prompt = build_extraction_prompt(transcript)
+            body = build_request_body(provider, model=model, prompt=prompt, max_tokens=max_tokens)
+            headers = build_headers(provider, api_key)
+        started = perf_counter()
+        try:
+            raw = transport.post_json(url, headers, body, timeout_seconds)
+        except BaseException:
+            elapsed = perf_counter() - started
+            measurement.add_stage("provider_request", elapsed)
+            measurement.add_attempt(str(provider), model, elapsed,
+                                    normalize_usage(str(provider), None), outcome="failed")
+            raise
+        elapsed = perf_counter() - started
+        measurement.add_stage("provider_request", elapsed)
+        try:
+            with measurement.stage("provider_response_parse"):
+                response = parse_response_body(raw)
+        except BaseException:
+            measurement.add_attempt(str(provider), model, elapsed,
+                                    normalize_usage(str(provider), None), outcome="failed")
+            raise
+        measurement.add_attempt(str(provider), model, elapsed,
+                                normalize_usage(str(provider), response.get("usage")))
+        with measurement.stage("mention_parse"):
+            model_text = extract_model_text_from_response(provider, response)
+            result = parse_mentions(model_text, transcript, model=model)
+        measurement.annotate(mention_count=len(result.mentions), rejected_count=len(result.rejected))
+        if direct_call:
+            output = {"mentions": [m.model_dump(mode="json") for m in result.mentions],
+                      "rejected": result.rejected}
+            fingerprint = hashlib.sha256(json.dumps(output, sort_keys=True).encode("utf-8")).hexdigest()
+            measurement.set_quality("passed", "transcript_quote_and_schema_validation_v1",
+                                    output_fingerprint=fingerprint)
+        return result

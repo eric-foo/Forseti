@@ -35,6 +35,7 @@ from __future__ import annotations
 import argparse
 import ast
 import importlib.util
+import os
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -292,28 +293,36 @@ _PRODUCER_DISCOVERY_EXCLUDED_DIRS = frozenset(
 def _producer_files(root: Path) -> list[Path]:
     harness = root / "forseti-harness"
     out: list[Path] = []
-    for path in sorted(harness.rglob("*.py")):
-        relative_parts = set(path.relative_to(harness).parts)
-        if relative_parts.intersection(_PRODUCER_DISCOVERY_EXCLUDED_DIRS):
-            continue
-        out.append(path)
-    return out
+    def discovery_error(error: OSError) -> None:
+        raise error
+
+    for dirpath, dirnames, filenames in os.walk(harness, onerror=discovery_error):
+        dirnames[:] = [d for d in dirnames if d not in _PRODUCER_DISCOVERY_EXCLUDED_DIRS]
+        if Path(dirpath) == harness:
+            # uv's environment and setuptools' wheel staging contain installed
+            # copies, not producer source. Restrict this exclusion to the
+            # harness root so a source package's build/ directory stays covered.
+            dirnames[:] = [d for d in dirnames if d not in {".venv", "build"}]
+        # Keep pathlib glob's platform case matching and matching directory entries.
+        out.extend(Path(dirpath) / name for name in (*dirnames, *filenames)
+                   if Path(name).match("*.py"))
+    return sorted(out)
 
 
-def _parse(paths: Iterable[Path]) -> dict[Path, ast.Module]:
+def _parse(paths: Iterable[Path]) -> tuple[dict[Path, ast.Module], list[Finding]]:
     parsed: dict[Path, ast.Module] = {}
+    failures: list[Finding] = []
     for path in paths:
         try:
             parsed[path] = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-        except (SyntaxError, UnicodeDecodeError, OSError):
-            continue
-    return parsed
+        except (SyntaxError, UnicodeDecodeError, OSError) as exc:
+            failures.append(Finding("source_parse_failed", f"{path}: {type(exc).__name__}: {exc}"))
+    return parsed, failures
 
 
 def scan(root: Path, paths: list[Path], registry) -> tuple[list[Finding], list[Unresolved]]:
-    parsed = _parse(paths)
+    parsed, findings = _parse(paths)
     consts = _build_global_consts(parsed)
-    findings: list[Finding] = []
     unresolved: list[Unresolved] = []
     front_door = registry.SILVER_ENVELOPE_FRONT_DOOR_MODULE
     for path, tree in parsed.items():
@@ -386,8 +395,14 @@ def main(argv: list[str]) -> int:
         return selftest(root)
 
     registry = _load_registry(root)
-    paths = [Path(p) for p in args.paths] if args.paths else _producer_files(root)
     findings = _registry_findings(registry)
+    try:
+        paths = [Path(p) for p in args.paths] if args.paths else _producer_files(root)
+    except OSError as exc:
+        findings.append(Finding("source_discovery_failed",
+                                f"{exc.filename or root}: {type(exc).__name__}: {exc.strerror or exc}"))
+        _print_report(findings, [])
+        return 1
     scan_findings, unresolved = scan(root, paths, registry)
     findings.extend(scan_findings)
     if args.strict:

@@ -1,0 +1,3099 @@
+{
+  "audit_source_sha": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+  "date": "2026-09-05",
+  "scope": "Frozen audit evidence; logical Git blob bytes, not physical storage or tokens. Synthetic performance, not production savings.",
+  "footprint": {
+    "head": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+    "method": "Tracked membership only: git ls-files --stage -z; committed blob byte sizes via git cat-file --batch-check. Logical expanded bytes, not packed .git or physical disk usage. No capture/outcome/binary content opened.",
+    "total_files": 4488,
+    "total_bytes": 192563705,
+    "unique_blobs": 4330,
+    "unique_blob_bytes": 187643637,
+    "duplicate_groups": 117,
+    "duplicate_excess_logical_bytes": 4920068,
+    "top_level": {
+      "docs": {
+        "count": 2484,
+        "bytes": 119022686
+      },
+      "forseti-harness": {
+        "count": 1538,
+        "bytes": 62771228
+      },
+      "forseti": {
+        "count": 380,
+        "bytes": 9449976
+      },
+      ".agents": {
+        "count": 57,
+        "bytes": 1173209
+      },
+      ".github": {
+        "count": 12,
+        "bytes": 93942
+      },
+      "(root files)": {
+        "count": 7,
+        "bytes": 21839
+      },
+      ".claude": {
+        "count": 5,
+        "bytes": 19299
+      },
+      ".codex": {
+        "count": 3,
+        "bytes": 10811
+      },
+      ".githooks": {
+        "count": 2,
+        "bytes": 715
+      }
+    },
+    "second_level": {
+      "docs/research": {
+        "count": 525,
+        "bytes": 59154770
+      },
+      "forseti-harness/cases": {
+        "count": 620,
+        "bytes": 45337198
+      },
+      "docs/_inbox": {
+        "count": 40,
+        "bytes": 21692284
+      },
+      "docs/review-inputs": {
+        "count": 622,
+        "bytes": 16989703
+      },
+      "forseti/product": {
+        "count": 380,
+        "bytes": 9449976
+      },
+      "docs/review-outputs": {
+        "count": 389,
+        "bytes": 8803738
+      },
+      "forseti-harness/tests": {
+        "count": 386,
+        "bytes": 6867452
+      },
+      "docs/prompts": {
+        "count": 445,
+        "bytes": 6020343
+      },
+      "forseti-harness/source_capture": {
+        "count": 143,
+        "bytes": 3379992
+      },
+      "forseti-harness/runners": {
+        "count": 179,
+        "bytes": 2913710
+      },
+      "docs/workflows": {
+        "count": 196,
+        "bytes": 2848449
+      },
+      "docs/decisions": {
+        "count": 152,
+        "bytes": 2112232
+      },
+      "forseti-harness/judgment": {
+        "count": 10,
+        "bytes": 1460241
+      },
+      "forseti-harness/capture_spine": {
+        "count": 72,
+        "bytes": 883074
+      },
+      "forseti-harness/data_lake": {
+        "count": 26,
+        "bytes": 871662
+      },
+      "docs/migration": {
+        "count": 85,
+        "bytes": 844350
+      },
+      ".agents/hooks": {
+        "count": 31,
+        "bytes": 783054
+      },
+      "docs/hygiene": {
+        "count": 28,
+        "bytes": 549603
+      },
+      ".agents/workflow-overlay": {
+        "count": 19,
+        "bytes": 312225
+      },
+      "forseti-harness/uv.lock": {
+        "count": 1,
+        "bytes": 223996
+      },
+      "forseti-harness/cleaning": {
+        "count": 18,
+        "bytes": 222777
+      },
+      "forseti-harness/docs": {
+        "count": 8,
+        "bytes": 148667
+      },
+      "forseti-harness/youtube_capture": {
+        "count": 8,
+        "bytes": 77639
+      },
+      "forseti-harness/schemas": {
+        "count": 11,
+        "bytes": 67717
+      },
+      ".github/scripts": {
+        "count": 8,
+        "bytes": 63136
+      },
+      "forseti-harness/scoring": {
+        "count": 8,
+        "bytes": 59586
+      },
+      "forseti-harness/evidence_binding": {
+        "count": 7,
+        "bytes": 55543
+      },
+      "forseti-harness/ecr": {
+        "count": 4,
+        "bytes": 43518
+      },
+      "forseti-harness/reports": {
+        "count": 14,
+        "bytes": 38005
+      },
+      ".agents/tools": {
+        "count": 1,
+        "bytes": 33033
+      },
+      "forseti-harness/README.md": {
+        "count": 1,
+        "bytes": 31720
+      },
+      ".github/workflows": {
+        "count": 4,
+        "bytes": 30806
+      },
+      ".agents/skills": {
+        "count": 5,
+        "bytes": 29060
+      },
+      "forseti-harness/provider_attempts.py": {
+        "count": 1,
+        "bytes": 27304
+      },
+      "forseti-harness/signal_content": {
+        "count": 4,
+        "bytes": 22433
+      },
+      "(root files)": {
+        "count": 7,
+        "bytes": 21839
+      },
+      ".agents/checks": {
+        "count": 1,
+        "bytes": 15837
+      },
+      ".claude/skills": {
+        "count": 2,
+        "bytes": 14060
+      },
+      "forseti-harness/packing": {
+        "count": 3,
+        "bytes": 10195
+      },
+      ".codex/hooks": {
+        "count": 2,
+        "bytes": 10015
+      },
+      "forseti-harness/provider_execution.py": {
+        "count": 1,
+        "bytes": 8954
+      },
+      "forseti-harness/source_observability": {
+        "count": 3,
+        "bytes": 8097
+      },
+      "forseti-harness/harness_utils.py": {
+        "count": 1,
+        "bytes": 7445
+      },
+      "docs/STRUCTURE.md": {
+        "count": 1,
+        "bytes": 5961
+      },
+      ".claude/agents": {
+        "count": 2,
+        "bytes": 2957
+      },
+      ".claude/settings.json": {
+        "count": 1,
+        "bytes": 2282
+      },
+      "forseti-harness/pyproject.toml": {
+        "count": 1,
+        "bytes": 1544
+      },
+      "forseti-harness/containers": {
+        "count": 3,
+        "bytes": 1467
+      },
+      "docs/README.md": {
+        "count": 1,
+        "bytes": 1253
+      },
+      "forseti-harness/config": {
+        "count": 4,
+        "bytes": 1143
+      },
+      ".codex/hooks.json": {
+        "count": 1,
+        "bytes": 796
+      },
+      ".githooks/commit-msg": {
+        "count": 1,
+        "bytes": 525
+      },
+      ".githooks/pre-push": {
+        "count": 1,
+        "bytes": 190
+      },
+      "forseti-harness/Makefile": {
+        "count": 1,
+        "bytes": 149
+      }
+    },
+    "extensions": {
+      ".bin": {
+        "count": 88,
+        "bytes": 43329868
+      },
+      ".md": {
+        "count": 2152,
+        "bytes": 34047977
+      },
+      ".png": {
+        "count": 30,
+        "bytes": 28847652
+      },
+      ".json": {
+        "count": 503,
+        "bytes": 24513038
+      },
+      ".py": {
+        "count": 898,
+        "bytes": 17640732
+      },
+      ".html": {
+        "count": 33,
+        "bytes": 16485425
+      },
+      ".txt": {
+        "count": 505,
+        "bytes": 9160655
+      },
+      ".pdf": {
+        "count": 3,
+        "bytes": 8141080
+      },
+      ".patch": {
+        "count": 1,
+        "bytes": 2385819
+      },
+      ".jsonl": {
+        "count": 25,
+        "bytes": 2233115
+      },
+      ".jpeg": {
+        "count": 6,
+        "bytes": 1761919
+      },
+      ".zip": {
+        "count": 31,
+        "bytes": 1709086
+      },
+      ".jpg": {
+        "count": 3,
+        "bytes": 856608
+      },
+      ".gz": {
+        "count": 2,
+        "bytes": 430672
+      },
+      ".yaml": {
+        "count": 157,
+        "bytes": 334929
+      },
+      ".csv": {
+        "count": 26,
+        "bytes": 311571
+      },
+      ".lock": {
+        "count": 1,
+        "bytes": 223996
+      },
+      ".tsv": {
+        "count": 2,
+        "bytes": 59158
+      },
+      ".ps1": {
+        "count": 7,
+        "bytes": 51482
+      },
+      ".yml": {
+        "count": 4,
+        "bytes": 30806
+      },
+      "(no extension)": {
+        "count": 7,
+        "bytes": 4686
+      },
+      ".toml": {
+        "count": 2,
+        "bytes": 2701
+      },
+      ".sh": {
+        "count": 2,
+        "bytes": 730
+      }
+    },
+    "overlay_sections": [
+      {
+        "path": ".agents/workflow-overlay/README.md",
+        "heading": "# Forseti Workflow Overlay",
+        "start": 1,
+        "end": 14,
+        "lines": 14,
+        "utf8_bytes": 523,
+        "word_count": 68
+      },
+      {
+        "path": ".agents/workflow-overlay/README.md",
+        "heading": "## Behavioral Admission",
+        "start": 15,
+        "end": 31,
+        "lines": 17,
+        "utf8_bytes": 938,
+        "word_count": 139
+      },
+      {
+        "path": ".agents/workflow-overlay/README.md",
+        "heading": "## Overlay Sections",
+        "start": 32,
+        "end": 51,
+        "lines": 20,
+        "utf8_bytes": 1937,
+        "word_count": 212
+      },
+      {
+        "path": ".agents/workflow-overlay/README.md",
+        "heading": "## Binding Rule",
+        "start": 52,
+        "end": 56,
+        "lines": 5,
+        "utf8_bytes": 312,
+        "word_count": 48
+      },
+      {
+        "path": ".agents/workflow-overlay/artifact-folders.md",
+        "heading": "# Artifact Folders",
+        "start": 1,
+        "end": 12,
+        "lines": 12,
+        "utf8_bytes": 322,
+        "word_count": 38
+      },
+      {
+        "path": ".agents/workflow-overlay/artifact-folders.md",
+        "heading": "## Accepted Folders",
+        "start": 13,
+        "end": 39,
+        "lines": 27,
+        "utf8_bytes": 4831,
+        "word_count": 511
+      },
+      {
+        "path": ".agents/workflow-overlay/artifact-folders.md",
+        "heading": "## Rules",
+        "start": 40,
+        "end": 54,
+        "lines": 15,
+        "utf8_bytes": 2161,
+        "word_count": 274
+      },
+      {
+        "path": ".agents/workflow-overlay/artifact-roles.md",
+        "heading": "# Artifact Roles",
+        "start": 1,
+        "end": 14,
+        "lines": 14,
+        "utf8_bytes": 563,
+        "word_count": 68
+      },
+      {
+        "path": ".agents/workflow-overlay/artifact-roles.md",
+        "heading": "## Role Bindings",
+        "start": 15,
+        "end": 34,
+        "lines": 20,
+        "utf8_bytes": 4576,
+        "word_count": 659
+      },
+      {
+        "path": ".agents/workflow-overlay/artifact-roles.md",
+        "heading": "## Protected Roles",
+        "start": 35,
+        "end": 41,
+        "lines": 7,
+        "utf8_bytes": 548,
+        "word_count": 78
+      },
+      {
+        "path": ".agents/workflow-overlay/artifact-roles.md",
+        "heading": "## Retrieval Metadata",
+        "start": 42,
+        "end": 49,
+        "lines": 8,
+        "utf8_bytes": 354,
+        "word_count": 38
+      },
+      {
+        "path": ".agents/workflow-overlay/artifact-roles.md",
+        "heading": "## Failure States",
+        "start": 50,
+        "end": 54,
+        "lines": 5,
+        "utf8_bytes": 309,
+        "word_count": 41
+      },
+      {
+        "path": ".agents/workflow-overlay/batch0-process-pilot.md",
+        "heading": "# Batch 0 Process Pilot (Retired)",
+        "start": 1,
+        "end": 21,
+        "lines": 21,
+        "utf8_bytes": 857,
+        "word_count": 112
+      },
+      {
+        "path": ".agents/workflow-overlay/batch1-decision-gate-economics.md",
+        "heading": "# Batch 1 Decision-Gate Economics Pilot (Retired)",
+        "start": 1,
+        "end": 20,
+        "lines": 20,
+        "utf8_bytes": 840,
+        "word_count": 105
+      },
+      {
+        "path": ".agents/workflow-overlay/communication-style.md",
+        "heading": "# Communication Style",
+        "start": 1,
+        "end": 17,
+        "lines": 17,
+        "utf8_bytes": 649,
+        "word_count": 81
+      },
+      {
+        "path": ".agents/workflow-overlay/communication-style.md",
+        "heading": "## Default Shape",
+        "start": 18,
+        "end": 27,
+        "lines": 10,
+        "utf8_bytes": 342,
+        "word_count": 55
+      },
+      {
+        "path": ".agents/workflow-overlay/communication-style.md",
+        "heading": "## Chat Output Topology",
+        "start": 28,
+        "end": 67,
+        "lines": 40,
+        "utf8_bytes": 2033,
+        "word_count": 257
+      },
+      {
+        "path": ".agents/workflow-overlay/communication-style.md",
+        "heading": "## Readability Rules",
+        "start": 68,
+        "end": 82,
+        "lines": 15,
+        "utf8_bytes": 797,
+        "word_count": 124
+      },
+      {
+        "path": ".agents/workflow-overlay/communication-style.md",
+        "heading": "## Goldilocks Bullet Pattern",
+        "start": 83,
+        "end": 89,
+        "lines": 7,
+        "utf8_bytes": 279,
+        "word_count": 51
+      },
+      {
+        "path": ".agents/workflow-overlay/communication-style.md",
+        "heading": "## Preferred Closeout Pattern",
+        "start": 90,
+        "end": 98,
+        "lines": 9,
+        "utf8_bytes": 150,
+        "word_count": 23
+      },
+      {
+        "path": ".agents/workflow-overlay/communication-style.md",
+        "heading": "## Owner-Run Command Blocks",
+        "start": 99,
+        "end": 114,
+        "lines": 16,
+        "utf8_bytes": 772,
+        "word_count": 119
+      },
+      {
+        "path": ".agents/workflow-overlay/communication-style.md",
+        "heading": "## Chief Architect Review Consumption",
+        "start": 115,
+        "end": 133,
+        "lines": 19,
+        "utf8_bytes": 995,
+        "word_count": 143
+      },
+      {
+        "path": ".agents/workflow-overlay/communication-style.md",
+        "heading": "## Review Adjudication Next Step",
+        "start": 134,
+        "end": 158,
+        "lines": 25,
+        "utf8_bytes": 1589,
+        "word_count": 241
+      },
+      {
+        "path": ".agents/workflow-overlay/communication-style.md",
+        "heading": "## Adversarial Review Summary Pattern",
+        "start": 159,
+        "end": 240,
+        "lines": 82,
+        "utf8_bytes": 3866,
+        "word_count": 484
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "# Cynefin Routing Layer",
+        "start": 1,
+        "end": 18,
+        "lines": 18,
+        "utf8_bytes": 804,
+        "word_count": 98
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "## Rule",
+        "start": 19,
+        "end": 30,
+        "lines": 12,
+        "utf8_bytes": 555,
+        "word_count": 84
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "## Trigger Conditions",
+        "start": 31,
+        "end": 51,
+        "lines": 21,
+        "utf8_bytes": 1055,
+        "word_count": 141
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "## Bypass Conditions",
+        "start": 52,
+        "end": 67,
+        "lines": 16,
+        "utf8_bytes": 652,
+        "word_count": 100
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "## Router Output",
+        "start": 68,
+        "end": 84,
+        "lines": 17,
+        "utf8_bytes": 749,
+        "word_count": 119
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "## Regimes",
+        "start": 85,
+        "end": 108,
+        "lines": 24,
+        "utf8_bytes": 1070,
+        "word_count": 150
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "## Execution Contract",
+        "start": 109,
+        "end": 132,
+        "lines": 24,
+        "utf8_bytes": 1211,
+        "word_count": 178
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "## One-Time Writable-Root Binding",
+        "start": 133,
+        "end": 148,
+        "lines": 16,
+        "utf8_bytes": 877,
+        "word_count": 127
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "### Task-Local Tool-Stall Circuit",
+        "start": 149,
+        "end": 171,
+        "lines": 23,
+        "utf8_bytes": 1347,
+        "word_count": 207
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "### Bounded-Change Fast Path",
+        "start": 172,
+        "end": 284,
+        "lines": 113,
+        "utf8_bytes": 6599,
+        "word_count": 880
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "### Created-Task Completion Return",
+        "start": 285,
+        "end": 313,
+        "lines": 29,
+        "utf8_bytes": 1733,
+        "word_count": 245
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "### Multi-Task Conservation Fast Path",
+        "start": 314,
+        "end": 363,
+        "lines": 50,
+        "utf8_bytes": 2825,
+        "word_count": 397
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "## Enforcement Placement",
+        "start": 364,
+        "end": 375,
+        "lines": 12,
+        "utf8_bytes": 641,
+        "word_count": 81
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "## Subagent Runtime Payload Safety",
+        "start": 376,
+        "end": 385,
+        "lines": 10,
+        "utf8_bytes": 522,
+        "word_count": 72
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "## Prompt Propagation",
+        "start": 386,
+        "end": 392,
+        "lines": 7,
+        "utf8_bytes": 259,
+        "word_count": 34
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "## Subagent Model Tiering",
+        "start": 393,
+        "end": 430,
+        "lines": 38,
+        "utf8_bytes": 2296,
+        "word_count": 329
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "## Orchestrator Context Economy",
+        "start": 431,
+        "end": 455,
+        "lines": 25,
+        "utf8_bytes": 1453,
+        "word_count": 213
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "## Non-Claims",
+        "start": 456,
+        "end": 461,
+        "lines": 6,
+        "utf8_bytes": 234,
+        "word_count": 36
+      },
+      {
+        "path": ".agents/workflow-overlay/decision-routing.md",
+        "heading": "## Direction Change Propagation",
+        "start": 462,
+        "end": 520,
+        "lines": 59,
+        "utf8_bytes": 2859,
+        "word_count": 247
+      },
+      {
+        "path": ".agents/workflow-overlay/delegated-review-patch.md",
+        "heading": "# Delegated Review-and-Patch For High-Stakes Authored Artifacts",
+        "start": 1,
+        "end": 344,
+        "lines": 344,
+        "utf8_bytes": 22799,
+        "word_count": 3148
+      },
+      {
+        "path": ".agents/workflow-overlay/delegated-review-patch.md",
+        "heading": "## Overlay Interface (fields a future skill implementation may read)",
+        "start": 345,
+        "end": 397,
+        "lines": 53,
+        "utf8_bytes": 3900,
+        "word_count": 388
+      },
+      {
+        "path": ".agents/workflow-overlay/delegated-review-patch.md",
+        "heading": "## Evidence And Non-Claims",
+        "start": 398,
+        "end": 415,
+        "lines": 18,
+        "utf8_bytes": 1049,
+        "word_count": 134
+      },
+      {
+        "path": ".agents/workflow-overlay/product-proof.md",
+        "heading": "# Product Proof",
+        "start": 1,
+        "end": 28,
+        "lines": 28,
+        "utf8_bytes": 1633,
+        "word_count": 181
+      },
+      {
+        "path": ".agents/workflow-overlay/product-proof.md",
+        "heading": "## Trust Objection Versus Refusal",
+        "start": 29,
+        "end": 66,
+        "lines": 38,
+        "utf8_bytes": 1456,
+        "word_count": 200
+      },
+      {
+        "path": ".agents/workflow-overlay/product-proof.md",
+        "heading": "## Kill Criteria Discipline",
+        "start": 67,
+        "end": 81,
+        "lines": 15,
+        "utf8_bytes": 582,
+        "word_count": 91
+      },
+      {
+        "path": ".agents/workflow-overlay/product-proof.md",
+        "heading": "## Pull Versus Praise",
+        "start": 82,
+        "end": 97,
+        "lines": 16,
+        "utf8_bytes": 727,
+        "word_count": 101
+      },
+      {
+        "path": ".agents/workflow-overlay/product-proof.md",
+        "heading": "## Judgment Spine Claim-Tier Boundary",
+        "start": 98,
+        "end": 125,
+        "lines": 28,
+        "utf8_bytes": 1476,
+        "word_count": 185
+      },
+      {
+        "path": ".agents/workflow-overlay/product-proof.md",
+        "heading": "## Zero-Spoiler Backtest Behavior",
+        "start": 126,
+        "end": 175,
+        "lines": 50,
+        "utf8_bytes": 2133,
+        "word_count": 280
+      },
+      {
+        "path": ".agents/workflow-overlay/product-proof.md",
+        "heading": "## Product-Proof Non-Claims",
+        "start": 176,
+        "end": 195,
+        "lines": 20,
+        "utf8_bytes": 740,
+        "word_count": 101
+      },
+      {
+        "path": ".agents/workflow-overlay/project-authority.md",
+        "heading": "# Project Authority",
+        "start": 1,
+        "end": 12,
+        "lines": 12,
+        "utf8_bytes": 379,
+        "word_count": 47
+      },
+      {
+        "path": ".agents/workflow-overlay/project-authority.md",
+        "heading": "## Identity",
+        "start": 13,
+        "end": 23,
+        "lines": 11,
+        "utf8_bytes": 1225,
+        "word_count": 131
+      },
+      {
+        "path": ".agents/workflow-overlay/project-authority.md",
+        "heading": "## Authority Boundary",
+        "start": 24,
+        "end": 27,
+        "lines": 4,
+        "utf8_bytes": 287,
+        "word_count": 42
+      },
+      {
+        "path": ".agents/workflow-overlay/project-authority.md",
+        "heading": "## Forbidden Drift",
+        "start": 28,
+        "end": 33,
+        "lines": 6,
+        "utf8_bytes": 298,
+        "word_count": 46
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "# Prompt Orchestration",
+        "start": 1,
+        "end": 24,
+        "lines": 24,
+        "utf8_bytes": 1350,
+        "word_count": 163
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "## Forseti Prompt Preflight",
+        "start": 25,
+        "end": 75,
+        "lines": 51,
+        "utf8_bytes": 4293,
+        "word_count": 567
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "## Source Boundary",
+        "start": 76,
+        "end": 94,
+        "lines": 19,
+        "utf8_bytes": 1404,
+        "word_count": 157
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "## Prompt Orchestrator Binding",
+        "start": 95,
+        "end": 103,
+        "lines": 9,
+        "utf8_bytes": 284,
+        "word_count": 28
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "## Source-Gated Method Contract",
+        "start": 104,
+        "end": 197,
+        "lines": 94,
+        "utf8_bytes": 5476,
+        "word_count": 785
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "## Project Template Registry",
+        "start": 198,
+        "end": 208,
+        "lines": 11,
+        "utf8_bytes": 449,
+        "word_count": 52
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "## Supported Prompt Families",
+        "start": 209,
+        "end": 227,
+        "lines": 19,
+        "utf8_bytes": 1875,
+        "word_count": 253
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "## Author Through The Prompt Orchestrator",
+        "start": 228,
+        "end": 257,
+        "lines": 30,
+        "utf8_bytes": 1849,
+        "word_count": 254
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "### Implementation Commission Receiver-Creation Clause",
+        "start": 258,
+        "end": 308,
+        "lines": 51,
+        "utf8_bytes": 2804,
+        "word_count": 366
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "### Multi-Task Commission Fast Path",
+        "start": 309,
+        "end": 344,
+        "lines": 36,
+        "utf8_bytes": 2218,
+        "word_count": 308
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "### Lane-Scoped Delegated Patch Prompt Default",
+        "start": 345,
+        "end": 447,
+        "lines": 103,
+        "utf8_bytes": 6435,
+        "word_count": 828
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "### Owner-Invoked Mini God Tier Uplift",
+        "start": 448,
+        "end": 502,
+        "lines": 55,
+        "utf8_bytes": 3551,
+        "word_count": 506
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "### Durable Prompt Lifecycle Closeout",
+        "start": 503,
+        "end": 524,
+        "lines": 22,
+        "utf8_bytes": 1098,
+        "word_count": 164
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "### Handoff Transport Versus Publication",
+        "start": 525,
+        "end": 561,
+        "lines": 37,
+        "utf8_bytes": 2079,
+        "word_count": 304
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "## Default Path Assignment",
+        "start": 562,
+        "end": 610,
+        "lines": 49,
+        "utf8_bytes": 2706,
+        "word_count": 380
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "## Full Prompt Versus Thin Wrapper",
+        "start": 611,
+        "end": 637,
+        "lines": 27,
+        "utf8_bytes": 1113,
+        "word_count": 175
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "## Fitness-Reference Surfacing (Durable / Cross-Recipient Prompts)",
+        "start": 638,
+        "end": 677,
+        "lines": 40,
+        "utf8_bytes": 2385,
+        "word_count": 341
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "## Review Prompt Defaults",
+        "start": 678,
+        "end": 751,
+        "lines": 74,
+        "utf8_bytes": 4481,
+        "word_count": 574
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "## Escalated Preflight Fields",
+        "start": 752,
+        "end": 800,
+        "lines": 49,
+        "utf8_bytes": 2949,
+        "word_count": 358
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "### Repo-Bound Review Target Resolution",
+        "start": 801,
+        "end": 854,
+        "lines": 54,
+        "utf8_bytes": 3518,
+        "word_count": 488
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "## Source-Heavy Evidence Preservation",
+        "start": 855,
+        "end": 872,
+        "lines": 18,
+        "utf8_bytes": 977,
+        "word_count": 139
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "## Output Modes",
+        "start": 873,
+        "end": 900,
+        "lines": 28,
+        "utf8_bytes": 3209,
+        "word_count": 421
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "## Prompt Validation Gates",
+        "start": 901,
+        "end": 971,
+        "lines": 71,
+        "utf8_bytes": 6378,
+        "word_count": 789
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "## Prompt Verdicts",
+        "start": 972,
+        "end": 978,
+        "lines": 7,
+        "utf8_bytes": 375,
+        "word_count": 55
+      },
+      {
+        "path": ".agents/workflow-overlay/prompt-orchestration.md",
+        "heading": "## Anti-Import Rules",
+        "start": 979,
+        "end": 983,
+        "lines": 5,
+        "utf8_bytes": 531,
+        "word_count": 66
+      },
+      {
+        "path": ".agents/workflow-overlay/retrieval-metadata.md",
+        "heading": "# Retrieval Metadata",
+        "start": 1,
+        "end": 22,
+        "lines": 22,
+        "utf8_bytes": 911,
+        "word_count": 108
+      },
+      {
+        "path": ".agents/workflow-overlay/retrieval-metadata.md",
+        "heading": "## Applicability",
+        "start": 23,
+        "end": 45,
+        "lines": 23,
+        "utf8_bytes": 895,
+        "word_count": 125
+      },
+      {
+        "path": ".agents/workflow-overlay/retrieval-metadata.md",
+        "heading": "## Exclusions",
+        "start": 46,
+        "end": 63,
+        "lines": 18,
+        "utf8_bytes": 812,
+        "word_count": 115
+      },
+      {
+        "path": ".agents/workflow-overlay/retrieval-metadata.md",
+        "heading": "## Core Header",
+        "start": 64,
+        "end": 88,
+        "lines": 25,
+        "utf8_bytes": 719,
+        "word_count": 102
+      },
+      {
+        "path": ".agents/workflow-overlay/retrieval-metadata.md",
+        "heading": "## Controlled Authority Boundary",
+        "start": 89,
+        "end": 108,
+        "lines": 20,
+        "utf8_bytes": 616,
+        "word_count": 90
+      },
+      {
+        "path": ".agents/workflow-overlay/retrieval-metadata.md",
+        "heading": "## Triggered Fields",
+        "start": 109,
+        "end": 143,
+        "lines": 35,
+        "utf8_bytes": 1201,
+        "word_count": 160
+      },
+      {
+        "path": ".agents/workflow-overlay/retrieval-metadata.md",
+        "heading": "## Forbidden Header Fields",
+        "start": 144,
+        "end": 161,
+        "lines": 18,
+        "utf8_bytes": 517,
+        "word_count": 71
+      },
+      {
+        "path": ".agents/workflow-overlay/retrieval-metadata.md",
+        "heading": "## Bloat Controls",
+        "start": 162,
+        "end": 172,
+        "lines": 11,
+        "utf8_bytes": 435,
+        "word_count": 70
+      },
+      {
+        "path": ".agents/workflow-overlay/retrieval-metadata.md",
+        "heading": "## Review Checks",
+        "start": 173,
+        "end": 189,
+        "lines": 17,
+        "utf8_bytes": 830,
+        "word_count": 103
+      },
+      {
+        "path": ".agents/workflow-overlay/review-lanes.md",
+        "heading": "# Review Lanes",
+        "start": 1,
+        "end": 20,
+        "lines": 20,
+        "utf8_bytes": 838,
+        "word_count": 106
+      },
+      {
+        "path": ".agents/workflow-overlay/review-lanes.md",
+        "heading": "## Current Lanes",
+        "start": 21,
+        "end": 37,
+        "lines": 17,
+        "utf8_bytes": 2281,
+        "word_count": 284
+      },
+      {
+        "path": ".agents/workflow-overlay/review-lanes.md",
+        "heading": "## Review Doctrine",
+        "start": 38,
+        "end": 166,
+        "lines": 129,
+        "utf8_bytes": 8974,
+        "word_count": 1213
+      },
+      {
+        "path": ".agents/workflow-overlay/review-lanes.md",
+        "heading": "## Template Retrieval Binding",
+        "start": 167,
+        "end": 200,
+        "lines": 34,
+        "utf8_bytes": 1662,
+        "word_count": 162
+      },
+      {
+        "path": ".agents/workflow-overlay/review-lanes.md",
+        "heading": "## Rules",
+        "start": 201,
+        "end": 232,
+        "lines": 32,
+        "utf8_bytes": 2103,
+        "word_count": 257
+      },
+      {
+        "path": ".agents/workflow-overlay/safety-rules.md",
+        "heading": "# Safety Rules",
+        "start": 1,
+        "end": 12,
+        "lines": 12,
+        "utf8_bytes": 512,
+        "word_count": 59
+      },
+      {
+        "path": ".agents/workflow-overlay/safety-rules.md",
+        "heading": "## Project-Specific Safety",
+        "start": 13,
+        "end": 43,
+        "lines": 31,
+        "utf8_bytes": 3800,
+        "word_count": 467
+      },
+      {
+        "path": ".agents/workflow-overlay/safety-rules.md",
+        "heading": "## Scope Discipline",
+        "start": 44,
+        "end": 53,
+        "lines": 10,
+        "utf8_bytes": 498,
+        "word_count": 71
+      },
+      {
+        "path": ".agents/workflow-overlay/safety-rules.md",
+        "heading": "## Rollback Boundary",
+        "start": 54,
+        "end": 56,
+        "lines": 3,
+        "utf8_bytes": 255,
+        "word_count": 36
+      },
+      {
+        "path": ".agents/workflow-overlay/skill-adoption.md",
+        "heading": "# Skill Adoption",
+        "start": 1,
+        "end": 13,
+        "lines": 13,
+        "utf8_bytes": 499,
+        "word_count": 58
+      },
+      {
+        "path": ".agents/workflow-overlay/skill-adoption.md",
+        "heading": "## Current Status",
+        "start": 14,
+        "end": 39,
+        "lines": 26,
+        "utf8_bytes": 1460,
+        "word_count": 183
+      },
+      {
+        "path": ".agents/workflow-overlay/skill-adoption.md",
+        "heading": "## Recognized Workflow Skills",
+        "start": 40,
+        "end": 72,
+        "lines": 33,
+        "utf8_bytes": 1889,
+        "word_count": 200
+      },
+      {
+        "path": ".agents/workflow-overlay/skill-adoption.md",
+        "heading": "## Recognized Workflow Tools",
+        "start": 73,
+        "end": 110,
+        "lines": 38,
+        "utf8_bytes": 6713,
+        "word_count": 801
+      },
+      {
+        "path": ".agents/workflow-overlay/skill-adoption.md",
+        "heading": "## Activation Caveat",
+        "start": 111,
+        "end": 118,
+        "lines": 8,
+        "utf8_bytes": 370,
+        "word_count": 57
+      },
+      {
+        "path": ".agents/workflow-overlay/skill-adoption.md",
+        "heading": "## Adoption Rules",
+        "start": 119,
+        "end": 143,
+        "lines": 25,
+        "utf8_bytes": 1543,
+        "word_count": 211
+      },
+      {
+        "path": ".agents/workflow-overlay/skill-adoption.md",
+        "heading": "## Owner-Authorized Candidate Sources",
+        "start": 144,
+        "end": 192,
+        "lines": 49,
+        "utf8_bytes": 3114,
+        "word_count": 339
+      },
+      {
+        "path": ".agents/workflow-overlay/skill-adoption.md",
+        "heading": "## Accepted Forseti-Local Candidate Skills",
+        "start": 193,
+        "end": 269,
+        "lines": 77,
+        "utf8_bytes": 5208,
+        "word_count": 579
+      },
+      {
+        "path": ".agents/workflow-overlay/skill-adoption.md",
+        "heading": "## Protected Skill Boundary",
+        "start": 270,
+        "end": 279,
+        "lines": 10,
+        "utf8_bytes": 413,
+        "word_count": 51
+      },
+      {
+        "path": ".agents/workflow-overlay/skill-adoption.md",
+        "heading": "## Rollback",
+        "start": 280,
+        "end": 286,
+        "lines": 7,
+        "utf8_bytes": 308,
+        "word_count": 43
+      },
+      {
+        "path": ".agents/workflow-overlay/skill-adoption.md",
+        "heading": "## Known Snapshots",
+        "start": 287,
+        "end": 292,
+        "lines": 6,
+        "utf8_bytes": 241,
+        "word_count": 31
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "# Source Loading",
+        "start": 1,
+        "end": 19,
+        "lines": 19,
+        "utf8_bytes": 856,
+        "word_count": 92
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "## Rule",
+        "start": 20,
+        "end": 40,
+        "lines": 21,
+        "utf8_bytes": 1052,
+        "word_count": 142
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "## Current Operating Boundary",
+        "start": 41,
+        "end": 54,
+        "lines": 14,
+        "utf8_bytes": 753,
+        "word_count": 99
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "## Forseti Start Preflight",
+        "start": 55,
+        "end": 108,
+        "lines": 54,
+        "utf8_bytes": 2561,
+        "word_count": 329
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "### Ordinary Interactive Path",
+        "start": 109,
+        "end": 131,
+        "lines": 23,
+        "utf8_bytes": 1126,
+        "word_count": 153
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "## Default Read Order",
+        "start": 132,
+        "end": 150,
+        "lines": 19,
+        "utf8_bytes": 720,
+        "word_count": 98
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "## Source Pack Tiers",
+        "start": 151,
+        "end": 166,
+        "lines": 16,
+        "utf8_bytes": 1414,
+        "word_count": 203
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "## Targeted Read Protocol",
+        "start": 167,
+        "end": 176,
+        "lines": 10,
+        "utf8_bytes": 553,
+        "word_count": 89
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "### Routine Read Shapes (overlay high-traffic files)",
+        "start": 177,
+        "end": 208,
+        "lines": 32,
+        "utf8_bytes": 1971,
+        "word_count": 230
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "### High-Context Guard",
+        "start": 209,
+        "end": 229,
+        "lines": 21,
+        "utf8_bytes": 972,
+        "word_count": 143
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "### Named Artifact Missing Fast Path",
+        "start": 230,
+        "end": 279,
+        "lines": 50,
+        "utf8_bytes": 2367,
+        "word_count": 359
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "## Prompt Source Capsules",
+        "start": 280,
+        "end": 301,
+        "lines": 22,
+        "utf8_bytes": 762,
+        "word_count": 122
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "### Source Capsule Contract",
+        "start": 302,
+        "end": 357,
+        "lines": 56,
+        "utf8_bytes": 2377,
+        "word_count": 330
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "## Data Capture Spine CA Read Pack",
+        "start": 358,
+        "end": 396,
+        "lines": 39,
+        "utf8_bytes": 2317,
+        "word_count": 245
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "### Data Capture Spine CA Capsule Limit",
+        "start": 397,
+        "end": 407,
+        "lines": 11,
+        "utf8_bytes": 667,
+        "word_count": 104
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "## Data Capture Intake Surface / MSP Pressure-Test Target Pack",
+        "start": 408,
+        "end": 450,
+        "lines": 43,
+        "utf8_bytes": 2533,
+        "word_count": 258
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "## Source Capture Method (auto-load for capture-spine activity)",
+        "start": 451,
+        "end": 470,
+        "lines": 20,
+        "utf8_bytes": 1418,
+        "word_count": 150
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "## ECR Source-Side Spine Read Pack",
+        "start": 471,
+        "end": 494,
+        "lines": 24,
+        "utf8_bytes": 1223,
+        "word_count": 173
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "## Intelligence Claim-Support Read Pack",
+        "start": 495,
+        "end": 516,
+        "lines": 22,
+        "utf8_bytes": 1178,
+        "word_count": 137
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "## Judgment Spine Evidence Ladder Read Pack",
+        "start": 517,
+        "end": 555,
+        "lines": 39,
+        "utf8_bytes": 2256,
+        "word_count": 213
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "## Expansion Rules",
+        "start": 556,
+        "end": 576,
+        "lines": 21,
+        "utf8_bytes": 843,
+        "word_count": 133
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "## Artifact Body Shape",
+        "start": 577,
+        "end": 593,
+        "lines": 17,
+        "utf8_bytes": 850,
+        "word_count": 107
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "## Context Boundary",
+        "start": 594,
+        "end": 605,
+        "lines": 12,
+        "utf8_bytes": 561,
+        "word_count": 87
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "## Files Not To Bulk-Load By Default",
+        "start": 606,
+        "end": 619,
+        "lines": 14,
+        "utf8_bytes": 347,
+        "word_count": 54
+      },
+      {
+        "path": ".agents/workflow-overlay/source-loading.md",
+        "heading": "## Not-Proven Boundaries",
+        "start": 620,
+        "end": 624,
+        "lines": 5,
+        "utf8_bytes": 240,
+        "word_count": 29
+      },
+      {
+        "path": ".agents/workflow-overlay/source-of-truth.md",
+        "heading": "# Source Of Truth",
+        "start": 1,
+        "end": 13,
+        "lines": 13,
+        "utf8_bytes": 441,
+        "word_count": 52
+      },
+      {
+        "path": ".agents/workflow-overlay/source-of-truth.md",
+        "heading": "## Current Source Hierarchy",
+        "start": 14,
+        "end": 21,
+        "lines": 8,
+        "utf8_bytes": 358,
+        "word_count": 50
+      },
+      {
+        "path": ".agents/workflow-overlay/source-of-truth.md",
+        "heading": "## Conflict Rules",
+        "start": 22,
+        "end": 29,
+        "lines": 8,
+        "utf8_bytes": 599,
+        "word_count": 81
+      },
+      {
+        "path": ".agents/workflow-overlay/source-of-truth.md",
+        "heading": "## Checkpoint Artifacts",
+        "start": 30,
+        "end": 56,
+        "lines": 27,
+        "utf8_bytes": 2092,
+        "word_count": 294
+      },
+      {
+        "path": ".agents/workflow-overlay/source-of-truth.md",
+        "heading": "## Doctrine Change Propagation Contract",
+        "start": 57,
+        "end": 131,
+        "lines": 75,
+        "utf8_bytes": 3647,
+        "word_count": 444
+      },
+      {
+        "path": ".agents/workflow-overlay/source-of-truth.md",
+        "heading": "## Known Source Documents",
+        "start": 132,
+        "end": 161,
+        "lines": 30,
+        "utf8_bytes": 4790,
+        "word_count": 436
+      },
+      {
+        "path": ".agents/workflow-overlay/template-registry.md",
+        "heading": "# Template Registry",
+        "start": 1,
+        "end": 19,
+        "lines": 19,
+        "utf8_bytes": 738,
+        "word_count": 84
+      },
+      {
+        "path": ".agents/workflow-overlay/template-registry.md",
+        "heading": "## Registry Rules",
+        "start": 20,
+        "end": 33,
+        "lines": 14,
+        "utf8_bytes": 804,
+        "word_count": 113
+      },
+      {
+        "path": ".agents/workflow-overlay/template-registry.md",
+        "heading": "## Registered Templates",
+        "start": 34,
+        "end": 46,
+        "lines": 13,
+        "utf8_bytes": 2352,
+        "word_count": 256
+      },
+      {
+        "path": ".agents/workflow-overlay/template-registry.md",
+        "heading": "## Unbound Template Kinds",
+        "start": 47,
+        "end": 53,
+        "lines": 7,
+        "utf8_bytes": 413,
+        "word_count": 51
+      },
+      {
+        "path": ".agents/workflow-overlay/validation-gates.md",
+        "heading": "# Validation Gates",
+        "start": 1,
+        "end": 52,
+        "lines": 52,
+        "utf8_bytes": 3021,
+        "word_count": 416
+      },
+      {
+        "path": ".agents/workflow-overlay/validation-gates.md",
+        "heading": "## Current Gates",
+        "start": 53,
+        "end": 288,
+        "lines": 236,
+        "utf8_bytes": 18820,
+        "word_count": 2347
+      },
+      {
+        "path": ".agents/workflow-overlay/validation-gates.md",
+        "heading": "## Prompt Orchestration Gates",
+        "start": 289,
+        "end": 426,
+        "lines": 138,
+        "utf8_bytes": 10022,
+        "word_count": 1256
+      },
+      {
+        "path": ".agents/workflow-overlay/validation-gates.md",
+        "heading": "## Product Proof Gates",
+        "start": 427,
+        "end": 467,
+        "lines": 41,
+        "utf8_bytes": 2696,
+        "word_count": 322
+      },
+      {
+        "path": ".agents/workflow-overlay/validation-gates.md",
+        "heading": "## Enforcement Placement",
+        "start": 468,
+        "end": 756,
+        "lines": 289,
+        "utf8_bytes": 18905,
+        "word_count": 2473
+      },
+      {
+        "path": ".agents/workflow-overlay/validation-gates.md",
+        "heading": "## Future Gates",
+        "start": 757,
+        "end": 761,
+        "lines": 5,
+        "utf8_bytes": 211,
+        "word_count": 31
+      },
+      {
+        "path": "AGENTS.md",
+        "heading": "# AGENTS.md",
+        "start": 1,
+        "end": 2,
+        "lines": 2,
+        "utf8_bytes": 13,
+        "word_count": 2
+      },
+      {
+        "path": "AGENTS.md",
+        "heading": "## Agent Behavior Kernel",
+        "start": 3,
+        "end": 32,
+        "lines": 30,
+        "utf8_bytes": 1976,
+        "word_count": 296
+      },
+      {
+        "path": "AGENTS.md",
+        "heading": "## Smallest Complete Intervention",
+        "start": 33,
+        "end": 94,
+        "lines": 62,
+        "utf8_bytes": 3559,
+        "word_count": 561
+      },
+      {
+        "path": "AGENTS.md",
+        "heading": "### Problem Integrity",
+        "start": 95,
+        "end": 115,
+        "lines": 21,
+        "utf8_bytes": 1202,
+        "word_count": 174
+      },
+      {
+        "path": "AGENTS.md",
+        "heading": "### Artifact-Level Smallest Complete Intervention",
+        "start": 116,
+        "end": 127,
+        "lines": 12,
+        "utf8_bytes": 722,
+        "word_count": 101
+      },
+      {
+        "path": "AGENTS.md",
+        "heading": "## Mini God Tier",
+        "start": 128,
+        "end": 136,
+        "lines": 9,
+        "utf8_bytes": 488,
+        "word_count": 67
+      },
+      {
+        "path": "AGENTS.md",
+        "heading": "## Forseti Routing",
+        "start": 137,
+        "end": 180,
+        "lines": 44,
+        "utf8_bytes": 2725,
+        "word_count": 317
+      },
+      {
+        "path": "docs/workflows/forseti_repo_map_v0.md",
+        "heading": "# Forseti Repo Map v0",
+        "start": 1,
+        "end": 29,
+        "lines": 29,
+        "utf8_bytes": 1267,
+        "word_count": 150
+      },
+      {
+        "path": "docs/workflows/forseti_repo_map_v0.md",
+        "heading": "## Start Here",
+        "start": 30,
+        "end": 47,
+        "lines": 18,
+        "utf8_bytes": 868,
+        "word_count": 117
+      },
+      {
+        "path": "docs/workflows/forseti_repo_map_v0.md",
+        "heading": "## T1 Admission Control",
+        "start": 48,
+        "end": 66,
+        "lines": 19,
+        "utf8_bytes": 982,
+        "word_count": 130
+      },
+      {
+        "path": "docs/workflows/forseti_repo_map_v0.md",
+        "heading": "## Decisive-File Quick Index",
+        "start": 67,
+        "end": 113,
+        "lines": 47,
+        "utf8_bytes": 4950,
+        "word_count": 458
+      },
+      {
+        "path": "docs/workflows/forseti_repo_map_v0.md",
+        "heading": "## Active Hooks",
+        "start": 114,
+        "end": 140,
+        "lines": 27,
+        "utf8_bytes": 1410,
+        "word_count": 178
+      },
+      {
+        "path": "docs/workflows/forseti_repo_map_v0.md",
+        "heading": "## Registered Dense-Area Submaps",
+        "start": 141,
+        "end": 151,
+        "lines": 11,
+        "utf8_bytes": 789,
+        "word_count": 111
+      },
+      {
+        "path": "docs/workflows/forseti_repo_map_v0.md",
+        "heading": "## Repository And Documentation Areas",
+        "start": 152,
+        "end": 179,
+        "lines": 28,
+        "utf8_bytes": 2270,
+        "word_count": 312
+      },
+      {
+        "path": "docs/workflows/forseti_repo_map_v0.md",
+        "heading": "## Product Axes And Major Areas",
+        "start": 180,
+        "end": 205,
+        "lines": 26,
+        "utf8_bytes": 2397,
+        "word_count": 272
+      },
+      {
+        "path": "docs/workflows/forseti_repo_map_v0.md",
+        "heading": "## Forseti Harness Areas",
+        "start": 206,
+        "end": 241,
+        "lines": 36,
+        "utf8_bytes": 3518,
+        "word_count": 411
+      },
+      {
+        "path": "docs/workflows/forseti_repo_map_v0.md",
+        "heading": "## Compatibility And Migration Routes",
+        "start": 242,
+        "end": 259,
+        "lines": 18,
+        "utf8_bytes": 1095,
+        "word_count": 121
+      },
+      {
+        "path": "docs/workflows/forseti_repo_map_v0.md",
+        "heading": "## Recommended Source Packs",
+        "start": 260,
+        "end": 274,
+        "lines": 15,
+        "utf8_bytes": 1530,
+        "word_count": 154
+      },
+      {
+        "path": "docs/workflows/forseti_repo_map_v0.md",
+        "heading": "## Non-Claims",
+        "start": 275,
+        "end": 284,
+        "lines": 10,
+        "utf8_bytes": 485,
+        "word_count": 68
+      }
+    ],
+    "duplicate_classification_totals": {
+      "review_snapshot_involved": 2497251,
+      "nonreview": 2422817
+    },
+    "runtime_internal_exact_duplicate_groups": [],
+    "runtime_fixture_internal_exact_duplicate_groups": [],
+    "coexisting_numeric_versions": [
+      [
+        "docs/prompts/handoffs/aphrodite_depth_layer_build_handoff_v0.md",
+        "docs/prompts/handoffs/aphrodite_depth_layer_build_handoff_v1.md"
+      ],
+      [
+        "docs/prompts/handoffs/cleaning_spine_foundation_architecture_planning_prompt_v0.md",
+        "docs/prompts/handoffs/cleaning_spine_foundation_architecture_planning_prompt_v1.md"
+      ],
+      [
+        "docs/research/aphrodite_depth_rehearsal_extraction_recipe_v0.md",
+        "docs/research/aphrodite_depth_rehearsal_extraction_recipe_v1.md"
+      ],
+      [
+        "docs/research/forseti_beauty_tower28_company_intelligence_csb_v1.md",
+        "docs/research/forseti_beauty_tower28_company_intelligence_csb_v2.md"
+      ],
+      [
+        "docs/research/forseti_beauty_tower28_company_intelligence_report_v1.md",
+        "docs/research/forseti_beauty_tower28_company_intelligence_report_v2.md"
+      ],
+      [
+        "docs/research/forseti_beauty_tower28_company_intelligence_scan_v1.md",
+        "docs/research/forseti_beauty_tower28_company_intelligence_scan_v2.md"
+      ],
+      [
+        "docs/research/judgment-spine/harness/v0_14/packing_to_harness_foundation_interface_architecture_v0.md",
+        "docs/research/judgment-spine/harness/v0_14/packing_to_harness_foundation_interface_architecture_v1.md",
+        "docs/research/judgment-spine/harness/v0_14/packing_to_harness_foundation_interface_architecture_v2.md",
+        "docs/research/judgment-spine/harness/v0_14/packing_to_harness_foundation_interface_architecture_v3.md"
+      ],
+      [
+        "forseti/product/spines/capture/core/operating_model/data_capture_harness_operating_model_architecture_v0.md",
+        "forseti/product/spines/capture/core/operating_model/data_capture_harness_operating_model_architecture_v1.md",
+        "forseti/product/spines/capture/core/operating_model/data_capture_harness_operating_model_architecture_v2.md"
+      ],
+      [
+        "forseti/product/spines/judgment/demand_read/c2_weighting/judgment_spine_c2_in_case_weighting_paired_read_probe_v0.md",
+        "forseti/product/spines/judgment/demand_read/c2_weighting/judgment_spine_c2_in_case_weighting_paired_read_probe_v1.md"
+      ],
+      [
+        "forseti/product/spines/judgment/demand_read/c2_weighting/judgment_spine_c2_qualitative_read_feasibility_probe_v0.md",
+        "forseti/product/spines/judgment/demand_read/c2_weighting/judgment_spine_c2_qualitative_read_feasibility_probe_v1.md",
+        "forseti/product/spines/judgment/demand_read/c2_weighting/judgment_spine_c2_qualitative_read_feasibility_probe_v2.md"
+      ]
+    ],
+    "moved_path_indexes": [
+      {
+        "path": "docs/migration/forseti_audience_taxonomy_filename_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "b905f494abc202499889882ebbc6180b12166602",
+        "stage": 0,
+        "bytes": 1152
+      },
+      {
+        "path": "docs/migration/forseti_backtest_specimen_filename_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "3ac371ebf498c06597729861b2558a78b81c4475",
+        "stage": 0,
+        "bytes": 1605
+      },
+      {
+        "path": "docs/migration/forseti_capture_core_filename_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "2571db00142c5642eabafd9bd97975f4db86c14a",
+        "stage": 0,
+        "bytes": 1731
+      },
+      {
+        "path": "docs/migration/forseti_commission_signal_board_filename_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "9cf0048edcc344d6098edda5c3f1e583fadef98b",
+        "stage": 0,
+        "bytes": 1705
+      },
+      {
+        "path": "docs/migration/forseti_data_lake_derived_retrieval_filename_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "95983156c5263dd334faff41ea89521e7ab5e32e",
+        "stage": 0,
+        "bytes": 1012
+      },
+      {
+        "path": "docs/migration/forseti_demand_read_taxonomy_filename_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "2698a1cb553230b20ef5c1d70e1a23a9c84e153d",
+        "stage": 0,
+        "bytes": 1351
+      },
+      {
+        "path": "docs/migration/forseti_doctrine_index_filename_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "856f7e53ee2501764fa0867b0e9346cd0b61f7db",
+        "stage": 0,
+        "bytes": 864
+      },
+      {
+        "path": "docs/migration/forseti_harness_runtime_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "a4cb5574b7fa453f87685f2128f003dd7f9f24ca",
+        "stage": 0,
+        "bytes": 1011
+      },
+      {
+        "path": "docs/migration/forseti_mini_god_tier_doctrine_filename_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "cd22ce00e3616f985484ed93a73b8488edc1ab35",
+        "stage": 0,
+        "bytes": 912
+      },
+      {
+        "path": "docs/migration/forseti_ontology_filename_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "11c6e53bab212cfe861d65a6bac18c0dd58c3c0f",
+        "stage": 0,
+        "bytes": 1370
+      },
+      {
+        "path": "docs/migration/forseti_product_lead_authority_filename_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "89211fe0a1093564271806e10f104ff586e41eef",
+        "stage": 0,
+        "bytes": 1947
+      },
+      {
+        "path": "docs/migration/forseti_product_lead_icp_wedge_filename_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "ad39e115fba80a2a570ee0d7db133a2e3ccd417e",
+        "stage": 0,
+        "bytes": 2260
+      },
+      {
+        "path": "docs/migration/forseti_product_root_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "d3de7d4ea81e46bedfd08bfd387fa2fcb2500b11",
+        "stage": 0,
+        "bytes": 68431
+      },
+      {
+        "path": "docs/migration/forseti_product_spine_binding_filename_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "b7a23fa384c034e6635ae6ad5d2b5e2d3364f41e",
+        "stage": 0,
+        "bytes": 1397
+      },
+      {
+        "path": "docs/migration/forseti_product_strategy_filename_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "ea34a8d50be4c24f4573bb4a490fdff9a8db7382",
+        "stage": 0,
+        "bytes": 1663
+      },
+      {
+        "path": "docs/migration/forseti_repo_map_architecture_mgt_filename_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "f2b642225e2a9d5c876f0d8c761d9d99750473a6",
+        "stage": 0,
+        "bytes": 901
+      },
+      {
+        "path": "docs/migration/forseti_repo_structure_binding_filename_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "b3e740e8f83caa3574b2b760d0c755b588146c79",
+        "stage": 0,
+        "bytes": 886
+      },
+      {
+        "path": "docs/migration/forseti_scanning_filename_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "823e688c47c5ed161f123ae3dc63301fae09750b",
+        "stage": 0,
+        "bytes": 1852
+      },
+      {
+        "path": "docs/migration/forseti_shared_prompt_template_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "75abf199a281a403ce28c877a89c0109d89a8856",
+        "stage": 0,
+        "bytes": 1159
+      },
+      {
+        "path": "docs/migration/forseti_spine_first_structure_filename_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "8ca3f82caac0e8a6bba73af3b8d2bcaf6fdb0dc8",
+        "stage": 0,
+        "bytes": 1190
+      },
+      {
+        "path": "docs/migration/forseti_vertical_exploration_filename_migration_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "62f95f7ffad4beac6974b8cdec2b2e5034d30f98",
+        "stage": 0,
+        "bytes": 1400
+      },
+      {
+        "path": "docs/migration/repo_structure_data_lake_r2_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "f485e659f817beba2372130a33194b94a07b5e2b",
+        "stage": 0,
+        "bytes": 2381
+      },
+      {
+        "path": "docs/migration/repo_structure_phase2_consolidation_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "d1851065f4f742013a5cf7492fb6b272dee19b32",
+        "stage": 0,
+        "bytes": 17489
+      },
+      {
+        "path": "docs/migration/repo_structure_search_lane_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "cca4d46cf1400618a543257aff2556f0bd8142fd",
+        "stage": 0,
+        "bytes": 2083
+      },
+      {
+        "path": "docs/migration/repo_structure_spine_first_v0/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "5bb44934daa0b8a5ac4c1d3b5d2614472d541f95",
+        "stage": 0,
+        "bytes": 44667
+      },
+      {
+        "path": "forseti/product/spines/commission_signal_board/migrations/moved_paths_index.md",
+        "mode": "100644",
+        "oid": "3470d0a62118882e8e710f1d1c3a5cf038aa7daa",
+        "stage": 0,
+        "bytes": 4107
+      }
+    ],
+    "precompact_tracked_paths": [],
+    "repository_ignore_probes": [
+      {
+        "path": "forseti-harness/youtube_capture/shorts_scroll_runs/a.json",
+        "exit": 1,
+        "stdout": "",
+        "stderr": "",
+        "scope": "repository rules only; user-global excludes intentionally disabled"
+      },
+      {
+        "path": "forseti-harness/cases/plumbing/example/scores/a.json",
+        "exit": 1,
+        "stdout": "",
+        "stderr": "",
+        "scope": "repository rules only; user-global excludes intentionally disabled"
+      },
+      {
+        "path": "forseti-harness/memory/logs/a.json",
+        "exit": 1,
+        "stdout": "",
+        "stderr": "",
+        "scope": "repository rules only; user-global excludes intentionally disabled"
+      },
+      {
+        "path": "forseti-harness/reports/source_capture/a.json",
+        "exit": 1,
+        "stdout": "",
+        "stderr": "",
+        "scope": "repository rules only; user-global excludes intentionally disabled"
+      },
+      {
+        "path": "forseti-harness/_scratch/a.json",
+        "exit": 0,
+        "stdout": ".gitignore:31:forseti-harness/_scratch/\tforseti-harness/_scratch/a.json",
+        "stderr": "",
+        "scope": "repository rules only; user-global excludes intentionally disabled"
+      },
+      {
+        "path": "orca-harness/youtube_capture/shorts_scroll_runs/a.json",
+        "exit": 0,
+        "stdout": ".gitignore:49:orca-harness/youtube_capture/shorts_scroll_runs/\torca-harness/youtube_capture/shorts_scroll_runs/a.json",
+        "stderr": "",
+        "scope": "repository rules only; user-global excludes intentionally disabled"
+      }
+    ],
+    "limitations": [
+      "Sizes describe expanded indexed Git blobs, not physical working-copy allocation, packed objects, history storage, or tokenizer counts.",
+      "Blob equality proves exact bytes only; it does not prove duplicated authority, accidental copy, safe deletion, or repeated prompt loading.",
+      "No broad physical crawl, external lake enumeration, credential read, binary/capture body read, or sealed outcome read.",
+      "Version-stem grouping is a filename observation, not supersession proof.",
+      "Global Git ignore file emitted sandbox access warnings in initial commands; repository-only ignore probes explicitly disable it."
+    ]
+  },
+  "ci_gates": [
+    {
+      "source_command": "python .agents/hooks/check_source_input_hashes.py --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_source_input_hashes.py",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "check_source_input_hashes: OK (base: c683477a5b6f0eb2998a3bac1d547ae92552a77a; checked 0 of 288 source-input/preserved-file hash record(s))\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 6.199760699877515
+    },
+    {
+      "source_command": "python .agents/hooks/check_map_links.py --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_map_links.py",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "check_map_links --strict: OK (0 findings)\nannotated nonresolving: 37 (debt, not failures)\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 12.12659060000442
+    },
+    {
+      "source_command": "python .agents/hooks/header_index.py --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/header_index.py",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "header_index --strict: no changed .md files in this diff -- OK (exit 0)\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.19487909995950758
+    },
+    {
+      "source_command": "python .agents/hooks/check_placement.py --changed --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_placement.py",
+        "--changed",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "summary: 0 changed path(s), 0 violation(s), 0 freshness, 0 legacy-tolerated (warn-only); base=c683477a5b6f0eb2998a3bac1d547ae92552a77a\nAuthority: .agents/workflow-overlay/artifact-folders.md (rules) + docs/decisions/forseti_repo_structure_binding_v0.md (binding) + repo-structure.yaml (router). Placement-shape only - not authority, validation, or readiness.\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.21188710001297295
+    },
+    {
+      "source_command": "python .agents/hooks/check_search_surface_google_route.py --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_search_surface_google_route.py",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "check_search_surface_google_route --strict: OK (0 findings)\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.19519570004194975
+    },
+    {
+      "source_command": "python .agents/hooks/check_csb_scanning_artifact.py --diff \"$FORSETI_DIFF_BASE\" --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_csb_scanning_artifact.py",
+        "--diff",
+        "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "check_csb_scanning_artifact: no changed CSB-first or Creator Registry preflight scan artifacts detected\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.2520967999007553
+    },
+    {
+      "source_command": "python .agents/hooks/check_ontology_ssot.py --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_ontology_ssot.py",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "check_ontology_ssot --strict: OK (ontology.yaml faithful + self-consistent)\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.1731863000895828
+    },
+    {
+      "source_command": "python .agents/hooks/check_ontology_tag_validity.py --selftest",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_ontology_tag_validity.py",
+        "--selftest"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "ontology tag validity selftest: OK\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.16331960004754364
+    },
+    {
+      "source_command": "python .agents/hooks/check_ontology_tag_validity.py --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_ontology_tag_validity.py",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "ontology tag validity: OK\nontology tag validity --strict: OK (0 changed markdown file(s) vs c683477a5b6f0eb2998a3bac1d547ae92552a77a)\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.39207959990017116
+    },
+    {
+      "source_command": "python .agents/hooks/check_ontology_drift.py --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_ontology_drift.py",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "check_ontology_drift --strict: OK (ontology<->runtime bindings aligned)\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.553776599932462
+    },
+    {
+      "source_command": "python .agents/hooks/check_fragrance_reference.py --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_fragrance_reference.py",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "check_fragrance_reference --strict: OK (fragrance reference internally consistent)\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.19079950009472668
+    },
+    {
+      "source_command": "python .agents/hooks/check_deletion_evidence.py --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_deletion_evidence.py",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "check_deletion_evidence --strict: OK -- every governed deletion in this diff carries a complete evidence record\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.37465459993109107
+    },
+    {
+      "source_command": "python .agents/hooks/check_dcp_receipt.py --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_dcp_receipt.py",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "check_dcp_receipt --strict: no changed .md files in this diff -- OK\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.48467419994995
+    },
+    {
+      "source_command": "python .agents/hooks/check_silver_lane_registry.py --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_silver_lane_registry.py",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "note: 1 lane argument(s) not statically resolved:\n  - forseti-harness/ecr/lake.py:136 (members:Name)\ncheck_silver_lane_registry: OK (no silver-lane write violations)\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 9.704035399947315
+    },
+    {
+      "source_command": "python .agents/hooks/check_review_routing.py --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_review_routing.py",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "check_review_routing --strict: OK (base: c683477a5b6f0eb2998a3bac1d547ae92552a77a)\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.8064230000600219
+    },
+    {
+      "source_command": "python .agents/hooks/check_review_output_provenance.py --diff \"$FORSETI_DIFF_BASE\" --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_review_output_provenance.py",
+        "--diff",
+        "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "review-output-provenance: no review-output files selected -- OK\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.5569274998269975
+    },
+    {
+      "source_command": "python .agents/hooks/check_handoff_pointers.py --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_handoff_pointers.py",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "check_handoff_pointers --strict: OK (0 findings in 0 changed file(s) vs c683477a5b6f0eb2998a3bac1d547ae92552a77a)\npinned/exempt handoff pointers: 0 (annotated debt, not failures)\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.6592858000658453
+    },
+    {
+      "source_command": "python .agents/hooks/check_prompt_output_mode.py --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_prompt_output_mode.py",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "check_prompt_output_mode --strict: OK (0 findings in 0 changed in-scope file(s) vs c683477a5b6f0eb2998a3bac1d547ae92552a77a)\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.5167220998555422
+    },
+    {
+      "source_command": "python .agents/hooks/check_review_summary.py --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_review_summary.py",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "check_review_summary --strict: OK (0 findings in 0 changed in-scope file(s) vs c683477a5b6f0eb2998a3bac1d547ae92552a77a)\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.5095625000540167
+    },
+    {
+      "source_command": "python .agents/hooks/check_hash_pin_freshness.py --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_hash_pin_freshness.py",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "check_hash_pin_freshness: OK (base: c683477a5b6f0eb2998a3bac1d547ae92552a77a; checked 0 of 265 pin(s))\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 4.238851600093767
+    },
+    {
+      "source_command": "python .agents/hooks/check_shared_helper_duplication.py --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_shared_helper_duplication.py",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "check_shared_helper_duplication --strict: OK (base: c683477a5b6f0eb2998a3bac1d547ae92552a77a)\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.3407274999190122
+    },
+    {
+      "source_command": "python .agents/hooks/check_full_gt_claims.py --changed --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_full_gt_claims.py",
+        "--changed",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "check_full_gt_claims: OK -- no unballasted full-GT claim language in scope\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.784060399979353
+    },
+    {
+      "source_command": "python .agents/hooks/check_harness_coupling.py --selftest",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_harness_coupling.py",
+        "--selftest"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "PASS harness Python expected_trigger=True observed_trigger=True\nPASS contract Python expected_trigger=True observed_trigger=True\nPASS generated inventory expected_trigger=True observed_trigger=True\nPASS unrelated JSON expected_trigger=False observed_trigger=False\nPASS documentation expected_trigger=False observed_trigger=False\nPASS existing contract test command\nPASS deleted paths remain in gate scope\nSELFTEST OK\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.22670789994299412
+    },
+    {
+      "source_command": "python .agents/hooks/check_harness_coupling.py --strict",
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        ".agents/hooks/check_harness_coupling.py",
+        "--strict"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "FORSETI_DIFF_BASE": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "returncode": 0,
+      "stdout": "SKIP harness coupling contracts: no harness Python or generated inventory change in c683477a5b6f0eb2998a3bac1d547ae92552a77a...HEAD\n",
+      "stderr": "",
+      "timeout": false,
+      "elapsed_seconds": 0.31490740017034113
+    }
+  ],
+  "adapter_probes": [
+    {
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905\\.codex\\hooks\\forseti_guard_codex_adapter.py"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "event": {
+        "tool_name": "PowerShell",
+        "tool_input": {
+          "command": "git status --short"
+        }
+      },
+      "synthetic_path_count": 0,
+      "elapsed_seconds": 0.3881122001912445,
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "timeout": false
+    },
+    {
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905\\.codex\\hooks\\forseti_guard_codex_adapter.py"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "event": {
+        "tool_name": "apply_patch",
+        "tool_input": {
+          "patch": "*** Update File: docs/workflows/synthetic_audit_path_0.md"
+        }
+      },
+      "synthetic_path_count": 1,
+      "elapsed_seconds": 0.47420820011757314,
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "timeout": false
+    },
+    {
+      "argv": [
+        "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905\\.codex\\hooks\\forseti_guard_codex_adapter.py"
+      ],
+      "cwd": "C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905",
+      "event": {
+        "tool_name": "apply_patch",
+        "tool_input": {
+          "patch": "*** Update File: docs/workflows/synthetic_audit_path_0.md\n*** Update File: docs/workflows/synthetic_audit_path_1.md\n*** Update File: docs/workflows/synthetic_audit_path_2.md\n*** Update File: docs/workflows/synthetic_audit_path_3.md\n*** Update File: docs/workflows/synthetic_audit_path_4.md\n*** Update File: docs/workflows/synthetic_audit_path_5.md\n*** Update File: docs/workflows/synthetic_audit_path_6.md\n*** Update File: docs/workflows/synthetic_audit_path_7.md\n*** Update File: docs/workflows/synthetic_audit_path_8.md\n*** Update File: docs/workflows/synthetic_audit_path_9.md"
+        }
+      },
+      "synthetic_path_count": 10,
+      "elapsed_seconds": 1.8986370000056922,
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "timeout": false
+    }
+  ],
+  "runtime_probes": {
+    "scope": "synthetic offline probes of pinned source; not production savings",
+    "availability": [
+      {
+        "total_available": 100,
+        "scope": 1,
+        "availability_json_reads": [
+          100,
+          100,
+          100
+        ],
+        "seconds": [
+          0.20614669984206557,
+          0.035216000163927674,
+          0.03531840001232922
+        ],
+        "median_seconds": 0.03531840001232922
+      },
+      {
+        "total_available": 1000,
+        "scope": 1,
+        "availability_json_reads": [
+          1000,
+          1000,
+          1000
+        ],
+        "seconds": [
+          7.038004899863154,
+          0.18789609987288713,
+          0.20073459995910525
+        ],
+        "median_seconds": 0.20073459995910525
+      },
+      {
+        "total_available": 3000,
+        "scope": 1,
+        "availability_json_reads": [
+          3000,
+          3000,
+          3000
+        ],
+        "seconds": [
+          15.298319000052288,
+          0.5217412000056356,
+          0.49736489984206855
+        ],
+        "median_seconds": 0.5217412000056356
+      }
+    ],
+    "quote_index": [
+      {
+        "cues": 100,
+        "quotes": 20,
+        "baseline_seconds": [
+          0.008611500030383468,
+          0.008011500118300319,
+          0.006852899910882115
+        ],
+        "scratch_reused_index_seconds": [
+          0.00026730005629360676,
+          0.0005189999938011169,
+          0.0004470997955650091
+        ],
+        "output_equal": true
+      },
+      {
+        "cues": 1000,
+        "quotes": 20,
+        "baseline_seconds": [
+          0.09393299999646842,
+          0.09164070012047887,
+          0.0818223999813199
+        ],
+        "scratch_reused_index_seconds": [
+          0.005376799963414669,
+          0.0041802998166531324,
+          0.005934299901127815
+        ],
+        "output_equal": true
+      },
+      {
+        "cues": 5000,
+        "quotes": 100,
+        "baseline_seconds": [
+          2.4049543999135494,
+          2.893962000031024,
+          1.9487642999738455
+        ],
+        "scratch_reused_index_seconds": [
+          0.0314597999677062,
+          0.022550199879333377,
+          0.032519400119781494
+        ],
+        "output_equal": true
+      }
+    ],
+    "asr_constructor": {
+      "transcribe_calls": 5,
+      "WhisperModel_constructions": 5,
+      "model_compute_real": false,
+      "status": "passed"
+    }
+  },
+  "runtime_fixture_tests": {
+    "status": "passed",
+    "exit_code": 0,
+    "seconds": 5.5084176999516785,
+    "stdout": "........................................................................ [ 91%]\n.......                                                                  [100%]\n============================== warnings summary ===============================\ntests/unit/test_youtube_asr_packet.py::test_no_speech_records_posture_without_cues\ntests/unit/test_youtube_asr_packet.py::test_transcriber_exception_records_failed_posture\ntests/unit/test_youtube_asr_packet.py::test_transcribed_without_cues_normalizes_to_no_speech\ntests/unit/test_youtube_asr_packet.py::test_rerun_is_a_new_observation_not_an_overwrite\ntests/unit/test_youtube_asr_packet.py::test_rerun_is_a_new_observation_not_an_overwrite\n  C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905\\forseti-harness\\source_capture\\transcript\\asr_packet.py:242: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).\n    ts = now_iso or (datetime.datetime.utcnow().isoformat() + \"Z\")\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n",
+    "stderr": "",
+    "command": [
+      "C:\\Users\\vmon7\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/unit/test_transcript_product_extractor.py",
+      "tests/unit/test_anti_blocking_http_adapter.py",
+      "tests/unit/test_source_capture_reddit_api.py",
+      "tests/unit/test_youtube_caption_packet.py",
+      "tests/unit/test_youtube_asr_packet.py",
+      "--basetemp=C:\\Users\\vmon7\\Desktop\\projects\\orca\\worktrees\\forseti-efficiency-audit-20260905\\forseti-harness\\_scratch\\efficiency_audit_20260905\\runtime\\pytest_temp"
+    ]
+  },
+  "runtime_source_notes": {
+    "source_context": {
+      "target": "C:/Users/vmon7/Desktop/projects/orca/worktrees/forseti-efficiency-audit-20260905",
+      "head": "c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+      "source_changes": "git diff --name-only produced no paths on closeout",
+      "runtime_entrypoint_basis": "forseti-harness/pyproject.toml and actual runners; top-level pyproject.toml does not exist"
+    },
+    "probe_setup_failures": [
+      "Initial probe import path used BASE.parents[3]; ModuleNotFoundError data_lake, no measures. Corrected scratch script to parents[2].",
+      "First scoped pickup supplied invalid synthetic obligation {'v':1}; ConsumptionSeamError missing obligation_schema. Corrected to required obligation_schema and consumer. The failure was visible, not suppressed."
+    ],
+    "evidence_limits": [
+      "Only synthetic test-mode roots under scratch; no external lake opened; no browser, network, paid model or real ASR execution.",
+      "First-read versus later-read timings vary sharply; measured wall time is function time on this workstation, not production savings.",
+      "ASR probe uses fake faster_whisper and establishes constructor counts only.",
+      "Quote-index candidate is scratch-only and sampled-output-equal, not a shipped or fully verified optimization.",
+      "Focused existing fixture modules passed; datetime.utcnow deprecation warnings retained in raw evidence.",
+      "Git emitted unable-to-access global ignore permission warnings; no tracked diff paths observed."
+    ],
+    "old_dispositions": {
+      "RE-HARN-1": "TimeoutError/OSError handling present at adapters/anti_blocking_http.py:144; focused fixtures passed.",
+      "RE-HARN-2": "pyproject explicitly includes youtube_capture/reports and youtube_capture/__init__.py exists; built wheel not revalidated.",
+      "RE-HARN-3": "Reddit GET/token timeout and OSError handling present at adapters/reddit_api.py:478,486,540,545; focused fixtures passed.",
+      "RE-HARN-4/4b": "Subprocess timeout values present at youtube_captions.py:33, audio_asr.py:26 and ig_reels_audio_packet.py:334; metadata has socket timeout but remains no total deadline at youtube_captions.py:46-56.",
+      "RE-HARN-5": "Common recursive walk now capture_spine/shared_validation.py:40; LinkedIn, creator-handle, Reddit, TikTok wrappers import it and retain intentional lane-specific policy sets. Old copy-paste prescription superseded.",
+      "RE-HARN-6": "audio_asr base_info literal remains deterministic; asr_packet.py:127 serialization uses that order. No sort_keys churn justified.",
+      "RE-HARN-7": "Blanket unwired characterization unsafe. LinkedIn exposes attended run_live_capture plus real BrowserFetcher; company aggregate validator is consumed by data_lake/company_surface.py:22. Not dead-code proof or deletion candidate; live deployment frequency unobserved.",
+      "RE-HARN-8": "fragrantica_lake.py:320-330 deliberately accepts source-valid integer ordinals and excludes unset zero; no int-to-float repair justified.",
+      "RE-HARN-9": "Actual batch reconciliation quality flag at runners/run_reddit_batch_quality_summary.py:171; no need to reinstate unreachable guard.",
+      "RE-HARN-10": "Seven model files still define _enum_values; small linear serializer helpers, no measured runtime bottleneck.",
+      "APH-IMPL-1/3": "Current shared social_heartbeat_run_control.py:362 uses bucket/lane/session artifact key; line709 sets receipt_pointer to receipt_jsonl.",
+      "APH-IMPL-4": "IG and TikTok recompute functions still resemble each other at rollup_formula_revalidation.py:328,379; field distinction comment_count/total_comment_count and complete-trio failure guards remain. Maintenance opportunity, not measured performance finding."
+    }
+  },
+  "audit_validation": {
+    "independent_tree_command": "git ls-tree -r -l c683477a5b6f0eb2998a3bac1d547ae92552a77a",
+    "independent_files": 4488,
+    "independent_bytes": 192563705,
+    "actual_synthetic_json_files_excluded": 4106,
+    "no_audit_scratch_in_index": true,
+    "seeded_existing_measurement_rejected": "availability read-count mismatch",
+    "note": "Checks evidence consistency, not semantic completeness of proposed optimizations."
+  },
+  "reproduction_sources": {
+    "footprint/measure.py": {
+      "sha256": "4323c1274200fae4fb5f7a8e9d577640e73c32a964a9afca1708a987ff7bacfc",
+      "utf8": "import subprocess,json,pathlib,collections,re,os\nroot=pathlib.Path.cwd(); out=root/'forseti-harness/_scratch/efficiency_audit_20260905/footprint'\ndef git(*args,inp=None):\n p=subprocess.run(['git',*args],input=inp,stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=True); return p.stdout\nraw=git('ls-files','--stage','-z')\ndef parse(data):\n result=[]\n for row in data.split(b'\\0'):\n  if not row: continue\n  meta,path=row.split(b'\\t',1);mode,oid,stage=meta.decode().split()\n  result.append(dict(path=path.decode('utf-8'),mode=mode,oid=oid,stage=int(stage)))\n return result\nfiles=parse(raw);oids=sorted(set(x['oid'] for x in files))\nsizes={a:int(c) for a,b,c in (l.split() for l in git('cat-file','--batch-check=%(objectname) %(objecttype) %(objectsize)',inp=('\\n'.join(oids)+'\\n').encode()).decode().splitlines())}\nfor x in files: x['bytes']=sizes[x['oid']]\ndef groups(fn):\n d={}\n for x in files:\n  k=fn(x['path']);a=d.setdefault(k,dict(count=0,bytes=0));a['count']+=1;a['bytes']+=x['bytes']\n return dict(sorted(d.items(),key=lambda kv:(-kv[1]['bytes'],kv[0])))\nbyoid=collections.defaultdict(list)\nfor x in files: byoid[x['oid']].append(x['path'])\ndup=[dict(oid=k,bytes=sizes[k],copies=len(v),excess_logical_bytes=sizes[k]*(len(v)-1),paths=v) for k,v in byoid.items() if len(v)>1]\ndup.sort(key=lambda x:-x['excess_logical_bytes'])\nsections=[]\nfor x in files:\n if x['path'].startswith('.agents/workflow-overlay/') and x['path'].endswith('.md') or x['path'] in ('AGENTS.md','docs/workflows/forseti_repo_map_v0.md'):\n  lines=(root/x['path']).read_text(encoding='utf-8-sig').splitlines(keepends=True);heads=[(i,l.strip()) for i,l in enumerate(lines) if re.match(r'^#{1,3} ',l)]\n  for j,(i,h) in enumerate(heads):\n   end=heads[j+1][0] if j+1<len(heads) else len(lines);s=''.join(lines[i:end]);sections.append(dict(path=x['path'],heading=h,start=i+1,end=end,lines=end-i,utf8_bytes=len(s.encode()),word_count=len(s.split())))\ntracked=set(x['path'] for x in files)\nphysical_candidates=list(tracked)+['__synthetic_untracked__/does-not-exist.md']\nbase=set(tracked);with_synthetic=set(physical_candidates)&tracked\ninteresting=[x for x in files if any(t in x['path'].lower() for t in ('/_inbox/','precompact','/packets/','/shorts_scroll_runs/','route_guard.json','/scores/','/memory/logs/','/reports/source_capture/'))]\nignored_check=git('check-ignore','--no-index','--stdin','-v',inp=('\\n'.join(x['path'] for x in files)+'\\n').encode()).decode() if False else ''\np=subprocess.run(['git','check-ignore','--no-index','--stdin','-v'],input=('\\n'.join(x['path'] for x in files)+'\\n').encode(),capture_output=True)\nresult=dict(head=git('rev-parse','HEAD').decode().strip(),method='Tracked membership only: git ls-files --stage -z; committed blob byte sizes via git cat-file --batch-check. Logical expanded bytes, not packed .git or physical disk usage. No capture/outcome/binary content opened.',total_files=len(files),total_bytes=sum(x['bytes'] for x in files),unique_blobs=len(oids),unique_blob_bytes=sum(sizes.values()),duplicate_groups=len(dup),duplicate_excess_logical_bytes=sum(x['excess_logical_bytes'] for x in dup),top_level=groups(lambda p:p.split('/')[0] if '/' in p else '(root files)'),second_level=groups(lambda p:'/'.join(p.split('/')[:2]) if '/' in p else '(root files)'),third_level=groups(lambda p:'/'.join(p.split('/')[:3]) if '/' in p else '(root files)'),extensions=groups(lambda p:pathlib.PurePosixPath(p).suffix.lower() or '(no extension)'),largest_files=sorted(files,key=lambda x:-x['bytes'])[:60],files=files,duplicates=dup,overlay_sections=sections,tracked_retention_paths=interesting,tracked_ignored_matches=p.stdout.decode().splitlines(),ignore_check_exit=p.returncode,ignore_check_stderr=p.stderr.decode(),synthetic_untracked_probe=dict(synthetic_path=physical_candidates[-1],baseline_members=len(base),after_members=len(with_synthetic),membership_equal=base==with_synthetic),worktree_metadata=git('worktree','list','--porcelain').decode(),untracked_directory_metadata=git('ls-files','--others','--exclude-standard','--directory').decode().splitlines(),root_directory_metadata=[dict(name=p.name,is_dir=p.is_dir()) for p in root.iterdir()],external_lake_metadata=dict(path='F:/forseti-data-lake',exists=pathlib.Path('F:/forseti-data-lake').exists()))\n(out/'inventory.json').write_text(json.dumps(result,indent=2),encoding='utf-8')\nprint(json.dumps({k:result[k] for k in ('head','total_files','total_bytes','unique_blobs','unique_blob_bytes','duplicate_groups','duplicate_excess_logical_bytes','top_level','extensions','synthetic_untracked_probe','external_lake_metadata')},indent=2))\nprint('LARGEST DUPLICATES');print(json.dumps(dup[:14],indent=2));print('TRACKED IGNORE MATCH COUNT',len(result['tracked_ignored_matches']));print('RETENTION PATH COUNT',len(interesting))\r\n# Supplemental classifications and bounded validation; no source mutation.\nresult['tracked_rule_matches']=result.pop('tracked_ignored_matches')\nresult['tracked_effectively_ignored_matches']=[x for x in result['tracked_rule_matches'] if not x.split('\\t')[0].split(':',2)[2].startswith('!')]\nresult['duplicate_classification_totals']={k:sum(x['excess_logical_bytes'] for x in dup if ('review_snapshot_involved' if any('/review-inputs/' in p for p in x['paths']) else 'nonreview')==k) for k in ('review_snapshot_involved','nonreview')}\nresult['runtime_internal_exact_duplicate_groups']=[x for x in dup if sum(p.startswith('forseti-harness/') for p in x['paths'])>1]\nresult['runtime_fixture_internal_exact_duplicate_groups']=[x for x in dup if sum(p.startswith('forseti-harness/tests/fixtures/') for p in x['paths'])>1]\nresult['warm_file_totals']={}\nfor path in ('AGENTS.md','.agents/workflow-overlay/prompt-orchestration.md','.agents/workflow-overlay/validation-gates.md','.agents/workflow-overlay/review-lanes.md','.agents/workflow-overlay/source-loading.md','docs/workflows/forseti_repo_map_v0.md'):\n s=(root/path).read_text(encoding='utf-8-sig');result['warm_file_totals'][path]=dict(lines=len(s.splitlines()),words=len(s.split()),utf8_bytes_lf=len(s.encode()))\nvg=collections.defaultdict(list)\nfor x in files:\n p=x['path']\n if '/review-inputs/' not in p and '/review-outputs/' not in p and p.endswith('.md'): vg[re.sub(r'_v\\d+(?=\\.md$)','_vN',p)].append(p)\nresult['coexisting_numeric_versions']=[v for v in vg.values() if len(v)>1]\nresult['moved_path_indexes']=[x for x in files if x['path'].endswith('/moved_paths_index.md')]\nresult['precompact_tracked_paths']=[x['path'] for x in files if 'precompact' in x['path'].lower()]\nresult['repository_ignore_probes']=[]\nfor path in ('forseti-harness/youtube_capture/shorts_scroll_runs/a.json','forseti-harness/cases/plumbing/example/scores/a.json','forseti-harness/memory/logs/a.json','forseti-harness/reports/source_capture/a.json','forseti-harness/_scratch/a.json','orca-harness/youtube_capture/shorts_scroll_runs/a.json'):\n q=subprocess.run(['git','-c','core.excludesFile=','check-ignore','--no-index','-v','--',path],capture_output=True,text=True);result['repository_ignore_probes'].append(dict(path=path,exit=q.returncode,stdout=q.stdout.strip(),stderr=q.stderr.strip(),scope='repository rules only; user-global excludes intentionally disabled'))\nq=subprocess.run(['git','-c','core.excludesFile=','status','--short','--untracked-files=normal','--ignored=matching'],capture_output=True,text=True);result['ignored_metadata']=dict(exit=q.returncode,stdout=q.stdout,stderr=q.stderr)\nresult['limitations']=['Sizes describe expanded indexed Git blobs, not physical working-copy allocation, packed objects, history storage, or tokenizer counts.','Blob equality proves exact bytes only; it does not prove duplicated authority, accidental copy, safe deletion, or repeated prompt loading.','No broad physical crawl, external lake enumeration, credential read, binary/capture body read, or sealed outcome read.','Version-stem grouping is a filename observation, not supersession proof.','Global Git ignore file emitted sandbox access warnings in initial commands; repository-only ignore probes explicitly disable it.']\n(out/'inventory.json').write_text(json.dumps(result,indent=2),encoding='utf-8')\r\n\r\n",
+      "placement": "Extract to forseti-harness/_scratch/efficiency_audit_20260905/footprint/measure.py at audit_source_sha. Inspect recorded root/interpreter before running. Runtime probes write synthetic data."
+    },
+    "ci/measure_gates.py": {
+      "sha256": "27b177af9b5bd3c26287d65e6a9ddad4f11ec79ee6b73d971b0f9a9e6cf0912e",
+      "utf8": "\"\"\"One-shot audit measurements, no source mutations or remote actions.\"\"\"\nimport json\nimport os\nfrom pathlib import Path\nimport re\nimport shlex\nimport subprocess\nimport sys\nimport time\n\nROOT = Path(__file__).resolve().parents[4]\nOUT = Path(__file__).resolve().parent\nBASE = \"c683477a5b6f0eb2998a3bac1d547ae92552a77a\"\nenv = dict(os.environ, FORSETI_DIFF_BASE=BASE, PYTHONDONTWRITEBYTECODE=\"1\", PYTHONUTF8=\"1\")\ncommands = []\nfor line in (ROOT / \".github/workflows/ci.yml\").read_text(encoding=\"utf-8\").splitlines():\n    match = re.match(r\"\\s*(?:run:\\s*)?(python\\s+\\.agents/hooks/.+)$\", line)\n    if match:\n        command = match.group(1).replace('\"$FORSETI_DIFF_BASE\"', BASE)\n        commands.append((match.group(1), [sys.executable, *shlex.split(command)[1:]]))\nresults = []\nfor i, (source_command, argv) in enumerate(commands, 1):\n    print(f\"[{i}/{len(commands)}] START {source_command}\", flush=True)\n    start = time.perf_counter()\n    record = {\"source_command\": source_command, \"argv\": argv, \"cwd\": str(ROOT), \"FORSETI_DIFF_BASE\": BASE}\n    try:\n        proc = subprocess.run(argv, cwd=ROOT, env=env, capture_output=True, text=True, encoding=\"utf-8\", errors=\"replace\", timeout=30)\n        record.update(returncode=proc.returncode, stdout=proc.stdout, stderr=proc.stderr, timeout=False)\n    except subprocess.TimeoutExpired as exc:\n        def decode(value):\n            return value.decode(\"utf-8\", errors=\"replace\") if isinstance(value, bytes) else (value or \"\")\n        record.update(returncode=None, stdout=decode(exc.stdout), stderr=decode(exc.stderr), timeout=True)\n    except OSError as exc:\n        record.update(returncode=None, stdout=\"\", stderr=str(exc), timeout=False, launch_error=True)\n    record[\"elapsed_seconds\"] = time.perf_counter() - start\n    results.append(record)\n    (OUT / \"gate_results.json\").write_text(json.dumps(results, indent=2), encoding=\"utf-8\")\n    print(f\"[{i}/{len(commands)}] END elapsed={record['elapsed_seconds']:.3f}s rc={record['returncode']} timeout={record['timeout']}\", flush=True)\n    if record[\"timeout\"]:\n        print(\"Timed-out command stopped; route will not be repeated.\", flush=True)\nprint(json.dumps({\"commands\": len(results), \"seconds\": sum(r['elapsed_seconds'] for r in results), \"nonzero_or_timeout\": sum(r['returncode'] != 0 for r in results)}, indent=2), flush=True)\n",
+      "placement": "Extract to forseti-harness/_scratch/efficiency_audit_20260905/ci/measure_gates.py at audit_source_sha. Inspect recorded root/interpreter before running. Runtime probes write synthetic data."
+    },
+    "ci/measure_adapter.py": {
+      "sha256": "e89918a7eecee0978add8cc4b52c521b23e56f0952b2bca144264735dd5110df",
+      "utf8": "\"\"\"Offline synthetic tool events: guard parsing only, never applies edits.\"\"\"\nimport json\nimport os\nfrom pathlib import Path\nimport subprocess\nimport sys\nimport time\n\nROOT = Path(__file__).resolve().parents[4]\nOUT = Path(__file__).resolve().parent\nenv = dict(os.environ, PYTHONDONTWRITEBYTECODE=\"1\", PYTHONUTF8=\"1\")\nrecords = []\nfor count in (0, 1, 10):\n    event = {\"tool_name\": \"PowerShell\", \"tool_input\": {\"command\": \"git status --short\"}} if count == 0 else {\"tool_name\": \"apply_patch\", \"tool_input\": {\"patch\": \"\\n\".join(f\"*** Update File: docs/workflows/synthetic_audit_path_{i}.md\" for i in range(count))}}\n    argv = [sys.executable, str(ROOT / \".codex/hooks/forseti_guard_codex_adapter.py\")]\n    start = time.perf_counter()\n    try:\n        proc = subprocess.run(argv, cwd=ROOT, env=env, input=json.dumps(event), capture_output=True, text=True, encoding=\"utf-8\", errors=\"replace\", timeout=30)\n        record = dict(argv=argv, cwd=str(ROOT), event=event, synthetic_path_count=count, elapsed_seconds=time.perf_counter()-start, returncode=proc.returncode, stdout=proc.stdout, stderr=proc.stderr, timeout=False)\n    except subprocess.TimeoutExpired as exc:\n        record = dict(argv=argv, cwd=str(ROOT), event=event, elapsed_seconds=time.perf_counter()-start, returncode=None, timeout=True, stderr=str(exc))\n    records.append(record)\n    print(json.dumps(record), flush=True)\n    (OUT / \"adapter_results.json\").write_text(json.dumps(records, indent=2), encoding=\"utf-8\")\n    if record[\"timeout\"]:\n        break\n",
+      "placement": "Extract to forseti-harness/_scratch/efficiency_audit_20260905/ci/measure_adapter.py at audit_source_sha. Inspect recorded root/interpreter before running. Runtime probes write synthetic data."
+    },
+    "runtime/probe_runtime.py": {
+      "sha256": "a073562a48df10492f0bb4f39724cbcce1de86b833fbbe2cfe9661959104403b",
+      "utf8": "import json, sys, time, statistics, types\nfrom pathlib import Path\nfrom unittest.mock import patch\nBASE=Path(__file__).resolve().parent\nHARNESS=BASE.parents[2]\nsys.path.insert(0,str(HARNESS))\nfrom data_lake.root import DataLakeRoot\nfrom data_lake.consumption import pickup\nfrom cleaning.transcript_product_extractor import locate_quote, _norm\nfrom source_capture.transcript.audio_asr import transcribe_audio\nresults={'scope':'synthetic offline probes of pinned source; not production savings','availability':[], 'quote_index':[]}\nfor n in (100,1000,3000):\n    root=DataLakeRoot.for_test(BASE/f'availability_{n}')\n    folder=root.path/'indexes'/'availability'; folder.mkdir(parents=True,exist_ok=True)\n    ids=[f'{i:026d}' for i in range(n)]\n    for pid in ids:\n        (folder/f'{pid}.json').write_text(json.dumps({'packet_id':pid,'source_family':'youtube'}),encoding='utf8')\n    original=Path.read_text\n    counts=[]; timings=[]\n    for _ in range(3):\n        counter=[0]\n        def read(path,*args,**kwargs):\n            if path.parent==folder: counter[0]+=1\n            return original(path,*args,**kwargs)\n        start=time.perf_counter()\n        with patch.object(Path,'read_text',read):\n            items=list(pickup(root,ack_namespace='transcript_asr',obligation_fn=lambda _: {'obligation_schema':1,'consumer':'offline_audit'},source_family='youtube',reconcile=False,scope_packet_ids=[ids[0]]))\n        timings.append(time.perf_counter()-start); counts.append(counter[0])\n        assert len(items)==1\n    row={'total_available':n,'scope':1,'availability_json_reads':counts,'seconds':timings,'median_seconds':statistics.median(timings)}\n    results['availability'].append(row); print(json.dumps({'progress':'availability','row':row}),flush=True)\nfor n,qcount in ((100,20),(1000,20),(5000,100)):\n    cues=[{'text':f'Cue {i} fragrance has a fresh rose accord and smooth drydown rating 8 of 10.', 'start_ms':i*1000,'end_ms':(i+1)*1000} for i in range(n)]\n    quotes=[cues[(i*47)%n]['text'] for i in range(qcount)]\n    def baseline(): return [locate_quote(q,cues) for q in quotes]\n    def indexed():\n        parts=[]; char_to_cue=[]\n        for i,c in enumerate(cues):\n            norm=_norm(c['text'])\n            if not norm: continue\n            if parts: parts.append(' '); char_to_cue.append(i)\n            parts.append(norm); char_to_cue.extend([i]*len(norm))\n        text=''.join(parts)\n        out=[]\n        for q in quotes:\n            needle=_norm(q); pos=text.find(needle)\n            out.append(None if pos<0 else (cues[char_to_cue[pos]]['start_ms'],cues[char_to_cue[pos+len(needle)-1]]['end_ms']))\n        return out\n    a=[];b=[]\n    for _ in range(3):\n        start=time.perf_counter(); expected=baseline(); a.append(time.perf_counter()-start)\n        start=time.perf_counter(); actual=indexed(); b.append(time.perf_counter()-start)\n        assert actual==expected\n    row={'cues':n,'quotes':qcount,'baseline_seconds':a,'scratch_reused_index_seconds':b,'output_equal':True}\n    results['quote_index'].append(row); print(json.dumps({'progress':'quote_index','row':row}),flush=True)\nloads=[]\nclass FakeModel:\n    def __init__(self,*args,**kwargs): loads.append([args,kwargs])\n    def transcribe(self,*args,**kwargs): return iter([types.SimpleNamespace(start=0,end=1,text='synthetic')]),types.SimpleNamespace(language='en')\nwith patch.dict(sys.modules,{'faster_whisper':types.SimpleNamespace(__version__='offline-fake',WhisperModel=FakeModel)}):\n    outputs=[transcribe_audio('synthetic-not-opened.wav') for _ in range(5)]\nassert all(o[0]=='transcribed' for o in outputs)\nresults['asr_constructor']={'transcribe_calls':5,'WhisperModel_constructions':len(loads),'model_compute_real':False,'status':'passed'}\n(BASE/'runtime_probes.json').write_text(json.dumps(results,indent=2),encoding='utf8')\nprint(json.dumps({'status':'passed','evidence':str(BASE/'runtime_probes.json')}),flush=True)\r\n\r\n\r\n",
+      "placement": "Extract to forseti-harness/_scratch/efficiency_audit_20260905/runtime/probe_runtime.py at audit_source_sha. Inspect recorded root/interpreter before running. Runtime probes write synthetic data."
+    },
+    "runtime/run_fixture_tests.py": {
+      "sha256": "3419159a8b89520d4f666d80d828d8bc76d6389d1aaf535cd98a0f2f718ad3ef",
+      "utf8": "import subprocess,sys,time,json\nfrom pathlib import Path\nb=Path(__file__).resolve().parent; harness=b.parents[2]\nargs=[sys.executable,'-m','pytest','-q','tests/unit/test_transcript_product_extractor.py','tests/unit/test_anti_blocking_http_adapter.py','tests/unit/test_source_capture_reddit_api.py','tests/unit/test_youtube_caption_packet.py','tests/unit/test_youtube_asr_packet.py','--basetemp='+str(b/'pytest_temp')]\nstart=time.perf_counter(); print('offline focused fixture tests started; subprocess timeout 60s',flush=True)\ntry:\n p=subprocess.run(args,cwd=harness,capture_output=True,text=True,timeout=60)\n out={'status':'passed' if p.returncode==0 else 'failed','exit_code':p.returncode,'seconds':time.perf_counter()-start,'stdout':p.stdout,'stderr':p.stderr,'command':args}\nexcept subprocess.TimeoutExpired as e:\n out={'status':'timed_out','seconds':time.perf_counter()-start,'stdout':str(e.stdout),'stderr':str(e.stderr),'command':args}\n(b/'runtime_fixture_tests.json').write_text(json.dumps(out,indent=2),encoding='utf8'); print(json.dumps(out),flush=True)\r\n",
+      "placement": "Extract to forseti-harness/_scratch/efficiency_audit_20260905/runtime/run_fixture_tests.py at audit_source_sha. Inspect recorded root/interpreter before running. Runtime probes write synthetic data."
+    }
+  },
+  "historical_resource_recheck": {
+    "scope": "All 24 raw resource values and paired arithmetic rechecked using the published baseline/trim labels. Independent arm assignment, patch quality, current model effects and billed cost NOT revalidated.",
+    "source_root": "C:\\tmp\\si-matched-screen-20260813-v2\\evidence",
+    "pairs": [
+      {
+        "block": "V1-r1",
+        "baseline": {
+          "source_id": "V1-r1-x",
+          "input_tokens": 1047146,
+          "cached_input_tokens": 964864,
+          "uncached_input_tokens": 82282,
+          "output_tokens": 7061,
+          "comparison_tokens": 1054207,
+          "wall_seconds": 256.2205305,
+          "exit": 0
+        },
+        "trim": {
+          "source_id": "V1-r1-y",
+          "input_tokens": 1486065,
+          "cached_input_tokens": 1402112,
+          "uncached_input_tokens": 83953,
+          "output_tokens": 14197,
+          "comparison_tokens": 1500262,
+          "wall_seconds": 366.8888173,
+          "exit": 0
+        }
+      },
+      {
+        "block": "V1-r2",
+        "baseline": {
+          "source_id": "V1-r2-x",
+          "input_tokens": 607217,
+          "cached_input_tokens": 549376,
+          "uncached_input_tokens": 57841,
+          "output_tokens": 6453,
+          "comparison_tokens": 613670,
+          "wall_seconds": 163.292892,
+          "exit": 0
+        },
+        "trim": {
+          "source_id": "V1-r2-y",
+          "input_tokens": 882594,
+          "cached_input_tokens": 810496,
+          "uncached_input_tokens": 72098,
+          "output_tokens": 7523,
+          "comparison_tokens": 890117,
+          "wall_seconds": 252.9576423,
+          "exit": 0
+        }
+      },
+      {
+        "block": "V1-r3",
+        "baseline": {
+          "source_id": "V1-r3-y",
+          "input_tokens": 2710338,
+          "cached_input_tokens": 2599936,
+          "uncached_input_tokens": 110402,
+          "output_tokens": 14560,
+          "comparison_tokens": 2724898,
+          "wall_seconds": 415.5018256,
+          "exit": 0
+        },
+        "trim": {
+          "source_id": "V1-r3-x",
+          "input_tokens": 1314722,
+          "cached_input_tokens": 1232128,
+          "uncached_input_tokens": 82594,
+          "output_tokens": 8379,
+          "comparison_tokens": 1323101,
+          "wall_seconds": 274.1378467,
+          "exit": 0
+        }
+      },
+      {
+        "block": "V2-r1",
+        "baseline": {
+          "source_id": "V2-r1-y",
+          "input_tokens": 2121562,
+          "cached_input_tokens": 1977344,
+          "uncached_input_tokens": 144218,
+          "output_tokens": 15342,
+          "comparison_tokens": 2136904,
+          "wall_seconds": 383.6674798,
+          "exit": 0
+        },
+        "trim": {
+          "source_id": "V2-r1-x",
+          "input_tokens": 4363034,
+          "cached_input_tokens": 4191232,
+          "uncached_input_tokens": 171802,
+          "output_tokens": 19565,
+          "comparison_tokens": 4382599,
+          "wall_seconds": 591.176564,
+          "exit": 0
+        }
+      },
+      {
+        "block": "V2-r2",
+        "baseline": {
+          "source_id": "V2-r2-y",
+          "input_tokens": 1595408,
+          "cached_input_tokens": 1486848,
+          "uncached_input_tokens": 108560,
+          "output_tokens": 12581,
+          "comparison_tokens": 1607989,
+          "wall_seconds": 332.0299855,
+          "exit": 0
+        },
+        "trim": {
+          "source_id": "V2-r2-x",
+          "input_tokens": 4404121,
+          "cached_input_tokens": 4239872,
+          "uncached_input_tokens": 164249,
+          "output_tokens": 20479,
+          "comparison_tokens": 4424600,
+          "wall_seconds": 565.3718547,
+          "exit": 0
+        }
+      },
+      {
+        "block": "V2-r3",
+        "baseline": {
+          "source_id": "V2-r3-y",
+          "input_tokens": 1492944,
+          "cached_input_tokens": 1401088,
+          "uncached_input_tokens": 91856,
+          "output_tokens": 11734,
+          "comparison_tokens": 1504678,
+          "wall_seconds": 317.612819,
+          "exit": 0
+        },
+        "trim": {
+          "source_id": "V2-r3-x",
+          "input_tokens": 1661965,
+          "cached_input_tokens": 1563904,
+          "uncached_input_tokens": 98061,
+          "output_tokens": 15340,
+          "comparison_tokens": 1677305,
+          "wall_seconds": 378.1938284,
+          "exit": 0
+        }
+      },
+      {
+        "block": "V3-r1",
+        "baseline": {
+          "source_id": "V3-r1-y",
+          "input_tokens": 795772,
+          "cached_input_tokens": 731392,
+          "uncached_input_tokens": 64380,
+          "output_tokens": 10290,
+          "comparison_tokens": 806062,
+          "wall_seconds": 280.4104967,
+          "exit": 0
+        },
+        "trim": {
+          "source_id": "V3-r1-x",
+          "input_tokens": 1312254,
+          "cached_input_tokens": 1223424,
+          "uncached_input_tokens": 88830,
+          "output_tokens": 9934,
+          "comparison_tokens": 1322188,
+          "wall_seconds": 269.5671909,
+          "exit": 0
+        }
+      },
+      {
+        "block": "V3-r2",
+        "baseline": {
+          "source_id": "V3-r2-y",
+          "input_tokens": 1133961,
+          "cached_input_tokens": 1057792,
+          "uncached_input_tokens": 76169,
+          "output_tokens": 11300,
+          "comparison_tokens": 1145261,
+          "wall_seconds": 337.8643558,
+          "exit": 0
+        },
+        "trim": {
+          "source_id": "V3-r2-x",
+          "input_tokens": 1385391,
+          "cached_input_tokens": 1240320,
+          "uncached_input_tokens": 145071,
+          "output_tokens": 10980,
+          "comparison_tokens": 1396371,
+          "wall_seconds": 357.0324765,
+          "exit": 0
+        }
+      },
+      {
+        "block": "V3-r3",
+        "baseline": {
+          "source_id": "V3-r3-y",
+          "input_tokens": 1271579,
+          "cached_input_tokens": 1188352,
+          "uncached_input_tokens": 83227,
+          "output_tokens": 10279,
+          "comparison_tokens": 1281858,
+          "wall_seconds": 322.4283628,
+          "exit": 0
+        },
+        "trim": {
+          "source_id": "V3-r3-x",
+          "input_tokens": 1248007,
+          "cached_input_tokens": 1163776,
+          "uncached_input_tokens": 84231,
+          "output_tokens": 12166,
+          "comparison_tokens": 1260173,
+          "wall_seconds": 332.5846169,
+          "exit": 0
+        }
+      },
+      {
+        "block": "V4-r1",
+        "baseline": {
+          "source_id": "V4-r1-x",
+          "input_tokens": 1908803,
+          "cached_input_tokens": 1793280,
+          "uncached_input_tokens": 115523,
+          "output_tokens": 15387,
+          "comparison_tokens": 1924190,
+          "wall_seconds": 375.7993673,
+          "exit": 0
+        },
+        "trim": {
+          "source_id": "V4-r1-y",
+          "input_tokens": 1413768,
+          "cached_input_tokens": 1295104,
+          "uncached_input_tokens": 118664,
+          "output_tokens": 13682,
+          "comparison_tokens": 1427450,
+          "wall_seconds": 334.3150283,
+          "exit": 0
+        }
+      },
+      {
+        "block": "V4-r2",
+        "baseline": {
+          "source_id": "V4-r2-x",
+          "input_tokens": 2399812,
+          "cached_input_tokens": 2267648,
+          "uncached_input_tokens": 132164,
+          "output_tokens": 13778,
+          "comparison_tokens": 2413590,
+          "wall_seconds": 413.4675776,
+          "exit": 0
+        },
+        "trim": {
+          "source_id": "V4-r2-y",
+          "input_tokens": 3367981,
+          "cached_input_tokens": 3210240,
+          "uncached_input_tokens": 157741,
+          "output_tokens": 16728,
+          "comparison_tokens": 3384709,
+          "wall_seconds": 481.2814065,
+          "exit": 0
+        }
+      },
+      {
+        "block": "V4-r3",
+        "baseline": {
+          "source_id": "V4-r3-x",
+          "input_tokens": 1929239,
+          "cached_input_tokens": 1817600,
+          "uncached_input_tokens": 111639,
+          "output_tokens": 12618,
+          "comparison_tokens": 1941857,
+          "wall_seconds": 366.0670392,
+          "exit": 0
+        },
+        "trim": {
+          "source_id": "V4-r3-y",
+          "input_tokens": 3008287,
+          "cached_input_tokens": 2860288,
+          "uncached_input_tokens": 147999,
+          "output_tokens": 17413,
+          "comparison_tokens": 3025700,
+          "wall_seconds": 485.3808073,
+          "exit": 0
+        }
+      }
+    ],
+    "lower_token_pairs": 3,
+    "median_token_ratio": 1.4127367864004312,
+    "median_wall_ratio": 1.1773754995151484,
+    "setup_failure": "Initial assumption that x always meant baseline failed comparison before any artifact write. Corrected to explicit published arm labels; independent assignment remains unproven."
+  }
+}

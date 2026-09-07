@@ -83,13 +83,19 @@ def validate_endpoint(provider: RawApiProvider, api_url: str) -> None:
         raise ValueError("endpoint must not include params, query, or fragment")
 
 
-def extract_model_text(provider: RawApiProvider, raw_response_body: str) -> str:
+def parse_response_body(raw_response_body: str) -> dict[str, Any]:
+    """Decode the provider envelope once for text extraction and usage accounting."""
     try:
         data = json.loads(raw_response_body)
     except json.JSONDecodeError as exc:
         raise ValueError(f"provider response was not JSON: {exc}") from exc
     if not isinstance(data, dict):
         raise ValueError("provider response JSON must be an object")
+    return data
+
+
+def extract_model_text_from_response(provider: RawApiProvider, data: dict[str, Any]) -> str:
+    """Extract text from an already decoded provider envelope."""
     if provider == RawApiProvider.ANTHROPIC_MESSAGES:
         chunks = [
             item["text"]
@@ -117,7 +123,12 @@ def extract_model_text(provider: RawApiProvider, raw_response_body: str) -> str:
     return text
 
 
+def extract_model_text(provider: RawApiProvider, raw_response_body: str) -> str:
+    return extract_model_text_from_response(provider, parse_response_body(raw_response_body))
+
+
 __all__ = [
     "RawApiProvider", "Transport", "build_headers", "build_request_body",
-    "default_endpoint", "extract_model_text", "validate_endpoint",
+    "default_endpoint", "extract_model_text", "extract_model_text_from_response",
+    "parse_response_body", "validate_endpoint",
 ]

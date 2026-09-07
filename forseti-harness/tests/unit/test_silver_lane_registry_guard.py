@@ -9,6 +9,7 @@ stay unresolved, and the front-door exemption is scoped to append_silver_record.
 from __future__ import annotations
 
 import ast
+import pytest
 import importlib.util
 import subprocess
 import sys
@@ -69,6 +70,63 @@ def test_producer_discovery_ignores_generated_test_scratch(tmp_path: Path) -> No
     discovered = guard._producer_files(tmp_path)
 
     assert discovered == [production]
+
+
+def test_generated_install_copies_are_pruned_but_new_source_still_fails(tmp_path, monkeypatch):
+    guard = _load_hook()
+    harness = tmp_path / "forseti-harness"
+    source = harness / "new_producer.py"
+    nested_source = harness / "package" / "build" / "producer.py"
+    generated = [harness / ".venv" / "lib" / "producer.py",
+                 harness / "build" / "lib" / "producer.py"]
+    for path in [source, nested_source, *generated]:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("root.append_record(lane='silver__seeded_bypass')\n", encoding="utf-8")
+    real_walk = guard.os.walk
+    visited = []
+
+    def observed_walk(*args, **kwargs):
+        for row in real_walk(*args, **kwargs):
+            visited.append(Path(row[0]))
+            yield row
+
+    monkeypatch.setattr(guard.os, "walk", observed_walk)
+    discovered = guard._producer_files(tmp_path)
+    assert discovered == sorted([source, nested_source])
+    assert not any(path.is_relative_to(harness / name)
+                   for path in visited for name in (".venv", "build"))
+    findings, _ = guard.scan(tmp_path, discovered, _load_registry())
+    assert len(findings) == 2
+    assert all(f.code == "undeclared_silver_lane" for f in findings)
+
+
+def test_discovery_prunes_before_descent_and_preserves_sorted_membership(tmp_path, monkeypatch):
+    guard = _load_hook()
+    harness = tmp_path / "forseti-harness"
+    for name in ("z.py", "package/a.py", "package/case.PY", "package/test_runs_allowed.py",
+                 "_scratch/deep/hidden.py", "package/tests/deep/hidden.py",
+                 "__pycache__/deep/hidden.py", "_test_runs/deep/hidden.py"):
+        path = harness / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("pass\n", encoding="utf-8")
+    # rglob also admits matching directory names; keep that membership unchanged.
+    (harness / "directory.py").mkdir()
+    expected = [path for path in sorted(harness.rglob("*.py"))
+                if not set(path.relative_to(harness).parts).intersection(
+                    guard._PRODUCER_DISCOVERY_EXCLUDED_DIRS)]
+    real_walk = guard.os.walk
+    visited = []
+
+    def observed_walk(*args, **kwargs):
+        for dirpath, dirnames, filenames in real_walk(*args, **kwargs):
+            visited.append(Path(dirpath))
+            yield dirpath, dirnames, filenames
+
+    monkeypatch.setattr(guard.os, "walk", observed_walk)
+    assert guard._producer_files(tmp_path) == expected
+    assert visited
+    assert all(not set(path.relative_to(harness).parts).intersection(
+        guard._PRODUCER_DISCOVERY_EXCLUDED_DIRS) for path in visited)
 
 
 
@@ -208,3 +266,57 @@ def test_registry_freezes_legacy_lineage_lanes() -> None:
         )
     finally:
         del registry.LANE_ROLES["silver__new_legacy_bypass"]
+
+
+@pytest.mark.parametrize("strict", [False, True])
+@pytest.mark.parametrize("contents", [b"def broken(:", b"\xff", None])
+def test_cli_rejects_incomplete_source_scan(tmp_path, strict, contents):
+    source = tmp_path / "producer.py"
+    if contents is not None:
+        source.write_bytes(contents)
+    result = _run(*(["--strict"] if strict else []), str(source))
+    assert result.returncode == 1, result.stdout + result.stderr
+    assert "source_parse_failed" in result.stdout
+    assert str(source) in result.stdout
+    assert "OK (" not in result.stdout
+
+
+def test_admitted_violation_cannot_disappear_when_read_fails(tmp_path, monkeypatch, capsys):
+    guard = _load_hook()
+    source = tmp_path / "producer.py"
+    source.write_text("root.append_record(lane='silver__unknown_probe')\n", encoding="utf-8")
+    assert guard.main([str(source)]) == 1
+    assert "undeclared_silver_lane" in capsys.readouterr().out
+    read = Path.read_text
+    def unreadable(path, *args, **kwargs):
+        if path == source:
+            raise PermissionError("injected read denial")
+        return read(path, *args, **kwargs)
+    monkeypatch.setattr(Path, "read_text", unreadable)
+    assert guard.main([str(source)]) == 1
+    report = capsys.readouterr().out
+    assert "source_parse_failed" in report and "PermissionError" in report
+    assert "OK (" not in report
+
+
+def test_directory_discovery_failure_is_not_a_clean_scan(tmp_path, monkeypatch, capsys):
+    guard = _load_hook()
+    registry = _load_registry()
+    harness = tmp_path / "forseti-harness"
+    denied = harness / "source_capture"
+    denied.mkdir(parents=True)
+    (denied / "producer.py").write_text("pass\n", encoding="utf-8")
+    scandir = guard.os.scandir
+    def fail_scan(path):
+        if not isinstance(path, int) and Path(path) == denied:
+            raise PermissionError(13, "injected discovery denial", str(denied))
+        return scandir(path)
+    monkeypatch.setattr(guard, "repo_root", lambda: tmp_path)
+    monkeypatch.setattr(guard, "_load_registry", lambda _: registry)
+    # Limit the injected OS fault to the guard; pytest cleanup can use scandir(fd).
+    with monkeypatch.context() as injection:
+        injection.setattr(guard.os, "scandir", fail_scan)
+        assert guard.main([]) == 1
+    report = capsys.readouterr().out
+    assert "source_discovery_failed" in report and str(denied) in report
+    assert "OK (" not in report

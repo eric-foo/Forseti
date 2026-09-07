@@ -1,0 +1,1098 @@
+{
+  "recorded_utc": "2026-09-05T08:41:39.251789+00:00",
+  "baseline_revision": "22a5868d46e89b51ccc0d293d95b5bf226d95cae",
+  "environment": {
+    "python": "3.12.7",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "external_requests": "none; ASR used cached small/int8 models with offline mode"
+  },
+  "authority": "Dated observations only; no production or model-token savings claim; CI status belongs to the lane PR.",
+  "source_hashes": {
+    ".agents/hooks/check_map_links.py": {
+      "before_sha256_lf": "37588be9ee5d48b91014c5ed3cb2948ab4dcb4eac21d514e3a8f5f4067535d3b",
+      "after_sha256_lf": "da60be76c8e9c5cc852b60668affc17f8850f0cf6339a79feffbc0c33ea37429"
+    },
+    ".agents/hooks/check_silver_lane_registry.py": {
+      "before_sha256_lf": "6b713d041521fb8a9d7c1d03313db0068332465ce9dedd3a4bc3bc91034eb7cb",
+      "after_sha256_lf": "7c7a5057800a0bcdd33fa39f06041ae91e078481aeb4e9e41bba814ebb045b9a"
+    },
+    ".agents/workflow-overlay/source-loading.md": {
+      "before_sha256_lf": "8c47b3fe1b973dbe4f34ea5016d9b2c2f526107ac2958d6540d3ea59ed5a5faf",
+      "after_sha256_lf": "c6d97f4d53a1ce98617e4c3a507b11ba62e40c291ca90c6df64b24d9f740abf3"
+    },
+    ".agents/workflow-overlay/validation-gates.md": {
+      "before_sha256_lf": "5e19dd69d1d89b2a6e7515fc514f93b39664f43d9caf0b1669f6c983c1e3ec94",
+      "after_sha256_lf": "486a4c748dca7bc8333c106ae72a1bef33a6c824452657366219128d18f938b5"
+    },
+    "docs/prompts/templates/shared/forseti_prompt_behavior_contract_v0.md": {
+      "before_sha256_lf": "ac5908dadf9fac7df97e205c790b6a459d2a504ffe69bbfa83320afcf354af34",
+      "after_sha256_lf": "6f883e53a7b30eb277cdd313629336cdaf195951a07534b6cbce8c0ffe0e4f2f"
+    },
+    ".gitignore": {
+      "before_sha256_lf": "8017da54df16e214e8ef9fcbeb9223d7b5583fcfa0fab2f4a5e8de6032e1849c",
+      "after_sha256_lf": "dcfeb011fc2cee20b31ae92fa483e9c15a65f23fbf7a09e21a12b2c7d38d8f80"
+    },
+    "forseti-harness/cleaning/transcript_product_extractor.py": {
+      "before_sha256_lf": "45a1878754192b6cab344fc11d74770851e19c49f46741947e7ac3378136054f",
+      "after_sha256_lf": "e15b92734abbc6764bf996e8566f70d598955b848e58ea188b57febe883f112b"
+    },
+    "forseti-harness/source_capture/transcript/audio_asr.py": {
+      "before_sha256_lf": "9e778b107a3e3deec7fee83c0dc06b5cb7dc5a36e71e4d8c48393564abb98b09",
+      "after_sha256_lf": "8e1e69c4ea624a947d83de78ab350b115e5c80b41063d5a4c1f69607c0370275"
+    },
+    "forseti-harness/runners/run_asr_transcript_catchup.py": {
+      "before_sha256_lf": "eedee66d4a6a0908a3c179ad1166fc59174567125cfec8a8e90952a0303d1e32",
+      "after_sha256_lf": "997d18358491ed151bb4546a970f17fcb9bd18e9875fd830b0834677247ae671"
+    },
+    "forseti-harness/runners/run_seam_cadence.py": {
+      "before_sha256_lf": "5e076e9bd7cc592ae1a0929e3e1a213a776ead2c5518dd33610eb0e9f2132fdd",
+      "after_sha256_lf": "0478ebca5a02230953a5cc2329b26f4c5f9ddac2199ed51376f20604157353ff"
+    },
+    "forseti-harness/runners/run_source_capture_ig_reels_creator_deep_capture.py": {
+      "before_sha256_lf": "0d91f797816573956e362978e4d5c89accb171cb9ea166db1529665801c84834",
+      "after_sha256_lf": "a601382032ba1e464a11d59ea60990c177b22d3ec690bcc6232aaa3cc7c5026f"
+    }
+  },
+  "transcript": {
+    "base": "22a5868d46e89b51ccc0d293d95b5bf226d95cae",
+    "python": "3.12.7 (tags/v3.12.7:0b05ead, Oct  1 2024, 03:06:41) [MSC v.1941 64 bit (AMD64)]",
+    "mode": "transcript",
+    "result": {
+      "seconds": {
+        "before": [
+          9.747825999977067,
+          4.772720100125298,
+          6.081844300031662,
+          4.409143200144172,
+          3.9791578000877053
+        ],
+        "after": [
+          0.038682600017637014,
+          0.03379380004480481,
+          0.029656799975782633,
+          0.03946970007382333,
+          0.020852999994531274
+        ]
+      },
+      "median_seconds": {
+        "before": 4.772720100125298,
+        "after": 0.03379380004480481
+      },
+      "output_sha256": "4dcfa6cfedd4d0a65feb46ad4150e035b3107684f8add9911b9771066cbfb2d6",
+      "counts": {
+        "accepted": 100,
+        "rejected": 2
+      },
+      "cues": 5000,
+      "input_sha256": "980f9a295e65ab0ef2400139c82715e34f99cb4a9b6e7323c855fde9121b6d3e"
+    }
+  },
+  "asr_initial_shared_process": {
+    "base": "22a5868d46e89b51ccc0d293d95b5bf226d95cae",
+    "python": "3.12.7 (tags/v3.12.7:0b05ead, Oct  1 2024, 03:06:41) [MSC v.1941 64 bit (AMD64)]",
+    "mode": "asr",
+    "result": {
+      "seconds": {
+        "before": [
+          17.254352500196546,
+          14.594776999903843,
+          16.48639630014077
+        ],
+        "after": [
+          19.499519600067288,
+          12.974414400057867,
+          21.279687199974433
+        ]
+      },
+      "median_seconds": {
+        "before": 16.48639630014077,
+        "after": 19.499519600067288
+      },
+      "constructor_counts": {
+        "before": [
+          3,
+          3,
+          3
+        ],
+        "after": [
+          1,
+          1,
+          1
+        ]
+      },
+      "output_sha256": "d7fcc617e867247110764c2f70b99f2ee6be4e831afc1d519db814e3ea3148b1",
+      "outputs": [
+        [
+          "transcribed",
+          [
+            {
+              "start_ms": 0,
+              "end_ms": 2720,
+              "text": "Today I am testing a fragrance."
+            },
+            {
+              "start_ms": 2720,
+              "end_ms": 5720,
+              "text": "The opening smells like fresh citrus."
+            },
+            {
+              "start_ms": 5720,
+              "end_ms": 7760,
+              "text": "I would give this perfume 8 out of 10."
+            }
+          ],
+          {
+            "tool": "faster-whisper",
+            "tool_version": "1.2.1",
+            "model": "small",
+            "model_repo_id": "Systran/faster-whisper-small",
+            "model_digest": null,
+            "model_digest_basis": "not available from the faster-whisper runtime (no weights hash exposed)",
+            "compute_type": "int8",
+            "decode_params": {
+              "beam_size": 1,
+              "vad_filter": true,
+              "condition_on_previous_text": false
+            },
+            "speech_gate": "faster-whisper builtin Silero VAD (onnx)",
+            "detected_language": "en"
+          }
+        ],
+        [
+          "no_speech",
+          [],
+          {
+            "tool": "faster-whisper",
+            "tool_version": "1.2.1",
+            "model": "small",
+            "model_repo_id": "Systran/faster-whisper-small",
+            "model_digest": null,
+            "model_digest_basis": "not available from the faster-whisper runtime (no weights hash exposed)",
+            "compute_type": "int8",
+            "decode_params": {
+              "beam_size": 1,
+              "vad_filter": true,
+              "condition_on_previous_text": false
+            },
+            "speech_gate": "faster-whisper builtin Silero VAD (onnx)",
+            "detected_language": "en"
+          }
+        ],
+        [
+          "transcribed",
+          [
+            {
+              "start_ms": 0,
+              "end_ms": 2720,
+              "text": "Today I am testing a fragrance."
+            },
+            {
+              "start_ms": 2720,
+              "end_ms": 5720,
+              "text": "The opening smells like fresh citrus."
+            },
+            {
+              "start_ms": 5720,
+              "end_ms": 7760,
+              "text": "I would give this perfume 8 out of 10."
+            }
+          ],
+          {
+            "tool": "faster-whisper",
+            "tool_version": "1.2.1",
+            "model": "small",
+            "model_repo_id": "Systran/faster-whisper-small",
+            "model_digest": null,
+            "model_digest_basis": "not available from the faster-whisper runtime (no weights hash exposed)",
+            "compute_type": "int8",
+            "decode_params": {
+              "beam_size": 1,
+              "vad_filter": true,
+              "condition_on_previous_text": false
+            },
+            "speech_gate": "faster-whisper builtin Silero VAD (onnx)",
+            "detected_language": "en"
+          }
+        ]
+      ],
+      "model": "small",
+      "compute_type": "int8",
+      "faster_whisper_version": "1.2.1",
+      "clips": [
+        {
+          "name": "speech.wav",
+          "sha256": "7d6697f88587bf0689d0b37cd47179292e3cff947b04ebf43bb641def4527d87"
+        },
+        {
+          "name": "silence.wav",
+          "sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa"
+        },
+        {
+          "name": "speech.wav",
+          "sha256": "7d6697f88587bf0689d0b37cd47179292e3cff947b04ebf43bb641def4527d87"
+        }
+      ]
+    }
+  },
+  "asr_followup_isolated_processes": {
+    "status": "passed",
+    "base": "22a5868d46e89b51ccc0d293d95b5bf226d95cae",
+    "order": [
+      "before",
+      "after",
+      "after",
+      "before"
+    ],
+    "worker_timeout_seconds": 60,
+    "timing_scope": "batch includes model release; imports/process launch excluded; CPU is process-wide across native threads",
+    "runs": [
+      {
+        "status": "passed",
+        "arm": "before",
+        "batch": {
+          "wall_seconds": 18.929865800077096,
+          "cpu_seconds": 40.109375
+        },
+        "clips": [
+          {
+            "clip": 1,
+            "wall_seconds": 8.553871399955824,
+            "cpu_seconds": 15.5
+          },
+          {
+            "clip": 2,
+            "wall_seconds": 3.9756235000677407,
+            "cpu_seconds": 8.171875
+          },
+          {
+            "clip": 3,
+            "wall_seconds": 6.400310100056231,
+            "cpu_seconds": 16.4375
+          }
+        ],
+        "phases": [
+          {
+            "phase": "constructor",
+            "clip": 1,
+            "wall_seconds": 2.8057436000090092,
+            "cpu_seconds": 3.625
+          },
+          {
+            "phase": "transcribe_sync",
+            "clip": 1,
+            "wall_seconds": 2.6314705999102443,
+            "cpu_seconds": 5.0625
+          },
+          {
+            "phase": "generator_exhaustion",
+            "clip": 1,
+            "wall_seconds": 3.0690653999336064,
+            "cpu_seconds": 6.671875
+          },
+          {
+            "phase": "constructor",
+            "clip": 2,
+            "wall_seconds": 1.9733958998695016,
+            "cpu_seconds": 2.765625
+          },
+          {
+            "phase": "transcribe_sync",
+            "clip": 2,
+            "wall_seconds": 1.96054399991408,
+            "cpu_seconds": 5.34375
+          },
+          {
+            "phase": "generator_exhaustion",
+            "clip": 2,
+            "wall_seconds": 0.0002389999572187662,
+            "cpu_seconds": 0.0
+          },
+          {
+            "phase": "constructor",
+            "clip": 3,
+            "wall_seconds": 1.525637400103733,
+            "cpu_seconds": 3.140625
+          },
+          {
+            "phase": "transcribe_sync",
+            "clip": 3,
+            "wall_seconds": 2.1162837999872863,
+            "cpu_seconds": 5.90625
+          },
+          {
+            "phase": "generator_exhaustion",
+            "clip": 3,
+            "wall_seconds": 2.6984916001092643,
+            "cpu_seconds": 7.3125
+          }
+        ],
+        "phase_totals": {
+          "constructor": {
+            "wall_seconds": 6.304776899982244,
+            "cpu_seconds": 9.53125
+          },
+          "transcribe_sync": {
+            "wall_seconds": 6.708298399811611,
+            "cpu_seconds": 16.3125
+          },
+          "generator_exhaustion": {
+            "wall_seconds": 5.767796000000089,
+            "cpu_seconds": 13.984375
+          }
+        },
+        "constructor_count": 3,
+        "output_sha256": "d7fcc617e867247110764c2f70b99f2ee6be4e831afc1d519db814e3ea3148b1",
+        "source_sha256_lf": "9e778b107a3e3deec7fee83c0dc06b5cb7dc5a36e71e4d8c48393564abb98b09",
+        "model": "small",
+        "compute_type": "int8",
+        "faster_whisper_version": "1.2.1",
+        "worker_launch_and_run_wall_seconds": 20.15192270022817,
+        "stderr_tail": ""
+      },
+      {
+        "status": "passed",
+        "arm": "after",
+        "batch": {
+          "wall_seconds": 16.13893219991587,
+          "cpu_seconds": 33.609375
+        },
+        "clips": [
+          {
+            "clip": 1,
+            "wall_seconds": 8.79883150011301,
+            "cpu_seconds": 15.671875
+          },
+          {
+            "clip": 2,
+            "wall_seconds": 2.12792110000737,
+            "cpu_seconds": 5.1875
+          },
+          {
+            "clip": 3,
+            "wall_seconds": 5.168033599853516,
+            "cpu_seconds": 12.6875
+          }
+        ],
+        "phases": [
+          {
+            "phase": "constructor",
+            "clip": 1,
+            "wall_seconds": 2.7346361000090837,
+            "cpu_seconds": 3.234375
+          },
+          {
+            "phase": "transcribe_sync",
+            "clip": 1,
+            "wall_seconds": 2.9452347001060843,
+            "cpu_seconds": 5.59375
+          },
+          {
+            "phase": "generator_exhaustion",
+            "clip": 1,
+            "wall_seconds": 3.1188775999471545,
+            "cpu_seconds": 6.84375
+          },
+          {
+            "phase": "transcribe_sync",
+            "clip": 2,
+            "wall_seconds": 2.127597900107503,
+            "cpu_seconds": 5.1875
+          },
+          {
+            "phase": "generator_exhaustion",
+            "clip": 2,
+            "wall_seconds": 0.0002554000820964575,
+            "cpu_seconds": 0.0
+          },
+          {
+            "phase": "transcribe_sync",
+            "clip": 3,
+            "wall_seconds": 2.10288989986293,
+            "cpu_seconds": 5.640625
+          },
+          {
+            "phase": "generator_exhaustion",
+            "clip": 3,
+            "wall_seconds": 3.0650231000036,
+            "cpu_seconds": 7.046875
+          }
+        ],
+        "phase_totals": {
+          "constructor": {
+            "wall_seconds": 2.7346361000090837,
+            "cpu_seconds": 3.234375
+          },
+          "transcribe_sync": {
+            "wall_seconds": 7.1757225000765175,
+            "cpu_seconds": 16.421875
+          },
+          "generator_exhaustion": {
+            "wall_seconds": 6.184156100032851,
+            "cpu_seconds": 13.890625
+          }
+        },
+        "constructor_count": 1,
+        "output_sha256": "d7fcc617e867247110764c2f70b99f2ee6be4e831afc1d519db814e3ea3148b1",
+        "source_sha256_lf": "8e1e69c4ea624a947d83de78ab350b115e5c80b41063d5a4c1f69607c0370275",
+        "model": "small",
+        "compute_type": "int8",
+        "faster_whisper_version": "1.2.1",
+        "worker_launch_and_run_wall_seconds": 17.83585590007715,
+        "stderr_tail": ""
+      },
+      {
+        "status": "passed",
+        "arm": "after",
+        "batch": {
+          "wall_seconds": 13.4135252002161,
+          "cpu_seconds": 33.796875
+        },
+        "clips": [
+          {
+            "clip": 1,
+            "wall_seconds": 7.915611800039187,
+            "cpu_seconds": 16.421875
+          },
+          {
+            "clip": 2,
+            "wall_seconds": 1.7129832999780774,
+            "cpu_seconds": 5.015625
+          },
+          {
+            "clip": 3,
+            "wall_seconds": 3.7451921000611037,
+            "cpu_seconds": 12.171875
+          }
+        ],
+        "phases": [
+          {
+            "phase": "constructor",
+            "clip": 1,
+            "wall_seconds": 2.599427100038156,
+            "cpu_seconds": 3.203125
+          },
+          {
+            "phase": "transcribe_sync",
+            "clip": 1,
+            "wall_seconds": 2.440616900101304,
+            "cpu_seconds": 5.578125
+          },
+          {
+            "phase": "generator_exhaustion",
+            "clip": 1,
+            "wall_seconds": 2.8754579999949783,
+            "cpu_seconds": 7.640625
+          },
+          {
+            "phase": "transcribe_sync",
+            "clip": 2,
+            "wall_seconds": 1.7127048000693321,
+            "cpu_seconds": 5.015625
+          },
+          {
+            "phase": "generator_exhaustion",
+            "clip": 2,
+            "wall_seconds": 0.00017559994012117386,
+            "cpu_seconds": 0.0
+          },
+          {
+            "phase": "transcribe_sync",
+            "clip": 3,
+            "wall_seconds": 1.5909575000405312,
+            "cpu_seconds": 5.5
+          },
+          {
+            "phase": "generator_exhaustion",
+            "clip": 3,
+            "wall_seconds": 2.154179200064391,
+            "cpu_seconds": 6.671875
+          }
+        ],
+        "phase_totals": {
+          "constructor": {
+            "wall_seconds": 2.599427100038156,
+            "cpu_seconds": 3.203125
+          },
+          "transcribe_sync": {
+            "wall_seconds": 5.744279200211167,
+            "cpu_seconds": 16.09375
+          },
+          "generator_exhaustion": {
+            "wall_seconds": 5.02981279999949,
+            "cpu_seconds": 14.3125
+          }
+        },
+        "constructor_count": 1,
+        "output_sha256": "d7fcc617e867247110764c2f70b99f2ee6be4e831afc1d519db814e3ea3148b1",
+        "source_sha256_lf": "8e1e69c4ea624a947d83de78ab350b115e5c80b41063d5a4c1f69607c0370275",
+        "model": "small",
+        "compute_type": "int8",
+        "faster_whisper_version": "1.2.1",
+        "worker_launch_and_run_wall_seconds": 15.02033850015141,
+        "stderr_tail": ""
+      },
+      {
+        "status": "passed",
+        "arm": "before",
+        "batch": {
+          "wall_seconds": 17.740429899888113,
+          "cpu_seconds": 40.296875
+        },
+        "clips": [
+          {
+            "clip": 1,
+            "wall_seconds": 7.636615599971265,
+            "cpu_seconds": 15.890625
+          },
+          {
+            "clip": 2,
+            "wall_seconds": 3.423684500157833,
+            "cpu_seconds": 8.109375
+          },
+          {
+            "clip": 3,
+            "wall_seconds": 6.680060799932107,
+            "cpu_seconds": 16.296875
+          }
+        ],
+        "phases": [
+          {
+            "phase": "constructor",
+            "clip": 1,
+            "wall_seconds": 2.411257900064811,
+            "cpu_seconds": 3.515625
+          },
+          {
+            "phase": "transcribe_sync",
+            "clip": 1,
+            "wall_seconds": 2.4203790000174195,
+            "cpu_seconds": 5.703125
+          },
+          {
+            "phase": "generator_exhaustion",
+            "clip": 1,
+            "wall_seconds": 2.7685185000300407,
+            "cpu_seconds": 6.578125
+          },
+          {
+            "phase": "constructor",
+            "clip": 2,
+            "wall_seconds": 1.5011718000750989,
+            "cpu_seconds": 3.078125
+          },
+          {
+            "phase": "transcribe_sync",
+            "clip": 2,
+            "wall_seconds": 1.8882222999818623,
+            "cpu_seconds": 4.96875
+          },
+          {
+            "phase": "generator_exhaustion",
+            "clip": 2,
+            "wall_seconds": 0.00022040004841983318,
+            "cpu_seconds": 0.0
+          },
+          {
+            "phase": "constructor",
+            "clip": 3,
+            "wall_seconds": 1.4554414998274297,
+            "cpu_seconds": 2.953125
+          },
+          {
+            "phase": "transcribe_sync",
+            "clip": 3,
+            "wall_seconds": 2.338264999911189,
+            "cpu_seconds": 5.375
+          },
+          {
+            "phase": "generator_exhaustion",
+            "clip": 3,
+            "wall_seconds": 2.8239586998242885,
+            "cpu_seconds": 7.875
+          }
+        ],
+        "phase_totals": {
+          "constructor": {
+            "wall_seconds": 5.36787119996734,
+            "cpu_seconds": 9.546875
+          },
+          "transcribe_sync": {
+            "wall_seconds": 6.646866299910471,
+            "cpu_seconds": 16.046875
+          },
+          "generator_exhaustion": {
+            "wall_seconds": 5.592697599902749,
+            "cpu_seconds": 14.453125
+          }
+        },
+        "constructor_count": 3,
+        "output_sha256": "d7fcc617e867247110764c2f70b99f2ee6be4e831afc1d519db814e3ea3148b1",
+        "source_sha256_lf": "9e778b107a3e3deec7fee83c0dc06b5cb7dc5a36e71e4d8c48393564abb98b09",
+        "model": "small",
+        "compute_type": "int8",
+        "faster_whisper_version": "1.2.1",
+        "worker_launch_and_run_wall_seconds": 18.949545100098476,
+        "stderr_tail": ""
+      }
+    ],
+    "medians": {
+      "before": {
+        "batch": {
+          "wall_seconds": 18.335147849982604,
+          "cpu_seconds": 40.203125
+        },
+        "phase_totals": {
+          "constructor": {
+            "wall_seconds": 5.836324049974792,
+            "cpu_seconds": 9.5390625
+          },
+          "transcribe_sync": {
+            "wall_seconds": 6.677582349861041,
+            "cpu_seconds": 16.1796875
+          },
+          "generator_exhaustion": {
+            "wall_seconds": 5.680246799951419,
+            "cpu_seconds": 14.21875
+          }
+        }
+      },
+      "after": {
+        "batch": {
+          "wall_seconds": 14.776228700065985,
+          "cpu_seconds": 33.703125
+        },
+        "phase_totals": {
+          "constructor": {
+            "wall_seconds": 2.66703160002362,
+            "cpu_seconds": 3.21875
+          },
+          "transcribe_sync": {
+            "wall_seconds": 6.460000850143842,
+            "cpu_seconds": 16.2578125
+          },
+          "generator_exhaustion": {
+            "wall_seconds": 5.606984450016171,
+            "cpu_seconds": 14.1015625
+          }
+        }
+      }
+    }
+  },
+  "checkers_same_tree": {
+    "base": "22a5868d46e89b51ccc0d293d95b5bf226d95cae",
+    "python": "3.12.7 (tags/v3.12.7:0b05ead, Oct  1 2024, 03:06:41) [MSC v.1941 64 bit (AMD64)]",
+    "checks": {
+      "check_map_links.py": {
+        "runs": {
+          "before": [
+            {
+              "seconds": 2.6801871999632567,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "f3d763c3b24aa48cb004f39dfe7ffe7c0ba5c878d06711336047dff99ab8a358"
+            },
+            {
+              "seconds": 2.765622599981725,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "f3d763c3b24aa48cb004f39dfe7ffe7c0ba5c878d06711336047dff99ab8a358"
+            },
+            {
+              "seconds": 2.8680764997843653,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "f3d763c3b24aa48cb004f39dfe7ffe7c0ba5c878d06711336047dff99ab8a358"
+            },
+            {
+              "seconds": 2.5777823999524117,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "f3d763c3b24aa48cb004f39dfe7ffe7c0ba5c878d06711336047dff99ab8a358"
+            },
+            {
+              "seconds": 2.383254500105977,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "f3d763c3b24aa48cb004f39dfe7ffe7c0ba5c878d06711336047dff99ab8a358"
+            }
+          ],
+          "after": [
+            {
+              "seconds": 2.189065600046888,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "f3d763c3b24aa48cb004f39dfe7ffe7c0ba5c878d06711336047dff99ab8a358"
+            },
+            {
+              "seconds": 2.1499029002152383,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "f3d763c3b24aa48cb004f39dfe7ffe7c0ba5c878d06711336047dff99ab8a358"
+            },
+            {
+              "seconds": 2.241347200004384,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "f3d763c3b24aa48cb004f39dfe7ffe7c0ba5c878d06711336047dff99ab8a358"
+            },
+            {
+              "seconds": 2.0079956999979913,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "f3d763c3b24aa48cb004f39dfe7ffe7c0ba5c878d06711336047dff99ab8a358"
+            },
+            {
+              "seconds": 2.7828479998279363,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "f3d763c3b24aa48cb004f39dfe7ffe7c0ba5c878d06711336047dff99ab8a358"
+            }
+          ]
+        },
+        "median_seconds": {
+          "before": 2.6801871999632567,
+          "after": 2.189065600046888
+        },
+        "source_sha256": {
+          "before": "37588be9ee5d48b91014c5ed3cb2948ab4dcb4eac21d514e3a8f5f4067535d3b",
+          "after": "91ca3ec68df29a5ba48209621c6ae2e7f448ebe6a01ff3c96a064bd2db9df7e7"
+        }
+      },
+      "check_silver_lane_registry.py": {
+        "runs": {
+          "before": [
+            {
+              "seconds": 11.16506929998286,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "a05aced16b9535328c6a0f9a3a26b8b67ed1c7926b1472339d46c6c27035ea99"
+            },
+            {
+              "seconds": 9.073451099917293,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "a05aced16b9535328c6a0f9a3a26b8b67ed1c7926b1472339d46c6c27035ea99"
+            },
+            {
+              "seconds": 9.301591200055555,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "a05aced16b9535328c6a0f9a3a26b8b67ed1c7926b1472339d46c6c27035ea99"
+            },
+            {
+              "seconds": 9.021117700031027,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "a05aced16b9535328c6a0f9a3a26b8b67ed1c7926b1472339d46c6c27035ea99"
+            },
+            {
+              "seconds": 11.050812399946153,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "a05aced16b9535328c6a0f9a3a26b8b67ed1c7926b1472339d46c6c27035ea99"
+            }
+          ],
+          "after": [
+            {
+              "seconds": 10.64679120015353,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "a05aced16b9535328c6a0f9a3a26b8b67ed1c7926b1472339d46c6c27035ea99"
+            },
+            {
+              "seconds": 10.677673500031233,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "a05aced16b9535328c6a0f9a3a26b8b67ed1c7926b1472339d46c6c27035ea99"
+            },
+            {
+              "seconds": 9.493990699993446,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "a05aced16b9535328c6a0f9a3a26b8b67ed1c7926b1472339d46c6c27035ea99"
+            },
+            {
+              "seconds": 8.605015400098637,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "a05aced16b9535328c6a0f9a3a26b8b67ed1c7926b1472339d46c6c27035ea99"
+            },
+            {
+              "seconds": 9.542193500092253,
+              "returncode": 0,
+              "stderr": "",
+              "stdout_sha256": "a05aced16b9535328c6a0f9a3a26b8b67ed1c7926b1472339d46c6c27035ea99"
+            }
+          ]
+        },
+        "median_seconds": {
+          "before": 9.301591200055555,
+          "after": 9.542193500092253
+        },
+        "source_sha256": {
+          "before": "6b713d041521fb8a9d7c1d03313db0068332465ce9dedd3a4bc3bc91034eb7cb",
+          "after": "a43f75b01a96127df8ac4bfa79dd50f1fcec21a5f68d2dffb2d69ed01157c830"
+        }
+      }
+    }
+  },
+  "silver_discovery_only": {
+    "baseline_revision": "22a5868d46e89b51ccc0d293d95b5bf226d95cae",
+    "baseline_read_argv": [
+      "git",
+      "show",
+      "22a5868d46e89b51ccc0d293d95b5bf226d95cae:.agents/hooks/check_silver_lane_registry.py"
+    ],
+    "baseline_read_returncode": 0,
+    "baseline_read_stderr": "",
+    "baseline_source_sha256": "6b713d041521fb8a9d7c1d03313db0068332465ce9dedd3a4bc3bc91034eb7cb",
+    "current_source_sha256": "a43f75b01a96127df8ac4bfa79dd50f1fcec21a5f68d2dffb2d69ed01157c830",
+    "membership_sha256": "6ca45f44dd6688d5565da7fe0bde753c9df803633ebcd61f28bbd2932ae4b99c",
+    "exact_sorted_membership_equal": true,
+    "source_unchanged_during_measurement": true,
+    "scope": "Discovery only; os.scandir instrumented; excludes imports and AST analysis; one shared live target tree; five alternating-order pairs",
+    "baseline_median_seconds": 0.0643412999343127,
+    "current_median_seconds": 0.044664699817076325,
+    "records": [
+      {
+        "pair": 1,
+        "kind": "baseline",
+        "elapsed_seconds": 0.0656151999719441,
+        "membership_count": 497,
+        "scandir_calls": 694,
+        "unique_scanned_directories": 347,
+        "excluded_subtree_scandir_calls": 72,
+        "unique_excluded_directories": 36
+      },
+      {
+        "pair": 1,
+        "kind": "current",
+        "elapsed_seconds": 0.04451759997755289,
+        "membership_count": 497,
+        "scandir_calls": 311,
+        "unique_scanned_directories": 311,
+        "excluded_subtree_scandir_calls": 0,
+        "unique_excluded_directories": 0
+      },
+      {
+        "pair": 2,
+        "kind": "current",
+        "elapsed_seconds": 0.044664699817076325,
+        "membership_count": 497,
+        "scandir_calls": 311,
+        "unique_scanned_directories": 311,
+        "excluded_subtree_scandir_calls": 0,
+        "unique_excluded_directories": 0
+      },
+      {
+        "pair": 2,
+        "kind": "baseline",
+        "elapsed_seconds": 0.0631937999278307,
+        "membership_count": 497,
+        "scandir_calls": 694,
+        "unique_scanned_directories": 347,
+        "excluded_subtree_scandir_calls": 72,
+        "unique_excluded_directories": 36
+      },
+      {
+        "pair": 3,
+        "kind": "baseline",
+        "elapsed_seconds": 0.06637739995494485,
+        "membership_count": 497,
+        "scandir_calls": 694,
+        "unique_scanned_directories": 347,
+        "excluded_subtree_scandir_calls": 72,
+        "unique_excluded_directories": 36
+      },
+      {
+        "pair": 3,
+        "kind": "current",
+        "elapsed_seconds": 0.041263499995693564,
+        "membership_count": 497,
+        "scandir_calls": 311,
+        "unique_scanned_directories": 311,
+        "excluded_subtree_scandir_calls": 0,
+        "unique_excluded_directories": 0
+      },
+      {
+        "pair": 4,
+        "kind": "current",
+        "elapsed_seconds": 0.04488019994460046,
+        "membership_count": 497,
+        "scandir_calls": 311,
+        "unique_scanned_directories": 311,
+        "excluded_subtree_scandir_calls": 0,
+        "unique_excluded_directories": 0
+      },
+      {
+        "pair": 4,
+        "kind": "baseline",
+        "elapsed_seconds": 0.0643412999343127,
+        "membership_count": 497,
+        "scandir_calls": 694,
+        "unique_scanned_directories": 347,
+        "excluded_subtree_scandir_calls": 72,
+        "unique_excluded_directories": 36
+      },
+      {
+        "pair": 5,
+        "kind": "baseline",
+        "elapsed_seconds": 0.06290990021079779,
+        "membership_count": 497,
+        "scandir_calls": 694,
+        "unique_scanned_directories": 347,
+        "excluded_subtree_scandir_calls": 72,
+        "unique_excluded_directories": 36
+      },
+      {
+        "pair": 5,
+        "kind": "current",
+        "elapsed_seconds": 0.046709399903193116,
+        "membership_count": 497,
+        "scandir_calls": 311,
+        "unique_scanned_directories": 311,
+        "excluded_subtree_scandir_calls": 0,
+        "unique_excluded_directories": 0
+      }
+    ]
+  },
+  "seeded_map_behavior": [
+    {
+      "kind": "baseline",
+      "mode": "run_strict",
+      "returncode": 1,
+      "admitted_reads": 2,
+      "corpus_walks": 2,
+      "stdout_sha256": "73af4bdd475b97069905dd257cbb73ae62cb0308c2161b8a35be7628e74a9873"
+    },
+    {
+      "kind": "proposed",
+      "mode": "run_strict",
+      "returncode": 1,
+      "admitted_reads": 1,
+      "corpus_walks": 1,
+      "stdout_sha256": "73af4bdd475b97069905dd257cbb73ae62cb0308c2161b8a35be7628e74a9873"
+    },
+    {
+      "kind": "baseline",
+      "mode": "run_strict_inline",
+      "returncode": 1,
+      "admitted_reads": 2,
+      "corpus_walks": 2,
+      "stdout_sha256": "73af4bdd475b97069905dd257cbb73ae62cb0308c2161b8a35be7628e74a9873"
+    },
+    {
+      "kind": "proposed",
+      "mode": "run_strict_inline",
+      "returncode": 1,
+      "admitted_reads": 1,
+      "corpus_walks": 1,
+      "stdout_sha256": "73af4bdd475b97069905dd257cbb73ae62cb0308c2161b8a35be7628e74a9873"
+    },
+    {
+      "kind": "baseline",
+      "mode": "run_check",
+      "returncode": 0,
+      "admitted_reads": 2,
+      "corpus_walks": 2,
+      "stdout_sha256": "1284e07b514ad183205108061f6d024d87c0e30796de27b44885e1e7c2cdfdc9"
+    },
+    {
+      "kind": "proposed",
+      "mode": "run_check",
+      "returncode": 0,
+      "admitted_reads": 1,
+      "corpus_walks": 1,
+      "stdout_sha256": "1284e07b514ad183205108061f6d024d87c0e30796de27b44885e1e7c2cdfdc9"
+    },
+    {
+      "kind": "baseline",
+      "mode": "run_report_orca",
+      "returncode": 0,
+      "admitted_reads": 2,
+      "corpus_walks": 2,
+      "stdout_sha256": "f4c1f711b49d496654d8d265b372bbab174dd8ad2626b0b422a24f90e5bb3099"
+    },
+    {
+      "kind": "proposed",
+      "mode": "run_report_orca",
+      "returncode": 0,
+      "admitted_reads": 1,
+      "corpus_walks": 1,
+      "stdout_sha256": "f4c1f711b49d496654d8d265b372bbab174dd8ad2626b0b422a24f90e5bb3099"
+    }
+  ],
+  "outputs_by_sha256": {
+    "f3d763c3b24aa48cb004f39dfe7ffe7c0ba5c878d06711336047dff99ab8a358": "check_map_links --strict: OK (0 findings)\nannotated nonresolving: 37 (debt, not failures)\n",
+    "a05aced16b9535328c6a0f9a3a26b8b67ed1c7926b1472339d46c6c27035ea99": "note: 1 lane argument(s) not statically resolved:\n  - forseti-harness/ecr/lake.py:136 (members:Name)\ncheck_silver_lane_registry: OK (no silver-lane write violations)\n",
+    "73af4bdd475b97069905dd257cbb73ae62cb0308c2161b8a35be7628e74a9873": "check_map_links --strict: 2 finding(s)\n  [C2] docs/admitted.md  ::  open_next path does not exist on disk: docs/missing_header.md\n  [C4] docs/admitted.md  ::  inline link target does not exist on disk: docs/missing_inline.md\nannotated nonresolving: 2 (debt, not failures)\n",
+    "1284e07b514ad183205108061f6d024d87c0e30796de27b44885e1e7c2cdfdc9": "check_map_links --check: 2 finding(s)\n\nC2  OPEN_NEXT->DISK  (1)\n  source: docs/admitted.md\n  detail: open_next path does not exist on disk: docs/missing_header.md\n\nC4  INLINE-LINK->DISK  (1 finding(s) across 1 file(s))\n  source: docs/admitted.md\n  detail: inline link target does not exist on disk: docs/missing_inline.md\n\nannotated nonresolving: 2 (debt, not failures)\n",
+    "f4c1f711b49d496654d8d265b372bbab174dd8ad2626b0b422a24f90e5bb3099": "check_map_links --report-forseti (REPORT MODE, exit 0; not a gate):\n  scope: forseti/  |  predicate = strict-minus-exit-0 (ratchet flips exit only)\n  open_next unresolved (C2):                         1\n  inline links unresolved (C4):                      1\n  folders w/ >=1 .md not map-covered (COV>C3):       0\n  annotated nonresolving:                            2 (debt, not failures)\n  total report findings:                             2\n    [C2] forseti/admitted.md  ::  open_next path does not exist on disk: docs/missing_header.md\n    [C4] forseti/admitted.md  ::  inline link target does not exist on disk: docs/missing_inline.md\n"
+  },
+  "ignore_probe": {
+    "generated_paths": [
+      "forseti-harness/cases/plumbing/example/scores/run.json",
+      "forseti-harness/memory/logs/event.json",
+      "forseti-harness/youtube_capture/packets/video/packet.json",
+      "forseti-harness/youtube_capture/shorts_scroll_runs/run.json"
+    ],
+    "before_exit_codes": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "after_exit_codes": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "trackable_controls": [
+      "forseti-harness/youtube_capture/capture_youtube_v0.py",
+      "forseti-harness/tests/fixtures/capture/example.json"
+    ],
+    "control_exit_codes_before_and_after": [
+      1,
+      1
+    ],
+    "legacy_ignore_control_exit_code": 0
+  },
+  "limits": [
+    "No end-to-end LLM workflow token or billed-cost measurement.",
+    "Initial shared-process ASR timing regressed; follow-up isolates processes and records CPU phases. Both retained.",
+    "Silver full-check timing did not improve; only discovery work improved.",
+    "Small local samples; OS cache, scheduling, and background load not controlled.",
+    "ASR parity covers fixed synthetic speech/silence on small/int8, not every model/audio/batch length.",
+    "Model reference release is observed by tests; immediate native memory reclamation is not claimed."
+  ],
+  "tool_route_failure": {
+    "sandboxed_tool_stall": "exec_command/use_default: speech generation produced zero-byte speech.wav, no completed output; terminated. Circuit remains open for this task.",
+    "mitigation": "One approved bounded SAPI child produced the fixture; root used per-operation approved execution thereafter. Checker ACL failure used a hash-bound approved replacement. Original routes are not claimed repaired."
+  },
+  "reproduction": {
+    "instructions": "Extract sources at their recorded repository-relative scratch paths in the implementation checkout. Set the SAPI speech output path to that checkout; run it hidden with a 20-second child limit. Run dogfood_runtime.py transcript, dogfood_runtime.py asr, asr_isolated_probe.py, dogfood_checkers.py, then measure_silver_discovery.py sequentially. Cached small model and optional ASR dependencies are required. Audio hashes detect a different default voice; no bit-identical audio or timings promised across machines.",
+    "sources": {
+      "forseti-harness/_scratch/efficiency_implementation_20260905/dogfood_runtime.py": {
+        "sha256_utf8_lf": "a6a278447949b212712ec9a8969e522a4669c18a9eb1f3e4166a3f01f5a92cc3",
+        "content": "\"\"\"One-off, offline baseline/implementation comparison; no production data writes.\"\"\"\nimport gc\nimport hashlib\nimport json\nimport os\nfrom pathlib import Path\nimport statistics\nimport subprocess\nimport sys\nimport time\nimport types\nimport wave\n\nROOT = Path(__file__).resolve().parents[3]\nHERE = Path(__file__).resolve().parent\nBASE = \"22a5868d46e89b51ccc0d293d95b5bf226d95cae\"\nsys.path.insert(0, str(ROOT / \"forseti-harness\"))\nos.environ[\"HF_HUB_OFFLINE\"] = \"1\"\nos.environ[\"HF_HUB_DISABLE_TELEMETRY\"] = \"1\"\nos.environ[\"TRANSFORMERS_OFFLINE\"] = \"1\"\n\n\ndef module_at_base(relative, name):\n    data = subprocess.check_output([\"git\", \"show\", f\"{BASE}:{relative}\"], cwd=ROOT)\n    module = types.ModuleType(name)\n    module.__file__ = str(ROOT / relative)\n    sys.modules[name] = module\n    exec(compile(data, module.__file__, \"exec\"), module.__dict__)\n    return module\n\n\ndef digest(value):\n    return hashlib.sha256(json.dumps(value, ensure_ascii=False, separators=(\",\", \":\")).encode()).hexdigest()\n\n\ndef transcript_probe():\n    from cleaning import transcript_product_extractor as after\n    before = module_at_base(\"forseti-harness/cleaning/transcript_product_extractor.py\", \"baseline_extractor\")\n    cues = [{\"start_ms\": i * 1000, \"end_ms\": (i + 1) * 1000,\n             \"text\": f\"Dior Sauvage Elixir sample {i} is eight out of ten.\"} for i in range(5000)]\n    items = [{\"brand\": \"Dior\", \"line\": \"Sauvage Elixir\", \"concentration\": \"elixir\", \"stance_vote\": 0.8,\n              \"extractor_confidence\": 0.9, \"source_pointer\": f\"sample {i * 49} is eight out of ten\",\n              \"stated_rating\": {\"value\": 8, \"scale_max\": 10, \"source_pointer\": \"eight out of ten\"}} for i in range(100)]\n    items.extend([{\"source_pointer\": \"fabricated quote\"}, None])\n    payload = json.dumps(items)\n    results = {\"before\": [], \"after\": []}\n    output_hashes = set()\n    counts = None\n    for repeat in range(5):\n        for label, mod in ([('before', before), ('after', after)] if repeat % 2 == 0 else [('after', after), ('before', before)]):\n            transcript = mod.TranscriptInput(video_id=\"dogfood\", transcript_anchor=\"DOGFOOD\", transcript_source=\"caption\", cues=cues)\n            start = time.perf_counter()\n            out = mod.parse_mentions(payload, transcript, model=\"offline-fixed-response\")\n            elapsed = time.perf_counter() - start\n            serial = {\"mentions\": [m.model_dump(mode=\"json\") for m in out.mentions], \"rejected\": out.rejected}\n            assert len(out.mentions) == 100 and len(out.rejected) == 2\n            assert all(m.stated_rating.value == 8 for m in out.mentions)\n            output_hashes.add(digest(serial))\n            results[label].append(elapsed)\n            counts = {\"accepted\": len(out.mentions), \"rejected\": len(out.rejected)}\n            print(f\"transcript repeat={repeat + 1} arm={label} seconds={elapsed:.4f}\", flush=True)\n    assert len(output_hashes) == 1, \"Full serialized extraction results differ\"\n    return {\"seconds\": results, \"median_seconds\": {k: statistics.median(v) for k, v in results.items()},\n            \"output_sha256\": next(iter(output_hashes)), \"counts\": counts, \"cues\": len(cues),\n            \"input_sha256\": digest({\"cues\": cues, \"model_response\": payload})}\n\n\ndef asr_probe():\n    import faster_whisper\n    from source_capture.transcript import audio_asr as after\n    before = module_at_base(\"forseti-harness/source_capture/transcript/audio_asr.py\", \"baseline_audio_asr\")\n    silence = HERE / \"silence.wav\"\n    with wave.open(str(silence), \"wb\") as stream:\n        stream.setnchannels(1)\n        stream.setsampwidth(2)\n        stream.setframerate(16000)\n        stream.writeframes(b\"\\0\\0\" * 32000)\n    clips = [HERE / \"speech.wav\", silence, HERE / \"speech.wav\"]\n    assert clips[0].stat().st_size > 1000\n    factory = faster_whisper.WhisperModel\n    timings = {\"before\": [], \"after\": []}\n    constructions = {\"before\": [], \"after\": []}\n    output_hashes = set()\n    final_outputs = None\n    for repeat in range(3):\n        for label, mod in ([('before', before), ('after', after)] if repeat % 2 == 0 else [('after', after), ('before', before)]):\n            gc.collect()\n            loads = []\n            def counted_model(*args, **kwargs):\n                loads.append(1)\n                return factory(*args, **kwargs)\n            faster_whisper.WhisperModel = counted_model\n            start = time.perf_counter()\n            try:\n                if label == \"after\":\n                    with mod.AudioTranscriber(model_name=\"small\", compute_type=\"int8\") as session:\n                        outputs = []\n                        for i, clip in enumerate(clips):\n                            outputs.append(session(str(clip)))\n                            print(f\"ASR repeat={repeat + 1} arm={label} clip={i + 1} posture={outputs[-1][0]}\", flush=True)\n                else:\n                    outputs = []\n                    for i, clip in enumerate(clips):\n                        outputs.append(mod.transcribe_audio(str(clip), model_name=\"small\", compute_type=\"int8\"))\n                        print(f\"ASR repeat={repeat + 1} arm={label} clip={i + 1} posture={outputs[-1][0]}\", flush=True)\n            finally:\n                faster_whisper.WhisperModel = factory\n            elapsed = time.perf_counter() - start\n            assert [v[0] for v in outputs] == [\"transcribed\", \"no_speech\", \"transcribed\"], outputs\n            assert outputs[0][1] and outputs[2][1]\n            assert len(loads) == (3 if label == \"before\" else 1)\n            timings[label].append(elapsed)\n            constructions[label].append(len(loads))\n            output_hashes.add(digest(outputs))\n            final_outputs = outputs\n            print(f\"ASR repeat={repeat + 1} arm={label} seconds={elapsed:.4f} loads={len(loads)}\", flush=True)\n    assert len(output_hashes) == 1, \"Real ASR cues, postures, or metadata differ\"\n    return {\"seconds\": timings, \"median_seconds\": {k: statistics.median(v) for k, v in timings.items()},\n            \"constructor_counts\": constructions, \"output_sha256\": next(iter(output_hashes)), \"outputs\": final_outputs,\n            \"model\": \"small\", \"compute_type\": \"int8\", \"faster_whisper_version\": faster_whisper.__version__,\n            \"clips\": [{\"name\": p.name, \"sha256\": hashlib.sha256(p.read_bytes()).hexdigest()} for p in clips]}\n\n\nif __name__ == \"__main__\":\n    mode = sys.argv[1]\n    print(f\"Starting {mode} offline paired comparison\", flush=True)\n    result = {\"base\": BASE, \"python\": sys.version, \"mode\": mode,\n              \"result\": transcript_probe() if mode == \"transcript\" else asr_probe()}\n    path = HERE / f\"{mode}_comparison.json\"\n    path.write_text(json.dumps(result, indent=2), encoding=\"utf-8\")\n    print(json.dumps(result[\"result\"][\"median_seconds\"]), flush=True)\n    print(f\"verified_output={path}\", flush=True)\n"
+      },
+      "forseti-harness/_scratch/efficiency_implementation_20260905/asr_isolated_probe.py": {
+        "sha256_utf8_lf": "6d18a764ed975a30b8ad8c4396790efc79d4d29c2eac98d848ac3033c693acc3",
+        "content": "\"\"\"Offline diagnostic only: isolated AB/BA ASR workers; no production writes.\"\"\"\nfrom __future__ import annotations\n\nimport hashlib\nimport json\nimport os\nfrom pathlib import Path\nimport statistics\nimport subprocess\nimport sys\nimport time\nimport types\n\nHERE = Path(__file__).resolve().parent\nROOT = HERE.parents[2]\nBASE = \"22a5868d46e89b51ccc0d293d95b5bf226d95cae\"\nSOURCE = \"forseti-harness/source_capture/transcript/audio_asr.py\"\nOUTPUT = HERE / \"asr_isolated_comparison.json\"\n\n\ndef digest(value):\n    return hashlib.sha256(json.dumps(value, ensure_ascii=False, separators=(\",\", \":\")).encode()).hexdigest()\n\n\ndef clock():\n    return time.perf_counter(), time.process_time()\n\n\ndef elapsed(start):\n    return {\"wall_seconds\": time.perf_counter() - start[0],\n            \"cpu_seconds\": time.process_time() - start[1]}\n\n\ndef worker(arm):\n    os.environ[\"HF_HUB_OFFLINE\"] = \"1\"\n    os.environ[\"HF_HUB_DISABLE_TELEMETRY\"] = \"1\"\n    os.environ[\"TRANSFORMERS_OFFLINE\"] = \"1\"\n    sys.path.insert(0, str(ROOT / \"forseti-harness\"))\n    import faster_whisper\n\n    if arm == \"before\":\n        read = subprocess.run([\"git\", \"show\", f\"{BASE}:{SOURCE}\"], cwd=ROOT,\n                              capture_output=True, timeout=10, check=True)\n        source = read.stdout\n        module = types.ModuleType(\"isolated_baseline_audio_asr\")\n        module.__file__ = str(ROOT / SOURCE)\n        sys.modules[module.__name__] = module\n        exec(compile(source, module.__file__, \"exec\"), module.__dict__)\n    else:\n        from source_capture.transcript import audio_asr as module\n        source = (ROOT / SOURCE).read_bytes()\n    prior = json.loads((HERE / \"asr_comparison.json\").read_text(encoding=\"utf-8\"))\n    expected_hash = prior[\"result\"][\"output_sha256\"]\n    clips = [HERE / \"speech.wav\", HERE / \"silence.wav\", HERE / \"speech.wav\"]\n    clip_inputs = [{\"name\": p.name, \"sha256\": hashlib.sha256(p.read_bytes()).hexdigest()} for p in clips]\n    assert clip_inputs == prior[\"result\"][\"clips\"], \"Dogfood audio bytes changed\"\n    model_class = faster_whisper.WhisperModel\n    original_init = model_class.__init__\n    original_transcribe = model_class.transcribe\n    phases = []\n    current_clip = 0\n\n    def timed_init(self, *args, **kwargs):\n        started = clock()\n        try:\n            original_init(self, *args, **kwargs)\n        finally:\n            phases.append({\"phase\": \"constructor\", \"clip\": current_clip, **elapsed(started)})\n\n    def timed_transcribe(self, *args, **kwargs):\n        clip_index = current_clip\n        started = clock()\n        try:\n            segments, info = original_transcribe(self, *args, **kwargs)\n        finally:\n            phases.append({\"phase\": \"transcribe_sync\", \"clip\": clip_index, **elapsed(started)})\n\n        def timed_segments():\n            started = clock()\n            try:\n                yield from segments\n            finally:\n                phases.append({\"phase\": \"generator_exhaustion\", \"clip\": clip_index, **elapsed(started)})\n\n        # No model instance is retained by instrumentation. The original generator\n        # retains only its normal runtime references, and is exhausted by the caller.\n        return timed_segments(), info\n\n    model_class.__init__ = timed_init\n    model_class.transcribe = timed_transcribe\n    outputs = []\n    clip_timings = []\n    batch_start = clock()\n    try:\n        if arm == \"after\":\n            with module.AudioTranscriber(model_name=\"small\", compute_type=\"int8\") as session:\n                for current_clip, path in enumerate(clips, 1):\n                    started = clock()\n                    outputs.append(session(str(path)))\n                    clip_timings.append({\"clip\": current_clip, **elapsed(started)})\n        else:\n            for current_clip, path in enumerate(clips, 1):\n                started = clock()\n                outputs.append(module.transcribe_audio(str(path), model_name=\"small\", compute_type=\"int8\"))\n                clip_timings.append({\"clip\": current_clip, **elapsed(started)})\n        batch = elapsed(batch_start)\n    finally:\n        model_class.__init__ = original_init\n        model_class.transcribe = original_transcribe\n    assert [v[0] for v in outputs] == [\"transcribed\", \"no_speech\", \"transcribed\"]\n    assert outputs[0][1] and outputs[2][1]\n    assert digest(outputs) == expected_hash, \"Serialized outputs differ from prior dogfood\"\n    constructions = sum(p[\"phase\"] == \"constructor\" for p in phases)\n    assert constructions == (3 if arm == \"before\" else 1)\n    phase_totals = {\n        phase: {metric: sum(p[metric] for p in phases if p[\"phase\"] == phase)\n                for metric in (\"wall_seconds\", \"cpu_seconds\")}\n        for phase in (\"constructor\", \"transcribe_sync\", \"generator_exhaustion\")\n    }\n    return {\"status\": \"passed\", \"arm\": arm, \"pid\": os.getpid(), \"batch\": batch,\n            \"clips\": clip_timings, \"phases\": phases, \"phase_totals\": phase_totals,\n            \"constructor_count\": constructions, \"output_sha256\": expected_hash,\n            \"source_sha256_lf\": hashlib.sha256(source.replace(b\"\\r\\n\", b\"\\n\")).hexdigest(),\n            \"model\": \"small\", \"compute_type\": \"int8\", \"faster_whisper_version\": faster_whisper.__version__}\n\n\ndef main():\n    report = {\"status\": \"running\", \"base\": BASE, \"order\": [\"before\", \"after\", \"after\", \"before\"],\n              \"worker_timeout_seconds\": 60, \"timing_scope\": \"batch includes model release; imports/process launch excluded; CPU is process-wide across native threads\",\n              \"runs\": []}\n    for index, arm in enumerate(report[\"order\"], 1):\n        print(f\"Isolated ASR worker {index}/4 arm={arm}; limit=60s\", flush=True)\n        launch = clock()\n        try:\n            result = subprocess.run([sys.executable, \"-u\", str(Path(__file__).resolve()), \"--worker\", arm],\n                                    cwd=ROOT, capture_output=True, text=True, timeout=60)\n            outer = elapsed(launch)\n            if result.returncode != 0:\n                raise RuntimeError(f\"worker exit={result.returncode}; stdout={result.stdout[-1000:]}; stderr={result.stderr[-3000:]}\")\n            row = json.loads(result.stdout)\n            assert row[\"status\"] == \"passed\"\n            row[\"worker_launch_and_run_wall_seconds\"] = outer[\"wall_seconds\"]\n            row[\"stderr_tail\"] = result.stderr[-1000:]\n            report[\"runs\"].append(row)\n        except (subprocess.TimeoutExpired, RuntimeError, ValueError, AssertionError) as exc:\n            report[\"status\"] = \"failed\"\n            report[\"failure\"] = {\"arm\": arm, \"worker_index\": index, \"error\": f\"{type(exc).__name__}: {exc}\"}\n            OUTPUT.write_text(json.dumps(report, indent=2), encoding=\"utf-8\")\n            print(json.dumps(report[\"failure\"]), flush=True)\n            return 1\n        OUTPUT.write_text(json.dumps(report, indent=2), encoding=\"utf-8\")\n        print(f\"Worker {index} passed; batch={row['batch']}\", flush=True)\n    report[\"medians\"] = {}\n    for arm in (\"before\", \"after\"):\n        runs = [r for r in report[\"runs\"] if r[\"arm\"] == arm]\n        report[\"medians\"][arm] = {\n            \"batch\": {metric: statistics.median(r[\"batch\"][metric] for r in runs)\n                      for metric in (\"wall_seconds\", \"cpu_seconds\")},\n            \"phase_totals\": {phase: {metric: statistics.median(r[\"phase_totals\"][phase][metric] for r in runs)\n                                      for metric in (\"wall_seconds\", \"cpu_seconds\")}\n                             for phase in (\"constructor\", \"transcribe_sync\", \"generator_exhaustion\")},\n        }\n    report[\"status\"] = \"passed\"\n    OUTPUT.write_text(json.dumps(report, indent=2), encoding=\"utf-8\")\n    print(json.dumps({\"status\": report[\"status\"], \"medians\": report[\"medians\"], \"output\": str(OUTPUT)}), flush=True)\n    return 0\n\n\nif __name__ == \"__main__\":\n    if len(sys.argv) == 3 and sys.argv[1] == \"--worker\":\n        assert sys.argv[2] in {\"before\", \"after\"}\n        print(json.dumps(worker(sys.argv[2])), flush=True)\n    else:\n        raise SystemExit(main())\n"
+      },
+      "forseti-harness/_scratch/efficiency_implementation_20260905/dogfood_checkers.py": {
+        "sha256_utf8_lf": "6520f3dc0b6048474cc5f4ee0dcef0aaf0698be724be6c1c1e0a4cf222b7db70",
+        "content": "\"\"\"Paired checker comparison on one frozen working tree, not two different corpora.\"\"\"\nimport hashlib\nimport json\nfrom pathlib import Path\nimport statistics\nimport subprocess\nimport sys\nimport time\n\nHERE = Path(__file__).resolve().parent\nROOT = HERE.parents[2]\nBASE = \"22a5868d46e89b51ccc0d293d95b5bf226d95cae\"\n\n\nif len(sys.argv) > 1 and sys.argv[1] == \"worker\":\n    name, arm = sys.argv[2:]\n    target = ROOT / \".agents/hooks\" / name\n    source = HERE / f\"{arm}_{name}.source\"\n    sys.path.insert(0, str(target.parent))\n    sys.argv = [str(target), \"--strict\"]\n    code = compile(source.read_bytes(), str(target), \"exec\")\n    globals()[\"__file__\"] = str(target)\n    exec(code, globals())\nelse:\n    report = {\"base\": BASE, \"python\": sys.version, \"same_working_tree\": str(ROOT), \"checks\": {}}\n    for name in [\"check_map_links.py\", \"check_silver_lane_registry.py\"]:\n        relative = f\".agents/hooks/{name}\"\n        before = subprocess.check_output([\"git\", \"show\", f\"{BASE}:{relative}\"], cwd=ROOT)\n        after = (ROOT / relative).read_bytes()\n        for arm, data in [(\"before\", before), (\"after\", after)]:\n            (HERE / f\"{arm}_{name}.source\").write_bytes(data)\n        records = {\"before\": [], \"after\": []}\n        outputs = set()\n        for repeat in range(5):\n            for arm in ([\"before\", \"after\"] if repeat % 2 == 0 else [\"after\", \"before\"]):\n                start = time.perf_counter()\n                result = subprocess.run([sys.executable, str(__file__), \"worker\", name, arm], cwd=ROOT,\n                                        capture_output=True, text=True, timeout=60)\n                elapsed = time.perf_counter() - start\n                records[arm].append({\"seconds\": elapsed, \"returncode\": result.returncode,\n                                     \"stdout\": result.stdout, \"stderr\": result.stderr})\n                outputs.add((result.returncode, result.stdout, result.stderr))\n                print(f\"{name} repeat={repeat + 1} arm={arm} seconds={elapsed:.4f} rc={result.returncode}\", flush=True)\n                assert result.returncode == 0, result.stdout + result.stderr\n        assert len(outputs) == 1, f\"{name}: observable checker outputs differ\"\n        report[\"checks\"][name] = {\"runs\": records,\n            \"median_seconds\": {k: statistics.median(r[\"seconds\"] for r in v) for k, v in records.items()},\n            \"source_sha256\": {\"before\": hashlib.sha256(before).hexdigest(), \"after\": hashlib.sha256(after).hexdigest()}}\n        (HERE / \"checker_comparison.json\").write_text(json.dumps(report, indent=2), encoding=\"utf-8\")\n    print(json.dumps({k: v[\"median_seconds\"] for k, v in report[\"checks\"].items()}), flush=True)\n"
+      },
+      "forseti-harness/_scratch/efficiency_implementation_20260905/make_speech.ps1": {
+        "sha256_utf8_lf": "a57ec6d950f5e9d99cb587c18427aea559ebe36930ed0507f0e7def38b36005e",
+        "content": "$stream = New-Object -ComObject SAPI.SpFileStream\n$stream.Open('C:/Users/vmon7/Desktop/projects/orca/worktrees/forseti-efficiency-implementation-20260905/forseti-harness/_scratch/efficiency_implementation_20260905/speech.wav', 3, $false)\n$voice = New-Object -ComObject SAPI.SpVoice\n$voice.AudioOutputStream = $stream\n[void]$voice.Speak('Today I am testing a fragrance. The opening smells like fresh citrus. I would give this perfume eight out of ten.')\n$stream.Close()\n"
+      },
+      "forseti-harness/_scratch/efficiency_implementation/measure_silver_discovery.py": {
+        "sha256_utf8_lf": "4e0c75d48473ab011ebee92e86196a871ddfdb1191602811b1293284f14993ee",
+        "content": "\"\"\"Same-tree baseline/current discovery-only dogfood, no production writes.\"\"\"\nimport hashlib\nimport importlib.util\nimport json\nimport os\nfrom pathlib import Path\nimport statistics\nimport subprocess\nimport sys\nimport time\nimport types\nfrom unittest.mock import patch\n\nROOT = Path(__file__).resolve().parents[3]\nOUT = Path(__file__).with_suffix('.json')\nREL = '.agents/hooks/check_silver_lane_registry.py'\nBASE = '22a5868d46e89b51ccc0d293d95b5bf226d95cae'\nargv = ['git', 'show', BASE + ':' + REL]\nproc = subprocess.run(argv, cwd=ROOT, capture_output=True, timeout=20)\nassert proc.returncode == 0, proc.stderr.decode('utf-8', errors='replace')\nbaseline_bytes = proc.stdout\ncurrent_bytes = (ROOT / REL).read_bytes()\nsys.path.insert(0, str(ROOT / '.agents/hooks'))\n\ndef load_source(name, data):\n    module = types.ModuleType(name)\n    module.__file__ = str(ROOT / REL)\n    sys.modules[name] = module\n    exec(compile(data, module.__file__, 'exec'), module.__dict__)\n    return module\n\nbaseline = load_source('silver_discovery_baseline', baseline_bytes)\ncurrent = load_source('silver_discovery_current', current_bytes)\nassert baseline._PRODUCER_DISCOVERY_EXCLUDED_DIRS == current._PRODUCER_DISCOVERY_EXCLUDED_DIRS\nexcluded = current._PRODUCER_DISCOVERY_EXCLUDED_DIRS\nreal_scandir = os.scandir\nrecords = []\nexpected = None\nfor pair in range(5):\n    order = [('baseline', baseline), ('current', current)]\n    if pair % 2:\n        order.reverse()\n    for label, module in order:\n        scans = []\n        def counted_scandir(path):\n            scans.append(Path(path))\n            return real_scandir(path)\n        start = time.perf_counter()\n        with patch('os.scandir', counted_scandir):\n            discovered = module._producer_files(ROOT)\n        elapsed = time.perf_counter() - start\n        membership = [p.relative_to(ROOT).as_posix() for p in discovered]\n        assert discovered == sorted(discovered), label\n        if expected is None:\n            expected = membership\n        assert membership == expected, f'Membership changed: {label} pair {pair}'\n        excluded_scans = [p for p in scans if set(p.relative_to(ROOT / 'forseti-harness').parts).intersection(excluded)]\n        record = dict(pair=pair + 1, kind=label, elapsed_seconds=elapsed,\n                      membership_count=len(membership), scandir_calls=len(scans),\n                      unique_scanned_directories=len(set(scans)),\n                      excluded_subtree_scandir_calls=len(excluded_scans),\n                      unique_excluded_directories=len(set(excluded_scans)),\n                      excluded_directory_examples=sorted(p.relative_to(ROOT).as_posix() for p in set(excluded_scans))[:5])\n        records.append(record)\n        print(json.dumps(record), flush=True)\nassert (ROOT / REL).read_bytes() == current_bytes, 'Current source drift during measurement'\nsummary = dict(\n    root=str(ROOT), baseline_revision=BASE,\n    invocation=[sys.executable, str(Path(__file__).resolve())],\n    baseline_read_argv=argv, baseline_read_returncode=proc.returncode,\n    baseline_read_stderr=proc.stderr.decode('utf-8', errors='replace'),\n    baseline_source_sha256=hashlib.sha256(baseline_bytes).hexdigest(),\n    current_source_sha256=hashlib.sha256(current_bytes).hexdigest(),\n    membership_sha256=hashlib.sha256('\\n'.join(expected).encode('utf-8')).hexdigest(),\n    exact_sorted_membership_equal=True,\n    source_unchanged_during_measurement=True,\n    scope='Discovery only; os.scandir instrumented; excludes imports and AST analysis; one shared live target tree; five alternating-order pairs',\n    baseline_median_seconds=statistics.median(r['elapsed_seconds'] for r in records if r['kind']=='baseline'),\n    current_median_seconds=statistics.median(r['elapsed_seconds'] for r in records if r['kind']=='current'),\n    records=records,\n)\nOUT.write_text(json.dumps(summary, indent=2), encoding='utf-8')\nprint(json.dumps({k:v for k,v in summary.items() if k != 'records'}), flush=True)\n"
+      }
+    }
+  }
+}

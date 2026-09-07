@@ -178,12 +178,6 @@ template_retrieval_binding:
   status: active
   registry: .agents/workflow-overlay/template-registry.md
   template_ids_authority: registry_registered_templates
-  template_ids:
-    shared-behavior-contract: model-neutral template include
-    research-evidence-lane-o3: o3 / o3-deep-research prompt posture
-    research-synthesis-gpt55: GPT-5.5 prompt posture
-    adversarial-artifact-review: model-neutral review template
-    thin-wrapper: model-neutral wrapper template
   authority_order:
     - current_turn_explicit_user_instruction
     - template_registry_entry

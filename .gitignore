@@ -44,10 +44,14 @@ orca-harness/reports/source_observability/*_dry_run.json
 orca-harness/reports/source_capture/
 orca-harness/cases/*/*/scores/
 orca-harness/memory/logs/
+forseti-harness/cases/*/*/scores/
+forseti-harness/memory/logs/
 # YouTube capture tooling: track code, never the captured data/outputs
 orca-harness/youtube_capture/packets/
 orca-harness/youtube_capture/shorts_scroll_runs/
 orca-harness/youtube_capture/route_guard.json
+forseti-harness/youtube_capture/packets/
+forseti-harness/youtube_capture/shorts_scroll_runs/
 
 # Disposable workflow scratch (precompact checkpoints, operator/subagent inbox)
 docs/hygiene/precompact_*

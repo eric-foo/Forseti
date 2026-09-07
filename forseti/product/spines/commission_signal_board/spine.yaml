@@ -32,11 +32,7 @@ intelligence_cycle_contract:
     supplement_ceiling_rule: supplement_that_would_change_a_sealed_claim_ceiling_requires_deliver_phase_acquire_and_seal_with_own_seal
     ceiling_seal_composition: deliver_seal_augments_understanding_seal_both_required; deliver_seal_ceilings_govern_named_claims_only; all_other_claims_stay_under_understanding_ceilings
   company_understanding_acquisition_sequence:
-    - define_question_and_validate_commission_board
-    - serp_phase1_competitor_scout
-    - specialist_fanout_co1_co2_co3
-    - serp_phase2_targeted_return
-    - seal_understanding
+    - "forseti/product/spines/commission_signal_board/workflows/commission_signal_board_playbook_v0.md#default-us-consumer-beauty-understanding-route" # owning sequence, including semantic integration before seal
   serp_phase_labels_are_internal_not_cycle_phases: true
   outcome_signals:
     - question_fit

@@ -72,13 +72,13 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: "3.12"
-      - name: Install forseti-harness (core) + pytest
+      - name: Install locked forseti-harness (core) + test dependencies
         run: |
-          python -m pip install --upgrade pip
-          # pyyaml is pinned explicitly (not left transitive) so the strict
-          # yaml-backed gates (ontology SSOT/drift, deletion-evidence) cannot
-          # silently fail-open if a dependency edit drops it.
-          python -m pip install -e . "pytest==9.0.3" "pytest-xdist==3.8.0" pyyaml
+          python -m pip install "uv==0.11.19"
+          uv sync --locked --group test --no-editable
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
+          # Isolated Python cannot import from the checkout or test sys.path shims.
+          .venv/bin/python -I -c "import judgment.semantic_evidence_integration, evidence_binding.youtube_audience_triangulation, packing.columnar, signal_content.deriver, provider_attempts, provider_execution, provider_jobs, yaml"
       - name: source-input hash freshness (source pointers stay current)
         working-directory: ${{ github.workspace }}
         run: python .agents/hooks/check_source_input_hashes.py --strict

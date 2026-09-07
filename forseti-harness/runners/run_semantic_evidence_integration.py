@@ -17,6 +17,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     RECONCILIATION_AUTHORING_LEGACY,
     RECONCILIATION_AUTHORING_IDENTITY_V1,
     RECONCILIATION_AUTHORING_IDENTITY_V2,
+    RECONCILIATION_AUTHORING_IDENTITY_V3,
     RECONCILIATION_POLICY_VERSION_V2,
     SOURCE_VERSION_V3,
     SemanticIntegrationError,
@@ -1413,9 +1414,10 @@ def prepare_reconciliation_level(
     compilation = _load_object(compilation_path)
     if authoring_revision is None:
         authoring_revision = (
-            RECONCILIATION_AUTHORING_IDENTITY_V2
-            if bundle.get("method_version") == METHOD_VERSION_V12
-            and response_version != RECONCILIATION_RESPONSE_VERSION_V2
+            RECONCILIATION_AUTHORING_IDENTITY_V3
+            if response_version == RECONCILIATION_RESPONSE_VERSION_V3
+            or (bundle.get("method_version") == METHOD_VERSION_V12
+                and response_version != RECONCILIATION_RESPONSE_VERSION_V2)
             else RECONCILIATION_AUTHORING_LEGACY
         )
     if existing_stage_path is None:
@@ -2103,13 +2105,14 @@ def prepare_evidence_selection_batches_run(
     batch_size: int,
     batch_dir: Path,
     batch_manifest_out: Path,
+    max_request_bytes: int | None = None,
 ) -> dict[str, Any]:
     spec = _load_object(spec_path)
     if spec.get("schema_version") != SELECTION_SPEC_VERSION:
         raise EvidenceConsumerError("point_actor_scope", "fresh authoring requires selection spec v2; frozen v1 replay uses finalization")
     sources = _selection_sources_from_spec(spec_path, spec)
     batch_manifest, prompts_and_schemas = prepare_evidence_selection_batches(
-        spec, sources, batch_size=batch_size
+        spec, sources, batch_size=batch_size, max_request_bytes=max_request_bytes
     )
     output_paths = [batch_manifest_out]
     for batch in batch_manifest["batches"]:
@@ -2383,6 +2386,7 @@ def prepare_batched_preselection_relation_confirmation_run(
     batch_size: int,
     confirmation_batch_dir: Path,
     confirmation_batch_manifest_out: Path,
+    max_request_bytes: int | None = None,
 ) -> dict[str, Any]:
     batch_manifest = _load_object(batch_manifest_path)
     selection_manifest = batch_manifest.get("selection_manifest")
@@ -2392,7 +2396,8 @@ def prepare_batched_preselection_relation_confirmation_run(
     responses = _load_relation_batch_responses(batch_manifest, response_dir)
     confirmation_batch_manifest, prompts_and_schemas = (
         prepare_batched_preselection_relation_confirmations(
-            batch_manifest, sources, responses, batch_size=batch_size
+            batch_manifest, sources, responses, batch_size=batch_size,
+            max_request_bytes=max_request_bytes,
         )
     )
     output_paths = [confirmation_batch_manifest_out]
@@ -2776,6 +2781,7 @@ def _parser() -> argparse.ArgumentParser:
             RECONCILIATION_AUTHORING_LEGACY,
             RECONCILIATION_AUTHORING_IDENTITY_V1,
             RECONCILIATION_AUTHORING_IDENTITY_V2,
+            RECONCILIATION_AUTHORING_IDENTITY_V3,
         ],
         help="Normal requests only: defaults to exact identity namespaces for method-v12 response-v3; legacy reproduces historical requests.")
     reconcile_level.add_argument(
@@ -2934,6 +2940,8 @@ def _parser() -> argparse.ArgumentParser:
     selection_batch_prepare = sub.add_parser("prepare-evidence-selection-batches")
     selection_batch_prepare.add_argument("--spec", type=Path, required=True)
     selection_batch_prepare.add_argument("--batch-size", type=int, required=True)
+    selection_batch_prepare.add_argument("--max-request-bytes", type=int, default=50000,
+        help="Bound each rendered prompt plus compact response schema without truncating evidence")
     selection_batch_prepare.add_argument("--batch-dir", type=Path, required=True)
     selection_batch_prepare.add_argument(
         "--batch-manifest-out", type=Path, required=True
@@ -3040,6 +3048,7 @@ def _parser() -> argparse.ArgumentParser:
     batched_preselection_confirmation.add_argument(
         "--batch-size", type=int, required=True
     )
+    batched_preselection_confirmation.add_argument("--max-request-bytes", type=int, default=50000)
     batched_preselection_confirmation.add_argument(
         "--confirmation-batch-dir", type=Path, required=True
     )
@@ -3511,6 +3520,7 @@ def main(argv: list[str] | None = None) -> int:
                 batch_size=args.batch_size,
                 batch_dir=args.batch_dir,
                 batch_manifest_out=args.batch_manifest_out,
+                max_request_bytes=args.max_request_bytes,
             )
         elif args.command == "reserve-evidence-selection-provider-attempt":
             result = reserve_evidence_selection_provider_attempt(
@@ -3573,6 +3583,7 @@ def main(argv: list[str] | None = None) -> int:
                 batch_size=args.batch_size,
                 confirmation_batch_dir=args.confirmation_batch_dir,
                 confirmation_batch_manifest_out=args.confirmation_batch_manifest_out,
+                max_request_bytes=args.max_request_bytes,
             )
         elif args.command == "finalize-batched-preselection-relation-confirmation":
             result = finalize_batched_preselection_relation_confirmation_run(

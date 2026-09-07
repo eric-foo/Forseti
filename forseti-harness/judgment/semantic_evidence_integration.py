@@ -4,6 +4,11 @@ The model-facing surface is deliberately subscription-style: this module packs
 bounded evidence and validates returned semantic choices, but never imports or
 calls a model provider.  Meaning belongs to the agent; provenance, coverage,
 identity credit, source-role competence, and stable serialization belong here.
+
+Before proposing or testing a method optimization, read the repo-root source
+forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md
+section "Supported operating route and owner-only reopen boundary". It owns
+the supported route and deferred alternatives; code presence is not adoption.
 """
 from __future__ import annotations
 
@@ -77,6 +82,7 @@ RECONCILIATION_DUPLICATE_LEAF_REPAIR_MODE = "duplicate_leaf_structural_v1"
 RECONCILIATION_AUTHORING_LEGACY = "legacy"
 RECONCILIATION_AUTHORING_IDENTITY_V1 = "exact_identity_namespaces_v1"
 RECONCILIATION_AUTHORING_IDENTITY_V2 = "exact_identity_namespaces_v2"
+RECONCILIATION_AUTHORING_IDENTITY_V3 = "exact_identity_namespaces_v3"
 RECONCILIATION_IDENTITY_V2_MAX_BATCH_CANDIDATES = 96
 RELATION_CLOSURE_STAGE_VERSION = "semantic_evidence_relation_closure_stage_v1"
 RELATION_CLOSURE_RESPONSE_VERSION = "semantic_evidence_relation_closure_response_v1"
@@ -5400,14 +5406,23 @@ def _v3_candidate_from_node(
     return candidate
 
 
+def _mixed_condition_lineage(candidate: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Expose ownership when a condition union would hide different source scopes."""
+    lineage = candidate["condition_lineage"]
+    if len({tuple(sorted(row["conditions"])) for row in lineage}) > 1:
+        return lineage
+    return []
+
+
 def _agent_reconciliation_candidate(
     candidate: Mapping[str, Any],
     *,
     convergence_mode: bool = False,
     evidence_index: Mapping[str, Any] | None = None,
     include_source_roles: bool = False,
+    include_condition_lineage: bool = False,
 ) -> dict[str, Any]:
-    """Hide compiler-owned expanded lineage from reconciliation prompts."""
+    """Hide expanded accounting while retaining decision-bearing source scope."""
     agent_candidate = {
         field: candidate[field]
         for field in (
@@ -5425,6 +5440,8 @@ def _agent_reconciliation_candidate(
     }
     if "evidence_postures" in candidate:
         agent_candidate["evidence_postures"] = candidate["evidence_postures"]
+    if include_condition_lineage and (lineage := _mixed_condition_lineage(candidate)):
+        agent_candidate["condition_lineage"] = lineage
     if convergence_mode and "terminal_proposition" in candidate:
         agent_candidate["terminal_proposition"] = candidate["terminal_proposition"]
     if include_source_roles:
@@ -6032,6 +6049,15 @@ def _render_v3_reconciliation_prompt(
             "behavior_evidence_refs: reserve it for behavior actually reported, not "
             "a desired or future act. "
         )
+    if preserve_child_scope and any(_mixed_condition_lineage(row) for row in candidates):
+        scope_instruction += (
+            "A candidate's conditions array is a union, not a claim that those details "
+            "co-occur or apply to every source. Where source scopes differ, condition_lineage "
+            "maps each semantic_unit_ref to its own conditions, including empty lists. "
+            "Do not combine conditions from different entries into a claim no individual "
+            "source establishes. Keep source-specific details in their lineage when "
+            "writing a shared bounded_meaning. These references are not author counts. "
+        )
     if local_repair is not None:
         if not decision_only or definition_recovery is not None:
             raise SemanticIntegrationError("local repair requires decision-only response v3")
@@ -6134,7 +6160,8 @@ def _render_v3_reconciliation_prompt(
             + "\n\nCANDIDATES\n" + json.dumps([
                 _agent_reconciliation_candidate(row,
                     convergence_mode=reconciliation_mode == "convergence",
-                    evidence_index=evidence_index, include_source_roles=True)
+                    evidence_index=evidence_index, include_source_roles=True,
+                    include_condition_lineage=True)
                 for row in candidates], ensure_ascii=False, separators=(",", ":"))
         )
     result = (
@@ -6165,6 +6192,7 @@ def _render_v3_reconciliation_prompt(
                         convergence_mode=reconciliation_mode == "convergence",
                         evidence_index=evidence_index,
                         include_source_roles=preserve_child_scope,
+                        include_condition_lineage=preserve_child_scope,
                     )
                     for row in candidates
                 ]
@@ -6256,9 +6284,22 @@ def _identity_authoring_enabled(decision_only, authoring_revision):
     if authoring_revision in {
         RECONCILIATION_AUTHORING_IDENTITY_V1,
         RECONCILIATION_AUTHORING_IDENTITY_V2,
+        RECONCILIATION_AUTHORING_IDENTITY_V3,
     } and decision_only:
         return True
     raise SemanticIntegrationError("unsupported reconciliation normal-authoring revision for response version")
+
+
+def _reconciliation_source_overlap_groups(candidates):
+    # Each group is one exact shared leaf, not a connected component: A-B and
+    # B-C overlap does not prohibit A-C. Repeated identical groups add no rule.
+    owners = defaultdict(set)
+    for candidate in candidates:
+        for leaf in candidate["leaf_relations"]:
+            owners[leaf["semantic_unit_ref"]].add(candidate["candidate_ref"])
+    return [list(group) for group in sorted({
+        tuple(sorted(refs)) for refs in owners.values() if len(refs) > 1
+    })]
 
 
 def _render_normal_reconciliation_prompt(
@@ -6284,11 +6325,29 @@ def _render_normal_reconciliation_prompt(
             "The same original leaf may enter one node through only one attached child. If two children share a leaf, "
             "keep them out of the same node or split the node without dropping either candidate.\n"
         )
-    return prompt + "\n\nNORMAL_AUTHORING_REVISION: " + revision + "\n" + instruction + json.dumps(
+    if revision == RECONCILIATION_AUTHORING_IDENTITY_V3:
+        instruction += (
+            "Code has checked the original source links for the supplied candidates. "
+            "SOURCE_OVERLAP_GROUPS below lists exact candidate_ref groups sharing an original piece of evidence. "
+            "Each returned node may attach at most one member of each group, regardless of relation. "
+            "Check each group separately; do not combine overlapping groups into a larger prohibition. "
+            "An empty list means no shared-source restrictions within this batch. "
+            "These are structural restrictions only, not evidence that allowed candidates share a meaning. "
+            "Preserve every required finding, using separate nodes where needed. "
+            "Code retains the original source links and independently validates the result; "
+            "you do not need original leaf IDs to apply these supplied restrictions.\n"
+        )
+    result = prompt + "\n\nNORMAL_AUTHORING_REVISION: " + revision + "\n" + instruction + json.dumps(
         _reconciliation_identity_prefixes(kwargs["candidates"]),
         ensure_ascii=False,
         separators=(",", ":"),
     ) + "\n"
+    if revision == RECONCILIATION_AUTHORING_IDENTITY_V3:
+        result += "\nSOURCE_OVERLAP_GROUPS\n" + json.dumps(
+            _reconciliation_source_overlap_groups(kwargs["candidates"]),
+            ensure_ascii=False, separators=(",", ":"),
+        ) + "\n"
+    return result
 
 
 def prepare_reconciliation_stage(
@@ -6493,12 +6552,12 @@ def prepare_reconciliation_stage(
     }
     agreement_origin_rule = bundle.get("method_version") in SEMANTIC_METHODS_V7_PLUS
     # Clarify current authoring without rewriting v11-and-earlier prompt replay.
-    preserve_child_scope = bundle.get("method_version") == METHOD_VERSION_V12
     decision_only = _reconciliation_decision_only(bundle, response_version)
+    preserve_child_scope = decision_only or bundle.get("method_version") == METHOD_VERSION_V12
     identity_namespaces = _identity_authoring_enabled(decision_only, authoring_revision)
     max_batch_candidates = (
         RECONCILIATION_IDENTITY_V2_MAX_BATCH_CANDIDATES
-        if authoring_revision == RECONCILIATION_AUTHORING_IDENTITY_V2
+        if authoring_revision in {RECONCILIATION_AUTHORING_IDENTITY_V2, RECONCILIATION_AUTHORING_IDENTITY_V3}
         else None
     )
     current_emerging_labels = sorted(
@@ -6624,7 +6683,10 @@ def _reconciliation_decision_only(bundle, response_version):
         return bundle.get("method_version") == METHOD_VERSION_V12
     if response_version == RECONCILIATION_RESPONSE_VERSION_V2:
         return False
-    if response_version == RECONCILIATION_RESPONSE_VERSION_V3 and bundle.get("method_version") == METHOD_VERSION_V12:
+    # An explicit decision-authoring request can reuse verified v7 evidence.
+    # This changes representation, not its extraction/verification method or
+    # historical default authoring. Never translate a failed stored v2 answer.
+    if response_version == RECONCILIATION_RESPONSE_VERSION_V3 and bundle.get("method_version") in {METHOD_VERSION_V7, METHOD_VERSION_V12}:
         return True
     raise SemanticIntegrationError("unsupported reconciliation authoring response version")
 
@@ -6680,7 +6742,7 @@ def prepare_reconciliation_prompts(bundle, stage, *, response_version=None, auth
     batches = stage["batches"]
     evidence_index = _unit_index(bundle)
     compact_lineage = bundle.get("schema_version") in {BUNDLE_VERSION_V4, BUNDLE_VERSION_V5}
-    preserve_child_scope = bundle.get("method_version") == METHOD_VERSION_V12
+    preserve_child_scope = decision_only or bundle.get("method_version") == METHOD_VERSION_V12
     current_emerging_labels = sorted({label for row in stage["candidates"] for label in row["emerging_axis_labels"]}
         - {label for row in stage["carried_emerging_axis_consolidations"] for label in row["original_labels"]})
     prompts: list[dict[str, Any]] = []
@@ -6973,7 +7035,7 @@ def prepare_reconciliation_repair(
     normal-path provider stage and never mutates the original response.
     """
     validate_reconciliation_stage(bundle, stage, [], require_all=False)
-    if (bundle.get("method_version") != METHOD_VERSION_V12
+    if (bundle.get("method_version") not in {METHOD_VERSION_V7, METHOD_VERSION_V12}
             or response.get("schema_version") != RECONCILIATION_RESPONSE_VERSION_V3
             or response.get("stage_sha256") != stage["stage_sha256"]):
         raise SemanticIntegrationError("local repair requires bound current response v3")
@@ -7424,8 +7486,8 @@ def validate_reconciliation_stage(
             raise SemanticIntegrationError("unknown or duplicate reconciliation batch")
         allowed = set(expected_batches[batch_id]["candidate_refs"])
         if response["schema_version"] == RECONCILIATION_RESPONSE_VERSION_V3:
-            if bundle.get("method_version") != METHOD_VERSION_V12:
-                raise SemanticIntegrationError("decision reconciliation requires current method v12")
+            if bundle.get("method_version") not in {METHOD_VERSION_V7, METHOD_VERSION_V12}:
+                raise SemanticIntegrationError("decision reconciliation requires verified method v7 or current method v12")
             original_labels = level_emerging_labels if batch_id == emerging_axis_owner_batch_id else set()
             response = _assemble_decision_reconciliation(
                 response, stage, expected_batches[batch_id], original_labels, candidate_index, evidence_index)

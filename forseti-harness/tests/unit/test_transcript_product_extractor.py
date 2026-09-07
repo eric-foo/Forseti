@@ -404,3 +404,101 @@ def test_locate_quote_multiple_matches_takes_first_span() -> None:
         {"start_ms": 5000, "end_ms": 6000, "text": "great scent here"},
     ]
     assert locate_quote("great scent here", cues) == (100, 200)
+
+
+def test_parse_reuses_one_cue_scan_for_mentions_and_ratings() -> None:
+    class CountedCues(list):
+        scans = 0
+
+        def __iter__(self):
+            self.scans += 1
+            return super().__iter__()
+
+    cues = CountedCues(_cues())
+    transcript = _transcript(cues=cues)
+    items = [
+        _item(stated_rating={"value": 8, "source_pointer": "8 out of 10" if i % 2 else "9 out of 10"})
+        for i in range(12)
+    ]
+    result = parse_mentions(json.dumps(items), transcript)
+    assert result.rejected == []
+    assert len(result.mentions) == 12
+    for i, mention in enumerate(result.mentions):
+        assert mention.mention_id == f"ANCHOR01:{i}"
+        assert (mention.start_ms, mention.end_ms) == (3000, 6000)
+        assert (mention.stated_rating.value if mention.stated_rating else None) == (8 if i % 2 else None)
+    assert cues.scans == 1
+
+    # Reusing a TranscriptInput across calls must not retain a stale/global index.
+    cues[1]["text"] = "a different observation"
+    later = parse_mentions(json.dumps(items), transcript)
+    assert later.mentions == []
+    assert later.rejected == [
+        {"index": str(i), "reason": "CE9: quote not found in transcript"} for i in range(12)
+    ]
+    assert cues.scans == 2
+
+
+@pytest.mark.parametrize("model_text", ["not json", "{}"])
+def test_parse_invalid_json_precedes_cue_access(model_text: str) -> None:
+    with pytest.raises(ValueError):
+        parse_mentions(model_text, _transcript(cues=[None]))
+
+
+@pytest.mark.parametrize("items", [[], [None, 3, []]])
+def test_parse_without_objects_does_not_access_transcript(items: list) -> None:
+    result = parse_mentions(json.dumps(items), None)
+    assert result.mentions == []
+    assert result.rejected == [
+        {"index": str(i), "reason": "item is not an object"} for i in range(len(items))
+    ]
+
+
+@pytest.mark.parametrize("items", [[], [None, 3, []], [{}, _item(source_pointer=" \t\n")]])
+def test_parse_without_searchable_quotes_does_not_read_cues(items: list) -> None:
+    result = parse_mentions(json.dumps(items), _transcript(cues=[None]))
+    assert result.mentions == []
+    assert result.rejected == [
+        {"index": str(i), "reason": "CE9: quote not found in transcript" if isinstance(item, dict)
+         else "item is not an object"}
+        for i, item in enumerate(items)
+    ]
+
+
+def test_nonempty_quote_still_exposes_malformed_cue() -> None:
+    with pytest.raises(AttributeError):
+        parse_mentions(json.dumps([_item()]), _transcript(cues=[None]))
+    with pytest.raises(AttributeError):
+        locate_quote("a quote", [None])
+    assert locate_quote(" \t", [None]) is None
+
+
+@pytest.mark.parametrize(
+    ("cues", "quote", "expected"),
+    [
+        ([{"start_ms": 10, "end_ms": 20, "text": "BEAST\u00a0mode"},
+          {"text": "\t "},
+          {"start_ms": 30, "end_ms": 40, "text": "compliment getter"},
+          {"start_ms": 50, "end_ms": 60, "text": "beast mode compliment getter"}],
+         " mode\ncompliment ", (10, 40)),
+        ([{"start_ms": "10", "end_ms": "20", "text": 123}], "23", (10, 20)),
+        ([{"start_ms": 10, "end_ms": 20, "text": None}], "None", (10, 20)),
+        ([{"start_ms": "bad", "end_ms": 20, "text": "beast"},
+          {"start_ms": 30, "end_ms": 40, "text": "beast"}], "beast", None),
+        ([{"start_ms": 10, "text": "beast"}], "beast", None),
+        ([{"start_ms": 10, "end_ms": None, "text": "beast"}], "beast", None),
+        ([{"text": " \t"}], "beast", None),
+        ([], "beast", None),
+    ],
+)
+def test_quote_edge_cases_preserve_parse_and_wrapper_results(cues, quote, expected) -> None:
+    assert locate_quote(quote, cues) == expected
+    result = parse_mentions(json.dumps([_item(source_pointer=quote)]), _transcript(cues=cues))
+    if expected is None:
+        assert result.mentions == []
+        assert result.rejected == [{"index": "0", "reason": "CE9: quote not found in transcript"}]
+    else:
+        assert result.rejected == []
+        assert len(result.mentions) == 1
+        assert (result.mentions[0].start_ms, result.mentions[0].end_ms) == expected
+        assert result.mentions[0].source_pointer == quote

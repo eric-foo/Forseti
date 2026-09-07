@@ -140,15 +140,16 @@ POLICY_MODULE_PINS: dict[str, tuple[tuple[str, ...], str]] = {
     ),
     "cleaning/transcript_product_extractor.py": (
         ("EXTRACTOR_RUBRIC_VERSION",),
-        # Import-only transport relocation; output-shaping rubric is unchanged.
-        "45a1878754192b6cab344fc11d74770851e19c49f46741947e7ac3378136054f",
+        # Output-neutral operational timing/usage sidecars; prompt, rubric and derived bytes unchanged.
+        "45b2ec3700c13c61e91cca7f4ed7e3eb73c14f6bd7bc757baf2dacd40f87b8d2",
     ),
     "cleaning/transcript_product_lake.py": (
         ("EXTRACTOR_RUBRIC_VERSION (cleaning/transcript_product_extractor.py)", "PRODUCT_MENTIONS_RECORD_SCHEMA_VERSION (record-shape token; weak-envelope residual closed)"),
         # Output-shaping: the official Silver envelope is retained, while durable
         # record/completion identity now binds the full policy fingerprint; the
         # PRODUCT_MENTIONS_RECORD_SCHEMA_VERSION bump to v2 re-surfaces V1 records.
-        "6885729bc1b5bee6b250ce2d40f4b3bd7ca66e225fbbc6cc3c6c5649dd1afbef",
+        # Output-neutral operational sidecar and marker readback; versions unchanged.
+        "20e83d91cbfdf31469aefc101e3f077c160daa5ad74b94507cc4ab44b52f1297",
     ),
     "ecr/deriver.py": (
         ("ECR_DERIVER_VERSION",),
@@ -309,9 +310,9 @@ POLICY_MODULE_PINS: dict[str, tuple[tuple[str, ...], str]] = {
     ),
     "source_capture/transcript/audio_asr.py": (
         ("transcriber_policy envelope defaults (model/compute/decode params are CLI-enveloped)",),
-        # Pin bumped: added a bounded yt-dlp subprocess timeout (liveness guard). NOT output-shaping
-        # -- only the hang-failure path changes; a successful bestaudio download derives identically.
-        "9e778b107a3e3deec7fee83c0dc06b5cb7dc5a36e71e4d8c48393564abb98b09",
+        # Output-neutral model lifetime change: reuse lazily within each serial batch.
+        # Decode parameters, provenance order, cues, and obligation policy remain unchanged.
+        "8e1e69c4ea624a947d83de78ab350b115e5c80b41063d5a4c1f69607c0370275",
     ),
     "source_capture/transcript/ig_reels_audio_packet.py": (
         ("transcriber_policy envelope (run_asr_transcript_catchup)", "TRANSCRIPT_ASR_RECORD_SCHEMA_VERSION (record-shape token, shared from asr_packet.py; weak-envelope residual closed)"),
@@ -323,7 +324,9 @@ POLICY_MODULE_PINS: dict[str, tuple[tuple[str, ...], str]] = {
         ("EXTRACTOR_RUBRIC_VERSION", "TikTok cue-normalization and packet-obligation policy"),
         # Output-shaping obligation change: record schema version now re-surfaces
         # packets for the envelope migration even when the extraction rubric is unchanged.
-        "054645d4501ed6084197efa3e34620b54dda7bb80e22ab6dda7907e23cc5414e",
+        # Output-neutral: identical acknowledgement handling now uses the shared
+        # consumption helper; namespace, obligation and model policy are unchanged.
+        "dd49b8deb101342017bae17f89bfc684148fe3263706a0bb8e6fa6cf2b93a5fd",
     ),
 }
 

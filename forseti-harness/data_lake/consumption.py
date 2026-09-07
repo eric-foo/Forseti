@@ -51,7 +51,7 @@ from typing import Any, Callable, Iterator, Sequence
 
 from data_lake.canonical_json import canonical_record_bytes
 from data_lake.lane_registry import LANE_ROLES
-from data_lake.root import DataLakeRootUnavailableError, raw_shard
+from data_lake.root import DataLakeRootError, DataLakeRootUnavailableError, raw_shard
 
 ACK_SCHEMA_VERSION = 1
 _ACK_SUBTREE = "acknowledgements"
@@ -338,6 +338,32 @@ class PickupItem:
     fingerprint: str
 
 
+def ack_packet(
+    data_root, item: PickupItem, evidence: list[dict], *, ack_namespace: str
+) -> str:
+    """Record the lane-owned completion fact. A create collision (another completer
+    won the race) is fine when the obligation is now acknowledged; anything else is
+    a real ack failure surfaced as a status."""
+    try:
+        append_ack(
+            data_root,
+            raw_anchor=item.raw_anchor,
+            ack_namespace=ack_namespace,
+            obligation=item.obligation,
+            evidence=evidence,
+        )
+    except DataLakeRootError as exc:
+        if is_acknowledged(
+            data_root,
+            raw_anchor=item.raw_anchor,
+            ack_namespace=ack_namespace,
+            obligation=item.obligation,
+        ):
+            return "acked"
+        return f"ack_failed: {type(exc).__name__}: {exc}"[:200]
+    return "acked"
+
+
 def pickup(
     root,
     *,
@@ -391,7 +417,7 @@ def pickup(
         else:
             first_packet_id = min(scope)
             try:
-                public_entries = root.snapshot_public_availability()
+                public_entries = root.snapshot_public_availability(scope_packet_ids=sorted(scope))
             except Exception as exc:
                 _raise_if_root_unavailable(
                     root, packet_id=first_packet_id, cause=exc
@@ -495,7 +521,7 @@ def reconcile_availability_per_packet(
         if not written_packet_ids:
             return failures
         try:
-            public_entries = root.snapshot_public_availability()
+            public_entries = root.snapshot_public_availability(scope_packet_ids=written_packet_ids)
         except Exception as exc:  # noqa: BLE001 - validation must stay fail-visible
             _raise_if_root_unavailable(
                 root, packet_id=written_packet_ids[0], cause=exc

@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import gc
+import hashlib
 import io
 import json
 import subprocess
 import sys
 import threading
 import time
+import tracemalloc
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -32,11 +35,13 @@ def test_provider_runner_high_only_before_reservation_or_launch(
     root = tmp_path / "attempts"
     argv = ["runner", "--attempt-root", str(root), "--attempt-id", "test-001",
             "--prompt-file", str(prompt), "--output-schema", str(schema),
-            "--worktree", str(tmp_path), "--model", "test-model", "--timeout-seconds", "5"]
+            "--worktree", str(tmp_path), "--model", "test-model", "--timeout-seconds", "5",
+            "--codex-executable", sys.executable]
     if effort is not None:
         argv += ["--reasoning-effort", effort]
     monkeypatch.setattr(sys, "argv", argv)
-    monkeypatch.setattr(run_codex_provider_attempt.shutil, "which", lambda _: "test-codex")
+    monkeypatch.setattr(run_codex_provider_attempt, "_local_codex_check",
+                        lambda *args: SimpleNamespace(returncode=0, stdout="codex-cli 0.153.1\n", stderr=""))
     launches = []
 
     def capture(**kwargs):
@@ -172,23 +177,38 @@ def test_silent_but_healthy_process_is_allowed_to_finish(tmp_path: Path) -> None
     assert result["useful_compute_seconds"] is None
 
 
-def test_timeout_stops_spawned_child_before_it_can_write_later(tmp_path: Path) -> None:
+@pytest.mark.parametrize("cleanup_delay", [0.0, 1.5])
+def test_timeout_stops_spawned_child_before_return(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, cleanup_delay: float,
+) -> None:
     prompt, attempt = _setup(tmp_path)
-    ready, later = tmp_path / "child-ready", tmp_path / "child-later"
+    ready, progress = tmp_path / "child-ready", tmp_path / "child-progress"
     child = (
-        "import time; from pathlib import Path; "
-        f"Path({str(ready)!r}).write_text('ready'); time.sleep(2); "
-        f"Path({str(later)!r}).write_text('still running')"
+        "import os,time; from pathlib import Path; "
+        f"Path({str(ready)!r}).write_text(str(os.getpid())); deadline = time.monotonic() + 15\n"
+        f"with Path({str(progress)!r}).open('ab', buffering=0) as output:\n"
+        " while time.monotonic() < deadline:\n"
+        "  output.write(b'.'); time.sleep(0.02)\n"
     )
     parent = f"import subprocess,time; subprocess.Popen([{sys.executable!r},'-c',{child!r}]); time.sleep(30)"
+    stop = provider_execution._stop_process_tree
+
+    def delayed_stop(process):
+        # Cleanup has its own budget; activity DURING cleanup is not a leak.
+        time.sleep(cleanup_delay)
+        return stop(process)
+
+    monkeypatch.setattr(provider_execution, "_stop_process_tree", delayed_stop)
     result = execute_provider_attempt(
         command=[sys.executable, "-c", parent], prompt_path=prompt,
         attempt_dir=attempt, timeout_seconds=1, stderr_echo=io.BytesIO(),
     )
     assert ready.exists(), "the child must have started, not failed incidentally"
-    assert result["outcome"] == "TIMED_OUT"
-    time.sleep(1.5)
-    assert not later.exists()
+    assert result["outcome"] == "TIMED_OUT" and result["error"] is None
+    settled = progress.read_bytes()
+    assert settled, "the child must have demonstrated activity before cleanup"
+    time.sleep(0.3)
+    assert progress.read_bytes() == settled, "child activity continued after cleanup returned"
 
 
 def test_launch_failure_has_a_durable_receipt(tmp_path: Path) -> None:
@@ -436,3 +456,115 @@ def test_invalid_timeout_is_rejected_before_launch(tmp_path: Path, timeout: floa
         execute_provider_attempt(command=[sys.executable, "-c", "pass"], prompt_path=prompt,
                                  attempt_dir=attempt, timeout_seconds=timeout, stderr_echo=io.BytesIO())
     assert list(attempt.iterdir()) == []
+
+
+@pytest.mark.parametrize("finish_before_poll", [False, True])
+@pytest.mark.parametrize("echo_mode", ["healthy", "broken", "absent"])
+def test_large_stderr_preserves_bytes_counts_and_publication_with_bounded_memory(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, echo_mode: str, finish_before_poll: bool,
+) -> None:
+    prompt, attempt = _setup(tmp_path)
+    block = b"x" * (65536 - 5) + b"retrying sampling request\r\nfalling back to HTTP\xff\n"
+    source = tmp_path / "stderr-block"
+    source.write_bytes(block)
+    expected = hashlib.sha256()
+    for _ in range(384):
+        expected.update(block)
+
+    class CountingEcho:
+        def __init__(self):
+            self.digest, self.byte_count, self.largest_write = hashlib.sha256(), 0, 0
+
+        def write(self, chunk):
+            self.digest.update(chunk)
+            self.byte_count += len(chunk)
+            self.largest_write = max(self.largest_write, len(chunk))
+            return len(chunk)
+
+        def flush(self):
+            pass
+
+    sink = CountingEcho()
+    echo = sink if echo_mode == "healthy" else _BrokenEcho() if echo_mode == "broken" else None
+    if echo_mode == "absent":
+        monkeypatch.setattr(provider_execution.sys, "stderr", None)
+    if finish_before_poll:
+        launch = provider_execution.subprocess.Popen
+
+        def finished_process(*args, **kwargs):
+            process = launch(*args, **kwargs)
+            process.wait(timeout=10)
+            return process
+
+        monkeypatch.setattr(provider_execution.subprocess, "Popen", finished_process)
+    script = _response_script(attempt) + (
+        f"block=Path({str(source)!r}).read_bytes(); "
+        "[sys.stderr.buffer.write(block) for _ in range(384)]"
+    )
+    gc.collect()
+    tracemalloc.start()
+    try:
+        result = execute_provider_attempt(
+            command=[sys.executable, "-c", script], prompt_path=prompt,
+            attempt_dir=attempt, timeout_seconds=15, stderr_echo=echo,
+        )
+        _, peak = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+    print(f"stderr dogfood: mode={echo_mode}, early_exit={finish_before_poll}, peak={peak}, max_echo_write={sink.largest_write}")
+    assert peak < 2 * 1024 * 1024, "stderr handling retained the full log"
+    assert result["outcome"] == "PROCESS_COMPLETED"
+    assert result["usage"] == USAGE
+    assert result["observed_retry_events"] == 384
+    assert result["observed_transport_fallback_events"] == 384
+    assert result["stderr_sha256"] == expected.hexdigest()
+    assert (attempt / "stderr.log").stat().st_size == len(block) * 384
+    assert result["stderr_echo_status"] == {"healthy": "MIRRORED", "broken": "FAILED", "absent": "UNAVAILABLE"}[echo_mode]
+    if echo_mode == "healthy":
+        assert sink.byte_count == len(block) * 384
+        assert sink.digest.hexdigest() == expected.hexdigest()
+        assert sink.largest_write <= 65536
+    _publish(attempt, tmp_path)
+    assert json.loads((tmp_path / "canonical" / "answer.json").read_text()) == {"answer": 42}
+
+
+def test_stderr_backlog_yields_to_deadline_then_finishes_mirroring(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    prompt, attempt = _setup(tmp_path)
+    ready = tmp_path / "log-ready"
+
+    class SlowFirstWrite:
+        byte_count = 0
+
+        def write(self, chunk):
+            if not self.byte_count:
+                time.sleep(0.25)
+            self.byte_count += len(chunk)
+            return len(chunk)
+
+        def flush(self):
+            pass
+
+    sink, at_stop = SlowFirstWrite(), {}
+    stop = provider_execution._stop_process_tree
+
+    def observe_stop(process):
+        at_stop["mirrored"] = sink.byte_count
+        at_stop["log_bytes"] = (attempt / "stderr.log").stat().st_size
+        return stop(process)
+
+    monkeypatch.setattr(provider_execution, "_stop_process_tree", observe_stop)
+    script = (
+        "import sys,time; from pathlib import Path; "
+        "sys.stderr.buffer.write(b'x' * (8 * 1024 * 1024)); sys.stderr.buffer.flush(); "
+        f"Path({str(ready)!r}).touch(); time.sleep(30)"
+    )
+    result = execute_provider_attempt(
+        command=[sys.executable, "-c", script], prompt_path=prompt,
+        attempt_dir=attempt, timeout_seconds=0.3, stderr_echo=sink,
+    )
+    assert ready.exists(), "exercise a real backlog before the timeout"
+    assert result["outcome"] == "TIMED_OUT" and result["error"] is None
+    assert 0 < at_stop["mirrored"] < at_stop["log_bytes"]
+    assert sink.byte_count == (attempt / "stderr.log").stat().st_size == 8 * 1024 * 1024

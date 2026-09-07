@@ -33,11 +33,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
 import os
 import re
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath, PureWindowsPath
-from typing import Any
+from typing import Any, Sequence
 
 from harness_utils import generate_ulid, hash_file, utc_now_z
 
@@ -387,6 +388,39 @@ class LoadedRawPacket:
     container: Path
     manifest: dict[str, Any]
     bodies: dict[str, bytes]
+
+
+_TOMBSTONE_CACHE_MAX_BYTES = 8 * 1024 * 1024
+
+
+class _TombstoneAnchorCache(dict[str, LoadedRawPacket]):
+    """Keep at most one small anchor; target packets are never retained."""
+    def __init__(self, anchor: str):
+        super().__init__()
+        self.anchor = anchor
+
+    def __setitem__(self, packet_id: str, loaded: LoadedRawPacket) -> None:
+        if packet_id != self.anchor:
+            return
+        # Charge bodies AND manifest containers/strings. Stop counting as soon
+        # as the budget is exceeded; an oversized anchor simply stays uncached.
+        remaining = _TOMBSTONE_CACHE_MAX_BYTES - sys.getsizeof(loaded) - sys.getsizeof(loaded.__dict__)
+        pending = [loaded.manifest, loaded.bodies, str(loaded.container)]
+        seen: set[int] = set()
+        while pending:
+            value = pending.pop()
+            if id(value) in seen:
+                continue
+            seen.add(id(value))
+            remaining -= sys.getsizeof(value)
+            if remaining < 0:
+                return
+            if isinstance(value, dict):
+                pending.extend(value.keys())
+                pending.extend(value.values())
+            elif isinstance(value, (list, tuple)):
+                pending.extend(value)
+        super().__setitem__(packet_id, loaded)
 
 
 class DataLakeRoot:
@@ -932,6 +966,7 @@ class DataLakeRoot:
                     raise DataLakeRootError(
                         f"raw packet tombstone lane is under the wrong anchor shard: {lane_dir}"
                     )
+                anchor_cache = _TombstoneAnchorCache(anchor)
                 for record_path in sorted(lane_dir.iterdir()):
                     if not record_path.is_file() or record_path.suffix != ".json":
                         raise DataLakeRootError(
@@ -941,7 +976,8 @@ class DataLakeRoot:
                         record = json.loads(record_path.read_text(encoding="utf-8"))
                         validate_silver_vault_record_for_write(record)
                         verify_silver_vault_record_sources(
-                            self, record, record_path=record_path
+                            self, record, record_path=record_path,
+                            verification_cache={"raw_packets": anchor_cache},
                         )
                     except (OSError, ValueError, SilverRecordError) as exc:
                         raise DataLakeRootError(
@@ -1183,20 +1219,43 @@ class DataLakeRoot:
                     packet_ids.append(packet_id)
         return sorted(packet_ids)
 
-    def snapshot_public_availability(self) -> list[dict]:
+    def snapshot_public_availability(
+        self, *, scope_packet_ids: Sequence[str] | None = None
+    ) -> list[dict]:
         """Read public availability entries once in stable by-key order.
 
         Root identity and tombstones are each checked once, then every
-        availability JSON entry is read at most once. Callers can validate and
-        filter the returned snapshot without racing a second index scan.
+        selected availability JSON entry is read at most once. An explicit
+        scope reads only those keys, without enumerating the global index.
+        Tombstone validation remains global and fail-closed for either mode.
         """
+        selected = None if scope_packet_ids is None else sorted(set(scope_packet_ids))
+        if selected is not None:
+            for packet_id in selected:
+                _validate_packet_id(packet_id)
         tombstoned = self.tombstoned_packet_ids()
         avail = self._path / "indexes" / "availability"
         if not avail.is_dir():
             return []
+        entry_files = (
+            sorted(avail.glob("*.json"))
+            if selected is None
+            else [avail / f"{packet_id}.json" for packet_id in selected]
+        )
         entries: list[dict] = []
-        for entry_file in sorted(avail.glob("*.json")):
-            entry = json.loads(entry_file.read_text(encoding="utf-8"))
+        for entry_file in entry_files:
+            try:
+                entry = json.loads(entry_file.read_text(encoding="utf-8"))
+            except FileNotFoundError:
+                if selected is None:
+                    raise
+                # Callers compare returned keys with their required scope and
+                # report missing entries; other I/O and parse failures propagate.
+                continue
+            if selected is not None and (
+                not isinstance(entry, dict) or entry.get("packet_id") != entry_file.stem
+            ):
+                raise DataLakeRootError(f"availability key mismatch: {entry_file}")
             if entry.get("packet_id") not in tombstoned:
                 entries.append(entry)
         return entries

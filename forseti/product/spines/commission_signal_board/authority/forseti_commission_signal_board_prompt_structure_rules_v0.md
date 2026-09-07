@@ -290,7 +290,9 @@ delegated-review convention. This requirement is deliberately bound to the
 broad consumer-brand completion profile, whose citation surface motivated it;
 extending it to another completion profile is an owner decision taken when
 that profile first carries decision-bearing source-native citations. The reviewer reads every
-`decision_bearing_support_ref` in its source-native body and verifies that the
+source-bearing reference attached to each final proposition, including support,
+counter, adjacent, behavior and engagement references and their `semantic_relations`
+entries, as well as every `decision_bearing_support_ref`, in the preserved source body and verifies that the
 subject product or brand is locally anchored, the cited body supports the
 assigned axis and role, alternative-product returns/repurchases/preferences are
 not attributed to the subject, and the named counterevidence genuinely tests
@@ -304,6 +306,26 @@ corpus rereading is not the default. Any bounded patch must be revalidated
 against the acquisition seal and separately adjudicated by the Chief Architect.
 This semantic review catches valid-but-misattributed citations that mechanical
 shape and hash checks cannot.
+
+Route `1.7.1` binds this same review to the final files. The seal's
+`evidence_depth_ledger.final_source_review` pins the existing review/adjudication
+Markdown by `locator` and `sha256`; the review stays outside the ledger it hashes.
+That Markdown contains exactly one `final_semantic_source_review` YAML block:
+`schema_version: acquisition_final_semantic_source_review_v1`,
+`reviewed_ledger_sha256`, `reviewed_view_sha256` (file hashes), `corpus_sha256`,
+`review_status: complete`, `adjudication_status: accepted`, and
+`unresolved_material_findings: []`. The review's scope is the final-proposition
+and decision-reference reading obligation above, plus every search
+exclusion's decision relevance and whether the credited continuations actually
+test the named axes. No coverage list is transcribed into the block: a list
+generated from the same files the checker reads would only restate the
+checker's own output, and copying it is not evidence that anyone read a source.
+A source mismatch or material gap returns to the collector; changed inputs
+require review/adjudication of the changed scope and fresh final bindings. A
+review of an earlier file cannot clear the final seal. The recorded hashes are
+the reviewer's own statement of what it read; the check proves that statement
+names the sealed inputs, never that the reading happened or that its
+conclusions are true.
 
 The same semantic pass scans decision-bearing axis labels and prose for a
 price, affordability, usable-quantity, or value comparison even when the
@@ -462,6 +484,27 @@ and add no material addition affecting that axis. The two families may still add
 usable threads. Each batch declares `new_usable_reddit_threads`, and the
 validator recomputes that count against captured candidates. "Later" and reset
 ordering use observed job execution time, not merely when a family was planned.
+
+From Route `1.7.1` on, every credited discovery job names
+`execution_packet_artifact_id` in the existing artifact registry. It resolves
+to a preserved Source Capture Packet `manifest.json` with known acquisition
+time and verified raw files. The packet must own every cited discovery output;
+a derived coding file cannot stand in for a later observation. The validator
+uses the packet's `timing.capture_time.value` and requires ledger `executed_at`
+to agree. Reusing earlier material remains valid evidence reuse but earns no
+later-search credit. A genuine later capture may return identical content. This
+proves only that a real capture happened when the ledger says it did; it never
+establishes that the continuation queried, reached, or tested every open axis,
+which stays with the closure test and the final semantic review.
+
+The collection coordinator owns the stopping decision and its proof.
+Consolidation supplies what the evidence means and which gaps could change the
+answer. Collection therefore alternates acquisition with provisional source-based
+interpretation; it does not wait for a final synthesis to learn whether to stop.
+If an interpretation confuses another product, purchase intention, or an entire
+thread with actual subject-product experience, correct that interpretation
+before choosing further searches. After any material addition, refresh the
+affected interpretation and restart its two-family stopping test.
 
 Do not perform final semantic adjudication while acquisition is still capable
 of changing the corpus. Use the provisional axis inventory and a lightweight

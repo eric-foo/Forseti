@@ -33,20 +33,42 @@ Current method-v12 semantic reconciliation preparation writes each prompt's
 candidate decisions and original-label assignments. The model chooses nodes,
 relations and wording; code carries child-owned identities, literal conditions,
 emerging labels, polarity composition and lineage. Use that exact sidecar.
+Current prompts also expose source-linked conditions when a candidate's sources
+have different condition sets, including empty sets. The combined `conditions`
+list does not establish that its details co-occur: shared wording must preserve
+each source's scope. Ordinary candidates omit this extra lineage. This changes
+newly rendered requests; it does not repair or replace already accepted answers.
 Native validation rejects missing, foreign, duplicate or prohibited decisions;
 a schema pass is not semantic proof. `prepare-reconciliation-level
 --existing-stage <stage.json>` resumes unchanged stage membership. Explicit
 `--response-version semantic_evidence_reconciliation_response_v2` preserves
 historical preparation, and stored v2 responses remain consumable unchanged.
+For a verified method-v7 continuation, explicitly select
+`--response-version semantic_evidence_reconciliation_response_v3` on a fresh
+stage to use the same decision compiler and source-role constraints. This
+retains method v7 and its verified inputs; the older-method default and stored
+legacy responses keep their original replay. Explicit v3 also defaults to
+`exact_identity_namespaces_v3`. Never rebind an old answer to this new request.
+The local reconciliation repair route also accepts these verified method-v7
+response-v3 answers, preserving the original method and stage. Historical
+response-v2 answers retain their existing replay and are not admitted as v3 repairs.
 Normal method-v12 response-v3 requests default to
-`--authoring-revision exact_identity_namespaces_v2`: opaque node-key prefixes
+`--authoring-revision exact_identity_namespaces_v3`: opaque node-key prefixes
 separate exact subject/comparator/version identity classes without choosing
-meanings, the existing repeated-leaf rule is stated before generation, and fresh
+meanings, and code supplies exact groups of candidates sharing original evidence.
+Each output node may use at most one member of each group; overlapping groups
+do not prohibit unrelated combinations. An empty list means no shared-source
+restrictions in that batch. The model need not reconstruct hidden source IDs;
+native validation still rejects duplicate source paths. These restrictions are
+included in the rendered byte budget. Fresh
 current stages cap each batch at 96 candidates as well as the prompt-byte limit.
-Use `--authoring-revision exact_identity_namespaces_v1` for prior namespaced
+Use `--authoring-revision exact_identity_namespaces_v2` for prior capped requests,
+`--authoring-revision exact_identity_namespaces_v1` for prior namespaced
 packing or `--authoring-revision legacy` for older normal v3 replay.
 Low-level Python preparation retains legacy defaults; current callers select
-`RECONCILIATION_AUTHORING_IDENTITY_V2` explicitly. Definition recovery and local
+`RECONCILIATION_AUTHORING_IDENTITY_V3` explicitly. Preserve completed request and
+response bindings; prepare future work separately under the new revision.
+Definition recovery and local
 repair keep their previously fitting historical requests and existing keys.
 Oversized local repairs try a lossless table layout before enforcing the same
 byte limit; all sources and connected attachments remain present, and the
@@ -66,8 +88,86 @@ history matter, use the shared executor rather than a task-local buffered
 subprocess wrapper. It is usable by any intelligence-cycle stage:
 
 ```powershell
-python runners/run_codex_provider_attempt.py --attempt-root <attempts> --attempt-id <new-id> --prompt-file <prompt.md> --output-schema <schema.json> --worktree <repo> --model <model> --reasoning-effort <effort> --timeout-seconds <seconds>
+python runners/run_codex_provider_attempt.py --codex-executable <absolute-native-codex-path> --require-chatgpt --attempt-root <attempts> --attempt-id <new-id> --prompt-file <prompt.md> --output-schema <schema.json> --worktree <repo> --model <model> --reasoning-effort high --timeout-seconds <seconds>
 ```
+
+For a self-contained job whose required project reads would otherwise trigger
+blocked shell calls, both the attempt and job runners accept repeatable
+`--preload-context <required-instruction-file>` arguments. The selected UTF-8
+files are supplied verbatim as additional developer context and the native
+`shell_tool` feature is disabled for that job. Project instructions remain
+active; select every required source for the bounded task, and report missing
+context rather than manufacturing an answer. Do not use this mode for a task
+that needs further file discovery or shell execution.
+
+For reconciliation, the observed required reads are the worktree's
+`.agents/workflow-overlay/README.md` and
+`forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`.
+Pass both explicitly. The launcher reads them before generation and records their
+paths, byte hashes, and combined context hash. The job pins that context across
+retries; drift fails before generation, and a reused receipt must carry the same
+context and shell restriction. Context files are checked before launch intent,
+including after a retry delay; drift preserves any existing retry claim without
+creating a false unknown-execution record. Restore the bound files to resume.
+Changing context or launcher code creates a different job binding: use a new job
+identity for new work, and preserve completed results under their original
+bindings rather than relaunching them to update instructions. Disabling
+`shell_tool` does not assert that every other tool feature is unavailable.
+Existing prompt/schema bytes and default launches
+are unchanged. Additional context consumes input tokens (about 20 KB for these
+two files); measure whole-job usage and denied-tool events rather than assuming
+a saving. This opt-in removes repeated blocked reads, not the underlying host
+policy. API authentication and spend boundaries are unchanged.
+
+Select a compatible installed native executable explicitly (`codex.exe` on
+Windows), including after an installation moves during an update. The runner
+never searches PATH, selects a different installation, or upgrades it. Its local
+version check records the version in the existing execution records; a version
+string alone does not establish that the server supports the requested model.
+
+The standing command above requires file-backed ChatGPT sign-in under
+`CODEX_HOME` (default `~/.codex`). It rejects `OPENAI_API_KEY`, `CODEX_API_KEY`,
+`CODEX_ACCESS_TOKEN`, and `OPENAI_BASE_URL` overrides without printing values.
+The selected executable checks `login status` against the same credential store
+and environment used for generation. A nonzero or unrecognized result stops
+before generation; check access in the real execution context before concluding
+that sign-in is missing. Codex prints that verdict on stderr, the same stream it
+uses for its own notices. Only the reproduced stderr notice beginning
+`WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir `
+and ending with a quoted directory is excluded from the authentication verdict.
+Other warnings, unexpected stdout, duplicate or conflicting verdicts, and nonzero
+exits still stop the launch. `login status` has no
+`--ignore-user-config`, so unlike generation it also loads
+`CODEX_HOME/config.toml`; a file the selected build cannot parse stops the launch
+as a reported configuration fault rather than as an authentication result.
+Keyring-only sign-in is not supported by this mode.
+Codex's native `forced_login_method="chatgpt"` restriction also applies during
+generation: if credentials change to another method after the check, Codex exits
+and may clear that mismatching login. The runner does not copy credentials,
+sign in, modify global configuration, or fall back to API billing. ChatGPT
+sign-in uses subscription access; subscription limits and service failures still
+apply ([OpenAI authentication](https://learn.chatgpt.com/docs/auth)). Omitting
+`--require-chatgpt` leaves authentication caller-managed and requires separate
+authorization if the selected route incurs API charges.
+
+Prepare prompt, schema, and attempt files in an ignored workspace run directory
+readable by the account that will execute the command. Avoid sandbox-private
+temporary directories when execution crosses into another permission context.
+The runner opens the actual inputs and creates the actual attempt records before
+generation; access failures stop locally, without changing ACLs or retrying.
+Keep each attempt ID new, including after a local failure reserves a directory.
+
+For a network-restricted agent shell, launch this command through the harness's
+per-operation network approval route. The outer shell controls the provider's
+connection; the child's `--sandbox read-only` restricts model tools and cannot
+grant that connection. Do not change global sandbox settings to make a run work.
+Use the first required batch to confirm a new installation or execution context
+before expanding to authorized parallel batches; no extra model diagnostic or
+per-batch network probe is required. Permission denials, model/client
+incompatibility, and provider failures retain their real errors in the attempt
+logs. Local version/login checks precede the generation budget, have ten-second
+limits, and make no model call;
+each attempt pays only these local checks and the existing file I/O.
 
 The timeout is one finite, workload-appropriate budget for the entire attempt;
 reconnects and additional client turns do not reset it. Logs go directly to
@@ -75,6 +175,11 @@ reconnects and additional client turns do not reset it. Logs go directly to
 The mirror is best effort over an authoritative on-disk log: a console that is
 absent or breaks mid-attempt is recorded in `stderr_echo_status` and never ends
 the attempt or suppresses its receipt.
+File hashing and stderr mirroring/counting use bounded buffers while preserving
+the complete on-disk logs and exact receipt counts. Execution-time usage accounting
+streams the event history, with memory proportional to the largest event line.
+Publication retains its immutable full snapshot; this is not an overall
+attempt-memory limit.
 An idle process is not evidence of useful model work. On timeout the executor
 stops its local process tree and preserves the attempt; a stop that fails is
 recorded in `error` and does not relabel the timeout. It cannot prove remote
@@ -128,6 +233,54 @@ original attempt remains `TIMED_OUT`, and the command makes no provider call.
 The shared runtime lives in `provider_execution.py`; immutable storage and
 publication remain in `provider_attempts.py`. This is not a mandatory wrapper
 around interactive conversations, capture tools, or unrelated processes.
+
+For a standing run that needs bounded automatic recovery, use the job entry
+point over that same executor:
+
+```powershell
+python runners/run_codex_provider_job.py --job-dir <run/jobs/unique-batch-id> --retry-budget-dir <run/retry-budget> --run-retry-limit <total-extra-attempts> --attempt-root <run/attempts> --prompt-file <prompt.md> --output-schema <schema.json> --worktree <repo> --codex-executable <absolute-native-codex-path> --model <model> --reasoning-effort high --timeout-seconds <seconds>
+```
+
+This entry point always requires ChatGPT authentication. Each job freezes its
+input hashes, executable and executor hashes, model, timeout, paths and retry
+policy. Repeating the same command reuses a completed immutable attempt without
+generation; the stage validator and publisher must still accept that answer.
+Jobs sharing a run use the same retry-budget directory and limit. Default
+`--max-retries 1` allows one extra attempt after a ten-second delay, only for
+recognized capacity or connection-reset diagnostics. `--retry-delay-seconds`
+sets a finite delay up to sixty seconds. Concurrent budget claims serialize;
+concurrent execution of the same job fails locally.
+
+An authentication error, changed input, unknown timeout, unknown launch outcome,
+exhausted budget, or semantic rejection remains visible and does not trigger
+automatic generation. A crash after launch intent without a terminal receipt
+requires inspection of the preserved attempt; restarting cannot prove that
+remote work stopped. A recorded launch intent whose attempt directory is missing
+is reported separately. Absence does not prove that no work started; preserve
+the intent and inspect launch diagnostics before deciding how to recover.
+Automatic relaunch remains refused, and an existing retry claim is not returned.
+Retry claims are retained even if usage is missing or a
+subsequent launch fails. Recovery neither edits answers nor changes model,
+credentials or evidence. Completed answer or turn events suppress fresh retries
+even when a timed-out process logged a reconnect warning; use the existing
+validator-owned recovery route where applicable. Token and latency accounting
+stays in the executor's
+per-attempt receipts; missing usage is unknown, and subscription usage is not an
+inferred dollar charge. The recurring cost is local hash/lock/receipt work plus
+only the explicitly budgeted extra provider attempts.
+
+Complete frontier point readers use named relation and preselection-confirmation
+batches when necessary. Both preparation commands accept `--max-request-bytes`
+(CLI default 50000), measured as UTF-8 prompt plus compact JSON response schema,
+and `--batch-size` bounds the required row decisions. Preparation partitions
+contiguous complete inventories; an indivisible oversized row fails
+`request_capacity` before generation. This is a request-size bound, not a claim
+about hidden provider context or response tokens. Literal candidate IDs and
+reasons survive assembly. A source-bound complete point may exceed the ordinary
+configurable origin ceiling only at its exact derived origin count; arbitrary
+selections cannot borrow that exception. Use both bounded preparation stages,
+then `finalize-batched-preselection-relation-confirmation-full-source` to validate
+the complete response set and copy full bound source bodies into the reader.
 
 ## Screening Reads
 
@@ -480,11 +633,11 @@ discipline, not a CI gate, and sets no test-count target.
 
 ## Commands
 
-Run the full suite (parallel; `--dist=loadfile` matches CI's scheduling so a
-file's tests stay on one worker):
+Run the full suite with the committed dependency lock and test group (parallel;
+`--dist=loadfile` matches CI's scheduling so a file's tests stay on one worker):
 
 ```powershell
-python -m pytest -n auto --dist=loadfile
+uv run --locked --group test python -m pytest -n auto --dist=loadfile
 ```
 
 Default validation for a change is the affected test files plus required CI for
@@ -556,3 +709,44 @@ If a generated score already exists for the same `(case_id, run_id,
 contestant_id)` tuple, the runner refuses to write another score unless
 `--allow-duplicate-score` is passed. Commit generated scores only under a
 separate fixture-admission decision.
+
+
+### Compact Phase A acquisition status
+
+For routine operator or agent checks, use:
+
+```powershell
+python runners/run_phase_a_customer_evidence_pipeline.py status --run-root <run-root> --summary
+```
+
+`--summary` is available on every pipeline subcommand and preserves its exit code.
+It reports acquisition status, candidate and queue counts, circuits, active work,
+and paths to full details. Omit it for the existing full JSON response. Acquisition
+completion does not imply evidence judgment or research readiness. `updated_at`
+records the last state write; unchanged idle polls do not refresh it as a heartbeat.
+Idle Reddit workers still read state and queue files, with a minimum 250 ms poll interval.
+
+
+Each Google or Reddit capture has a 300-second outer deadline, including runner
+startup. This backstop allows headroom over the existing navigation, startup,
+settle, and scroll budgets; it is not a new retry budget. An optional finite,
+positive `capture_timeout_seconds` in each route config overrides it (set before
+initialization, since running configurations are hash-bound). Operator interruption
+cancels owned capture processes and waits for the workers before releasing the run
+lock. Retained Chrome is outside the capture process group/job and stays open.
+Timeouts and uncertain cleanup block the run and retain in-flight claims for the
+existing resume inspection; they do not silently retry or credit partial output.
+Capture output goes to temporary files; only the last 2,000 bytes of each stream
+are returned. This bounds the returned output, but temporary disk usage has no
+byte cap before the capture exits or reaches its deadline.
+
+
+### Tombstone verification cost
+
+Public lake reads still inspect the derived tree for tombstones. Within each
+anchor, verification can reuse one raw packet under an 8 MiB retained-object
+budget (body bytes plus manifest objects), not a whole-process memory limit;
+target packets and oversized anchors remain uncached. Every public read creates
+fresh caches and still validates all encountered records. This reduces repeated
+raw reads, not the global directory walk, and does not provide an atomic snapshot
+against concurrent physical tampering.

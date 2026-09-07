@@ -59,7 +59,7 @@ from source_capture.ig_reels_grid_capture import (
     IgReelsGridCaptureSuccess,
     fetch_ig_reels_grid_capture,
 )
-from source_capture.transcript.audio_asr import transcribe_audio
+from source_capture.transcript.audio_asr import AudioTranscriber
 
 DEFAULT_TOP_N = 3
 DEFAULT_MODEL = "small"
@@ -308,7 +308,7 @@ def scan_creator_reels_ranked(
     return rank_reels_by_engagement(joined_rows), capture
 
 
-def _make_capture_fn(scratch: str, *, model: str) -> CaptureFn:
+def _make_capture_fn(scratch: str, *, transcribe_fn: Callable) -> CaptureFn:
     """The real per-reel deep-capture: ONE render -> comments + transcript, reusing
     the deep-capture runner's render/download legs and the agnostic transcriber."""
 
@@ -317,7 +317,7 @@ def _make_capture_fn(scratch: str, *, model: str) -> CaptureFn:
             shortcode,
             render_fn=_render,
             download_fn=_make_downloader(scratch),
-            transcribe_fn=lambda path: transcribe_audio(path, model_name=model),
+            transcribe_fn=transcribe_fn,
         )
 
     return _capture
@@ -385,11 +385,14 @@ def run_creator_deep_capture(
             persist_fn=resolved_persist_fn,
         )
 
-    with tempfile.TemporaryDirectory(prefix="forseti_creator_deepcap_") as scratch:
+    with (
+        tempfile.TemporaryDirectory(prefix="forseti_creator_deepcap_") as scratch,
+        AudioTranscriber(model_name=model) as transcribe_fn,
+    ):
         captured = select_and_capture_top_reels(
             ranked,
             top_n=top_n,
-            capture_fn=_make_capture_fn(scratch, model=model),
+            capture_fn=_make_capture_fn(scratch, transcribe_fn=transcribe_fn),
             persist_fn=resolved_persist_fn,
         )
     return ranked, captured
@@ -441,11 +444,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             result, data_root=resolved_data_root
         )
 
-    with tempfile.TemporaryDirectory(prefix="forseti_creator_deepcap_") as scratch:
+    with (
+        tempfile.TemporaryDirectory(prefix="forseti_creator_deepcap_") as scratch,
+        AudioTranscriber(model_name=args.model) as transcribe_fn,
+    ):
         captured = select_and_capture_top_reels(
             ranked,
             top_n=args.top_n,
-            capture_fn=_make_capture_fn(scratch, model=args.model),
+            capture_fn=_make_capture_fn(scratch, transcribe_fn=transcribe_fn),
             persist_fn=persist_fn,
         )
         # capture (render + transcription) happens inside this block, while the temp audio still exists.

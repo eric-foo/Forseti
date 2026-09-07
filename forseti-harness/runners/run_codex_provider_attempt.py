@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
-import shutil
+import os
+import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -17,6 +20,121 @@ from provider_attempts import reserve_provider_attempt  # noqa: E402
 from provider_execution import execute_provider_attempt  # noqa: E402
 
 
+# These override the sign-in or provider route independently of user config.
+# Never log their values or silently remove them and change the caller's intent.
+AUTH_ROUTE_OVERRIDES = (
+    "OPENAI_API_KEY", "CODEX_API_KEY", "CODEX_ACCESS_TOKEN", "OPENAI_BASE_URL",
+)
+CHATGPT_CONFIG = ("cli_auth_credentials_store=\"file\"", "model_provider=\"openai\"")
+# Native marker for a config-load fault; matched, never echoed, since the text
+# quotes the user's configuration file.
+CONFIG_LOAD_FAILURE = "Error loading config"
+
+
+def preloaded_context(paths: list[Path]) -> tuple[str, list[dict[str, str]]]:
+    """Load caller-selected authority verbatim, never discover or summarize it."""
+    sections, manifest = [], []
+    for source in paths:
+        path = source.resolve(strict=True)
+        raw = path.read_bytes()
+        value = raw.decode("utf-8")
+        if not value.strip() or "\0" in value:
+            raise ValueError("preloaded context must be nonempty UTF-8 text without NUL")
+        record = {"path": str(path), "sha256": hashlib.sha256(raw).hexdigest()}
+        if record in manifest:
+            raise ValueError("duplicate preloaded context path")
+        manifest.append(record)
+        sections.append(f"SOURCE {path}\nSHA256 {record['sha256']}\n{value}\nEND SOURCE\n")
+    if not sections:
+        return "", []
+    return (
+        "The launcher has supplied the following required task-context files in full. "
+        "Read and apply them here; their presence satisfies reading these exact files. "
+        "Project instructions still apply. This job uses only the supplied request and "
+        "context. The launcher disables the shell_tool feature. Do not invoke tools "
+        "to reread the same files "
+        "or delegate this job. If another required source is missing, report that gap "
+        "rather than inventing its contents or claiming completion.\n\n" + "\n".join(sections),
+        manifest,
+    )
+# Only this reproduced stderr notice is unrelated to authentication. A generic
+# "proceeding" warning is not evidence that its remaining text is harmless.
+TEMP_ALIAS_NOTICE_PREFIX = (
+    "WARNING: proceeding, even though we could not create PATH aliases: "
+    "Refusing to create helper binaries under temporary dir "
+)
+
+
+def _local_codex_check(executable: str, arguments: list[str], env: dict[str, str]) -> subprocess.CompletedProcess[str]:
+    # No prompt or model call. Bound diagnostics independently of generation.
+    try:
+        return subprocess.run(
+            [executable, *arguments], env=env, stdin=subprocess.DEVNULL,
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            timeout=10, check=False,
+        )
+    except subprocess.TimeoutExpired as exc:
+        # This exception carries captured native output, which can quote credentials.
+        raise ValueError(f"Codex local check failed ({type(exc).__name__}); check the selected installation and execution permissions") from None
+    except OSError as exc:
+        # Preserve OS fields, not arbitrary exception args or captured child output.
+        detail = type(exc).__name__
+        code = exc.winerror if getattr(exc, "winerror", None) else exc.errno
+        if code is not None:
+            detail += f" {code}"
+        if exc.strerror:
+            detail += f": {exc.strerror}"
+        raise ValueError(f"Codex local check failed ({detail}); check the selected installation and execution permissions") from None
+
+
+def _auth_verdict(stdout: str, stderr: str) -> str:
+    """Remove only the reproduced temporary-directory notice from stderr.
+
+    Keep stream boundaries, all other nonempty lines, and duplicate verdicts;
+    the caller still requires exit zero and exactly one ChatGPT verdict.
+    """
+    lines = [line.strip() for line in stdout.splitlines()]
+    for raw_line in stderr.splitlines():
+        line = raw_line.strip()
+        if not re.fullmatch(re.escape(TEMP_ALIAS_NOTICE_PREFIX) + r'"[^"\r\n]+"', line):
+            lines.append(line)
+    return "\n".join(line for line in lines if line)
+
+
+def _auth_failure_diagnostic(status: subprocess.CompletedProcess[str]) -> dict:
+    """Explain a refused local check without copying credential-bearing output.
+
+    The job caller already preserves stderr in its launch log. Keep stream and
+    verdict facts there before argparse replaces native output with a generic
+    error. Unknown lines remain opaque fingerprints, never an auth allowlist.
+    """
+    observed = _auth_verdict(status.stdout, status.stderr)
+    lines = observed.splitlines()
+    verdicts = lines.count("Logged in using ChatGPT")
+    if CONFIG_LOAD_FAILURE in observed:
+        reason = "configuration_load_failed"
+    elif status.returncode:
+        reason = "local_check_nonzero_exit"
+    elif not verdicts:
+        reason = "chatgpt_verdict_missing"
+    elif verdicts != 1:
+        reason = "chatgpt_verdict_ambiguous"
+    else:
+        reason = "unexpected_output_with_chatgpt_verdict"
+    streams = {}
+    for name, raw in (("stdout", status.stdout), ("stderr", status.stderr)):
+        stream_lines = [line.strip() for line in raw.splitlines() if line.strip()]
+        streams[name] = {
+            "chatgpt_verdict_count": stream_lines.count("Logged in using ChatGPT"),
+            "not_logged_in_count": stream_lines.count("Not logged in"),
+            "api_key_verdict_count": sum(line.startswith("Logged in using an API key") for line in stream_lines),
+            "other_line_sha256": [hashlib.sha256(line.encode("utf-8")).hexdigest()
+                                  for line in stream_lines if line != "Logged in using ChatGPT"],
+        }
+    return {"reason": reason, "exit_code": status.returncode,
+            "generation_started": False, "streams": streams}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--attempt-root", type=Path, required=True)
@@ -25,6 +143,13 @@ def main() -> int:
     parser.add_argument("--output-schema", type=Path, required=True)
     parser.add_argument("--worktree", type=Path, required=True)
     parser.add_argument("--model", required=True)
+    parser.add_argument("--codex-executable", type=Path, required=True,
+                        help="Absolute path to the selected Codex executable; never search PATH")
+    parser.add_argument("--require-chatgpt", action="store_true",
+                        help="Require file-backed ChatGPT sign-in; reject API or unknown authentication before generation")
+    parser.add_argument("--preload-context", type=Path, action="append", default=[],
+                        help="Supply a required UTF-8 instruction file verbatim; repeat for multiple files. Disables shell_tool for this self-contained job.")
+    parser.add_argument("--expected-context-sha256", help=argparse.SUPPRESS)
     # Owner's standing launch rule; reject before reservation or provider access.
     parser.add_argument("--reasoning-effort", choices=("high",), default="high")
     parser.add_argument("--timeout-seconds", type=float, required=True)
@@ -32,25 +157,88 @@ def main() -> int:
     if not math.isfinite(args.timeout_seconds) or args.timeout_seconds <= 0:
         parser.error("--timeout-seconds must be finite and positive")
     if not args.prompt_file.is_file() or not args.output_schema.is_file() or not args.worktree.is_dir():
-        parser.error("prompt, schema, and worktree must exist")
-    executable = shutil.which("codex")
-    if executable is None:
-        parser.error("codex executable not found")
-    reserved = reserve_provider_attempt(attempt_root=args.attempt_root, attempt_id=args.attempt_id)
+        parser.error("prompt/schema must be accessible files and worktree an accessible directory")
+    if not args.codex_executable.is_absolute() or not args.codex_executable.is_file():
+        parser.error("--codex-executable must name an existing absolute executable path; no PATH fallback")
+    executable = str(args.codex_executable.resolve())
+    # Windows batch shims introduce an extra shell and installation selection.
+    # Judge the path that will actually run, not the one named on the command line.
+    if Path(executable).suffix.lower() in (".cmd", ".bat"):
+        parser.error("--codex-executable must select the native executable, not a .cmd/.bat shim")
+    for label, source in (("prompt", args.prompt_file), ("schema", args.output_schema)):
+        try:
+            with source.open("rb") as handle:
+                handle.read(1)
+        except OSError:
+            parser.error(f"{label} is unreadable in this execution context; use accessible run files")
+    try:
+        context, context_files = preloaded_context(args.preload_context)
+    except (OSError, ValueError) as exc:
+        parser.error(f"cannot preload task context ({type(exc).__name__}); no generation launched")
+    context_sha = hashlib.sha256(context.encode("utf-8")).hexdigest() if context else None
+    if args.expected_context_sha256 and args.expected_context_sha256 != context_sha:
+        parser.error("preloaded task context changed; no generation launched")
+    env = dict(os.environ)
+    config: list[str] = []
+    metadata = {"authentication_policy": "chatgpt_only" if args.require_chatgpt else "caller_managed"}
+    if args.require_chatgpt:
+        conflicts = [name for name in AUTH_ROUTE_OVERRIDES if env.get(name)]
+        if conflicts:
+            parser.error("subscription-only launch rejects credential/endpoint overrides: " + ", ".join(conflicts))
+        # Pin the same store and home for the read-only check and execution.
+        env["CODEX_HOME"] = str(Path(env.get("CODEX_HOME") or Path.home() / ".codex").resolve())
+        config = [part for value in CHATGPT_CONFIG for part in ("--config", value)]
+    try:
+        version = _local_codex_check(executable, ["--version"], env)
+        if version.returncode or not re.fullmatch(r"codex-cli \d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?", version.stdout.strip()):
+            raise ValueError("selected executable did not report a Codex CLI version")
+        metadata["codex_version"] = version.stdout.strip()
+        if args.require_chatgpt:
+            status = _local_codex_check(executable, [*config, "login", "status"], env)
+            observed = _auth_verdict(status.stdout, status.stderr)
+            if status.returncode or observed != "Logged in using ChatGPT":
+                print("FORSETI_CODEX_AUTH_CHECK_FAILED " + json.dumps(
+                    _auth_failure_diagnostic(status), ensure_ascii=True), file=sys.stderr, flush=True)
+            # `login status` has no --ignore-user-config, so unlike generation it also
+            # loads CODEX_HOME/config.toml. A load failure there reports no auth fact.
+            if CONFIG_LOAD_FAILURE in observed:
+                raise ValueError(f"Codex could not load its configuration under CODEX_HOME={env['CODEX_HOME']}; authentication was not determined (no generation launched)")
+            if status.returncode or observed != "Logged in using ChatGPT":
+                raise ValueError("ChatGPT authentication was not verified; check file-backed sign-in in this execution context (no generation launched)")
+            metadata["authentication_observed"] = "chatgpt"
+            # Enforce again inside Codex to close credential changes after status.
+            config += ["--config", 'forced_login_method="chatgpt"']
+        if context:
+            config += ["--config", "developer_instructions=" + json.dumps(context, ensure_ascii=False),
+                       "--disable", "shell_tool"]
+            metadata["preloaded_context_sha256"] = context_sha
+            metadata["preloaded_context_files"] = json.dumps(context_files, ensure_ascii=False)
+        reserved = reserve_provider_attempt(attempt_root=args.attempt_root, attempt_id=args.attempt_id)
+    except (ValueError, OSError) as exc:
+        parser.error(str(exc))
     attempt_dir = Path(reserved["attempt_dir"])
     command = [
         executable, "exec", "--ephemeral", "--ignore-user-config", "--ignore-rules",
         "--json", "--sandbox", "read-only", "-C", str(args.worktree),
         "--model", args.model, "--config", f'model_reasoning_effort="{args.reasoning_effort}"',
+        *config,
         "--output-schema", str(args.output_schema),
         "--output-last-message", str(attempt_dir / "response.json"), "-",
     ]
     print(f"FORSETI_PROVIDER_ATTEMPT_STARTED {args.attempt_id}; limit={args.timeout_seconds}s", file=sys.stderr, flush=True)
-    receipt = execute_provider_attempt(
-        command=command, prompt_path=args.prompt_file, attempt_dir=attempt_dir,
-        timeout_seconds=args.timeout_seconds, response_schema_path=args.output_schema,
-    )
-    print(json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True))
+    try:
+        receipt = execute_provider_attempt(
+            command=command, prompt_path=args.prompt_file, attempt_dir=attempt_dir,
+            timeout_seconds=args.timeout_seconds, response_schema_path=args.output_schema,
+            env=env, launch_metadata=metadata,
+        )
+    except OSError as exc:
+        parser.error(f"execution file access failed ({type(exc).__name__}: {exc}); inspect preserved attempt {attempt_dir}; do not retry its ID")
+    # The receipt echoes the command, so preloaded context puts BOMs and other
+    # text outside a Windows redirected console's encoding on this stream. JSON
+    # escapes preserve it without discarding a completed attempt's report, and
+    # keep the exit code below distinguishable from a real generation failure.
+    print(json.dumps(receipt, ensure_ascii=True, indent=2, sort_keys=True))
     return 0 if receipt["outcome"] == "PROCESS_COMPLETED" else 1
 
 

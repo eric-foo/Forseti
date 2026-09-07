@@ -2556,7 +2556,7 @@ def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: 
     verification, _ = prepare_row_verification(bundle, raw)
     verified = apply_row_verification(bundle, raw, verification, _row_verification_responses(verification))
     stage, prompts = prepare_reconciliation_stage(bundle, verified,
-        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V2)
+        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3)
     bp, cp = tmp_path / "bundle.json", tmp_path / "compiled.json"
     bp.write_text(json.dumps(bundle), encoding="utf-8")
     cp.write_text(json.dumps(verified), encoding="utf-8")
@@ -2579,6 +2579,79 @@ def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: 
     response[0]["semantic_nodes"][0]["child_relations"][0]["child_ref"] = "foreign::meaning"
     with pytest.raises(SemanticIntegrationError, match="unknown, duplicate, or invalid child"):
         validate_reconciliation_stage(bundle, stage, response)
+
+
+def test_explicit_v7_decision_authoring_preserves_source_and_legacy_replay(tmp_path):
+    bundle = build_bundle(_source_v7(count=2), max_prompt_bytes=30_000)
+    responses = _v5_responses(bundle, detailed_per_batch=2)
+    compiled = validate_batch_responses(bundle, responses)
+    verification, _ = prepare_row_verification(bundle, compiled)
+    verified = apply_row_verification(bundle, compiled, verification, _row_verification_responses(verification))
+    legacy = prepare_reconciliation_stage(bundle, verified)
+    stage, prompts = prepare_reconciliation_stage(bundle, verified,
+        response_version=semantic_module.RECONCILIATION_RESPONSE_VERSION_V3)
+    assert bundle['method_version'] == METHOD_VERSION_V7
+    assert 'TERMINAL_SOURCE_ROLE_COMPETENCE' in prompts[0]['prompt']
+    assert 'source_roles_by_relation' in prompts[0]['prompt']
+    assert prompts[0]['response_schema']['properties']['schema_version']['const'] == semantic_module.RECONCILIATION_RESPONSE_VERSION_V3
+    old = _singleton_reconciliation_responses(stage)[0]
+    owned = {'subject_product_ids', 'comparator_product_ids', 'product_version_ids',
+        'conditions', 'polarity', 'emerging_axis_labels', 'child_relations'}
+    decisions = {ref: {'attachments': [], 'unmerged_reason': None} for ref in stage['batches'][0]['candidate_refs']}
+    for node in old['semantic_nodes']:
+        for relation in node['child_relations']:
+            decisions[relation['child_ref']]['attachments'].append({
+                'semantic_node_key': node['semantic_node_key'], 'relation': relation['relation']})
+    response = dict(schema_version=semantic_module.RECONCILIATION_RESPONSE_VERSION_V3,
+        stage_sha256=stage['stage_sha256'], batch_id=old['batch_id'],
+        semantic_nodes=[{k:v for k,v in node.items() if k not in owned} for node in old['semantic_nodes']],
+        decisions_by_candidate_ref=decisions,
+        emerging_axis_consolidations=[{k:v for k,v in group.items() if k != 'original_labels'} for group in old['emerging_axis_consolidations']],
+        assignments_by_original_label={label:group['candidate_key'] for group in old['emerging_axis_consolidations'] for label in group['original_labels']})
+    result = validate_reconciliation_stage(bundle, stage, [response])
+    assert result == validate_reconciliation_stage(bundle, stage, [old])
+    assert prepare_reconciliation_stage(bundle, verified) == legacy
+    bad = deepcopy(response)
+    del bad['decisions_by_candidate_ref'][next(iter(decisions))]
+    with pytest.raises(SemanticIntegrationError, match='candidate decisions'):
+        validate_reconciliation_stage(bundle, stage, [bad])
+    bad = deepcopy(response)
+    bad['semantic_nodes'][0].update(terminal_proposition=True, claim_kind='observable_fact',
+        causal_ceiling='descriptive_only', opposition_checked=True)
+    with pytest.raises(SemanticIntegrationError, match='incompetent for observable_fact'):
+        validate_reconciliation_stage(bundle, stage, [bad])
+
+    from runners.run_semantic_evidence_integration import (
+        prepare_reconciliation_local_repair, submit_reconciliation_local_repair,
+        _write_json, _load_object)
+    before = deepcopy((bundle, stage, response))
+    key = response['semantic_nodes'][0]['semantic_node_key']
+    nomination = dict(node_keys=[key], reason='Correct the nominated shared claim scope.')
+    for name, value in [('bundle', bundle), ('stage', stage), ('response', response), ('nomination', nomination)]:
+        _write_json(tmp_path / (name + '.json'), value)
+    args = dict(bundle_path=tmp_path / 'bundle.json', stage_path=tmp_path / 'stage.json',
+                failed_response_path=tmp_path / 'response.json')
+    prepare_reconciliation_local_repair(**args, nomination_path=tmp_path / 'nomination.json', output_dir=tmp_path / 'request')
+    request = _load_object(tmp_path / 'request/request.json')['request']
+    replacement = {k: deepcopy(v) for k, v in response['semantic_nodes'][0].items() if k != 'opposition_checked'}
+    replacement['bounded_meaning'] = 'A corrected bounded source report.'
+    patch = dict(request_sha256=request['request_sha256'], correction=dict(cannot_repair_reason=None,
+        replacement=dict(semantic_nodes=[replacement], decisions_by_candidate_ref={
+            ref: response['decisions_by_candidate_ref'][ref] for ref in request['candidate_refs']})))
+    _write_json(tmp_path / 'patch.json', patch)
+    submit_args = dict(**args, request_path=tmp_path / 'request/request.json', patch_path=tmp_path / 'patch.json', output_dir=tmp_path / 'successor')
+    receipt = submit_reconciliation_local_repair(**submit_args)
+    successor = _load_object(tmp_path / 'successor/response.json')
+    assert successor['semantic_nodes'][0]['bounded_meaning'] == replacement['bounded_meaning']
+    assert successor['semantic_nodes'][0]['opposition_checked'] is False
+    assert successor['semantic_nodes'][1:] == response['semantic_nodes'][1:]
+    assert successor['decisions_by_candidate_ref'] == response['decisions_by_candidate_ref']
+    assert submit_reconciliation_local_repair(**submit_args) == receipt
+    assert validate_reconciliation_stage(bundle, stage, [successor])
+    assert (bundle, stage, response) == before
+    assert bundle['method_version'] == METHOD_VERSION_V7
+    with pytest.raises(SemanticIntegrationError, match='bound current response v3'):
+        semantic_module.prepare_reconciliation_repair(bundle, stage, old, **nomination)
 
 
 def _decision_reconciliation_fixture(count=2):
@@ -2998,12 +3071,12 @@ def test_public_normal_authoring_default_and_legacy_replay_are_separate(tmp_path
             compilation_path=tmp_path/"compiled.json", existing_stage_path=tmp_path/"stage.json",
             stage_out=directory/"stage.json", prompt_dir=directory/"prompts", authoring_revision=revision)
         expected = semantic_module.prepare_reconciliation_prompts(bundle, stage,
-            authoring_revision=revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V2)
+            authoring_revision=revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3)
         assert json.loads((directory/"stage.json").read_text()) == stage
         for row in expected:
             assert (directory/"prompts"/f"{row['batch_id']}.md").read_bytes() == (row["prompt"] + "\n").encode()
             assert json.loads((directory/"prompts"/f"{row['batch_id']}.schema.json").read_text()) == row["response_schema"]
-        assert result["authoring_revision"] == (revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V2)
+        assert result["authoring_revision"] == (revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3)
     assert semantic_module.prepare_reconciliation_prompts(bundle, stage,
         authoring_revision=semantic_module.RECONCILIATION_AUTHORING_LEGACY) == legacy
     new_stage, new_prompts = prepare_reconciliation_stage(bundle, compiled,
@@ -3014,7 +3087,11 @@ def test_public_normal_authoring_default_and_legacy_replay_are_separate(tmp_path
     assert sorted(ref for batch in new_stage["batches"] for ref in batch["candidate_refs"]) == sorted(row["candidate_ref"] for row in new_stage["candidates"])
 
 
-def test_identity_v2_caps_current_batches_and_states_leaf_path_invariant(monkeypatch):
+@pytest.mark.parametrize("revision", [
+    semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V2,
+    semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3,
+])
+def test_identity_current_caps_batches_and_states_source_restriction(monkeypatch, revision):
     # The cap must be exercised above one with a remainder: at one, an
     # off-by-one that packed cap-1 candidates per batch is indistinguishable
     # from the correct bound and would silently repack every current stage.
@@ -3032,23 +3109,75 @@ def test_identity_v2_caps_current_batches_and_states_leaf_path_invariant(monkeyp
         bundle,
         verified,
         reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
-        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V2,
+        authoring_revision=revision,
     )
     assert len(v1_stage["batches"]) == 1
     assert [len(row["candidate_refs"]) for row in v2_stage["batches"]] == [3, 3, 2]
     assert sorted(
         ref for batch in v2_stage["batches"] for ref in batch["candidate_refs"]
     ) == sorted(row["candidate_ref"] for row in v2_stage["candidates"])
-    assert all(
-        "The same original leaf may enter one node through only one attached child"
-        in row["prompt"]
-        for row in v2_prompts
-    )
+    if revision == semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V2:
+        assert all("The same original leaf may enter one node through only one attached child"
+                   in row["prompt"] for row in v2_prompts)
+    else:
+        assert all(json.loads(row["prompt"].split("\nSOURCE_OVERLAP_GROUPS\n")[1]) == []
+                   for row in v2_prompts)
     assert all(
         "The same original leaf may enter one node through only one attached child"
         not in row["prompt"]
         for row in v1_prompts
     )
+
+
+@pytest.mark.parametrize("overlap", ["none", "partial", "all"])
+def test_identity_v3_rendered_restrictions_match_native_consumer(tmp_path, overlap):
+    from itertools import combinations
+    from runners.run_semantic_evidence_integration import prepare_reconciliation_level
+    bundle, compiled, stage, _, response = _decision_reconciliation_fixture(count=3)
+    candidates = stage["candidates"]
+    refs = [row["candidate_ref"] for row in candidates]
+    leaves = [deepcopy(row["leaf_relations"][0]) for row in candidates]
+    if overlap != "none":
+        candidates[1]["leaf_relations"] = [leaves[0], leaves[1]]
+        candidates[2]["leaf_relations"] = [leaves[1 if overlap == "partial" else 0], leaves[2]]
+    stage["stage_sha256"] = semantic_module._sha256(
+        {key: value for key, value in stage.items() if key != "stage_sha256"})
+    for name, value in [("bundle", bundle), ("compiled", compiled), ("stage", stage)]:
+        (tmp_path / f"{name}.json").write_text(json.dumps(value), encoding="utf-8")
+    result = prepare_reconciliation_level(
+        bundle_path=tmp_path/"bundle.json", compilation_path=tmp_path/"compiled.json",
+        existing_stage_path=tmp_path/"stage.json", stage_out=tmp_path/"out.json",
+        prompt_dir=tmp_path/"prompts")
+    text = (tmp_path/"prompts"/f"{response['batch_id']}.md").read_text(encoding="utf-8")
+    groups = json.loads(text.split("\nSOURCE_OVERLAP_GROUPS\n", 1)[1])
+    expected = [] if overlap == "none" else (
+        [sorted(refs[:2]), sorted(refs[1:])] if overlap == "partial" else [sorted(refs)])
+    assert groups == sorted(expected)
+    assert "trace its attached candidates" not in text
+    assert result["authoring_revision"] == semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3
+    assert len(text.encode("utf-8")) - 1 <= stage["max_prompt_bytes"]
+    assert json.loads((tmp_path/"out.json").read_text(encoding="utf-8")) == stage
+    # Check the instructions against the existing independent consumer, not a
+    # second invocation of the helper that authored them. Unselected candidates
+    # remain singletons, so accounting and retention stay complete.
+    for size in (2, 3):
+        for merged in combinations(refs, size):
+            answer = deepcopy(response)
+            answer["stage_sha256"] = stage["stage_sha256"]
+            partitions = [merged, *((ref,) for ref in refs if ref not in merged)]
+            answer["semantic_nodes"] = []
+            for index, members in enumerate(partitions):
+                node = deepcopy(response["semantic_nodes"][0])
+                node["semantic_node_key"] = f"k000_test_{index}"
+                answer["semantic_nodes"].append(node)
+                for ref in members:
+                    answer["decisions_by_candidate_ref"][ref]["attachments"][0]["semantic_node_key"] = node["semantic_node_key"]
+            prohibited = any(len(set(merged) & set(group)) > 1 for group in groups)
+            if prohibited:
+                with pytest.raises(SemanticIntegrationError, match="duplicates one leaf"):
+                    validate_reconciliation_stage(bundle, stage, [answer])
+            else:
+                validate_reconciliation_stage(bundle, stage, [answer])
 
 
 def test_duplicate_leaf_seed_still_fails_at_native_consumer():
@@ -4306,6 +4435,55 @@ def test_decision_reconciliation_schema_and_consumer_retention_agree(mode, postu
     else:
         with pytest.raises(SemanticIntegrationError, match="cannot unmerge required finding"):
             validate_reconciliation_stage(bundle, stage, [response])
+
+
+@pytest.mark.parametrize("mode", ["normal", "convergence"])
+@pytest.mark.parametrize("source_conditions,expose", [
+    ([["Brown Sugar"], ["since purchasing it during the last sale"]], True),
+    ([["Vanilla", "recent purchase during the sale"], ["Vanilla"]], True),
+    ([["Hot Cocoa", "missed Birthday Cake release"], ["new hot chocolate option"]], True),
+    ([["when it warms up"], []], True),
+    ([["Vanilla"], ["Vanilla"]], False),
+    ([[], []], False),
+])
+def test_reconciliation_prompt_preserves_mixed_source_conditions(
+    mode, source_conditions, expose,
+):
+    bundle, _, stage, _, response = _decision_reconciliation_fixture()
+    for candidate, conditions in zip(stage["candidates"], source_conditions):
+        candidate["conditions"] = conditions
+        candidate["condition_lineage"][0]["conditions"] = conditions
+    stage["stage_sha256"] = _canonical_hash({
+        key: value for key, value in stage.items() if key != "stage_sha256"
+    })
+    response["stage_sha256"] = stage["stage_sha256"]
+    nodes = validate_reconciliation_stage(bundle, stage, [response])
+    next_stage, _ = prepare_reconciliation_stage(bundle, nodes,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2)
+    next_stage["reconciliation_mode"] = mode
+    next_stage["stage_sha256"] = _canonical_hash({
+        key: value for key, value in next_stage.items() if key != "stage_sha256"
+    })
+    before = deepcopy(next_stage)
+    prompts = semantic_module.prepare_reconciliation_prompts(bundle, next_stage)
+    candidate = next_stage["candidates"][0]
+    rendered = json.JSONDecoder().raw_decode(
+        prompts[0]["prompt"].split("\n\nCANDIDATES\n", 1)[1]
+    )[0][0]
+
+    assert rendered["conditions"] == sorted(set(sum(source_conditions, [])))
+    assert rendered.get("condition_lineage") == (
+        candidate["condition_lineage"] if expose else None
+    )
+    assert ("not a claim that those details co-occur" in prompts[0]["prompt"]) is expose
+    assert '"leaf_relations"' not in prompts[0]["prompt"]
+    assert prompts[0]["prompt_utf8_bytes"] <= next_stage["max_prompt_bytes"]
+    assert next_stage == before
+
+    # Legacy renderers retain their frozen projection rather than inheriting
+    # the current scope policy merely because stored lineage is available.
+    legacy = semantic_module._agent_reconciliation_candidate(candidate)
+    assert "condition_lineage" not in legacy
 
 
 def test_current_reconciliation_role_projection_preserves_relation_orientation() -> None:

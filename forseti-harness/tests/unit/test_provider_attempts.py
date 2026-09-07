@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import hashlib
+import tracemalloc
 from pathlib import Path
 
 import pytest
@@ -621,3 +622,62 @@ def test_timeout_recovery_refuses_to_write_inside_a_frozen_attempt(
         path.name for path in before
     )
     assert all(path.read_bytes() == value for path, value in before.items())
+
+
+@pytest.mark.parametrize("duplicate", [False, True])
+def test_usage_file_streams_large_event_history_with_bounded_memory(tmp_path: Path, duplicate: bool) -> None:
+    from provider_attempts import codex_usage_from_events
+
+    path = tmp_path / "large-events.jsonl"
+    usage = {"input_tokens": 120, "cached_input_tokens": 40, "output_tokens": 25, "reasoning_output_tokens": 9}
+    row = json.dumps({"type": "item.updated", "text": "x" * 1024}).encode() + b"\n"
+    with path.open("wb") as output:
+        if duplicate:
+            output.write(_events(usage).encode())
+        for _ in range(24576):
+            output.write(row)
+        output.write(_events(usage).encode())
+    tracemalloc.start()
+    try:
+        if duplicate:
+            with pytest.raises(ValueError, match="exactly one completed-turn usage"):
+                codex_usage_from_events(path)
+        else:
+            assert codex_usage_from_events(path) == usage
+        _, peak = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+    print(f"event-history dogfood: bytes={path.stat().st_size}, duplicate={duplicate}, peak={peak}")
+    assert peak < 1024 * 1024
+
+
+def test_usage_stream_preserves_snapshot_parser_results_and_errors(tmp_path: Path) -> None:
+    from provider_attempts import codex_usage_from_events, _codex_usage_from_event_bytes
+
+    usage = {"input_tokens": 120, "cached_input_tokens": 40, "output_tokens": 25, "reasoning_output_tokens": 9}
+    valid = _events(usage).encode()
+    cases = [
+        valid, b"\xef\xbb\xbf" + valid, b"garbage\r\n" + valid, valid.replace(b"\n", b"\r"),
+        b"[]\n{}\n" + valid, b"\n", valid + valid, valid + b"\xff", valid + valid + b"\xff",
+        _events({**usage, "input_tokens": True}).encode(),
+        _events({**usage, "cached_input_tokens": 121}).encode(),
+        _events({**usage, "reasoning_output_tokens": 26}).encode(),
+        _events({"input_tokens": 120}).encode(),
+        b'{"type":"turn.completed","usage":null}\n' + valid,
+        valid.replace(b'"usage":', b'"note":"left\xe2\x80\xa8right","usage":'),
+        b"prefix\xe2\x80\xa8" + valid,
+    ]
+    path = tmp_path / "events.jsonl"
+    for payload in cases:
+        path.write_bytes(payload)
+        try:
+            expected = _codex_usage_from_event_bytes(payload)
+        except ValueError as error:
+            with pytest.raises(type(error)) as caught:
+                codex_usage_from_events(path)
+            # Unicode decoder offsets depend on buffering; preserve the failure
+            # class while usage validation retains its exact messages.
+            if not isinstance(error, UnicodeDecodeError):
+                assert str(caught.value) == str(error)
+        else:
+            assert codex_usage_from_events(path) == expected == usage

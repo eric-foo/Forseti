@@ -14,6 +14,8 @@ import pytest
 
 from data_lake.consumption import (
     ConsumptionSeamError,
+    PickupItem,
+    ack_packet,
     ack_record_id,
     append_ack,
     find_acks,
@@ -268,10 +270,10 @@ def test_scoped_pickup_uses_one_ordered_snapshot_before_family_filter(
     snapshot_calls = 0
     original_snapshot = root.snapshot_public_availability
 
-    def counted_snapshot() -> list[dict]:
+    def counted_snapshot(**kwargs) -> list[dict]:
         nonlocal snapshot_calls
         snapshot_calls += 1
-        return original_snapshot()
+        return original_snapshot(**kwargs)
 
     monkeypatch.setattr(root, "snapshot_public_availability", counted_snapshot)
 
@@ -450,10 +452,10 @@ def test_scoped_reconcile_validates_successful_writes_with_one_snapshot(
     snapshot_calls = 0
     original_snapshot = root.snapshot_public_availability
 
-    def counted_snapshot() -> list[dict]:
+    def counted_snapshot(**kwargs) -> list[dict]:
         nonlocal snapshot_calls
         snapshot_calls += 1
-        return original_snapshot()
+        return original_snapshot(**kwargs)
 
     monkeypatch.setattr(root, "snapshot_public_availability", counted_snapshot)
     monkeypatch.setattr(
@@ -473,7 +475,7 @@ def test_scoped_reconcile_missing_public_write_fails_loud(
 ) -> None:
     root = DataLakeRoot.for_test(tmp_path / "lake")
     selected = _commit_packet(root, tmp_path, "missing-after-write")
-    monkeypatch.setattr(root, "snapshot_public_availability", lambda: [])
+    monkeypatch.setattr(root, "snapshot_public_availability", lambda **kwargs: [])
 
     failures = reconcile_availability_per_packet(
         root, scope_packet_ids=[selected]
@@ -555,7 +557,7 @@ def test_scoped_reconcile_snapshot_promotes_root_loss(
     root = DataLakeRoot.for_test(tmp_path / "lake")
     selected = _commit_packet(root, tmp_path, "snapshot-root-loss")
 
-    def disconnect_during_snapshot() -> list[dict]:
+    def disconnect_during_snapshot(**kwargs) -> list[dict]:
         root.path.rename(tmp_path / "disconnected-snapshot-lake")
         raise OSError(433, "A device which does not exist was specified")
 
@@ -657,3 +659,81 @@ def test_reconcile_purge_surfaces_locked_entry_per_packet(
     assert "PermissionError" in failures[0]["error"]
     # The healthy packet was never hostage to the locked one.
     assert root.read_availability(healthy) is not None
+
+
+@pytest.mark.parametrize("namespace", ["projection_ig", "ecr_set"])
+def test_ack_packet_persists_the_append_ack_record_and_tolerates_collision(
+    tmp_path: Path, monkeypatch, namespace: str
+) -> None:
+    import data_lake.consumption as consumption
+
+    root = DataLakeRoot.for_test(tmp_path / "lake")
+    pid = _commit_packet(root, tmp_path, "ack_helper")
+    obligation = _obligation(inputs=["committed-input"])
+    item = PickupItem(pid, obligation, obligation_fingerprint(obligation))
+    timestamp = "2026-09-05T00:00:00+00:00"
+
+    class FixedDatetime:
+        @staticmethod
+        def now(tz):
+            return consumption_datetime.fromisoformat(timestamp)
+
+    consumption_datetime = consumption.datetime
+    monkeypatch.setattr(consumption, "datetime", FixedDatetime)
+    # The direct seam writer is the pre-refactor record-shape reference.
+    expected_path = append_ack(
+        root, raw_anchor=pid, ack_namespace=namespace,
+        obligation=obligation, evidence=_EVIDENCE,
+    )
+    expected_bytes = expected_path.read_bytes()
+    other_root = DataLakeRoot.for_test(tmp_path / "other_lake")
+    monkeypatch.setattr("source_capture.writer.generate_ulid", lambda: pid)
+    assert _commit_packet(other_root, tmp_path, "ack_helper") == pid
+    assert ack_packet(other_root, item, _EVIDENCE, ack_namespace=namespace) == "acked"
+    actual_path = other_root.lane_dir(
+        subtree="acknowledgements", raw_anchor=pid, lane=namespace
+    ) / expected_path.name
+    assert actual_path.read_bytes() == expected_bytes
+    # The second call hits create-only collision, rechecks this namespace, and
+    # neither appends another fact nor overwrites the original completion.
+    assert ack_packet(other_root, item, _EVIDENCE, ack_namespace=namespace) == "acked"
+    assert actual_path.read_bytes() == expected_bytes
+    assert len(find_acks(other_root, raw_anchor=pid, ack_namespace=namespace)) == 1
+
+
+def test_ack_packet_failed_write_is_bounded_and_remains_unacknowledged(tmp_path: Path, monkeypatch) -> None:
+    root = DataLakeRoot.for_test(tmp_path / "lake")
+    pid = _commit_packet(root, tmp_path, "failed_ack")
+    item = PickupItem(pid, _obligation(), obligation_fingerprint(_obligation()))
+    error = DataLakeRootError("write denied " + "x" * 250)
+
+    def fail_write(*args, **kwargs):
+        raise error
+
+    monkeypatch.setattr(root, "append_record", fail_write)
+    result = ack_packet(root, item, _EVIDENCE, ack_namespace=_NS)
+    assert result == f"ack_failed: DataLakeRootError: {error}"[:200]
+    assert len(result) == 200
+    assert not is_acknowledged(root, raw_anchor=pid, ack_namespace=_NS, obligation=item.obligation)
+
+
+@pytest.mark.parametrize("failure_site", ["append_ack", "is_acknowledged"])
+def test_ack_packet_propagates_unhandled_and_recheck_failures(monkeypatch, failure_site: str) -> None:
+    import data_lake.consumption as consumption
+
+    error = OSError("unreadable acknowledgement store")
+
+    def fail_append(*args, **kwargs):
+        if failure_site == "append_ack":
+            raise error
+        raise DataLakeRootError("write failed")
+
+    def fail_recheck(*args, **kwargs):
+        raise error
+
+    monkeypatch.setattr(consumption, "append_ack", fail_append)
+    monkeypatch.setattr(consumption, "is_acknowledged", fail_recheck)
+    item = PickupItem("A" * 26, _obligation(), obligation_fingerprint(_obligation()))
+    with pytest.raises(OSError) as raised:
+        ack_packet(object(), item, _EVIDENCE, ack_namespace=_NS)
+    assert raised.value is error

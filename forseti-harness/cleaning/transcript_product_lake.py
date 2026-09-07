@@ -24,6 +24,7 @@ from cleaning.transcript_product_extractor import (
     TranscriptExtractionResult,
     TranscriptInput,
     extract_transcript_products,
+    transcript_measurement,
 )
 from data_lake.silver_lineage import (
     SilverDerivedRef,
@@ -344,21 +345,47 @@ def extract_products_into_lake(
     Returns the written member paths. Re-appending the same record_id is refused by the lake
     (write-once); the runner avoids that by checking `is_record_set_complete` first.
     """
-    result = extract_transcript_products(
-        transcript,
-        transport=transport,
-        provider=provider,
-        model=model,
-        api_key=api_key,
-        max_tokens=max_tokens,
-    )
-    return write_product_mentions_result_into_lake(
-        data_root=data_root,
-        transcript=transcript,
-        result=result,
-        model=model,
-        record_id=record_id,
-        policy_version=policy_version,
-        policy_fingerprint_sha256=policy_fingerprint_sha256,
-        extraction_backend="provider_api",
-    )
+    with transcript_measurement(transcript, "transcript_products_into_lake", {
+        "provider": str(provider), "model": model, "max_tokens": max_tokens,
+        "policy_version": policy_version,
+        "policy_fingerprint_sha256": policy_fingerprint_sha256 or product_mentions_policy_fingerprint(policy_version),
+    }) as measurement:
+        result = extract_transcript_products(
+            transcript,
+            transport=transport,
+            provider=provider,
+            model=model,
+            api_key=api_key,
+            max_tokens=max_tokens,
+        )
+        with measurement.stage("lake_write"):
+            written = write_product_mentions_result_into_lake(
+                data_root=data_root,
+                transcript=transcript,
+                result=result,
+                model=model,
+                record_id=record_id,
+                policy_version=policy_version,
+                policy_fingerprint_sha256=policy_fingerprint_sha256,
+                extraction_backend="provider_api",
+            )
+        # Measurement reads only: the validated writer and authoritative payload stay unchanged.
+        # A readback failure is a failed measurement oracle, not a failed product write.
+        with measurement.stage("persisted_verify"):
+            try:
+                path = written[PRODUCT_MENTIONS_LANE]
+                fingerprint = hashlib.sha256(path.read_bytes()).hexdigest()
+                expected = data_root.read_record_set_member_sha256(
+                    subtree="derived", raw_anchor=transcript.transcript_anchor,
+                    record_id=path.name, completion_lane=PRODUCT_MENTIONS_SET_LANE,
+                    member_lane=PRODUCT_MENTIONS_LANE,
+                )
+                if fingerprint != expected:
+                    raise ValueError("persisted member hash differs from completion marker")
+            except Exception as exc:
+                measurement.set_quality("failed", "silver_validated_write_and_marker_sha256_v1")
+                measurement.error(f"persisted_verify:{type(exc).__name__}")
+            else:
+                measurement.set_quality("passed", "silver_validated_write_and_marker_sha256_v1",
+                                        output_fingerprint=fingerprint)
+        return written

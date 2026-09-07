@@ -4,18 +4,60 @@
 retrieval_header_version: 1
 artifact_role: Review input packet
 scope: >
-  Greppable source packet for read-only adversarial artifact review of the
-  Capture spine core migration at commit a75c337b3497d530f9b7fbfb25acb0fd230d3616.
+  Historical review packet index and recovery route for the Capture spine core
+  migration at commit a75c337b3497d530f9b7fbfb25acb0fd230d3616.
 use_when:
-  - Reviewing PR #316's Capture spine core migration as a multi-file artifact change.
-  - Checking moved-path correctness, stale references, DCP honesty, and scope containment.
+  - Recovering the committed inputs to PR #316's historical migration review.
+  - Investigating that review's source-context hash discrepancy.
 authority_boundary: retrieval_only
 open_next:
   - docs/prompts/reviews/capture_spine_core_migration_adversarial_artifact_review_prompt_v0.md
-  - docs/review-outputs/adversarial-artifact-reviews/capture_spine_core_migration_adversarial_artifact_review_v0.md # nonresolving: expected reviewer output path created by running this prompt
+  - docs/review-outputs/adversarial-artifact-reviews/capture_spine_core_migration_adversarial_artifact_review_v0.md
 ```
 
-## Packet Contents
+## Retirement And Recovery — 2026-09-05
+
+The 451 normalized snapshots and `diff_u80.patch` were retired from the current
+checkout. This index, nine manifests, historical prompt and review remain.
+Recover the complete committed packet from
+`6d62b05aef99d541110b818157ec0ca10b85c305` when inspecting the historical inputs.
+The source revisions below recover original source; they are not a recipe for
+recreating the packet's normalization.
+
+**Historical verification discrepancy:** all five recorded SHA-256 pins below
+fail against the committed files at both this recovery revision and the original
+packet commit `8df13cbd2ee3b655d94e315dc8cf1e258c3a9c70`. The old prompt's
+`BLOCKED_SOURCE_CONTEXT` rule therefore still applies, and the review's claim
+that all pins matched is not reproduced. The original pins and findings remain
+verbatim as historical claims. Restoring the packet does not validate that
+review or clear its source-context gate. Resolve the discrepancy or commission
+a new review with freshly bound inputs before relying on that certification.
+
+From a clone containing the recovery revision, this PowerShell command restores
+into a new temporary directory, preserving committed LF bytes independently of
+the host's `core.autocrlf` setting:
+
+```powershell
+$packetRecovery = Join-Path $env:TEMP ("forseti-review-" + [guid]::NewGuid().ToString("N"))
+New-Item -ItemType Directory -Path $packetRecovery | Out-Null
+$packetArchive = Join-Path $packetRecovery "packet.tar"
+git -c core.autocrlf=false archive --format=tar --output=$packetArchive 6d62b05aef99d541110b818157ec0ca10b85c305 docs/review-inputs/capture_spine_core_migration_adversarial_artifact_review_v0
+if ($LASTEXITCODE -ne 0) { throw "Historical packet archive failed" }
+tar -xf $packetArchive -C $packetRecovery
+if ($LASTEXITCODE -ne 0) { throw "Historical packet extraction failed" }
+```
+
+Resolve the packet-relative paths below beneath `$packetRecovery`. Integrity is
+equality with that revision's Git tree, not a match to the old pins: compare the
+462 recovered file paths and each file's `git hash-object --no-filters` result
+with `git ls-tree -r` at the recovery revision. The two snapshot manifests
+enumerate 451 of those files. The retirement check recovered every member,
+verified all lengths and blob identities, and rejected a corrupted patch byte;
+it separately recorded all five historical pin failures. A normal Windows
+archive with `core.autocrlf=true` changes text bytes and cannot supply this
+committed-byte verification.
+
+## Historical Packet Contents
 
 This packet is generated from the migration commit, not from the later review-package commit.
 
@@ -54,7 +96,11 @@ manifest/head_snapshot_files.txt sha256: 7829ED278143AE0FA85B685C0B72C5F3966C373
 manifest/base_snapshot_files.txt sha256: A43A6D684FDB0526C2485D8EF8D0834D72FFEE7E473C43B01A6F756128AC0E8A
 ```
 
-## Reviewer Use
+## Historical Reviewer Use — Recover First
+
+These original directions refer to the restored directory. They are preserved
+for historical inspection; the hash discrepancy above blocks execution under
+the old prompt's source-context certification.
 
 Review the filed prompt first:
 

@@ -22,6 +22,9 @@ from judgment.phase_a_semantic_run import (  # noqa: E402
     eligible_serp_source_rows,
     load_google_serp_rows,
 )
+from source_capture.retail_grid_projection import (  # noqa: E402
+    load_verified_source_capture_packet_directory,
+)
 
 
 SEAL_VERSION = "phase_acquisition_seal_v3"
@@ -241,8 +244,9 @@ UNDERSTANDING_ROUTE_VERSIONS = {
     "1.5.0",
     "1.6.0",
     "1.7.0",
+    "1.7.1",
 }
-CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.7.0"
+CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.7.1"
 CAMPAIGN_EVIDENCE_VIEW_VERSION = "campaign_evidence_view_v1"
 SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION_V1 = (
     "semantic_evidence_integration_view_v1"
@@ -279,9 +283,10 @@ _CAMPAIGN_INTEGRATION_ROUTE_VERSIONS = {
     "1.5.0",
     "1.6.0",
     "1.7.0",
+    "1.7.1",
 }
 _SEMANTIC_INTEGRATION_ROUTE_ID = "semantic_evidence_integration"
-_SEMANTIC_INTEGRATION_ROUTE_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0"}
+_SEMANTIC_INTEGRATION_ROUTE_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.7.1"}
 # Route 1.1.0 introduced comparator closure, campaign-evidence integration,
 # conditional verification, and retailer-state accounting together, so a
 # historical audit of a 1.1.0 seal still owes all of them. Pre-fanout
@@ -295,6 +300,7 @@ _ROUTE_REVISION_1_1_OBLIGATION_VERSIONS = {
     "1.5.0",
     "1.6.0",
     "1.7.0",
+    "1.7.1",
 }
 _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {
     "1.2.0",
@@ -303,12 +309,17 @@ _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {
     "1.5.0",
     "1.6.0",
     "1.7.0",
+    "1.7.1",
 }
-_ROUTE_REVISION_1_3_OBLIGATION_VERSIONS = {"1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0"}
-_ROUTE_REVISION_1_4_OBLIGATION_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0"}
-_ROUTE_REVISION_1_5_OBLIGATION_VERSIONS = {"1.5.0", "1.6.0", "1.7.0"}
-_ROUTE_REVISION_1_6_OBLIGATION_VERSIONS = {"1.6.0", "1.7.0"}
-_ROUTE_REVISION_1_7_OBLIGATION_VERSIONS = {"1.7.0"}
+_ROUTE_REVISION_1_3_OBLIGATION_VERSIONS = {"1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.7.1"}
+_ROUTE_REVISION_1_4_OBLIGATION_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.7.1"}
+_ROUTE_REVISION_1_5_OBLIGATION_VERSIONS = {"1.5.0", "1.6.0", "1.7.0", "1.7.1"}
+_ROUTE_REVISION_1_6_OBLIGATION_VERSIONS = {"1.6.0", "1.7.0", "1.7.1"}
+_ROUTE_REVISION_1_7_OBLIGATION_VERSIONS = {"1.7.0", "1.7.1"}
+# Like every ladder above, a 1.7.1 obligation accrues to 1.7.1 and every later
+# route. An equality test here would silently drop the completion-proof gate the
+# first time a newer route version is stamped.
+_ROUTE_REVISION_1_7_1_OBLIGATION_VERSIONS = {"1.7.1"}
 _CAMPAIGN_SOURCE_ROLES = {
     "owned_post",
     "paid_ad",
@@ -663,6 +674,14 @@ def _validate_understanding_evidence_depth(
         if isinstance(seal.get("understanding_route"), dict)
         else None
     )
+    proof_contract = (
+        isinstance(route_version, str)
+        and route_version in _ROUTE_REVISION_1_7_1_OBLIGATION_VERSIONS
+    )
+    if current_consumer_brand and valid_pass and proof_contract:
+        _validate_final_semantic_source_review(
+            seal, repo_root=repo_root, findings=findings
+        )
     serp_link_contract = (
         isinstance(route_version, str)
         and route_version in _ROUTE_REVISION_1_7_OBLIGATION_VERSIONS
@@ -778,6 +797,7 @@ def _validate_understanding_evidence_depth(
             require_complete=valid_pass,
             decision_contract=current_consumer_brand,
             findings=findings,
+            execution_contract=proof_contract,
         )
     if valid_pass:
         floors = (
@@ -1802,6 +1822,16 @@ def _load_community_axis_coding(
         if not isinstance(row.get("source_ref"), str) or not row.get("source_ref"):
             findings.append("missing_community_source_ref")
             complete = False
+        # Source-native creation timestamp is an acquisition-time obligation for
+        # every coded community row; an unavailable date stays unknown and fails
+        # completeness rather than being inferred.
+        created_utc = row.get("comment_created_utc")
+        if not isinstance(created_utc, str) or not created_utc:
+            findings.append("missing_community_comment_created_utc")
+            complete = False
+        elif _parse_iso_datetime(created_utc) is None:
+            findings.append("invalid_community_comment_created_utc")
+            complete = False
         if row.get("parser_limitation") is not None and not isinstance(
             row.get("parser_limitation"), str
         ):
@@ -2008,7 +2038,12 @@ def _validate_serp_source_frontier(
     focused_searches: Mapping[tuple[str, str], Mapping[str, Any]],
     findings: list[str],
 ) -> bool:
-    """Require one semantic disposition for every bounded source-bearing SERP row."""
+    """Require one semantic disposition for every bounded source-bearing SERP row.
+
+    Row coverage, row identity and target resolution are mechanical. Whether an
+    exclusion reason is true is not checkable here; the final semantic source
+    review owns it.
+    """
     if not isinstance(value, dict):
         findings.append("missing_serp_source_frontier")
         return False
@@ -3081,6 +3116,44 @@ def _consumer_phase2_execution_times(
     return observed
 
 
+def _frontier_observation_time(
+    job: Mapping[str, Any], *, artifacts: Mapping[str, Path]
+) -> datetime:
+    """Read acquisition time from a verified capture, never a later coding file.
+
+    The pointer reuses the existing artifact registry. The packet must own the
+    job's cited outputs; re-pinning an unrelated recent packet earns no credit.
+    """
+    artifact_id = job.get("execution_packet_artifact_id")
+    if not isinstance(artifact_id, str) or artifact_id not in artifacts:
+        raise ValueError("missing execution packet")
+    manifest_path = artifacts[artifact_id].resolve()
+    if manifest_path.name != "manifest.json":
+        raise ValueError("execution proof must be a preserved packet manifest")
+    packet, _ = load_verified_source_capture_packet_directory(manifest_path.parent)
+    owned_paths = {manifest_path} | {
+        (manifest_path.parent / item.relative_packet_path).resolve()
+        for item in packet.preserved_files
+    }
+    output_ids = job.get("artifact_ids")
+    if (
+        not isinstance(output_ids, list)
+        or not output_ids
+        or any(
+            not isinstance(item, str)
+            or item not in artifacts
+            or artifacts[item].resolve() not in owned_paths
+            for item in output_ids
+        )
+    ):
+        raise ValueError("execution packet does not own discovery outputs")
+    fact = packet.timing.capture_time
+    observed = _parse_iso_datetime(fact.value) if fact.status.value == "known" else None
+    if observed is None:
+        raise ValueError("execution packet has no observed acquisition time")
+    return observed
+
+
 def _validate_reddit_candidate_frontier(
     ledger: Mapping[str, Any],
     *,
@@ -3089,6 +3162,7 @@ def _validate_reddit_candidate_frontier(
     require_complete: bool,
     decision_contract: bool,
     findings: list[str],
+    execution_contract: bool = False,
 ) -> bool:
     """The 40-thread floor is a minimum, never a completion target.
 
@@ -3157,8 +3231,25 @@ def _validate_reddit_candidate_frontier(
                 findings.append("missing_frontier_discovery_query")
                 complete = False
             executed_at = _parse_iso_datetime(row.get("executed_at"))
+            unproven_execution = False
+            if require_complete and decision_contract and execution_contract:
+                try:
+                    observed_at = _frontier_observation_time(row, artifacts=artifacts)
+                except (OSError, ValueError):
+                    # The recorded time may be well-formed; what is missing is
+                    # its capture proof. Do not also claim it is malformed.
+                    findings.append(f"unproven_frontier_execution:{job_id}")
+                    complete = False
+                    unproven_execution = True
+                    executed_at = None
+                else:
+                    if executed_at != observed_at:
+                        findings.append(f"frontier_execution_time_mismatch:{job_id}")
+                        complete = False
+                    executed_at = observed_at
             if executed_at is None:
-                findings.append("invalid_frontier_discovery_executed_at")
+                if not unproven_execution:
+                    findings.append("invalid_frontier_discovery_executed_at")
                 complete = False
             else:
                 discovery_executed_at[job_id] = executed_at
@@ -4356,6 +4447,69 @@ def _validate_understanding_route(
     _validate_retailer_state_accounting(
         route.get("retailer_state_accounting"), findings=findings
     )
+
+
+def _validate_final_semantic_source_review(
+    seal: Mapping[str, Any], *, repo_root: Path, findings: list[str],
+) -> None:
+    """Require the existing semantic review to name the exact final inputs.
+
+    This is review scope/freshness proof only: it detects a review whose
+    declared inputs are not the ledger, view and corpus the seal actually
+    pins, which is the reviewed-an-earlier-revision failure. It is not
+    automated semantic entailment and is not evidence that a reviewer read
+    anything. It does not force structured references into the
+    customer-language bundle or make Consolidation reopen Collection's
+    source locators.
+    """
+    prefix = "final_semantic_source_review_"
+
+    def read_ref(ref: Any, label: str, *, markdown: bool = False) -> Any:
+        if not isinstance(ref, dict):
+            findings.append(prefix + "missing_" + label)
+            return None
+        before = len(findings)
+        try:
+            _verify_artifact(ref.get("locator"), ref.get("sha256"), repo_root=repo_root,
+                             code=prefix + label, findings=findings)
+            if len(findings) != before:
+                return None
+            path = Path(ref["locator"])
+            text = (path if path.is_absolute() else repo_root / path).read_text(encoding="utf-8-sig")
+            if markdown:
+                blocks = [yaml.safe_load(body) for body in _YAML_FENCE.findall(text)]
+                values = [b["final_semantic_source_review"] for b in blocks
+                          if isinstance(b, dict) and "final_semantic_source_review" in b]
+                value = values[0] if len(values) == 1 else None
+            else:
+                value = json.loads(text)
+            if isinstance(value, dict):
+                return value
+        except (OSError, UnicodeError, ValueError, yaml.YAMLError):
+            pass
+        findings.append(prefix + "invalid_" + label)
+        return None
+
+    ledger_ref = seal["evidence_depth_ledger"]  # Verified by the calling depth gate.
+    review = read_ref(ledger_ref.get("final_source_review"), "binding", markdown=True)
+    route = seal.get("understanding_route")
+    integration = route.get("semantic_evidence_integration", {}) if isinstance(route, dict) else {}
+    view_ref = integration.get("view") if isinstance(integration, dict) else None
+    view = read_ref(view_ref, "view")
+    if review is None or view is None:
+        return
+    if (review.get("schema_version") != "acquisition_final_semantic_source_review_v1"
+            or review.get("review_status") != "complete"
+            or review.get("adjudication_status") != "accepted"
+            or review.get("unresolved_material_findings") != []):
+        findings.append(prefix + "not_complete_and_adjudicated")
+    for field, expected in (
+        ("reviewed_ledger_sha256", ledger_ref["sha256"]),
+        ("reviewed_view_sha256", view_ref["sha256"]),
+        ("corpus_sha256", view.get("corpus_sha256")),
+    ):
+        if not expected or review.get(field) != expected:
+            findings.append(prefix + field + "_mismatch")
 
 
 def _validate_semantic_evidence_integration(
