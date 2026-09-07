@@ -1822,6 +1822,16 @@ def _load_community_axis_coding(
         if not isinstance(row.get("source_ref"), str) or not row.get("source_ref"):
             findings.append("missing_community_source_ref")
             complete = False
+        # Source-native creation timestamp is an acquisition-time obligation for
+        # every coded community row; an unavailable date stays unknown and fails
+        # completeness rather than being inferred.
+        created_utc = row.get("comment_created_utc")
+        if not isinstance(created_utc, str) or not created_utc:
+            findings.append("missing_community_comment_created_utc")
+            complete = False
+        elif _parse_iso_datetime(created_utc) is None:
+            findings.append("invalid_community_comment_created_utc")
+            complete = False
         if row.get("parser_limitation") is not None and not isinstance(
             row.get("parser_limitation"), str
         ):
