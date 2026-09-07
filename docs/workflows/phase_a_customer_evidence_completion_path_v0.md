@@ -1746,8 +1746,11 @@ state kind, stage, direction, object, quantity, condition, context-only row,
 and awkward companion state. A coherently rehashed omission or cross-point
 transfer therefore fails at the consumer boundary. Loading a saved brief or
 axis output also reuses the compiler's nonempty, unique representative-handle
-selection and displayed support/counter coverage checks; recomputed hashes do
-not waive those rules.
+selection and displayed support/counter coverage checks, then requires the
+saved brief to equal the brief that recompilation produces, so compiler-owned
+fields are derived again; recomputed hashes do not waive those rules. The
+interpretation and valid representative choices, including their order, are
+reused from the saved brief rather than compared with the original response.
 
 Finalization harvests every valid response or reusable brief even when another
 point is missing. It then fails visibly and emits no axis output until every

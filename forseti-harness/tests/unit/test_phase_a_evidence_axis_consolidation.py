@@ -5065,13 +5065,23 @@ def test_point_reader_compiler_closes_decision_state_at_consumer_boundary(
     assert caught.value.boundary == "point_reader_decision_state"
 
 
-@pytest.mark.parametrize("mutation", ["empty", "duplicate", "omit_counter"])
+@pytest.mark.parametrize(
+    ("mutation", "boundary"),
+    [
+        ("empty", "point_reader_response"),
+        ("duplicate", "point_reader_response"),
+        ("omit_counter", "point_reader_response"),
+        ("rewrite_non_claims", "point_reader_brief"),
+        ("drop_non_claims", "point_reader_brief"),
+        ("foreign_field", "point_reader_brief"),
+    ],
+)
 @pytest.mark.parametrize("decision_state", [False, True])
-def test_saved_point_reader_rechecks_representative_selection(
+def test_saved_point_reader_rechecks_compiled_brief(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
-    mutation: str, decision_state: bool,
+    mutation: str, boundary: str, decision_state: bool,
 ) -> None:
-    """Rehashing a saved output cannot evade the compiler's handle rules."""
+    """Rehashing a saved output cannot evade the compiler's own brief."""
     _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
     if decision_state:
         _route_every_point_as_decision_state(spec)
@@ -5101,10 +5111,16 @@ def test_saved_point_reader_rechecks_representative_selection(
         representatives.clear()
     elif mutation == "duplicate":
         representatives.append(copy.deepcopy(representatives[0]))
-    else:
+    elif mutation == "omit_counter":
         brief["representative_evidence"] = [
             row for row in representatives if row["relation"] != "counter"
         ]
+    elif mutation == "rewrite_non_claims":
+        brief["non_claims"] = ["this brief establishes its upstream meanings"]
+    elif mutation == "drop_non_claims":
+        brief.pop("non_claims")
+    else:
+        brief["operator_note"] = "approved"
     brief["brief_sha256"] = _canonical_json_sha256(
         {key: value for key, value in brief.items() if key != "brief_sha256"}
     )
@@ -5118,7 +5134,7 @@ def test_saved_point_reader_rechecks_representative_selection(
             manifest, output=json.loads(saved_path.read_text(encoding="utf-8")),
             point_store_dir=store,
         )
-    assert caught.value.boundary == "point_reader_response"
+    assert caught.value.boundary == boundary
 
 
 @pytest.mark.parametrize("company", ["summer_fridays", "dieux"])
@@ -5150,19 +5166,25 @@ def test_captured_point_reader_replay_and_saved_brief_recovery(
     assert resumed["reused_brief_count"] == case["expected_accepted_points"]
     assert hash_file(tmp_path / "resumed.json") == case["expected_output_raw_sha256"]
 
-    # The same captured bytes used by real consumers must not permit a resume
-    # to accept an empty saved brief merely because its hash is coherent.
-    brief_path = next((tmp_path / "briefs").glob("*.json"))
-    brief = json.loads(brief_path.read_text(encoding="utf-8"))
-    brief["representative_evidence"] = []
-    brief["brief_sha256"] = _canonical_json_sha256(
-        {key: value for key, value in brief.items() if key != "brief_sha256"}
-    )
-    _write(brief_path, brief)
-    with pytest.raises(EvidenceConsumerError) as caught:
-        finalize_point_reader_run(**kwargs, output_path=tmp_path / "corrupted.json")
-    assert caught.value.boundary == "point_reader_response"
-    assert not (tmp_path / "corrupted.json").exists()
+    # The same captured bytes used by real consumers must not permit a resume to
+    # accept an emptied selection or a rewritten non-claim boundary merely
+    # because the saved brief's hash is coherent.
+    brief_path = sorted((tmp_path / "briefs").glob("*.json"))[0]
+    original = json.loads(brief_path.read_text(encoding="utf-8"))
+    for corruption, boundary in (
+        ({"representative_evidence": []}, "point_reader_response"),
+        ({"non_claims": ["this brief is a Deliver recommendation"]}, "point_reader_brief"),
+    ):
+        brief = {**original, **corruption}
+        brief["brief_sha256"] = _canonical_json_sha256(
+            {key: value for key, value in brief.items() if key != "brief_sha256"}
+        )
+        _write(brief_path, brief)
+        corrupted_path = tmp_path / f"corrupted-{boundary}.json"
+        with pytest.raises(EvidenceConsumerError) as caught:
+            finalize_point_reader_run(**kwargs, output_path=corrupted_path)
+        assert caught.value.boundary == boundary
+        assert not corrupted_path.exists()
 
 
 def test_point_reader_identity_binds_meaning_but_not_storage_path(

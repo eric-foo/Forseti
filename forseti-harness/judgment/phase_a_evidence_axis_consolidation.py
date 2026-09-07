@@ -6661,7 +6661,7 @@ def _validate_point_reader_brief_from_validated_facts(
             )
     # Saved briefs must retain the compiler's nonempty, unique, relation-covering
     # selection even when a caller has coherently recomputed every stored hash.
-    _compile_point_reader_brief_from_validated_facts(
+    recompiled = _compile_point_reader_brief_from_validated_facts(
         manifest,
         point=point,
         facts=facts,
@@ -6674,6 +6674,16 @@ def _validate_point_reader_brief_from_validated_facts(
             ],
         },
     )
+    # That recompilation is also the only authority for every remaining
+    # compiler-owned field, including the reader's non-claim boundaries, so a
+    # coherently rehashed saved brief cannot add, drop, or rewrite one.  Brief
+    # identity stays with the dedicated check below.
+    if {key: value for key, value in brief.items() if key != "brief_sha256"} != {
+        key: value for key, value in recompiled.items() if key != "brief_sha256"
+    }:
+        raise EvidenceConsumerError(
+            "point_reader_brief", "compiled brief content changed"
+        )
     if brief.get("brief_sha256") != _canonical_json_sha256(
         {key: value for key, value in brief.items() if key != "brief_sha256"}
     ):

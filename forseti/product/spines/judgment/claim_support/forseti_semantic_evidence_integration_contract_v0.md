@@ -1437,10 +1437,16 @@ evidence group that cannot fit fails visibly instead of being clipped.
 
 Saved point briefs and assembled reader outputs enforce the compiler's same
 representative-selection rules: at least one unique placement handle, and
-coverage of displayed support and counter relations when present. Recomputing
-brief and axis hashes cannot make an empty, duplicated, or counter-omitting
-selection valid. This validation correction leaves reader inputs, schemas,
-method text, and valid output bytes unchanged.
+coverage of displayed support and counter relations when present. Validation
+then recompiles the brief from that selection and requires the saved brief to
+equal it field for field, so every other compiler-owned field, including the
+reader's non-claim boundaries, is restated by the compiler rather than trusted
+from storage. Recomputing brief and axis hashes therefore cannot make an empty,
+duplicated, or counter-omitting selection valid, nor can it add, drop, or
+rewrite a compiler-owned field. The interpretation and valid representative
+choices, including their order, are reused from the saved brief rather than
+compared with the original response. This validation correction leaves
+reader inputs, schemas, method text, and valid output bytes unchanged.
 
 The current point reader projects the exact meanings named by a displayed row's
 `relation_semantic_unit_refs`. A selected row's primary meaning and quote remain
