@@ -59,15 +59,20 @@ front door.
 
 An owner instruction to `success implement` is an explicit **conditional**
 commission for this lane, not a universal review gate. At implementation
-closeout, before merge, it activates only when the Chief Architect can name a
-material failure mode specific to the diff that could still pass every bound
-test and required CI because the implementation and validation share the same
-assumption, or because the decisive path has no independent oracle. The
-commission must name that failure class, the validation gap, and the bounded
-editable target. Generic author bias and labels of size, importance, novelty,
-production proximity, or high stakes alone never satisfy this trigger. If that
-concrete case cannot be made, delegation is not commissioned and the ordinary
-validated path continues.
+closeout, before merge, use the existing review-routing disposition: a
+`not_needed` disposition must name the affected behavior and the independent
+evidence supporting it at the affected boundary. A preserved baseline or direct
+observation can supply that evidence; tests that repeat the implementation's
+same assumption do not establish independent coverage. When a material
+behavioral boundary remains supported only by that shared assumption, or lacks
+independent evidence, commission bounded review of that uncertainty. Name the
+affected boundary, evidence gap, and editable target; an exact defect hypothesis
+is not required. Inability to imagine another defect is not evidence of
+coverage. When independent evidence supports the affected behavior, the
+ordinary validated path may continue without delegation. Generic author bias
+and labels of size, importance, novelty, production proximity, or high stakes
+alone never satisfy the trigger. Record the reasoning in the existing
+disposition; this adds no separate form or review stage.
 
 If delegation is explicitly commissioned for a work unit, freeze an
 implementation commit inside the open PR, delegate, adjudicate and incorporate
