@@ -11,7 +11,7 @@ import math
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Callable, Mapping, Sequence
+from typing import Any, Callable, Iterable, Mapping, Sequence
 
 from jsonschema import SchemaError, ValidationError
 from jsonschema.validators import validator_for
@@ -521,23 +521,32 @@ def reserve_provider_attempt(*, attempt_root: Path, attempt_id: str) -> dict[str
 def codex_usage_from_events(events_path: Path) -> dict[str, int]:
     """Recover exact completed-turn token fields from one Codex JSONL stream."""
 
-    return _codex_usage_from_event_bytes(events_path.read_bytes())
+    with events_path.open("r", encoding="utf-8-sig", newline="") as events:
+        # Preserve the snapshot parser's splitlines behavior, including Unicode
+        # separators, while retaining only the current physical line.
+        return _codex_usage_from_event_lines(line for row in events for line in row.splitlines())
 
 
 def _codex_usage_from_event_bytes(events: bytes) -> dict[str, int]:
-    completed: list[Mapping[str, Any]] = []
-    for line in events.decode("utf-8-sig").splitlines():
+    return _codex_usage_from_event_lines(events.decode("utf-8-sig").splitlines())
+
+
+def _codex_usage_from_event_lines(lines: Iterable[str]) -> dict[str, int]:
+    completed = 0
+    usage: Mapping[str, Any] = {}
+    for line in lines:
         try:
             event = json.loads(line)
         except json.JSONDecodeError:
             continue
         if isinstance(event, Mapping) and event.get("type") == "turn.completed":
-            usage = event.get("usage")
-            if isinstance(usage, Mapping):
-                completed.append(usage)
-    if len(completed) != 1:
+            candidate = event.get("usage")
+            if isinstance(candidate, Mapping):
+                completed += 1
+                if completed == 1:
+                    usage = candidate
+    if completed != 1:
         raise ValueError("attempt events must contain exactly one completed-turn usage")
-    usage = completed[0]
     fields = (
         "input_tokens",
         "cached_input_tokens",
