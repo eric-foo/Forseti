@@ -534,8 +534,13 @@ as an unresolved check, not a demonstrated material change or an automatic
 reset. Incomplete incorporation, an unassessed support record, or unfinished
 stopping verification is not by itself evidence of a source shortage. State
 that remaining work precisely. This judgment does not waive required coverage,
-source admission, or stopping proof, and resets remain limited to the affected
-and justified adjacent topics.
+source admission, or stopping proof. Decision-relevant unresolved checks stay
+visible in the appropriate existing record until an evidence-supported
+disposition answers or meaningfully bounds them, including a checked conclusion
+that they are non-material, or records an honest blocker or gap. Failure to
+demonstrate a material addition alone does not dispose of an unresolved check;
+any unresolved material finding or blocking gap still prevents a passing seal.
+Resets remain limited to the affected and justified adjacent topics.
 
 Do not perform final semantic adjudication while acquisition is still capable
 of changing the corpus. Use the provisional axis inventory and a lightweight

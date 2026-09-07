@@ -862,9 +862,12 @@ decision through a typed new axis, tier, mechanism, segment/condition, behavior
 consequence, competitor destination, contradiction, sampling-risk, or
 competitive-action addition; reopen only affected and justified adjacent axes.
 Apply the authority's **Materiality decision effect (all source families)**
-rule here: show the supported answer before and after and weigh relevant
-existing evidence in the current decision explanation. Use the same test in
-saturation reporting; an unresolved check is not an automatic material reset.
+rule here: show the supported answer before and after, weigh relevant existing
+evidence, and explain why the difference changes the responsible conclusion or
+action. Naming an allowed kind alone does not establish that effect. Apply the
+same test in saturation reporting; an unresolved check does not automatically
+reset stopping, but still needs an evidence-supported disposition under the
+existing seal requirements.
 
 For comparator candidates, treat SERP as the map and the fan-out lanes as the
 evidence acquisition. Before core fan-out, require the authority's two-origin,
