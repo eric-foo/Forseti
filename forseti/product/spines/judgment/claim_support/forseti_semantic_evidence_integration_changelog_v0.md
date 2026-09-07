@@ -24,6 +24,15 @@ contract or its linked owning source. This history creates no new review step.
 
 ## Changelog
 
+- `v120` / 2026-09-07 — corrected saved point-reader validation after blind-proof
+  perturbations showed coherently rehashed empty or duplicated representatives
+  were accepted. Saved briefs now reuse the compiler's selection checks,
+  including displayed counterevidence coverage. Six regression cases fail
+  before the correction and pass afterward across the existing routes; valid
+  reader bytes, inputs, methods, and schemas do not change. Two captured
+  company fixtures also reproduce nine pre-correction point outputs exactly,
+  exercise saved-brief reuse, and reject rehashed empty briefs. This correction
+  does not establish completed all-axis blind conformance.
 - `v119` / 2026-09-07 — corrected v116's historical replay regression: some
   already-materialized Summer Fridays selections and no-frontier packs had
   hash-bound dates derived from their pinned source artifacts. New selection

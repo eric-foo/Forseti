@@ -6659,6 +6659,21 @@ def _validate_point_reader_brief_from_validated_facts(
             raise EvidenceConsumerError(
                 "point_reader_brief", "compiled representative metadata changed"
             )
+    # Saved briefs must retain the compiler's nonempty, unique, relation-covering
+    # selection even when a caller has coherently recomputed every stored hash.
+    _compile_point_reader_brief_from_validated_facts(
+        manifest,
+        point=point,
+        facts=facts,
+        response={
+            "point_id": point_id,
+            "point_input_sha256": point["point_input_sha256"],
+            "interpretation": interpretation,
+            "representative_handles": [
+                {"placement_id": row["placement_id"]} for row in representatives
+            ],
+        },
+    )
     if brief.get("brief_sha256") != _canonical_json_sha256(
         {key: value for key, value in brief.items() if key != "brief_sha256"}
     ):

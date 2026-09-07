@@ -5065,6 +5065,106 @@ def test_point_reader_compiler_closes_decision_state_at_consumer_boundary(
     assert caught.value.boundary == "point_reader_decision_state"
 
 
+@pytest.mark.parametrize("mutation", ["empty", "duplicate", "omit_counter"])
+@pytest.mark.parametrize("decision_state", [False, True])
+def test_saved_point_reader_rechecks_representative_selection(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+    mutation: str, decision_state: bool,
+) -> None:
+    """Rehashing a saved output cannot evade the compiler's handle rules."""
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    if decision_state:
+        _route_every_point_as_decision_state(spec)
+    view = build_axis_consolidated_view(spec)
+    view_path, store = tmp_path / "view.json", tmp_path / "points"
+    _write(view_path, view)
+    manifest, payloads = build_axis_point_reader_snapshot(
+        view, source_view_path=view_path,
+        subject_identity=_point_reader_subject_identity(),
+    )
+    _write_point_reader_store(store, manifest, payloads)
+    briefs = [
+        compile_point_reader_brief(
+            manifest, point_store_dir=store, point_id=point["point_id"],
+            response=_point_reader_response(point, payloads[point["point_id"]]),
+        )
+        for point in manifest["points"]
+    ]
+    output = assemble_axis_point_reader_output(manifest, briefs=briefs)
+    assert validate_axis_point_reader_output(
+        manifest, output=output, point_store_dir=store
+    ) == output
+    brief = output["accepted_points"][0]
+    representatives = brief["representative_evidence"]
+    assert {row["relation"] for row in representatives} == {"support", "counter"}
+    if mutation == "empty":
+        representatives.clear()
+    elif mutation == "duplicate":
+        representatives.append(copy.deepcopy(representatives[0]))
+    else:
+        brief["representative_evidence"] = [
+            row for row in representatives if row["relation"] != "counter"
+        ]
+    brief["brief_sha256"] = _canonical_json_sha256(
+        {key: value for key, value in brief.items() if key != "brief_sha256"}
+    )
+    output["axis_output_sha256"] = _canonical_json_sha256(
+        {key: value for key, value in output.items() if key != "axis_output_sha256"}
+    )
+    saved_path = tmp_path / "mutated-output.json"
+    _write(saved_path, output)
+    with pytest.raises(EvidenceConsumerError) as caught:
+        validate_axis_point_reader_output(
+            manifest, output=json.loads(saved_path.read_text(encoding="utf-8")),
+            point_store_dir=store,
+        )
+    assert caught.value.boundary == "point_reader_response"
+
+
+@pytest.mark.parametrize("company", ["summer_fridays", "dieux"])
+def test_captured_point_reader_replay_and_saved_brief_recovery(
+    tmp_path: Path, company: str,
+) -> None:
+    fixture_root = Path(__file__).parents[1] / "fixtures" / "phase_a_point_reader_replay"
+    provenance = json.loads((fixture_root / "provenance.json").read_text(encoding="utf-8"))
+    case = next(row for row in provenance["cases"] if row["company"] == company)
+    fixture = fixture_root / company
+    assert {path.relative_to(fixture).as_posix() for path in fixture.rglob("*") if path.is_file()} == {
+        row["relative_path"] for row in case["files"]
+    }
+    for row in case["files"]:
+        assert hash_file(fixture / row["relative_path"]) == row["sha256"]
+    kwargs = {
+        "manifest_path": fixture / "snapshot.json",
+        "point_store_dir": fixture / "points",
+        "responses_dir": fixture / "responses",
+        "brief_store_dir": tmp_path / "briefs",
+        "expected_snapshot_sha256": case["snapshot_sha256"],
+    }
+    fresh = finalize_point_reader_run(**kwargs, output_path=tmp_path / "fresh.json")
+    assert fresh["compiled_point_count"] == case["expected_accepted_points"]
+    assert fresh["counts"]["rejected_point_count"] == case["expected_rejected_points"]
+    assert hash_file(tmp_path / "fresh.json") == case["expected_output_raw_sha256"]
+    resumed = finalize_point_reader_run(**kwargs, output_path=tmp_path / "resumed.json")
+    assert resumed["compiled_point_count"] == 0
+    assert resumed["reused_brief_count"] == case["expected_accepted_points"]
+    assert hash_file(tmp_path / "resumed.json") == case["expected_output_raw_sha256"]
+
+    # The same captured bytes used by real consumers must not permit a resume
+    # to accept an empty saved brief merely because its hash is coherent.
+    brief_path = next((tmp_path / "briefs").glob("*.json"))
+    brief = json.loads(brief_path.read_text(encoding="utf-8"))
+    brief["representative_evidence"] = []
+    brief["brief_sha256"] = _canonical_json_sha256(
+        {key: value for key, value in brief.items() if key != "brief_sha256"}
+    )
+    _write(brief_path, brief)
+    with pytest.raises(EvidenceConsumerError) as caught:
+        finalize_point_reader_run(**kwargs, output_path=tmp_path / "corrupted.json")
+    assert caught.value.boundary == "point_reader_response"
+    assert not (tmp_path / "corrupted.json").exists()
+
+
 def test_point_reader_identity_binds_meaning_but_not_storage_path(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

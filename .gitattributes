@@ -16,3 +16,7 @@ forseti-harness/capture_spine/tiktok_creator_discovery_frontier/*.json text eol=
 # so autocrlf (true on Windows) cannot CRLF-inflate the archived bodies/metadata
 # and break that sha256 == bytes invariant. Applies to existing and future cases.
 **/source_captures/** -text
+
+# Captured reader replay fixtures retain their original hash-bound bytes.
+forseti-harness/tests/fixtures/phase_a_point_reader_replay/**/*.json -text
+forseti-harness/tests/fixtures/phase_a_point_reader_replay/**/*.jsonl -text

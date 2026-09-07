@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v119
+version: v120
 effective_date: 2026-09-07
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v119
+# Semantic Evidence Integration Contract v120
 
 ## Purpose
 
@@ -1434,6 +1434,13 @@ response per batch, exact batch-local identity coverage, and exact combined
 coverage at the unchanged full reconciliation boundary before finalization.
 The ceiling is an execution control, not an evidence or semantic rule; one
 evidence group that cannot fit fails visibly instead of being clipped.
+
+Saved point briefs and assembled reader outputs enforce the compiler's same
+representative-selection rules: at least one unique placement handle, and
+coverage of displayed support and counter relations when present. Recomputing
+brief and axis hashes cannot make an empty, duplicated, or counter-omitting
+selection valid. This validation correction leaves reader inputs, schemas,
+method text, and valid output bytes unchanged.
 
 The current point reader projects the exact meanings named by a displayed row's
 `relation_semantic_unit_refs`. A selected row's primary meaning and quote remain
