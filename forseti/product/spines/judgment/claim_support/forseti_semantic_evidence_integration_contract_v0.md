@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v118
-effective_date: 2026-09-06
+version: v119
+effective_date: 2026-09-07
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v118
+# Semantic Evidence Integration Contract v119
 
 ## Purpose
 
@@ -41,7 +41,17 @@ embedded for provenance. Current selection consumers likewise keep missing
 publication times unavailable instead of reopening those locators. Historical
 unmaterialized sources without that stored hash retain their locator
 verification, and historical bundles without a materialized-source identity
-retain their existing metadata fallback. Consolidation's output is the complete
+retain their existing metadata fallback. New selection manifests use v2 and
+new no-frontier axis manifests use v3 to bind this portable-date behavior.
+Earlier selection v1 and no-frontier manifest v2 straddle the boundary: replay
+first derives the portable inventory, then may use the prior hash-verified
+publication-time fallback only if the complete original inventory hash matches.
+This preserves both historical date behaviors without rewriting any source,
+manifest, candidate, or reader output. Missing or changed legacy source bytes
+cannot become a successful replay; new materialized manifests never use this
+fallback. Historical replay may therefore still depend on its pinned Collection
+artifacts, but does not rerun Collection or establish current-method execution.
+Consolidation's output is the complete
 evidence retrieval surface consumed by the acquisition seal and later Deliver
 work. This stage boundary does not create or rename a globally numbered phase;
 historical Phase A, Phase B, Turn B, Understanding, and Deliver vocabulary

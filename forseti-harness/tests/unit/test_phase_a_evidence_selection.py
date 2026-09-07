@@ -3257,6 +3257,118 @@ def test_preselection_confirmation_reapplies_first_pass_row_guards(
     assert caught.value.boundary == "creator_customer_laundering"
 
 
+def _materialized_missing_date_source(tmp_path: Path) -> tuple[dict, list[dict], Path]:
+    spec, sources = _write_source(tmp_path, count=1)
+    source = sources[0]
+    group = source["packet"]["source_groups"][0]
+    group["evidence_rows"][0][group["evidence_columns"].index("publication_time")] = None
+    raw_path = tmp_path / "dated_comment.json"
+    raw_path.write_text(json.dumps({"comments": [{
+        "comment_id": "0", "timestamp_state": "2026-07-29T08:17:00+0000"
+    }]}), encoding="utf-8")
+    source["bundle"]["source_artifacts"] = [{
+        "artifact_id": "artifact:0", "locator": str(raw_path), "sha256": hash_file(raw_path)
+    }]
+    source["bundle"]["semantic_work_unit_projection"] = {
+        "context_registry": [],
+        "semantic_execution_identity": {
+            "source_schema_version": "semantic_evidence_source_v3", "source_sha256": "a" * 64
+        },
+    }
+    _reseal(source)
+    return spec, sources, raw_path
+
+
+@pytest.mark.parametrize("legacy_date", [False, True])
+def test_selection_v1_replays_exact_publication_inventory(tmp_path: Path, legacy_date: bool) -> None:
+    spec, sources, raw_path = _materialized_missing_date_source(tmp_path)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    expected = _candidate_rows(sources, spec)
+    if legacy_date:
+        expected[0]["publication_time"] = "2026-07-29T08:17:00+0000"
+    else:
+        # A v1 authored after the portable boundary must not reopen raw paths.
+        raw_path.write_text("{}", encoding="utf-8")
+    manifest["schema_version"] = "phase_a_evidence_selection_manifest_v1"
+    manifest["candidate_inventory_sha256"] = _canonical_hash(expected)
+    manifest.pop("manifest_sha256")
+    manifest["manifest_sha256"] = _canonical_hash(manifest)
+    loaded = evidence_selection.load_selection_sources(manifest)
+    _, _, quote = finalize_relations_prepare_quotes(manifest, loaded, _relation_response(expected))
+    assert quote["labeled_inventory"][0]["publication_time"] == expected[0]["publication_time"]
+
+
+@pytest.mark.parametrize("mutation", ["invented_date", "changed_source", "current_manifest"])
+def test_selection_date_replay_cannot_launder_rehashed_inventory(tmp_path: Path, mutation: str) -> None:
+    spec, sources, raw_path = _materialized_missing_date_source(tmp_path)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    assert manifest["schema_version"] == "phase_a_evidence_selection_manifest_v2"
+    expected = _candidate_rows(sources, spec)
+    expected[0]["publication_time"] = (
+        "2099-01-01" if mutation == "invented_date" else "2026-07-29T08:17:00+0000"
+    )
+    if mutation != "current_manifest":
+        manifest["schema_version"] = "phase_a_evidence_selection_manifest_v1"
+    if mutation == "changed_source":
+        raw_path.write_text("{}", encoding="utf-8")
+    manifest["candidate_inventory_sha256"] = _canonical_hash(expected)
+    manifest.pop("manifest_sha256")
+    manifest["manifest_sha256"] = _canonical_hash(manifest)
+    with pytest.raises(EvidenceConsumerError) as caught:
+        evidence_selection.load_selection_sources(manifest)
+    assert caught.value.boundary == (
+        "publication_time_source_hash" if mutation == "changed_source" else "manifest_verification"
+    )
+
+
+@pytest.mark.parametrize("mode", ["legacy_date", "portable_v2", "current_v3", "invented_date", "changed_source"])
+def test_no_frontier_date_replay_preserves_inventory_at_reader(tmp_path: Path, mode: str) -> None:
+    _, sources, raw_path = _materialized_missing_date_source(tmp_path)
+    source = sources[0]
+    source["packet"]["selection"] = {"mode": "proposition", "proposition_ids": []}
+    source["packet"]["selection_coverage"] = {"truncated": False}
+    _reseal(source)
+    frontier = build_customer_pull_point_frontier(
+        source["packet"], frontier_id="date-replay", business_question="What evidence exists?",
+        subject_product_ids=["summer-fridays-lip-butter-balm"],
+    )
+    frontier_path = tmp_path / "frontier.json"
+    frontier_path.write_text(json.dumps(frontier), encoding="utf-8")
+    manifest = materialize_phase_a_evidence_no_frontier_axis_manifest(
+        axis_id="hydration_and_moisture", subject_product_ids=["summer-fridays-lip-butter-balm"],
+        source_id="full-corpus", packet_path=source["packet_path"],
+        bundle_path=source["bundle_path"], frontier_path=frontier_path,
+    )
+    assert manifest["schema_version"] == "phase_a_evidence_axis_pack_manifest_v3"
+    expected = build_phase_a_evidence_axis_pack(manifest)["candidate_inventory"]
+    if mode != "portable_v2":
+        expected[0]["publication_time"] = (
+            "2099-01-01" if mode == "invented_date" else "2026-07-29T08:17:00+0000"
+        )
+    if mode != "current_v3":
+        manifest["schema_version"] = "phase_a_evidence_axis_pack_manifest_v2"
+    if mode in {"portable_v2", "changed_source"}:
+        raw_path.write_text("{}", encoding="utf-8")
+    manifest["candidate_inventory_sha256"] = _canonical_hash(expected)
+    manifest.pop("manifest_sha256")
+    manifest["manifest_sha256"] = _canonical_hash(manifest)
+    if mode in {"current_v3", "invented_date", "changed_source"}:
+        with pytest.raises(EvidenceConsumerError) as caught:
+            build_phase_a_evidence_axis_pack(manifest)
+        assert caught.value.boundary == (
+            "publication_time_source_hash" if mode == "changed_source" else "no_frontier_axis_candidate_inventory"
+        )
+        return
+    pack = build_phase_a_evidence_axis_pack(manifest)
+    pack_path = tmp_path / "pack.json"
+    pack_path.write_text(json.dumps(pack), encoding="utf-8")
+    saved = json.loads(pack_path.read_text(encoding="utf-8"))
+    validate_phase_a_evidence_axis_pack(saved, expected_axis_pack_sha256=pack["axis_pack_sha256"])
+    request = build_no_frontier_reader_request(saved, source_axis_pack_path=pack_path)
+    assert saved["candidate_inventory"] == expected
+    assert request["candidate_rows"]
+
+
 def test_missing_packet_publication_time_rehydrates_only_without_materialized_source_identity(
     tmp_path: Path,
 ) -> None:

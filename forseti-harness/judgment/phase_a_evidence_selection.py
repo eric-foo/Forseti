@@ -29,7 +29,9 @@ from judgment.phase_a_evidence_consumer import (
 LEGACY_SELECTION_SPEC_VERSION = "phase_a_evidence_selection_spec_v1"
 SELECTION_SPEC_VERSION = "phase_a_evidence_selection_spec_v2"
 CUSTOMER_PULL_FRONTIER_VERSION = "phase_a_customer_pull_point_frontier_v1"
-SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v1"
+LEGACY_SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v1"
+SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v2"
+SUPPORTED_SELECTION_MANIFEST_VERSIONS = {LEGACY_SELECTION_MANIFEST_VERSION, SELECTION_MANIFEST_VERSION}
 PARENT_CONTEXT_POLICY = "linked_parent_context_v1"
 SELECTION_BATCH_MANIFEST_VERSION = "phase_a_evidence_selection_batch_manifest_v1"
 LEGACY_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v1"
@@ -1706,6 +1708,7 @@ def _candidate_rows(
     spec: Mapping[str, Any],
     *,
     include_parent_context: bool = True,
+    legacy_publication_time: bool = False,
 ) -> list[dict[str, Any]]:
     axis_ids = spec.get("axis_ids")
     subject_ids = spec.get("subject_product_ids")
@@ -1768,7 +1771,7 @@ def _candidate_rows(
         stored = _publication_time_value(evidence.get("publication_time"))
         if stored is not None:
             return stored
-        if _has_portable_materialized_source_identity(source):
+        if not legacy_publication_time and _has_portable_materialized_source_identity(source):
             return None
         key = (str(source["source_id"]), evidence_id)
         if key not in publication_time_cache:
@@ -2800,7 +2803,7 @@ def _relation_response_mode(spec: Mapping[str, Any]) -> str:
 def load_selection_sources(manifest: Mapping[str, Any]) -> list[dict[str, Any]]:
     stored = manifest.get("manifest_sha256")
     payload = {key: value for key, value in manifest.items() if key != "manifest_sha256"}
-    if manifest.get("schema_version") != SELECTION_MANIFEST_VERSION or stored != _canonical_json_sha256(payload):
+    if manifest.get("schema_version") not in SUPPORTED_SELECTION_MANIFEST_VERSIONS or stored != _canonical_json_sha256(payload):
         raise EvidenceConsumerError("manifest_verification", "selection manifest changed")
     sources = []
     for row in manifest.get("sources", []):
@@ -2836,6 +2839,18 @@ def _candidate_rows_for_manifest(
         manifest["spec"],
         include_parent_context=policy == PARENT_CONTEXT_POLICY,
     )
+    # v1 straddled the portable-date change. Try its prior hash-bound source
+    # projection only when the current inventory does not match. Callers still
+    # require the complete original inventory hash; no stored value is restamped.
+    if (
+        manifest.get("schema_version") == LEGACY_SELECTION_MANIFEST_VERSION
+        and _canonical_json_sha256(candidates) != manifest.get("candidate_inventory_sha256")
+    ):
+        candidates = _candidate_rows(
+            sources, manifest["spec"],
+            include_parent_context=policy == PARENT_CONTEXT_POLICY,
+            legacy_publication_time=True,
+        )
     _point_actor_scope(manifest["spec"], candidates)
     _load_relation_adjudication(manifest, candidates)
     return candidates
@@ -4397,7 +4412,7 @@ def _preselection_confirmation_state(
     stored = manifest.get("manifest_sha256")
     payload = {key: value for key, value in manifest.items() if key != "manifest_sha256"}
     if (
-        manifest.get("schema_version") != SELECTION_MANIFEST_VERSION
+        manifest.get("schema_version") not in SUPPORTED_SELECTION_MANIFEST_VERSIONS
         or stored != _canonical_json_sha256(payload)
     ):
         raise EvidenceConsumerError(

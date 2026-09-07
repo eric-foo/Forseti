@@ -53,7 +53,12 @@ failure. The public preparation runner verifies the source's stored content
 hash without reopening its provenance locators. Current selection consumers
 also keep missing publication times unavailable rather than reopening those
 Collection paths. Historical unmaterialized inputs and bundles without a
-materialized-source identity keep their existing locator behavior.
+materialized-source identity keep their existing locator behavior. New selection
+manifest v2 and no-frontier axis manifest v3 bind the portable behavior.
+Historical selection v1 and no-frontier manifest v2 replay either pre-existing
+date projection only against their complete original inventory hash; the legacy
+projection verifies its source-artifact bytes. Never restamp a frozen inventory
+to bypass a date mismatch. Contract v119 owns this compatibility boundary.
 This is a conceptual and completion boundary between acquisition and Deliver,
 not a new globally numbered phase: historical Phase A, Phase B, Turn B,
 Understanding, and Deliver vocabulary is not renumbered or migrated.

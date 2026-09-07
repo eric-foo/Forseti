@@ -24,6 +24,14 @@ contract or its linked owning source. This history creates no new review step.
 
 ## Changelog
 
+- `v119` / 2026-09-07 — corrected v116's historical replay regression: some
+  already-materialized Summer Fridays selections and no-frontier packs had
+  hash-bound dates derived from their pinned source artifacts. New selection
+  manifest v2 and no-frontier axis manifest v3 explicitly bind portable dates;
+  older manifests can replay either prior projection only against the original
+  complete inventory hash, with source-artifact hashes still enforced. No
+  frozen bytes or provider responses are rewritten, and this correction makes
+  no all-axis reader-quality or blind-conformance completion claim.
 - `v118` / 2026-09-06 — allowed explicit decision authoring for verified method
   v7 while retaining legacy replay; grounded complete-frontier origin caps in
   exact source membership; bounded both literal relation and confirmation
