@@ -10490,3 +10490,31 @@ def test_frozen_v8_repair_replay_keeps_parent_and_active_content_bound() -> None
         corrupt["compilation_sha256"] = _canonical_hash(corrupt)
         with pytest.raises(SemanticIntegrationError, match=error):
             prepare_reconciliation_stage(bundle, corrupt)
+
+    # A current V9 repair authored over a frozen V8 verification stays valid.
+    mixed = deepcopy(repaired)
+    mixed["row_verification_manifest"] = deepcopy(frozen["row_verification_manifest"])
+    mixed_repair = mixed["row_repair_manifest"]
+    mixed_repair["parent_row_verification_manifest_sha256"] = mixed[
+        "row_verification_manifest"
+    ]["manifest_sha256"]
+    mixed_repair.pop("manifest_sha256")
+    mixed_repair["manifest_sha256"] = _canonical_hash(mixed_repair)
+    mixed.pop("compilation_sha256")
+    mixed["compilation_sha256"] = _canonical_hash(mixed)
+    prepare_reconciliation_stage(bundle, mixed)
+
+    # The reverse order never executed: a current V9 verification cannot carry a
+    # repair stamped with the frozen V8 identity, even after coherent rehashing.
+    downgraded = deepcopy(repaired)
+    downgraded_repair = downgraded["row_repair_manifest"]
+    downgraded_repair["verification_method_version"] = ROW_VERIFICATION_METHOD_VERSION_V8
+    downgraded_repair["verification_method_sha256"] = _canonical_hash(
+        ROW_VERIFICATION_METHOD_TEXT_V8
+    )
+    downgraded_repair.pop("manifest_sha256")
+    downgraded_repair["manifest_sha256"] = _canonical_hash(downgraded_repair)
+    downgraded.pop("compilation_sha256")
+    downgraded["compilation_sha256"] = _canonical_hash(downgraded)
+    with pytest.raises(SemanticIntegrationError, match="stale method lineage"):
+        prepare_reconciliation_stage(bundle, downgraded)

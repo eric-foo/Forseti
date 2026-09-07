@@ -787,7 +787,10 @@ manifest may retain the exact verifier-v8 version and policy hash where the
 bundle's current verifier is v9. V9 changes transport instructions, not semantic
 policy. Replay preserves the original manifest, compilation, and output bytes;
 it does not certify a v9 execution. All active-row and response-lineage checks
-still apply. New verification continues to author v9; integration methods v11
+still apply. A row-repair manifest may carry the frozen v8 identity only when
+its parent row-verification manifest carries it; a v9 verification still
+requires a v9 repair, while a v9 repair authored over a frozen v8 verification
+stays valid. New verification continues to author v9; integration methods v11
 and v12 still require their own v10 and v11 verifiers. Older verifier policies,
 unknown hashes, or a version/hash substitution remain rejected.
 

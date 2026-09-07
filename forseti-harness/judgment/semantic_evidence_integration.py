@@ -5032,7 +5032,8 @@ def _verify_row_verification_manifest(
                 f"row verification manifest has invalid {field}"
             )
     method_version, method_text = _verification_method(bundle)
-    accepted_methods = [(method_version, _sha256(method_text))]
+    current_method = (method_version, _sha256(method_text))
+    accepted_methods = [current_method]
     # V9 changes response transport only. Replay the exact frozen V8 policy
     # without restamping it; newer semantic policies still require their verifier.
     if method_version == "semantic_evidence_row_verification_method_v9":
@@ -5081,13 +5082,24 @@ def _verify_row_verification_manifest(
             "manifest_sha256",
         } or repair_manifest.get("schema_version") != ROW_REPAIR_MANIFEST_VERSION:
             raise SemanticIntegrationError("invalid row repair manifest shape")
+        # A repair cannot predate the verification it descends from, so the
+        # frozen V8 identity is available here only when the parent carries it.
+        repair_methods = (
+            accepted_methods
+            if (
+                manifest["verification_method_version"],
+                manifest["verification_method_sha256"],
+            )
+            != current_method
+            else [current_method]
+        )
         if (
             repair_manifest.get("parent_row_verification_manifest_sha256")
             != manifest["manifest_sha256"]
             or (
                 repair_manifest.get("verification_method_version"),
                 repair_manifest.get("verification_method_sha256"),
-            ) not in accepted_methods
+            ) not in repair_methods
         ):
             raise SemanticIntegrationError("row repair manifest has stale method lineage")
         for field in (
