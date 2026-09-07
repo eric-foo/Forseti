@@ -1929,6 +1929,9 @@ paraphrase and context-supported entailment; it cannot broaden the claim to
 admit evidence. A missing required qualifier is insufficient support, not by
 itself an opposing report. Source-authored causal attribution may support a
 reported-experience claim while the analyst's causal ceiling remains intact.
+An evidentiary limit ("does not establish X") is not a source fact asserting
+that X did not happen. Evaluate a report at its stated time; later action does
+not erase an earlier reported state unless the claim requires its persistence.
 Actual identity, condition, time, intensity, uncertainty and action-state
 differences remain material. This applies the owning claim-support contract;
 it adds no lexical semantic classifier, evidence filter or provider stage.
