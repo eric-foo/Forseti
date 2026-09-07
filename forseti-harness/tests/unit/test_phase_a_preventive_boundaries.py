@@ -71,7 +71,17 @@ def test_verified_dates_reach_portable_selection_without_collection_paths(tmp_pa
     expected, candidates = _portable_pipeline(tmp_path, dates)
     observed = {row["evidence_id"]: row["publication_time"] for row in candidates}
     assert len(observed) == len(dates)
-    assert observed == {key: selection._publication_time_value(value) for key, value in expected.items()}
+    # Independent oracle: using the consumer's date reader here would let the
+    # same faulty normalization erase dates on both sides of the assertion.
+    assert observed == dict(zip(expected, [dates[0], dates[1], None, None], strict=True)), "publication time changed at portable selection"
+
+
+def test_portable_date_signal_rejects_loss_in_consumer(tmp_path, monkeypatch):
+    # Inject a consumer defect after packet verification, without altering any
+    # source, packet, hash or proof artifact. Reuse the positive test's oracle.
+    monkeypatch.setattr(selection, "_publication_time_value", lambda value: None)
+    with pytest.raises(AssertionError, match="publication time changed at portable selection"):
+        test_verified_dates_reach_portable_selection_without_collection_paths(tmp_path, monkeypatch)
 
 
 def test_date_preservation_signal_rejects_loss_inside_an_admitted_row(tmp_path):

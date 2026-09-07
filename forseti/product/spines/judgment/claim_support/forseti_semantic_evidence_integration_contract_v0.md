@@ -159,6 +159,13 @@ in its existing `point_scope_reason` before classifying rows; this adds no field
 or provider call. Returning to a product means resuming use, distinct from
 returning that product as merchandise.
 
+This confirmation guidance is shared selection policy for every integration
+method version. It changes `relation_adjudication_basis`; stored bindings made
+under the previous policy fail reuse validation and require fresh adjudication.
+In batched confirmation, each call states its criterion independently. The
+canonical response retains the first reason and transport retains all reasons;
+their semantic consistency is instructed, not mechanically verified.
+
 Source-authored causal attribution and the analyst's causal ceiling are separate:
 "this caused my rash" may support reported irritation while objective causation
 remains unestablished. It does not oppose the report merely because causation is
@@ -177,6 +184,8 @@ and relative dates never become fabricated exact dates. Portable selection still
 does not reopen legacy Collection locators. This does not migrate or repair a
 historical date-poor source, and these generic criteria do not settle a contested
 historical point definition or establish all-axis semantic correctness.
+An injected faulty consumer date reader must fail the same preservation assertion
+against independently specified expected dates, without changing proof artifacts.
 
 Upstream `product_candidates` are hypotheses, not product truth. For the
 current method, every admitted item also carries source-pinned product context

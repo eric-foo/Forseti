@@ -31,7 +31,14 @@ contract or its linked owning source. This history creates no new review step.
   analyst causal limits, and preserve time and action/object distinctions.
   Shared state classification distinguishes ongoing use, purchase evidence and
   merchandise returns. Added fresh-source date persistence regressions through
-  portable selection; existing adapters already carry dates. No extra provider
+  portable selection; existing adapters already carry dates. The confirmation
+  guidance is selection-lane policy and applies to every method version, so it
+  changes `relation_adjudication_basis` and a stored `relation_adjudication`
+  binding recorded under the previous policy must be re-adjudicated. The live
+  contract discloses this boundary and the instructed, unverified consistency
+  across confirmation batches. A consumer date-reader mutation now falsifies
+  the portable-selection assertion against an independent date oracle without
+  modifying proof artifacts. No extra provider
   stage, historical corpus migration, contested staple relabeling, or all-axis
   proof claim.
 - `v118` / 2026-09-06 — allowed explicit decision authoring for verified method

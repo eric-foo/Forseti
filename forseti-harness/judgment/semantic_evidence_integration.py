@@ -7530,7 +7530,7 @@ def validate_reconciliation_stage(
         allowed = set(expected_batches[batch_id]["candidate_refs"])
         if response["schema_version"] == RECONCILIATION_RESPONSE_VERSION_V3:
             if bundle.get("method_version") not in {METHOD_VERSION_V7, METHOD_VERSION_V12, METHOD_VERSION_V13}:
-                raise SemanticIntegrationError("decision reconciliation requires verified method v7 or current method v12")
+                raise SemanticIntegrationError("decision reconciliation requires verified method v7 or current method v12 or v13")
             original_labels = level_emerging_labels if batch_id == emerging_axis_owner_batch_id else set()
             response = _assemble_decision_reconciliation(
                 response, stage, expected_batches[batch_id], original_labels, candidate_index, evidence_index)
@@ -7894,7 +7894,7 @@ def diagnose_reconciliation_response(
     if response.get("schema_version") != RECONCILIATION_RESPONSE_VERSION_V3:
         raise SemanticIntegrationError("reconciliation diagnostic requires current response v3")
     if bundle.get("method_version") not in {METHOD_VERSION_V12, METHOD_VERSION_V13}:
-        raise SemanticIntegrationError("reconciliation diagnostic requires current method v12")
+        raise SemanticIntegrationError("reconciliation diagnostic requires current method v12 or v13")
     if response.get("stage_sha256") != stage.get("stage_sha256"):
         raise SemanticIntegrationError("reconciliation response has stale stage hash")
     expected_batches = {row["batch_id"]: row for row in stage["batches"]}
@@ -11322,6 +11322,7 @@ __all__ = [
     "EVIDENCE_PACKET_VERSION",
     "EVIDENCE_PACKET_VERSION_V1",
     "EVIDENCE_PACKET_VERSION_V2",
+    "MEANING_BOUNDARY_GUIDANCE",
     "METHOD_TEXT",
     "METHOD_TEXT_V2",
     "METHOD_TEXT_V3",
@@ -11361,6 +11362,7 @@ __all__ = [
     "ROW_VERIFICATION_METHOD_TEXT",
     "ROW_VERIFICATION_METHOD_TEXT_V10",
     "ROW_VERIFICATION_METHOD_TEXT_V11",
+    "ROW_VERIFICATION_METHOD_TEXT_V12",
     "ROW_VERIFICATION_METHOD_TEXT_V3",
     "ROW_VERIFICATION_METHOD_TEXT_V4",
     "ROW_VERIFICATION_METHOD_TEXT_V5",
@@ -11370,6 +11372,7 @@ __all__ = [
     "ROW_VERIFICATION_METHOD_VERSION",
     "ROW_VERIFICATION_METHOD_VERSION_V10",
     "ROW_VERIFICATION_METHOD_VERSION_V11",
+    "ROW_VERIFICATION_METHOD_VERSION_V12",
     "ROW_VERIFICATION_METHOD_VERSION_V3",
     "ROW_VERIFICATION_METHOD_VERSION_V4",
     "ROW_VERIFICATION_METHOD_VERSION_V5",
