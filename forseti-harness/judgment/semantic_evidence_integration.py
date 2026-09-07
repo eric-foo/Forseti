@@ -18,6 +18,7 @@ import json
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from typing import Any
+from judgment.claim_meaning import CLAIM_FORMATION_GUIDANCE
 
 
 BUNDLE_VERSION = "semantic_evidence_bundle_v1"
@@ -83,6 +84,7 @@ RECONCILIATION_AUTHORING_LEGACY = "legacy"
 RECONCILIATION_AUTHORING_IDENTITY_V1 = "exact_identity_namespaces_v1"
 RECONCILIATION_AUTHORING_IDENTITY_V2 = "exact_identity_namespaces_v2"
 RECONCILIATION_AUTHORING_IDENTITY_V3 = "exact_identity_namespaces_v3"
+RECONCILIATION_AUTHORING_IDENTITY_V4 = "exact_identity_namespaces_v4"
 RECONCILIATION_IDENTITY_V2_MAX_BATCH_CANDIDATES = 96
 RELATION_CLOSURE_STAGE_VERSION = "semantic_evidence_relation_closure_stage_v1"
 RELATION_CLOSURE_RESPONSE_VERSION = "semantic_evidence_relation_closure_response_v1"
@@ -6285,6 +6287,7 @@ def _identity_authoring_enabled(decision_only, authoring_revision):
         RECONCILIATION_AUTHORING_IDENTITY_V1,
         RECONCILIATION_AUTHORING_IDENTITY_V2,
         RECONCILIATION_AUTHORING_IDENTITY_V3,
+        RECONCILIATION_AUTHORING_IDENTITY_V4,
     } and decision_only:
         return True
     raise SemanticIntegrationError("unsupported reconciliation normal-authoring revision for response version")
@@ -6325,7 +6328,7 @@ def _render_normal_reconciliation_prompt(
             "The same original leaf may enter one node through only one attached child. If two children share a leaf, "
             "keep them out of the same node or split the node without dropping either candidate.\n"
         )
-    if revision == RECONCILIATION_AUTHORING_IDENTITY_V3:
+    if revision in {RECONCILIATION_AUTHORING_IDENTITY_V3, RECONCILIATION_AUTHORING_IDENTITY_V4}:
         instruction += (
             "Code has checked the original source links for the supplied candidates. "
             "SOURCE_OVERLAP_GROUPS below lists exact candidate_ref groups sharing an original piece of evidence. "
@@ -6342,7 +6345,9 @@ def _render_normal_reconciliation_prompt(
         ensure_ascii=False,
         separators=(",", ":"),
     ) + "\n"
-    if revision == RECONCILIATION_AUTHORING_IDENTITY_V3:
+    if revision == RECONCILIATION_AUTHORING_IDENTITY_V4:
+        result += "\nCLAIM_FORMATION\n" + CLAIM_FORMATION_GUIDANCE + "\n"
+    if revision in {RECONCILIATION_AUTHORING_IDENTITY_V3, RECONCILIATION_AUTHORING_IDENTITY_V4}:
         result += "\nSOURCE_OVERLAP_GROUPS\n" + json.dumps(
             _reconciliation_source_overlap_groups(kwargs["candidates"]),
             ensure_ascii=False, separators=(",", ":"),
@@ -6557,7 +6562,7 @@ def prepare_reconciliation_stage(
     identity_namespaces = _identity_authoring_enabled(decision_only, authoring_revision)
     max_batch_candidates = (
         RECONCILIATION_IDENTITY_V2_MAX_BATCH_CANDIDATES
-        if authoring_revision in {RECONCILIATION_AUTHORING_IDENTITY_V2, RECONCILIATION_AUTHORING_IDENTITY_V3}
+        if authoring_revision in {RECONCILIATION_AUTHORING_IDENTITY_V2, RECONCILIATION_AUTHORING_IDENTITY_V3, RECONCILIATION_AUTHORING_IDENTITY_V4}
         else None
     )
     current_emerging_labels = sorted(

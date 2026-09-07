@@ -17,6 +17,7 @@ from typing import Any, Mapping, Sequence
 from urllib.parse import urlparse
 
 from harness_utils import hash_file, sha256_text
+from judgment.claim_meaning import CLAIM_INTERPRETATION_GUIDANCE, CLAIM_MEANING_POLICY
 from judgment.phase_a_evidence_consumer import (
     EvidenceConsumerError,
     _canonical_json_sha256,
@@ -30,8 +31,12 @@ LEGACY_SELECTION_SPEC_VERSION = "phase_a_evidence_selection_spec_v1"
 SELECTION_SPEC_VERSION = "phase_a_evidence_selection_spec_v2"
 CUSTOMER_PULL_FRONTIER_VERSION = "phase_a_customer_pull_point_frontier_v1"
 LEGACY_SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v1"
-SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v2"
-SUPPORTED_SELECTION_MANIFEST_VERSIONS = {LEGACY_SELECTION_MANIFEST_VERSION, SELECTION_MANIFEST_VERSION}
+PREVIOUS_SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v2"
+SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v3"
+SUPPORTED_SELECTION_MANIFEST_VERSIONS = {
+    LEGACY_SELECTION_MANIFEST_VERSION, PREVIOUS_SELECTION_MANIFEST_VERSION,
+    SELECTION_MANIFEST_VERSION,
+}
 PARENT_CONTEXT_POLICY = "linked_parent_context_v1"
 SELECTION_BATCH_MANIFEST_VERSION = "phase_a_evidence_selection_batch_manifest_v1"
 LEGACY_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v1"
@@ -309,6 +314,19 @@ PRESELECTION_RELATION_CONFIRMATION_BATCH_ENVELOPE_JSON:
 
 def _compact(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
+
+
+def _meaning_guidance(manifest: Mapping[str, Any]) -> str:
+    """Historical manifests retain their original prompt and adjudication basis."""
+    if (manifest.get("schema_version") == SELECTION_MANIFEST_VERSION
+            or manifest.get("claim_meaning_policy") == CLAIM_MEANING_POLICY):
+        return CLAIM_INTERPRETATION_GUIDANCE
+    return ""
+
+
+def _meaning_prompt(template: str, manifest: Mapping[str, Any]) -> str:
+    guidance = _meaning_guidance(manifest)
+    return guidance + "\n\n" + template if guidance else template
 
 
 def _frontier_point_sort_key(row: Mapping[str, Any]) -> tuple[Any, ...]:
@@ -1179,7 +1197,9 @@ def relation_adjudication_basis(
                    PRESELECTION_RELATION_CONFIRMATION_PROMPT,
                    PRESELECTION_CONFIRMATION_BATCH_PROMPT,
                    RELATION_REF_INSTRUCTION, POINT_ACTOR_SCOPE_GUIDANCE,
-                   _policy_guidance(spec, candidates)],
+                   _policy_guidance(spec, candidates)] + (
+                       [_meaning_guidance(manifest)] if _meaning_guidance(manifest) else []
+                   ),
         "judgment_projection_columns": {
             "relation": RELATION_PROMPT_COLUMNS,
             "legacy_relation": LEGACY_RELATION_PROMPT_COLUMNS,
@@ -2520,7 +2540,9 @@ def prepare_evidence_selection(
         _attach_parent_context_envelope(envelope, context_aware, context_rows)
     else:
         envelope = _relation_prompt_envelope(spec, candidates, actor_scope=actor_scope)
-    prompt = RELATION_PROMPT.format(
+    prompt = _meaning_prompt(
+        RELATION_PROMPT, {"schema_version": SELECTION_MANIFEST_VERSION}
+    ).format(
         response_instruction=(
             POSITIONAL_RELATION_RESPONSE_INSTRUCTION
             if response_mode == "positional"
@@ -2623,7 +2645,7 @@ def prepare_evidence_selection_batches(
         subset = candidates[start : start + count]
         batch_id = f"batch_{batch_index:04d}"
         envelope = _relation_prompt_envelope(spec, subset, batch_id=batch_id, actor_scope=actor_scope)
-        prompt = RELATION_PROMPT.format(
+        prompt = _meaning_prompt(RELATION_PROMPT, selection_manifest).format(
             response_instruction=(BATCHED_RELATION_RESPONSE_INSTRUCTION if response_mode == "positional"
                 else LITERAL_RELATION_RESPONSE_INSTRUCTION + " Return the exact batch_id from the envelope."),
             reason_instruction="",
@@ -4306,6 +4328,8 @@ def _prepare_quotes_from_labeled(
         "model_api_calls": 0,
     }
     actor_scope = _point_actor_scope(manifest["spec"], labeled)
+    if _meaning_guidance(manifest):
+        quote_manifest["claim_meaning_policy"] = CLAIM_MEANING_POLICY
     if actor_scope is not None:
         _validate_actor_relations(actor_scope, labeled)
         quote_manifest["point_actor_scope"] = actor_scope
@@ -4483,7 +4507,7 @@ def prepare_preselection_relation_confirmation(
     _attach_parent_context_envelope(envelope, context_aware, context_rows)
     _, _, point_context_rows = _project_parent_context(candidates)
     _attach_point_parent_context_envelope(envelope, point_context_rows)
-    prompt_template = PRESELECTION_RELATION_CONFIRMATION_PROMPT
+    prompt_template = _meaning_prompt(PRESELECTION_RELATION_CONFIRMATION_PROMPT, manifest)
     if include_relation_refs:
         prompt_template = prompt_template.replace(
             "\n\nThe first-pass relation,",
@@ -4971,7 +4995,7 @@ def prepare_batched_preselection_relation_confirmations(
         _attach_actor_scope(envelope, actor_scope, [row for _, row in subset])
         _attach_parent_context_envelope(envelope, context_aware, context_rows)
         _attach_point_parent_context_envelope(envelope, point_context_rows)
-        prompt_template = PRESELECTION_CONFIRMATION_BATCH_PROMPT
+        prompt_template = _meaning_prompt(PRESELECTION_CONFIRMATION_BATCH_PROMPT, selection_manifest)
         if include_relation_refs:
             prompt_template = prompt_template.replace(
                 "\n\nThe first-pass relation,",
@@ -5263,7 +5287,7 @@ def prepare_selected_relation_confirmation(
         point_context_rows=quote_manifest.get("point_parent_context_rows", []),
     )
     _attach_actor_scope(envelope, quote_manifest.get("point_actor_scope"), [row for _, row in presentation], table="selected")
-    prompt = RELATION_CONFIRMATION_PROMPT.format(envelope=_compact(envelope))
+    prompt = _meaning_prompt(RELATION_CONFIRMATION_PROMPT, quote_manifest).format(envelope=_compact(envelope))
     schema = _relation_confirmation_schema()
     confirmation_manifest = {
         "schema_version": RELATION_CONFIRMATION_MANIFEST_VERSION,

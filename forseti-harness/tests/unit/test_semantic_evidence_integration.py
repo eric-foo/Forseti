@@ -2556,7 +2556,7 @@ def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: 
     verification, _ = prepare_row_verification(bundle, raw)
     verified = apply_row_verification(bundle, raw, verification, _row_verification_responses(verification))
     stage, prompts = prepare_reconciliation_stage(bundle, verified,
-        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3)
+        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4)
     bp, cp = tmp_path / "bundle.json", tmp_path / "compiled.json"
     bp.write_text(json.dumps(bundle), encoding="utf-8")
     cp.write_text(json.dumps(verified), encoding="utf-8")
@@ -3014,14 +3014,16 @@ def test_reconciliation_diagnostic_never_guesses_definition_or_orphan_from_malfo
 
 @pytest.mark.parametrize("field", ["subject_product_ids", "comparator_product_ids", "product_version_ids"])
 @pytest.mark.parametrize("relation", sorted(semantic_module.RELATIONS))
-def test_normal_identity_namespaces_bind_all_roles_and_relations(field, relation):
+@pytest.mark.parametrize("revision", [semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1,
+                                       semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4])
+def test_normal_identity_namespaces_bind_all_roles_and_relations(field, relation, revision):
     import re
     bundle, _, stage, _, response = _decision_reconciliation_fixture()
     stage["candidates"][1][field] = ["different-identity"]
     stage["stage_sha256"] = semantic_module._sha256({k: v for k, v in stage.items() if k != "stage_sha256"})
     response["stage_sha256"] = stage["stage_sha256"]
     record = semantic_module.prepare_reconciliation_prompts(bundle, stage,
-        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1)[0]
+        authoring_revision=revision)[0]
     schema = record["response_schema"]
     decisions = response["decisions_by_candidate_ref"]
     patterns = []
@@ -3065,18 +3067,21 @@ def test_public_normal_authoring_default_and_legacy_replay_are_separate(tmp_path
     bundle, compiled, stage, legacy, _ = _decision_reconciliation_fixture(count=40)
     for name, value in [("bundle", bundle), ("compiled", compiled), ("stage", stage)]:
         (tmp_path / f"{name}.json").write_text(json.dumps(value), encoding="utf-8")
-    for revision in [None, semantic_module.RECONCILIATION_AUTHORING_LEGACY]:
+    for revision in [None, semantic_module.RECONCILIATION_AUTHORING_LEGACY,
+                     semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1,
+                     semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V2,
+                     semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3]:
         directory = tmp_path / (revision or "current")
         result = prepare_reconciliation_level(bundle_path=tmp_path/"bundle.json",
             compilation_path=tmp_path/"compiled.json", existing_stage_path=tmp_path/"stage.json",
             stage_out=directory/"stage.json", prompt_dir=directory/"prompts", authoring_revision=revision)
         expected = semantic_module.prepare_reconciliation_prompts(bundle, stage,
-            authoring_revision=revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3)
+            authoring_revision=revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4)
         assert json.loads((directory/"stage.json").read_text()) == stage
         for row in expected:
             assert (directory/"prompts"/f"{row['batch_id']}.md").read_bytes() == (row["prompt"] + "\n").encode()
             assert json.loads((directory/"prompts"/f"{row['batch_id']}.schema.json").read_text()) == row["response_schema"]
-        assert result["authoring_revision"] == (revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3)
+        assert result["authoring_revision"] == (revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4)
     assert semantic_module.prepare_reconciliation_prompts(bundle, stage,
         authoring_revision=semantic_module.RECONCILIATION_AUTHORING_LEGACY) == legacy
     new_stage, new_prompts = prepare_reconciliation_stage(bundle, compiled,
@@ -3087,9 +3092,45 @@ def test_public_normal_authoring_default_and_legacy_replay_are_separate(tmp_path
     assert sorted(ref for batch in new_stage["batches"] for ref in batch["candidate_refs"]) == sorted(row["candidate_ref"] for row in new_stage["candidates"])
 
 
+def test_current_claim_formation_guidance_changes_prompt_only_and_preserves_historical_bytes(monkeypatch):
+    import hashlib
+    from judgment.claim_meaning import CLAIM_FORMATION_GUIDANCE, CLAIM_MEANING_GUIDANCE
+
+    bundle, compiled, stage, _, response = _decision_reconciliation_fixture()
+    original = deepcopy((bundle, compiled, stage, response))
+    # Frozen native prompt digests from d2fc32a4 with this same stage fixture.
+    historical_hashes = {
+        "legacy": "649cf6d7cb0c71c50e811d6f7c9ada0b4f53ec7ebfcbad572dd27c1e106f23f9",
+        "exact_identity_namespaces_v1": "5848e355575cd9b61eddf1b05ae9bd4e39d5455663d6dc4ae2ecec510aec7a87",
+        "exact_identity_namespaces_v2": "4e476e3566e56babedd6b4845ee6d1a55c3ec6fc1c4078104ff802899c5e850a",
+        "exact_identity_namespaces_v3": "5eb3041b09fa12533f9af23baa829dcc635b98913f837a0120f585a9c15669ad",
+    }
+    historical = {revision: semantic_module.prepare_reconciliation_prompts(bundle, stage, authoring_revision=revision)
+                  for revision in historical_hashes}
+    for revision, records in historical.items():
+        assert hashlib.sha256(records[0]["prompt"].encode()).hexdigest() == historical_hashes[revision]
+        assert CLAIM_FORMATION_GUIDANCE not in records[0]["prompt"]
+    current = semantic_module.prepare_reconciliation_prompts(bundle, stage,
+        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4)
+    assert current[0]["prompt"].count(CLAIM_FORMATION_GUIDANCE) == 1
+    assert CLAIM_MEANING_GUIDANCE in current[0]["prompt"]
+    assert current[0]["response_schema"] == historical["exact_identity_namespaces_v3"][0]["response_schema"]
+    accepted = validate_reconciliation_stage(bundle, stage, [response])
+    monkeypatch.setattr(semantic_module, "CLAIM_FORMATION_GUIDANCE", CLAIM_FORMATION_GUIDANCE + " Changed formation guidance.")
+    changed = semantic_module.prepare_reconciliation_prompts(bundle, stage,
+        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4)
+    assert hashlib.sha256(changed[0]["prompt"].encode()).hexdigest() != hashlib.sha256(current[0]["prompt"].encode()).hexdigest()
+    assert changed[0]["response_schema"] == current[0]["response_schema"]
+    assert all(semantic_module.prepare_reconciliation_prompts(bundle, stage, authoring_revision=revision) == records
+               for revision, records in historical.items())
+    assert validate_reconciliation_stage(bundle, stage, [response]) == accepted
+    assert (bundle, compiled, stage, response) == original
+
+
 @pytest.mark.parametrize("revision", [
     semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V2,
     semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3,
+    semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4,
 ])
 def test_identity_current_caps_batches_and_states_source_restriction(monkeypatch, revision):
     # The cap must be exercised above one with a remainder: at one, an
@@ -3130,7 +3171,9 @@ def test_identity_current_caps_batches_and_states_source_restriction(monkeypatch
 
 
 @pytest.mark.parametrize("overlap", ["none", "partial", "all"])
-def test_identity_v3_rendered_restrictions_match_native_consumer(tmp_path, overlap):
+@pytest.mark.parametrize("revision", [semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3,
+                                       semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4])
+def test_identity_rendered_restrictions_match_native_consumer(tmp_path, overlap, revision):
     from itertools import combinations
     from runners.run_semantic_evidence_integration import prepare_reconciliation_level
     bundle, compiled, stage, _, response = _decision_reconciliation_fixture(count=3)
@@ -3147,14 +3190,14 @@ def test_identity_v3_rendered_restrictions_match_native_consumer(tmp_path, overl
     result = prepare_reconciliation_level(
         bundle_path=tmp_path/"bundle.json", compilation_path=tmp_path/"compiled.json",
         existing_stage_path=tmp_path/"stage.json", stage_out=tmp_path/"out.json",
-        prompt_dir=tmp_path/"prompts")
+        prompt_dir=tmp_path/"prompts", authoring_revision=revision)
     text = (tmp_path/"prompts"/f"{response['batch_id']}.md").read_text(encoding="utf-8")
     groups = json.loads(text.split("\nSOURCE_OVERLAP_GROUPS\n", 1)[1])
     expected = [] if overlap == "none" else (
         [sorted(refs[:2]), sorted(refs[1:])] if overlap == "partial" else [sorted(refs)])
     assert groups == sorted(expected)
     assert "trace its attached candidates" not in text
-    assert result["authoring_revision"] == semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3
+    assert result["authoring_revision"] == revision
     assert len(text.encode("utf-8")) - 1 <= stage["max_prompt_bytes"]
     assert json.loads((tmp_path/"out.json").read_text(encoding="utf-8")) == stage
     # Check the instructions against the existing independent consumer, not a

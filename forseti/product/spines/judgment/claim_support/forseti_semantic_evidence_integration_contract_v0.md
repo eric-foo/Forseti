@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v120
+version: v121
 effective_date: 2026-09-07
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v120
+# Semantic Evidence Integration Contract v121
 
 ## Purpose
 
@@ -41,8 +41,8 @@ embedded for provenance. Current selection consumers likewise keep missing
 publication times unavailable instead of reopening those locators. Historical
 unmaterialized sources without that stored hash retain their locator
 verification, and historical bundles without a materialized-source identity
-retain their existing metadata fallback. New selection manifests use v2 and
-new no-frontier axis manifests use v3 to bind this portable-date behavior.
+retain their existing metadata fallback. Selection manifests v2 and later and
+no-frontier axis manifests v3 and later bind this portable-date behavior.
 Earlier selection v1 and no-frontier manifest v2 straddle the boundary: replay
 first derives the portable inventory, then may use the prior hash-verified
 publication-time fallback only if the complete original inventory hash matches.
@@ -1883,7 +1883,7 @@ shape, without replacing raw provider artifacts. No normal-path semantic provide
 stage is added. Mechanical assembly does not prove that chosen meanings belong together.
 
 Normal method-v12 response-v3 preparation now selects
-`exact_identity_namespaces_v2` at the public `prepare-reconciliation-level`
+`exact_identity_namespaces_v4` at the public `prepare-reconciliation-level`
 entrypoint. The separately selected `authoring_revision` is not a response or
 stage schema revision. Each exact tuple of subject, comparator and version
 **sets, with their roles preserved**, gets a code-derived opaque prefix. Every
@@ -1894,29 +1894,52 @@ into these handles. Matching prefixes establish compatibility, not semantic
 warrant, actual product identity truth, or useful consolidation.
 
 This normal-request-only constraint applies at every reconciliation level and
-mode. V2 also states the existing native repeated-leaf rule before generation:
+mode. V2 introduced the existing native repeated-leaf rule before generation:
 one original semantic leaf may enter a node through only one attached child.
 Fresh V2 stages cap a batch at 96 candidates as well as the existing prompt-byte
 limit. The cap bounds output and connected-repair scope; it does not choose a
 meaning, truncate context, weaken the native consumer, or promise provider
-success. New stage packing includes the instruction bytes; immutable resumed
+success. V3 presents exact shared-leaf groups instead of asking the model to
+reconstruct them. V4 retains those groups and adds the shared supported-meaning
+guidance described below. New stage packing includes the instruction bytes; immutable resumed
 stages retain their membership and fail visibly if whitespace compaction cannot
 fit the complete prompt. Native identity checks remain unchanged for all
 relations. The restriction removes an incidental signal previously carried by
 attempted incompatible merges; equal upstream-discrepancy discovery sensitivity
 is not claimed. It adds request bytes, not a provider call or a new review stage.
 
-Use `--authoring-revision exact_identity_namespaces_v1` to reproduce the prior
+Use `--authoring-revision exact_identity_namespaces_v1`, `exact_identity_namespaces_v2`,
+or `exact_identity_namespaces_v3` to reproduce the corresponding prior
 namespaced normal requests, or `--authoring-revision legacy` to reproduce the
 older unrestricted normal requests.
 The low-level Python preparation APIs retain their historical default for replay;
-current callers explicitly select `RECONCILIATION_AUTHORING_IDENTITY_V2`.
+current callers explicitly select `RECONCILIATION_AUTHORING_IDENTITY_V4`.
 Explicit response-v2 and older methods retain historical public defaults.
 Missing-definition and local-repair requests use the unchanged historical
 renderer/schema and can preserve existing opaque keys. Accepted work keeps its
 actual original prompt, schema, attempt and correction receipts; newly rendered
 unused requests are never substituted as its provenance. Neither namespace
 compliance nor native acceptance proves source-supported meaning preservation.
+
+Current normal authoring and selection consume the same supported-meaning
+standard from `judgment/claim_meaning.py`. Claim formation chooses a useful
+shared assertion without introducing an analyst's stronger status label or
+threshold. Selection interprets the already-bound claim through ordinary
+paraphrase and context-supported entailment; it cannot broaden the claim to
+admit evidence. A missing required qualifier is insufficient support, not by
+itself an opposing report. Source-authored causal attribution may support a
+reported-experience claim while the analyst's causal ceiling remains intact.
+Actual identity, condition, time, intensity, uncertainty and action-state
+differences remain material. This applies the owning claim-support contract;
+it adds no lexical semantic classifier, evidence filter or provider stage.
+
+Selection manifest v3 binds this guidance in new first-pass and confirmation
+requests and in adjudication reuse eligibility. Its quote manifests carry
+`claim_meaning_policy: supported_claim_meaning_v1` for the selected-row
+confirmation route. Selection v1/v2 and explicit prior reconciliation authoring
+revisions keep their original prompts and adjudication basis. New instructions
+do not reinterpret frozen responses or establish semantic correctness merely
+because a response passes structural validation.
 
 Current response-v3 generation requires a nonempty node list when any assigned
 candidate must remain a finding under the existing retention rule. This prevents

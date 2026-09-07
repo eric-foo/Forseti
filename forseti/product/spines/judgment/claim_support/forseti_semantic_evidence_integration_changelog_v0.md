@@ -24,6 +24,16 @@ contract or its linked owning source. This history creates no new review step.
 
 ## Changelog
 
+- `v121` / 2026-09-07 — aligned current claim formation and relation
+  interpretation through one shared supported-meaning instruction. Public normal
+  authoring now selects identity revision v4, preserving v3 structural groups;
+  selection manifest v3 carries the same standard through first pass and
+  confirmation and binds it into adjudication reuse. Prior explicitly selected
+  authoring revisions and selection v1/v2 retain historical prompt behavior.
+  The change preserves material claim qualifiers while avoiding invented
+  thresholds, word matching and confusion between source attribution and an
+  analyst's causal ceiling. It adds no provider stage or deterministic semantic
+  rule and does not complete the broader blind proof or historical data repairs.
 - `v120` / 2026-09-07 — corrected saved point-reader validation after blind-proof
   perturbations showed coherently rehashed empty or duplicated representatives
   were accepted. Saved briefs now reuse the compiler's selection checks,

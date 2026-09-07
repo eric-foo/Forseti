@@ -18,6 +18,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     RECONCILIATION_AUTHORING_IDENTITY_V1,
     RECONCILIATION_AUTHORING_IDENTITY_V2,
     RECONCILIATION_AUTHORING_IDENTITY_V3,
+    RECONCILIATION_AUTHORING_IDENTITY_V4,
     RECONCILIATION_POLICY_VERSION_V2,
     SOURCE_VERSION_V3,
     SemanticIntegrationError,
@@ -1414,7 +1415,7 @@ def prepare_reconciliation_level(
     compilation = _load_object(compilation_path)
     if authoring_revision is None:
         authoring_revision = (
-            RECONCILIATION_AUTHORING_IDENTITY_V3
+            RECONCILIATION_AUTHORING_IDENTITY_V4
             if response_version == RECONCILIATION_RESPONSE_VERSION_V3
             or (bundle.get("method_version") == METHOD_VERSION_V12
                 and response_version != RECONCILIATION_RESPONSE_VERSION_V2)
@@ -2782,6 +2783,7 @@ def _parser() -> argparse.ArgumentParser:
             RECONCILIATION_AUTHORING_IDENTITY_V1,
             RECONCILIATION_AUTHORING_IDENTITY_V2,
             RECONCILIATION_AUTHORING_IDENTITY_V3,
+            RECONCILIATION_AUTHORING_IDENTITY_V4,
         ],
         help="Normal requests only: defaults to exact identity namespaces for method-v12 response-v3; legacy reproduces historical requests.")
     reconcile_level.add_argument(

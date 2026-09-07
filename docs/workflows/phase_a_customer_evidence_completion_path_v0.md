@@ -442,23 +442,27 @@ Native consumers reject missing, foreign,
 duplicate, orphan or prohibited assignments, and incompatible identities.
 Structural exactness does not establish semantic warrant.
 Normal method-v12 response-v3 requests at `prepare-reconciliation-level` select
-`exact_identity_namespaces_v2`: each exact subject/comparator/version set tuple
+`exact_identity_namespaces_v4`: each exact subject/comparator/version set tuple
 gets an opaque prefix and each candidate may attach only to keys in its own
 class. Compatible evidence may share any number of model-authored keys; matching
 identity does not justify merging meanings. The same rule applies at later
-levels and in convergence. V2 also states the native one-leaf/one-child-path
-rule and caps fresh current batches at 96 candidates so output and connected
+levels and in convergence. The native one-leaf/one-child-path rule is exposed
+through exact shared-leaf groups, and fresh current batches cap at 96 candidates so output and connected
 repair scope remain bounded without truncation. It adds request bytes, not
-another provider stage.
+another provider stage. V4 adds the shared supported-meaning standard: form a
+useful assertion each support establishes without inventing a stronger status
+label or threshold. Current selection manifest v3 applies that standard when
+interpreting the fixed claim; it does not broaden the claim or relax source facts.
 New packing includes those bytes; resumed stages keep their frozen membership
 and fail without truncation when they cannot fit.
-Use `--authoring-revision exact_identity_namespaces_v1` for prior namespaced
+Use `--authoring-revision exact_identity_namespaces_v1`, `exact_identity_namespaces_v2`,
+or `exact_identity_namespaces_v3` for their respective prior namespaced
 replay and `--authoring-revision legacy` for older normal prompt/schema replay;
-low-level Python callers select `RECONCILIATION_AUTHORING_IDENTITY_V2` explicitly
+low-level Python callers select `RECONCILIATION_AUTHORING_IDENTITY_V4` explicitly
 for current generation. Explicit response-v2 and older-method public defaults,
 missing-definition requests and local repairs keep their historical behavior.
 For a verified method-v7 continuation, explicitly request response v3 on a fresh
-stage to use that same decision compiler, source-role guidance and identity-v2
+stage to use that same decision compiler, source-role guidance and identity-v4
 packing. Preserve the method-v7 input identity and historical attempts. This
 removes exact source copying from the model's work without weakening claim-kind
 competence or pretending that a new prompt was used for an old answer.
