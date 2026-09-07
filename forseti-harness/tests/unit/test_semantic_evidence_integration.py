@@ -6342,11 +6342,23 @@ def test_row_verification_manifest_binds_the_active_compilation_content() -> Non
             if key != "compilation_sha256"
         }
     )
-    with pytest.raises(
-        SemanticIntegrationError,
-        match="does not bind the current verification method",
+    frozen_v8 = deepcopy(historical_v8)
+    prepare_reconciliation_stage(bundle, historical_v8)
+    assert historical_v8 == frozen_v8
+    # Rehash outer identities so each rejection reaches the intended boundary.
+    for field, value, error in (
+        ("verification_method_sha256", "0" * 64, "does not bind the current verification method"),
+        ("active_rows_sha256", "0" * 64, "does not bind the active row content"),
     ):
-        prepare_reconciliation_stage(bundle, historical_v8)
+        corrupt = deepcopy(historical_v8)
+        manifest = corrupt["row_verification_manifest"]
+        manifest[field] = value
+        manifest.pop("manifest_sha256")
+        manifest["manifest_sha256"] = _canonical_hash(manifest)
+        corrupt.pop("compilation_sha256")
+        corrupt["compilation_sha256"] = _canonical_hash(corrupt)
+        with pytest.raises(SemanticIntegrationError, match=error):
+            prepare_reconciliation_stage(bundle, corrupt)
 
     legacy_manifest = deepcopy(verified)
     legacy_manifest["row_verification_manifest"]["schema_version"] = (
@@ -9295,6 +9307,14 @@ def test_supplied_axis_vocabulary_reaches_all_current_consumers(axis_id, label, 
     forged["compilation_sha256"] = _canonical_hash(forged)
     with pytest.raises(SemanticIntegrationError, match="does not bind the current verification method"):
         prepare_reconciliation_stage(bundle, forged)
+    manifest["verification_method_version"] = ROW_VERIFICATION_METHOD_VERSION_V8
+    manifest["verification_method_sha256"] = _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V8)
+    manifest.pop("manifest_sha256")
+    manifest["manifest_sha256"] = _canonical_hash(manifest)
+    forged.pop("compilation_sha256")
+    forged["compilation_sha256"] = _canonical_hash(forged)
+    with pytest.raises(SemanticIntegrationError, match="does not bind the current verification method"):
+        prepare_reconciliation_stage(bundle, forged)
 
 
 def test_v11_preserves_historical_method_bytes_and_replay() -> None:
@@ -10437,3 +10457,36 @@ def test_v5_flows_through_unchanged_v2_downstream_interfaces() -> None:
         "context_fields": ["product_context", "parent_context"],
     }
     assert packet["model_api_calls"] == 0
+
+
+def test_frozen_v8_repair_replay_keeps_parent_and_active_content_bound() -> None:
+    bundle, _, repaired, _ = _terminal_repair_migration_fixture()
+    frozen = deepcopy(repaired)
+    verification = frozen["row_verification_manifest"]
+    repair = frozen["row_repair_manifest"]
+    for manifest in (verification, repair):
+        manifest["verification_method_version"] = ROW_VERIFICATION_METHOD_VERSION_V8
+        manifest["verification_method_sha256"] = _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V8)
+        if manifest is repair:
+            manifest["parent_row_verification_manifest_sha256"] = verification["manifest_sha256"]
+        manifest.pop("manifest_sha256")
+        manifest["manifest_sha256"] = _canonical_hash(manifest)
+    frozen.pop("compilation_sha256")
+    frozen["compilation_sha256"] = _canonical_hash(frozen)
+    before = deepcopy(frozen)
+    prepare_reconciliation_stage(bundle, frozen)
+    assert frozen == before
+    for field, error in (
+        ("verification_method_sha256", "stale method lineage"),
+        ("parent_row_verification_manifest_sha256", "stale method lineage"),
+        ("active_rows_sha256", "does not bind the active row content"),
+    ):
+        corrupt = deepcopy(frozen)
+        manifest = corrupt["row_repair_manifest"]
+        manifest[field] = "0" * 64
+        manifest.pop("manifest_sha256")
+        manifest["manifest_sha256"] = _canonical_hash(manifest)
+        corrupt.pop("compilation_sha256")
+        corrupt["compilation_sha256"] = _canonical_hash(corrupt)
+        with pytest.raises(SemanticIntegrationError, match=error):
+            prepare_reconciliation_stage(bundle, corrupt)

@@ -782,6 +782,15 @@ which retain their own response shapes. This removes contradictory response
 instructions without changing semantic policy, adding a provider call, or
 rewriting historical row-verifier v8 text.
 
+Owner-authorized replay correction (2026-09-07): a completed row-verification
+manifest may retain the exact verifier-v8 version and policy hash where the
+bundle's current verifier is v9. V9 changes transport instructions, not semantic
+policy. Replay preserves the original manifest, compilation, and output bytes;
+it does not certify a v9 execution. All active-row and response-lineage checks
+still apply. New verification continues to author v9; integration methods v11
+and v12 still require their own v10 and v11 verifiers. Older verifier policies,
+unknown hashes, or a version/hash substitution remain rejected.
+
 Contract v78 adds `phase_a_semantic_integration_run_v9` and integration method
 v11, retaining keyed transport v3, required subjects, and row-owned posture
 restrictions. Method v11 pairs with row-verification method v10; historical

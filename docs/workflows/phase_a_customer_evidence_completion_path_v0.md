@@ -74,6 +74,14 @@ Application preserves source order and raw response hashes preserve the actual
 answer order. Contract v82 owns this boundary; it changes no semantic prompt or
 stage identity and does not make a structurally valid answer semantically right.
 
+Frozen verifier-v8 compilations replay unchanged where the current verifier is
+v9, whose change was response transport only. New verification still uses v9;
+methods v11/v12 retain their stricter verifier pairing. The semantic-integration
+contract's v77 replay clarification owns the exact version/hash acceptance and
+unchanged active-row/lineage checks. Replay does not establish current-method
+execution or semantic truth and requires no provider re-verification merely to
+change a version label.
+
 The existing calibration entry point follows the production-owned
 `SEMANTIC_METHODS_V7_PLUS` set, including current method v12, rather than a
 separate historical allowlist. Primary and cold-repeat evaluation both require
