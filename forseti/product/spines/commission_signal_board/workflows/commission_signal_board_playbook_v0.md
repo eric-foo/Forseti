@@ -627,7 +627,7 @@ phase_acquisition_seal:
     locator:
     sha256:
   understanding_route:
-    route_version: "1.7.1"
+    route_version: "1.8.0"
     comparator_closure:
       state: phase_a_competitor_context_closed | blocked_open_comparator_candidates
       candidate_frame:
@@ -1119,7 +1119,7 @@ version unless an explicit migration/restart is applied and recorded.
 
 ```yaml
 understanding_acquire_seal_route:
-  current_version: 1.7.1
+  current_version: 1.8.0
   versioning_started: 2026-08-07
   baseline_revision: 1aa3a833edbb8425a4ca2eee91bd850feec4e32c
   version_semantics:
@@ -1330,6 +1330,27 @@ understanding_acquire_seal_route:
         New runs use 1.7.1. Earlier stamped routes remain historical-audit-only
         under allow-preversion-route and owe only their stamped requirements;
         never rewrite historical evidence or imply a process fix repairs it.
+    - version: 1.8.0
+      date: 2026-09-05
+      owning_change: current-main method-v12 acquisition-seal compatibility repair
+      changed_behavior: >
+        Keeps Route 1.7.1 and every inherited acquisition obligation, and admits
+        semantic_evidence_integration_view_v2 only when it carries the exact
+        semantic_evidence_integration_method_v12 version and canonical method
+        hash. Adds no view field, reader-method change, review stage, provider
+        route, or automated semantic-truth claim.
+      affected_gate: >
+        Current Route 1.8.0 seals require the exact method-v12/view-v2 tuple.
+        Historical Route 1.7.1 audits continue to require the exact
+        method-v3/view-v2 tuple and inherit their original obligations.
+      migration_note: >
+        This current-main route succeeds revision
+        70f295561e20e9dc478985041850cf2b5e6bcfc1. It is not the separately
+        developed original Experiment Beauty Route 1.8/1.9 branch at
+        e85c332bee81b9fb32e9d76e11dcf8a4fa3626b3; matching numbers do not
+        establish inheritance or make those seals pass. A run migrates only by
+        rebuilding and validating its current-method artifacts; historical
+        seals are never restamped.
   append_only_rule: >
     Every future semantic route change appends one row with version, date,
     owning change/PR when known, changed behavior, affected gate, and

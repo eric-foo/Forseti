@@ -22,6 +22,11 @@ from judgment.phase_a_semantic_run import (  # noqa: E402
     eligible_serp_source_rows,
     load_google_serp_rows,
 )
+from judgment.semantic_evidence_integration import (  # noqa: E402
+    SOURCE_VERSION_V3,
+    build_bundle,
+)
+from runners.run_semantic_evidence_integration import _verify_sources  # noqa: E402
 from source_capture.retail_grid_projection import (  # noqa: E402
     load_verified_source_capture_packet_directory,
 )
@@ -245,8 +250,9 @@ UNDERSTANDING_ROUTE_VERSIONS = {
     "1.6.0",
     "1.7.0",
     "1.7.1",
+    "1.8.0",
 }
-CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.7.1"
+CURRENT_UNDERSTANDING_ROUTE_VERSION = "1.8.0"
 CAMPAIGN_EVIDENCE_VIEW_VERSION = "campaign_evidence_view_v1"
 SEMANTIC_EVIDENCE_INTEGRATION_VIEW_VERSION_V1 = (
     "semantic_evidence_integration_view_v1"
@@ -266,6 +272,12 @@ SEMANTIC_EVIDENCE_METHOD_VERSION_V3 = (
 SEMANTIC_EVIDENCE_METHOD_SHA256_V3 = (
     "c1a3fde85acf10f6be6ad9078f0341aa7000dbddf40786261406b6fa79db3e3c"
 )
+SEMANTIC_EVIDENCE_METHOD_VERSION_V12 = (
+    "semantic_evidence_integration_method_v12"
+)
+SEMANTIC_EVIDENCE_METHOD_SHA256_V12 = (
+    "4f434ce37d3a93d1af85e7597c5cb61213f4f339eea44e37100c12c82822f72a"
+)
 # Historical compatibility aliases used by route-1.5 fixtures. New route
 # validation selects an explicit version tuple and never treats these as the
 # route-1.6 current method.
@@ -284,9 +296,17 @@ _CAMPAIGN_INTEGRATION_ROUTE_VERSIONS = {
     "1.6.0",
     "1.7.0",
     "1.7.1",
+    "1.8.0",
 }
 _SEMANTIC_INTEGRATION_ROUTE_ID = "semantic_evidence_integration"
-_SEMANTIC_INTEGRATION_ROUTE_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.7.1"}
+_SEMANTIC_INTEGRATION_ROUTE_VERSIONS = {
+    "1.4.0",
+    "1.5.0",
+    "1.6.0",
+    "1.7.0",
+    "1.7.1",
+    "1.8.0",
+}
 # Route 1.1.0 introduced comparator closure, campaign-evidence integration,
 # conditional verification, and retailer-state accounting together, so a
 # historical audit of a 1.1.0 seal still owes all of them. Pre-fanout
@@ -301,6 +321,7 @@ _ROUTE_REVISION_1_1_OBLIGATION_VERSIONS = {
     "1.6.0",
     "1.7.0",
     "1.7.1",
+    "1.8.0",
 }
 _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {
     "1.2.0",
@@ -310,16 +331,18 @@ _ROUTE_REVISION_1_2_OBLIGATION_VERSIONS = {
     "1.6.0",
     "1.7.0",
     "1.7.1",
+    "1.8.0",
 }
-_ROUTE_REVISION_1_3_OBLIGATION_VERSIONS = {"1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.7.1"}
-_ROUTE_REVISION_1_4_OBLIGATION_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.7.1"}
-_ROUTE_REVISION_1_5_OBLIGATION_VERSIONS = {"1.5.0", "1.6.0", "1.7.0", "1.7.1"}
-_ROUTE_REVISION_1_6_OBLIGATION_VERSIONS = {"1.6.0", "1.7.0", "1.7.1"}
-_ROUTE_REVISION_1_7_OBLIGATION_VERSIONS = {"1.7.0", "1.7.1"}
+_ROUTE_REVISION_1_3_OBLIGATION_VERSIONS = {"1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.7.1", "1.8.0"}
+_ROUTE_REVISION_1_4_OBLIGATION_VERSIONS = {"1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.7.1", "1.8.0"}
+_ROUTE_REVISION_1_5_OBLIGATION_VERSIONS = {"1.5.0", "1.6.0", "1.7.0", "1.7.1", "1.8.0"}
+_ROUTE_REVISION_1_6_OBLIGATION_VERSIONS = {"1.6.0", "1.7.0", "1.7.1", "1.8.0"}
+_ROUTE_REVISION_1_7_OBLIGATION_VERSIONS = {"1.7.0", "1.7.1", "1.8.0"}
 # Like every ladder above, a 1.7.1 obligation accrues to 1.7.1 and every later
 # route. An equality test here would silently drop the completion-proof gate the
 # first time a newer route version is stamped.
-_ROUTE_REVISION_1_7_1_OBLIGATION_VERSIONS = {"1.7.1"}
+_ROUTE_REVISION_1_7_1_OBLIGATION_VERSIONS = {"1.7.1", "1.8.0"}
+_ROUTE_REVISION_1_8_OBLIGATION_VERSIONS = {"1.8.0"}
 _CAMPAIGN_SOURCE_ROLES = {
     "owned_post",
     "paid_ad",
@@ -764,6 +787,7 @@ def _validate_understanding_evidence_depth(
     if consumer_brand:
         product_axis_complete = _validate_consumer_brand_product_axes(
             ledger,
+            repo_root=repo_root,
             artifacts=artifacts,
             families=families,
             route_jobs=_route_job_states(seal),
@@ -1232,6 +1256,16 @@ def _consumer_support_registry(
     families: Mapping[str, Any],
 ) -> dict[tuple[str, str], str | None]:
     registry: dict[tuple[str, str], str | None] = {}
+    retailer = families.get("retailer_reviews")
+    if isinstance(retailer, dict) and isinstance(retailer.get("corpora"), list):
+        for row in retailer["corpora"]:
+            if not isinstance(row, dict):
+                continue
+            corpus_id = row.get("corpus_id")
+            if isinstance(corpus_id, str) and corpus_id:
+                # A used target may resolve to its review corpus; this does not
+                # supply independent non-retailer support for an axis.
+                registry[("retailer_reviews", corpus_id)] = None
     external = families.get("external_context")
     if isinstance(external, dict) and isinstance(external.get("units"), list):
         for row in external["units"]:
@@ -1911,6 +1945,74 @@ def _load_consumer_phase2_searches(
     return registry, complete
 
 
+def _load_community_target_sources(
+    value: Any,
+    *,
+    ledger: Mapping[str, Any],
+    repo_root: Path,
+    artifacts: Mapping[str, Path],
+    search_artifact_ids: set[str],
+    findings: list[str],
+) -> tuple[dict[str, str], bool]:
+    """Resolve target-use refs from the existing source, without floor credit."""
+    if value is None:
+        return {}, True
+    source_id = value.get("source_artifact_id") if isinstance(value, dict) else None
+    if not isinstance(source_id, str) or source_id not in artifacts:
+        findings.append("missing_community_target_semantic_source")
+        return {}, False
+    search_paths = {
+        artifacts[artifact_id].resolve()
+        for artifact_id in search_artifact_ids
+        if artifact_id in artifacts
+    }
+    try:
+        source_path = artifacts[source_id].resolve()
+        if source_id in search_artifact_ids or source_path in search_paths:
+            raise ValueError("SERP artifact cannot be a community source")
+        source = json.loads(source_path.read_text(encoding="utf-8"))
+        if (
+            not isinstance(source, dict)
+            or source.get("schema_version") != SOURCE_VERSION_V3
+            or not source.get("source_sha256")
+            or source.get("cycle_id") != ledger.get("cycle_id")
+        ):
+            raise ValueError("community target requires this cycle's materialized v3 source")
+        # Reuse the owning source validator: stored hash, container membership,
+        # accounting dispositions and native-artifact edges stay one contract.
+        build_bundle(source, _pack_batches=False, _apply_identity_posture=False)
+        _verify_sources(source, repo_root=repo_root)
+        source_artifacts = {
+            row["artifact_id"]: row for row in source["source_artifacts"]
+        }
+        resolved: dict[str, str] = {}
+        for row in source["captured_items"]:
+            if (
+                row.get("source_family") != "community_review"
+                or row.get("source_role") != "community_post"
+                or row["accounting_disposition"] != "assess"
+            ):
+                continue
+            artifact_id = row["source_artifact_id"]
+            native_path = Path(source_artifacts[artifact_id]["locator"])
+            if not native_path.is_absolute():
+                native_path = repo_root / native_path
+            native_path = native_path.resolve()
+            if (
+                artifact_id not in artifacts
+                or artifacts[artifact_id].resolve() != native_path
+                or artifact_id in search_artifact_ids
+                or native_path in search_paths
+                or native_path == source_path
+            ):
+                raise ValueError("community leaf lacks a matching ledgered native body")
+            resolved[row["evidence_id"]] = artifact_id
+        return resolved, True
+    except (OSError, ValueError, SemanticIntegrationError) as exc:
+        findings.append(f"invalid_community_target_semantic_source:{exc}")
+        return {}, False
+
+
 def _validate_target_reconciliation(
     value: Any,
     *,
@@ -1920,6 +2022,7 @@ def _validate_target_reconciliation(
     route_jobs: Mapping[str, str],
     search_artifact_ids: set[str],
     findings: list[str],
+    community_source_artifacts: Mapping[str, str] | None = None,
 ) -> tuple[dict[str, Mapping[str, Any]], bool]:
     if not isinstance(value, list) or not value:
         findings.append("missing_consumer_target_reconciliation")
@@ -2002,6 +2105,14 @@ def _validate_target_reconciliation(
                     key = (str(ref.get("family")), str(ref.get("unit_id")))
                     if key not in registry:
                         findings.append(f"unresolved_consumer_target_evidence_ref:{target_id}")
+                        complete = False
+                    elif key[0] == "community_review" and (
+                        community_source_artifacts is None
+                        or community_source_artifacts.get(key[1]) != capture_artifact_id
+                    ):
+                        findings.append(
+                            f"consumer_target_evidence_native_body_mismatch:{target_id}"
+                        )
                         complete = False
         elif state != "no_material_yield" and not str(row.get("reason", "")).strip():
             findings.append(f"missing_consumer_target_reason:{target_id}")
@@ -2453,6 +2564,7 @@ def _validate_focused_search_jobs(
 def _validate_consumer_brand_product_axes(
     ledger: Mapping[str, Any],
     *,
+    repo_root: Path,
     artifacts: Mapping[str, Path],
     families: Mapping[str, Any],
     route_jobs: Mapping[str, str],
@@ -2613,6 +2725,20 @@ def _validate_consumer_brand_product_axes(
                     for packet_id in packet_ids
                     if isinstance(packet_id, str)
                 )
+        community_source_artifacts, community_sources_complete = (
+            _load_community_target_sources(
+                families.get("community_review"),
+                ledger=ledger,
+                repo_root=repo_root,
+                artifacts=artifacts,
+                search_artifact_ids=search_artifact_ids,
+                findings=findings,
+            )
+        )
+        registry.update(
+            (("community_review", evidence_id), None)
+            for evidence_id in community_source_artifacts
+        )
         targets, targets_complete = _validate_target_reconciliation(
             ledger.get("target_reconciliation"),
             artifacts=artifacts,
@@ -2621,6 +2747,7 @@ def _validate_consumer_brand_product_axes(
             route_jobs=route_jobs,
             search_artifact_ids=search_artifact_ids,
             findings=findings,
+            community_source_artifacts=community_source_artifacts,
         )
         complete = (
             complete
@@ -2628,6 +2755,7 @@ def _validate_consumer_brand_product_axes(
             and community_complete
             and searches_complete
             and targets_complete
+            and community_sources_complete
         )
         if serp_link_contract:
             complete = (
@@ -4564,7 +4692,10 @@ def _validate_semantic_evidence_integration(
     )
     if view.get("schema_version") != expected_view_version:
         findings.append("invalid_semantic_integration_view_version")
-    if route_version in _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS:
+    if route_version in _ROUTE_REVISION_1_8_OBLIGATION_VERSIONS:
+        expected_method_version = SEMANTIC_EVIDENCE_METHOD_VERSION_V12
+        expected_method_hash = SEMANTIC_EVIDENCE_METHOD_SHA256_V12
+    elif route_version in _ROUTE_REVISION_1_6_OBLIGATION_VERSIONS:
         expected_method_version = SEMANTIC_EVIDENCE_METHOD_VERSION_V3
         expected_method_hash = SEMANTIC_EVIDENCE_METHOD_SHA256_V3
     elif route_version in _ROUTE_REVISION_1_5_OBLIGATION_VERSIONS:

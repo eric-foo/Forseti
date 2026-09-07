@@ -127,6 +127,7 @@ from runners.run_semantic_evidence_integration import (
     _parser as _semantic_integration_parser,
     evaluate_semantic_calibration_run,
     migrate_repaired_terminal_run,
+    materialize_v3,
     prepare_batches,
     prepare_relation_closure_run,
     prepare_row_repair_run,
@@ -4533,6 +4534,113 @@ def test_v3_full_corpus_accounting_fails_closed_on_missing_leaf() -> None:
         build_bundle(source, max_prompt_bytes=8_000)
 
 
+def _community_review_source(tmp_path: Path, *, current_method: bool = True) -> dict:
+    source = _source_v10(count=2) if current_method else _source_v3(count=2)
+    if current_method:
+        source["semantic_method_version"] = semantic_module.METHOD_VERSION_V12
+    for index, row in enumerate(source["captured_items"], start=1):
+        container_id = f"review-service:review-{index}"
+        source_ref = f"https://review-service.test/reviews/{index}"
+        row.update(
+            evidence_id=container_id,
+            container_id=container_id,
+            source_family="community_review",
+            source_role="community_post",
+            source_ref=source_ref,
+            independence_key=f"review-service:author-{index}",
+        )
+        row["product_context"] = [{
+            "context_type": "thread_title",
+            "source_artifact_id": row["source_artifact_id"],
+            "source_ref": source_ref,
+            "text": "Summer Fridays balm review, August 2026; reviewer says gifted.",
+        }]
+        container = source["containers"][index - 1]
+        container.update(
+            container_id=container_id,
+            completeness="partial",
+            capture_boundary="Visible review text; replies and wider pool unavailable.",
+        )
+        (tmp_path / f"thread-{index}.json").write_bytes(f"thread-{index}\n".encode())
+    source["captured_items"][1].update(
+        accounting_disposition="blocked",
+        accounting_reason="The source preview ends mid-sentence.",
+        text="The balm felt comfortable, but after a week Show more",
+    )
+    return source
+
+
+@pytest.mark.parametrize("current_method", [False, True])
+def test_community_review_public_round_trip_preserves_partial_capture(
+    tmp_path: Path, current_method: bool,
+) -> None:
+    source = _community_review_source(tmp_path, current_method=current_method)
+    source_path = tmp_path / "source.json"
+    source_path.write_text(json.dumps(source), encoding="utf-8")
+    materialized_path = tmp_path / "materialized.json"
+    result = materialize_v3(
+        source_path=source_path, repo_root=tmp_path, source_out=materialized_path,
+    )
+    materialized = json.loads(materialized_path.read_text(encoding="utf-8"))
+    assert materialized["captured_items"][0] == source["captured_items"][0]
+    for field in ("evidence_id", "container_id", "source_artifact_id", "source_ref",
+                  "text", "accounting_disposition", "accounting_reason"):
+        assert materialized["captured_items"][1][field] == source["captured_items"][1][field]
+    assert result["accounting_disposition_counts"] == {"assess": 1, "blocked": 1}
+    assert result["model_api_calls"] == 0
+
+    bundle_path = tmp_path / "bundle.json"
+    prepared = prepare_batches(
+        source_path=materialized_path, repo_root=tmp_path, bundle_out=bundle_path,
+        prompt_dir=tmp_path / "prompts", max_batch_chars=40_000,
+        max_prompt_bytes=40_000,
+    )
+    bundle = json.loads(bundle_path.read_text(encoding="utf-8"))
+    assert prepared["model_api_calls"] == 0
+    assert bundle["containers"] == source["containers"]
+    assert len(bundle["evidence_units"]) == 1
+    unit = bundle["evidence_units"][0]
+    original = source["captured_items"][0]
+    for field in ("evidence_id", "container_id", "source_family", "source_role",
+                  "source_ref", "text", "independence_key"):
+        assert unit[field] == original[field]
+    prompt = (tmp_path / "prompts" / "batch-0001.md").read_text(encoding="utf-8")
+    assert original["text"] in prompt
+    assert original["product_context"][0]["text"] in prompt
+    accounting = {row["evidence_id"]: row for row in bundle["corpus_accounting"]}
+    blocked = accounting["review-service:review-2"]
+    assert blocked["accounting_disposition"] == "blocked"
+    assert blocked["text"] == source["captured_items"][1]["text"]
+    assert "evidence_unit_ref" not in blocked
+
+
+@pytest.mark.parametrize("fault, error", [
+    ("unsupported_family", "unsupported source_family"),
+    ("missing_leaf", "captured_leaf_count"),
+    ("changed_source", "hash mismatch"),
+])
+def test_community_review_public_admission_fails_closed(
+    tmp_path: Path, fault: str, error: str,
+) -> None:
+    source = _community_review_source(tmp_path)
+    if fault == "unsupported_family":
+        source["captured_items"][0]["source_family"] = "unknown_future_family"
+    elif fault == "missing_leaf":
+        source["captured_items"].pop()
+    else:
+        (tmp_path / "thread-1.json").write_bytes(b"altered source\n")
+    source_path = tmp_path / "source.json"
+    source_path.write_text(json.dumps(source), encoding="utf-8")
+    with pytest.raises(ValueError, match=error):
+        prepare_batches(
+            source_path=source_path, repo_root=tmp_path,
+            bundle_out=tmp_path / "bundle.json", prompt_dir=tmp_path / "prompts",
+            max_batch_chars=40_000, max_prompt_bytes=40_000,
+        )
+    assert not (tmp_path / "bundle.json").exists()
+    assert not (tmp_path / "prompts").exists()
+
+
 def test_v3_materializer_is_deterministic_and_rejects_unsupported_family() -> None:
     source = _source_v3(count=2)
     first = materialize_source_v3(source)
@@ -4564,8 +4672,10 @@ def test_v3_materializer_validates_without_provisional_batch_packing(
         build_bundle(source, max_prompt_bytes=8_000)
 
 
-def test_v3_unknown_actor_cannot_receive_independence_credit() -> None:
+@pytest.mark.parametrize("source_family", ["reddit_community", "community_review"])
+def test_v3_unknown_actor_cannot_receive_independence_credit(source_family: str) -> None:
     source = _source_v3(count=1)
+    source["captured_items"][0]["source_family"] = source_family
     source["captured_items"][0]["independence_posture"] = "unavailable"
     # The stale-looking key is retained deliberately: compiler posture, not a
     # nonempty operator string, owns whether independence credit is possible.

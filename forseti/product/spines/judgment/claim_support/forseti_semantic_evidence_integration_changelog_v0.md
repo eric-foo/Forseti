@@ -24,6 +24,17 @@ contract or its linked owning source. This history creates no new review step.
 
 ## Changelog
 
+- `v119` / 2026-09-06 — admitted the exact method-v12/view-v2 tuple for
+  current Understanding Acquire & Seal Route 1.8.0 while retaining historical
+  Route 1.7.1/method-v3 compatibility and every inherited completion check.
+  Added the shared `community_review` family using the existing `community_post`
+  role and one conversation container per native review root with its captured
+  replies; partial bodies and pools retain their explicit limits. Used
+  community targets resolve exact assessable leaves through a ledger pointer
+  to the existing materialized source, with native graph and byte checks and
+  no added axis-family or independent-origin floor credit. No source schema,
+  semantic method, review stage or automatic migration was added.
+
 - `v118` / 2026-09-06 — allowed explicit decision authoring for verified method
   v7 while retaining legacy replay; grounded complete-frontier origin caps in
   exact source membership; bounded both literal relation and confirmation
