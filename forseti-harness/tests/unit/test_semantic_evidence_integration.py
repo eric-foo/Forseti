@@ -2539,11 +2539,12 @@ def test_current_reconciliation_preserves_literal_conditions_and_bounded_scope(m
         validate_reconciliation_stage(bundle, stage, wrong_kind)
 
 
-def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: Path) -> None:
+@pytest.mark.parametrize("method", [semantic_module.METHOD_VERSION_V12, semantic_module.METHOD_VERSION_V13])
+def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: Path, method: str) -> None:
     from runners.run_semantic_evidence_integration import prepare_reconciliation_level
 
     source = _source_v10(count=1)
-    source["semantic_method_version"] = semantic_module.METHOD_VERSION_V12
+    source["semantic_method_version"] = method
     bundle = build_bundle(source, max_prompt_bytes=30_000)
     responses = _keyed_responses(bundle)
     evidence_id = bundle["batches"][0]["evidence_ids"][0]
@@ -9405,6 +9406,7 @@ def test_v10_schema_requires_one_subject_without_changing_v9_replay() -> None:
 @pytest.mark.parametrize("method,verifier", [
     (semantic_module.METHOD_VERSION_V11, semantic_module.ROW_VERIFICATION_METHOD_VERSION_V10),
     (semantic_module.METHOD_VERSION_V12, semantic_module.ROW_VERIFICATION_METHOD_VERSION_V11),
+    (semantic_module.METHOD_VERSION_V13, semantic_module.ROW_VERIFICATION_METHOD_VERSION_V12),
 ])
 def test_supplied_axis_vocabulary_reaches_all_current_consumers(axis_id, label, method, verifier) -> None:
     source = _source_v10(count=1)

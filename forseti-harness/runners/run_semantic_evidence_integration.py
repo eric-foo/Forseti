@@ -14,6 +14,7 @@ if __package__ in {None, ""}:
 from judgment.semantic_evidence_integration import (  # noqa: E402
     BUNDLE_VERSION_V4,
     METHOD_VERSION_V12,
+    METHOD_VERSION_V13,
     RECONCILIATION_AUTHORING_LEGACY,
     RECONCILIATION_AUTHORING_IDENTITY_V1,
     RECONCILIATION_AUTHORING_IDENTITY_V2,
@@ -1416,7 +1417,7 @@ def prepare_reconciliation_level(
         authoring_revision = (
             RECONCILIATION_AUTHORING_IDENTITY_V3
             if response_version == RECONCILIATION_RESPONSE_VERSION_V3
-            or (bundle.get("method_version") == METHOD_VERSION_V12
+            or (bundle.get("method_version") in {METHOD_VERSION_V12, METHOD_VERSION_V13}
                 and response_version != RECONCILIATION_RESPONSE_VERSION_V2)
             else RECONCILIATION_AUTHORING_LEGACY
         )

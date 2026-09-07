@@ -24,6 +24,16 @@ contract or its linked owning source. This history creates no new review step.
 
 ## Changelog
 
+- `v119` / 2026-09-07 — added run v11 / integration method v13 / verifier v12
+  for preventive meaning preservation, with previous method text retained for
+  replay. Current point authoring and existing relation confirmation use one
+  meaning criterion across candidates, separate source causal attribution from
+  analyst causal limits, and preserve time and action/object distinctions.
+  Shared state classification distinguishes ongoing use, purchase evidence and
+  merchandise returns. Added fresh-source date persistence regressions through
+  portable selection; existing adapters already carry dates. No extra provider
+  stage, historical corpus migration, contested staple relabeling, or all-axis
+  proof claim.
 - `v118` / 2026-09-06 — allowed explicit decision authoring for verified method
   v7 while retaining legacy replay; grounded complete-frontier origin caps in
   exact source membership; bounded both literal relation and confirmation

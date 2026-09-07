@@ -58,8 +58,8 @@ This is a conceptual and completion boundary between acquisition and Deliver,
 not a new globally numbered phase: historical Phase A, Phase B, Turn B,
 Understanding, and Deliver vocabulary is not renumbered or migrated.
 
-For new cross-company authoring, use `phase_a_semantic_integration_run_v10`
-(integration method v12, verifier v11). The supplied `CURRENT_AXES` inventory
+For new cross-company authoring, use `phase_a_semantic_integration_run_v11`
+(integration method v13, verifier v12). The supplied `CURRENT_AXES` inventory
 owns output IDs; shared examples describe concepts, never another company's
 required IDs. Preserve a supported meaning even when it needs an emerging-axis
 label instead of an existing axis. See the semantic-integration contract v81
@@ -89,7 +89,7 @@ answer order. Contract v82 owns this boundary; it changes no semantic prompt or
 stage identity and does not make a structurally valid answer semantically right.
 
 The existing calibration entry point follows the production-owned
-`SEMANTIC_METHODS_V7_PLUS` set, including current method v12, rather than a
+`SEMANTIC_METHODS_V7_PLUS` set, including current method v13, rather than a
 separate historical allowlist. Primary and cold-repeat evaluation both require
 their own exact row-verified compilation for those methods. Contract v79 owns
 this compatibility correction; it neither changes semantic prompts nor makes

@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v118
-effective_date: 2026-09-06
+version: v119
+effective_date: 2026-09-07
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v118
+# Semantic Evidence Integration Contract v119
 
 ## Purpose
 
@@ -136,8 +136,8 @@ shape requires one exact stored subject/comparator orientation; retain opposite
 orientations separately without relabeling child identity. This is a transport
 constraint, not a claim that the meanings differ or represent separate events.
 
-Current authoring uses run v10 / integration method v12 / row-verification
-method v11. `CURRENT_AXES` alone supplies valid output axis IDs. Category names
+Current authoring uses run v11 / integration method v13 / row-verification
+method v12. `CURRENT_AXES` alone supplies valid output axis IDs. Category names
 in the semantic examples below describe meaning, not fixed identifiers or
 mandatory assignments across companies. The agent selects supplied IDs by the
 unit's meaning and the supplied labels; it never imports Summer Fridays IDs
@@ -147,6 +147,36 @@ Code still rejects foreign IDs; it does not translate categories or infer fit.
 Earlier run/method identities and their prompt bytes remain historical replay,
 not current cross-company authoring. No frozen output is rewritten or silently
 promoted into the new generation.
+
+The current extraction, whole-row verification, point authoring and existing
+relation confirmation apply one meaning criterion across a point's candidates.
+Fix the assertion, material conditions, time and action/object before assigning
+relations; semantically equivalent reports do not need the analyst's exact
+words. A changed relation requires a source-supported change in that criterion,
+not an invented duration, purchase or causal-proof requirement. Preserve actual
+opposition and meaning-changing near-misses. Confirmation records the criterion
+in its existing `point_scope_reason` before classifying rows; this adds no field
+or provider call. Returning to a product means resuming use, distinct from
+returning that product as merchandise.
+
+Source-authored causal attribution and the analyst's causal ceiling are separate:
+"this caused my rash" may support reported irritation while objective causation
+remains unestablished. It does not oppose the report merely because causation is
+unproven. Predictions remain predictions; later trial does not retract earlier
+interest. An evidentiary ceiling is not an assertion that a later action never
+occurred. Preserve merchandise refunds separately from resuming product use.
+Current use or a numbered container does not prove purchase or repurchase.
+The shared Decision State prompt carries these action/object and timing rules
+into its existing classification stage. No additional provider stage or
+deterministic semantic classifier is introduced.
+
+Fresh source adapters already preserve source-native publication times through
+materialization. The regression boundary includes rematerialization, bundle,
+packet and portable selection: a verified exact date must survive, while missing
+and relative dates never become fabricated exact dates. Portable selection still
+does not reopen legacy Collection locators. This does not migrate or repair a
+historical date-poor source, and these generic criteria do not settle a contested
+historical point definition or establish all-axis semantic correctness.
 
 Upstream `product_candidates` are hypotheses, not product truth. For the
 current method, every admitted item also carries source-pinned product context
