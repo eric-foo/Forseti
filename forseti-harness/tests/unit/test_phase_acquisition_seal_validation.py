@@ -442,6 +442,7 @@ def _consumer_depth_ledger(tmp_path: Path) -> dict:
                 "alternative_brand": None,
                 "explicit_outcome": "none_explicit",
                 "source_ref": f"depth-source#thread-{index}",
+                "comment_created_utc": f"2025-02-07T04:{index:02d}:15.183000+0000",
                 "parser_limitation": None,
             }
             for index in range(40)
@@ -2346,6 +2347,122 @@ def test_consumer_brand_v3_requires_comment_coding_for_each_reddit_thread(
     findings = _validate(tmp_path, _make_passing(seal))
 
     assert "independent_reddit_threads_without_comment_coding" in findings
+
+
+def _rewrite_community_coding(tmp_path: Path, ledger: dict, mutate) -> None:
+    path = tmp_path / "community_axis_coding.json"
+    coding = json.loads(path.read_text(encoding="utf-8"))
+    mutate(coding)
+    path.write_text(json.dumps(coding, indent=2) + "\n", encoding="utf-8")
+    next(
+        row
+        for row in ledger["artifacts"]
+        if row["artifact_id"] == "community-axis-coding"
+    )["sha256"] = _artifact_hash(path)
+
+
+def _community_coding_findings(tmp_path: Path, mutate) -> list[str]:
+    seal = _blocked_seal(tmp_path)
+    reference = _consumer_depth_ledger(tmp_path)
+    ledger_path = tmp_path / reference["locator"]
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    _rewrite_community_coding(tmp_path, ledger, mutate)
+    _rewrite_depth_reference(seal, ledger_path, ledger)
+    return _validate(tmp_path, _make_passing(seal))
+
+
+def test_consumer_brand_v3_requires_comment_created_utc(tmp_path: Path) -> None:
+    def mutate(coding: dict) -> None:
+        del coding["rows"][0]["comment_created_utc"]
+
+    findings = _community_coding_findings(tmp_path, mutate)
+
+    assert "missing_community_comment_created_utc" in findings
+    assert "passing_consumer_brand_seal_without_axis_closure" in findings
+
+
+@pytest.mark.parametrize(
+    "value", [None, "", 20250207, {"utc": "2025-02-07T04:12:15+0000"}]
+)
+def test_consumer_brand_v3_rejects_unusable_comment_created_utc(
+    tmp_path: Path, value: object
+) -> None:
+    def mutate(coding: dict) -> None:
+        coding["rows"][0]["comment_created_utc"] = value
+
+    findings = _community_coding_findings(tmp_path, mutate)
+
+    assert "missing_community_comment_created_utc" in findings
+    assert "passing_consumer_brand_seal_without_axis_closure" in findings
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "2025-02-07T04:12:15.183000+0900Z",
+        "07/02/2025",
+        "2025-02-30T04:12:15+0000",
+        "yesterday",
+    ],
+)
+def test_consumer_brand_v3_rejects_malformed_comment_created_utc(
+    tmp_path: Path, value: str
+) -> None:
+    def mutate(coding: dict) -> None:
+        coding["rows"][0]["comment_created_utc"] = value
+
+    findings = _community_coding_findings(tmp_path, mutate)
+
+    assert "invalid_community_comment_created_utc" in findings
+    assert "passing_consumer_brand_seal_without_axis_closure" in findings
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "2025-02-07T04:12:15.183000+0000",
+        "2025-02-07T04:12:15+00:00",
+        "2025-02-07T04:12:15Z",
+        "2025-02-07T04:12:15.183Z",
+        "2025-02-07T04:12:15-05:00",
+    ],
+)
+def test_consumer_brand_v3_accepts_existing_comment_created_utc_forms(
+    tmp_path: Path, value: str
+) -> None:
+    def mutate(coding: dict) -> None:
+        for row in coding["rows"]:
+            row["comment_created_utc"] = value
+
+    assert _community_coding_findings(tmp_path, mutate) == []
+
+
+def test_consumer_brand_v3_keeps_unavailable_comment_date_unknown(
+    tmp_path: Path,
+) -> None:
+    """An unavailable timestamp stays unknown rather than inferred: the row keeps
+    its parser limitation, and completeness still fails because the community
+    rule grants no waiver for an absent date."""
+
+    def mutate(coding: dict) -> None:
+        coding["rows"][0]["comment_created_utc"] = None
+        coding["rows"][0]["parser_limitation"] = (
+            "source metadata exposed no comment timestamp"
+        )
+
+    findings = _community_coding_findings(tmp_path, mutate)
+
+    assert "missing_community_comment_created_utc" in findings
+    assert "passing_consumer_brand_seal_without_axis_closure" in findings
+    assert "invalid_community_parser_limitation" not in findings
+    coding = json.loads(
+        (tmp_path / "community_axis_coding.json").read_text(encoding="utf-8")
+    )
+    assert coding["rows"][0]["comment_created_utc"] is None
+    assert (
+        coding["rows"][0]["parser_limitation"]
+        == "source metadata exposed no comment timestamp"
+    )
 
 
 def test_consumer_brand_v3_reddit_floor_needs_explicit_exhaustion(
