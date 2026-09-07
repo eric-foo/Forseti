@@ -29,3 +29,9 @@ CLAIM_INTERPRETATION_GUIDANCE = (
     "report of the same predicate, and adjacent is relevant but establishes neither. "
     "Missing a required qualifier is insufficient support, not by itself counterevidence."
 )
+CLAIM_CONFIRMATION_CRITERION = (
+    "First state the point's single meaning criterion in point_scope_reason, "
+    "including its action/object and temporal state and separating any analyst "
+    "evidentiary ceiling. Apply that same criterion to every row; do not redefine "
+    "it to fit a candidate."
+)

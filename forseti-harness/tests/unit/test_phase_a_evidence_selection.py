@@ -335,6 +335,7 @@ def test_adjudication_survives_confirmation_and_quote_replay_without_mutating_pr
 
 @pytest.mark.parametrize("mutation", [
     "point", "scope", "source", "meaning", "conditions", "origin", "policy", "claim_meaning_guidance",
+    "claim_confirmation_criterion",
 ])
 def test_adjudication_rejects_changed_basis_after_honest_repins(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mutation: str) -> None:
     spec, sources, _ = _adjudication_fixture(tmp_path)
@@ -345,6 +346,8 @@ def test_adjudication_rejects_changed_basis_after_honest_repins(tmp_path: Path, 
         spec["admit_semantic_refs"] = [{"source_id": "full-corpus", "semantic_unit_ref": "community_post:0::hydration"}]
     elif mutation == "claim_meaning_guidance":
         monkeypatch.setattr(evidence_selection, "CLAIM_INTERPRETATION_GUIDANCE", "Changed meaning policy.")
+    elif mutation == "claim_confirmation_criterion":
+        monkeypatch.setattr(evidence_selection, "CLAIM_CONFIRMATION_CRITERION", "Changed confirmation criterion.")
     elif mutation == "policy":
         monkeypatch.setattr(evidence_selection, "POINT_ACTOR_SCOPE_GUIDANCE", "A genuinely different actor rule.")
     else:
@@ -3552,7 +3555,7 @@ def _quote_response(quote_manifest: dict, sources: list[dict]) -> dict:
 
 
 def test_current_meaning_guidance_reaches_single_and_batched_native_consumers(tmp_path: Path) -> None:
-    from judgment.claim_meaning import CLAIM_INTERPRETATION_GUIDANCE, CLAIM_MEANING_POLICY
+    from judgment.claim_meaning import CLAIM_CONFIRMATION_CRITERION, CLAIM_INTERPRETATION_GUIDANCE, CLAIM_MEANING_POLICY
 
     spec, sources = _write_source(tmp_path, 5)
     spec["relation_response_mode"] = "positional"
@@ -3574,6 +3577,10 @@ def test_current_meaning_guidance_reaches_single_and_batched_native_consumers(tm
     confirmation_batches, confirmation_prompts = prepare_batched_preselection_relation_confirmations(
         batch_manifest, sources, responses, batch_size=2
     )
+    for rendered in [prompt, *(item[0] for item in batches)]:
+        assert CLAIM_CONFIRMATION_CRITERION not in rendered
+    for rendered in [confirm_prompt, selected_prompt, *(item[0] for item in confirmation_prompts)]:
+        assert rendered.count(CLAIM_CONFIRMATION_CRITERION) == 1
     for rendered, bound in [
         (prompt, manifest), (confirm_prompt, confirmation), (selected_prompt, selected_confirmation),
         *((item[0], bound) for item, bound in zip(batches, batch_manifest["batches"], strict=True)),
@@ -3607,7 +3614,8 @@ def test_current_meaning_guidance_reaches_single_and_batched_native_consumers(tm
 
 
 @pytest.mark.parametrize("version", ["phase_a_evidence_selection_manifest_v1", "phase_a_evidence_selection_manifest_v2"])
-def test_historical_selection_meaning_replay_keeps_frozen_prompt_and_basis(tmp_path: Path, monkeypatch, version: str) -> None:
+@pytest.mark.parametrize("changed_policy", ["CLAIM_INTERPRETATION_GUIDANCE", "CLAIM_CONFIRMATION_CRITERION"])
+def test_historical_selection_meaning_replay_keeps_frozen_prompt_and_basis(tmp_path: Path, monkeypatch, version: str, changed_policy: str) -> None:
     spec, sources = _write_source(tmp_path, 5)
     prompt, _, manifest = prepare_evidence_selection(spec, sources)
     # Digests captured from the unchanged d2fc32a4 native entry points with this fixture.
@@ -3631,7 +3639,7 @@ def test_historical_selection_meaning_replay_keeps_frozen_prompt_and_basis(tmp_p
     assert old_selected[2]["prompt_sha256"] == "ee801e8fe60dbe49ca429cb6a952899767fbb463cd6f1c789ea6040951c3389f"
     assert "claim_meaning_policy" not in quote
     artifact = finalize_quotes(quote, sources, _quote_response(quote, sources))
-    monkeypatch.setattr(evidence_selection, "CLAIM_INTERPRETATION_GUIDANCE", "Changed current meaning rule.")
+    monkeypatch.setattr(evidence_selection, changed_policy, "Changed current meaning rule.")
     loaded = evidence_selection.load_selection_sources(manifest)
     assert evidence_selection.relation_adjudication_basis(manifest, candidates) == basis
     assert prepare_preselection_relation_confirmation(manifest, loaded, first) == old_confirmation

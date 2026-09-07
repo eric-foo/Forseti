@@ -1937,7 +1937,9 @@ differences remain material. This applies the owning claim-support contract;
 it adds no lexical semantic classifier, evidence filter or provider stage.
 
 Selection manifest v3 binds this guidance in new first-pass and confirmation
-requests and in adjudication reuse eligibility. Its quote manifests carry
+requests and in adjudication reuse eligibility. Confirmation first states one meaning criterion in the
+existing `point_scope_reason` before applying it across rows, without adding
+a field or provider stage. Quote manifests also carry
 `claim_meaning_policy: supported_claim_meaning_v1` for the selected-row
 confirmation route. Selection v1/v2 and explicit prior reconciliation authoring
 revisions keep their original prompts and adjudication basis. New instructions

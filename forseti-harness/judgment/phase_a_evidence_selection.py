@@ -17,7 +17,9 @@ from typing import Any, Mapping, Sequence
 from urllib.parse import urlparse
 
 from harness_utils import hash_file, sha256_text
-from judgment.claim_meaning import CLAIM_INTERPRETATION_GUIDANCE, CLAIM_MEANING_POLICY
+from judgment.claim_meaning import (
+    CLAIM_CONFIRMATION_CRITERION, CLAIM_INTERPRETATION_GUIDANCE, CLAIM_MEANING_POLICY,
+)
 from judgment.phase_a_evidence_consumer import (
     EvidenceConsumerError,
     _canonical_json_sha256,
@@ -324,8 +326,10 @@ def _meaning_guidance(manifest: Mapping[str, Any]) -> str:
     return ""
 
 
-def _meaning_prompt(template: str, manifest: Mapping[str, Any]) -> str:
+def _meaning_prompt(template: str, manifest: Mapping[str, Any], *, confirmation: bool = False) -> str:
     guidance = _meaning_guidance(manifest)
+    if guidance and confirmation:
+        guidance += "\n\n" + CLAIM_CONFIRMATION_CRITERION
     return guidance + "\n\n" + template if guidance else template
 
 
@@ -1198,7 +1202,8 @@ def relation_adjudication_basis(
                    PRESELECTION_CONFIRMATION_BATCH_PROMPT,
                    RELATION_REF_INSTRUCTION, POINT_ACTOR_SCOPE_GUIDANCE,
                    _policy_guidance(spec, candidates)] + (
-                       [_meaning_guidance(manifest)] if _meaning_guidance(manifest) else []
+                       [_meaning_guidance(manifest), CLAIM_CONFIRMATION_CRITERION]
+                       if _meaning_guidance(manifest) else []
                    ),
         "judgment_projection_columns": {
             "relation": RELATION_PROMPT_COLUMNS,
@@ -4507,7 +4512,7 @@ def prepare_preselection_relation_confirmation(
     _attach_parent_context_envelope(envelope, context_aware, context_rows)
     _, _, point_context_rows = _project_parent_context(candidates)
     _attach_point_parent_context_envelope(envelope, point_context_rows)
-    prompt_template = _meaning_prompt(PRESELECTION_RELATION_CONFIRMATION_PROMPT, manifest)
+    prompt_template = _meaning_prompt(PRESELECTION_RELATION_CONFIRMATION_PROMPT, manifest, confirmation=True)
     if include_relation_refs:
         prompt_template = prompt_template.replace(
             "\n\nThe first-pass relation,",
@@ -4995,7 +5000,7 @@ def prepare_batched_preselection_relation_confirmations(
         _attach_actor_scope(envelope, actor_scope, [row for _, row in subset])
         _attach_parent_context_envelope(envelope, context_aware, context_rows)
         _attach_point_parent_context_envelope(envelope, point_context_rows)
-        prompt_template = _meaning_prompt(PRESELECTION_CONFIRMATION_BATCH_PROMPT, selection_manifest)
+        prompt_template = _meaning_prompt(PRESELECTION_CONFIRMATION_BATCH_PROMPT, selection_manifest, confirmation=True)
         if include_relation_refs:
             prompt_template = prompt_template.replace(
                 "\n\nThe first-pass relation,",
@@ -5287,7 +5292,7 @@ def prepare_selected_relation_confirmation(
         point_context_rows=quote_manifest.get("point_parent_context_rows", []),
     )
     _attach_actor_scope(envelope, quote_manifest.get("point_actor_scope"), [row for _, row in presentation], table="selected")
-    prompt = _meaning_prompt(RELATION_CONFIRMATION_PROMPT, quote_manifest).format(envelope=_compact(envelope))
+    prompt = _meaning_prompt(RELATION_CONFIRMATION_PROMPT, quote_manifest, confirmation=True).format(envelope=_compact(envelope))
     schema = _relation_confirmation_schema()
     confirmation_manifest = {
         "schema_version": RELATION_CONFIRMATION_MANIFEST_VERSION,
