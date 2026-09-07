@@ -196,6 +196,12 @@ directions strengthens the finding that the experience is split; it does not
 justify averaging the conflict away or selecting the preferred side.
 `not_checked` caps a claim at an unresolved or provisional posture.
 
+For collection continuation and saturation judgments, including audits and
+summaries, also apply **Materiality decision effect (all source families)** in
+`forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md`.
+Use its comparison in the existing decision explanation; preserving opposition
+does not by itself establish a material change or require more collection.
+
 ## Causal and motivational boundary
 
 Public evidence may support descriptions and reported reasons. It does not gain

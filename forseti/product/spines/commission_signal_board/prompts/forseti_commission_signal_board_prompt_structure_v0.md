@@ -861,6 +861,10 @@ from material additions. A useful thread reopens an axis only when it changes a
 decision through a typed new axis, tier, mechanism, segment/condition, behavior
 consequence, competitor destination, contradiction, sampling-risk, or
 competitive-action addition; reopen only affected and justified adjacent axes.
+Apply the authority's **Materiality decision effect (all source families)**
+rule here: show the supported answer before and after and weigh relevant
+existing evidence in the current decision explanation. Use the same test in
+saturation reporting; an unresolved check is not an automatic material reset.
 
 For comparator candidates, treat SERP as the map and the fan-out lanes as the
 evidence acquisition. Before core fan-out, require the authority's two-origin,

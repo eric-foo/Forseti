@@ -506,6 +506,37 @@ thread with actual subject-product experience, correct that interpretation
 before choosing further searches. After any material addition, refresh the
 affected interpretation and restart its two-family stopping test.
 
+**Materiality decision effect (all source families).** Before collection,
+consolidation, review, or reporting declares an addition material, reopens a
+topic, or uses that addition to explain unproven saturation, use the existing
+`decision_effect` explanation (or the owning narrative) to state the supported
+answer before and after considering it, cite the relevant evidence, and explain
+why the difference changes what can responsibly be concluded or done about the
+commissioned question. Naming a new mechanism, condition, contradiction, or
+other allowed kind alone does not establish that effect.
+
+Compare support and opposition for the same bounded proposition, considering
+source fit, independence and duplication, engagement in its native context,
+relevant conditions, and consequences. Generic positive sentiment cannot
+outvote a specific consequential failure; likes are not independent customer
+experiences. Ordinary corroboration, a useful detail, or an isolated exception
+that does not change the responsible answer is retained without a stopping
+reset. No fixed vote, engagement, or source-count threshold decides materiality.
+An exceptionally direct observation can establish a consequential existence or
+risk finding, never its prevalence; repeated reports can reveal an important
+condition without overturning the answer for other conditions.
+
+A credible unresolved concern may justify a discriminating check before it
+establishes a material addition. First use relevant evidence already held; if
+that cannot answer it, name the exact question whose answer could change the
+conclusion or action and obtain the evidence needed to decide it. Report this
+as an unresolved check, not a demonstrated material change or an automatic
+reset. Incomplete incorporation, an unassessed support record, or unfinished
+stopping verification is not by itself evidence of a source shortage. State
+that remaining work precisely. This judgment does not waive required coverage,
+source admission, or stopping proof, and resets remain limited to the affected
+and justified adjacent topics.
+
 Do not perform final semantic adjudication while acquisition is still capable
 of changing the corpus. Use the provisional axis inventory and a lightweight
 maturity scan to identify open axes, run the evidence-floor plus material-
