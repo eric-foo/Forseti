@@ -58,6 +58,20 @@ def _stop_process_tree(process: subprocess.Popen[bytes]) -> str | None:
     return "; ".join(failures) or None
 
 
+def _stderr_event_counts(path: Path) -> tuple[int, int]:
+    phrases = (b"retrying sampling request", b"falling back to HTTP")
+    counts, tails = [0, 0], [b"", b""]
+    with path.open("rb") as source:
+        for chunk in iter(lambda: source.read(65536), b""):
+            for index, phrase in enumerate(phrases):
+                window = tails[index] + chunk
+                counts[index] += window.count(phrase)
+                # Each phrase keeps its own partial suffix: no complete match
+                # survives into the next window to be counted twice.
+                tails[index] = window[-(len(phrase) - 1):]
+    return counts[0], counts[1]
+
+
 def execute_provider_attempt(
     *, command: Sequence[str], prompt_path: Path, attempt_dir: Path,
     timeout_seconds: float, stderr_echo: BinaryIO | None = None,
@@ -113,17 +127,25 @@ def execute_provider_attempt(
           paths["events.jsonl"].open("xb") as stdout,
           paths["stderr.log"].open("xb") as stderr,
           paths["stderr.log"].open("rb") as live_stderr):
-        def mirror() -> None:
+        def mirror(*, drain: bool = False) -> None:
             # The console echo is a convenience over the authoritative on-disk log:
             # a detached or closed stream must not kill the attempt or the receipt.
             nonlocal echo, echo_status, echo_error
             if echo is None:
                 return
             try:
-                chunk = live_stderr.read()
-                if chunk:
+                # Drain a fixed EOF snapshot without file-sized allocations.
+                # Live output must not postpone the process deadline indefinitely.
+                remaining = os.fstat(live_stderr.fileno()).st_size - live_stderr.tell()
+                while remaining > 0:
+                    if not drain and time.monotonic() >= deadline:
+                        break
+                    chunk = live_stderr.read(min(65536, remaining))
+                    if not chunk:
+                        break
                     echo.write(chunk)
                     echo.flush()
+                    remaining -= len(chunk)
             except (OSError, ValueError) as exc:
                 echo, echo_status = None, "FAILED"
                 echo_error = f"{type(exc).__name__}: {exc}"
@@ -157,9 +179,9 @@ def execute_provider_attempt(
             if not isinstance(exc, Exception):
                 interrupted = exc
         finally:
-            mirror()
+            mirror(drain=True)
     wall_seconds = time.monotonic() - started
-    stderr_text = paths["stderr.log"].read_text(encoding="utf-8", errors="replace")
+    retry_events, fallback_events = _stderr_event_counts(paths["stderr.log"])
     try:
         usage = codex_usage_from_events(paths["events.jsonl"])
         usage_status, usage_error = "COMPLETED_TURN_REPORTED", None
@@ -175,8 +197,8 @@ def execute_provider_attempt(
         "outcome": outcome, "completed_at": utc_now_z_microseconds(), "exit_code": exit_code,
         "error": error, "wall_seconds": wall_seconds,
         "useful_compute_seconds": None, "useful_compute_seconds_status": "UNOBSERVED",
-        "observed_retry_events": stderr_text.count("retrying sampling request"),
-        "observed_transport_fallback_events": stderr_text.count("falling back to HTTP"),
+        "observed_retry_events": retry_events,
+        "observed_transport_fallback_events": fallback_events,
         "retry_observation_scope": "recognized Codex stderr messages; not provider request accounting",
         "usage": usage, "usage_status": usage_status, "usage_error": usage_error,
         "usage_scope": "reported completed-turn fields; hidden retry usage is not independently observed",

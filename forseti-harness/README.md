@@ -175,6 +175,11 @@ reconnects and additional client turns do not reset it. Logs go directly to
 The mirror is best effort over an authoritative on-disk log: a console that is
 absent or breaks mid-attempt is recorded in `stderr_echo_status` and never ends
 the attempt or suppresses its receipt.
+File hashing and stderr mirroring/counting use bounded buffers while preserving
+the complete on-disk logs and exact receipt counts. Execution-time usage accounting
+streams the event history, with memory proportional to the largest event line.
+Publication retains its immutable full snapshot; this is not an overall
+attempt-memory limit.
 An idle process is not evidence of useful model work. On timeout the executor
 stops its local process tree and preserves the attempt; a stop that fails is
 recorded in `error` and does not relabel the timeout. It cannot prove remote

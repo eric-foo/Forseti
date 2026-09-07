@@ -40,7 +40,11 @@ def sha256_bytes(data: bytes) -> str:
 
 
 def hash_file(path: Path) -> str:
-    return sha256_bytes(path.read_bytes())
+    digest = hashlib.sha256()
+    with path.open("rb") as source:
+        for chunk in iter(lambda: source.read(65536), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def as_dict(value: Any) -> dict[str, Any]:
