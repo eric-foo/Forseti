@@ -1200,7 +1200,7 @@ because no accepted point exists to route.
 When an axis has nonempty axis-tagged evidence but no admitted frontier point,
 do not treat it as empty, invent a bounded point, or assign generic
 support/counter relations. Materialize
-`phase_a_evidence_axis_pack_manifest_v2` with
+`phase_a_evidence_axis_pack_manifest_v3` with
 `materialize-no-frontier-axis-manifest`, then build and validate
 `phase_a_evidence_axis_pack_v2` through the normal axis-pack commands. The
 manifest pins the packet, bundle, frontier, exact semantic-unit membership, and
