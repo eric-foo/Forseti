@@ -10,9 +10,10 @@ const errorRecord = error => error === null ? null : {
 
 /** Run one executable without a shell or retries; preserve unknown exit codes.
  * cwd and timeoutMs are explicit. env, when supplied, is the child's full env.
- * A deadline requests SIGTERM on the direct child and waits for execFile's
- * completion callback. A child/descendant holding pipes open may prevent a
- * response: no response is never success. killed means a kill request succeeded,
+ * A deadline requests SIGTERM on the direct child and detaches our pipe read
+ * ends, so a surviving descendant cannot hold the call open past it; a direct
+ * child that outlives the signal still can, and no response is never success.
+ * Output written after the deadline is not collected. killed means a kill request succeeded,
  * not proof of termination. stdout/stderr are UTF-8, bounded by maxBuffer each.
  * A thrown validation/launch error or any result error remains a failure.
  */
@@ -59,6 +60,12 @@ export function runCommand(file, args, { cwd, timeoutMs, maxBuffer = 1024 * 1024
         timedOut = true;
         try { child.kill('SIGTERM'); }
         catch (error) { terminationError = error; }
+        // execFile reports completion on stream close, so a descendant that
+        // inherited these pipes would otherwise strand the call indefinitely
+        // past the deadline. Detach the read ends to bound it; timedOut is
+        // already latched, so a late exit code still cannot become success.
+        child.stdout?.destroy();
+        child.stderr?.destroy();
       }, timeoutMs);
     } catch (error) {
       finish(error, '', '');

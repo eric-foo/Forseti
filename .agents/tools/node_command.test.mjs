@@ -83,6 +83,21 @@ test('a deadline followed by graceful exit zero is still not success', {
   assert.equal(result.processSuccess, false);
 });
 
+test('a descendant holding the pipes cannot strand the call past the deadline', async () => {
+  // The direct child hands its stdout/stderr to a detached grandchild and exits
+  // zero at once, so only the deadline can release the call.
+  const source = 'require("node:child_process")' +
+    '.spawn(process.execPath, ["-e", "setTimeout(() => {}, 10000)"], { detached: true, stdio: ["ignore", 1, 2] })' +
+    '.unref(); process.stdout.write("parent-exited")';
+  const started = Date.now();
+  const result = await runNode(source, { timeoutMs: 1000 });
+  const elapsed = Date.now() - started;
+  assert.equal(result.processSuccess, false);
+  assert.equal(result.timedOut, true);
+  assert.equal(result.stdout, 'parent-exited');
+  assert.ok(elapsed < 6000, 'deadline did not release the call: ' + elapsed + 'ms');
+});
+
 for (const stream of ['stdout', 'stderr']) {
   test(stream + ' buffer overflow preserves truncation and fails', async () => {
     const result = await runNode('process.' + stream + '.write("x".repeat(65536))', { maxBuffer: 128 });
