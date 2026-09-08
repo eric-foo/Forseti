@@ -154,7 +154,8 @@ invoked or resolver-loaded skills provide task-local mechanics only.
 
 `.agents/workflow-overlay/decision-routing.md` owns uncertainty routing,
 repo-change isolation, receiver selection, the bounded-change fast path, and
-task-local tool-stall recovery. `.agents/workflow-overlay/prompt-orchestration.md`
+command review intervals, explicit hard deadlines, and task-local tool-stall
+recovery. `.agents/workflow-overlay/prompt-orchestration.md`
 owns every durable prompt, handoff, wrapper, rerun, and patch prompt.
 All agent and provider launches use `high`, never `xhigh` or higher; apply the
 launch/inheritance rule in `docs/decisions/subagent_model_tiering_doctrine_v0.md`.

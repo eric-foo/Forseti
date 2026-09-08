@@ -3,7 +3,8 @@ import { test } from 'node:test';
 import { mkdtemp, readFile, rmdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { runCommand } from './node_command.mjs';
+import { runCommand, startCommand } from './node_command.mjs';
+import { setTimeout as delay } from 'node:timers/promises';
 
 const options = { cwd: process.cwd(), timeoutMs: 5000 };
 const runNode = (source, overrides = {}) =>
@@ -119,7 +120,57 @@ test('exit zero cannot verify an expected artifact', async t => {
 });
 
 test('invalid budgets fail before launch', () => {
-  assert.throws(() => runCommand(process.execPath, [], { cwd: process.cwd() }), /timeoutMs/);
+  assert.throws(() => runCommand(process.execPath, [], { cwd: process.cwd(), timeoutMs: 0 }), /timeoutMs/);
   assert.throws(() => runCommand(process.execPath, [], { timeoutMs: 1000 }), /cwd/);
   assert.throws(() => runNode('', { maxBuffer: 0 }), /maxBuffer/);
+});
+
+
+test('healthy work survives review checkpoints with one process and no hard deadline', async t => {
+  const command = startCommand(process.execPath, ['-e',
+    'const tick = setInterval(() => process.stdout.write("."), 100); setTimeout(() => { clearInterval(tick); process.stdout.write("done"); }, 1400)'],
+    { cwd: process.cwd() });
+  t.after(() => command.terminate());
+  const first = command.inspect();
+  await delay(500); // expected-duration checkpoint, not a kill timer
+  const checkpoint = command.inspect();
+  assert.equal(checkpoint.pid, first.pid);
+  assert.equal(checkpoint.state, 'running');
+  assert.equal(checkpoint.timedOut, false);
+  assert.equal(checkpoint.interrupted, false);
+  assert.equal('processSuccess' in checkpoint, false);
+  assert.ok(checkpoint.stdoutChars > 0);
+  assert.ok(checkpoint.lastOutputElapsedMs > 0);
+  const result = await command.result;
+  assert.equal(result.processSuccess, true);
+  assert.equal(result.timedOut, false);
+  assert.match(result.stdout, /^\.+done$/);
+  assert.equal(command.inspect().state, 'completed');
+  command.terminate(); // completed results cannot be relabeled by a late stop
+  assert.equal(command.inspect().interrupted, false);
+});
+
+test('a quiet checkpoint is not a deadline or a failure verdict', async t => {
+  const command = startCommand(process.execPath, ['-e', 'setTimeout(() => {}, 900)'], { cwd: process.cwd() });
+  t.after(() => command.terminate());
+  await delay(300);
+  assert.equal(command.inspect().state, 'running');
+  assert.equal(command.inspect().stdoutChars, 0);
+  assert.equal(command.inspect().lastOutputElapsedMs, null);
+  assert.equal((await command.result).processSuccess, true);
+});
+
+test('explicit stop is interruption, not timeout, and never success', async t => {
+  const command = startCommand(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], { cwd: process.cwd(), timeoutMs: 5000 });
+  t.after(() => command.terminate());
+  await delay(100);
+  command.terminate();
+  command.terminate(); // same stop decision, no restart or repeated signal
+  const result = await command.result;
+  assert.equal(result.processSuccess, false);
+  assert.equal(result.interrupted, true);
+  assert.equal(result.timedOut, false);
+  assert.equal(result.exitCode, null);
+  assert.equal(result.signal, 'SIGTERM');
+  assert.equal(command.inspect().state, 'completed');
 });
