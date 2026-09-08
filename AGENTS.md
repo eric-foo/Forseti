@@ -157,8 +157,14 @@ Every entry into delegated review-and-patch -- including an explicit request or
 an automatic checkpoint from `success-implement`, `/fused`, implementation, or
 review -- is operator-courier prompt authoring only: immediately return one
 paste-ready prompt, and do not inspect or test controller availability, create
-or dispatch a task, fork or spawn an agent, or execute the review. Generic skill
-mechanics defer to this Forseti rule.
+or dispatch a task, fork or spawn an agent, or execute the review. This binds
+the commissioning lane -- the actor asked to obtain a review. It does not bind a
+receiver executing a courier authored in another lane whose `receiver_binding`
+names an `author_vendor` different from the receiver's own model family and
+grants direct write access at the pinned revision; that receiver runs the review
+it was couriered and states its own model family in its return, for example
+`delegate_vendor: Anthropic`. Generic skill mechanics defer to this Forseti
+rule.
 `.agents/workflow-overlay/safety-rules.md` owns authorization boundaries;
 `docs/decisions/dev_workflow_ci_branch_protection_doctrine_v0.md` owns
 publication and landing.
