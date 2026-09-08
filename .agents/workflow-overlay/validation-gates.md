@@ -47,6 +47,9 @@ extensive means adequate coverage of material failure modes, including possible
 regressions, not maximum executions or merely a passing smoke test.
 
 Assess source-supported meaning and the intended consumer outcome separately.
+Where a run has row judgments and whole-point acceptance, report both separately
+from delivered consumer output; correct rows in a rejected point are not a
+delivered success. Use the existing result or closeout, not another artifact.
 A valid schema, accepted artifact, or successful process exit cannot establish
 semantic adequacy. Interpretation and materiality remain judgment-owned;
 mechanical checks enforce observable bindings and consumer outcomes. Finding a
@@ -70,6 +73,10 @@ does not establish that actor's autonomous success. Shared downstream output
 can test how actors assess the same evidence, not independent generation or
 better downstream judgments. Report ties and untested claims without promoting
 them into improvement or optimality claims.
+When a fresh comparison is run, judge improvement against its observed baseline;
+a historical failure remains evidence but cannot replace a passing fresh
+baseline to manufacture a gain. Name any changed packing or context that limits
+comparison with earlier runs.
 
 Prefer the smallest set of discriminating cases, including a useful positive,
 a near-miss and relevant contrary evidence. Batch compatible cases or findings
