@@ -214,11 +214,14 @@ converge; no lead count establishes or prevents an angle.
 Every evidence-revealed, decision-relevant angle receives a discriminating
 check unless it is already answered, plainly immaterial to the bound question,
 or genuinely repetitive. The check is question-directed; it is not a one-query
-ceiling or permission for a shallow pass. An angle becomes a material seam when
-the check supplies independent corroboration, exposes a material contradiction,
-or reveals an important mechanism or condition. A single exceptionally direct
-observation may establish a material seam's existence or risk, never its
-prevalence.
+ceiling or permission for a shallow pass. Promote an angle to a material seam
+only when the checked evidence changes the supported answer at the bound
+question's scope. Apply **Materiality decision effect (all source families)** in
+`forseti/product/spines/commission_signal_board/authority/forseti_commission_signal_board_prompt_structure_rules_v0.md`
+for the before/after comparison, claim-support limits, and unresolved-check
+disposition. Corroboration, a new mechanism or condition, or a detailed individual
+report is not automatically material. Meaningful audience resonance may change
+an optics answer without verifying the underlying product allegation.
 
 Once visible, a material seam is a required information job. Before acquisition
 can close, it must be supported, contradicted, meaningfully bounded, or honestly
@@ -228,9 +231,10 @@ observation, pointer, negative, gap, and capture-request vocabulary.
 
 Example: a detailed report of pilling directly attacks a product's
 "layers seamlessly under makeup" claim and opens a layering-compatibility
-angle. Independent reports or an important condition promote the claim-to-
-experience relationship to a material seam. Several pump complaints that
-converge on trapped product and lost value can open a packaging-to-value angle.
+angle. Independent reports or a newly supported condition can promote the
+claim-to-experience relationship when they change the bound answer. Several pump
+complaints that converge on trapped product and lost value can open a
+packaging-to-value angle.
 Unrelated complaints about delivery, bottle color, coupons, and a damaged
 shipping carton remain separate leads unless they form a coherent,
 product-relevant inquiry.
