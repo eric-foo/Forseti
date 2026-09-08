@@ -79,6 +79,9 @@ jobs:
           echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
           # Isolated Python cannot import from the checkout or test sys.path shims.
           .venv/bin/python -I -c "import judgment.semantic_evidence_integration, evidence_binding.youtube_audience_triangulation, packing.columnar, signal_content.deriver, provider_attempts, provider_execution, provider_jobs, yaml"
+      - name: Node fallback process-result tests
+        working-directory: ${{ github.workspace }}
+        run: node --test .agents/tools/node_command.test.mjs
       - name: source-input hash freshness (source pointers stay current)
         working-directory: ${{ github.workspace }}
         run: python .agents/hooks/check_source_input_hashes.py --strict

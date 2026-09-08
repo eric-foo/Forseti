@@ -170,28 +170,84 @@ standing default.
 
 ### Task-Local Tool-Stall Circuit
 
-After one silent sandboxed tool stall, open a circuit for that
-tool-plus-permission route in the current task. Use a realistic,
-operation-specific timeout. On Windows, absent stronger operation-specific
-evidence, allow a full 60 seconds for reads or patches before declaring
-`sandboxed_tool_stall`. A yielded or deferred running handle alone is not a
-stall before that budget expires; give the owner a concise progress update
-around 30 seconds while it continues. Longer operations such as tests keep
-their operation-specific expected runtime and are not forced into the 60-second
-budget. Wait at most once for any remaining original budget, then terminate the
-call. Do not retry the same route merely because the command or conversation
-turn changed.
+Separate an expected-duration review interval from a hard deadline. Reaching an
+expected duration, a quiet period, or a yielded tool handle triggers inspection
+of the existing operation, not automatic termination or a restart. Use elapsed
+time, available process state, output progress, and operation-specific evidence
+to decide whether to keep waiting. Silence alone proves neither health nor a
+stall. Keep owner updates timely and use short tool waits or persistent handles
+so monitoring does not itself lose the operation at a tool-call timeout.
 
-If the stalled operation might have written, inspect only its intended targets
-once. Retry a safe in-scope operation at most once through a distinct approved
-route and reuse that route for the task. Stop the affected action and dependent
-work when the mutation outcome is unknown, target state drifted, another writer
-appeared, a real guard denied the action, or the alternate route also stalls.
-Apply the blocker-scope rule in `AGENTS.md` to continue authorized work that does
-not depend on that state; this does not authorize a retry or bypass. A fresh task
-is a fresh route even when carried context reports an earlier task's stall. Verify the final diff;
-alternate-route completion is mitigation, not proof that the ordinary route is
-repaired.
+Choose review intervals from the operation's expected duration; do not use fixed
+read, patch, or test kill budgets as defaults. A hard deadline needs an explicit
+user/tool limit or an operation-specific resource/safety justification. Honor
+explicit hard deadlines as such; never silently turn one into a review interval
+or extend it. The commissioned 30-second child-scoped validation smoke timeout
+in `prompt-orchestration.md` remains an explicit hard deadline.
+
+After an observed tool stall, open a circuit for that tool-plus-permission
+route in the current task. A command reaching its explicit hard deadline is
+timeout evidence, not proof the tool route stalled. If status cannot be recovered,
+report it as unknown rather than success or a proven deadlock. Do not retry the
+route merely because the command or conversation turn changed. Stop a stalled
+owned operation only through its supported cancellation or explicit termination
+control; do not kill inferred unrelated processes.
+
+If the operation might have written, inspect only its intended targets once.
+A safe read-only recovery may use one distinct approved route; writer retries
+require fresh verification of prior effects and explicit authorization. A review
+interval grants neither. Stop the affected action and dependent work when the
+mutation outcome is unknown, target state drifted, another writer appeared, a
+real guard denied the action, or the alternate route also stalls. Apply the
+blocker-scope rule in `AGENTS.md` to continue authorized independent work; this
+does not authorize a retry or bypass. A fresh task is a fresh route even when
+carried context reports an earlier task's stall. Verify the final diff;
+alternate-route completion is mitigation, not proof the ordinary route is repaired.
+
+When an approved alternate route uses Node REPL for local commands, import
+`.agents/tools/node_command.mjs` from the effective target worktree; do not
+recreate transient child-process wrappers. Normal purpose-built command tools
+remain the normal route. Read the Node REPL tool instructions first. For work
+that may exceed one tool call, start once without awaiting completion:
+
+```javascript
+var { startCommand } = await import('file:///C:/path/to/worktree/.agents/tools/node_command.mjs');
+var command = startCommand(executable, argv, { cwd: 'C:/path/to/worktree' });
+nodeRepl.write(command.inspect());
+```
+
+At the next review interval, call `command.inspect()` in a later REPL call.
+It reports PID, elapsed time, decoded output counts, last-output timing, and
+whether the child is running, exited with output still open, or completed;
+these are observations, not health or success verdicts. Keep the same handle
+while healthy work continues. Once its state is `completed`, consume the result:
+
+```javascript
+var result = await command.result;
+nodeRepl.write(result);
+if (result?.processSuccess !== true) throw new Error('Command failed or remains unverified; inspect result');
+```
+
+Use `command.terminate()` only for an explicit stop decision, never solely because
+a review interval elapsed. It records interruption and requests SIGTERM once on
+the direct child. For an explicit hard deadline, supply `timeoutMs` when starting;
+omitting it installs no kill timer. Retain the handle to inspect the operation
+or explicitly stop it. Existing `runCommand(executable, argv, options)`
+awaits the same result contract and honors supplied `timeoutMs` as a hard deadline,
+but it returns no handle to inspect or stop, so it still requires `timeoutMs` and
+fails before launch when it is omitted. If the REPL/tool loses the handle, the
+operation's state is unknown; recover its owned process/target state before any
+writer retry.
+
+The helper preserves observed exit code (including null), signal, timeout,
+interruption/kill information, errors and bounded stdout/stderr. An output-limit
+error is failure with truncated output. A missing response, thrown error, or any
+result other than `processSuccess === true` cannot clear a gate; never coalesce an
+unknown exit code to zero. A timeout or stop may have had write effects, and
+killing the direct child does not prove all descendants stopped. Process success
+alone does not verify a saved artifact: apply the fresh durable-target readback
+rule in `AGENTS.md` before claiming persistence. The circuit and blocker-scope
+rules above still apply.
 
 ### Bounded-Change Fast Path
 
