@@ -125,6 +125,16 @@ test('invalid budgets fail before launch', () => {
   assert.throws(() => runNode('', { maxBuffer: 0 }), /maxBuffer/);
 });
 
+test('an awaited run keeps its required deadline; only an inspectable start may omit one', async () => {
+  // runCommand returns no handle, so an omitted deadline is an unbounded,
+  // unstoppable await rather than a checkpointed one. Fail before launch.
+  assert.throws(() => runCommand(process.execPath, [], { cwd: process.cwd() }), /timeoutMs/);
+  const command = startCommand(process.execPath, ['-e', ''], { cwd: process.cwd() });
+  assert.equal(command.inspect().timedOut, false);
+  command.terminate();
+  await command.result;
+});
+
 
 test('healthy work survives review checkpoints with one process and no hard deadline', async t => {
   const command = startCommand(process.execPath, ['-e',

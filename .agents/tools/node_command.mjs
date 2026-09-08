@@ -107,7 +107,12 @@ export function startCommand(file, args, { cwd, timeoutMs, maxBuffer = 1024 * 10
   };
 }
 
-// Awaiting convenience for bounded work; use startCommand across REPL calls.
+// Awaiting convenience for bounded work. It exposes no inspect or terminate
+// handle, so no review checkpoint can replace a deadline here and timeoutMs
+// stays required; use startCommand across REPL calls to inspect without one.
 export function runCommand(file, args, options) {
+  if (options?.timeoutMs === undefined) {
+    throw new RangeError('timeoutMs is required by runCommand; use startCommand to inspect work without a hard deadline');
+  }
   return startCommand(file, args, options).result;
 }

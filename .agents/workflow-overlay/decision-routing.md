@@ -231,10 +231,13 @@ if (result?.processSuccess !== true) throw new Error('Command failed or remains 
 Use `command.terminate()` only for an explicit stop decision, never solely because
 a review interval elapsed. It records interruption and requests SIGTERM once on
 the direct child. For an explicit hard deadline, supply `timeoutMs` when starting;
-omitting it installs no kill timer. Existing `runCommand(executable, argv, options)`
-awaits the same result contract and still honors supplied `timeoutMs` as a hard
-deadline. If the REPL/tool loses the handle, the operation's state is unknown;
-recover its owned process/target state before any writer retry.
+omitting it installs no kill timer. Retain the handle to inspect the operation
+or explicitly stop it. Existing `runCommand(executable, argv, options)`
+awaits the same result contract and honors supplied `timeoutMs` as a hard deadline,
+but it returns no handle to inspect or stop, so it still requires `timeoutMs` and
+fails before launch when it is omitted. If the REPL/tool loses the handle, the
+operation's state is unknown; recover its owned process/target state before any
+writer retry.
 
 The helper preserves observed exit code (including null), signal, timeout,
 interruption/kill information, errors and bounded stdout/stderr. An output-limit

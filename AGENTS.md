@@ -153,7 +153,7 @@ Do not import `jb` or external workflow policy as Forseti authority. Explicitly
 invoked or resolver-loaded skills provide task-local mechanics only.
 
 `.agents/workflow-overlay/decision-routing.md` owns uncertainty routing,
-repo-change isolation, receiver selection, the bounded-change fast path, and
+repo-change isolation, receiver selection, the bounded-change fast path,
 command review intervals, explicit hard deadlines, and task-local tool-stall
 recovery. `.agents/workflow-overlay/prompt-orchestration.md`
 owns every durable prompt, handoff, wrapper, rerun, and patch prompt.
