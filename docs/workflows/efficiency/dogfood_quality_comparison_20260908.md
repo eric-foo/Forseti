@@ -13,8 +13,9 @@ authority_boundary: retrieval_only
 
 The quality-focused candidate is implemented on `codex/dogfood-quality-20260908`
 from baseline `bb4e0c812e87a794fe6df8a89c19610e0c076e25`. It is not established
-as a reliable quality improvement. Review and required CI remain pending at
-this record's authoring; consult the lane's current Git/PR state before landing.
+as a reliable quality improvement. The different-vendor review was returned and
+adjudicated on 2026-09-08; required CI remains a landing gate. Consult the lane's
+current Git/PR state for publication and landing status.
 The controlling source is `.agents/workflow-overlay/validation-gates.md`,
 **Model-backed dogfood quality**; routing and prompt preflight point there.
 This record is experiment evidence, not additional standing instructions.
@@ -88,12 +89,15 @@ preflight pointers were updated. Top-level instructions, overlay entrypoint,
 source-loading and repo map already route to these owners; no competing dogfood
 section was found by the scoped stale-language search. No global skill changed.
 
-Recurring cost: semantic dogfood requires a judgment over selected contrasts
-before answer exposure, using a separate context when exposure would anchor it,
-then source-based reconciliation. This is scoped to semantic correctness and
-does not require a universal extra review cycle, fixed repeat count or new
-artifact. Its demonstrated benefit is exposing one missed defect; its observed
-risk is an independent checker inventing another. It must not become a veto.
+No mandatory extra source-first run is installed. Delegated review narrowed the source-first
+clause from a required step to an available move, guarded by source
+reconciliation and a preservation check on its own output, because its single
+trial paired one exposed defect with one invented support judgment. It stays
+scoped to semantic correctness and adds no universal extra review cycle, fixed
+repeat count or new artifact. Its demonstrated benefit is exposing one missed
+defect; its observed risk is an independent checker inventing another. It must
+not become a veto. When selected, it still costs an independent assessment and
+source-based reconciliation; optional does not mean cost-free.
 
 Reported native usage across three completed attempts: 65463
 input tokens, including 4224 cached input, and
@@ -106,12 +110,21 @@ source-first experiment supports only a narrower diagnostic benefit, with a
 material preservation failure before reconciliation. It does not establish
 reliability, broad transfer, better case commissioning, autonomous execution,
 or product correctness. No further model calls or policy landing are implied.
-The success-implement checkpoint routes this candidate and its mixed evidence
-to operator-couriered different-vendor review before adoption.
+The success-implement checkpoint produced an operator-couriered Anthropic review
+at `896098f552de812599786a439202125530d4f856`. The author kept its narrowing
+of the mandatory source-first clause and corresponding evidence-record repairs
+(F1-F3). The author clarified the conditional cost and reopening language;
+cosmetic findings were left unchanged. This accepts a bounded assessment option
+and honesty/preservation rules, not a demonstrated quality improvement.
 
 The earlier `cold_operability_signal_pr_backtest_2026_08_07_v0.md` rejected a
 standing extra consumer run when its admission bar and regression protection
-were unmet. This candidate does not supersede that rejection. The source-first
-clause's recurring scope is specifically an unresolved review question given
-the preservation failure here; do not infer permission to install a universal
-independent-checker requirement from this experiment.
+were unmet. This candidate does not supersede that rejection. Delegated review
+resolved the source-first clause's recurring scope by making the check optional
+rather than required, given the preservation failure here; do not infer
+permission to install a universal independent-checker requirement from this
+experiment. Reconsider the scope when new evidence could change that decision,
+such as a controlled comparison showing that skipping the optional move misses
+material defects and that using it improves decisions without unacceptable
+preservation regressions. A defect need not reach production to supply that
+evidence; one skipped check alone does not establish a universal requirement.

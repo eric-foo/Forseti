@@ -51,11 +51,14 @@ A valid schema, accepted artifact, or successful process exit cannot establish
 semantic adequacy. Interpretation and materiality remain judgment-owned;
 mechanical checks enforce observable bindings and consumer outcomes. Finding a
 material defect can resolve the experiment without establishing product success.
-When testing semantic correctness, judge the selected source/claim contrasts
-before revealing the generated judgments or consumer acceptance, then reconcile
-differences against the source. Keep this check separate from the producing
-context where seeing its answer could anchor the assessment. The independent
-judgment is fallible evidence, not an automatic replacement label or veto.
+When the decision turns on semantic correctness and an already-generated
+judgment or consumer acceptance would anchor the assessment, judging the
+selected source/claim contrasts in a separate context before that exposure is
+an available move, not a required step. It can surface a defect that
+exposed-output assessment misses, and it can also invent unsupported support of
+its own, so when it is used, reconcile every difference against the source and
+check its own output for preservation regressions. The independent judgment is
+fallible evidence, not an automatic replacement label or veto.
 Before continuing dependent execution, inspect its prerequisite outcome rather
 than process completion alone; diagnose a blocker instead of blindly advancing.
 
