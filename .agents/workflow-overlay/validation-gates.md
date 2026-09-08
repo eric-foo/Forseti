@@ -47,9 +47,10 @@ extensive means adequate coverage of material failure modes, including possible
 regressions, not maximum executions or merely a passing smoke test.
 
 Assess source-supported meaning and the intended consumer outcome separately.
-Where a run has row judgments and whole-point acceptance, report both separately
-from delivered consumer output; correct rows in a rejected point are not a
-delivered success. Use the existing result or closeout, not another artifact.
+Where a run has row judgments and whole-point acceptance, distinguish row
+correctness from whether the point was accepted and what output was delivered;
+correct rows in a rejected point are not a delivered success. Use the existing
+result or closeout, not another artifact.
 A valid schema, accepted artifact, or successful process exit cannot establish
 semantic adequacy. Interpretation and materiality remain judgment-owned;
 mechanical checks enforce observable bindings and consumer outcomes. Finding a
@@ -75,8 +76,7 @@ better downstream judgments. Report ties and untested claims without promoting
 them into improvement or optimality claims.
 When a fresh comparison is run, judge improvement against its observed baseline;
 a historical failure remains evidence but cannot replace a passing fresh
-baseline to manufacture a gain. Name any changed packing or context that limits
-comparison with earlier runs.
+baseline to manufacture a gain.
 
 Prefer the smallest set of discriminating cases, including a useful positive,
 a near-miss and relevant contrary evidence. Batch compatible cases or findings
@@ -92,8 +92,8 @@ Reuse unchanged stages and prior evidence where their bindings still hold.
 For a confirmation-only change, fresh confirmation may consume the original
 first response when its prompt, schema, inputs and provenance remain applicable;
 do not reauthor or restamp that response. Replay proves compatibility, not fresh
-model behavior. If packing changes the tested invocation, disclose that variable
-and preserve any production-shape check needed by the actual claim. Share only
+model behavior. Disclose packing or context changes that limit comparison with
+earlier runs, and preserve any production-shape check needed by the actual claim. Share only
 needed context; parallel calls reduce latency, not necessarily token cost.
 
 After binding adequate quality coverage, estimate calls and input/output volume

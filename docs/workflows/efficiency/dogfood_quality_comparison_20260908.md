@@ -3,9 +3,10 @@
 ```yaml
 retrieval_header_version: 1
 artifact_role: Bounded workflow experiment evidence
-scope: Dogfood result assessment under existing, revised, and source-first guidance.
+scope: Dogfood result assessment under existing, revised, and source-first guidance, plus the later rejected opposition and tied scope criterion comparisons.
 use_when:
   - Reviewing the dogfood quality overlay candidate and its evidence limits.
+  - Reviewing the rejected opposition criterion or tied scope criterion comparison, their consolidated disposition and evidence limits.
 authority_boundary: retrieval_only
 ```
 
