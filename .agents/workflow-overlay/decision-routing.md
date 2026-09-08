@@ -184,10 +184,12 @@ turn changed.
 
 If the stalled operation might have written, inspect only its intended targets
 once. Retry a safe in-scope operation at most once through a distinct approved
-route and reuse that route for the task. Stop when the mutation outcome is
-unknown, target state drifted, another writer appeared, a real guard denied the
-action, or the alternate route also stalls. A fresh task is a fresh route even
-when carried context reports an earlier task's stall. Verify the final diff;
+route and reuse that route for the task. Stop the affected action and dependent
+work when the mutation outcome is unknown, target state drifted, another writer
+appeared, a real guard denied the action, or the alternate route also stalls.
+Apply the blocker-scope rule in `AGENTS.md` to continue authorized work that does
+not depend on that state; this does not authorize a retry or bypass. A fresh task
+is a fresh route even when carried context reports an earlier task's stall. Verify the final diff;
 alternate-route completion is mitigation, not proof that the ordinary route is
 repaired.
 

@@ -26,6 +26,11 @@ per-operation approval, never a standing rule.
 Prioritize the current end-to-end critical path: when the bound outcome is
 blocked, clear that blocker before adjacent proof, cleanup, or hardening unless
 the bound outcome requires it.
+Before stopping for a blocker, identify which actions and claims actually depend
+on it. Stop those actions and withhold those claims; continue authorized work
+that advances the same outcome without relying on the blocked state. A blocker
+report is not a substitute for that work. Do not bypass a guard or uncertain
+mutation, or add adjacent work merely to stay busy.
 For an unfamiliar production runner or CLI, resolve the executable, subcommand,
 and required arguments from repository source or `--help` before the first run.
 Familiar test and Git commands do not pay this preflight.
