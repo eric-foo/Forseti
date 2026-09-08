@@ -193,6 +193,30 @@ is a fresh route even when carried context reports an earlier task's stall. Veri
 alternate-route completion is mitigation, not proof that the ordinary route is
 repaired.
 
+When an approved alternate route uses Node REPL for local commands, import
+`.agents/tools/node_command.mjs` from the effective target worktree; do not
+recreate transient child-process wrappers. Normal purpose-built command tools
+remain the normal route. Read the Node REPL tool instructions first, then use
+an absolute file URL and the operation's actual timeout, for example:
+
+```javascript
+var { runCommand } = await import('file:///C:/path/to/worktree/.agents/tools/node_command.mjs');
+var result = await runCommand('git', ['status', '--short'], {
+  cwd: 'C:/path/to/worktree', timeoutMs: 30000,
+});
+nodeRepl.write(result);
+if (result?.processSuccess !== true) throw new Error('Command failed or remains unverified; inspect result');
+```
+
+The helper preserves observed exit code (including null), signal, timeout/kill
+information, errors and bounded stdout/stderr. An output-limit error is failure
+with truncated output. A missing response, thrown error, or any result other than
+`processSuccess === true` cannot clear a gate; never coalesce an unknown exit code
+to zero. A timeout may have had write effects, and killing the direct child does
+not prove all descendants stopped. Process success alone does not verify a saved
+artifact: apply the fresh durable-target readback rule in `AGENTS.md` before
+claiming persistence. The circuit and blocker-scope rules above still apply.
+
 ### Bounded-Change Fast Path
 
 For a named handoff with a small candidate-authority set, one bound edit unit,
