@@ -944,7 +944,7 @@ Before using a generated Forseti prompt, apply these gates:
    and duplicate role titles fail this gate unless an explicit load-bearing
    experimental control requires the extra synchronization.
 5. Output mode explicit: exactly one output mode is named, with write destination and report destination if applicable.
-6. Required checks named: validation gates can fail and include pass, fail, blocked, and not-run semantics. Model-backed dogfood commissions apply **Model-backed dogfood economy** in `validation-gates.md`; carry its decision, coverage, cost estimate and stop condition in the existing prompt rather than multiplying calls by fixture or adding a separate checklist.
+6. Required checks named: validation gates can fail and include pass, fail, blocked, and not-run semantics. Model-backed dogfood commissions apply **Model-backed dogfood quality** in `validation-gates.md`; carry its decision, failure and preservation cases, outcome checks and stop condition in the existing prompt. Size execution after adequate quality coverage is bound; do not add a separate checklist.
 7. Source capsule remains decision-bounded under
    `.agents/workflow-overlay/source-loading.md`; its default budgets are
    exceeded only when omitting the additional source would make the prompt

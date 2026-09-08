@@ -33,17 +33,43 @@ bucketed findings. Do not re-run a passing gate to improve the readability,
 formatting, or completeness of its output; capture the run once and read the
 captured output. Re-run only when changed bytes could falsify the claim.
 
-### Model-backed dogfood economy
+### Model-backed dogfood quality
 
 Before commissioning model-backed dogfood, use the existing plan or commission
-to state the decision the evidence must resolve, the necessary contrasting
-cases, estimated calls and repeated input/output volume, and the stop or
-expansion condition. A short paragraph is sufficient; no separate plan,
-receipt, approval gate, fixed call cap, or universal repeat count is required.
-Without this bound, fixture count, stages, agents and repeats can multiply
-calls without improving the decision. Extensive means adequate coverage of
-material failure modes, not maximum executions; a cheap smoke test is not
-complete when the outcome needs broader coverage.
+to name the decision, the material failure the experiment must expose, a valid
+behavior it must preserve, and the observation that resolves the decision or
+requires diagnosis or broader coverage. Choose contrasting cases and expected
+judgments before viewing results; keep evaluator expectations out of the tested
+actor's inputs when those expectations would give away the answer. A short
+paragraph is sufficient; no separate plan, receipt, approval gate, fixed call
+cap, or universal repeat count is required. Quality comes before economy:
+extensive means adequate coverage of material failure modes, including possible
+regressions, not maximum executions or merely a passing smoke test.
+
+Assess source-supported meaning and the intended consumer outcome separately.
+A valid schema, accepted artifact, or successful process exit cannot establish
+semantic adequacy. Interpretation and materiality remain judgment-owned;
+mechanical checks enforce observable bindings and consumer outcomes. Finding a
+material defect can resolve the experiment without establishing product success.
+When the decision turns on semantic correctness and an already-generated
+judgment or consumer acceptance would anchor the assessment, judging the
+selected source/claim contrasts in a separate context before that exposure is
+an available move, not a required step. It can surface a defect that
+exposed-output assessment misses, and it can also invent unsupported support of
+its own, so when it is used, reconcile every difference against the source and
+check its own output for preservation regressions. The independent judgment is
+fallible evidence, not an automatic replacement label or veto.
+Before continuing dependent execution, inspect its prerequisite outcome rather
+than process completion alone; diagnose a blocker instead of blindly advancing.
+
+For process comparisons, exercise the behavior the proposed change claims to
+improve on matched inputs with the relevant conditions held constant. Plan
+quality does not establish execution quality. State which outcomes were fresh,
+replayed, autonomous, or recovered; host completion of a blocked actor's work
+does not establish that actor's autonomous success. Shared downstream output
+can test how actors assess the same evidence, not independent generation or
+better downstream judgments. Report ties and untested claims without promoting
+them into improvement or optimality claims.
 
 Prefer the smallest set of discriminating cases, including a useful positive,
 a near-miss and relevant contrary evidence. Batch compatible cases or findings
@@ -63,7 +89,8 @@ model behavior. If packing changes the tested invocation, disclose that variable
 and preserve any production-shape check needed by the actual claim. Share only
 needed context; parallel calls reduce latency, not necessarily token cost.
 
-Use existing native receipts to report observed input, cached input and output
+After binding adequate quality coverage, estimate calls and input/output volume
+in the existing commission. Use native receipts to report observed input, cached input and output
 usage when available, with missing usage explicit and cached input not counted
 twice. Stop at the bound decision or diagnostic outcome; further calls must
 resolve a named remaining uncertainty. Preserve failures and frozen expected
