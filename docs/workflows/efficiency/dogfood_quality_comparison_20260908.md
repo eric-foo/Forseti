@@ -108,3 +108,10 @@ reliability, broad transfer, better case commissioning, autonomous execution,
 or product correctness. No further model calls or policy landing are implied.
 The success-implement checkpoint routes this candidate and its mixed evidence
 to operator-couriered different-vendor review before adoption.
+
+The earlier `cold_operability_signal_pr_backtest_2026_08_07_v0.md` rejected a
+standing extra consumer run when its admission bar and regression protection
+were unmet. This candidate does not supersede that rejection. The source-first
+clause's recurring scope is specifically an unresolved review question given
+the preservation failure here; do not infer permission to install a universal
+independent-checker requirement from this experiment.
