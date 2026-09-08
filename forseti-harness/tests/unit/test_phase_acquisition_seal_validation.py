@@ -6362,3 +6362,171 @@ def test_retailer_state_change_requires_change_summary(tmp_path: Path) -> None:
     assert "retailer_state_change_without_summary:RSA-002" in _validate(
         tmp_path, seal
     )
+
+
+def _shared_search_fixture(tmp_path: Path) -> tuple[dict, dict, dict, dict]:
+    """Two topics, six explicit questions, one actual Phase 2 producer/packet."""
+    _blocked_seal(tmp_path)
+    _consumer_depth_ledger(tmp_path)
+    ledger = json.loads((tmp_path / "evidence_depth_ledger.json").read_text(encoding="utf-8"))
+    first = ledger["product_axes"][0]
+    second = deepcopy(first)
+    second["axis_id"] = "routine_fit"
+    ledger["product_axes"] = [first, second]
+    checks = []
+    for axis in ledger["product_axes"]:
+        for index, plan in enumerate(axis["focused_search_jobs"]):
+            plan["job_id"] = "P2-001"
+            plan["target_ids"] = ["target-1"] if index == 0 else []
+            plan["question"] = f"What native accounts address {axis['axis_id']} / {plan['goal']}?"
+            checks.append({"axis_id": axis["axis_id"], "goal": plan["goal"],
+                           "question": plan["question"], "reached": True,
+                           "evaluation": "Read the selected native account." if index == 0 else "Examined the returned rows; none addressed this question.",
+                           "selected_target_ids": plan["target_ids"]})
+    record = {"job_id": "P2-001", "query": "Summer Fridays packaging and routine experiences",
+              "executed_at": "2026-08-02T00:09:00+00:00",
+              "serp_packet_artifact_ids": ["serp-packet"], "goal_checks": checks}
+    frontier = ledger["serp_source_frontier"]
+    for field in ("search_surfaces", "producer_job_packet_inventory"):
+        frontier[field] = [row for row in frontier[field] if row["phase"] == "serp_phase1" or row["job_id"] == "P2-001"]
+    frontier["producer_job_packet_inventory_sha256"] = _sha256(frontier["producer_job_packet_inventory"])
+    queue_path = tmp_path / "serp_phase2_queue_state.json"
+    queue = json.loads(queue_path.read_text(encoding="utf-8"))
+    queue["jobs"] = [{"job_id": "P2-001", "query": record["query"],
+                      "goal_plan": [{key: check[key] for key in ("axis_id", "goal", "question")} for check in checks]}]
+    queue["completed_job_ids"] = ["P2-001"]
+    queue["attempt_history"] = [row for row in queue["attempt_history"] if row["job_id"] == "P2-001"]
+    target = ledger["target_reconciliation"][0]
+    target["axis_ids"] = [first["axis_id"], second["axis_id"]]
+    return ledger, record, queue, {"target-1": target}
+
+
+def _shared_search_findings(tmp_path: Path, ledger: dict, record: dict, queue: dict, targets: dict) -> tuple[list[str], dict]:
+    from datetime import datetime
+    from runners.run_phase_acquisition_seal_validation import (
+        _consumer_phase2_execution_times, _load_consumer_phase2_searches,
+        _validate_focused_search_jobs, _validate_serp_source_frontier,
+    )
+    queue_path = tmp_path / "serp_phase2_queue_state.json"
+    queue_path.write_text(json.dumps(queue), encoding="utf-8")
+    for receipt in ledger["serp_source_frontier"]["producer_queue_states"]:
+        if receipt["artifact_id"] == "serp-phase2-queue-state":
+            receipt["raw_sha256"] = __import__("hashlib").sha256(queue_path.read_bytes()).hexdigest()
+    search_path = tmp_path / "consumer_phase2_search.json"
+    search_path.write_text(json.dumps({"schema_version": "consumer_brand_phase2_search_v1",
+        "subject": ledger["subject"], "cycle_id": ledger["cycle_id"], "jobs": [record]}), encoding="utf-8")
+    artifacts = {row["artifact_id"]: tmp_path / row["locator"] for row in ledger["artifacts"]}
+    findings = []
+    axes = {row["axis_id"]: row for row in ledger["product_axes"]}
+    registry, _ = _load_consumer_phase2_searches(ledger=ledger, artifacts=artifacts, axis_rows=axes, findings=findings)
+    for axis_id, axis in axes.items():
+        _validate_focused_search_jobs(axis, axis_id=axis_id, route_jobs={"P2-001": "completed"},
+            required=True, current_contract=True,
+            inventory_digest=axis["focused_search_jobs"][0]["axis_inventory_sha256"],
+            inventory_created_at=datetime.fromisoformat("2026-08-02T00:00:00+00:00"),
+            artifacts=artifacts, search_jobs=registry, targets=targets, findings=findings)
+    _validate_serp_source_frontier(ledger["serp_source_frontier"], artifacts=artifacts,
+        targets=targets, phase_job_ids={"serp_phase1": {"P1-001"}, "serp_phase2": {"P2-001"}},
+        focused_searches=registry, findings=findings)
+    assert len(registry) == 1
+    assert len(_consumer_phase2_execution_times(ledger, artifacts)) == 1
+    return findings, registry
+
+
+def test_shared_search_covers_six_explicit_questions_with_one_producer(tmp_path: Path) -> None:
+    ledger, record, queue, targets = _shared_search_fixture(tmp_path)
+    findings, registry = _shared_search_findings(tmp_path, ledger, record, queue, targets)
+    assert findings == []
+    assert len(next(iter(registry.values()))["goal_checks"]) == 6
+    inventory = ledger["serp_source_frontier"]["producer_job_packet_inventory"]
+    phase2 = [row for row in inventory if row["phase"] == "serp_phase2"]
+    assert len(phase2) == 1
+    assert phase2[0]["successful_packet_count"] == 1
+    assert "job_id_aliases" not in ledger["serp_source_frontier"]["producer_queue_states"][1]
+
+
+@pytest.mark.parametrize(("mutation", "expected"), [
+    ("missing_pair", "missing_consumer_phase2_goal_check"),
+    ("duplicate_pair", "duplicate_consumer_phase2_goal_check"),
+    ("unplanned_pair", "unplanned_consumer_phase2_goal_check"),
+    ("unreached", "unreached_consumer_phase2_goal_check"),
+    ("missing_evaluation", "missing_consumer_phase2_goal_evaluation"),
+    ("question_mismatch", "consumer_phase2_goal_question_mismatch"),
+    ("unplanned_question", "consumer_phase2_producer_goal_plan_mismatch"),
+    ("missing_producer_plan", "consumer_phase2_producer_goal_plan_mismatch"),
+    ("producer_query_mismatch", "consumer_phase2_producer_goal_plan_mismatch"),
+    ("target_mismatch", "product_axis_search_target_inventory_mismatch"),
+    ("target_wrong_axis", "product_axis_search_target_axis_mismatch"),
+    ("target_wrong_job", "product_axis_search_target_job_mismatch"),
+    ("duplicate_target", "invalid_consumer_phase2_goal_targets"),
+    ("malformed_targets", "invalid_consumer_phase2_goal_targets"),
+    ("ambiguous_scalar", "ambiguous_consumer_phase2_search_goal_shape"),
+    ("axis_array", "invalid_consumer_phase2_goal_check_pair"),
+    ("missing_checks", "missing_consumer_phase2_goal_checks"),
+    ("duplicate_ledger_goal", "invalid_product_axis_search_goal"),
+    ("late_plan", "product_axis_search_executed_before_plan"),
+])
+def test_shared_search_rejects_false_coverage(tmp_path: Path, mutation: str, expected: str) -> None:
+    ledger, record, queue, targets = _shared_search_fixture(tmp_path)
+    check = record["goal_checks"][0]
+    plan = ledger["product_axes"][0]["focused_search_jobs"][0]
+    if mutation == "missing_pair": record["goal_checks"].pop()
+    elif mutation == "duplicate_pair": record["goal_checks"].append(deepcopy(check))
+    elif mutation == "unplanned_pair": check["axis_id"] = "unplanned_axis"
+    elif mutation == "unreached": check["reached"] = False
+    elif mutation == "missing_evaluation": check["evaluation"] = " "
+    elif mutation == "question_mismatch": check["question"] = "Different question"
+    elif mutation == "unplanned_question":
+        check["question"] = plan["question"] = "Backfilled after seeing the results"
+        assert plan["planned_at"] < record["executed_at"]
+    elif mutation == "missing_producer_plan": queue["jobs"][0].pop("goal_plan")
+    elif mutation == "producer_query_mismatch": queue["jobs"][0]["query"] = "Unrelated query"
+    elif mutation == "target_mismatch": check["selected_target_ids"] = []
+    elif mutation == "target_wrong_axis": targets["target-1"]["axis_ids"] = ["unrelated"]
+    elif mutation == "target_wrong_job": targets["target-1"]["discovered_by_job_id"] = "other_job"
+    elif mutation == "duplicate_target": check["selected_target_ids"] = ["target-1", "target-1"]
+    elif mutation == "malformed_targets": check["selected_target_ids"] = [{}]
+    elif mutation == "ambiguous_scalar": record["axis_id"] = "packaging_reliability"
+    elif mutation == "axis_array": check["axis_id"] = ["packaging_reliability", "routine_fit"]
+    elif mutation == "missing_checks": record["goal_checks"] = []
+    elif mutation == "duplicate_ledger_goal": ledger["product_axes"][0]["focused_search_jobs"].append(deepcopy(plan))
+    elif mutation == "late_plan": plan["planned_at"] = "2026-08-02T01:00:00+00:00"
+    findings, _ = _shared_search_findings(tmp_path, ledger, record, queue, targets)
+    assert any(row.startswith(expected) for row in findings), findings
+
+
+def test_shared_search_producer_lookup_is_phase_scoped(tmp_path: Path) -> None:
+    """A Phase 1 job reusing the id is a different producer, not an ambiguity."""
+    from runners.run_phase_acquisition_seal_validation import (
+        _validate_phase2_producer_goal_plan,
+    )
+    checks = [{"axis_id": "packaging_reliability", "goal": "corroboration",
+               "question": "q1", "reached": True, "evaluation": "Read the body.",
+               "selected_target_ids": ["target-1"]}]
+    record = {"job_id": "J-001", "query": "shared query", "goal_checks": checks}
+    phase2_state = tmp_path / "serp_phase2_state.json"
+    phase2_state.write_text(json.dumps({"jobs": [{"job_id": "J-001",
+        "query": "shared query", "goal_plan": [{key: checks[0][key]
+        for key in ("axis_id", "goal", "question")}]}]}), encoding="utf-8")
+    phase1_state = tmp_path / "serp_phase1_state.json"
+    phase1_state.write_text(json.dumps({"jobs": []}), encoding="utf-8")
+    artifacts = {"phase2-state": phase2_state, "phase1-state": phase1_state}
+    phase2_row = {"phase": "serp_phase2", "job_id": "J-001",
+                  "producer_job_id": "J-001",
+                  "producer_queue_state_artifact_id": "phase2-state"}
+    phase1_row = {"phase": "serp_phase1", "job_id": "J-001",
+                  "producer_job_id": "J-001",
+                  "producer_queue_state_artifact_id": "phase1-state"}
+    findings: list[str] = []
+    assert _validate_phase2_producer_goal_plan(
+        record, inventory=[phase1_row, phase2_row], artifacts=artifacts,
+        findings=findings,
+    )
+    assert findings == []
+    # Two Phase 2 producers for one id stay a real ambiguity.
+    duplicate = dict(phase2_row, producer_job_id="J-001-retry")
+    assert not _validate_phase2_producer_goal_plan(
+        record, inventory=[phase2_row, duplicate], artifacts=artifacts,
+        findings=findings,
+    )
+    assert findings == ["consumer_phase2_producer_goal_plan_mismatch:J-001"]

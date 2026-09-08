@@ -458,6 +458,27 @@ or not they add a new distinct-origin credit, unless that axis records proven
 source exhaustion. Related same-topic sources remain as sharpening volume;
 exact duplicates collapse and do not inflate distinct-origin spread.
 
+One physical search may serve several of these questions only when each exact
+(axis, goal) pair was explicitly planned and actually evaluated. In
+`consumer_brand_phase2_search_v1`, keep one job with its one query, execution
+time and packet list; use `goal_checks` instead of scalar `axis_id`, `goal`
+and `selected_target_ids`. Each check contains `axis_id`, `goal`, the nonempty
+planned `question`, `reached: true`, a nonempty source-backed `evaluation`,
+and its own `selected_target_ids` (empty when nothing was selected). Each pair
+has exactly one ledger `focused_search_jobs` entry carrying the same job and
+search-artifact IDs, question, inventory hash, pre-execution `planned_at`,
+disposition and matching `target_ids`. Before capture, submit that physical
+Google queue job with `goal_plan`: the same ordered list of just `axis_id`,
+`goal` and `question`. The preserved producer job's query and complete plan
+must match the checks; a backdated consumer ledger alone supplies no shared
+planning credit. The seal still requires the pinned producer receipt and exact
+packet inventory. Missing, duplicate, unplanned or unreached pairs and wrongly
+bound targets fail; topic arrays never imply a Cartesian set of goal checks.
+Actual evaluation remains a source-reading judgment for final semantic review.
+Count the physical job and its actual packets once; shared goal coverage creates
+no extra producer aliases, independent sources or continuation families. Existing
+scalar single-goal records remain valid without these additional fields.
+
 Community support is comment-coded: thread and comment identity, product
 context, axis, contribution, choice, alternative brand when present, explicit
 outcome, source reference, source-native creation timestamp

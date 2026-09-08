@@ -1902,6 +1902,16 @@ def _load_consumer_phase2_searches(
                 complete = False
                 continue
             registry[key] = row
+            if "goal_checks" in row:
+                planned = [
+                    (axis_id, plan)
+                    for axis_id, axis in axis_rows.items()
+                    for plan in axis.get("focused_search_jobs", [])
+                    if isinstance(plan, dict)
+                    and (plan.get("search_artifact_id"), plan.get("job_id")) == key
+                ]
+                if not _validate_phase2_goal_checks(row, planned, findings):
+                    complete = False
             if not isinstance(row.get("query"), str) or not row.get("query"):
                 findings.append(f"missing_consumer_phase2_search_query:{job_id}")
                 complete = False
@@ -1919,6 +1929,117 @@ def _load_consumer_phase2_searches(
                 findings.append(f"unresolved_consumer_phase2_search_packet:{job_id}")
                 complete = False
     return registry, complete
+
+
+def _validate_phase2_goal_checks(
+    record: Mapping[str, Any],
+    planned: list[tuple[str, Mapping[str, Any]]],
+    findings: list[str],
+) -> bool:
+    """Bind explicit coverage to plans without expanding the physical job registry."""
+    job_id = record.get("job_id")
+    start = len(findings)
+    if any(field in record for field in ("axis_id", "goal", "selected_target_ids")):
+        findings.append(f"ambiguous_consumer_phase2_search_goal_shape:{job_id}")
+    checks = record.get("goal_checks")
+    if not isinstance(checks, list) or not checks:
+        findings.append(f"missing_consumer_phase2_goal_checks:{job_id}")
+        return False
+    seen: set[tuple[str, str]] = set()
+    for check in checks:
+        if not isinstance(check, dict):
+            findings.append(f"invalid_consumer_phase2_goal_check:{job_id}")
+            continue
+        axis_id, goal = check.get("axis_id"), check.get("goal")
+        if not isinstance(axis_id, str) or not isinstance(goal, str):
+            findings.append(f"invalid_consumer_phase2_goal_check_pair:{job_id}")
+            continue
+        pair = (axis_id, goal)
+        if pair in seen:
+            findings.append(f"duplicate_consumer_phase2_goal_check:{job_id}:{axis_id}:{goal}")
+        seen.add(pair)
+        plans = [plan for aid, plan in planned if (aid, plan.get("goal")) == pair]
+        if len(plans) != 1 or goal not in _FOCUSED_SEARCH_GOALS:
+            findings.append(f"unplanned_consumer_phase2_goal_check:{job_id}:{axis_id}:{goal}")
+        question = check.get("question")
+        if (
+            not isinstance(question, str)
+            or not question.strip()
+            or len(plans) != 1
+            or plans[0].get("question") != question
+        ):
+            findings.append(f"consumer_phase2_goal_question_mismatch:{job_id}:{axis_id}:{goal}")
+        if check.get("reached") is not True:
+            findings.append(f"unreached_consumer_phase2_goal_check:{job_id}:{axis_id}:{goal}")
+        evaluation = check.get("evaluation")
+        if not isinstance(evaluation, str) or not evaluation.strip():
+            findings.append(f"missing_consumer_phase2_goal_evaluation:{job_id}:{axis_id}:{goal}")
+        target_ids = check.get("selected_target_ids")
+        if (
+            not isinstance(target_ids, list)
+            or any(not isinstance(target, str) or not target for target in target_ids)
+            or len(set(target_ids)) != len(target_ids)
+        ):
+            findings.append(f"invalid_consumer_phase2_goal_targets:{job_id}:{axis_id}:{goal}")
+    for axis_id, plan in planned:
+        if (axis_id, str(plan.get("goal"))) not in seen:
+            findings.append(f"missing_consumer_phase2_goal_check:{job_id}:{axis_id}:{plan.get('goal')}")
+    return len(findings) == start
+
+
+def _validate_phase2_producer_goal_plan(
+    record: Mapping[str, Any],
+    *,
+    inventory: list[dict[str, Any]],
+    artifacts: Mapping[str, Path],
+    findings: list[str],
+) -> bool:
+    """Use the observed producer identity, never a consumer's backdated plan alone."""
+    job_id = record.get("job_id")
+    # Producer identity is (phase, job_id) everywhere else in this file; a
+    # Phase 1 job reusing this id is a different producer, not an ambiguity.
+    producers = [
+        row
+        for row in inventory
+        if row.get("job_id") == job_id and row.get("phase") == "serp_phase2"
+    ]
+    checks = record.get("goal_checks")
+    try:
+        if len(producers) != 1 or not isinstance(checks, list):
+            raise ValueError("shared search must resolve to one producer")
+        producer = producers[0]
+        state = json.loads(artifacts[producer["producer_queue_state_artifact_id"]].read_text(encoding="utf-8"))
+        jobs = [row for row in state["jobs"] if row.get("job_id") == producer["producer_job_id"]]
+        expected = [
+            {field: check.get(field) for field in ("axis_id", "goal", "question")}
+            for check in checks if isinstance(check, dict)
+        ]
+        if (
+            len(jobs) != 1 or not expected or len(expected) != len(checks)
+            or jobs[0].get("goal_plan") != expected
+            or jobs[0].get("query") != record.get("query")
+        ):
+            raise ValueError("consumer checks differ from submitted producer plan")
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        findings.append(f"consumer_phase2_producer_goal_plan_mismatch:{job_id}")
+        return False
+    return True
+
+
+def _phase2_goal_record(
+    record: Mapping[str, Any] | None, axis_id: str, goal: Any
+) -> Mapping[str, Any] | None:
+    if record is None or "goal_checks" not in record:
+        return record
+    checks = record.get("goal_checks")
+    if not isinstance(checks, list):
+        return None
+    matches = [
+        check for check in checks
+        if isinstance(check, dict)
+        and check.get("axis_id") == axis_id and check.get("goal") == goal
+    ]
+    return matches[0] if len(matches) == 1 else None
 
 
 def _validate_target_reconciliation(
@@ -2215,6 +2336,14 @@ def _validate_serp_source_frontier(
             if observed_inventory != declared_inventory:
                 findings.append("serp_producer_job_packet_inventory_mismatch")
                 complete = False
+            for record in focused_searches.values():
+                if "goal_checks" not in record:
+                    continue
+                if not _validate_phase2_producer_goal_plan(
+                    record, inventory=observed_inventory, artifacts=artifacts,
+                    findings=findings,
+                ):
+                    complete = False
     eligible: dict[tuple[str, str, int], Mapping[str, Any]] = {}
     for artifact_id in sorted(admitted_artifacts):
         try:
@@ -2354,7 +2483,16 @@ def _validate_focused_search_jobs(
             complete = False
         else:
             goals.add(str(goal))
-        if not isinstance(job_id, str) or not job_id or job_id in job_ids:
+        physical_record = search_jobs.get((str(row.get("search_artifact_id")), str(job_id)))
+        goal_record = _phase2_goal_record(physical_record, axis_id, goal)
+        explicit_check = (
+            current_contract and physical_record is not None
+            and "goal_checks" in physical_record and goal_record is not None
+        )
+        if (
+            not isinstance(job_id, str) or not job_id
+            or (job_id in job_ids and not explicit_check)
+        ):
             findings.append(f"invalid_product_axis_search_job_id:{axis_id}")
             complete = False
         else:
@@ -2405,8 +2543,9 @@ def _validate_focused_search_jobs(
                 complete = False
             else:
                 if (
-                    search_record.get("axis_id") != axis_id
-                    or search_record.get("goal") != goal
+                    goal_record is None
+                    or goal_record.get("axis_id") != axis_id
+                    or goal_record.get("goal") != goal
                 ):
                     findings.append(f"product_axis_search_record_mismatch:{axis_id}")
                     complete = False
@@ -2426,7 +2565,7 @@ def _validate_focused_search_jobs(
                 findings.append(f"captured_product_axis_search_without_targets:{axis_id}")
                 complete = False
             else:
-                if search_record is not None and search_record.get(
+                if goal_record is not None and goal_record.get(
                     "selected_target_ids"
                 ) != target_ids:
                     findings.append(f"product_axis_search_target_inventory_mismatch:{axis_id}")
@@ -2639,7 +2778,7 @@ def _validate_consumer_brand_product_axes(
             and searches_complete
             and targets_complete
         )
-        if serp_link_contract:
+        if serp_link_contract or any("goal_checks" in row for row in search_jobs.values()):
             complete = (
                 _validate_serp_source_frontier(
                     ledger.get("serp_source_frontier"),

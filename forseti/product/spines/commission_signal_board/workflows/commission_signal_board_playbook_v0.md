@@ -295,7 +295,10 @@ not spend a separate sacrificial query.
    artifact. First hash-pin the complete axis
    inventory. For each material consumer-brand axis, Phase 2 then runs one
    adaptive corroboration/segmentation goal, one comparison/switch/value goal,
-   and one disconfirmation/strongest-delight goal. A concrete material source
+   and one disconfirmation/strongest-delight goal. One physical query may serve
+   several explicitly planned questions through the producer-bound goal checks
+   in the [operating rules](../authority/forseti_commission_signal_board_prompt_structure_rules_v0.md);
+   it remains one producer job and supplies no extra continuation family. A concrete material source
    found by those
    queries becomes an ordinary job in the existing owning route accounting;
    the owning specialist or Capture route publishes its separate focused
@@ -899,7 +902,7 @@ terminally accounted, its discovery query and captured result packet pinned,
 the mandatory high-yield query-family set, and the additional floor exception
 when below 40,
 per-thread source-native artifacts, comment-coding-backed support-ref fields,
-three focused Phase 2 jobs per material axis, and target reconciliation from
+three explicitly planned and evaluated Phase 2 goals per material axis, and target reconciliation from
 search pointer through native body to evidence unit — a SERP artifact never
 doubles as the native body. Each material axis declares evidence strength
 separately from decision maturity, closure basis, claim ceiling, and the two
