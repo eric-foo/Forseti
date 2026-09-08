@@ -378,7 +378,15 @@ an explicit invocation and an automatic checkpoint from `success-implement`,
 `/fused`, implementation, or review: return exactly one paste-ready prompt for
 the operator to courier. Do not inspect or test installed controllers, agents,
 CLIs, plugins, or fallback routes; create or dispatch a task; fork or spawn
-another agent; send the prompt; or execute the review. Generic skill mechanics
+another agent; send the prompt; or execute the review. This binds the
+commissioning lane -- the actor asked to obtain a review. It does not bind a
+receiver executing a courier authored in another lane whose `receiver_binding`
+names an `author_vendor` different from the receiver's own model family and
+grants direct write access at the pinned revision; that receiver runs the review
+it was couriered and states its own model family in its return, for example
+`delegate_vendor: Anthropic`. A courier authored in the receiver's own lane, or
+one whose `author_vendor` matches the receiver's model family, stays inside the
+authoring boundary above. Generic skill mechanics
 that describe automatic entry or an available review route do not override this
 Forseti owner-courier boundary. The commission includes
 `delivery: operator_courier_only`,
