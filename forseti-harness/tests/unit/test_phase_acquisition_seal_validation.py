@@ -6493,3 +6493,40 @@ def test_shared_search_rejects_false_coverage(tmp_path: Path, mutation: str, exp
     elif mutation == "late_plan": plan["planned_at"] = "2026-08-02T01:00:00+00:00"
     findings, _ = _shared_search_findings(tmp_path, ledger, record, queue, targets)
     assert any(row.startswith(expected) for row in findings), findings
+
+
+def test_shared_search_producer_lookup_is_phase_scoped(tmp_path: Path) -> None:
+    """A Phase 1 job reusing the id is a different producer, not an ambiguity."""
+    from runners.run_phase_acquisition_seal_validation import (
+        _validate_phase2_producer_goal_plan,
+    )
+    checks = [{"axis_id": "packaging_reliability", "goal": "corroboration",
+               "question": "q1", "reached": True, "evaluation": "Read the body.",
+               "selected_target_ids": ["target-1"]}]
+    record = {"job_id": "J-001", "query": "shared query", "goal_checks": checks}
+    phase2_state = tmp_path / "serp_phase2_state.json"
+    phase2_state.write_text(json.dumps({"jobs": [{"job_id": "J-001",
+        "query": "shared query", "goal_plan": [{key: checks[0][key]
+        for key in ("axis_id", "goal", "question")}]}]}), encoding="utf-8")
+    phase1_state = tmp_path / "serp_phase1_state.json"
+    phase1_state.write_text(json.dumps({"jobs": []}), encoding="utf-8")
+    artifacts = {"phase2-state": phase2_state, "phase1-state": phase1_state}
+    phase2_row = {"phase": "serp_phase2", "job_id": "J-001",
+                  "producer_job_id": "J-001",
+                  "producer_queue_state_artifact_id": "phase2-state"}
+    phase1_row = {"phase": "serp_phase1", "job_id": "J-001",
+                  "producer_job_id": "J-001",
+                  "producer_queue_state_artifact_id": "phase1-state"}
+    findings: list[str] = []
+    assert _validate_phase2_producer_goal_plan(
+        record, inventory=[phase1_row, phase2_row], artifacts=artifacts,
+        findings=findings,
+    )
+    assert findings == []
+    # Two Phase 2 producers for one id stay a real ambiguity.
+    duplicate = dict(phase2_row, producer_job_id="J-001-retry")
+    assert not _validate_phase2_producer_goal_plan(
+        record, inventory=[phase2_row, duplicate], artifacts=artifacts,
+        findings=findings,
+    )
+    assert findings == ["consumer_phase2_producer_goal_plan_mismatch:J-001"]

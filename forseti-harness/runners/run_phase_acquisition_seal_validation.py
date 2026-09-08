@@ -1996,7 +1996,13 @@ def _validate_phase2_producer_goal_plan(
 ) -> bool:
     """Use the observed producer identity, never a consumer's backdated plan alone."""
     job_id = record.get("job_id")
-    producers = [row for row in inventory if row.get("job_id") == job_id]
+    # Producer identity is (phase, job_id) everywhere else in this file; a
+    # Phase 1 job reusing this id is a different producer, not an ambiguity.
+    producers = [
+        row
+        for row in inventory
+        if row.get("job_id") == job_id and row.get("phase") == "serp_phase2"
+    ]
     checks = record.get("goal_checks")
     try:
         if len(producers) != 1 or not isinstance(checks, list):
