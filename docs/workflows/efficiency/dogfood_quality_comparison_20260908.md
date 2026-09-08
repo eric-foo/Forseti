@@ -3,9 +3,10 @@
 ```yaml
 retrieval_header_version: 1
 artifact_role: Bounded workflow experiment evidence
-scope: Dogfood result assessment under existing, revised, and source-first guidance.
+scope: Dogfood result assessment under existing, revised, and source-first guidance, plus the later rejected opposition and tied scope criterion comparisons.
 use_when:
   - Reviewing the dogfood quality overlay candidate and its evidence limits.
+  - Reviewing the rejected opposition criterion or tied scope criterion comparison, their consolidated disposition and evidence limits.
 authority_boundary: retrieval_only
 ```
 
@@ -128,3 +129,73 @@ such as a controlled comparison showing that skipping the optional move misses
 material defects and that using it improves decisions without unacceptable
 preservation regressions. A defect need not reach production to supply that
 evidence; one skipped check alone does not establish a universal requirement.
+
+## Later bounded comparisons and consolidated disposition
+
+The quality guidance was subsequently merged in PR #1576. The following two
+experiments tested product-prompt candidates, not that overlay's effectiveness.
+Neither candidate was adopted. Their old and candidate instructions, frozen
+expectations, native receipts and detailed scores remain in their named local
+directories; unavailable host-local evidence is not a verification pass.
+
+| Experiment | Fresh baseline | Candidate | Consumer outcome | Disposition |
+| --- | --- | --- | --- | --- |
+| Opposition criterion, 48 rows across six findings | 46/48 row matches; zero material row errors | 45/48; one material false counter | Both arms accepted 5/6 points; interest rejected in both | Reject candidate; it introduced a material regression |
+| Scope criterion, two original findings plus three constructed scope controls | 5/5 scopes; 16/16 original row judgments | Same results | Both arms accepted 2/2 original points | Tie; no demonstrated benefit |
+
+The opposition candidate replaced the vague end of the existing confirmation
+criterion with a distinction between having no position and taking an opposing
+position. Both arms correctly classified the original no-view row this time.
+The candidate instead made “My Instant Angel arrived but I have not opened or
+tried it yet” counterevidence against regular use; baseline kept it adjacent.
+That incorrect counter reached the accepted regular-use artifact. Both arms
+also rejected “interest in trying or buying” as combining different actions.
+Thus the row scores do not describe 48 delivered rows or a repaired interest
+point. The failure remained visible; no rejection was bypassed.
+
+The scope candidate replaced the attribute/outcome-only scope paragraph with
+one informative shared assertion covering experience, behavior or attitude.
+Both versions accepted interest, hydration and a paraphrased interest claim;
+both rejected a topic-only claim and an unrelated bundle. The three scope
+controls reused interest source rows but were prompt-only perturbations, not
+new native first-stage results or end-to-end consumer fixtures. Only the 16
+original interest/hydration rows contributed to the semantic correctness score.
+
+Evidence pointers:
+
+- Opposition: `C:/tmp/forseti-opposition-criterion-test-20260908/plan.json`
+  contains the exact candidate and frozen acceptance; `comparison.json` and
+  `report.md` contain results; `before/` and `after/` retain native outputs,
+  regenerated manifests and consumer artifacts. Two calls reported 53,362 input
+  tokens (2,816 cached, included) and 8,556 output tokens.
+- Scope: `C:/tmp/forseti-scope-criterion-test-20260908/plan.json` contains the
+  exact candidate and frozen acceptance; `comparison.json` and `report.md`
+  contain results; `before/` and `after/` retain the corresponding native and
+  consumer evidence. Two calls reported 50,304 input tokens (2,816 cached,
+  included) and 4,479 output tokens.
+
+Both comparisons used gpt-5.5/high, unchanged original first responses and the
+same prompt/schema/context/packing within each pair except for the named
+instruction replacement. They used one sample per arm, not reliability trials.
+The second comparison changed packing and coverage relative to the first;
+neither sampling variation nor surrounding-context effects were isolated.
+Historical failures remain valid evidence of possible failure, but cannot be
+substituted for these fresh baseline observations to claim improvement. Root-task
+usage is additional to the reported native usage.
+
+The opposition scorer initially failed after generation because it inferred an
+oracle array index from a semantic reference. Recovery used the existing
+candidate-to-oracle mapping and manifest row bindings, then scored the saved
+response; no prompt, expected judgment or model response changed and no model
+retry occurred. This is an execution lesson, not evidence for a new general
+runner. Likewise, the earlier host-execution probe at
+`C:/tmp/forseti-dogfood-execution-probe-20260908/result.json` demonstrated stopping
+on failed prerequisites; it did not install a shared execution mechanism.
+
+The retained benefit is explicit separation of row correctness, point
+acceptance and delivery, plus honest comparison against the observed baseline.
+The owning dogfood section in `validation-gates.md` carries those clarifications;
+existing decision-routing and prompt-orchestration pointers remain sufficient.
+Source-first checking remains optional and fallible. Product semantic errors
+remain unresolved. A rejected or tied candidate is reopened only for a named
+decision-relevant uncertainty or new evidence, not to seek a favorable sample.

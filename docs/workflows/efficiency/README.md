@@ -9,7 +9,7 @@ claim that any documented result has been reproduced.
 
 | Need | Open |
 | --- | --- |
-| Review the quality-first dogfood candidate, missed semantic defect, and source-first check's mixed result | `dogfood_quality_comparison_20260908.md` |
+| Review the quality-first dogfood candidate's missed semantic defect, the mixed source-first check, the rejected opposition wording and the tied scope comparison | `dogfood_quality_comparison_20260908.md` |
 | Inspect semantic-contract history separation, token footprint, compatibility preservation, and cold lookups | `semantic_contract_history_split_dogfood_2026_09_06_v0.md` |
 | Inspect the September bloat retirement, helper consolidation and rejected reading-route experiment | `forseti_bloat_cut_dogfood_2026_09_05_v0.md` |
 | Measure complete tasks and extraction runs, compare matched quality-bound observations, or inspect repository size | `forseti_efficiency_measurement_v0.md` |
