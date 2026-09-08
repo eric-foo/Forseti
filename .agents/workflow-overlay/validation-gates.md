@@ -33,6 +33,45 @@ bucketed findings. Do not re-run a passing gate to improve the readability,
 formatting, or completeness of its output; capture the run once and read the
 captured output. Re-run only when changed bytes could falsify the claim.
 
+### Model-backed dogfood economy
+
+Before commissioning model-backed dogfood, use the existing plan or commission
+to state the decision the evidence must resolve, the necessary contrasting
+cases, estimated calls and repeated input/output volume, and the stop or
+expansion condition. A short paragraph is sufficient; no separate plan,
+receipt, approval gate, fixed call cap, or universal repeat count is required.
+Without this bound, fixture count, stages, agents and repeats can multiply
+calls without improving the decision. Extensive means adequate coverage of
+material failure modes, not maximum executions; a cheap smoke test is not
+complete when the outcome needs broader coverage.
+
+Prefer the smallest set of discriminating cases, including a useful positive,
+a near-miss and relevant contrary evidence. Batch compatible cases or findings
+under shared instructions, keeping their source scopes, identities and outputs
+separate and validating each through its actual consumer. Bound batches by
+input/output fit and reliable judgment, not just maximum context capacity.
+Keep comparisons or reviews requiring independence in separate contexts;
+several answers in one context do not establish independent replication.
+Use additional independent runs only when variation matters to the decision,
+and broaden when observed results expose a material gap in the bound coverage.
+
+Reuse unchanged stages and prior evidence where their bindings still hold.
+For a confirmation-only change, fresh confirmation may consume the original
+first response when its prompt, schema, inputs and provenance remain applicable;
+do not reauthor or restamp that response. Replay proves compatibility, not fresh
+model behavior. If packing changes the tested invocation, disclose that variable
+and preserve any production-shape check needed by the actual claim. Share only
+needed context; parallel calls reduce latency, not necessarily token cost.
+
+Use existing native receipts to report observed input, cached input and output
+usage when available, with missing usage explicit and cached input not counted
+twice. Stop at the bound decision or diagnostic outcome; further calls must
+resolve a named remaining uncertainty. Preserve failures and frozen expected
+judgments. Infrastructure recovery is distinct from a semantic retry; neither
+another sample nor a revised oracle may silently erase an unfavorable result.
+
+### Failure visibility
+
 Validation reports must preserve failure visibility by bucket:
 
 - `GATE PASS` / `GATE FAIL` are exit-code-bearing checks required for the claim.
