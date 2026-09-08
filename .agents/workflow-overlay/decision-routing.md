@@ -48,8 +48,8 @@ Cynefin router when the route is otherwise clear.
 ## Trigger Conditions
 
 Before planning or commissioning model-backed dogfood, apply **Model-backed
-dogfood economy** in `validation-gates.md`. It owns decision-bound coverage,
-batching, evidence reuse, independence and stopping; this pointer does not
+dogfood quality** in `validation-gates.md`. It owns discriminating coverage,
+meaning and consumer checks, comparison limits, evidence reuse and stopping; this pointer does not
 trigger the full router or add a separate artifact.
 
 Run the full router when either condition is true:
