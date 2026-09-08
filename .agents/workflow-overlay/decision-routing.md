@@ -185,8 +185,9 @@ explicit hard deadlines as such; never silently turn one into a review interval
 or extend it. The commissioned 30-second child-scoped validation smoke timeout
 in `prompt-orchestration.md` remains an explicit hard deadline.
 
-After an observed tool stall or hard timeout, open a circuit for that
-tool-plus-permission route in the current task. If status cannot be recovered,
+After an observed tool stall, open a circuit for that tool-plus-permission
+route in the current task. A command reaching its explicit hard deadline is
+timeout evidence, not proof the tool route stalled. If status cannot be recovered,
 report it as unknown rather than success or a proven deadlock. Do not retry the
 route merely because the command or conversation turn changed. Stop a stalled
 owned operation only through its supported cancellation or explicit termination
