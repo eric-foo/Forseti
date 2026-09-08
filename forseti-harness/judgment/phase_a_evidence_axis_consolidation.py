@@ -40,7 +40,9 @@ from judgment.phase_a_evidence_selection import (
 
 AXIS_PACK_MANIFEST_VERSION = "phase_a_evidence_axis_pack_manifest_v1"
 AXIS_PACK_VERSION = "phase_a_evidence_axis_pack_v1"
-NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION = "phase_a_evidence_axis_pack_manifest_v2"
+LEGACY_NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION = "phase_a_evidence_axis_pack_manifest_v2"
+NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION = "phase_a_evidence_axis_pack_manifest_v3"
+SUPPORTED_NO_FRONTIER_MANIFEST_VERSIONS = {LEGACY_NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION, NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION}
 NO_FRONTIER_AXIS_PACK_VERSION = "phase_a_evidence_axis_pack_v2"
 LEGACY_CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v1"
 CONSOLIDATION_SPEC_VERSION = "phase_a_evidence_axis_consolidation_spec_v2"
@@ -901,6 +903,7 @@ def _no_frontier_axis_candidates(
     bundle: Mapping[str, Any],
     packet_path: Path,
     bundle_path: Path,
+    legacy_inventory_sha256: str | None = None,
 ) -> list[dict[str, Any]]:
     sources = [
         {
@@ -911,19 +914,23 @@ def _no_frontier_axis_candidates(
             "bundle_path": bundle_path,
         }
     ]
+    spec = {
+        "axis_ids": [axis_id],
+        "subject_product_ids": list(subject_product_ids),
+        "admit_semantic_refs": [],
+        "protected_evidence_ids": {},
+    }
     candidates = _candidate_rows(
-        sources,
-        {
-            "axis_ids": [axis_id],
-            "subject_product_ids": list(subject_product_ids),
-            "admit_semantic_refs": [],
-            "protected_evidence_ids": {},
-        },
+        sources, spec,
         # Axis admission never resolves a parent prompt, so carrying the field
         # here would stamp every row with an empty parent_context that reads as
         # "this reply has no parent" instead of "this route did not resolve one".
         include_parent_context=False,
     )
+    if legacy_inventory_sha256 is not None and _canonical_json_sha256(candidates) != legacy_inventory_sha256:
+        candidates = _candidate_rows(
+            sources, spec, include_parent_context=False, legacy_publication_time=True
+        )
     if not candidates:
         raise EvidenceConsumerError(
             "no_frontier_axis_candidates",
@@ -1152,6 +1159,8 @@ def _build_no_frontier_axis_pack(manifest: Mapping[str, Any]) -> dict[str, Any]:
         bundle=bundle,
         packet_path=paths["packet_path"],
         bundle_path=paths["bundle_path"],
+        legacy_inventory_sha256=(manifest.get("candidate_inventory_sha256")
+            if manifest.get("schema_version") == LEGACY_NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION else None),
     )
     observed_refs = sorted(row["semantic_unit_ref"] for row in candidates)
     if observed_refs != expected_refs:
@@ -1188,7 +1197,7 @@ def _build_no_frontier_axis_pack(manifest: Mapping[str, Any]) -> dict[str, Any]:
         "subject_product_ids": copy.deepcopy(subjects),
         "source_id": source_id,
         "source_manifest": {
-            "schema_version": NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION,
+            "schema_version": manifest["schema_version"],
             "manifest_sha256": stored_manifest_hash,
         },
         "source_bindings": bindings,
@@ -1255,7 +1264,7 @@ def _build_no_frontier_axis_pack(manifest: Mapping[str, Any]) -> dict[str, Any]:
 def build_phase_a_evidence_axis_pack(manifest: Mapping[str, Any]) -> dict[str, Any]:
     """Build a generic, cold-resolvable Phase A axis pack from explicit pins."""
 
-    if manifest.get("schema_version") == NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION:
+    if manifest.get("schema_version") in SUPPORTED_NO_FRONTIER_MANIFEST_VERSIONS:
         return _build_no_frontier_axis_pack(manifest)
     if manifest.get("schema_version") != AXIS_PACK_MANIFEST_VERSION:
         raise EvidenceConsumerError("axis_manifest", "unsupported axis manifest version")
@@ -1460,7 +1469,7 @@ def validate_phase_a_evidence_axis_pack(
         if (
             not isinstance(source_manifest, Mapping)
             or source_manifest.get("schema_version")
-            != NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION
+            not in SUPPORTED_NO_FRONTIER_MANIFEST_VERSIONS
             or not isinstance(source_manifest.get("manifest_sha256"), str)
             or not isinstance(bindings, Mapping)
             or not isinstance(candidates, list)
@@ -1480,7 +1489,7 @@ def validate_phase_a_evidence_axis_pack(
                 "axis_pack_verification", "candidate semantic identities are invalid"
             )
         manifest: dict[str, Any] = {
-            "schema_version": NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION,
+            "schema_version": source_manifest["schema_version"],
             "axis_id": pack.get("axis_id"),
             "subject_product_ids": copy.deepcopy(pack.get("subject_product_ids")),
             "source_id": pack.get("source_id"),
@@ -1910,40 +1919,34 @@ def _no_frontier_reader_candidates(
     bundle_path = Path(bindings["bundle_path"])
     packet = _load_object(packet_path, boundary="no_frontier_reader_source")
     bundle = _load_object(bundle_path, boundary="no_frontier_reader_source")
-    candidates = _candidate_rows(
-        [
-            {
-                "source_id": pack["source_id"],
-                "packet": packet,
-                "bundle": bundle,
-                "packet_path": packet_path,
-                "bundle_path": bundle_path,
-            }
+    sources = [{
+        "source_id": pack["source_id"], "packet": packet, "bundle": bundle,
+        "packet_path": packet_path, "bundle_path": bundle_path,
+    }]
+    spec = {
+        "axis_ids": [pack["axis_id"]],
+        "subject_product_ids": copy.deepcopy(pack["subject_product_ids"]),
+        "admit_semantic_refs": [
+            {"source_id": pack["source_id"], "semantic_unit_ref": row["semantic_unit_ref"]}
+            for row in pack["candidate_inventory"]
         ],
-        {
-            "axis_ids": [pack["axis_id"]],
-            "subject_product_ids": copy.deepcopy(pack["subject_product_ids"]),
-            "admit_semantic_refs": [
-                {
-                    "source_id": pack["source_id"],
-                    "semantic_unit_ref": row["semantic_unit_ref"],
-                }
-                for row in pack["candidate_inventory"]
-            ],
-            "protected_evidence_ids": {},
-        },
+        "protected_evidence_ids": {},
+    }
+    modes = [False]
+    if pack["source_manifest"]["schema_version"] == LEGACY_NO_FRONTIER_AXIS_PACK_MANIFEST_VERSION:
+        modes.append(True)
+    for legacy_publication_time in modes:
+        candidates = _candidate_rows(sources, spec, legacy_publication_time=legacy_publication_time)
+        without_parent = [
+            {key: value for key, value in row.items() if key != "parent_context"}
+            for row in candidates
+        ]
+        if without_parent == pack["candidate_inventory"]:
+            return candidates
+    raise EvidenceConsumerError(
+        "no_frontier_reader_candidate_resolution",
+        "parent-context resolution changed the frozen candidate ledger",
     )
-    without_parent = []
-    for row in candidates:
-        projected = copy.deepcopy(row)
-        projected.pop("parent_context", None)
-        without_parent.append(projected)
-    if without_parent != pack["candidate_inventory"]:
-        raise EvidenceConsumerError(
-            "no_frontier_reader_candidate_resolution",
-            "parent-context resolution changed the frozen candidate ledger",
-        )
-    return candidates
 
 
 def build_no_frontier_reader_request(
@@ -6656,6 +6659,31 @@ def _validate_point_reader_brief_from_validated_facts(
             raise EvidenceConsumerError(
                 "point_reader_brief", "compiled representative metadata changed"
             )
+    # Saved briefs must retain the compiler's nonempty, unique, relation-covering
+    # selection even when a caller has coherently recomputed every stored hash.
+    recompiled = _compile_point_reader_brief_from_validated_facts(
+        manifest,
+        point=point,
+        facts=facts,
+        response={
+            "point_id": point_id,
+            "point_input_sha256": point["point_input_sha256"],
+            "interpretation": interpretation,
+            "representative_handles": [
+                {"placement_id": row["placement_id"]} for row in representatives
+            ],
+        },
+    )
+    # That recompilation is also the only authority for every remaining
+    # compiler-owned field, including the reader's non-claim boundaries, so a
+    # coherently rehashed saved brief cannot add, drop, or rewrite one.  Brief
+    # identity stays with the dedicated check below.
+    if {key: value for key, value in brief.items() if key != "brief_sha256"} != {
+        key: value for key, value in recompiled.items() if key != "brief_sha256"
+    }:
+        raise EvidenceConsumerError(
+            "point_reader_brief", "compiled brief content changed"
+        )
     if brief.get("brief_sha256") != _canonical_json_sha256(
         {key: value for key, value in brief.items() if key != "brief_sha256"}
     ):

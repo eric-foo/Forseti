@@ -17,6 +17,10 @@ from typing import Any, Mapping, Sequence
 from urllib.parse import urlparse
 
 from harness_utils import hash_file, sha256_text
+from judgment.claim_meaning import (
+    CLAIM_CONFIRMATION_CRITERION, CLAIM_INTERPRETATION_GUIDANCE, CLAIM_MEANING_POLICY,
+    CLAIM_REF_SCOPE_NOTE,
+)
 from judgment.phase_a_evidence_consumer import (
     EvidenceConsumerError,
     _canonical_json_sha256,
@@ -29,7 +33,13 @@ from judgment.phase_a_evidence_consumer import (
 LEGACY_SELECTION_SPEC_VERSION = "phase_a_evidence_selection_spec_v1"
 SELECTION_SPEC_VERSION = "phase_a_evidence_selection_spec_v2"
 CUSTOMER_PULL_FRONTIER_VERSION = "phase_a_customer_pull_point_frontier_v1"
-SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v1"
+LEGACY_SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v1"
+PREVIOUS_SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v2"
+SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v3"
+SUPPORTED_SELECTION_MANIFEST_VERSIONS = {
+    LEGACY_SELECTION_MANIFEST_VERSION, PREVIOUS_SELECTION_MANIFEST_VERSION,
+    SELECTION_MANIFEST_VERSION,
+}
 PARENT_CONTEXT_POLICY = "linked_parent_context_v1"
 SELECTION_BATCH_MANIFEST_VERSION = "phase_a_evidence_selection_batch_manifest_v1"
 LEGACY_QUOTE_MANIFEST_VERSION = "phase_a_evidence_quote_manifest_v1"
@@ -307,6 +317,32 @@ PRESELECTION_RELATION_CONFIRMATION_BATCH_ENVELOPE_JSON:
 
 def _compact(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
+
+
+def _meaning_guidance(manifest: Mapping[str, Any]) -> str:
+    """Historical manifests retain their original prompt and adjudication basis."""
+    if (manifest.get("schema_version") == SELECTION_MANIFEST_VERSION
+            or manifest.get("claim_meaning_policy") == CLAIM_MEANING_POLICY):
+        return CLAIM_INTERPRETATION_GUIDANCE
+    return ""
+
+
+def _meaning_prompt(template: str, manifest: Mapping[str, Any], *, confirmation: bool = False) -> str:
+    guidance = _meaning_guidance(manifest)
+    if guidance and confirmation:
+        guidance += "\n\n" + CLAIM_CONFIRMATION_CRITERION
+    return guidance + "\n\n" + template if guidance else template
+
+
+def _relation_ref_instruction(manifest: Mapping[str, Any]) -> str:
+    """Scope the ref-provenance rule so it does not read as a ban on interpretation.
+
+    Historical manifests keep the unscoped wording their responses were judged
+    under; only manifests carrying the current meaning standard get the note.
+    """
+    if _meaning_guidance(manifest):
+        return RELATION_REF_INSTRUCTION + CLAIM_REF_SCOPE_NOTE
+    return RELATION_REF_INSTRUCTION
 
 
 def _frontier_point_sort_key(row: Mapping[str, Any]) -> tuple[Any, ...]:
@@ -1177,7 +1213,11 @@ def relation_adjudication_basis(
                    PRESELECTION_RELATION_CONFIRMATION_PROMPT,
                    PRESELECTION_CONFIRMATION_BATCH_PROMPT,
                    RELATION_REF_INSTRUCTION, POINT_ACTOR_SCOPE_GUIDANCE,
-                   _policy_guidance(spec, candidates)],
+                   _policy_guidance(spec, candidates)] + (
+                       [_meaning_guidance(manifest), CLAIM_CONFIRMATION_CRITERION,
+                        _relation_ref_instruction(manifest)]
+                       if _meaning_guidance(manifest) else []
+                   ),
         "judgment_projection_columns": {
             "relation": RELATION_PROMPT_COLUMNS,
             "legacy_relation": LEGACY_RELATION_PROMPT_COLUMNS,
@@ -1706,6 +1746,7 @@ def _candidate_rows(
     spec: Mapping[str, Any],
     *,
     include_parent_context: bool = True,
+    legacy_publication_time: bool = False,
 ) -> list[dict[str, Any]]:
     axis_ids = spec.get("axis_ids")
     subject_ids = spec.get("subject_product_ids")
@@ -1768,7 +1809,7 @@ def _candidate_rows(
         stored = _publication_time_value(evidence.get("publication_time"))
         if stored is not None:
             return stored
-        if _has_portable_materialized_source_identity(source):
+        if not legacy_publication_time and _has_portable_materialized_source_identity(source):
             return None
         key = (str(source["source_id"]), evidence_id)
         if key not in publication_time_cache:
@@ -2517,7 +2558,9 @@ def prepare_evidence_selection(
         _attach_parent_context_envelope(envelope, context_aware, context_rows)
     else:
         envelope = _relation_prompt_envelope(spec, candidates, actor_scope=actor_scope)
-    prompt = RELATION_PROMPT.format(
+    prompt = _meaning_prompt(
+        RELATION_PROMPT, {"schema_version": SELECTION_MANIFEST_VERSION}
+    ).format(
         response_instruction=(
             POSITIONAL_RELATION_RESPONSE_INSTRUCTION
             if response_mode == "positional"
@@ -2620,7 +2663,7 @@ def prepare_evidence_selection_batches(
         subset = candidates[start : start + count]
         batch_id = f"batch_{batch_index:04d}"
         envelope = _relation_prompt_envelope(spec, subset, batch_id=batch_id, actor_scope=actor_scope)
-        prompt = RELATION_PROMPT.format(
+        prompt = _meaning_prompt(RELATION_PROMPT, selection_manifest).format(
             response_instruction=(BATCHED_RELATION_RESPONSE_INSTRUCTION if response_mode == "positional"
                 else LITERAL_RELATION_RESPONSE_INSTRUCTION + " Return the exact batch_id from the envelope."),
             reason_instruction="",
@@ -2800,7 +2843,7 @@ def _relation_response_mode(spec: Mapping[str, Any]) -> str:
 def load_selection_sources(manifest: Mapping[str, Any]) -> list[dict[str, Any]]:
     stored = manifest.get("manifest_sha256")
     payload = {key: value for key, value in manifest.items() if key != "manifest_sha256"}
-    if manifest.get("schema_version") != SELECTION_MANIFEST_VERSION or stored != _canonical_json_sha256(payload):
+    if manifest.get("schema_version") not in SUPPORTED_SELECTION_MANIFEST_VERSIONS or stored != _canonical_json_sha256(payload):
         raise EvidenceConsumerError("manifest_verification", "selection manifest changed")
     sources = []
     for row in manifest.get("sources", []):
@@ -2836,6 +2879,18 @@ def _candidate_rows_for_manifest(
         manifest["spec"],
         include_parent_context=policy == PARENT_CONTEXT_POLICY,
     )
+    # v1 straddled the portable-date change. Try its prior hash-bound source
+    # projection only when the current inventory does not match. Callers still
+    # require the complete original inventory hash; no stored value is restamped.
+    if (
+        manifest.get("schema_version") == LEGACY_SELECTION_MANIFEST_VERSION
+        and _canonical_json_sha256(candidates) != manifest.get("candidate_inventory_sha256")
+    ):
+        candidates = _candidate_rows(
+            sources, manifest["spec"],
+            include_parent_context=policy == PARENT_CONTEXT_POLICY,
+            legacy_publication_time=True,
+        )
     _point_actor_scope(manifest["spec"], candidates)
     _load_relation_adjudication(manifest, candidates)
     return candidates
@@ -4291,6 +4346,8 @@ def _prepare_quotes_from_labeled(
         "model_api_calls": 0,
     }
     actor_scope = _point_actor_scope(manifest["spec"], labeled)
+    if _meaning_guidance(manifest):
+        quote_manifest["claim_meaning_policy"] = CLAIM_MEANING_POLICY
     if actor_scope is not None:
         _validate_actor_relations(actor_scope, labeled)
         quote_manifest["point_actor_scope"] = actor_scope
@@ -4397,7 +4454,7 @@ def _preselection_confirmation_state(
     stored = manifest.get("manifest_sha256")
     payload = {key: value for key, value in manifest.items() if key != "manifest_sha256"}
     if (
-        manifest.get("schema_version") != SELECTION_MANIFEST_VERSION
+        manifest.get("schema_version") not in SUPPORTED_SELECTION_MANIFEST_VERSIONS
         or stored != _canonical_json_sha256(payload)
     ):
         raise EvidenceConsumerError(
@@ -4468,11 +4525,11 @@ def prepare_preselection_relation_confirmation(
     _attach_parent_context_envelope(envelope, context_aware, context_rows)
     _, _, point_context_rows = _project_parent_context(candidates)
     _attach_point_parent_context_envelope(envelope, point_context_rows)
-    prompt_template = PRESELECTION_RELATION_CONFIRMATION_PROMPT
+    prompt_template = _meaning_prompt(PRESELECTION_RELATION_CONFIRMATION_PROMPT, manifest, confirmation=True)
     if include_relation_refs:
         prompt_template = prompt_template.replace(
             "\n\nThe first-pass relation,",
-            f"\n\n{RELATION_REF_INSTRUCTION}\n\nThe first-pass relation,",
+            f"\n\n{_relation_ref_instruction(manifest)}\n\nThe first-pass relation,",
             1,
         )
     prompt = prompt_template.format(
@@ -4956,11 +5013,11 @@ def prepare_batched_preselection_relation_confirmations(
         _attach_actor_scope(envelope, actor_scope, [row for _, row in subset])
         _attach_parent_context_envelope(envelope, context_aware, context_rows)
         _attach_point_parent_context_envelope(envelope, point_context_rows)
-        prompt_template = PRESELECTION_CONFIRMATION_BATCH_PROMPT
+        prompt_template = _meaning_prompt(PRESELECTION_CONFIRMATION_BATCH_PROMPT, selection_manifest, confirmation=True)
         if include_relation_refs:
             prompt_template = prompt_template.replace(
                 "\n\nThe first-pass relation,",
-                f"\n\n{RELATION_REF_INSTRUCTION}\n\nThe first-pass relation,",
+                f"\n\n{_relation_ref_instruction(selection_manifest)}\n\nThe first-pass relation,",
                 1,
             )
         prompt = prompt_template.format(
@@ -5248,7 +5305,7 @@ def prepare_selected_relation_confirmation(
         point_context_rows=quote_manifest.get("point_parent_context_rows", []),
     )
     _attach_actor_scope(envelope, quote_manifest.get("point_actor_scope"), [row for _, row in presentation], table="selected")
-    prompt = RELATION_CONFIRMATION_PROMPT.format(envelope=_compact(envelope))
+    prompt = _meaning_prompt(RELATION_CONFIRMATION_PROMPT, quote_manifest, confirmation=True).format(envelope=_compact(envelope))
     schema = _relation_confirmation_schema()
     confirmation_manifest = {
         "schema_version": RELATION_CONFIRMATION_MANIFEST_VERSION,

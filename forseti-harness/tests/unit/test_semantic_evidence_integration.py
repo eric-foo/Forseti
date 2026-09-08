@@ -2539,11 +2539,12 @@ def test_current_reconciliation_preserves_literal_conditions_and_bounded_scope(m
         validate_reconciliation_stage(bundle, stage, wrong_kind)
 
 
-def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: Path) -> None:
+@pytest.mark.parametrize("method", [semantic_module.METHOD_VERSION_V12, semantic_module.METHOD_VERSION_V13])
+def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: Path, method: str) -> None:
     from runners.run_semantic_evidence_integration import prepare_reconciliation_level
 
     source = _source_v10(count=1)
-    source["semantic_method_version"] = semantic_module.METHOD_VERSION_V12
+    source["semantic_method_version"] = method
     bundle = build_bundle(source, max_prompt_bytes=30_000)
     responses = _keyed_responses(bundle)
     evidence_id = bundle["batches"][0]["evidence_ids"][0]
@@ -2556,14 +2557,17 @@ def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: 
     verification, _ = prepare_row_verification(bundle, raw)
     verified = apply_row_verification(bundle, raw, verification, _row_verification_responses(verification))
     stage, prompts = prepare_reconciliation_stage(bundle, verified,
-        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3)
+        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4)
     bp, cp = tmp_path / "bundle.json", tmp_path / "compiled.json"
     bp.write_text(json.dumps(bundle), encoding="utf-8")
     cp.write_text(json.dumps(verified), encoding="utf-8")
-    prepare_reconciliation_level(bundle_path=bp, compilation_path=cp,
+    prepared = prepare_reconciliation_level(bundle_path=bp, compilation_path=cp,
         stage_out=tmp_path / "stage.json", prompt_dir=tmp_path / "prompts")
+    assert prepared["authoring_revision"] == semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4
     assert json.loads((tmp_path / "stage.json").read_text()) == stage
     for prompt in prompts:
+        assert prompt["prompt"].count(semantic_module.CLAIM_FORMATION_GUIDANCE) == 1
+        assert semantic_module.MEANING_BOUNDARY_GUIDANCE not in prompt["prompt"]
         path = tmp_path / "prompts" / prompt["batch_id"]
         assert path.with_suffix(".md").read_bytes() == (prompt["prompt"] + "\n").encode("utf-8")
         assert json.loads(path.with_suffix(".schema.json").read_text()) == prompt["response_schema"]
@@ -2654,9 +2658,9 @@ def test_explicit_v7_decision_authoring_preserves_source_and_legacy_replay(tmp_p
         semantic_module.prepare_reconciliation_repair(bundle, stage, old, **nomination)
 
 
-def _decision_reconciliation_fixture(count=2):
+def _decision_reconciliation_fixture(count=2, *, method=semantic_module.METHOD_VERSION_V12):
     source = _source_v10(count=count)
-    source["semantic_method_version"] = semantic_module.METHOD_VERSION_V12
+    source["semantic_method_version"] = method
     bundle = build_bundle(source, max_prompt_bytes=30_000)
     responses = _keyed_responses(bundle)
     n = 0
@@ -3014,14 +3018,16 @@ def test_reconciliation_diagnostic_never_guesses_definition_or_orphan_from_malfo
 
 @pytest.mark.parametrize("field", ["subject_product_ids", "comparator_product_ids", "product_version_ids"])
 @pytest.mark.parametrize("relation", sorted(semantic_module.RELATIONS))
-def test_normal_identity_namespaces_bind_all_roles_and_relations(field, relation):
+@pytest.mark.parametrize("revision", [semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1,
+                                       semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4])
+def test_normal_identity_namespaces_bind_all_roles_and_relations(field, relation, revision):
     import re
     bundle, _, stage, _, response = _decision_reconciliation_fixture()
     stage["candidates"][1][field] = ["different-identity"]
     stage["stage_sha256"] = semantic_module._sha256({k: v for k, v in stage.items() if k != "stage_sha256"})
     response["stage_sha256"] = stage["stage_sha256"]
     record = semantic_module.prepare_reconciliation_prompts(bundle, stage,
-        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1)[0]
+        authoring_revision=revision)[0]
     schema = record["response_schema"]
     decisions = response["decisions_by_candidate_ref"]
     patterns = []
@@ -3065,18 +3071,21 @@ def test_public_normal_authoring_default_and_legacy_replay_are_separate(tmp_path
     bundle, compiled, stage, legacy, _ = _decision_reconciliation_fixture(count=40)
     for name, value in [("bundle", bundle), ("compiled", compiled), ("stage", stage)]:
         (tmp_path / f"{name}.json").write_text(json.dumps(value), encoding="utf-8")
-    for revision in [None, semantic_module.RECONCILIATION_AUTHORING_LEGACY]:
+    for revision in [None, semantic_module.RECONCILIATION_AUTHORING_LEGACY,
+                     semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V1,
+                     semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V2,
+                     semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3]:
         directory = tmp_path / (revision or "current")
         result = prepare_reconciliation_level(bundle_path=tmp_path/"bundle.json",
             compilation_path=tmp_path/"compiled.json", existing_stage_path=tmp_path/"stage.json",
             stage_out=directory/"stage.json", prompt_dir=directory/"prompts", authoring_revision=revision)
         expected = semantic_module.prepare_reconciliation_prompts(bundle, stage,
-            authoring_revision=revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3)
+            authoring_revision=revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4)
         assert json.loads((directory/"stage.json").read_text()) == stage
         for row in expected:
             assert (directory/"prompts"/f"{row['batch_id']}.md").read_bytes() == (row["prompt"] + "\n").encode()
             assert json.loads((directory/"prompts"/f"{row['batch_id']}.schema.json").read_text()) == row["response_schema"]
-        assert result["authoring_revision"] == (revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3)
+        assert result["authoring_revision"] == (revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4)
     assert semantic_module.prepare_reconciliation_prompts(bundle, stage,
         authoring_revision=semantic_module.RECONCILIATION_AUTHORING_LEGACY) == legacy
     new_stage, new_prompts = prepare_reconciliation_stage(bundle, compiled,
@@ -3087,9 +3096,77 @@ def test_public_normal_authoring_default_and_legacy_replay_are_separate(tmp_path
     assert sorted(ref for batch in new_stage["batches"] for ref in batch["candidate_refs"]) == sorted(row["candidate_ref"] for row in new_stage["candidates"])
 
 
+def test_current_claim_formation_guidance_changes_prompt_only_and_preserves_historical_bytes(monkeypatch):
+    import hashlib
+    from judgment.claim_meaning import CLAIM_FORMATION_GUIDANCE, CLAIM_MEANING_GUIDANCE
+
+    bundle, compiled, stage, _, response = _decision_reconciliation_fixture()
+    original = deepcopy((bundle, compiled, stage, response))
+    # Frozen native prompt digests from d2fc32a4 with this same stage fixture.
+    historical_hashes = {
+        "legacy": "649cf6d7cb0c71c50e811d6f7c9ada0b4f53ec7ebfcbad572dd27c1e106f23f9",
+        "exact_identity_namespaces_v1": "5848e355575cd9b61eddf1b05ae9bd4e39d5455663d6dc4ae2ecec510aec7a87",
+        "exact_identity_namespaces_v2": "4e476e3566e56babedd6b4845ee6d1a55c3ec6fc1c4078104ff802899c5e850a",
+        "exact_identity_namespaces_v3": "5eb3041b09fa12533f9af23baa829dcc635b98913f837a0120f585a9c15669ad",
+    }
+    historical = {revision: semantic_module.prepare_reconciliation_prompts(bundle, stage, authoring_revision=revision)
+                  for revision in historical_hashes}
+    for revision, records in historical.items():
+        assert hashlib.sha256(records[0]["prompt"].encode()).hexdigest() == historical_hashes[revision]
+        assert CLAIM_FORMATION_GUIDANCE not in records[0]["prompt"]
+    current = semantic_module.prepare_reconciliation_prompts(bundle, stage,
+        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4)
+    assert current[0]["prompt"].count(CLAIM_FORMATION_GUIDANCE) == 1
+    assert CLAIM_MEANING_GUIDANCE in current[0]["prompt"]
+    assert current[0]["response_schema"] == historical["exact_identity_namespaces_v3"][0]["response_schema"]
+    accepted = validate_reconciliation_stage(bundle, stage, [response])
+    monkeypatch.setattr(semantic_module, "CLAIM_FORMATION_GUIDANCE", CLAIM_FORMATION_GUIDANCE + " Changed formation guidance.")
+    changed = semantic_module.prepare_reconciliation_prompts(bundle, stage,
+        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4)
+    assert hashlib.sha256(changed[0]["prompt"].encode()).hexdigest() != hashlib.sha256(current[0]["prompt"].encode()).hexdigest()
+    assert changed[0]["response_schema"] == current[0]["response_schema"]
+    assert all(semantic_module.prepare_reconciliation_prompts(bundle, stage, authoring_revision=revision) == records
+               for revision, records in historical.items())
+    assert validate_reconciliation_stage(bundle, stage, [response]) == accepted
+    assert (bundle, compiled, stage, response) == original
+
+
+@pytest.mark.parametrize("revision,prompt_hash,schema_hash", [
+    ("legacy", "d7139c1d88d87c76390f99df2ddb0d472749feb7f794e84d77ab3506a0a1e823", "d0cb6a2ee66eb8bdcc3047244fcf153c744665c79fbfd082853169af779c7267"),
+    ("exact_identity_namespaces_v1", "400c9466cce26cdbbcfcbdd26ae380b9269c93bf4c88b241396a351fa56b98cf", "fce121e97c1c8d62aabf0e486080f860398bd79d9a81461fa481313e5e760c86"),
+    ("exact_identity_namespaces_v2", "539f5008caec8478a9158f9b82deb5a6c37b9a50ee9be85e7ef8515d4166bfe4", "fce121e97c1c8d62aabf0e486080f860398bd79d9a81461fa481313e5e760c86"),
+    ("exact_identity_namespaces_v3", "100768e54bed83d53e02cd4ebe8da2f33cb7c84d0b1406b1d82d3204f19cf6e5", "fce121e97c1c8d62aabf0e486080f860398bd79d9a81461fa481313e5e760c86"),
+])
+def test_v13_explicit_historical_authoring_preserves_reviewed_foreign_prompts(tmp_path, revision, prompt_hash, schema_hash):
+    import hashlib
+    from runners.run_semantic_evidence_integration import prepare_reconciliation_level
+
+    # Digests captured from reviewed 8832adc using this same native v13 fixture.
+    bundle, compiled, stage, _, response = _decision_reconciliation_fixture(method=semantic_module.METHOD_VERSION_V13)
+    paths = {name: tmp_path / f"{name}.json" for name in ("bundle", "compiled", "stage")}
+    for name, value in (("bundle", bundle), ("compiled", compiled), ("stage", stage)):
+        paths[name].write_text(json.dumps(value), encoding="utf-8")
+    before = {name: path.read_bytes() for name, path in paths.items()}
+    result = prepare_reconciliation_level(bundle_path=paths["bundle"], compilation_path=paths["compiled"],
+        existing_stage_path=paths["stage"], stage_out=tmp_path/"out.json", prompt_dir=tmp_path/"prompts",
+        authoring_revision=revision)
+    assert result["authoring_revision"] == revision
+    assert json.loads((tmp_path/"out.json").read_text()) == stage
+    record = semantic_module.prepare_reconciliation_prompts(bundle, stage, authoring_revision=revision)[0]
+    assert hashlib.sha256(record["prompt"].encode()).hexdigest() == prompt_hash
+    assert semantic_module._sha256(record["response_schema"]) == schema_hash
+    assert record["prompt"].startswith(semantic_module.MEANING_BOUNDARY_GUIDANCE + "\n\n")
+    assert semantic_module.CLAIM_FORMATION_GUIDANCE not in record["prompt"]
+    assert (tmp_path/"prompts"/f"{record['batch_id']}.md").read_bytes() == (record["prompt"] + "\n").encode()
+    assert json.loads((tmp_path/"prompts"/f"{record['batch_id']}.schema.json").read_text()) == record["response_schema"]
+    assert validate_reconciliation_stage(bundle, stage, [response])["semantic_nodes"]
+    assert {name: path.read_bytes() for name, path in paths.items()} == before
+
+
 @pytest.mark.parametrize("revision", [
     semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V2,
     semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3,
+    semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4,
 ])
 def test_identity_current_caps_batches_and_states_source_restriction(monkeypatch, revision):
     # The cap must be exercised above one with a remainder: at one, an
@@ -3130,7 +3207,9 @@ def test_identity_current_caps_batches_and_states_source_restriction(monkeypatch
 
 
 @pytest.mark.parametrize("overlap", ["none", "partial", "all"])
-def test_identity_v3_rendered_restrictions_match_native_consumer(tmp_path, overlap):
+@pytest.mark.parametrize("revision", [semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3,
+                                       semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4])
+def test_identity_rendered_restrictions_match_native_consumer(tmp_path, overlap, revision):
     from itertools import combinations
     from runners.run_semantic_evidence_integration import prepare_reconciliation_level
     bundle, compiled, stage, _, response = _decision_reconciliation_fixture(count=3)
@@ -3147,14 +3226,14 @@ def test_identity_v3_rendered_restrictions_match_native_consumer(tmp_path, overl
     result = prepare_reconciliation_level(
         bundle_path=tmp_path/"bundle.json", compilation_path=tmp_path/"compiled.json",
         existing_stage_path=tmp_path/"stage.json", stage_out=tmp_path/"out.json",
-        prompt_dir=tmp_path/"prompts")
+        prompt_dir=tmp_path/"prompts", authoring_revision=revision)
     text = (tmp_path/"prompts"/f"{response['batch_id']}.md").read_text(encoding="utf-8")
     groups = json.loads(text.split("\nSOURCE_OVERLAP_GROUPS\n", 1)[1])
     expected = [] if overlap == "none" else (
         [sorted(refs[:2]), sorted(refs[1:])] if overlap == "partial" else [sorted(refs)])
     assert groups == sorted(expected)
     assert "trace its attached candidates" not in text
-    assert result["authoring_revision"] == semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3
+    assert result["authoring_revision"] == revision
     assert len(text.encode("utf-8")) - 1 <= stage["max_prompt_bytes"]
     assert json.loads((tmp_path/"out.json").read_text(encoding="utf-8")) == stage
     # Check the instructions against the existing independent consumer, not a
@@ -6520,11 +6599,23 @@ def test_row_verification_manifest_binds_the_active_compilation_content() -> Non
             if key != "compilation_sha256"
         }
     )
-    with pytest.raises(
-        SemanticIntegrationError,
-        match="does not bind the current verification method",
+    frozen_v8 = deepcopy(historical_v8)
+    prepare_reconciliation_stage(bundle, historical_v8)
+    assert historical_v8 == frozen_v8
+    # Rehash outer identities so each rejection reaches the intended boundary.
+    for field, value, error in (
+        ("verification_method_sha256", "0" * 64, "does not bind the current verification method"),
+        ("active_rows_sha256", "0" * 64, "does not bind the active row content"),
     ):
-        prepare_reconciliation_stage(bundle, historical_v8)
+        corrupt = deepcopy(historical_v8)
+        manifest = corrupt["row_verification_manifest"]
+        manifest[field] = value
+        manifest.pop("manifest_sha256")
+        manifest["manifest_sha256"] = _canonical_hash(manifest)
+        corrupt.pop("compilation_sha256")
+        corrupt["compilation_sha256"] = _canonical_hash(corrupt)
+        with pytest.raises(SemanticIntegrationError, match=error):
+            prepare_reconciliation_stage(bundle, corrupt)
 
     legacy_manifest = deepcopy(verified)
     legacy_manifest["row_verification_manifest"]["schema_version"] = (
@@ -9405,6 +9496,7 @@ def test_v10_schema_requires_one_subject_without_changing_v9_replay() -> None:
 @pytest.mark.parametrize("method,verifier", [
     (semantic_module.METHOD_VERSION_V11, semantic_module.ROW_VERIFICATION_METHOD_VERSION_V10),
     (semantic_module.METHOD_VERSION_V12, semantic_module.ROW_VERIFICATION_METHOD_VERSION_V11),
+    (semantic_module.METHOD_VERSION_V13, semantic_module.ROW_VERIFICATION_METHOD_VERSION_V12),
 ])
 def test_supplied_axis_vocabulary_reaches_all_current_consumers(axis_id, label, method, verifier) -> None:
     source = _source_v10(count=1)
@@ -9467,6 +9559,14 @@ def test_supplied_axis_vocabulary_reaches_all_current_consumers(axis_id, label, 
     manifest = forged["row_verification_manifest"]
     manifest["verification_method_version"] = ROW_VERIFICATION_METHOD_VERSION
     manifest["verification_method_sha256"] = _canonical_hash(ROW_VERIFICATION_METHOD_TEXT)
+    manifest.pop("manifest_sha256")
+    manifest["manifest_sha256"] = _canonical_hash(manifest)
+    forged.pop("compilation_sha256")
+    forged["compilation_sha256"] = _canonical_hash(forged)
+    with pytest.raises(SemanticIntegrationError, match="does not bind the current verification method"):
+        prepare_reconciliation_stage(bundle, forged)
+    manifest["verification_method_version"] = ROW_VERIFICATION_METHOD_VERSION_V8
+    manifest["verification_method_sha256"] = _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V8)
     manifest.pop("manifest_sha256")
     manifest["manifest_sha256"] = _canonical_hash(manifest)
     forged.pop("compilation_sha256")
@@ -10615,3 +10715,64 @@ def test_v5_flows_through_unchanged_v2_downstream_interfaces() -> None:
         "context_fields": ["product_context", "parent_context"],
     }
     assert packet["model_api_calls"] == 0
+
+
+def test_frozen_v8_repair_replay_keeps_parent_and_active_content_bound() -> None:
+    bundle, _, repaired, _ = _terminal_repair_migration_fixture()
+    frozen = deepcopy(repaired)
+    verification = frozen["row_verification_manifest"]
+    repair = frozen["row_repair_manifest"]
+    for manifest in (verification, repair):
+        manifest["verification_method_version"] = ROW_VERIFICATION_METHOD_VERSION_V8
+        manifest["verification_method_sha256"] = _canonical_hash(ROW_VERIFICATION_METHOD_TEXT_V8)
+        if manifest is repair:
+            manifest["parent_row_verification_manifest_sha256"] = verification["manifest_sha256"]
+        manifest.pop("manifest_sha256")
+        manifest["manifest_sha256"] = _canonical_hash(manifest)
+    frozen.pop("compilation_sha256")
+    frozen["compilation_sha256"] = _canonical_hash(frozen)
+    before = deepcopy(frozen)
+    prepare_reconciliation_stage(bundle, frozen)
+    assert frozen == before
+    for field, error in (
+        ("verification_method_sha256", "stale method lineage"),
+        ("parent_row_verification_manifest_sha256", "stale method lineage"),
+        ("active_rows_sha256", "does not bind the active row content"),
+    ):
+        corrupt = deepcopy(frozen)
+        manifest = corrupt["row_repair_manifest"]
+        manifest[field] = "0" * 64
+        manifest.pop("manifest_sha256")
+        manifest["manifest_sha256"] = _canonical_hash(manifest)
+        corrupt.pop("compilation_sha256")
+        corrupt["compilation_sha256"] = _canonical_hash(corrupt)
+        with pytest.raises(SemanticIntegrationError, match=error):
+            prepare_reconciliation_stage(bundle, corrupt)
+
+    # A current V9 repair authored over a frozen V8 verification stays valid.
+    mixed = deepcopy(repaired)
+    mixed["row_verification_manifest"] = deepcopy(frozen["row_verification_manifest"])
+    mixed_repair = mixed["row_repair_manifest"]
+    mixed_repair["parent_row_verification_manifest_sha256"] = mixed[
+        "row_verification_manifest"
+    ]["manifest_sha256"]
+    mixed_repair.pop("manifest_sha256")
+    mixed_repair["manifest_sha256"] = _canonical_hash(mixed_repair)
+    mixed.pop("compilation_sha256")
+    mixed["compilation_sha256"] = _canonical_hash(mixed)
+    prepare_reconciliation_stage(bundle, mixed)
+
+    # The reverse order never executed: a current V9 verification cannot carry a
+    # repair stamped with the frozen V8 identity, even after coherent rehashing.
+    downgraded = deepcopy(repaired)
+    downgraded_repair = downgraded["row_repair_manifest"]
+    downgraded_repair["verification_method_version"] = ROW_VERIFICATION_METHOD_VERSION_V8
+    downgraded_repair["verification_method_sha256"] = _canonical_hash(
+        ROW_VERIFICATION_METHOD_TEXT_V8
+    )
+    downgraded_repair.pop("manifest_sha256")
+    downgraded_repair["manifest_sha256"] = _canonical_hash(downgraded_repair)
+    downgraded.pop("compilation_sha256")
+    downgraded["compilation_sha256"] = _canonical_hash(downgraded)
+    with pytest.raises(SemanticIntegrationError, match="stale method lineage"):
+        prepare_reconciliation_stage(bundle, downgraded)

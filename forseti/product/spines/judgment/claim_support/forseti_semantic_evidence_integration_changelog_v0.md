@@ -24,6 +24,51 @@ contract or its linked owning source. This history creates no new review step.
 
 ## Changelog
 
+- `v122` / 2026-09-08 — reconciled producer prevention with versioned shared
+  claim interpretation. Current run v11 binds integration method v13 and
+  verifier v12; public normal reconciliation retains authoring v4 without a
+  duplicate producer preamble. New Decision State manifest v2 selects clarified
+  action/time wording; v1 batching and finalization retain historical behavior.
+  Current selection distinguishes an absent precondition from an incompatible
+  outcome and keeps citation scope separate from interpreting supported meaning.
+  Its development v3 policy basis changes; selection v1/v2 and explicit prior
+  authoring revisions retain replay. Added a date-loss falsifier at the actual
+  portable consumer as well as materialization. The bounded native matrix
+  improved from 63/72 to 67/72 under the unchanged oracle, with no paired
+  regressions; ambiguity and inherited normalization defects remain disclosed.
+  This does not establish all-axis blind proof, remove cross-batch criterion
+  variability, or repair historical source data.
+- `v121` / 2026-09-07 — aligned current claim formation and relation
+  interpretation through one shared supported-meaning instruction. Public normal
+  authoring now selects identity revision v4, preserving v3 structural groups;
+  selection manifest v3 carries the same standard through first pass and
+  confirmation and binds it into adjudication reuse. Prior explicitly selected
+  authoring revisions and selection v1/v2 retain historical prompt behavior.
+  The change preserves material claim qualifiers while avoiding invented
+  thresholds, word matching and confusion between source attribution and an
+  analyst's causal ceiling. It adds no provider stage or deterministic semantic
+  rule and does not complete the broader blind proof or historical data repairs.
+- `v120` / 2026-09-07 — corrected saved point-reader validation after blind-proof
+  perturbations showed coherently rehashed empty or duplicated representatives
+  were accepted. Saved briefs now reuse the compiler's selection checks,
+  including displayed counterevidence coverage, and must equal the brief that
+  recompilation produces, so a rehashed brief can no longer rewrite or drop the
+  reader's non-claim boundaries or carry a foreign field. Twelve regression
+  cases fail before the correction and pass afterward across the existing
+  routes; valid reader bytes, inputs, methods, and schemas do not change. Two
+  captured company fixtures also reproduce nine pre-correction point outputs
+  exactly, exercise saved-brief reuse, and reject rehashed empty and
+  non-claim-rewritten briefs. Reuse does not compare the saved interpretation
+  or valid representative choices and order with the original response. This
+  correction does not establish completed all-axis blind conformance.
+- `v119` / 2026-09-07 — corrected v116's historical replay regression: some
+  already-materialized Summer Fridays selections and no-frontier packs had
+  hash-bound dates derived from their pinned source artifacts. New selection
+  manifest v2 and no-frontier axis manifest v3 explicitly bind portable dates;
+  older manifests can replay either prior projection only against the original
+  complete inventory hash, with source-artifact hashes still enforced. No
+  frozen bytes or provider responses are rewritten, and this correction makes
+  no all-axis reader-quality or blind-conformance completion claim.
 - `v118` / 2026-09-06 — allowed explicit decision authoring for verified method
   v7 while retaining legacy replay; grounded complete-frontier origin caps in
   exact source membership; bounded both literal relation and confirmation

@@ -5065,6 +5065,128 @@ def test_point_reader_compiler_closes_decision_state_at_consumer_boundary(
     assert caught.value.boundary == "point_reader_decision_state"
 
 
+@pytest.mark.parametrize(
+    ("mutation", "boundary"),
+    [
+        ("empty", "point_reader_response"),
+        ("duplicate", "point_reader_response"),
+        ("omit_counter", "point_reader_response"),
+        ("rewrite_non_claims", "point_reader_brief"),
+        ("drop_non_claims", "point_reader_brief"),
+        ("foreign_field", "point_reader_brief"),
+    ],
+)
+@pytest.mark.parametrize("decision_state", [False, True])
+def test_saved_point_reader_rechecks_compiled_brief(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+    mutation: str, boundary: str, decision_state: bool,
+) -> None:
+    """Rehashing a saved output cannot evade the compiler's own brief."""
+    _, spec, _ = _generic_fixture(tmp_path, monkeypatch)
+    if decision_state:
+        _route_every_point_as_decision_state(spec)
+    view = build_axis_consolidated_view(spec)
+    view_path, store = tmp_path / "view.json", tmp_path / "points"
+    _write(view_path, view)
+    manifest, payloads = build_axis_point_reader_snapshot(
+        view, source_view_path=view_path,
+        subject_identity=_point_reader_subject_identity(),
+    )
+    _write_point_reader_store(store, manifest, payloads)
+    briefs = [
+        compile_point_reader_brief(
+            manifest, point_store_dir=store, point_id=point["point_id"],
+            response=_point_reader_response(point, payloads[point["point_id"]]),
+        )
+        for point in manifest["points"]
+    ]
+    output = assemble_axis_point_reader_output(manifest, briefs=briefs)
+    assert validate_axis_point_reader_output(
+        manifest, output=output, point_store_dir=store
+    ) == output
+    brief = output["accepted_points"][0]
+    representatives = brief["representative_evidence"]
+    assert {row["relation"] for row in representatives} == {"support", "counter"}
+    if mutation == "empty":
+        representatives.clear()
+    elif mutation == "duplicate":
+        representatives.append(copy.deepcopy(representatives[0]))
+    elif mutation == "omit_counter":
+        brief["representative_evidence"] = [
+            row for row in representatives if row["relation"] != "counter"
+        ]
+    elif mutation == "rewrite_non_claims":
+        brief["non_claims"] = ["this brief establishes its upstream meanings"]
+    elif mutation == "drop_non_claims":
+        brief.pop("non_claims")
+    else:
+        brief["operator_note"] = "approved"
+    brief["brief_sha256"] = _canonical_json_sha256(
+        {key: value for key, value in brief.items() if key != "brief_sha256"}
+    )
+    output["axis_output_sha256"] = _canonical_json_sha256(
+        {key: value for key, value in output.items() if key != "axis_output_sha256"}
+    )
+    saved_path = tmp_path / "mutated-output.json"
+    _write(saved_path, output)
+    with pytest.raises(EvidenceConsumerError) as caught:
+        validate_axis_point_reader_output(
+            manifest, output=json.loads(saved_path.read_text(encoding="utf-8")),
+            point_store_dir=store,
+        )
+    assert caught.value.boundary == boundary
+
+
+@pytest.mark.parametrize("company", ["summer_fridays", "dieux"])
+def test_captured_point_reader_replay_and_saved_brief_recovery(
+    tmp_path: Path, company: str,
+) -> None:
+    fixture_root = Path(__file__).parents[1] / "fixtures" / "phase_a_point_reader_replay"
+    provenance = json.loads((fixture_root / "provenance.json").read_text(encoding="utf-8"))
+    case = next(row for row in provenance["cases"] if row["company"] == company)
+    fixture = fixture_root / company
+    assert {path.relative_to(fixture).as_posix() for path in fixture.rglob("*") if path.is_file()} == {
+        row["relative_path"] for row in case["files"]
+    }
+    for row in case["files"]:
+        assert hash_file(fixture / row["relative_path"]) == row["sha256"]
+    kwargs = {
+        "manifest_path": fixture / "snapshot.json",
+        "point_store_dir": fixture / "points",
+        "responses_dir": fixture / "responses",
+        "brief_store_dir": tmp_path / "briefs",
+        "expected_snapshot_sha256": case["snapshot_sha256"],
+    }
+    fresh = finalize_point_reader_run(**kwargs, output_path=tmp_path / "fresh.json")
+    assert fresh["compiled_point_count"] == case["expected_accepted_points"]
+    assert fresh["counts"]["rejected_point_count"] == case["expected_rejected_points"]
+    assert hash_file(tmp_path / "fresh.json") == case["expected_output_raw_sha256"]
+    resumed = finalize_point_reader_run(**kwargs, output_path=tmp_path / "resumed.json")
+    assert resumed["compiled_point_count"] == 0
+    assert resumed["reused_brief_count"] == case["expected_accepted_points"]
+    assert hash_file(tmp_path / "resumed.json") == case["expected_output_raw_sha256"]
+
+    # The same captured bytes used by real consumers must not permit a resume to
+    # accept an emptied selection or a rewritten non-claim boundary merely
+    # because the saved brief's hash is coherent.
+    brief_path = sorted((tmp_path / "briefs").glob("*.json"))[0]
+    original = json.loads(brief_path.read_text(encoding="utf-8"))
+    for corruption, boundary in (
+        ({"representative_evidence": []}, "point_reader_response"),
+        ({"non_claims": ["this brief is a Deliver recommendation"]}, "point_reader_brief"),
+    ):
+        brief = {**original, **corruption}
+        brief["brief_sha256"] = _canonical_json_sha256(
+            {key: value for key, value in brief.items() if key != "brief_sha256"}
+        )
+        _write(brief_path, brief)
+        corrupted_path = tmp_path / f"corrupted-{boundary}.json"
+        with pytest.raises(EvidenceConsumerError) as caught:
+            finalize_point_reader_run(**kwargs, output_path=corrupted_path)
+        assert caught.value.boundary == boundary
+        assert not corrupted_path.exists()
+
+
 def test_point_reader_identity_binds_meaning_but_not_storage_path(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -6135,6 +6257,56 @@ def test_decision_state_reconciliation_batches_without_splitting_evidence(
             manifest, batch_set, list(reversed(responses))
         )
     assert caught.value.boundary == "decision_state_reconciliation_batch_combination"
+
+
+@pytest.mark.parametrize("version", ["phase_a_decision_state_reconciliation_manifest_v1", "phase_a_decision_state_reconciliation_manifest_v2"])
+def test_decision_state_versioned_prompts_batch_and_finalize_without_reinterpreting_history(tmp_path, monkeypatch, version):
+    import judgment.phase_a_decision_state_reconciliation as decision_state
+
+    plan, _, _, _ = _decision_state_reconciliation_fixture(tmp_path, monkeypatch)
+    plan["prior_specs"] = []
+    before = {str(path): path.read_bytes() for path in tmp_path.rglob("*.json")}
+    manifest = prepare_phase_a_decision_state_reconciliation(plan)
+    assert manifest["schema_version"] == "phase_a_decision_state_reconciliation_manifest_v2"
+    groups = manifest["unresolved_evidence_groups"]
+    scope = manifest["reconciliation_scope_sha256"]
+    manifest["schema_version"] = version
+    manifest["prompt"] = decision_state._prompt(groups, reconciliation_scope_sha256=scope, manifest_version=version)
+    manifest.pop("manifest_sha256")
+    manifest["manifest_sha256"] = _canonical_json_sha256(manifest)
+    individual = [decision_state._prompt([group], reconciliation_scope_sha256=scope, manifest_version=version) for group in groups]
+    batches = prepare_phase_a_decision_state_adjudication_batches(manifest, max_prompt_characters=max(map(len, individual)))
+    assert [row["prompt"] for row in batches["batches"]] == individual
+    assert len(batches["batches"]) == len(groups) == 3
+    current_guidance = "Being on a numbered tube or reporting current use establishes ongoing_use"
+    for prompt in [manifest["prompt"], *individual]:
+        assert prompt.count(current_guidance) == int(version.endswith("_v2"))
+        if version.endswith("_v2"):
+            assert "Preserve earlier interest even when later trial occurred" in prompt
+            assert "Resolve return by its object" in prompt
+            assert "Do not infer future repurchase from use" in prompt
+    if version.endswith("_v1"):
+        # Original 066be prompt bytes; only normalize the fixture's path-bound scope hash.
+        assert sha256_text(decision_state._prompt([], reconciliation_scope_sha256="a" * 64, manifest_version=version)) == "434369aa1605779c94a4fcd715714b54112d8fb76fcd3e6f96ddde7be39ac973"
+        assert [sha256_text(row["prompt"].replace(scope, "a" * 64)) for row in batches["batches"]] == [
+            "af36436e7308c5c78c85da00d9841116f6773a9a017c2586a1ca4a127533b362",
+            "0fe9b1d7f729f3f7872fa13db4e012cb7859a77cb5b76788cbc376ffe81a9f08",
+            "eef54c817dd5e1f8920ab1f33ec0c97108877426be59e35525b0bfadde77304f",
+        ]
+    responses = [{"schema_version": DECISION_STATE_ADJUDICATION_VERSION, "reconciliation_scope_sha256": scope,
+        "judgments": [{"item_ids": [item], "classification": "context_only", "state_kind": None,
+            "commercial_direction": None, "decision_object": None, "quantity": None, "conditions": []}
+            for item in batch["item_ids"]]} for batch in batches["batches"]]
+    combined = combine_phase_a_decision_state_adjudication_batches(manifest, batches, responses)
+    output = finalize_phase_a_decision_state_reconciliation(manifest, adjudication=combined)
+    assert build_axis_consolidated_view(output["hydration_and_moisture"])
+    assert {str(path): path.read_bytes() for path in tmp_path.rglob("*.json")} == before
+
+
+def test_decision_state_prepare_rejects_unsupported_manifest_version(tmp_path, monkeypatch):
+    plan, _, _, _ = _decision_state_reconciliation_fixture(tmp_path, monkeypatch)
+    with pytest.raises(EvidenceConsumerError, match="unsupported reconciliation manifest version"):
+        prepare_phase_a_decision_state_reconciliation(plan, manifest_version="unknown")
 
 
 def _repin_point_chain(

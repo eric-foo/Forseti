@@ -1,0 +1,199 @@
+{
+  "axis_id": "formula_consistency_and_change",
+  "counts": {
+    "accepted_point_count": 1,
+    "frontier_point_count": 1,
+    "rejected_point_count": 0
+  },
+  "method_binding": {
+    "method_text": "Read exactly one complete Phase A evidence point. Explain only its bounded point. Use the supplied relation and literal evidence without relabelling either. Preserve counterevidence and awkward coexistence. For Decision State, distinguish judgment, intent, observed action, quantity, object, and conditions; never turn intent into observed behavior or several purchased units into several repurchases. Current use or possession of another container does not prove a completed repeat purchase unless an exact owned meaning explicitly records the acquisition or repurchase. Bind every condition, time, action, quantity, attribution, and outcome only to the exact meaning that states it. A quote or companion meaning from the same evidence is context, not permission to transfer its fields to a neighboring meaning; preserve coexisting observations without fusing them or reducing an experienced outcome to intent alone. Do not infer prevalence, causation, market representativeness, or pricing power, and do not make or infer an analyst Deliver recommendation. Preserve source-authored advice as source-local evidence without adopting it as analyst advice. Treat candidate_pool_accounting as exact captured-pool bookkeeping: distinguish it from selected display examples, and never turn its row or origin counts into customer prevalence. Read full_candidate_pool before reading the display panel as the point. State its exact captured support and counter counts before characterizing direction or balance; never let the displayed examples stand in for the full pool. The display panel remains selected examples even when its row count happens to equal the full-pool row count. Cite only supplied point-local placement handles.",
+    "method_text_sha256": "cef49f92f070efbe903eb4e20fc7b0a18ff1ca1bc00b57297a8c28abf5e6d91e",
+    "point_reader_policy": {
+      "coverage": "every accepted point exactly once; no duplicate or foreign point",
+      "deterministic_fields": "subject, point, route, display and full-candidate accounting, literal representatives, and the complete Decision State ledger are compiler-owned",
+      "model_scope": "interpretation plus point-local evidence handles only",
+      "non_claims": [
+        "no Deliver recommendation",
+        "no prevalence or causal claim",
+        "no Data Lake persistence or global index",
+        "no axis-level semantic condensation"
+      ],
+      "rejected_frontier": "each rejected point receives a deterministic receipt bound to the validated axis pack; no model call is spent on rejection bookkeeping",
+      "semantic_unit": "one complete accepted Phase A point"
+    },
+    "point_reader_policy_sha256": "4e655077aaecbcccbb02c0277522fac09dbb04dd8e0ef07490221d1eeaf10f3d",
+    "response_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "interpretation": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "point_id": {
+          "type": "string"
+        },
+        "point_input_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "representative_handles": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "placement_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "placement_id"
+            ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "point_input_sha256",
+        "point_id",
+        "interpretation",
+        "representative_handles"
+      ],
+      "type": "object"
+    },
+    "response_schema_sha256": "5472a7907a9edeaa77330f92b8df4831336f7f5773d636525dc9ba8688702587"
+  },
+  "points": [
+    {
+      "bounded_point": "Trader Joe's Lip Butter has ingredients similar to Summer Fridays Lip Butter Balm.",
+      "brief_file": "brief_40d1f49979505d31d02e61eb0e93136737f65dd7bdd18bdc92d4202dc4b0043c.json",
+      "candidate_pool_accounting": {
+        "bounded_point": "Trader Joe's Lip Butter has ingredients similar to Summer Fridays Lip Butter Balm.",
+        "display_panel": {
+          "relation_row_counts": {
+            "adjacent": 10,
+            "counter": 0,
+            "support": 2
+          },
+          "scope": "selected_display_examples_not_the_full_candidate_pool",
+          "semantic_row_count": 12
+        },
+        "full_candidate_pool": {
+          "direct_relation_by_source_role": [
+            {
+              "evidence_item_count": 3,
+              "material_engagement_origin_count": 2,
+              "origin_count": 3,
+              "relation": "support",
+              "semantic_row_count": 3,
+              "source_role": "community_post"
+            }
+          ],
+          "direct_relation_origin_overlap": {
+            "both": 0,
+            "counter_only": 0,
+            "support_only": 3
+          },
+          "evidence_item_count": 252,
+          "independence_posture_origin_counts": {
+            "credited": 193,
+            "unavailable": 11
+          },
+          "material_engagement_origin_count": 132,
+          "origin_count": 204,
+          "relation_counts": {
+            "adjacent": {
+              "evidence_item_count": 18,
+              "material_engagement_origin_count": 10,
+              "origin_count": 18,
+              "semantic_row_count": 18
+            },
+            "counter": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "exclude": {
+              "evidence_item_count": 235,
+              "material_engagement_origin_count": 121,
+              "origin_count": 189,
+              "semantic_row_count": 293
+            },
+            "support": {
+              "evidence_item_count": 3,
+              "material_engagement_origin_count": 2,
+              "origin_count": 3,
+              "semantic_row_count": 3
+            }
+          },
+          "semantic_row_count": 314
+        },
+        "point_id": "prop_ad198f3ddd0c6e9be960"
+      },
+      "displayed_relation_row_counts": {
+        "adjacent": 10,
+        "counter": 0,
+        "support": 2
+      },
+      "fact_count": 12,
+      "input_contract": {
+        "axis_id": "formula_consistency_and_change",
+        "bounded_point": "Trader Joe's Lip Butter has ingredients similar to Summer Fridays Lip Butter Balm.",
+        "candidate_pool_accounting_sha256": "d45e379c691981c629986bfa9b689d36d85e9441329d41c108779f317d8c031e",
+        "decision_state_ledger_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "method_text_sha256": "cef49f92f070efbe903eb4e20fc7b0a18ff1ca1bc00b57297a8c28abf5e6d91e",
+        "point_brief_schema_version": "phase_a_evidence_point_brief_v4",
+        "point_id": "prop_ad198f3ddd0c6e9be960",
+        "point_payload_raw_sha256": "792819b2ce54dbcc55c52dc8aaf1d5da304be2caafaf51d1766cfb8184dcf7b4",
+        "point_reader_policy_sha256": "4e655077aaecbcccbb02c0277522fac09dbb04dd8e0ef07490221d1eeaf10f3d",
+        "projection_mode": "direct_outcome",
+        "response_schema_sha256": "5472a7907a9edeaa77330f92b8df4831336f7f5773d636525dc9ba8688702587",
+        "source_lineage": {
+          "artifact_sha256": "31388b15f4ffe2d7720ec8d654ee9a5d55aded88b48828c54a7b1f5b626270ab",
+          "policy_lineage": {
+            "artifact_schema_version": "phase_a_evidence_selection_artifact_v3",
+            "quote_manifest_schema_version": "phase_a_evidence_quote_manifest_v9",
+            "selection_manifest_schema_version": "phase_a_evidence_selection_manifest_v1"
+          },
+          "policy_revision": "repository:3b25832c451c12ac6afe44cfbd02e6a4a87e2987:current-authoring-v4",
+          "quote_manifest_file_sha256": "7d58fd0da277443f189aac38ca1c5637f6324d7bf4adef7ed8336e94ff5312d1",
+          "quote_manifest_sha256": "57d57490111cc9aee05f71f2fab624c1a65b3bc052921bf7232062f350830e98",
+          "selection_manifest_file_sha256": "e8990c3ac08705b68b89e8a4cc048f3db576e56fc56b5c243dd0379382c609a8",
+          "selection_manifest_sha256": "5d073417252b54c75e115d40f9fedd72df1728d5ff8da2b81ed5db1844536249"
+        },
+        "subject_identity_sha256": "985c7d0eb97326b70ab821220b9a6dc909645ffcffa5b58c697e0ed9a37cbfaa"
+      },
+      "point_id": "prop_ad198f3ddd0c6e9be960",
+      "point_input_sha256": "40d1f49979505d31d02e61eb0e93136737f65dd7bdd18bdc92d4202dc4b0043c",
+      "point_payload_file": "point_40d1f49979505d31d02e61eb0e93136737f65dd7bdd18bdc92d4202dc4b0043c.jsonl",
+      "projection_mode": "direct_outcome",
+      "response_file": "response_40d1f49979505d31d02e61eb0e93136737f65dd7bdd18bdc92d4202dc4b0043c.json",
+      "truth_origin_count": 12
+    }
+  ],
+  "rejected_point_receipts": [],
+  "schema_version": "phase_a_evidence_point_reader_run_manifest_v2",
+  "snapshot_sha256": "82c4c8ded56c387a3b254f546ffea97bd38bd1ff355373f15f7fe076f096e2de",
+  "source_binding": {
+    "source_axis_pack_sha256": "c90836bb39d6dfc0d370819c36fd7a46c57125d170734926e3921efdbfdf6db6",
+    "source_view_raw_sha256": "25735890dcae8ffc6ecde0e6fb2012352402ef06406525051a3b609fcd7abbdb",
+    "source_view_sha256": "6a8bfbb9d5dc5b958bf1e5ec762bb43eb37c21968cb9103fc3bebd8474dc6e49"
+  },
+  "storage_contract": {
+    "lookup_rule": "join point_payload_file inside the supplied point store",
+    "point_store_root": "runtime_supplied",
+    "portable_identity_excludes": [
+      "absolute paths",
+      "mtimes",
+      "labels alone"
+    ]
+  },
+  "subject_identity": {
+    "company_id": "summer-fridays",
+    "cutoff": "2026-08-25",
+    "product_id": "lip-butter-balm",
+    "schema_version": "phase_a_point_reader_subject_identity_v1"
+  },
+  "subject_identity_sha256": "985c7d0eb97326b70ab821220b9a6dc909645ffcffa5b58c697e0ed9a37cbfaa"
+}

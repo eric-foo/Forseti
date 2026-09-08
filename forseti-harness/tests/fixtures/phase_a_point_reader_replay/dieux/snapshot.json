@@ -1,0 +1,1042 @@
+{
+  "axis_id": "packaging_dispensing_usability",
+  "counts": {
+    "accepted_point_count": 8,
+    "frontier_point_count": 9,
+    "rejected_point_count": 1
+  },
+  "method_binding": {
+    "actor_scope_rule": "ACTOR SCOPE: point_actor_scope is an authored part of the bounded point, not a relation prediction. For source_local_reports, 'the author/customer/reviewer' refers to each row's own reporting origin, never to one unnamed focal person. source_id identifies an input source that may contain many actors; it is not a person identifier. Read the source-bound independence_key together with independence_posture and source-visible attribution. Different keys do not by themselves prove different people; unavailable identity and possible overlap remain unresolved. Support repeats the exact scoped report; counter is an explicitly opposed report of that same predicate/criterion, not a contradiction of another person's private state. Different favorite choices may be contrasting reports, not evidence that a particular person's favorite is false. Check origin overlap before describing support and counter as separate authors: one credited origin can appear on both sides. Preserve its separate observations; whether they conflict, change, or refine a report depends on their meanings and dates, not the key alone. A joint favorite does not oppose a non-exclusive favorite claim merely because another option is named; preserve any explicit exclusivity criterion. Ownership of other options, non-exhaustive lists, liking, and intent do not negate ownership. For identified_actor, only the explicitly bound source_id and credited independence_key can establish the focal person's private state; another or unknown origin cannot support or counter it. Candidate identities do not select the focal actor without that authored binding. Do not infer a focal actor from row order, a semantic-ref spelling, or first-pass labels. The declared scope cannot broaden a named person's claim into a market or population claim; if the point and authored scope are incompatible, do not confirm single_point. Semantic adequacy remains judgment-owned.",
+    "actor_scope_rule_sha256": "577fc7761dac40c43194b6336a6688d19ced3eef9828b7901cc6de6fd2863911",
+    "method_text": "Read exactly one complete Phase A evidence point. Explain only its bounded point. Use the supplied relation and literal evidence without relabelling either. Preserve counterevidence and awkward coexistence. For Decision State, distinguish judgment, intent, observed action, quantity, object, and conditions; never turn intent into observed behavior or several purchased units into several repurchases. Current use or possession of another container does not prove a completed repeat purchase unless an exact owned meaning explicitly records the acquisition or repurchase. Bind every condition, time, action, quantity, attribution, and outcome only to the exact meaning that states it. A quote or companion meaning from the same evidence is context, not permission to transfer its fields to a neighboring meaning; preserve coexisting observations without fusing them or reducing an experienced outcome to intent alone. Do not infer prevalence, causation, market representativeness, or pricing power, and do not make or infer an analyst Deliver recommendation. Preserve source-authored advice as source-local evidence without adopting it as analyst advice. Treat candidate_pool_accounting as exact captured-pool bookkeeping: distinguish it from selected display examples, and never turn its row or origin counts into customer prevalence. Read full_candidate_pool before reading the display panel as the point. State its exact captured support and counter counts before characterizing direction or balance; never let the displayed examples stand in for the full pool. The display panel remains selected examples even when its row count happens to equal the full-pool row count. Cite only supplied point-local placement handles.",
+    "method_text_sha256": "cef49f92f070efbe903eb4e20fc7b0a18ff1ca1bc00b57297a8c28abf5e6d91e",
+    "point_reader_policy": {
+      "coverage": "every accepted point exactly once; no duplicate or foreign point",
+      "deterministic_fields": "subject, point, route, display and full-candidate accounting, literal representatives, and the complete Decision State ledger are compiler-owned",
+      "model_scope": "interpretation plus point-local evidence handles only",
+      "non_claims": [
+        "no Deliver recommendation",
+        "no prevalence or causal claim",
+        "no Data Lake persistence or global index",
+        "no axis-level semantic condensation"
+      ],
+      "rejected_frontier": "each rejected point receives a deterministic receipt bound to the validated axis pack; no model call is spent on rejection bookkeeping",
+      "semantic_unit": "one complete accepted Phase A point"
+    },
+    "point_reader_policy_sha256": "4e655077aaecbcccbb02c0277522fac09dbb04dd8e0ef07490221d1eeaf10f3d",
+    "response_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "interpretation": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "point_id": {
+          "type": "string"
+        },
+        "point_input_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "representative_handles": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "placement_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "placement_id"
+            ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "point_input_sha256",
+        "point_id",
+        "interpretation",
+        "representative_handles"
+      ],
+      "type": "object"
+    },
+    "response_schema_sha256": "5472a7907a9edeaa77330f92b8df4831336f7f5773d636525dc9ba8688702587"
+  },
+  "points": [
+    {
+      "bounded_point": "Instant Angel's metal-tube packaging was experienced as attractive or distinctive.",
+      "brief_file": "brief_d3d20b0839062ffdf6fdf00176643968033bdb769b4e3f22ba035f2abf4e1b1a.json",
+      "candidate_pool_accounting": {
+        "bounded_point": "Instant Angel's metal-tube packaging was experienced as attractive or distinctive.",
+        "display_panel": {
+          "relation_row_counts": {
+            "adjacent": 1,
+            "counter": 0,
+            "support": 3
+          },
+          "scope": "selected_display_examples_not_the_full_candidate_pool",
+          "semantic_row_count": 4
+        },
+        "full_candidate_pool": {
+          "direct_relation_by_source_role": [
+            {
+              "evidence_item_count": 2,
+              "material_engagement_origin_count": 1,
+              "origin_count": 2,
+              "relation": "support",
+              "semantic_row_count": 3,
+              "source_role": "retailer_review"
+            }
+          ],
+          "direct_relation_origin_overlap": {
+            "both": 0,
+            "counter_only": 0,
+            "support_only": 2
+          },
+          "evidence_item_count": 3,
+          "independence_posture_origin_counts": {
+            "credited": 3
+          },
+          "material_engagement_origin_count": 2,
+          "origin_count": 3,
+          "relation_counts": {
+            "adjacent": {
+              "evidence_item_count": 1,
+              "material_engagement_origin_count": 1,
+              "origin_count": 1,
+              "semantic_row_count": 1
+            },
+            "counter": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "exclude": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "support": {
+              "evidence_item_count": 2,
+              "material_engagement_origin_count": 1,
+              "origin_count": 2,
+              "semantic_row_count": 3
+            }
+          },
+          "semantic_row_count": 4
+        },
+        "point_id": "prop_072ef7b08b4936f9941c"
+      },
+      "displayed_relation_row_counts": {
+        "adjacent": 1,
+        "counter": 0,
+        "support": 3
+      },
+      "fact_count": 4,
+      "input_contract": {
+        "actor_scope_rule_sha256": "577fc7761dac40c43194b6336a6688d19ced3eef9828b7901cc6de6fd2863911",
+        "axis_id": "packaging_dispensing_usability",
+        "bounded_point": "Instant Angel's metal-tube packaging was experienced as attractive or distinctive.",
+        "candidate_pool_accounting_sha256": "f3ea8b2f3e2d0d6ed4e962ef5bd37826355d0d85ed2fc2b66ee00ba1fbb02650",
+        "decision_state_ledger_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "method_text_sha256": "cef49f92f070efbe903eb4e20fc7b0a18ff1ca1bc00b57297a8c28abf5e6d91e",
+        "point_actor_scope": {
+          "mode": "source_local_reports"
+        },
+        "point_brief_schema_version": "phase_a_evidence_point_brief_v4",
+        "point_id": "prop_072ef7b08b4936f9941c",
+        "point_payload_raw_sha256": "33b4b94038e13b5c8284e9c16d7df05250b9f8f15279fbb7855d3b36ee910011",
+        "point_reader_policy_sha256": "4e655077aaecbcccbb02c0277522fac09dbb04dd8e0ef07490221d1eeaf10f3d",
+        "projection_mode": "direct_outcome",
+        "response_schema_sha256": "5472a7907a9edeaa77330f92b8df4831336f7f5773d636525dc9ba8688702587",
+        "source_lineage": {
+          "artifact_sha256": "029fbd8f36de470ac6f5332cf83946942c3046e8089b962ace41e35e029cffa1",
+          "policy_lineage": {
+            "artifact_schema_version": "phase_a_evidence_selection_artifact_v3",
+            "quote_manifest_schema_version": "phase_a_evidence_quote_manifest_v10",
+            "selection_manifest_schema_version": "phase_a_evidence_selection_manifest_v1"
+          },
+          "policy_revision": "phase_a_evidence_quote_manifest_v10",
+          "quote_manifest_file_sha256": "83e9ed2c5f6a3822510633842ea6b2037b53097c5c3133603dc9df733c6d1b47",
+          "quote_manifest_sha256": "e1286876b124c05b9d83266b4f4a6b69d57058446ef392287715c6c738b70fc0",
+          "selection_manifest_file_sha256": "806b8e67ca5d98a9d2f0864f326b8c829cb3749520a69c10e670e84649877123",
+          "selection_manifest_sha256": "3cdd89d1fa6f446bfae38b8d70eabbf2433a4c0307b984a018d2906ba0baf7d0"
+        },
+        "subject_identity_sha256": "a29ec7b4e8f363df08c5cec3b8b0fbe51a54ecbffb5cbec78b90cff3c1e8b0e1"
+      },
+      "point_actor_scope": {
+        "mode": "source_local_reports"
+      },
+      "point_id": "prop_072ef7b08b4936f9941c",
+      "point_input_sha256": "d3d20b0839062ffdf6fdf00176643968033bdb769b4e3f22ba035f2abf4e1b1a",
+      "point_payload_file": "point_d3d20b0839062ffdf6fdf00176643968033bdb769b4e3f22ba035f2abf4e1b1a.jsonl",
+      "projection_mode": "direct_outcome",
+      "response_file": "response_d3d20b0839062ffdf6fdf00176643968033bdb769b4e3f22ba035f2abf4e1b1a.json",
+      "truth_origin_count": 3
+    },
+    {
+      "bounded_point": "Forever Eye Masks were experienced as adhering well and staying in place during wear.",
+      "brief_file": "brief_60c451059feaccd536fe7868c8f70167f5761bbcae2498296b44e81b00be5c47.json",
+      "candidate_pool_accounting": {
+        "bounded_point": "Forever Eye Masks were experienced as adhering well and staying in place during wear.",
+        "display_panel": {
+          "relation_row_counts": {
+            "adjacent": 1,
+            "counter": 0,
+            "support": 3
+          },
+          "scope": "selected_display_examples_not_the_full_candidate_pool",
+          "semantic_row_count": 4
+        },
+        "full_candidate_pool": {
+          "direct_relation_by_source_role": [
+            {
+              "evidence_item_count": 1,
+              "material_engagement_origin_count": 1,
+              "origin_count": 1,
+              "relation": "support",
+              "semantic_row_count": 1,
+              "source_role": "community_post"
+            },
+            {
+              "evidence_item_count": 2,
+              "material_engagement_origin_count": 0,
+              "origin_count": 2,
+              "relation": "support",
+              "semantic_row_count": 2,
+              "source_role": "retailer_review"
+            }
+          ],
+          "direct_relation_origin_overlap": {
+            "both": 0,
+            "counter_only": 0,
+            "support_only": 3
+          },
+          "evidence_item_count": 4,
+          "independence_posture_origin_counts": {
+            "credited": 4
+          },
+          "material_engagement_origin_count": 1,
+          "origin_count": 4,
+          "relation_counts": {
+            "adjacent": {
+              "evidence_item_count": 1,
+              "material_engagement_origin_count": 0,
+              "origin_count": 1,
+              "semantic_row_count": 1
+            },
+            "counter": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "exclude": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "support": {
+              "evidence_item_count": 3,
+              "material_engagement_origin_count": 1,
+              "origin_count": 3,
+              "semantic_row_count": 3
+            }
+          },
+          "semantic_row_count": 4
+        },
+        "point_id": "prop_09fa0c2123153a3fdb95"
+      },
+      "displayed_relation_row_counts": {
+        "adjacent": 1,
+        "counter": 0,
+        "support": 3
+      },
+      "fact_count": 4,
+      "input_contract": {
+        "actor_scope_rule_sha256": "577fc7761dac40c43194b6336a6688d19ced3eef9828b7901cc6de6fd2863911",
+        "axis_id": "packaging_dispensing_usability",
+        "bounded_point": "Forever Eye Masks were experienced as adhering well and staying in place during wear.",
+        "candidate_pool_accounting_sha256": "aeb7f178b7d629e77cd45679d5b8ab980c3cfe4b443c5bdde0e71b0d69074865",
+        "decision_state_ledger_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "method_text_sha256": "cef49f92f070efbe903eb4e20fc7b0a18ff1ca1bc00b57297a8c28abf5e6d91e",
+        "point_actor_scope": {
+          "mode": "source_local_reports"
+        },
+        "point_brief_schema_version": "phase_a_evidence_point_brief_v4",
+        "point_id": "prop_09fa0c2123153a3fdb95",
+        "point_payload_raw_sha256": "1c1734ecf6b78fc99cbf0197f628048324ade3252be9014f1d8cbfa18b35e603",
+        "point_reader_policy_sha256": "4e655077aaecbcccbb02c0277522fac09dbb04dd8e0ef07490221d1eeaf10f3d",
+        "projection_mode": "direct_outcome",
+        "response_schema_sha256": "5472a7907a9edeaa77330f92b8df4831336f7f5773d636525dc9ba8688702587",
+        "source_lineage": {
+          "artifact_sha256": "4bd4f3812f5c2a904297d652d766c2621debfb26254262dd458b8b6a248fb853",
+          "policy_lineage": {
+            "artifact_schema_version": "phase_a_evidence_selection_artifact_v3",
+            "quote_manifest_schema_version": "phase_a_evidence_quote_manifest_v10",
+            "selection_manifest_schema_version": "phase_a_evidence_selection_manifest_v1"
+          },
+          "policy_revision": "phase_a_evidence_quote_manifest_v10",
+          "quote_manifest_file_sha256": "6fa1bd7af2ed04aa39ca89308a35cc26e193bfba162d8c9ea11ad4b2bf06220d",
+          "quote_manifest_sha256": "9da1d53f616f4d4839624553186fd6deeff6e8e9f80e19b260f9e22bc86f8816",
+          "selection_manifest_file_sha256": "471908b236c22d9fb8bd9e6cffb6e0ce5f053b36db21b6fb554b78334075ef14",
+          "selection_manifest_sha256": "aff9fc632d55fde124aa3ddb17127ff1b837f348138f64410d63e4054e7625b4"
+        },
+        "subject_identity_sha256": "a29ec7b4e8f363df08c5cec3b8b0fbe51a54ecbffb5cbec78b90cff3c1e8b0e1"
+      },
+      "point_actor_scope": {
+        "mode": "source_local_reports"
+      },
+      "point_id": "prop_09fa0c2123153a3fdb95",
+      "point_input_sha256": "60c451059feaccd536fe7868c8f70167f5761bbcae2498296b44e81b00be5c47",
+      "point_payload_file": "point_60c451059feaccd536fe7868c8f70167f5761bbcae2498296b44e81b00be5c47.jsonl",
+      "projection_mode": "direct_outcome",
+      "response_file": "response_60c451059feaccd536fe7868c8f70167f5761bbcae2498296b44e81b00be5c47.json",
+      "truth_origin_count": 4
+    },
+    {
+      "bounded_point": "Instant Angel packaging was personally viewed as environmentally preferable because of perceived low-plastic, plastic-free, sustainable, or recyclable qualities; included agreement remains agreement.",
+      "brief_file": "brief_3741c6fdfa374e5daabea1b393cecd73d508dcbab4cece2b0588fde80d2665fa.json",
+      "candidate_pool_accounting": {
+        "bounded_point": "Instant Angel packaging was personally viewed as environmentally preferable because of perceived low-plastic, plastic-free, sustainable, or recyclable qualities; included agreement remains agreement.",
+        "display_panel": {
+          "relation_row_counts": {
+            "adjacent": 0,
+            "counter": 0,
+            "support": 4
+          },
+          "scope": "selected_display_examples_not_the_full_candidate_pool",
+          "semantic_row_count": 4
+        },
+        "full_candidate_pool": {
+          "direct_relation_by_source_role": [
+            {
+              "evidence_item_count": 2,
+              "material_engagement_origin_count": 1,
+              "origin_count": 2,
+              "relation": "support",
+              "semantic_row_count": 2,
+              "source_role": "community_post"
+            },
+            {
+              "evidence_item_count": 1,
+              "material_engagement_origin_count": 0,
+              "origin_count": 1,
+              "relation": "support",
+              "semantic_row_count": 2,
+              "source_role": "retailer_review"
+            }
+          ],
+          "direct_relation_origin_overlap": {
+            "both": 0,
+            "counter_only": 0,
+            "support_only": 3
+          },
+          "evidence_item_count": 3,
+          "independence_posture_origin_counts": {
+            "credited": 3
+          },
+          "material_engagement_origin_count": 1,
+          "origin_count": 3,
+          "relation_counts": {
+            "adjacent": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "counter": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "exclude": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "support": {
+              "evidence_item_count": 3,
+              "material_engagement_origin_count": 1,
+              "origin_count": 3,
+              "semantic_row_count": 4
+            }
+          },
+          "semantic_row_count": 4
+        },
+        "point_id": "prop_4eb3825212c47c1e16b3"
+      },
+      "displayed_relation_row_counts": {
+        "adjacent": 0,
+        "counter": 0,
+        "support": 4
+      },
+      "fact_count": 4,
+      "input_contract": {
+        "actor_scope_rule_sha256": "577fc7761dac40c43194b6336a6688d19ced3eef9828b7901cc6de6fd2863911",
+        "axis_id": "packaging_dispensing_usability",
+        "bounded_point": "Instant Angel packaging was personally viewed as environmentally preferable because of perceived low-plastic, plastic-free, sustainable, or recyclable qualities; included agreement remains agreement.",
+        "candidate_pool_accounting_sha256": "f7af2bb58cf6c8f9f1bb1ed430d50b70ca6a053cfa3a307cda3aad2d5d1583a4",
+        "decision_state_ledger_sha256": "9ab8493656d770a22139cbf3192ede5516c7084dd6972f8fc6352bcd60a2d8db",
+        "method_text_sha256": "cef49f92f070efbe903eb4e20fc7b0a18ff1ca1bc00b57297a8c28abf5e6d91e",
+        "point_actor_scope": {
+          "mode": "source_local_reports"
+        },
+        "point_brief_schema_version": "phase_a_evidence_point_brief_v4",
+        "point_id": "prop_4eb3825212c47c1e16b3",
+        "point_payload_raw_sha256": "6e594a7c39b9d816201a5f5c45767137c498a433d2bd7aefa888a07f6bf96d49",
+        "point_reader_policy_sha256": "4e655077aaecbcccbb02c0277522fac09dbb04dd8e0ef07490221d1eeaf10f3d",
+        "projection_mode": "decision_state",
+        "response_schema_sha256": "5472a7907a9edeaa77330f92b8df4831336f7f5773d636525dc9ba8688702587",
+        "source_lineage": {
+          "artifact_sha256": "e152bb9f28307ebd2f87669d010a9d54b485b523d1fd3a1a0fa204c833b7020a",
+          "policy_lineage": {
+            "artifact_schema_version": "phase_a_evidence_selection_artifact_v3",
+            "quote_manifest_schema_version": "phase_a_evidence_quote_manifest_v10",
+            "selection_manifest_schema_version": "phase_a_evidence_selection_manifest_v1"
+          },
+          "policy_revision": "phase_a_evidence_quote_manifest_v10",
+          "quote_manifest_file_sha256": "1e674c97516373c801e6e0e67c0a4bde10cb08ea16b487fd159b1309e42e7d5e",
+          "quote_manifest_sha256": "e236b678b480f8d2887a4434a2c176ae7faaa194eb475ae433d3fe7cb581d309",
+          "selection_manifest_file_sha256": "a2ac4874bb7a7d1727f5d2b2c5fb7cd56d4571026c77d6af1fda53b2520c2864",
+          "selection_manifest_sha256": "dc1a02fe0276bc95634ffa1894cb4dbe148f3097ff2c73b75ae7bd8584e746bf"
+        },
+        "subject_identity_sha256": "a29ec7b4e8f363df08c5cec3b8b0fbe51a54ecbffb5cbec78b90cff3c1e8b0e1"
+      },
+      "point_actor_scope": {
+        "mode": "source_local_reports"
+      },
+      "point_id": "prop_4eb3825212c47c1e16b3",
+      "point_input_sha256": "3741c6fdfa374e5daabea1b393cecd73d508dcbab4cece2b0588fde80d2665fa",
+      "point_payload_file": "point_3741c6fdfa374e5daabea1b393cecd73d508dcbab4cece2b0588fde80d2665fa.jsonl",
+      "projection_mode": "decision_state",
+      "response_file": "response_3741c6fdfa374e5daabea1b393cecd73d508dcbab4cece2b0588fde80d2665fa.json",
+      "truth_origin_count": 3
+    },
+    {
+      "bounded_point": "Forever Eye Masks were experienced as easy to clean or rinse after use.",
+      "brief_file": "brief_a11c925e659a6877a7cbe0c90c007976a120cf4bd796f7142a14e902ebeee0b7.json",
+      "candidate_pool_accounting": {
+        "bounded_point": "Forever Eye Masks were experienced as easy to clean or rinse after use.",
+        "display_panel": {
+          "relation_row_counts": {
+            "adjacent": 0,
+            "counter": 0,
+            "support": 8
+          },
+          "scope": "selected_display_examples_not_the_full_candidate_pool",
+          "semantic_row_count": 8
+        },
+        "full_candidate_pool": {
+          "direct_relation_by_source_role": [
+            {
+              "evidence_item_count": 6,
+              "material_engagement_origin_count": 0,
+              "origin_count": 6,
+              "relation": "support",
+              "semantic_row_count": 8,
+              "source_role": "retailer_review"
+            }
+          ],
+          "direct_relation_origin_overlap": {
+            "both": 0,
+            "counter_only": 0,
+            "support_only": 6
+          },
+          "evidence_item_count": 7,
+          "independence_posture_origin_counts": {
+            "credited": 7
+          },
+          "material_engagement_origin_count": 0,
+          "origin_count": 7,
+          "relation_counts": {
+            "adjacent": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "counter": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "exclude": {
+              "evidence_item_count": 1,
+              "material_engagement_origin_count": 0,
+              "origin_count": 1,
+              "semantic_row_count": 1
+            },
+            "support": {
+              "evidence_item_count": 6,
+              "material_engagement_origin_count": 0,
+              "origin_count": 6,
+              "semantic_row_count": 8
+            }
+          },
+          "semantic_row_count": 9
+        },
+        "point_id": "prop_65a8d6facddccc5ea0e9"
+      },
+      "displayed_relation_row_counts": {
+        "adjacent": 0,
+        "counter": 0,
+        "support": 8
+      },
+      "fact_count": 8,
+      "input_contract": {
+        "actor_scope_rule_sha256": "577fc7761dac40c43194b6336a6688d19ced3eef9828b7901cc6de6fd2863911",
+        "axis_id": "packaging_dispensing_usability",
+        "bounded_point": "Forever Eye Masks were experienced as easy to clean or rinse after use.",
+        "candidate_pool_accounting_sha256": "bb0fb82b0b33001ee0203efbfadb5964ff09fba75becff030c95fc785a5700ed",
+        "decision_state_ledger_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "method_text_sha256": "cef49f92f070efbe903eb4e20fc7b0a18ff1ca1bc00b57297a8c28abf5e6d91e",
+        "point_actor_scope": {
+          "mode": "source_local_reports"
+        },
+        "point_brief_schema_version": "phase_a_evidence_point_brief_v4",
+        "point_id": "prop_65a8d6facddccc5ea0e9",
+        "point_payload_raw_sha256": "9d03823edd2a7f3ccf8fb8d998bb77ecee7b9991f3b934da0bbcae37f6973b19",
+        "point_reader_policy_sha256": "4e655077aaecbcccbb02c0277522fac09dbb04dd8e0ef07490221d1eeaf10f3d",
+        "projection_mode": "direct_outcome",
+        "response_schema_sha256": "5472a7907a9edeaa77330f92b8df4831336f7f5773d636525dc9ba8688702587",
+        "source_lineage": {
+          "artifact_sha256": "44cebbc2f58af669fe0f1c754fa1316200210c2c823507ce0a51f2909fec19d2",
+          "policy_lineage": {
+            "artifact_schema_version": "phase_a_evidence_selection_artifact_v3",
+            "quote_manifest_schema_version": "phase_a_evidence_quote_manifest_v10",
+            "selection_manifest_schema_version": "phase_a_evidence_selection_manifest_v1"
+          },
+          "policy_revision": "phase_a_evidence_quote_manifest_v10",
+          "quote_manifest_file_sha256": "832307d4045e6adf962ac39622d54ee2229f12088f35aa2210c05ed87382ca1d",
+          "quote_manifest_sha256": "4b50cfbb56f242e33d08a2d53974323abfd9ca636e52e57d34847d8ea208b5b3",
+          "selection_manifest_file_sha256": "c37d83f4cfb79151593bcd4fa6cd1f30cf072a386cf76fc9fd7097c65dd4796c",
+          "selection_manifest_sha256": "fd33dcf66ce1ba6676e19884d109e42436e0e343c2d2fb11956189476b8473ee"
+        },
+        "subject_identity_sha256": "a29ec7b4e8f363df08c5cec3b8b0fbe51a54ecbffb5cbec78b90cff3c1e8b0e1"
+      },
+      "point_actor_scope": {
+        "mode": "source_local_reports"
+      },
+      "point_id": "prop_65a8d6facddccc5ea0e9",
+      "point_input_sha256": "a11c925e659a6877a7cbe0c90c007976a120cf4bd796f7142a14e902ebeee0b7",
+      "point_payload_file": "point_a11c925e659a6877a7cbe0c90c007976a120cf4bd796f7142a14e902ebeee0b7.jsonl",
+      "projection_mode": "direct_outcome",
+      "response_file": "response_a11c925e659a6877a7cbe0c90c007976a120cf4bd796f7142a14e902ebeee0b7.json",
+      "truth_origin_count": 6
+    },
+    {
+      "bounded_point": "Instant Angel packaging was experienced as dispensing excess product or causing waste.",
+      "brief_file": "brief_2369074702439a081bf407c99e7fd31d2294bfbd6e2c2e30c90afde50035bf55.json",
+      "candidate_pool_accounting": {
+        "bounded_point": "Instant Angel packaging was experienced as dispensing excess product or causing waste.",
+        "display_panel": {
+          "relation_row_counts": {
+            "adjacent": 0,
+            "counter": 0,
+            "support": 3
+          },
+          "scope": "selected_display_examples_not_the_full_candidate_pool",
+          "semantic_row_count": 3
+        },
+        "full_candidate_pool": {
+          "direct_relation_by_source_role": [
+            {
+              "evidence_item_count": 1,
+              "material_engagement_origin_count": 1,
+              "origin_count": 1,
+              "relation": "support",
+              "semantic_row_count": 1,
+              "source_role": "community_post"
+            },
+            {
+              "evidence_item_count": 1,
+              "material_engagement_origin_count": 1,
+              "origin_count": 1,
+              "relation": "support",
+              "semantic_row_count": 2,
+              "source_role": "retailer_review"
+            }
+          ],
+          "direct_relation_origin_overlap": {
+            "both": 0,
+            "counter_only": 0,
+            "support_only": 2
+          },
+          "evidence_item_count": 2,
+          "independence_posture_origin_counts": {
+            "credited": 2
+          },
+          "material_engagement_origin_count": 2,
+          "origin_count": 2,
+          "relation_counts": {
+            "adjacent": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "counter": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "exclude": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "support": {
+              "evidence_item_count": 2,
+              "material_engagement_origin_count": 2,
+              "origin_count": 2,
+              "semantic_row_count": 3
+            }
+          },
+          "semantic_row_count": 3
+        },
+        "point_id": "prop_70b20270e8ef5a0b251a"
+      },
+      "displayed_relation_row_counts": {
+        "adjacent": 0,
+        "counter": 0,
+        "support": 3
+      },
+      "fact_count": 3,
+      "input_contract": {
+        "actor_scope_rule_sha256": "577fc7761dac40c43194b6336a6688d19ced3eef9828b7901cc6de6fd2863911",
+        "axis_id": "packaging_dispensing_usability",
+        "bounded_point": "Instant Angel packaging was experienced as dispensing excess product or causing waste.",
+        "candidate_pool_accounting_sha256": "892b47a35e9ffb9926a62dc9cfa698763c8b91f017ba1946e1dca415e10cb219",
+        "decision_state_ledger_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "method_text_sha256": "cef49f92f070efbe903eb4e20fc7b0a18ff1ca1bc00b57297a8c28abf5e6d91e",
+        "point_actor_scope": {
+          "mode": "source_local_reports"
+        },
+        "point_brief_schema_version": "phase_a_evidence_point_brief_v4",
+        "point_id": "prop_70b20270e8ef5a0b251a",
+        "point_payload_raw_sha256": "2490a4c39e15e64e852c3613972b8d0716a1c8af1ef23e5ac44c88f69b772917",
+        "point_reader_policy_sha256": "4e655077aaecbcccbb02c0277522fac09dbb04dd8e0ef07490221d1eeaf10f3d",
+        "projection_mode": "direct_outcome",
+        "response_schema_sha256": "5472a7907a9edeaa77330f92b8df4831336f7f5773d636525dc9ba8688702587",
+        "source_lineage": {
+          "artifact_sha256": "da1d3f7a601e15bebd44667a4d794032480a05b606444cba4a86c1aacf157d07",
+          "policy_lineage": {
+            "artifact_schema_version": "phase_a_evidence_selection_artifact_v3",
+            "quote_manifest_schema_version": "phase_a_evidence_quote_manifest_v10",
+            "selection_manifest_schema_version": "phase_a_evidence_selection_manifest_v1"
+          },
+          "policy_revision": "phase_a_evidence_quote_manifest_v10",
+          "quote_manifest_file_sha256": "4212b215acbd1c409af173110437f8be4055804126805080132987a024b8af70",
+          "quote_manifest_sha256": "4428e311e971da5144d8aad3b566b176676da67e20fa34d437dc3d2af035581a",
+          "selection_manifest_file_sha256": "68baf3932c36fdec85418de12b111d4b427bc0236b9d1d410ba40194555b80c1",
+          "selection_manifest_sha256": "591ad484d100cdc778b79a1d2ad2ba5ab60b8df9219df3645d5bc36c8187b1a3"
+        },
+        "subject_identity_sha256": "a29ec7b4e8f363df08c5cec3b8b0fbe51a54ecbffb5cbec78b90cff3c1e8b0e1"
+      },
+      "point_actor_scope": {
+        "mode": "source_local_reports"
+      },
+      "point_id": "prop_70b20270e8ef5a0b251a",
+      "point_input_sha256": "2369074702439a081bf407c99e7fd31d2294bfbd6e2c2e30c90afde50035bf55",
+      "point_payload_file": "point_2369074702439a081bf407c99e7fd31d2294bfbd6e2c2e30c90afde50035bf55.jsonl",
+      "projection_mode": "direct_outcome",
+      "response_file": "response_2369074702439a081bf407c99e7fd31d2294bfbd6e2c2e30c90afde50035bf55.json",
+      "truth_origin_count": 2
+    },
+    {
+      "bounded_point": "Tube packaging was preferred and personally endorsed.",
+      "brief_file": "brief_90bb02a5daf26132074337886eb123756689553b872b518ecb8edf337fcb7679.json",
+      "candidate_pool_accounting": {
+        "bounded_point": "Tube packaging was preferred and personally endorsed.",
+        "display_panel": {
+          "relation_row_counts": {
+            "adjacent": 0,
+            "counter": 0,
+            "support": 2
+          },
+          "scope": "selected_display_examples_not_the_full_candidate_pool",
+          "semantic_row_count": 2
+        },
+        "full_candidate_pool": {
+          "direct_relation_by_source_role": [
+            {
+              "evidence_item_count": 2,
+              "material_engagement_origin_count": 0,
+              "origin_count": 2,
+              "relation": "support",
+              "semantic_row_count": 2,
+              "source_role": "community_post"
+            }
+          ],
+          "direct_relation_origin_overlap": {
+            "both": 0,
+            "counter_only": 0,
+            "support_only": 2
+          },
+          "evidence_item_count": 2,
+          "independence_posture_origin_counts": {
+            "credited": 2
+          },
+          "material_engagement_origin_count": 0,
+          "origin_count": 2,
+          "relation_counts": {
+            "adjacent": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "counter": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "exclude": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "support": {
+              "evidence_item_count": 2,
+              "material_engagement_origin_count": 0,
+              "origin_count": 2,
+              "semantic_row_count": 2
+            }
+          },
+          "semantic_row_count": 2
+        },
+        "point_id": "prop_8fe421a2b41bc02d8dea"
+      },
+      "displayed_relation_row_counts": {
+        "adjacent": 0,
+        "counter": 0,
+        "support": 2
+      },
+      "fact_count": 2,
+      "input_contract": {
+        "actor_scope_rule_sha256": "577fc7761dac40c43194b6336a6688d19ced3eef9828b7901cc6de6fd2863911",
+        "axis_id": "packaging_dispensing_usability",
+        "bounded_point": "Tube packaging was preferred and personally endorsed.",
+        "candidate_pool_accounting_sha256": "c3383cb763f526e3a59b2325d288a3e0193a3e2ed75485d355bec9667e1db6d2",
+        "decision_state_ledger_sha256": "c86bb6278b7f86922952cfba8918bf93933dfd36106182cd95ff961255aad17a",
+        "method_text_sha256": "cef49f92f070efbe903eb4e20fc7b0a18ff1ca1bc00b57297a8c28abf5e6d91e",
+        "point_actor_scope": {
+          "mode": "source_local_reports"
+        },
+        "point_brief_schema_version": "phase_a_evidence_point_brief_v4",
+        "point_id": "prop_8fe421a2b41bc02d8dea",
+        "point_payload_raw_sha256": "4d004e5564dde46789aa932bd0cd1107fa18a49d4b07a568f369275e80c8fc6c",
+        "point_reader_policy_sha256": "4e655077aaecbcccbb02c0277522fac09dbb04dd8e0ef07490221d1eeaf10f3d",
+        "projection_mode": "decision_state",
+        "response_schema_sha256": "5472a7907a9edeaa77330f92b8df4831336f7f5773d636525dc9ba8688702587",
+        "source_lineage": {
+          "artifact_sha256": "8a37f9a059184d218fea0fb2d6d2255d054de5cc689918dfa382da1637f4db99",
+          "policy_lineage": {
+            "artifact_schema_version": "phase_a_evidence_selection_artifact_v3",
+            "quote_manifest_schema_version": "phase_a_evidence_quote_manifest_v10",
+            "selection_manifest_schema_version": "phase_a_evidence_selection_manifest_v1"
+          },
+          "policy_revision": "phase_a_evidence_quote_manifest_v10",
+          "quote_manifest_file_sha256": "c7b9ecf164530589f26a28722f20e3da68fe801770d2c7cee75326e8722bf2ea",
+          "quote_manifest_sha256": "67fb6e8222ed5909c06be7c79af0848f57040b863a1f2aa7ffbf462f3b2f8bdc",
+          "selection_manifest_file_sha256": "f4eb57b9384f37edcac5e3c3e128fcda96757027de8bcb0138b0714f2d1ebaeb",
+          "selection_manifest_sha256": "8fcf12a46da29cee8ab3b329cf5a8b0cb44584d4708681ef21d656060d2cf654"
+        },
+        "subject_identity_sha256": "a29ec7b4e8f363df08c5cec3b8b0fbe51a54ecbffb5cbec78b90cff3c1e8b0e1"
+      },
+      "point_actor_scope": {
+        "mode": "source_local_reports"
+      },
+      "point_id": "prop_8fe421a2b41bc02d8dea",
+      "point_input_sha256": "90bb02a5daf26132074337886eb123756689553b872b518ecb8edf337fcb7679",
+      "point_payload_file": "point_90bb02a5daf26132074337886eb123756689553b872b518ecb8edf337fcb7679.jsonl",
+      "projection_mode": "decision_state",
+      "response_file": "response_90bb02a5daf26132074337886eb123756689553b872b518ecb8edf337fcb7679.json",
+      "truth_origin_count": 2
+    },
+    {
+      "bounded_point": "The Instant Angel tube was experienced as difficult to moderate and prone to dispensing too much product.",
+      "brief_file": "brief_6b76da0bf8936d1eb460677a03ac2a3ba83a5d75d3b342b733e6c9db27a81ec8.json",
+      "candidate_pool_accounting": {
+        "bounded_point": "The Instant Angel tube was experienced as difficult to moderate and prone to dispensing too much product.",
+        "display_panel": {
+          "relation_row_counts": {
+            "adjacent": 0,
+            "counter": 0,
+            "support": 3
+          },
+          "scope": "selected_display_examples_not_the_full_candidate_pool",
+          "semantic_row_count": 3
+        },
+        "full_candidate_pool": {
+          "direct_relation_by_source_role": [
+            {
+              "evidence_item_count": 3,
+              "material_engagement_origin_count": 3,
+              "origin_count": 3,
+              "relation": "support",
+              "semantic_row_count": 3,
+              "source_role": "retailer_review"
+            }
+          ],
+          "direct_relation_origin_overlap": {
+            "both": 0,
+            "counter_only": 0,
+            "support_only": 3
+          },
+          "evidence_item_count": 3,
+          "independence_posture_origin_counts": {
+            "credited": 3
+          },
+          "material_engagement_origin_count": 3,
+          "origin_count": 3,
+          "relation_counts": {
+            "adjacent": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "counter": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "exclude": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "support": {
+              "evidence_item_count": 3,
+              "material_engagement_origin_count": 3,
+              "origin_count": 3,
+              "semantic_row_count": 3
+            }
+          },
+          "semantic_row_count": 3
+        },
+        "point_id": "prop_a3f9056b2377d245630d"
+      },
+      "displayed_relation_row_counts": {
+        "adjacent": 0,
+        "counter": 0,
+        "support": 3
+      },
+      "fact_count": 3,
+      "input_contract": {
+        "actor_scope_rule_sha256": "577fc7761dac40c43194b6336a6688d19ced3eef9828b7901cc6de6fd2863911",
+        "axis_id": "packaging_dispensing_usability",
+        "bounded_point": "The Instant Angel tube was experienced as difficult to moderate and prone to dispensing too much product.",
+        "candidate_pool_accounting_sha256": "fc1316cf45d002957cbc9de18e707e2eb45a3b963617ad3e138b32330148bbeb",
+        "decision_state_ledger_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "method_text_sha256": "cef49f92f070efbe903eb4e20fc7b0a18ff1ca1bc00b57297a8c28abf5e6d91e",
+        "point_actor_scope": {
+          "mode": "source_local_reports"
+        },
+        "point_brief_schema_version": "phase_a_evidence_point_brief_v4",
+        "point_id": "prop_a3f9056b2377d245630d",
+        "point_payload_raw_sha256": "4e5f5ab128cbd521a1efde92ea352c58bfbc2139719b712af9e899b4c4133e49",
+        "point_reader_policy_sha256": "4e655077aaecbcccbb02c0277522fac09dbb04dd8e0ef07490221d1eeaf10f3d",
+        "projection_mode": "direct_outcome",
+        "response_schema_sha256": "5472a7907a9edeaa77330f92b8df4831336f7f5773d636525dc9ba8688702587",
+        "source_lineage": {
+          "artifact_sha256": "bf73de175768659dd4906ef757ccb514054d971b145107b495bbeae15a678247",
+          "policy_lineage": {
+            "artifact_schema_version": "phase_a_evidence_selection_artifact_v3",
+            "quote_manifest_schema_version": "phase_a_evidence_quote_manifest_v10",
+            "selection_manifest_schema_version": "phase_a_evidence_selection_manifest_v1"
+          },
+          "policy_revision": "phase_a_evidence_quote_manifest_v10",
+          "quote_manifest_file_sha256": "f0b19826305b85f1a7182c8a1effdbaba256c311cb956c073360d6a033a224bf",
+          "quote_manifest_sha256": "c21671add3fbc6cdea06522a7de338d8300b4d5549f161201aa815d8b91471ce",
+          "selection_manifest_file_sha256": "f7f307eb47d8a7757a452915841583f1989e5d2fc3c42b26e48efe30a2904c05",
+          "selection_manifest_sha256": "9a1cf2b6f98d01a29e87c1aa310d7abece5b8e7a58f5085f86488a4b21a84c80"
+        },
+        "subject_identity_sha256": "a29ec7b4e8f363df08c5cec3b8b0fbe51a54ecbffb5cbec78b90cff3c1e8b0e1"
+      },
+      "point_actor_scope": {
+        "mode": "source_local_reports"
+      },
+      "point_id": "prop_a3f9056b2377d245630d",
+      "point_input_sha256": "6b76da0bf8936d1eb460677a03ac2a3ba83a5d75d3b342b733e6c9db27a81ec8",
+      "point_payload_file": "point_6b76da0bf8936d1eb460677a03ac2a3ba83a5d75d3b342b733e6c9db27a81ec8.jsonl",
+      "projection_mode": "direct_outcome",
+      "response_file": "response_6b76da0bf8936d1eb460677a03ac2a3ba83a5d75d3b342b733e6c9db27a81ec8.json",
+      "truth_origin_count": 3
+    },
+    {
+      "bounded_point": "Instant Angel's packaging was disliked or appraised as worse than packaging for similar creams.",
+      "brief_file": "brief_4be366650b8bac78181eb234ed3101d4b99f07f6b008ec2b48216ecba7277b66.json",
+      "candidate_pool_accounting": {
+        "bounded_point": "Instant Angel's packaging was disliked or appraised as worse than packaging for similar creams.",
+        "display_panel": {
+          "relation_row_counts": {
+            "adjacent": 0,
+            "counter": 0,
+            "support": 2
+          },
+          "scope": "selected_display_examples_not_the_full_candidate_pool",
+          "semantic_row_count": 2
+        },
+        "full_candidate_pool": {
+          "direct_relation_by_source_role": [
+            {
+              "evidence_item_count": 1,
+              "material_engagement_origin_count": 1,
+              "origin_count": 1,
+              "relation": "support",
+              "semantic_row_count": 1,
+              "source_role": "community_post"
+            },
+            {
+              "evidence_item_count": 1,
+              "material_engagement_origin_count": 1,
+              "origin_count": 1,
+              "relation": "support",
+              "semantic_row_count": 1,
+              "source_role": "retailer_review"
+            }
+          ],
+          "direct_relation_origin_overlap": {
+            "both": 0,
+            "counter_only": 0,
+            "support_only": 2
+          },
+          "evidence_item_count": 2,
+          "independence_posture_origin_counts": {
+            "credited": 2
+          },
+          "material_engagement_origin_count": 2,
+          "origin_count": 2,
+          "relation_counts": {
+            "adjacent": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "counter": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "exclude": {
+              "evidence_item_count": 0,
+              "material_engagement_origin_count": 0,
+              "origin_count": 0,
+              "semantic_row_count": 0
+            },
+            "support": {
+              "evidence_item_count": 2,
+              "material_engagement_origin_count": 2,
+              "origin_count": 2,
+              "semantic_row_count": 2
+            }
+          },
+          "semantic_row_count": 2
+        },
+        "point_id": "prop_b2f7c34e3d92bf574a0a"
+      },
+      "displayed_relation_row_counts": {
+        "adjacent": 0,
+        "counter": 0,
+        "support": 2
+      },
+      "fact_count": 2,
+      "input_contract": {
+        "actor_scope_rule_sha256": "577fc7761dac40c43194b6336a6688d19ced3eef9828b7901cc6de6fd2863911",
+        "axis_id": "packaging_dispensing_usability",
+        "bounded_point": "Instant Angel's packaging was disliked or appraised as worse than packaging for similar creams.",
+        "candidate_pool_accounting_sha256": "04f976259002df10ee6af49084614928fdc9ccfe19a09c23f807d0ead2db17f3",
+        "decision_state_ledger_sha256": "1f5562b884869e894a6dfdea5f4e71a7e03c1048bcb516b877c7cba62d7065a2",
+        "method_text_sha256": "cef49f92f070efbe903eb4e20fc7b0a18ff1ca1bc00b57297a8c28abf5e6d91e",
+        "point_actor_scope": {
+          "mode": "source_local_reports"
+        },
+        "point_brief_schema_version": "phase_a_evidence_point_brief_v4",
+        "point_id": "prop_b2f7c34e3d92bf574a0a",
+        "point_payload_raw_sha256": "9ac85f7cb10e0fb46238caff9ea2c6328ca8ed1f70a9e76884a177e22a9226d4",
+        "point_reader_policy_sha256": "4e655077aaecbcccbb02c0277522fac09dbb04dd8e0ef07490221d1eeaf10f3d",
+        "projection_mode": "decision_state",
+        "response_schema_sha256": "5472a7907a9edeaa77330f92b8df4831336f7f5773d636525dc9ba8688702587",
+        "source_lineage": {
+          "artifact_sha256": "0b1e15641c2254c1a503202fcd158a0283761095b7b24e3291968d78a68ef096",
+          "policy_lineage": {
+            "artifact_schema_version": "phase_a_evidence_selection_artifact_v3",
+            "quote_manifest_schema_version": "phase_a_evidence_quote_manifest_v10",
+            "selection_manifest_schema_version": "phase_a_evidence_selection_manifest_v1"
+          },
+          "policy_revision": "phase_a_evidence_quote_manifest_v10",
+          "quote_manifest_file_sha256": "e5c68a7332fc3b4730ae254e97b2293222b4f917e6f89c3b0efa908649f92138",
+          "quote_manifest_sha256": "cbfb1f7722594d7dcd0d7d7244f4906d6b25fc792a60ca4e40af0c0b8b5d9b1c",
+          "selection_manifest_file_sha256": "973f29a1a135fb6a747b4dff9677d51808c7dffcf8462addf07eba39dbce603f",
+          "selection_manifest_sha256": "b92c1f9a368f7de09a4a8de843af75ab8aec449c6f3ab01c7f2ef8006deaccc5"
+        },
+        "subject_identity_sha256": "a29ec7b4e8f363df08c5cec3b8b0fbe51a54ecbffb5cbec78b90cff3c1e8b0e1"
+      },
+      "point_actor_scope": {
+        "mode": "source_local_reports"
+      },
+      "point_id": "prop_b2f7c34e3d92bf574a0a",
+      "point_input_sha256": "4be366650b8bac78181eb234ed3101d4b99f07f6b008ec2b48216ecba7277b66",
+      "point_payload_file": "point_4be366650b8bac78181eb234ed3101d4b99f07f6b008ec2b48216ecba7277b66.jsonl",
+      "projection_mode": "decision_state",
+      "response_file": "response_4be366650b8bac78181eb234ed3101d4b99f07f6b008ec2b48216ecba7277b66.json",
+      "truth_origin_count": 2
+    }
+  ],
+  "rejected_point_receipts": [
+    {
+      "bounded_point": "The Instant Angel tube was reported as difficult to empty or dispense smoothly.",
+      "disposition": "rejected_after_independent_scope_confirmation",
+      "point_id": "prop_1095774f90765c399d6a",
+      "reason": "emptying and smooth dispensing are distinct packaging outcomes joined as alternatives",
+      "receipt_sha256": "afd2417cdaf9c913f6b37f8a1c7c7924a023793dd18918bc66e43f3923dd2810",
+      "resolution_kind": "validated_axis_frontier_disposition",
+      "schema_version": "phase_a_point_reader_rejected_receipt_v1",
+      "source_axis_pack_sha256": "2160fee7997e7ea14b7376d4ea2846664fdb5334d39437df2f49609d7a3abb76",
+      "source_resolution_receipt_sha256": "7fc0a9875207660eaef3d73d81e1a78b29bb252546526daad94cc11d4b601917"
+    }
+  ],
+  "schema_version": "phase_a_evidence_point_reader_run_manifest_v2",
+  "snapshot_sha256": "527123ad245b633879650b3f2834e6b8626b330bdb6be46b43ceda1e9de8c46d",
+  "source_binding": {
+    "source_axis_pack_sha256": "2160fee7997e7ea14b7376d4ea2846664fdb5334d39437df2f49609d7a3abb76",
+    "source_view_raw_sha256": "027ef49553af81f978e5f0847a39b14e0bdadeea6cdbd965a3aedb783989ee0a",
+    "source_view_sha256": "7ccf878bafeddf3f6c15fd99b2399775596297818016a861053241b7e1a6aec4"
+  },
+  "storage_contract": {
+    "lookup_rule": "join point_payload_file inside the supplied point store",
+    "point_store_root": "runtime_supplied",
+    "portable_identity_excludes": [
+      "absolute paths",
+      "mtimes",
+      "labels alone"
+    ]
+  },
+  "subject_identity": {
+    "company_id": "dieux-skin",
+    "cutoff": "unknown_in_historical_seal",
+    "product_id": "dieux-p03-sealed-portfolio",
+    "schema_version": "phase_a_point_reader_subject_identity_v1"
+  },
+  "subject_identity_sha256": "a29ec7b4e8f363df08c5cec3b8b0fbe51a54ecbffb5cbec78b90cff3c1e8b0e1"
+}

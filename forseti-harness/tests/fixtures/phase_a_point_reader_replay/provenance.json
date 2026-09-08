@@ -1,0 +1,142 @@
+{
+  "cases": [
+    {
+      "axis": "formula_consistency_and_change",
+      "captured_output": {
+        "bytes": 13497,
+        "path": "C:\\tmp\\forseti-blind-all-axis-20260907-7de2952f\\summer_fridays\\formula_consistency_and_change\\current-reader-output.json",
+        "sha256": "5427348adbad5cd55167eacc8d2c4a020f439a24308b1886e6c5662a8b2ffe35"
+      },
+      "company": "summer_fridays",
+      "expected_accepted_points": 1,
+      "expected_output_raw_sha256": "5427348adbad5cd55167eacc8d2c4a020f439a24308b1886e6c5662a8b2ffe35",
+      "expected_output_schema": "phase_a_evidence_point_reader_axis_output_v2",
+      "expected_rejected_points": 0,
+      "files": [
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-conformance-20260907-f6df59e7bb\\date-replay-correction\\summer_fridays\\axes\\formula_consistency_and_change\\a\\snapshot.json",
+          "relative_path": "snapshot.json",
+          "sha256": "57c41a9d93c5a476883360ebb5739e1150b2dd523abeb7f185367c315c270fe7"
+        },
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-conformance-20260907-f6df59e7bb\\date-replay-correction\\summer_fridays\\axes\\formula_consistency_and_change\\a\\point-store\\point_40d1f49979505d31d02e61eb0e93136737f65dd7bdd18bdc92d4202dc4b0043c.jsonl",
+          "relative_path": "points/point_40d1f49979505d31d02e61eb0e93136737f65dd7bdd18bdc92d4202dc4b0043c.jsonl",
+          "sha256": "792819b2ce54dbcc55c52dc8aaf1d5da304be2caafaf51d1766cfb8184dcf7b4"
+        },
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-all-axis-20260907-7de2952f\\summer_fridays\\formula_consistency_and_change\\responses\\response_40d1f49979505d31d02e61eb0e93136737f65dd7bdd18bdc92d4202dc4b0043c.json",
+          "relative_path": "responses/response_40d1f49979505d31d02e61eb0e93136737f65dd7bdd18bdc92d4202dc4b0043c.json",
+          "sha256": "1d45addefe127004e64385ef677fd0fbd6a126a4dca6474919c1ac32866b7f33"
+        }
+      ],
+      "snapshot_sha256": "82c4c8ded56c387a3b254f546ffea97bd38bd1ff355373f15f7fe076f096e2de"
+    },
+    {
+      "axis": "packaging_dispensing_usability",
+      "captured_output": {
+        "bytes": 220359,
+        "path": "C:\\tmp\\forseti-blind-all-axis-20260907-7de2952f\\dieux\\packaging_dispensing_usability\\current-reader-output.json",
+        "sha256": "9021ebd7fa10f7c67b680c76ca5b85fbf01250ac33306144b031750d13b9ee67"
+      },
+      "company": "dieux",
+      "expected_accepted_points": 8,
+      "expected_output_raw_sha256": "9021ebd7fa10f7c67b680c76ca5b85fbf01250ac33306144b031750d13b9ee67",
+      "expected_output_schema": "phase_a_evidence_point_reader_axis_output_v2",
+      "expected_rejected_points": 1,
+      "files": [
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-conformance-20260907-f6df59e7bb\\date-replay-correction\\dieux\\axes\\packaging_dispensing_usability\\a\\snapshot.json",
+          "relative_path": "snapshot.json",
+          "sha256": "f12fd657f2cd503be63ea5532f654ec3ee0e475fd4a84729a482f0e35ed96777"
+        },
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-conformance-20260907-f6df59e7bb\\date-replay-correction\\dieux\\axes\\packaging_dispensing_usability\\a\\point-store\\point_d3d20b0839062ffdf6fdf00176643968033bdb769b4e3f22ba035f2abf4e1b1a.jsonl",
+          "relative_path": "points/point_d3d20b0839062ffdf6fdf00176643968033bdb769b4e3f22ba035f2abf4e1b1a.jsonl",
+          "sha256": "33b4b94038e13b5c8284e9c16d7df05250b9f8f15279fbb7855d3b36ee910011"
+        },
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-all-axis-20260907-7de2952f\\dieux\\packaging_dispensing_usability\\responses\\response_d3d20b0839062ffdf6fdf00176643968033bdb769b4e3f22ba035f2abf4e1b1a.json",
+          "relative_path": "responses/response_d3d20b0839062ffdf6fdf00176643968033bdb769b4e3f22ba035f2abf4e1b1a.json",
+          "sha256": "3cece21357c680bf7d5907d53f196df433efc1ee23b3fe52dc0dcf16e0b91f06"
+        },
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-conformance-20260907-f6df59e7bb\\date-replay-correction\\dieux\\axes\\packaging_dispensing_usability\\a\\point-store\\point_60c451059feaccd536fe7868c8f70167f5761bbcae2498296b44e81b00be5c47.jsonl",
+          "relative_path": "points/point_60c451059feaccd536fe7868c8f70167f5761bbcae2498296b44e81b00be5c47.jsonl",
+          "sha256": "1c1734ecf6b78fc99cbf0197f628048324ade3252be9014f1d8cbfa18b35e603"
+        },
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-all-axis-20260907-7de2952f\\dieux\\packaging_dispensing_usability\\responses\\response_60c451059feaccd536fe7868c8f70167f5761bbcae2498296b44e81b00be5c47.json",
+          "relative_path": "responses/response_60c451059feaccd536fe7868c8f70167f5761bbcae2498296b44e81b00be5c47.json",
+          "sha256": "e0847fd4f3e377fd1e45451a6e28a89fab8ee9e07b8be6be4907dd49f015c2f1"
+        },
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-conformance-20260907-f6df59e7bb\\date-replay-correction\\dieux\\axes\\packaging_dispensing_usability\\a\\point-store\\point_3741c6fdfa374e5daabea1b393cecd73d508dcbab4cece2b0588fde80d2665fa.jsonl",
+          "relative_path": "points/point_3741c6fdfa374e5daabea1b393cecd73d508dcbab4cece2b0588fde80d2665fa.jsonl",
+          "sha256": "6e594a7c39b9d816201a5f5c45767137c498a433d2bd7aefa888a07f6bf96d49"
+        },
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-all-axis-20260907-7de2952f\\dieux\\packaging_dispensing_usability\\responses\\response_3741c6fdfa374e5daabea1b393cecd73d508dcbab4cece2b0588fde80d2665fa.json",
+          "relative_path": "responses/response_3741c6fdfa374e5daabea1b393cecd73d508dcbab4cece2b0588fde80d2665fa.json",
+          "sha256": "c1aed0cbde195b7ba57e491290c7966d7cb24bee6b44048053d69c3f1301916e"
+        },
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-conformance-20260907-f6df59e7bb\\date-replay-correction\\dieux\\axes\\packaging_dispensing_usability\\a\\point-store\\point_a11c925e659a6877a7cbe0c90c007976a120cf4bd796f7142a14e902ebeee0b7.jsonl",
+          "relative_path": "points/point_a11c925e659a6877a7cbe0c90c007976a120cf4bd796f7142a14e902ebeee0b7.jsonl",
+          "sha256": "9d03823edd2a7f3ccf8fb8d998bb77ecee7b9991f3b934da0bbcae37f6973b19"
+        },
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-all-axis-20260907-7de2952f\\dieux\\packaging_dispensing_usability\\responses\\response_a11c925e659a6877a7cbe0c90c007976a120cf4bd796f7142a14e902ebeee0b7.json",
+          "relative_path": "responses/response_a11c925e659a6877a7cbe0c90c007976a120cf4bd796f7142a14e902ebeee0b7.json",
+          "sha256": "bf7408cabe5bb82abe0f80f02d2c9160b6c0aa1790d93638a8cc724202224593"
+        },
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-conformance-20260907-f6df59e7bb\\date-replay-correction\\dieux\\axes\\packaging_dispensing_usability\\a\\point-store\\point_2369074702439a081bf407c99e7fd31d2294bfbd6e2c2e30c90afde50035bf55.jsonl",
+          "relative_path": "points/point_2369074702439a081bf407c99e7fd31d2294bfbd6e2c2e30c90afde50035bf55.jsonl",
+          "sha256": "2490a4c39e15e64e852c3613972b8d0716a1c8af1ef23e5ac44c88f69b772917"
+        },
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-all-axis-20260907-7de2952f\\dieux\\packaging_dispensing_usability\\responses\\response_2369074702439a081bf407c99e7fd31d2294bfbd6e2c2e30c90afde50035bf55.json",
+          "relative_path": "responses/response_2369074702439a081bf407c99e7fd31d2294bfbd6e2c2e30c90afde50035bf55.json",
+          "sha256": "0c8bb4005830faf155e6621eafbc882552c6ac4f5ca98aa0b4b313941206b050"
+        },
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-conformance-20260907-f6df59e7bb\\date-replay-correction\\dieux\\axes\\packaging_dispensing_usability\\a\\point-store\\point_90bb02a5daf26132074337886eb123756689553b872b518ecb8edf337fcb7679.jsonl",
+          "relative_path": "points/point_90bb02a5daf26132074337886eb123756689553b872b518ecb8edf337fcb7679.jsonl",
+          "sha256": "4d004e5564dde46789aa932bd0cd1107fa18a49d4b07a568f369275e80c8fc6c"
+        },
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-all-axis-20260907-7de2952f\\dieux\\packaging_dispensing_usability\\responses\\response_90bb02a5daf26132074337886eb123756689553b872b518ecb8edf337fcb7679.json",
+          "relative_path": "responses/response_90bb02a5daf26132074337886eb123756689553b872b518ecb8edf337fcb7679.json",
+          "sha256": "148aefe7528219de4eee411fac558998131f931d426956405ab4465bafc22353"
+        },
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-conformance-20260907-f6df59e7bb\\date-replay-correction\\dieux\\axes\\packaging_dispensing_usability\\a\\point-store\\point_6b76da0bf8936d1eb460677a03ac2a3ba83a5d75d3b342b733e6c9db27a81ec8.jsonl",
+          "relative_path": "points/point_6b76da0bf8936d1eb460677a03ac2a3ba83a5d75d3b342b733e6c9db27a81ec8.jsonl",
+          "sha256": "4e5f5ab128cbd521a1efde92ea352c58bfbc2139719b712af9e899b4c4133e49"
+        },
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-all-axis-20260907-7de2952f\\dieux\\packaging_dispensing_usability\\responses\\response_6b76da0bf8936d1eb460677a03ac2a3ba83a5d75d3b342b733e6c9db27a81ec8.json",
+          "relative_path": "responses/response_6b76da0bf8936d1eb460677a03ac2a3ba83a5d75d3b342b733e6c9db27a81ec8.json",
+          "sha256": "02c35fd2698a70642caa4988870a7382c5eec6238372edf88c4274d98a7a82a3"
+        },
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-conformance-20260907-f6df59e7bb\\date-replay-correction\\dieux\\axes\\packaging_dispensing_usability\\a\\point-store\\point_4be366650b8bac78181eb234ed3101d4b99f07f6b008ec2b48216ecba7277b66.jsonl",
+          "relative_path": "points/point_4be366650b8bac78181eb234ed3101d4b99f07f6b008ec2b48216ecba7277b66.jsonl",
+          "sha256": "9ac85f7cb10e0fb46238caff9ea2c6328ca8ed1f70a9e76884a177e22a9226d4"
+        },
+        {
+          "captured_source": "C:\\tmp\\forseti-blind-all-axis-20260907-7de2952f\\dieux\\packaging_dispensing_usability\\responses\\response_4be366650b8bac78181eb234ed3101d4b99f07f6b008ec2b48216ecba7277b66.json",
+          "relative_path": "responses/response_4be366650b8bac78181eb234ed3101d4b99f07f6b008ec2b48216ecba7277b66.json",
+          "sha256": "31e13260e011eaecad9de3c67c59bdb6ea2c457fe6d7bbda5d726661ab61be32"
+        }
+      ],
+      "snapshot_sha256": "527123ad245b633879650b3f2834e6b8626b330bdb6be46b43ceda1e9de8c46d"
+    }
+  ],
+  "freeze": {
+    "bytes": 52392,
+    "path": "C:\\tmp\\forseti-blind-all-axis-20260907-7de2952f\\current-freeze.json",
+    "sha256": "3ff44c1c2fe1329ec3805d07bdbb8f280ca8a17a018cabeefdad135e7ceeb11e"
+  },
+  "scope": "Exact captured pre-fix point-reader inputs and responses; byte-replay and saved-brief reuse regression, not semantic gold or full corpus replay."
+}

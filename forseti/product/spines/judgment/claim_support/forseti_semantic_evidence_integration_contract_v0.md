@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v118
-effective_date: 2026-09-06
+version: v122
+effective_date: 2026-09-08
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v118
+# Semantic Evidence Integration Contract v122
 
 ## Purpose
 
@@ -41,7 +41,17 @@ embedded for provenance. Current selection consumers likewise keep missing
 publication times unavailable instead of reopening those locators. Historical
 unmaterialized sources without that stored hash retain their locator
 verification, and historical bundles without a materialized-source identity
-retain their existing metadata fallback. Consolidation's output is the complete
+retain their existing metadata fallback. Selection manifests v2 and later and
+no-frontier axis manifests v3 and later bind this portable-date behavior.
+Earlier selection v1 and no-frontier manifest v2 straddle the boundary: replay
+first derives the portable inventory, then may use the prior hash-verified
+publication-time fallback only if the complete original inventory hash matches.
+This preserves both historical date behaviors without rewriting any source,
+manifest, candidate, or reader output. Missing or changed legacy source bytes
+cannot become a successful replay; new materialized manifests never use this
+fallback. Historical replay may therefore still depend on its pinned Collection
+artifacts, but does not rerun Collection or establish current-method execution.
+Consolidation's output is the complete
 evidence retrieval surface consumed by the acquisition seal and later Deliver
 work. This stage boundary does not create or rename a globally numbered phase;
 historical Phase A, Phase B, Turn B, Understanding, and Deliver vocabulary
@@ -136,8 +146,8 @@ shape requires one exact stored subject/comparator orientation; retain opposite
 orientations separately without relabeling child identity. This is a transport
 constraint, not a claim that the meanings differ or represent separate events.
 
-Current authoring uses run v10 / integration method v12 / row-verification
-method v11. `CURRENT_AXES` alone supplies valid output axis IDs. Category names
+Current authoring uses run v11 / integration method v13 / row-verification
+method v12. `CURRENT_AXES` alone supplies valid output axis IDs. Category names
 in the semantic examples below describe meaning, not fixed identifiers or
 mandatory assignments across companies. The agent selects supplied IDs by the
 unit's meaning and the supplied labels; it never imports Summer Fridays IDs
@@ -147,6 +157,13 @@ Code still rejects foreign IDs; it does not translate categories or infer fit.
 Earlier run/method identities and their prompt bytes remain historical replay,
 not current cross-company authoring. No frozen output is rewritten or silently
 promoted into the new generation.
+
+Method v13 teaches the existing normalization stage to preserve source-attributed
+outcomes, forecasts, earlier interest, and distinct action objects without adding
+an analyst's unstated threshold. Verifier v12 checks those same boundaries in
+the whole row. Neither stage infers a purchase from use or turns resuming use
+into a merchandise return. Prior method/verifier texts retain their original
+identities; the new generation adds instruction bytes, not another model stage.
 
 Upstream `product_candidates` are hypotheses, not product truth. For the
 current method, every admitted item also carries source-pinned product context
@@ -370,7 +387,7 @@ missing, duplicate, foreign, and mismatched replacement identities fail.
 Application follows source order, while the actual response order remains in
 raw-response hash lineage. Order tolerance alone does not prove the chosen
 meaning correct or change method or stage identity.
-Current keyed-v3 methods v10, v11 and v12 emit row-review response v2 for both
+Current keyed-v3 methods v10 through v13 emit row-review response v2 for both
 verification and selective repair: one required object key per assigned evidence
 ID, with replacements constrained to that same ID. The public preparation
 runners persist each prompt's `.schema.json`; provider execution must use it.
@@ -815,6 +832,18 @@ is omitted from row verification, targeted audit, and reconciliation prompts,
 which retain their own response shapes. This removes contradictory response
 instructions without changing semantic policy, adding a provider call, or
 rewriting historical row-verifier v8 text.
+
+Owner-authorized replay correction (2026-09-07): a completed row-verification
+manifest may retain the exact verifier-v8 version and policy hash where the
+bundle's current verifier is v9. V9 changes transport instructions, not semantic
+policy. Replay preserves the original manifest, compilation, and output bytes;
+it does not certify a v9 execution. All active-row and response-lineage checks
+still apply. A row-repair manifest may carry the frozen v8 identity only when
+its parent row-verification manifest carries it; a v9 verification still
+requires a v9 repair, while a v9 repair authored over a frozen v8 verification
+stays valid. New verification continues to author v9; integration methods v11
+through v13 still require their own v10 through v12 verifiers. Older verifier policies,
+unknown hashes, or a version/hash substitution remain rejected.
 
 Contract v78 adds `phase_a_semantic_integration_run_v9` and integration method
 v11, retaining keyed transport v3, required subjects, and row-owned posture
@@ -1402,6 +1431,13 @@ or independently writable evidence authority. Exact historical agreement proves
 mechanical reuse eligibility, not semantic truth; bounded review retains the
 right to challenge an old judgment.
 
+New Decision State reconciliation manifests use v2 to select the clarified
+action/time instructions: reported current use is not proof of repurchase;
+earlier interest survives later trial; returning merchandise differs from
+resuming use. Historical v1 manifests remain valid and retain their original
+prompt when batched. This version selects wording only: the adjudication schema,
+reuse rules, coverage checks and consolidation consumer stay unchanged.
+
 When the unresolved prompt exceeds a provider or operator-selected character
 ceiling, `prepare-decision-state-adjudication-batches` greedily packs whole
 evidence groups into deterministic bounded prompts. It never splits one
@@ -1412,6 +1448,19 @@ response per batch, exact batch-local identity coverage, and exact combined
 coverage at the unchanged full reconciliation boundary before finalization.
 The ceiling is an execution control, not an evidence or semantic rule; one
 evidence group that cannot fit fails visibly instead of being clipped.
+
+Saved point briefs and assembled reader outputs enforce the compiler's same
+representative-selection rules: at least one unique placement handle, and
+coverage of displayed support and counter relations when present. Validation
+then recompiles the brief from that selection and requires the saved brief to
+equal it field for field, so every other compiler-owned field, including the
+reader's non-claim boundaries, is restated by the compiler rather than trusted
+from storage. Recomputing brief and axis hashes therefore cannot make an empty,
+duplicated, or counter-omitting selection valid, nor can it add, drop, or
+rewrite a compiler-owned field. The interpretation and valid representative
+choices, including their order, are reused from the saved brief rather than
+compared with the original response. This validation correction leaves
+reader inputs, schemas, method text, and valid output bytes unchanged.
 
 The current point reader projects the exact meanings named by a displayed row's
 `relation_semantic_unit_refs`. A selected row's primary meaning and quote remain
@@ -1798,7 +1847,7 @@ equivalent and how conditions, negation, and uncertainty should be described.
 Structural completeness is therefore proven; perfect open-world semantic
 recall is not.
 
-Current method-v12 reconciliation uses decision-only response v3. The model
+Current method-v13 reconciliation uses decision-only response v3. The model
 authors bounded nodes, relations, axes, uncertainty and terminal metadata. One
 required keyed decision per candidate names one or more node attachments or an
 allowed unmerged reason, never both. One required keyed assignment per original
@@ -1847,8 +1896,8 @@ responses share the existing validator and downstream node-compilation-v2
 shape, without replacing raw provider artifacts. No normal-path semantic provider
 stage is added. Mechanical assembly does not prove that chosen meanings belong together.
 
-Normal method-v12 response-v3 preparation now selects
-`exact_identity_namespaces_v2` at the public `prepare-reconciliation-level`
+Normal method-v12/v13 response-v3 preparation now selects
+`exact_identity_namespaces_v4` at the public `prepare-reconciliation-level`
 entrypoint. The separately selected `authoring_revision` is not a response or
 stage schema revision. Each exact tuple of subject, comparator and version
 **sets, with their roles preserved**, gets a code-derived opaque prefix. Every
@@ -1859,29 +1908,72 @@ into these handles. Matching prefixes establish compatibility, not semantic
 warrant, actual product identity truth, or useful consolidation.
 
 This normal-request-only constraint applies at every reconciliation level and
-mode. V2 also states the existing native repeated-leaf rule before generation:
+mode. V2 introduced the existing native repeated-leaf rule before generation:
 one original semantic leaf may enter a node through only one attached child.
 Fresh V2 stages cap a batch at 96 candidates as well as the existing prompt-byte
 limit. The cap bounds output and connected-repair scope; it does not choose a
 meaning, truncate context, weaken the native consumer, or promise provider
-success. New stage packing includes the instruction bytes; immutable resumed
+success. V3 presents exact shared-leaf groups instead of asking the model to
+reconstruct them. V4 retains those groups and adds the shared supported-meaning
+guidance described below. New stage packing includes the instruction bytes; immutable resumed
 stages retain their membership and fail visibly if whitespace compaction cannot
 fit the complete prompt. Native identity checks remain unchanged for all
 relations. The restriction removes an incidental signal previously carried by
 attempted incompatible merges; equal upstream-discrepancy discovery sensitivity
 is not claimed. It adds request bytes, not a provider call or a new review stage.
 
-Use `--authoring-revision exact_identity_namespaces_v1` to reproduce the prior
+Use `--authoring-revision exact_identity_namespaces_v1`, `exact_identity_namespaces_v2`,
+or `exact_identity_namespaces_v3` to reproduce the corresponding prior
 namespaced normal requests, or `--authoring-revision legacy` to reproduce the
 older unrestricted normal requests.
 The low-level Python preparation APIs retain their historical default for replay;
-current callers explicitly select `RECONCILIATION_AUTHORING_IDENTITY_V2`.
+current callers explicitly select `RECONCILIATION_AUTHORING_IDENTITY_V4`.
+V4 uses its role-specific shared formation instruction once; v13's explicit
+prior authoring revisions retain their original full-method preamble.
 Explicit response-v2 and older methods retain historical public defaults.
 Missing-definition and local-repair requests use the unchanged historical
 renderer/schema and can preserve existing opaque keys. Accepted work keeps its
 actual original prompt, schema, attempt and correction receipts; newly rendered
 unused requests are never substituted as its provenance. Neither namespace
 compliance nor native acceptance proves source-supported meaning preservation.
+
+Current normal authoring and selection consume the same supported-meaning
+standard from `judgment/claim_meaning.py`. Claim formation chooses a useful
+shared assertion without introducing an analyst's stronger status label or
+threshold. Selection interprets the already-bound claim through ordinary
+paraphrase and context-supported entailment; it cannot broaden the claim to
+admit evidence. A missing required qualifier is insufficient support, not by
+itself an opposing report. Source-authored causal attribution may support a
+reported-experience claim while the analyst's causal ceiling remains intact.
+An evidentiary limit ("does not establish X") is not a source fact asserting
+that X did not happen. Evaluate a report at its stated time; later action does
+not erase an earlier reported state unless the claim requires its persistence.
+Actual identity, condition, time, intensity, uncertainty and action-state
+differences remain material. This applies the owning claim-support contract;
+it adds no lexical semantic classifier, evidence filter or provider stage.
+
+A row whose own relevant precondition never arose for its speaker does not
+report an incompatible outcome. The model distinguishes that absence of an
+occasion from actual counterevidence. Ref-selection rules constrain which
+stored meanings may be cited, without overriding their context-supported
+interpretation or donating another meaning's unstated facts.
+
+Selection manifest v3 binds this guidance in new first-pass and confirmation
+requests and in adjudication reuse eligibility. Confirmation first states one meaning criterion in the
+existing `point_scope_reason` before applying it across rows, without adding
+a field or provider stage. Quote manifests also carry
+`claim_meaning_policy: supported_claim_meaning_v1` for the selected-row
+confirmation route. Selection v1/v2 and explicit prior reconciliation authoring
+revisions keep their original prompts and adjudication basis. New instructions
+do not reinterpret frozen responses or establish semantic correctness merely
+because a response passes structural validation.
+
+The current development revision updates the v3 policy basis, so prior v3
+adjudications under different instruction bytes require a fresh adjudication;
+stored prompts and responses remain evidence of their actual attempt. Historical
+v1/v2 replay is unchanged. Each confirmation batch states its own criterion.
+The combined response retains the first batch's reason, while attempt records
+preserve all reasons; there is no cross-batch semantic consistency proof.
 
 Current response-v3 generation requires a nonempty node list when any assigned
 candidate must remain a finding under the existing retention rule. This prevents
@@ -2227,7 +2319,7 @@ Current-route operations are:
     method and exact method hash, so this is explicit method comparison rather
     than fallback. It makes no model call and cannot authorize a corpus run.
     Supported targets are historical methods v5/v6 and the production-owned
-    `SEMANTIC_METHODS_V7_PLUS` set (currently v7-v11). Every target in that set
+    `SEMANTIC_METHODS_V7_PLUS` set (currently v7-v13). Every target in that set
     requires a provenance-bound row-verified compilation for both primary and
     configured cold-repeat evaluation. A new keyed response transport does not
     waive verification; historical v5/v6 replay behavior remains unchanged.

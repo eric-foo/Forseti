@@ -53,17 +53,25 @@ failure. The public preparation runner verifies the source's stored content
 hash without reopening its provenance locators. Current selection consumers
 also keep missing publication times unavailable rather than reopening those
 Collection paths. Historical unmaterialized inputs and bundles without a
-materialized-source identity keep their existing locator behavior.
+materialized-source identity keep their existing locator behavior. New selection
+manifest v2 and no-frontier axis manifest v3 bind the portable behavior.
+Historical selection v1 and no-frontier manifest v2 replay either pre-existing
+date projection only against their complete original inventory hash; the legacy
+projection verifies its source-artifact bytes. Never restamp a frozen inventory
+to bypass a date mismatch. Contract v119 owns this compatibility boundary.
 This is a conceptual and completion boundary between acquisition and Deliver,
 not a new globally numbered phase: historical Phase A, Phase B, Turn B,
 Understanding, and Deliver vocabulary is not renumbered or migrated.
 
-For new cross-company authoring, use `phase_a_semantic_integration_run_v10`
-(integration method v12, verifier v11). The supplied `CURRENT_AXES` inventory
+For new cross-company authoring, use `phase_a_semantic_integration_run_v11`
+(integration method v13, verifier v12). The supplied `CURRENT_AXES` inventory
 owns output IDs; shared examples describe concepts, never another company's
 required IDs. Preserve a supported meaning even when it needs an emerging-axis
 label instead of an existing axis. See the semantic-integration contract v81
-for the owning rule. Historical run v9 / method v11 and earlier artifacts keep
+for the owning rule. Contract v122 adds meaning-boundary guidance to the existing
+producer and verifier and versions new Decision State prompts as manifest v2;
+old v1 manifests retain their original batching prompts. Historical run v10 /
+method v12 and earlier artifacts keep
 their original identity and replay; do not edit frozen outputs or relabel old
 responses as a new-method proof. This correction does not establish the cause
 of Dieux's provider timeout. All new model attempts use `high` under the
@@ -88,8 +96,16 @@ Application preserves source order and raw response hashes preserve the actual
 answer order. Contract v82 owns this boundary; it changes no semantic prompt or
 stage identity and does not make a structurally valid answer semantically right.
 
+Frozen verifier-v8 compilations replay unchanged where the current verifier is
+v9, whose change was response transport only. New verification still uses v9;
+methods v11/v12/v13 retain their stricter verifier pairing. The semantic-integration
+contract's v77 replay clarification owns the exact version/hash acceptance and
+unchanged active-row/lineage checks. Replay does not establish current-method
+execution or semantic truth and requires no provider re-verification merely to
+change a version label.
+
 The existing calibration entry point follows the production-owned
-`SEMANTIC_METHODS_V7_PLUS` set, including current method v12, rather than a
+`SEMANTIC_METHODS_V7_PLUS` set, including current method v13, rather than a
 separate historical allowlist. Primary and cold-repeat evaluation both require
 their own exact row-verified compilation for those methods. Contract v79 owns
 this compatibility correction; it neither changes semantic prompts nor makes
@@ -429,23 +445,27 @@ Native consumers reject missing, foreign,
 duplicate, orphan or prohibited assignments, and incompatible identities.
 Structural exactness does not establish semantic warrant.
 Normal method-v12 response-v3 requests at `prepare-reconciliation-level` select
-`exact_identity_namespaces_v2`: each exact subject/comparator/version set tuple
+`exact_identity_namespaces_v4`: each exact subject/comparator/version set tuple
 gets an opaque prefix and each candidate may attach only to keys in its own
 class. Compatible evidence may share any number of model-authored keys; matching
 identity does not justify merging meanings. The same rule applies at later
-levels and in convergence. V2 also states the native one-leaf/one-child-path
-rule and caps fresh current batches at 96 candidates so output and connected
+levels and in convergence. The native one-leaf/one-child-path rule is exposed
+through exact shared-leaf groups, and fresh current batches cap at 96 candidates so output and connected
 repair scope remain bounded without truncation. It adds request bytes, not
-another provider stage.
+another provider stage. V4 adds the shared supported-meaning standard: form a
+useful assertion each support establishes without inventing a stronger status
+label or threshold. Current selection manifest v3 applies that standard when
+interpreting the fixed claim; it does not broaden the claim or relax source facts.
 New packing includes those bytes; resumed stages keep their frozen membership
 and fail without truncation when they cannot fit.
-Use `--authoring-revision exact_identity_namespaces_v1` for prior namespaced
+Use `--authoring-revision exact_identity_namespaces_v1`, `exact_identity_namespaces_v2`,
+or `exact_identity_namespaces_v3` for their respective prior namespaced
 replay and `--authoring-revision legacy` for older normal prompt/schema replay;
-low-level Python callers select `RECONCILIATION_AUTHORING_IDENTITY_V2` explicitly
+low-level Python callers select `RECONCILIATION_AUTHORING_IDENTITY_V4` explicitly
 for current generation. Explicit response-v2 and older-method public defaults,
 missing-definition requests and local repairs keep their historical behavior.
 For a verified method-v7 continuation, explicitly request response v3 on a fresh
-stage to use that same decision compiler, source-role guidance and identity-v2
+stage to use that same decision compiler, source-role guidance and identity-v4
 packing. Preserve the method-v7 input identity and historical attempts. This
 removes exact source copying from the model's work without weakening claim-kind
 competence or pretending that a new prompt was used for an old answer.
@@ -1187,7 +1207,7 @@ because no accepted point exists to route.
 When an axis has nonempty axis-tagged evidence but no admitted frontier point,
 do not treat it as empty, invent a bounded point, or assign generic
 support/counter relations. Materialize
-`phase_a_evidence_axis_pack_manifest_v2` with
+`phase_a_evidence_axis_pack_manifest_v3` with
 `materialize-no-frontier-axis-manifest`, then build and validate
 `phase_a_evidence_axis_pack_v2` through the normal axis-pack commands. The
 manifest pins the packet, bundle, frontier, exact semantic-unit membership, and
@@ -1731,7 +1751,13 @@ identity, source venue/role/surface, date, native engagement, and relation. For
 Decision State it also attaches the complete exact ledger, including every
 state kind, stage, direction, object, quantity, condition, context-only row,
 and awkward companion state. A coherently rehashed omission or cross-point
-transfer therefore fails at the consumer boundary.
+transfer therefore fails at the consumer boundary. Loading a saved brief or
+axis output also reuses the compiler's nonempty, unique representative-handle
+selection and displayed support/counter coverage checks, then requires the
+saved brief to equal the brief that recompilation produces, so compiler-owned
+fields are derived again; recomputed hashes do not waive those rules. The
+interpretation and valid representative choices, including their order, are
+reused from the saved brief rather than compared with the original response.
 
 Finalization harvests every valid response or reusable brief even when another
 point is missing. It then fails visibly and emits no axis output until every
