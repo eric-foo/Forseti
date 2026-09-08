@@ -534,7 +534,12 @@ topic, or uses that addition to explain unproven saturation, use the existing
 answer before and after considering it, cite the relevant evidence, and explain
 why the difference changes what can responsibly be concluded or done about the
 commissioned question. Naming a new mechanism, condition, contradiction, or
-other allowed kind alone does not establish that effect.
+other allowed kind alone does not establish that effect. Keep the before/after
+comparison at the commissioned question's scope: do not manufacture a change
+by narrowing it to one newly reported event, consequence, or named destination.
+Equally, do not hide a consequential new pattern inside a broad answer such as
+"preferences vary." Evidence is assessed at its exact claim scope; materiality
+is assessed by what that supported claim changes in the commissioned answer.
 
 Compare support and opposition for the same bounded proposition, considering
 source fit, independence and duplication, engagement in its native context,
@@ -543,9 +548,19 @@ outvote a specific consequential failure; likes are not independent customer
 experiences. Ordinary corroboration, a useful detail, or an isolated exception
 that does not change the responsible answer is retained without a stopping
 reset. No fixed vote, engagement, or source-count threshold decides materiality.
-An exceptionally direct observation can establish a consequential existence or
-risk finding, never its prevalence; repeated reports can reveal an important
-condition without overturning the answer for other conditions.
+Apply the claim-support contract's existing postures to that comparison. For
+an optics question, meaningful claim-specific audience response or independently
+recurring perceptions can change the supported public narrative even when the
+underlying product allegation is unverified. Neither proves a physical defect,
+causation, or population prevalence. Engagement on a parent post does not
+transfer to a particular comment or allegation without evidence of endorsement.
+A detailed individual report remains a report; vividness, specificity, or a
+stated consequence does not make it a directly verified product fact or a
+resonant audience finding. A competent direct trace (for example a dated
+published price or policy) can establish the bounded fact it exposes without
+engagement or repetition, but resets stopping only if that fact changes the
+commissioned answer. Repeated reports can reveal an important condition without
+overturning the answer for other conditions.
 
 A credible unresolved concern may justify a discriminating check before it
 establishes a material addition. First use relevant evidence already held; if
@@ -561,7 +576,13 @@ disposition answers or meaningfully bounds them, including a checked conclusion
 that they are non-material, or records an honest blocker or gap. Failure to
 demonstrate a material addition alone does not dispose of an unresolved check;
 any unresolved material finding or blocking gap still prevents a passing seal.
-Resets remain limited to the affected and justified adjacent topics.
+Carry a checked non-material disposition into collection, closure, and reporting;
+absent new evidence that changes that disposition, do not revive the same concern
+as an acquisition blocker. A processing generation or additional usable row does
+not itself restart stopping. Distinguish a changed conclusion from remaining
+required coverage, stopping verification, and synthesis or review work; completing
+one does not imply the others are complete. Resets remain limited to the affected
+and justified adjacent topics.
 
 Do not perform final semantic adjudication while acquisition is still capable
 of changing the corpus. Use the provisional axis inventory and a lightweight

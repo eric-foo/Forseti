@@ -862,12 +862,14 @@ decision through a typed new axis, tier, mechanism, segment/condition, behavior
 consequence, competitor destination, contradiction, sampling-risk, or
 competitive-action addition; reopen only affected and justified adjacent axes.
 Apply the authority's **Materiality decision effect (all source families)**
-rule here: show the supported answer before and after, weigh relevant existing
-evidence, and explain why the difference changes the responsible conclusion or
-action. Naming an allowed kind alone does not establish that effect. Apply the
-same test in saturation reporting; an unresolved check does not automatically
-reset stopping, but still needs an evidence-supported disposition under the
-existing seal requirements.
+rule here: compare the supported answer before and after at the commissioned
+question's scope, using the existing claim-support postures. Neither a new named
+destination or individual consequence nor a new processing generation alone
+establishes materiality. Preserve meaningful optics changes without treating resonance as
+product proof. Apply the same rule in saturation reporting: carry checked
+non-material dispositions forward, distinguish remaining coverage, stopping
+verification, and synthesis/review work, and keep genuinely unresolved checks
+visible under the existing seal requirements.
 
 For comparator candidates, treat SERP as the map and the fan-out lanes as the
 evidence acquisition. Before core fan-out, require the authority's two-origin,
