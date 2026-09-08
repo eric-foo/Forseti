@@ -865,11 +865,12 @@ Apply the authority's **Materiality decision effect (all source families)**
 rule here: compare the supported answer before and after at the commissioned
 question's scope, using the existing claim-support postures. Neither a new named
 destination or individual consequence nor a new processing generation alone
-establishes materiality. Preserve meaningful optics changes without treating resonance as
-product proof. Apply the same rule in saturation reporting: carry checked
-non-material dispositions forward, distinguish remaining coverage, stopping
-verification, and synthesis/review work, and keep genuinely unresolved checks
-visible under the existing seal requirements.
+establishes materiality. Preserve meaningful optics changes without treating
+resonance as product proof, and do not transfer parent-post engagement to a
+specific comment or allegation without evidence of endorsement. Apply the same
+rule in saturation reporting: carry checked non-material dispositions forward,
+distinguish remaining coverage, stopping verification, and synthesis/review work,
+and keep genuinely unresolved checks visible under the existing seal requirements.
 
 For comparator candidates, treat SERP as the map and the fan-out lanes as the
 evidence acquisition. Before core fan-out, require the authority's two-origin,

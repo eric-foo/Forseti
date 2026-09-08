@@ -548,19 +548,20 @@ outvote a specific consequential failure; likes are not independent customer
 experiences. Ordinary corroboration, a useful detail, or an isolated exception
 that does not change the responsible answer is retained without a stopping
 reset. No fixed vote, engagement, or source-count threshold decides materiality.
-Apply the claim-support contract's existing postures to that comparison. For
-an optics question, meaningful claim-specific audience response or independently
-recurring perceptions can change the supported public narrative even when the
-underlying product allegation is unverified. Neither proves a physical defect,
-causation, or population prevalence. Engagement on a parent post does not
-transfer to a particular comment or allegation without evidence of endorsement.
-A detailed individual report remains a report; vividness, specificity, or a
-stated consequence does not make it a directly verified product fact or a
-resonant audience finding. A competent direct trace (for example a dated
-published price or policy) can establish the bounded fact it exposes without
-engagement or repetition, but resets stopping only if that fact changes the
-commissioned answer. Repeated reports can reveal an important condition without
-overturning the answer for other conditions.
+Apply the existing postures in the claim-support contract at
+`forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`
+to that comparison. For an optics question, meaningful claim-specific audience
+response or independently recurring perceptions can change the supported public
+narrative even when the underlying product allegation is unverified. Neither
+proves a physical defect, causation, or population prevalence. Engagement on a
+parent post does not transfer to a particular comment or allegation without
+evidence of endorsement. A detailed individual report remains a report;
+vividness, specificity, or a stated consequence does not make it a directly
+verified product fact or a resonant audience finding. A competent direct trace
+(for example a dated published price or policy) can establish the bounded fact
+it exposes without engagement or repetition, but resets stopping only if that
+fact changes the commissioned answer. Repeated reports can reveal an important
+condition without overturning the answer for other conditions.
 
 A credible unresolved concern may justify a discriminating check before it
 establishes a material addition. First use relevant evidence already held; if

@@ -52,8 +52,9 @@ subject product or entity
 
 This precise evidence scope does not redefine the commissioned question for a
 materiality judgment. A newly supported individual event or named destination
-may enrich the record without changing that answer; apply the collection
-materiality rule below before using it to reopen work.
+may enrich the record without changing that answer; apply **Materiality decision
+effect (all source families)**, referenced below, before using it to reopen
+work.
 
 Two items mentioning the same broad axis are not automatically corroborating.
 A review about an older formula does not establish the current formula. A claim
