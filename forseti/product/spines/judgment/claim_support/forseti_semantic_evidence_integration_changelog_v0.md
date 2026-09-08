@@ -24,6 +24,17 @@ contract or its linked owning source. This history creates no new review step.
 
 ## Changelog
 
+- `v123` / 2026-09-08 — current run v12 binds integration method v14 and
+  verifier v13; public normal authoring selects v5. Shared contextual guidance
+  replaces tense-led or positive-predicate interpretation with whole-account,
+  claim-specific judgment. Selection v4 includes original row-owned bodies in
+  existing confirmations; current selected quote manifests bind the bodies for
+  portable confirmation. Historical selection v1/v2/v3, policy v1, methods and
+  authoring prompts remain unchanged. No deterministic meaning classifier or
+  provider stage is added. The new evaluation freezes owner-corrected judgments
+  before fresh paired attempts; historical oracles and scores remain evidence
+  of their original standard, not silently revised results.
+
 - `v122` / 2026-09-08 — reconciled producer prevention with versioned shared
   claim interpretation. Current run v11 binds integration method v13 and
   verifier v12; public normal reconciliation retains authoring v4 without a
