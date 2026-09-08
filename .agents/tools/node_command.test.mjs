@@ -136,7 +136,7 @@ test('an awaited run keeps its required deadline; only an inspectable start may 
 });
 
 
-test('healthy work survives review checkpoints with one process and no hard deadline', async t => {
+test('healthy work survives review checkpoints with one process and no hard deadline', { timeout: 15000 }, async t => {
   const command = startCommand(process.execPath, ['-e',
     'const tick = setInterval(() => process.stdout.write("."), 100); setTimeout(() => { clearInterval(tick); process.stdout.write("done"); }, 1400)'],
     { cwd: process.cwd() });
@@ -160,7 +160,7 @@ test('healthy work survives review checkpoints with one process and no hard dead
   assert.equal(command.inspect().interrupted, false);
 });
 
-test('a quiet checkpoint is not a deadline or a failure verdict', async t => {
+test('a quiet checkpoint is not a deadline or a failure verdict', { timeout: 15000 }, async t => {
   const command = startCommand(process.execPath, ['-e', 'setTimeout(() => {}, 900)'], { cwd: process.cwd() });
   t.after(() => command.terminate());
   await delay(300);

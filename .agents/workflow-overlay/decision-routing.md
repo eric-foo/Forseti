@@ -179,7 +179,7 @@ stall. Keep owner updates timely and use short tool waits or persistent handles
 so monitoring does not itself lose the operation at a tool-call timeout.
 
 Choose review intervals from the operation's expected duration; do not use fixed
-20-second read or 60-second test kill defaults. A hard deadline needs an explicit
+read, patch, or test kill budgets as defaults. A hard deadline needs an explicit
 user/tool limit or an operation-specific resource/safety justification. Honor
 explicit hard deadlines as such; never silently turn one into a review interval
 or extend it. The commissioned 30-second child-scoped validation smoke timeout
