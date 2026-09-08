@@ -98,12 +98,13 @@ CONTEXTUAL_CLAIM_INTERPRETATION_GUIDANCE = (
     + CONTEXTUAL_CLAIM_RELATION_GUIDANCE
 )
 CONTEXTUAL_CLAIM_CONFIRMATION_CRITERION = (
-    "First state in point_scope_reason what would constitute meaningful support "
-    "or opposition for this finding, including its action/object, time and "
-    "relevant experiential context. Derive that comparison from the finding "
-    "itself, not from a desired label or an invented eligibility threshold. "
-    "Apply it consistently to every row, reading each supplied source_body "
-    "together with that row's normalized meanings and bound parent context."
+    "State the point's single meaning in point_scope_reason, including its "
+    "material action/object and time. Derive scope from the finding, not from "
+    "candidate labels or invented eligibility thresholds. Apply the contextual "
+    "relation guidance to each source_body together with that row's normalized "
+    "meanings and bound parent context. Do not manufacture an opposing class by "
+    "negating the support criterion: no relevant experience is different from "
+    "a contrary experience, and attitudes are judged as attitudes."
 )
 CONTEXTUAL_CLAIM_REF_INSTRUCTION = (
     "For every row, return relation_semantic_unit_refs as the smallest nonempty "

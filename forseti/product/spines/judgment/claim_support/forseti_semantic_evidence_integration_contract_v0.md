@@ -1956,7 +1956,10 @@ alongside normalized meanings and bound parent context. Missing body is null,
 not evidence of absence. The model grounds its label in the original account;
 source text may clarify supplied meanings but does not license foreign refs or
 rewrite saved normalization. The existing `point_scope_reason` states the
-finding-specific comparison before applying it to all rows.
+single bounded meaning. Confirmation applies the contextual relation standard
+to each row rather than manufacturing opposition by negating the support
+criterion. No relevant experience differs from contrary experience; attitudes
+remain judged as attitudes.
 
 Current quote manifests carry the same policy and a selected-id-keyed
 `confirmation_source_bodies` map so the selected-row confirmation consumer has
