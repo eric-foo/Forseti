@@ -1,0 +1,10 @@
+2026-09-09T14:35:42.772591Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=file:///C:/Users/vmon7/.codex/plugins/cache/agent-workflow-local/agent-workflow/0.1.98/.codex-plugin/plugin.json
+2026-09-09T14:35:42.792825Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=file:///C:/Users/vmon7/.codex/plugins/cache/agent-workflow-local/agent-workflow/0.1.98/.codex-plugin/plugin.json
+2026-09-09T14:35:42.862168Z  WARN codex_skills::interface: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-09-09T14:35:42.862269Z  WARN codex_skills::interface: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-09-09T14:35:43.003225Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell
+2026-09-09T14:35:43.759297Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=file:///C:/Users/vmon7/.codex/plugins/cache/agent-workflow-local/agent-workflow/0.1.98/.codex-plugin/plugin.json
+2026-09-09T14:35:43.772504Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=file:///C:/Users/vmon7/.codex/plugins/cache/agent-workflow-local/agent-workflow/0.1.98/.codex-plugin/plugin.json
+2026-09-09T14:35:43.892374Z  WARN codex_skills::interface: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-09-09T14:35:43.892410Z  WARN codex_skills::interface: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-09-09T14:36:19.832422Z  WARN codex_core::hook_runtime: after_agent hook failed; continuing turn_id=01a08698-9afb-7941-8df4-e5ade379e701 hook_name=legacy_notify error=The filename or extension is too long. (os error 206)

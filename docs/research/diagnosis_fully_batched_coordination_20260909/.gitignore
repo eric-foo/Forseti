@@ -1,0 +1,7 @@
+# Preserve all commissioned sample evidence, including otherwise ignored empty logs.
+!*.log
+!*.jsonl
+!runs/
+!runs/**
+!judges/
+!judges/**

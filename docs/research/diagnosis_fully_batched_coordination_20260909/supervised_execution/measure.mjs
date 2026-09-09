@@ -1,0 +1,35 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {native,sha,assert} from '../lib.mjs';
+const dir=path.dirname(fileURLToPath(import.meta.url));
+const read=async p=>JSON.parse(await fs.readFile(dir+'/'+p,'utf8'));
+const frozen=await read('freeze.json'),dog=await read('dogfood.json'),base=await read('coordinator-start.json');
+for(const f of frozen.files)assert(sha(await fs.readFile(path.resolve(dir,f.path)))===f.sha256,'Frozen identity: '+f.path);
+const v=await read('real-verifier/result.json'),vn=await native(v.native_session);
+assert(JSON.stringify(vn.last_counter.usage)===JSON.stringify(v.usage)&&vn.complete,'Completed native verifier accounting');
+assert(dog.supervision_model_calls===0&&dog.semantic_retries===0&&dog.quiet.process_success&&dog.quiet.wall_ms>=70000,'Quiet path and retries');
+for(const name of ['overdue','nonzero','spawn-error','quiet-70s']){
+ const r=await read('tests/'+name+'/receipt.json');
+ for(const stream of ['stdout','stderr'])assert((await fs.stat(dir+'/tests/'+name+'/'+stream+'.log')).size===r[stream+'_bytes'],'Preserved log bytes');
+ assert(r.launches===1&&r.restarts===0&&!r.termination_requested,'No implicit recovery');
+ if(name==='overdue')assert(r.process_success&&r.review_events.length===1,'Overdue review');
+ if(name==='nonzero')assert(!r.process_success&&r.exit===7,'Exit visibility');
+ if(name==='spawn-error')assert(!r.process_success&&r.error==='ENOENT','Spawn visibility');
+}
+const response=await read('real-verifier/response.json'),input=await read('../verification_experiment/runs/hydration-control/verifier-input.json'),corrected=await read('real-verifier/corrected.json');
+assert(response.corrections.length===1&&response.corrections[0].pointer==='/report','Observed control correction boundary');
+const c=response.corrections[0],replay=structuredClone(input.answer);
+assert(replay.report.split(c.old_text).length===2,'Exact original match');replay.report=replay.report.replace(c.old_text,c.new_text);
+assert(JSON.stringify(replay)===JSON.stringify(corrected),'Exact correction replay; unrelated fields unchanged');
+assert(JSON.stringify(input.reader_input).includes(c.source_excerpt)&&c.source_keys.includes('A13'),'Correction excerpt exists in frozen source pack');
+const check=process.argv.includes('--check'),saved=check?await read('measurement.json'):null;
+const n=await native(base.session,saved?.coordinator.cutoff),last=n.last_counter;
+const usage=Object.fromEntries(Object.entries(last.usage).map(([k,val])=>[k,val-(base.base_counter.usage[k]??0)]));
+assert(Object.values(usage).every(v=>v>=0),'Monotone counter difference');
+const calls=n.es.filter(e=>e.timestamp>=dog.started_at&&e.timestamp<=dog.finished_at&&e.type==='response_item'&&/^(function_call|custom_tool_call)$/.test(e.payload?.type));
+const waits=calls.filter(e=>/await tools\.write_stdin\(\{session_id:47970,/.test(e.payload.arguments??e.payload.input??'')).map(e=>({timestamp:e.timestamp,requested_ms:55000}));
+assert(waits.length===1,'Observed single host wait during dogfood');
+const m={verified_at:saved?.verified_at??new Date().toISOString(),verifier:{id:v.id,wall_ms:v.wall_ms,usage:v.usage,model_calls:v.model_calls,tool_calls:v.tool_calls},supervision:{model_calls:0,tokens:0,semantic_retries:0},host_waits:waits,coordinator:{session:base.session,started_at:base.started_at,base_counter:base.base_counter,cutoff:last.timestamp,last_counter:last,usage,uncached_input_tokens:usage.input_tokens-usage.cached_input_tokens},combined_tokens_at_cutoff:usage.total_tokens+v.total_tokens,unallocated_tail:'All coordinator activity after cutoff, including publication and final response, remains additional; this is not a finalized whole-turn total.',checks:['frozen implementation and source identity','native verifier completion and accounting','exact source-supported known-error correction replay','quiet-job completion with one host wait','single overdue review without termination or restart','nonzero and spawn failure visibility','preserved stdout and stderr byte counts']};
+if(check)assert(JSON.stringify(m)===JSON.stringify(saved),'Durable measurement replay');else await fs.writeFile(dir+'/measurement.json',JSON.stringify(m,null,2));
+console.log(JSON.stringify({status:'PASS',checks:m.checks.length,verifier_tokens:v.total_tokens,coordinator_tokens:usage.total_tokens,coordinator_cached_input_tokens:usage.cached_input_tokens,combined_tokens_at_cutoff:m.combined_tokens_at_cutoff,cutoff:last.timestamp,host_waits:waits.length}));

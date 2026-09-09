@@ -1,0 +1,14 @@
+{
+  "label": "batch-packaging-full-initial",
+  "exe": "C:\\Program Files\\nodejs\\node.exe",
+  "args": [
+    "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca\\docs\\research\\diagnosis_fully_batched_coordination_20260909/run.mjs",
+    "packaging",
+    "full",
+    "initial"
+  ],
+  "started_at": "2026-09-09T14:09:33.763Z",
+  "finished_at": "2026-09-09T14:10:53.186Z",
+  "code": 0,
+  "signal": null
+}

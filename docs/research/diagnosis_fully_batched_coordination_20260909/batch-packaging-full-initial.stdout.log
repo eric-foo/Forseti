@@ -1,0 +1,2 @@
+{"started":"packaging","arm":"full","stage":"initial","round":0,"started_at":"2026-09-09T14:09:33.903Z"}
+{"finished":"packaging","arm":"full","stage":"initial","round":0,"code":0,"usage":{"input_tokens":29904,"cached_input_tokens":0,"cache_write_input_tokens":0,"output_tokens":2209,"reasoning_output_tokens":89},"tools":0}

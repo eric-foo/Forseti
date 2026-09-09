@@ -1,0 +1,29 @@
+{
+  "id": "01a08774-bd75-7570-b82d-146c1fe6cb18",
+  "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/10/rollout-2026-09-10T02-36-10-01a08774-bd75-7570-b82d-146c1fe6cb18.jsonl",
+  "settings": {
+    "model": "gpt-6-astra",
+    "effort": "high",
+    "cli_version": "0.153.4",
+    "originator": "Codex Desktop",
+    "service_tier": "unavailable"
+  },
+  "usage": {
+    "input_tokens": 38448,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 480,
+    "reasoning_output_tokens": 328,
+    "total_tokens": 38928
+  },
+  "total_tokens": 38928,
+  "model_calls": 1,
+  "tool_calls": 0,
+  "corrections": 1,
+  "unresolved": [],
+  "cold_input_verified": true,
+  "prompt_sha256": "3a4fe35da7a802c220899a9b5ec19e77a50e851122489b126fde061e33ee10c7",
+  "review_events": [],
+  "wall_ms": 23529,
+  "claim_boundary": "Execution/input/accounting verified. Semantic outcome requires inspecting the saved original response and exact source evidence; process success is not diagnosis-quality approval."
+}

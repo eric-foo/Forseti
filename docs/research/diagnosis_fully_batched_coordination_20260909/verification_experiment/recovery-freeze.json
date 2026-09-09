@@ -1,0 +1,18 @@
+{
+  "frozen_at": "2026-09-09T14:39:29.765Z",
+  "scope": "Accept input-rooted /answer pointers by removing only the wrapper prefix; exact-once patch checks unchanged. Launch the three originally planned judges. No generator/verifier or semantic retries.",
+  "files": [
+    {
+      "path": "resume.mjs",
+      "sha256": "b06c44d1cf9d822e565f6ad09850ca04161b543bce190b39148b5651163ca0c9"
+    },
+    {
+      "path": "judge.txt",
+      "sha256": "2e288a24f1bd050769035f5a9e9dbc3c7c403b3c2d2816aae7f79998d8b1266a"
+    },
+    {
+      "path": "judge.schema.json",
+      "sha256": "0de22bff1b95b80e9d571f42c0a1e81c3cf0c548f3a926f6bbec3a6a698a7f2b"
+    }
+  ]
+}

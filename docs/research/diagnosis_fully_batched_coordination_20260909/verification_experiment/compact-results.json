@@ -1,0 +1,395 @@
+{
+  "raw_outcomes": {
+    "fresh": {
+      "pairs": 9,
+      "before_material_errors": 5,
+      "after_material_errors": 2,
+      "answers_with_errors_before": 4,
+      "answers_with_errors_after": 2
+    },
+    "positive_control": {
+      "pairs": 1,
+      "before_material_errors": 1,
+      "after_material_errors": 0,
+      "answers_with_errors_before": 1,
+      "answers_with_errors_after": 0
+    }
+  },
+  "totals": {
+    "generators": {
+      "launches": 11,
+      "model_calls": 11,
+      "input_tokens": 379914,
+      "cached_input_tokens": 60160,
+      "output_tokens": 25194,
+      "reasoning_output_tokens": 1490,
+      "total_tokens": 405108,
+      "serial_wall_ms": 886988
+    },
+    "verifiers": {
+      "launches": 10,
+      "model_calls": 10,
+      "input_tokens": 367565,
+      "cached_input_tokens": 17664,
+      "output_tokens": 6351,
+      "reasoning_output_tokens": 4664,
+      "total_tokens": 373916,
+      "serial_wall_ms": 294027
+    },
+    "judges": {
+      "launches": 3,
+      "model_calls": 3,
+      "input_tokens": 205473,
+      "cached_input_tokens": 0,
+      "output_tokens": 4907,
+      "reasoning_output_tokens": 1664,
+      "total_tokens": 210380,
+      "serial_wall_ms": 184587
+    },
+    "coordinator": {
+      "input_tokens": 1989393,
+      "cached_input_tokens": 1951488,
+      "output_tokens": 26232,
+      "reasoning_output_tokens": 7968,
+      "total_tokens": 2015625
+    },
+    "combined": 3005029
+  },
+  "elapsed": {
+    "supervised_ms": 522529,
+    "turn_to_cutoff_ms": 927489
+  },
+  "pairs": [
+    {
+      "run_id": "hydration-control",
+      "case": "hydration",
+      "positive_control": true,
+      "baseline_label": "A",
+      "corrected_label": "B",
+      "pair_id": "pair-18ee2c6373",
+      "before_material_errors": [
+        {
+          "label": "noncausation_of_congestion_promoted_to_reduction",
+          "answer_excerpt": "plus less irritation, congestion and perceived oil production",
+          "source_keys": [
+            "A13"
+          ],
+          "source_excerpt": "It has not caused the congestion on my forehead that results in textured skin and bumps",
+          "reason": "The main diagnosis claims reduced congestion, whereas the source reports hydration without causing congestion. The accurate source-index wording limits but does not erase this stronger benefit claim."
+        }
+      ],
+      "after_material_errors": [],
+      "before_notes": [
+        "A14’s 'softer, calmer skin' is a reasonable broad paraphrase given the title 'Calming, Soothing, Buttery Soft Sorcery' and the reported soft skin without irritation; it does not specify a reduction in redness."
+      ],
+      "after_notes": []
+    },
+    {
+      "run_id": "hydration-r1",
+      "case": "hydration",
+      "positive_control": false,
+      "baseline_label": "A",
+      "corrected_label": "B",
+      "pair_id": "pair-8ff855b660",
+      "before_material_errors": [
+        {
+          "label": "absence_of_redness_promoted_to_reduction",
+          "answer_excerpt": "gives silky jelly-to-oil slip and soft, less red skin",
+          "source_keys": [
+            "A14"
+          ],
+          "source_excerpt": "I have rosacea and I've been adding a drop of this to my moisturizer at night and I wake up with super soft skin with no redness, irritation, or clogged pores.",
+          "reason": "The source reports no redness after joint use, without establishing prior redness or a decrease. 'Less red' adds a comparative improvement; rosacea and the calming title do not establish that specific change. Accurate wording in the source index does not erase the overstatement."
+        }
+      ],
+      "after_material_errors": [],
+      "before_notes": [
+        "The phrase 'duration, reduced oil, irritation and congestion claims' does not unambiguously assert reduced congestion; the source index expressly preserves 'no forehead congestion'."
+      ],
+      "after_notes": [
+        "The phrase 'duration, reduced oil, irritation and congestion claims' is imprecise but remains consistent with the source index’s explicit 'no forehead congestion'."
+      ]
+    },
+    {
+      "run_id": "packaging-r1",
+      "case": "packaging",
+      "positive_control": false,
+      "baseline_label": "B",
+      "corrected_label": "A",
+      "pair_id": "pair-d8b100092b",
+      "before_material_errors": [
+        {
+          "label": "unsupported_historical_evidence_boundary",
+          "answer_excerpt": "Initial stage is reconstructed as the supplied focal set before additions P08–P13 and R01; no separate initial-stage record was supplied.",
+          "source_keys": [
+            "reader_input.stage",
+            "reader_input.method",
+            "reader_input.focal_keys"
+          ],
+          "source_excerpt": "\"stage\":\"updated\"\n\"method\":\"Reread the complete initial and added source set and construct the current diagnosis.\"\n\"focal_keys\":[\"P00\",\"P01\",\"P02\",\"P03\",\"P04\",\"P06\",\"P07\",\"P15\",\"P17\",\"P20\",\"P21\",\"P26\",\"P27\",\"P29\",\"P32\",\"P38\",\"P39\",\"P40\",\"P42\",\"P08\",\"P09\",\"P10\",\"P11\",\"P12\",\"P13\",\"R01\"]",
+          "reason": "The current set supplies no historical membership boundary. Treating record order as that boundary invents an initial single-report diagnosis and subsequent gains in recurrence, replacement shipment and repurchase intent. Calling this a reconstruction does not establish the asserted history."
+        }
+      ],
+      "after_material_errors": [
+        {
+          "label": "unsupported_historical_evidence_boundary",
+          "answer_excerpt": "Initial stage is reconstructed as the supplied focal set before additions P08–P13 and R01; no separate initial-stage record was supplied.",
+          "source_keys": [
+            "reader_input.stage",
+            "reader_input.method",
+            "reader_input.focal_keys"
+          ],
+          "source_excerpt": "\"stage\":\"updated\"\n\"method\":\"Reread the complete initial and added source set and construct the current diagnosis.\"\n\"focal_keys\":[\"P00\",\"P01\",\"P02\",\"P03\",\"P04\",\"P06\",\"P07\",\"P15\",\"P17\",\"P20\",\"P21\",\"P26\",\"P27\",\"P29\",\"P32\",\"P38\",\"P39\",\"P40\",\"P42\",\"P08\",\"P09\",\"P10\",\"P11\",\"P12\",\"P13\",\"R01\"]",
+          "reason": "The current set supplies no historical membership boundary. Treating record order as that boundary invents an initial single-report diagnosis and subsequent gains in recurrence, replacement shipment and repurchase intent. Calling this a reconstruction does not establish the asserted history."
+        }
+      ],
+      "before_notes": [
+        "A and B are identical and receive the same findings. Their current counts and descriptive community/retailer evidence are supported."
+      ],
+      "after_notes": [
+        "A and B are identical and receive the same findings. Their current counts and descriptive community/retailer evidence are supported."
+      ]
+    },
+    {
+      "run_id": "packaging-r2",
+      "case": "packaging",
+      "positive_control": false,
+      "baseline_label": "B",
+      "corrected_label": "A",
+      "pair_id": "pair-9838fe726d",
+      "before_material_errors": [
+        {
+          "label": "unsupported_historical_evidence_boundary",
+          "answer_excerpt": "The initial comparison below uses the visible core preceding the appended P08–P13 and R01 records; it is a reconstruction, not a separately verified initial report.",
+          "source_keys": [
+            "reader_input.stage",
+            "reader_input.method",
+            "reader_input.focal_keys"
+          ],
+          "source_excerpt": "\"stage\":\"updated\"\n\"method\":\"Reread the complete initial and added source set and construct the current diagnosis.\"\n\"focal_keys\":[\"P00\",\"P01\",\"P02\",\"P03\",\"P04\",\"P06\",\"P07\",\"P15\",\"P17\",\"P20\",\"P21\",\"P26\",\"P27\",\"P29\",\"P32\",\"P38\",\"P39\",\"P40\",\"P42\",\"P08\",\"P09\",\"P10\",\"P11\",\"P12\",\"P13\",\"R01\"]",
+          "reason": "Record order does not identify initial versus added evidence. The resulting account of P06 alone initially and six accounts plus retailer evidence subsequently invents how diagnostic support developed, despite the reconstruction caveat."
+        },
+        {
+          "label": "unsupported_independent_cross_role_corroboration",
+          "answer_excerpt": "the retailer review corroborates only the broader problem of loose closures and leakage, under a different product/use condition.\n\nR01 independently reports Softwear–Void's lid repeatedly unscrewing",
+          "source_keys": [
+            "P06",
+            "P13",
+            "R01",
+            "forseti_intelligence_claim_support_contract_v0.md"
+          ],
+          "source_excerpt": "P06: \"author_url\":\"/@jasminesingh1102\"\nP13: \"author_url\":\"/@betterxthanxnew\"\nR01: \"actor_identity\":\"215817888\"\nContract: \"Exact, possible, confirmed, or unavailable same-actor overlap cannot be used to manufacture independent-origin credit.\"",
+          "reason": "The separate retailer identifier does not establish independence from the TikTok actors. Descriptive recurrence across roles is supported, but the main diagnosis grants corroboration and explicitly calls R01 independent. The later unverified-identity caveat limits, but does not erase, that stronger support claim."
+        }
+      ],
+      "after_material_errors": [
+        {
+          "label": "unsupported_historical_evidence_boundary",
+          "answer_excerpt": "The initial comparison below uses the visible core preceding the appended P08–P13 and R01 records; it is a reconstruction, not a separately verified initial report.",
+          "source_keys": [
+            "reader_input.stage",
+            "reader_input.method",
+            "reader_input.focal_keys"
+          ],
+          "source_excerpt": "\"stage\":\"updated\"\n\"method\":\"Reread the complete initial and added source set and construct the current diagnosis.\"\n\"focal_keys\":[\"P00\",\"P01\",\"P02\",\"P03\",\"P04\",\"P06\",\"P07\",\"P15\",\"P17\",\"P20\",\"P21\",\"P26\",\"P27\",\"P29\",\"P32\",\"P38\",\"P39\",\"P40\",\"P42\",\"P08\",\"P09\",\"P10\",\"P11\",\"P12\",\"P13\",\"R01\"]",
+          "reason": "Record order does not identify initial versus added evidence. The resulting account of P06 alone initially and six accounts plus retailer evidence subsequently invents how diagnostic support developed, despite the reconstruction caveat."
+        }
+      ],
+      "before_notes": [],
+      "after_notes": [
+        "Preserving broader community and retailer closure/leak evidence while withholding independent cross-role corroboration is appropriate; no supported behavior is lost."
+      ]
+    },
+    {
+      "run_id": "packaging-r3",
+      "case": "packaging",
+      "positive_control": false,
+      "baseline_label": "B",
+      "corrected_label": "A",
+      "pair_id": "pair-b8e18222bd",
+      "before_material_errors": [
+        {
+          "label": "unsupported_historical_evidence_boundary",
+          "answer_excerpt": "Stage comparison treats P00–P42 in the supplied pre-addition list as initial evidence, and P08–P13 plus R01 as additions.",
+          "source_keys": [
+            "reader_input.stage",
+            "reader_input.method",
+            "reader_input.focal_keys"
+          ],
+          "source_excerpt": "\"stage\":\"updated\"\n\"method\":\"Reread the complete initial and added source set and construct the current diagnosis.\"\n\"focal_keys\":[\"P00\",\"P01\",\"P02\",\"P03\",\"P04\",\"P06\",\"P07\",\"P15\",\"P17\",\"P20\",\"P21\",\"P26\",\"P27\",\"P29\",\"P32\",\"P38\",\"P39\",\"P40\",\"P42\",\"P08\",\"P09\",\"P10\",\"P11\",\"P12\",\"P13\",\"R01\"]",
+          "reason": "No pre-addition list or historical membership boundary is supplied. The answer invents initial counts and a transition from isolated leakage to recurring complaints with additional remedy and loyalty evidence. Correct current counts do not validate that historical diagnosis."
+        }
+      ],
+      "after_material_errors": [],
+      "before_notes": [],
+      "after_notes": [
+        "The complete-set diagnosis requires no historical reconstruction. It preserves broader retailer leakage evidence without assigning Softwear to the unidentified TikTok complaints."
+      ]
+    }
+  ],
+  "verifier_flags": [
+    {
+      "run_id": "buying-r1",
+      "corrections": [
+        {
+          "pointer": "/source_index/2/findings",
+          "old_text": "wash-associated absence of breakouts",
+          "new_text": "wash-associated cessation of breakouts",
+          "source_keys": [
+            "A04"
+          ],
+          "source_excerpt": "Obviously I immediately bought the face wash and….. bam… no more breakouts and no more makeup remover needed.",
+          "reason": "The reviewer reports that breakouts stopped after using the wash. Describing only their absence weakens the reported improvement into a potentially neutral lack of breakouts."
+        }
+      ],
+      "unresolved_material_issues": [],
+      "summary": "One material weakening of a reported benefit corrected; no other material unsupported changes identified."
+    },
+    {
+      "run_id": "hydration-r1",
+      "corrections": [
+        {
+          "pointer": "/answer/report",
+          "old_text": "soft, less red skin",
+          "new_text": "soft skin with no redness",
+          "source_keys": [
+            "A14"
+          ],
+          "source_excerpt": "I have rosacea and I've been adding a drop of this to my moisturizer at night and I wake up with super soft skin with no redness, irritation, or clogged pores.",
+          "reason": "The account reports absence of redness after joint use with moisturizer, not a reduction in pre-existing redness."
+        }
+      ],
+      "unresolved_material_issues": [],
+      "summary": "Corrected one unsupported improvement claim; all other content is preserved."
+    },
+    {
+      "run_id": "hydration-control",
+      "corrections": [
+        {
+          "pointer": "/answer/report",
+          "old_text": "plus less irritation, congestion and perceived oil production.",
+          "new_text": "plus less irritation and perceived oil production, without causing forehead congestion.",
+          "source_keys": [
+            "A13"
+          ],
+          "source_excerpt": "It has not caused the congestion on my forehead that results in textured skin and bumps",
+          "reason": "Not causing congestion does not establish a reduction in pre-existing congestion."
+        },
+        {
+          "pointer": "/answer/report",
+          "old_text": "with softer, calmer skin.",
+          "new_text": "with soft skin and no redness, irritation or clogged pores.",
+          "source_keys": [
+            "A14"
+          ],
+          "source_excerpt": "I've been adding a drop of this to my moisturizer at night and I wake up with super soft skin with no redness, irritation, or clogged pores.",
+          "reason": "The account reports softness and absence of adverse symptoms, without explicitly establishing comparative improvement in softness or pre-existing redness and irritation."
+        }
+      ],
+      "unresolved_material_issues": [],
+      "summary": "Corrected two descriptions that strengthened reported outcomes into unsupported improvements."
+    },
+    {
+      "run_id": "packaging-r3",
+      "corrections": [
+        {
+          "pointer": "/answer/report",
+          "old_text": "Stage comparison treats P00–P42 in the supplied pre-addition list as initial evidence, and P08–P13 plus R01 as additions.\n\nInitial:",
+          "new_text": "Across the complete supplied source set:",
+          "source_keys": [
+            "P08",
+            "R01"
+          ],
+          "source_excerpt": "That happened to mine too, I ordered it from Sephora and they sent a replacement for free ☺️",
+          "reason": "The input supplies a complete current set without a historical initial/addition partition. This framing invents evidence-stage ownership and a support comparison."
+        },
+        {
+          "pointer": "/answer/report",
+          "old_text": "Initially, P06 alone reports",
+          "new_text": "P06 reports",
+          "source_keys": [
+            "P06",
+            "P08",
+            "P13"
+          ],
+          "source_excerpt": "Same here, ordered mine from Sephora and the top was not screwed down properly. Major leak 😭",
+          "reason": "P06's report is supported, but its historical status as the sole report is not established by this input."
+        },
+        {
+          "pointer": "/answer/report",
+          "old_text": " Initial requested counts are arrival_leak 1, explicit_loose_top 1, bare_arrival_agreement 0, replacement_offered 1, replacement_sent 0, retailer_leak 0 and repurchase_intended 0.",
+          "new_text": "",
+          "source_keys": [
+            "P08",
+            "P09",
+            "P10",
+            "P11",
+            "P12",
+            "P13",
+            "R01"
+          ],
+          "source_excerpt": "That happened to mine too, I ordered it from Sephora and they sent a replacement for free ☺️",
+          "reason": "These historical counts depend on an unavailable partition. Removing the unsupported comparison preserves the supported current counts and reported consequences."
+        },
+        {
+          "pointer": "/answer/report",
+          "old_text": "Updated: Seven distinct focal TikTok accounts",
+          "new_text": "Seven distinct focal TikTok accounts",
+          "source_keys": [
+            "P06",
+            "P08",
+            "P09",
+            "P10",
+            "P11",
+            "P12",
+            "P13"
+          ],
+          "source_excerpt": "my product came leaked the top part was loose so i had to open it and clean so it was exposed to oxygen. is it not good to use anymore?",
+          "reason": "Preserves the supported current recurrence while removing its presentation as a verified change from an earlier evidence stage."
+        }
+      ],
+      "unresolved_material_issues": [],
+      "summary": "Removed an unsupported historical evidence split and comparison. The current packaging diagnosis, source findings and structured counts otherwise remain supported."
+    },
+    {
+      "run_id": "packaging-r2",
+      "corrections": [
+        {
+          "pointer": "/answer/report",
+          "old_text": "the retailer review corroborates only the broader problem of loose closures and leakage, under a different product/use condition.",
+          "new_text": "the retailer review provides descriptive context for the broader problem of loose closures and leakage under a different product/use condition; independent cross-role corroboration is not established.",
+          "source_keys": [
+            "P06",
+            "P13",
+            "R01"
+          ],
+          "source_excerpt": "P06: \"my product came leaked the top part was loose\"\nP13: \"the top was not screwed down properly. Major leak 😭\"\nR01: \"The lid keeps coming unscrewed and tonight it came loose in my pocket at work\"",
+          "reason": "The records support similar reported problems under different conditions, but do not establish cross-platform actor independence needed for cross-role corroboration."
+        },
+        {
+          "pointer": "/answer/report",
+          "old_text": "R01 independently reports",
+          "new_text": "R01 reports",
+          "source_keys": [
+            "R01"
+          ],
+          "source_excerpt": "\"actor_identity\":\"215817888\"",
+          "reason": "The retailer actor identifier does not establish independence from the TikTok accounts."
+        },
+        {
+          "pointer": "/answer/report",
+          "old_text": "It supports recurrence across source roles of reported closure/leak problems, subject to unverified cross-platform identity;",
+          "new_text": "It provides descriptive cross-role evidence of reported closure/leak problems, without established cross-platform independence;",
+          "source_keys": [
+            "P06",
+            "R01"
+          ],
+          "source_excerpt": "P06: \"my product came leaked the top part was loose\"\nR01: \"The lid keeps coming unscrewed and tonight it came loose in my pocket at work\"",
+          "reason": "Preserves the usable contextual evidence while removing the implication of independently corroborated recurrence across source roles."
+        }
+      ],
+      "unresolved_material_issues": [],
+      "summary": "Corrected unsupported cross-role independence and corroboration claims while preserving the reported failures, product distinctions, and behavioral consequences."
+    }
+  ]
+}

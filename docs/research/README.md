@@ -18,6 +18,7 @@ Do not use this folder for implementation, automation, scraping tools, datasets,
 
 ## Research Areas
 
+- [Fully batched diagnostic coordination, 2026-09-09](diagnosis_fully_batched_coordination_20260909/report.md), [paired source-backed verification experiment](diagnosis_fully_batched_coordination_20260909/verification_experiment/report.md), and [supervised execution dogfood](diagnosis_fully_batched_coordination_20260909/supervised_execution/report.md): fixed-evidence experiments with preserved first passes and native accounting. The verification follow-up tests three fresh repetitions per case and a separate historical positive control. The execution follow-up provides a sample-local entrypoint, tests failure and quiet-job handling, and meters the outer conversation separately. Research only; no method rollout or merge authorization.
 - `docs/research/consulting-judgment-corpus/`: consulting-judgment corpus material.
 - `docs/research/answer_engine/`: answer-engine/AEO probe evidence, including the Phase-0 feasibility report and JSON sidecar. Research/proposed evidence only; the current route is scanning README -> answer-engine source-family spec -> this folder, with no product authority, gate-recordable method, validation/readiness/proof claim, capture authorization, scraping authorization, or implementation authorization.
 - `docs/research/judgment-spine/`: Judgment Spine parent contract, harness specs, case indexes, and case-learning artifacts.

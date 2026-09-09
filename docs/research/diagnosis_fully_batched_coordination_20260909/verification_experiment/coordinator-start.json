@@ -1,0 +1,17 @@
+{
+  "session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-06-01-01a0867d-6954-7e30-bac7-2c28f7cc3400.jsonl",
+  "turn_started_at": "2026-09-09T14:28:30.859Z",
+  "base_counter": {
+    "timestamp": "2026-09-09T14:28:28.805Z",
+    "usage": {
+      "input_tokens": 3150179,
+      "cached_input_tokens": 3058176,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 25008,
+      "reasoning_output_tokens": 4400,
+      "total_tokens": 3175187
+    }
+  },
+  "capture_at": "2026-09-09T14:31:59.036Z",
+  "accounting": "Current experiment turn from its start, including preparation before this capture. Prior experiment and intervening discussion are excluded; their reprocessed context charged in this turn remains included."
+}

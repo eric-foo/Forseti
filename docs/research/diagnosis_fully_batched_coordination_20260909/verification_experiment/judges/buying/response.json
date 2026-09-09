@@ -1,0 +1,61 @@
+{
+  "case": "buying",
+  "summary": "No material diagnostic errors found in the supplied answers. They preserve three focal Experiment acquisition accounts, distinguish other actions and intentions, retain contextual stock-up testimony, and report adverse outcomes alongside loyalty without establishing broader causation.",
+  "pairs": [
+    {
+      "pair_id": "pair-725682e9ae",
+      "answers": [
+        {
+          "label": "A",
+          "material_errors": [],
+          "nonmaterial_notes": [
+            "“Wash-associated absence of breakouts” preserves A04’s reported “bam… no more breakouts” in context."
+          ]
+        },
+        {
+          "label": "B",
+          "material_errors": [],
+          "nonmaterial_notes": [
+            "“Wash-associated cessation of breakouts” is supported by A04’s “bam… no more breakouts”; the wording difference does not change the diagnosis."
+          ]
+        }
+      ]
+    },
+    {
+      "pair_id": "pair-87ad3d351b",
+      "answers": [
+        {
+          "label": "A",
+          "material_errors": [],
+          "nonmaterial_notes": [
+            "The completed-routine count omits A05 despite preserving its prior sheet-mask cessation in the source index. Under the supplied assessment rule, this stopping-versus-replacement accounting discrepancy is nonmaterial.",
+            "Calling A14–A16 “additions” lacks a supplied historical boundary, but does not change their current behavioral classification."
+          ]
+        },
+        {
+          "label": "B",
+          "material_errors": [],
+          "nonmaterial_notes": [
+            "The completed-routine count omits A05 despite preserving its prior sheet-mask cessation in the source index. Under the supplied assessment rule, this stopping-versus-replacement accounting discrepancy is nonmaterial.",
+            "Calling A14–A16 “additions” lacks a supplied historical boundary, but does not change their current behavioral classification."
+          ]
+        }
+      ]
+    },
+    {
+      "pair_id": "pair-8f25fb5f96",
+      "answers": [
+        {
+          "label": "A",
+          "material_errors": [],
+          "nonmaterial_notes": []
+        },
+        {
+          "label": "B",
+          "material_errors": [],
+          "nonmaterial_notes": []
+        }
+      ]
+    }
+  ]
+}

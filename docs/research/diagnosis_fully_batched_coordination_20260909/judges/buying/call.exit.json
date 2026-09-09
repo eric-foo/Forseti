@@ -1,0 +1,25 @@
+{
+  "label": "judges/buying/call",
+  "exe": "C:/Users/vmon7/AppData/Local/OpenAI/Codex/bin/fd4c151a749f3ab4/codex.exe",
+  "args": [
+    "exec",
+    "--json",
+    "--model",
+    "gpt-6-astra",
+    "-c",
+    "model_reasoning_effort=\"high\"",
+    "-C",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca\\docs\\research\\diagnosis_fully_batched_coordination_20260909/judges/buying",
+    "--disable",
+    "shell_tool",
+    "--output-schema",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca\\docs\\research\\diagnosis_fully_batched_coordination_20260909/judge.schema.json",
+    "--output-last-message",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca\\docs\\research\\diagnosis_fully_batched_coordination_20260909/judges/buying/response.json",
+    "-"
+  ],
+  "started_at": "2026-09-09T14:13:09.490Z",
+  "finished_at": "2026-09-09T14:14:35.807Z",
+  "code": 0,
+  "signal": null
+}

@@ -1,0 +1,69 @@
+{
+  "retrieval_requests": [],
+  "report": "Only the initial stage is supplied; a second-stage diagnosis is unavailable.\n\nTwo focal accounts explicitly narrate completed Experiment acquisition: A04 describes four product categories and A05 one, totaling five product-action assertions. Both are credited, distinct retailer-review origins supporting the broad proposition that Experiment acquisition occurred. Their specific reasons differ and are not independently repeated reasons: A04 describes favorable experience followed by range expansion and a desire for richer nighttime care; A05 attributes immediate checkout to discovering a reusable mask through TikTok, within a stated sustainability goal. These are individual reported reasons, not established market causes. Neither review has positive engagement: each records 0 up-votes and 0 down-votes, observation time unavailable.\n\nA01 explicitly re-added Softwear to an FF cart because of a comment; this establishes a reported recommendation-to-cart consequence, not checkout, use or repurchase. Its Reddit score is 13. A02's objection concerns the Dr. Idriss exfoliator, resolved by its parent, and cannot count as Experiment rejection. A12 narrates Regimen Lab cream 2.0 and cleanser acquisition, not Experiment acquisition; future range exploration remains intention. Scores are respectively 4 and 12. These scores are recorded as not interpreted/material_positive=false; they establish neither verified experiences nor buying effects.\n\nNo focal account explicitly reports Experiment stockpiling, gift receipt, contemplated or completed return, or intended or completed routine replacement. A04's claim that makeup remover is no longer needed is functional redundancy, not explicit discontinuation. Its refill review metadata cannot establish an additional purchase or repurchase. The sister's introduction is not explicit gifted receipt. A05 had already paused disposable sheet masks for sustainability; the account does not explicitly narrate replacing them with Avant Guard. Joint use of hydrating/moisturizing products limits attribution of barrier repair to the mask.\n\nContext-only evidence is material but excluded from focal counts. cowrunamuck (2025-09-05, score 21; context_5f002acbf9eb1cd7bfc3) reports two Softwear backups because of strong preference and formerly inconvenient website shipping, alongside sensitive-skin tolerance, smooth/moisturized lips, and preference over Eadem's scent/taste. This supplies an explicit contextual stock-up reason and resolves A01's product, but does not donate purchase or experience testimony to A01. RowanVC (2025-09-05, score 42; context_ff821dc553240c0290fa) praises Softwear and Experiment, describes a general lip-balm stash rather than explicit Experiment stockpiling, and describes Dr. Idriss exfoliator stickiness and layering with lanolin or other masks. This resolves A02's reference. These are distinct visible accounts in the same Sephora thread; conversational co-location and unavailable independence credit remain visible. Reused thread context is not another source or origin. Thread-post author/time/engagement are unavailable in supplied context; the Regimen Lab post establishes A12's brand reference only.\n\nConflict posture for explicitly reported Experiment acquisition is none_observed within this bounded set; no focal account disputes those acquisitions. Positive experience coexists with limitations: A05 reports imperfect cheek/nose fit while remaining enthusiastic; A04's thick/oily concern precedes favorable use and is not a reported adverse outcome. A02's sensory avoidance and A12's small-cleanser complaint concern other-brand products alongside continued approval or interest. No Experiment adverse outcome alongside loyalty is explicitly supplied. Exact formula versions and transaction dates remain unknown; named category mappings do not establish exact acquired SKUs. This selected set cannot establish prevalence, cross-venue corroboration of completed Experiment buying, repeat-purchase rates, or independent recurrence of any precise buying reason.",
+  "source_index": [
+    {
+      "key": "A01",
+      "findings": "boxybrown84; Reddit r/Sephora, 2025-09-05; reddit:1n9da6u:ncm3hhd. Explicitly removed Experiment balm from an FF cart and put it back because of another comment. Parent identifies Softwear; exact SKU/version unknown. Cart re-addition only: no completed purchase, use, repurchase or stock-up. 'Crusty lips thank you' does not establish a realized benefit. Score 13, observation time unavailable, not interpreted/material_positive=false; independence posture unavailable. Parent cowrunamuck's use and two backups remain separate contextual testimony."
+    },
+    {
+      "key": "A02",
+      "findings": "PamelaDamnela; Reddit r/Sephora, 2025-09-05; reddit:1n9da6u:ncly8vq. Says they have 'that one' but always skip it because they cannot stand the feeling, while loving the baste balm. Parent resolves these references to Dr. Idriss exfoliator and Barrier Baste, not Experiment; exact SKU/version unknown. Reports sensory avoidance alongside other-product approval, without explicit acquisition transaction, return or routine substitution. Score 4, observation time unavailable, not interpreted/material_positive=false; independence posture unavailable. Parent RowanVC's Softwear praise cannot be credited to this actor."
+    },
+    {
+      "key": "A04",
+      "findings": "Junip customer 202931541; retailer review 7540631, 2025-03-22, updated 2025-03-23; credited origin. Four explicit Experiment acquisition categories: ordered Super Saturated after sister's introduction and favorable experience; bought Buffer Jelly seeking richer, repairing nighttime hydration; immediately bought face wash, reasonably mapped to Plasma Wash; bought mesh moisturizer, reasonably mapped to Molecular Mesh, at launch. Reports Super Saturated lightweight/refreshing/fast-drying hydration without clogged-pore feeling before makeup; Buffer Jelly yielded glowy, clean-looking skin despite initial thick/oily concern, with little needed; cleanser reportedly removed makeup, hydrated and coincided with no more breakouts. No-more-makeup-remover-needed is functional redundancy, not explicit stopped use. Likes counter colors and expresses strong brand loyalty, without isolating colors as purchase cause. Metadata: combo/sensitive skin, verified buyer, unrewarded, Super Saturated Refill target; metadata adds no acquisition or repurchase assertion. Sister introduction is not explicit gift. Exact acquired SKUs/formulas unknown. Votes 0 up/0 down; observation time unavailable. Benefits and sequential buying reasons are this actor's reports, not measured effects or independently corroborated motives."
+    },
+    {
+      "key": "A05",
+      "findings": "Junip customer 44968672; retailer review 1569510, 2022-11-03, updated same day; credited origin. Explicit immediate checkout of reusable mask after TikTok creator discovery, with a sustainability goal and prior pause in near-nightly disposable sheet masking. Context identifies Avant Guard; metadata target Acid Lime/SMALL, verified buyer and unrewarded, but acquired formula/version remains unknown. Reports almost-perfect fit except cheek sides/nose, easy cleaning, and motivation to use hydrating/moisturizing products helping barrier repair; joint use prevents mask-only attribution. Positive commitment coexists with fit complaint. No explicit gift, return, stock-up, repurchase or actual routine substitution. One acquisition category. Votes 0 up/0 down; observation time unavailable."
+    },
+    {
+      "key": "A12",
+      "findings": "eratch; Reddit r/SkincareAddictionLux, 2025-01-16; reddit:1i30kik:m7j6no0. Thread context explicitly concerns Regimen Lab. Reports getting its cream 2.0 while seeking healing moisturizer after excessive tret use, and also picking up its cleanser. These are other-brand acquisitions, excluded from Experiment counts. Favorable cream experience motivates intention to try more; praises formulations and perceived science-based market-gap focus. Cleanser is nice but small; interest favors serums/moisturizers. Tret-related trouble is not an Experiment adverse outcome, and actual healing is not explicitly established. No explicit return or completed routine substitution. Score 12, observation time unavailable, not interpreted/material_positive=false; independence posture unavailable. Cream version 2.0 stated; cleanser SKU/version unknown."
+    }
+  ],
+  "counts": [
+    {
+      "name": "experiment_acquisition_focal",
+      "source_accounts": ["A04", "A05"],
+      "count": 2
+    },
+    {
+      "name": "cart_readdition",
+      "source_accounts": ["A01"],
+      "count": 1
+    },
+    {
+      "name": "stockup_focal",
+      "source_accounts": [],
+      "count": 0
+    },
+    {
+      "name": "gift_receipt",
+      "source_accounts": [],
+      "count": 0
+    },
+    {
+      "name": "return_considered",
+      "source_accounts": [],
+      "count": 0
+    },
+    {
+      "name": "return_completed",
+      "source_accounts": [],
+      "count": 0
+    },
+    {
+      "name": "routine_replacement_intended",
+      "source_accounts": [],
+      "count": 0
+    },
+    {
+      "name": "routine_replacement_completed",
+      "source_accounts": [],
+      "count": 0
+    }
+  ],
+  "product_action_assertions": 5
+}

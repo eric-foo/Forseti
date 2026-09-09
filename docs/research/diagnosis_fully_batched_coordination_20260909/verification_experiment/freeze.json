@@ -1,0 +1,66 @@
+{
+  "frozen_at": "2026-09-09T14:31:59.043Z",
+  "source_parent_head": "b560907824d6927ce92bff581aac47b7ab050df3",
+  "files": [
+    {
+      "path": "experiment.mjs",
+      "sha256": "60dad3f83154651d905e7b27472f57ece412b220f91c14aa29a7b0377158aed7"
+    },
+    {
+      "path": "verifier.txt",
+      "sha256": "9d567aac40fd8fae73690d8476c033c97793d9318fdaf5595e238fb998ffd316"
+    },
+    {
+      "path": "judge.txt",
+      "sha256": "2e288a24f1bd050769035f5a9e9dbc3c7c403b3c2d2816aae7f79998d8b1266a"
+    },
+    {
+      "path": "verifier.schema.json",
+      "sha256": "44d8c204983e7b33323e59b2a8332606d337b21892746d78fdf033ae3a039881"
+    },
+    {
+      "path": "judge.schema.json",
+      "sha256": "0de22bff1b95b80e9d571f42c0a1e81c3cf0c548f3a926f6bbec3a6a698a7f2b"
+    },
+    {
+      "path": "plan.json",
+      "sha256": "d7d53b40511c4d3b76a9b824dfb5f18aea915ef9acaf9e38f838cb92fa3a44f6"
+    },
+    {
+      "path": "../common.txt",
+      "sha256": "52d6ef24c515e281ae150dab37a0ebda3bf485029ba8ffc023c5a52a1f0db33e"
+    },
+    {
+      "path": "../authority-context.txt",
+      "sha256": "4d918de0de55acd8570edcd2d703f3df9c0dfd387296a2f29aa0c089b112c482"
+    },
+    {
+      "path": "../response.schema.json",
+      "sha256": "10116811053f00600e9e5f643c0ee3c442673b70a6c2af0985ae625c2c404458"
+    },
+    {
+      "path": "../sources.json",
+      "sha256": "70be89523d15f3622e8f0103eedde839a76206aa84fd5222788b2db67472db1f"
+    },
+    {
+      "path": "../count-definitions.json",
+      "sha256": "d466138ab4106d8b64ee0300b0d806b5b5d0f697e488725592d7b51e768804ea"
+    },
+    {
+      "path": "../runs/hydration-full-update/input.json",
+      "sha256": "dea51e6e131123604140182255d495bc59353323bc4156e253d4a2fb4c1a8fbe"
+    },
+    {
+      "path": "../runs/buying-full-update/input.json",
+      "sha256": "c76cdfccd8cbbb804c9645ae53d320b1d327508b0160489065f6b06c85a310a6"
+    },
+    {
+      "path": "../runs/packaging-full-update/input.json",
+      "sha256": "0b4578d1fb60e273a933236603f5544983c19fb841286115655fd69decf73542"
+    },
+    {
+      "path": "../runs/hydration-full-update/final.json",
+      "sha256": "dcd1eb776266693aaf581ac19aa0a7dbb1cf10fb5ca0d17c414624542d8f0705"
+    }
+  ]
+}

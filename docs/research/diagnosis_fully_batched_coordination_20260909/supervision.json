@@ -1,0 +1,20 @@
+{
+  "start": "2026-09-09T14:09:33.738Z",
+  "finish": "2026-09-09T14:14:35.820Z",
+  "reader_stages": 12,
+  "judge_outcomes": [
+    {
+      "status": "fulfilled",
+      "error": null
+    },
+    {
+      "status": "fulfilled",
+      "error": null
+    },
+    {
+      "status": "fulfilled",
+      "error": null
+    }
+  ],
+  "semantic_retries": 0
+}

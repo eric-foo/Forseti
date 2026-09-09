@@ -1,0 +1,24 @@
+{
+  "executable": "C:/Users/vmon7/AppData/Local/OpenAI/Codex/bin/fd4c151a749f3ab4/codex.exe",
+  "args": [
+    "exec",
+    "--json",
+    "--model",
+    "gpt-6-astra",
+    "-c",
+    "model_reasoning_effort=\"high\"",
+    "-C",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca\\docs\\research\\diagnosis_fully_batched_coordination_20260909\\verification_experiment/judges/packaging",
+    "--disable",
+    "shell_tool",
+    "--output-schema",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca\\docs\\research\\diagnosis_fully_batched_coordination_20260909\\verification_experiment/judge.schema.json",
+    "--output-last-message",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca\\docs\\research\\diagnosis_fully_batched_coordination_20260909\\verification_experiment/judges/packaging/response.json",
+    "-"
+  ],
+  "role": "judge",
+  "effort": "high",
+  "no_resume": true,
+  "stdin_sha256": "6a1ff2fe9f902642d39f40955791fe1a4542e1f7317755da17fcd6757ef8ab9c"
+}

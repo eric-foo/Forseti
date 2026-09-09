@@ -1,0 +1,65 @@
+{
+  "started_at": "2026-09-09T18:36:09.096Z",
+  "finished_at": "2026-09-09T18:37:19.640Z",
+  "deterministic": {
+    "overdue_review_without_kill_or_restart": true,
+    "nonzero_exit": 7,
+    "spawn_error": "ENOENT"
+  },
+  "verifier": {
+    "id": "01a08774-bd75-7570-b82d-146c1fe6cb18",
+    "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/10/rollout-2026-09-10T02-36-10-01a08774-bd75-7570-b82d-146c1fe6cb18.jsonl",
+    "settings": {
+      "model": "gpt-6-astra",
+      "effort": "high",
+      "cli_version": "0.153.4",
+      "originator": "Codex Desktop",
+      "service_tier": "unavailable"
+    },
+    "usage": {
+      "input_tokens": 38448,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 480,
+      "reasoning_output_tokens": 328,
+      "total_tokens": 38928
+    },
+    "total_tokens": 38928,
+    "model_calls": 1,
+    "tool_calls": 0,
+    "corrections": 1,
+    "unresolved": [],
+    "cold_input_verified": true,
+    "prompt_sha256": "3a4fe35da7a802c220899a9b5ec19e77a50e851122489b126fde061e33ee10c7",
+    "review_events": [],
+    "wall_ms": 23529,
+    "claim_boundary": "Execution/input/accounting verified. Semantic outcome requires inspecting the saved original response and exact source evidence; process success is not diagnosis-quality approval."
+  },
+  "quiet": {
+    "started_at": "2026-09-09T18:36:09.541Z",
+    "finished_at": "2026-09-09T18:37:19.638Z",
+    "executable": "C:\\Program Files\\nodejs\\node.exe",
+    "args": [
+      "-e",
+      "setTimeout(()=>process.exit(0),70000)"
+    ],
+    "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca\\docs\\research\\diagnosis_fully_batched_coordination_20260909\\supervised_execution",
+    "pid": 9888,
+    "exit": 0,
+    "signal": null,
+    "error": null,
+    "wall_ms": 70098,
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "last_output_elapsed_ms": null,
+    "review_events": [],
+    "launches": 1,
+    "restarts": 0,
+    "termination_requested": false,
+    "process_success": true
+  },
+  "reviews": [],
+  "semantic_retries": 0,
+  "supervision_model_calls": 0,
+  "native_measurement_boundary": "Verifier tokens charged separately. Main implementation conversation and mandatory status updates are not hidden; measured separately at closeout."
+}

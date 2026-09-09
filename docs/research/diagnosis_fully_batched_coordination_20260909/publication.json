@@ -1,0 +1,9 @@
+{
+  "url": "https://github.com/eric-foo/forseti/pull/1587",
+  "initial_head": "7d9925701c34b2ed0ed663f0d083a66afff6a14f",
+  "branch": "codex/diagnosis-fully-batched-coordination-20260909",
+  "initial_remote_verified": true,
+  "draft_observed": true,
+  "observed_at": "2026-09-09T14:20:09.080Z",
+  "final_head": "Read final remote hash from closeout receipt; this file precedes the final commit."
+}

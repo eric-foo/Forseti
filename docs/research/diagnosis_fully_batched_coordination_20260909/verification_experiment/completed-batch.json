@@ -1,0 +1,110 @@
+{
+  "started_at": "2026-09-09T14:32:10.924Z",
+  "finished_at": "2026-09-09T14:36:38.144Z",
+  "result": [
+    {
+      "case": "buying",
+      "id": "buying-r2",
+      "positive_control": false,
+      "retrievals": 0,
+      "corrections": 0,
+      "unresolved": 0
+    },
+    {
+      "case": "buying",
+      "id": "buying-r3",
+      "positive_control": false,
+      "retrievals": 0,
+      "corrections": 0,
+      "unresolved": 0
+    },
+    {
+      "case": "hydration",
+      "id": "hydration-r2",
+      "positive_control": false,
+      "retrievals": 0,
+      "corrections": 0,
+      "unresolved": 0
+    },
+    {
+      "case": "buying",
+      "id": "buying-r1",
+      "positive_control": false,
+      "retrievals": 0,
+      "corrections": 1,
+      "unresolved": 0
+    },
+    {
+      "case": "hydration",
+      "id": "hydration-r3",
+      "positive_control": false,
+      "retrievals": 1,
+      "corrections": 0,
+      "unresolved": 0
+    },
+    {
+      "case": "packaging",
+      "id": "packaging-r1",
+      "positive_control": false,
+      "retrievals": 0,
+      "corrections": 0,
+      "unresolved": 0
+    },
+    {
+      "case": "hydration",
+      "id": "hydration-r1",
+      "positive_control": false,
+      "retrievals": 1,
+      "semantic_retries": 0,
+      "corrections": 1,
+      "unresolved": 0
+    },
+    {
+      "case": "hydration",
+      "id": "hydration-control",
+      "positive_control": true,
+      "retrievals": 1,
+      "semantic_retries": 0,
+      "corrections": 2,
+      "unresolved": 0
+    },
+    {
+      "case": "packaging",
+      "id": "packaging-r3",
+      "positive_control": false,
+      "retrievals": 0,
+      "semantic_retries": 0,
+      "corrections": 4,
+      "unresolved": 0
+    },
+    {
+      "case": "packaging",
+      "id": "packaging-r2",
+      "positive_control": false,
+      "retrievals": 0,
+      "semantic_retries": 0,
+      "corrections": 3,
+      "unresolved": 0
+    }
+  ],
+  "failures": [],
+  "first_pass_failures": [
+    {
+      "id": "hydration-r1",
+      "error": "Missing pointer"
+    },
+    {
+      "id": "hydration-control",
+      "error": "Missing pointer"
+    },
+    {
+      "id": "packaging-r3",
+      "error": "Missing pointer"
+    },
+    {
+      "id": "packaging-r2",
+      "error": "Missing pointer"
+    }
+  ],
+  "recovery": "recovery.json"
+}

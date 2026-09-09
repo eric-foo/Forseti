@@ -1,0 +1,90 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "case": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "pairs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pair_id": {
+            "type": "string"
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "material_errors": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "label": {
+                        "type": "string"
+                      },
+                      "answer_excerpt": {
+                        "type": "string"
+                      },
+                      "source_keys": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "source_excerpt": {
+                        "type": "string"
+                      },
+                      "reason": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "label",
+                      "answer_excerpt",
+                      "source_keys",
+                      "source_excerpt",
+                      "reason"
+                    ]
+                  }
+                },
+                "nonmaterial_notes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "label",
+                "material_errors",
+                "nonmaterial_notes"
+              ]
+            }
+          }
+        },
+        "required": [
+          "pair_id",
+          "answers"
+        ]
+      }
+    }
+  },
+  "required": [
+    "case",
+    "summary",
+    "pairs"
+  ]
+}

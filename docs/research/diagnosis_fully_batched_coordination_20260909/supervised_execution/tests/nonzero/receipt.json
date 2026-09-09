@@ -1,0 +1,23 @@
+{
+  "started_at": "2026-09-09T18:36:09.450Z",
+  "finished_at": "2026-09-09T18:36:09.534Z",
+  "executable": "C:\\Program Files\\nodejs\\node.exe",
+  "args": [
+    "-e",
+    "process.stderr.write(\"intentional failure\");process.exit(7)"
+  ],
+  "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca\\docs\\research\\diagnosis_fully_batched_coordination_20260909\\supervised_execution",
+  "pid": 57620,
+  "exit": 7,
+  "signal": null,
+  "error": null,
+  "wall_ms": 84,
+  "stdout_bytes": 0,
+  "stderr_bytes": 19,
+  "last_output_elapsed_ms": 75,
+  "review_events": [],
+  "launches": 1,
+  "restarts": 0,
+  "termination_requested": false,
+  "process_success": false
+}

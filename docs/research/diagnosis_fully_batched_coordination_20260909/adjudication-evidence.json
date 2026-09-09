@@ -1,0 +1,99 @@
+{
+  "hydration": {
+    "reader_input_keys": [
+      "case",
+      "question",
+      "count_definitions",
+      "products",
+      "stage",
+      "focal_keys",
+      "method",
+      "sources"
+    ],
+    "has_initial_keys": false,
+    "has_addition_keys": false,
+    "decisive_answer": [
+      "ion/repair at night. A08 reports hydration at age 51 alongside tretinoin and other actives. A13 reports retained plumpness/hydration through a 12-hour shift, with oily T-zone, dry sensitive cheeks and mild rosacea, plus less irritation, congestion and perceived oil production. The 12-hour duration and those additional improvements remain single-account reports. No direct negative SS hydration testimony is observable here, but A07’s testimony is unavailable even after retrieval. Formula versions are unknown; the evidence does not establish current-formula performan"
+    ],
+    "source_excerpt": [
+      "t balance between hydrating my dry cheeks without causing congestion on my forehead and breakouts from the excess oil. This product does that. It has not caused the congestion on my forehead that results in textured skin and bumps, while at the same time it nourishes my cheeks and keeps the reactivity threshold low. I’ve also noticed a decrease in the natural oil production of my skin since starti"
+    ]
+  },
+  "buying": {
+    "reader_input_keys": [
+      "case",
+      "question",
+      "count_definitions",
+      "products",
+      "stage",
+      "focal_keys",
+      "method",
+      "sources"
+    ],
+    "has_initial_keys": false,
+    "has_addition_keys": false,
+    "decisive_answer": [
+      "Only the initial stage is supplied; a second-stage diagnosis is unavailable.\n\nTwo focal accounts explicitly narrate completed Experiment acquisition: A04 describes four product categories and A05 one, totaling five product-action assertions. Both are credited, distinct retailer-review origins supporting the broad proposition that Experiment acquisition occurred. Their specific reasons differ and are not independently repeated reasons: A04 describes favorable experience followed by range expansion and a desire for richer nighttime care; A05 attributes immediate checkout to discovering a reusable mask through TikTok, within a stated sustainability goal. These are individual reported reasons, not established market causes. Neither review has positive engagement: each records 0 up-votes and 0 down-votes, observation time unavailable.\n\nA01 explicitly re-added Softwear to an FF cart because of a comment; this establishes a reported recommendation-to-cart consequence, not checkout, use or repurchase. Its Reddit score is 13. A02's objection concerns the Dr. Idriss exfoliator, resolved by its parent, and cannot count as Experiment rejection. A12 narrates Regimen Lab cream 2.0 and cleanser acquisition, not Experiment acquisition; future range exploration remains intention. Scores are respectively 4 and 12. These scores are recorded as not interpreted/material_positive=false; they establish neither verified experiences nor buying effects.\n\nNo focal account explicitly reports Experiment stockpiling, gift receipt, contemplated or completed return, or intended or completed routine replacement. A04's claim that makeup remover is no longer needed is functional redundancy, not explicit discontinuation. Its refill review metadata cannot establish an additional purchase or repurchase. The",
+      "boxybrown84; Reddit r/Sephora, 2025-09-05; reddit:1n9da6u:ncm3hhd. Explicitly removed Experiment balm from an FF cart and put it back because of another comment. Parent identifies Softwear; exact SKU/version unknown. Cart re-addition only: no completed purchase, use, repurchase or stock-up. 'Crusty lips thank you' does not establish a realized benefit. Score 13, observation time unavailable, not interpreted/material_positive=false; independence posture unavailable. Parent cowrunamuck's use and two backups remain separate contextual testimony.",
+      "PamelaDamnela; Reddit r/Sephora, 2025-09-05; reddit:1n9da6u:ncly8vq. Says they have 'that one' but always skip it because they cannot stand the feeling, while loving the baste balm. Parent resolves these references to Dr. Idriss exfoliator and Barrier Baste, not Experiment; exact SKU/version unknown. Reports sensory avoidance alongside other-product approval, without explicit acquisition transaction, return or routine substitution. Score 4, observation time unavailable, not interpreted/material_positive=false; independence posture unavailable. Parent RowanVC's Softwear praise cannot be credited to this actor.",
+      "Junip customer 202931541; retailer review 7540631, 2025-03-22, updated 2025-03-23; credited origin. Four explicit Experiment acquisition categories: ordered Super Saturated after sister's introduction and favorable experience; bought Buffer Jelly seeking richer, repairing nighttime hydration; immediately bought face wash, reasonably mapped to Plasma Wash; bought mesh moisturizer, reasonably mapped to Molecular Mesh, at launch. Reports Super Saturated lightweight/refreshing/fast-drying hydration without clogged-pore feeling before makeup; Buffer Jelly yielded glowy, clean-looking skin despite initial thick/oily concern, with little needed; cleanser reportedly removed makeup, hydrated and coincided with no more breakouts. No-more-makeup-remover-needed is functional redundancy, not explicit stopped use. Likes counter colors and expresses strong brand loyalty, without isolating colors as purchase cause. Metadata: combo/sensitive skin, verified buyer, unrewarded, Super Saturated Refill target; metadata adds no acquisition or repurchase assertion. Sister introduction is not explicit gift. Exact acquired SKUs/formulas unknown. Votes 0 up/0 down; observation time unavailable. Benefits and sequential buying reasons are this actor's reports, not measured effects or independently corroborated motives.",
+      "eratch; Reddit r/SkincareAddictionLux, 2025-01-16; reddit:1i30kik:m7j6no0. Thread context explicitly concerns Regimen Lab. Reports getting its cream 2.0 while seeking healing moisturizer after excessive tret use, and also picking up its cleanser. These are other-brand acquisitions, excluded from Experiment counts. Favorable cream experience motivates intention to try more; praises formulations and perceived science-based market-gap focus. Cleanser is nice but small; interest favors serums/moisturizers. Tret-related trouble is not an Experiment adverse outcome, and actual healing is not explicitly established. No explicit return or completed routine substitution. Score 12, observation time unavailable, not interpreted/material_positive=false; independence posture unavailable. Cream version 2.0 stated; cleanser SKU/version unknown."
+    ],
+    "context": [
+      {
+        "keys": [
+          "bundle_pointer",
+          "text_sha256",
+          "context_id",
+          "context_type",
+          "source_artifact_id",
+          "source_ref",
+          "text",
+          "native_identity"
+        ],
+        "bounded_strings": [
+          "r is clear and scent free. It is the absolutely BEST. I can’t recommend it enough. I literally have two backups because I love it so much and it used to be harder to get since I’d have to have it shipped from Experiment’s website. So excited it’s at Sephora now!!",
+          "cowrunamuck"
+        ]
+      }
+    ]
+  },
+  "retrievals": [
+    {
+      "arm": "incremental",
+      "stage": "initial",
+      "started_at": "2026-09-09T14:09:33.927Z",
+      "finished_at": "2026-09-09T14:11:27.888Z",
+      "calls": 2,
+      "retrievals": 1,
+      "complete": true
+    },
+    {
+      "arm": "incremental",
+      "stage": "update",
+      "started_at": "2026-09-09T14:11:28.012Z",
+      "finished_at": "2026-09-09T14:13:09.050Z",
+      "calls": 1,
+      "retrievals": 0,
+      "complete": true
+    },
+    {
+      "arm": "full",
+      "stage": "initial",
+      "started_at": "2026-09-09T14:09:33.946Z",
+      "finished_at": "2026-09-09T14:10:53.772Z",
+      "calls": 2,
+      "retrievals": 1,
+      "complete": true
+    },
+    {
+      "arm": "full",
+      "stage": "update",
+      "started_at": "2026-09-09T14:10:53.940Z",
+      "finished_at": "2026-09-09T14:12:37.588Z",
+      "calls": 2,
+      "retrievals": 1,
+      "complete": true
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "pair-725682e9ae": {
+    "run_id": "buying-r1",
+    "case": "buying",
+    "positive_control": false,
+    "baseline_label": "A",
+    "corrected_label": "B"
+  },
+  "pair-d8b100092b": {
+    "run_id": "packaging-r1",
+    "case": "packaging",
+    "positive_control": false,
+    "baseline_label": "B",
+    "corrected_label": "A"
+  },
+  "pair-18ee2c6373": {
+    "run_id": "hydration-control",
+    "case": "hydration",
+    "positive_control": true,
+    "baseline_label": "A",
+    "corrected_label": "B"
+  },
+  "pair-87ad3d351b": {
+    "run_id": "buying-r2",
+    "case": "buying",
+    "positive_control": false,
+    "baseline_label": "B",
+    "corrected_label": "A"
+  },
+  "pair-9838fe726d": {
+    "run_id": "packaging-r2",
+    "case": "packaging",
+    "positive_control": false,
+    "baseline_label": "B",
+    "corrected_label": "A"
+  },
+  "pair-8ff855b660": {
+    "run_id": "hydration-r1",
+    "case": "hydration",
+    "positive_control": false,
+    "baseline_label": "A",
+    "corrected_label": "B"
+  },
+  "pair-8f25fb5f96": {
+    "run_id": "buying-r3",
+    "case": "buying",
+    "positive_control": false,
+    "baseline_label": "A",
+    "corrected_label": "B"
+  },
+  "pair-5591cdfe2e": {
+    "run_id": "hydration-r2",
+    "case": "hydration",
+    "positive_control": false,
+    "baseline_label": "A",
+    "corrected_label": "B"
+  },
+  "pair-b8e18222bd": {
+    "run_id": "packaging-r3",
+    "case": "packaging",
+    "positive_control": false,
+    "baseline_label": "B",
+    "corrected_label": "A"
+  },
+  "pair-6a6ed59901": {
+    "run_id": "hydration-r3",
+    "case": "hydration",
+    "positive_control": false,
+    "baseline_label": "B",
+    "corrected_label": "A"
+  }
+}

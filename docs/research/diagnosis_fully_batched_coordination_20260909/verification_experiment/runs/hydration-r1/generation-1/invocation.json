@@ -1,0 +1,24 @@
+{
+  "executable": "C:/Users/vmon7/AppData/Local/OpenAI/Codex/bin/fd4c151a749f3ab4/codex.exe",
+  "args": [
+    "exec",
+    "--json",
+    "--model",
+    "gpt-6-astra",
+    "-c",
+    "model_reasoning_effort=\"medium\"",
+    "-C",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca\\docs\\research\\diagnosis_fully_batched_coordination_20260909\\verification_experiment/runs/hydration-r1/generation-1",
+    "--disable",
+    "shell_tool",
+    "--output-schema",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca\\docs\\research\\diagnosis_fully_batched_coordination_20260909/response.schema.json",
+    "--output-last-message",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca\\docs\\research\\diagnosis_fully_batched_coordination_20260909\\verification_experiment/runs/hydration-r1/generation-1/response.json",
+    "-"
+  ],
+  "role": "generator",
+  "effort": "medium",
+  "no_resume": true,
+  "stdin_sha256": "14a2945905ef8d32782257b86121abd928fea6915fbde07dd9294af0c0178523"
+}

@@ -1,0 +1,7 @@
+{
+  "case": "hydration",
+  "id": "hydration-control",
+  "positive_control": true,
+  "retrievals": 1,
+  "semantic_retries": 0
+}

@@ -1,0 +1,75 @@
+{
+  "verified_at": "2026-09-09T18:39:15.218Z",
+  "verifier": {
+    "id": "01a08774-bd75-7570-b82d-146c1fe6cb18",
+    "wall_ms": 23529,
+    "usage": {
+      "input_tokens": 38448,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 480,
+      "reasoning_output_tokens": 328,
+      "total_tokens": 38928
+    },
+    "model_calls": 1,
+    "tool_calls": 0
+  },
+  "supervision": {
+    "model_calls": 0,
+    "tokens": 0,
+    "semantic_retries": 0
+  },
+  "host_waits": [
+    {
+      "timestamp": "2026-09-09T18:36:27.925Z",
+      "requested_ms": 55000
+    }
+  ],
+  "coordinator": {
+    "session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-06-01-01a0867d-6954-7e30-bac7-2c28f7cc3400.jsonl",
+    "started_at": "2026-09-09T18:28:42.927Z",
+    "base_counter": {
+      "timestamp": "2026-09-09T18:28:15.112Z",
+      "usage": {
+        "input_tokens": 8995030,
+        "cached_input_tokens": 8248832,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 66273,
+        "reasoning_output_tokens": 20849,
+        "total_tokens": 9061303
+      }
+    },
+    "cutoff": "2026-09-09T18:38:15.370Z",
+    "last_counter": {
+      "timestamp": "2026-09-09T18:38:15.370Z",
+      "usage": {
+        "input_tokens": 9961577,
+        "cached_input_tokens": 9165952,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 76651,
+        "reasoning_output_tokens": 25005,
+        "total_tokens": 10038228
+      }
+    },
+    "usage": {
+      "input_tokens": 966547,
+      "cached_input_tokens": 917120,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 10378,
+      "reasoning_output_tokens": 4156,
+      "total_tokens": 976925
+    },
+    "uncached_input_tokens": 49427
+  },
+  "combined_tokens_at_cutoff": 1015853,
+  "unallocated_tail": "All coordinator activity after cutoff, including publication and final response, remains additional; this is not a finalized whole-turn total.",
+  "checks": [
+    "frozen implementation and source identity",
+    "native verifier completion and accounting",
+    "exact source-supported known-error correction replay",
+    "quiet-job completion with one host wait",
+    "single overdue review without termination or restart",
+    "nonzero and spawn failure visibility",
+    "preserved stdout and stderr byte counts"
+  ]
+}
