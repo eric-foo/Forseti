@@ -1,0 +1,11 @@
+{
+  "status": "draft_open",
+  "head": "3dabbd10dd7390a95e126b011c8abb34984f758b",
+  "branch": "codex/diagnosis-batched-coordination-20260909",
+  "remote_readback": "3dabbd10dd7390a95e126b011c8abb34984f758b\trefs/heads/codex/diagnosis-batched-coordination-20260909\n",
+  "recovery": "All git commands exited zero. Generated whitespace regex lost its backslash, causing a false wrapper mismatch. Fixed comparator; observed 40-character local and remote hashes match. No repush/recommit retry.",
+  "failed_sequence": "publication-first-failure.json",
+  "pr_url": "https://github.com/eric-foo/forseti/pull/1586",
+  "pr_number": 1586,
+  "review": "Different-vendor operator-courier review and author adjudication pending; no merge"
+}

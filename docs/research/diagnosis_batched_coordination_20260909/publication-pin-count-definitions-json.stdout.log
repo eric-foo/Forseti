@@ -1,0 +1,27 @@
+{
+  "packaging": {
+    "arrival_leak": "Focal TikTok accounts reporting or contextually agreeing to arrival leak, including bare agreements, excluding brand response/retailer.",
+    "explicit_loose_top": "Focal TikTok accounts explicitly describing loose or improperly screwed top.",
+    "bare_arrival_agreement": "Only terse same/same way agreement with no further report.",
+    "replacement_offered": "Brand offer to send service replacement.",
+    "replacement_sent": "Customer explicitly reports replacement sent; not confirmed delivered.",
+    "retailer_leak": "Retailer accounts reporting packaging leakage.",
+    "repurchase_intended": "Explicit future repeat purchase intent."
+  },
+  "hydration": {
+    "ss_hydration_direct": "Focal accounts directly reporting SS hydration; exclude a mask-serum joint result and generic hydrating interest.",
+    "ss_hydration_joint": "Focal accounts reporting joint mask plus SS hydration/retention, without separable allocation.",
+    "ss_texture_direct": "Focal accounts first-hand reporting SS feel/texture including comparisons and lightweight/fast-drying.",
+    "ss_texture_speculative": "Focal non-user SS texture comparison or speculation."
+  },
+  "buying": {
+    "experiment_acquisition_focal": "Focal accounts explicitly narrating completed Experiment acquisition/checkout/stock-up. Exclude context-only accounts, metadata alone, use alone, gifts and other brands.",
+    "cart_readdition": "Focal accounts explicitly returning an item to cart.",
+    "stockup_focal": "Focal accounts explicitly stockpiling Experiment product.",
+    "gift_receipt": "Focal explicit gifted receipt.",
+    "return_considered": "Focal contemplated product return.",
+    "return_completed": "Focal completed product return.",
+    "routine_replacement_intended": "Focal prospective product substitution in routine.",
+    "routine_replacement_completed": "Focal explicit reported actual discontinuation/substitution in a routine. Functional redundancy (for example no more makeup remover needed) is retained separately but does not establish completed behavioral replacement."
+  }
+}

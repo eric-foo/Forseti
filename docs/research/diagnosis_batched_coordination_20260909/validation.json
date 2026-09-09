@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-09-09T13:38:41.974Z",
+  "checked_at": "2026-09-09T13:42:55.469Z",
   "source_identity": true,
   "only_two_predeclared_corrections": true,
   "changed_timestamp_keys": [
@@ -19,7 +19,11 @@
   "files": [
     {
       "path": ".gitattributes",
-      "bytes": 131
+      "bytes": 219
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 74
     },
     {
       "path": "authority-context.txt",
@@ -170,16 +174,20 @@
       "bytes": 3256
     },
     {
+      "path": "closeout.mjs",
+      "bytes": 2526
+    },
+    {
       "path": "common.txt",
       "bytes": 2189
     },
     {
       "path": "compare.mjs",
-      "bytes": 3110
+      "bytes": 3130
     },
     {
       "path": "comparison.json",
-      "bytes": 11729
+      "bytes": 16286
     },
     {
       "path": "count-definitions.json",
@@ -188,6 +196,10 @@
     {
       "path": "counters.mjs",
       "bytes": 1320
+    },
+    {
+      "path": "diff-scope.json",
+      "bytes": 23575
     },
     {
       "path": "durable-accounting-check.json",
@@ -230,8 +242,160 @@
       "bytes": 5792
     },
     {
+      "path": "publication-add.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-add.stdout.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-commit.stderr.log",
+      "bytes": 449
+    },
+    {
+      "path": "publication-commit.stdout.log",
+      "bytes": 16615
+    },
+    {
+      "path": "publication-first-failure.json",
+      "bytes": 5214
+    },
+    {
+      "path": "publication-head.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-head.stdout.log",
+      "bytes": 41
+    },
+    {
+      "path": "publication-lint.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-lint.stdout.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-authority-context-txt.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-authority-context-txt.stdout.log",
+      "bytes": 16972
+    },
+    {
+      "path": "publication-pin-batch-mjs.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-batch-mjs.stdout.log",
+      "bytes": 1624
+    },
+    {
+      "path": "publication-pin-common-txt.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-common-txt.stdout.log",
+      "bytes": 2189
+    },
+    {
+      "path": "publication-pin-count-definitions-json.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-count-definitions-json.stdout.log",
+      "bytes": 2110
+    },
+    {
+      "path": "publication-pin-expected-json.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-expected-json.stdout.log",
+      "bytes": 9272
+    },
+    {
+      "path": "publication-pin-experiment-json.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-experiment-json.stdout.log",
+      "bytes": 9599
+    },
+    {
+      "path": "publication-pin-fixture-errata-json.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-fixture-errata-json.stdout.log",
+      "bytes": 3194
+    },
+    {
+      "path": "publication-pin-response-schema-json.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-response-schema-json.stdout.log",
+      "bytes": 1365
+    },
+    {
+      "path": "publication-pin-run-mjs.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-run-mjs.stdout.log",
+      "bytes": 6525
+    },
+    {
+      "path": "publication-pin-sources-json.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-sources-json.stdout.log",
+      "bytes": 71612
+    },
+    {
       "path": "publication-preflight-failure.json",
       "bytes": 1528
+    },
+    {
+      "path": "publication-push.stderr.log",
+      "bytes": 439
+    },
+    {
+      "path": "publication-push.stdout.log",
+      "bytes": 127
+    },
+    {
+      "path": "publication-readback.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-readback.stdout.log",
+      "bytes": 8498
+    },
+    {
+      "path": "publication-remote.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-remote.stdout.log",
+      "bytes": 98
+    },
+    {
+      "path": "publication-sequence.json",
+      "bytes": 4748
+    },
+    {
+      "path": "publication.json",
+      "bytes": 728
+    },
+    {
+      "path": "publish.mjs",
+      "bytes": 2588
     },
     {
       "path": "quality-initial.json",
@@ -722,8 +886,12 @@
       "bytes": 71612
     },
     {
+      "path": "staging-race-failure.json",
+      "bytes": 1370
+    },
+    {
       "path": "validate.mjs",
-      "bytes": 2850
+      "bytes": 3051
     },
     {
       "path": "validation-process.json",
@@ -731,7 +899,7 @@
     },
     {
       "path": "validation.json",
-      "bytes": 15956
+      "bytes": 16727
     }
   ],
   "byte_counts": {
@@ -739,8 +907,9 @@
     "reader_stdin": 493727,
     "reader_event_stdout": 142503,
     "stderr": 0,
+    "coordinator_command_logs": 155015,
     "final_answers": 131835,
-    "all_artifacts_at_check": 1783938
+    "all_artifacts_at_check": 1981127
   },
   "bytes_are_not_tokens": true
 }
