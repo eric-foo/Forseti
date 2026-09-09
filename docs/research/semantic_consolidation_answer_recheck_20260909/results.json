@@ -1,0 +1,900 @@
+{
+  "checked_at": "2026-09-09T10:32:05.355Z",
+  "mechanical_validation": "pass",
+  "meaning_quality": "Author assessment in report.md; not graded by schema or count arithmetic",
+  "checks": [
+    {
+      "case": "accounts-initial",
+      "category": "hydration",
+      "expected_accounts": [
+        "A04",
+        "A08",
+        "A09"
+      ],
+      "observed_accounts": [
+        "A04",
+        "A08",
+        "A09"
+      ],
+      "derived_account_count": 3,
+      "reported_account_count": 3,
+      "expected_action_count": null,
+      "derived_action_count": null,
+      "reported_action_count": null,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": false,
+      "recovered": true
+    },
+    {
+      "case": "accounts-initial",
+      "category": "texture_direct",
+      "expected_accounts": [
+        "A03",
+        "A04"
+      ],
+      "observed_accounts": [
+        "A03",
+        "A04"
+      ],
+      "derived_account_count": 2,
+      "reported_account_count": 2,
+      "expected_action_count": null,
+      "derived_action_count": null,
+      "reported_action_count": null,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": false,
+      "recovered": true
+    },
+    {
+      "case": "accounts-initial",
+      "category": "texture_speculative",
+      "expected_accounts": [],
+      "observed_accounts": [],
+      "derived_account_count": 0,
+      "reported_account_count": 0,
+      "expected_action_count": null,
+      "derived_action_count": null,
+      "reported_action_count": null,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": false,
+      "recovered": true
+    },
+    {
+      "case": "accounts-initial",
+      "category": "buying_stockup",
+      "expected_accounts": [
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "observed_accounts": [
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "derived_account_count": 3,
+      "reported_account_count": 3,
+      "expected_action_count": 6,
+      "derived_action_count": 6,
+      "reported_action_count": 6,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "accounts-initial",
+      "category": "cart_readdition",
+      "expected_accounts": [
+        "A01"
+      ],
+      "observed_accounts": [
+        "A01"
+      ],
+      "derived_account_count": 1,
+      "reported_account_count": 1,
+      "expected_action_count": 1,
+      "derived_action_count": 1,
+      "reported_action_count": 1,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "accounts-initial",
+      "category": "gift_receipt",
+      "expected_accounts": [],
+      "observed_accounts": [],
+      "derived_account_count": 0,
+      "reported_account_count": 0,
+      "expected_action_count": 0,
+      "derived_action_count": 0,
+      "reported_action_count": 0,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "accounts-initial",
+      "category": "return_considered",
+      "expected_accounts": [],
+      "observed_accounts": [],
+      "derived_account_count": 0,
+      "reported_account_count": 0,
+      "expected_action_count": 0,
+      "derived_action_count": 0,
+      "reported_action_count": 0,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "accounts-initial",
+      "category": "return_completed",
+      "expected_accounts": [],
+      "observed_accounts": [],
+      "derived_account_count": 0,
+      "reported_account_count": 0,
+      "expected_action_count": 0,
+      "derived_action_count": 0,
+      "reported_action_count": 0,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "accounts-initial",
+      "category": "replacement_intended",
+      "expected_accounts": [],
+      "observed_accounts": [],
+      "derived_account_count": 0,
+      "reported_account_count": 0,
+      "expected_action_count": 0,
+      "derived_action_count": 0,
+      "reported_action_count": 0,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "accounts-initial",
+      "category": "replacement_completed",
+      "expected_accounts": [],
+      "observed_accounts": [],
+      "derived_account_count": 0,
+      "reported_account_count": 0,
+      "expected_action_count": 0,
+      "derived_action_count": 0,
+      "reported_action_count": 0,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "accounts-final",
+      "category": "hydration",
+      "expected_accounts": [
+        "A04",
+        "A08",
+        "A09",
+        "A13"
+      ],
+      "observed_accounts": [
+        "A04",
+        "A08",
+        "A09",
+        "A13"
+      ],
+      "derived_account_count": 4,
+      "reported_account_count": 4,
+      "expected_action_count": null,
+      "derived_action_count": null,
+      "reported_action_count": null,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": false,
+      "recovered": true
+    },
+    {
+      "case": "accounts-final",
+      "category": "texture_direct",
+      "expected_accounts": [
+        "A03",
+        "A04",
+        "A13"
+      ],
+      "observed_accounts": [
+        "A03",
+        "A04",
+        "A13"
+      ],
+      "derived_account_count": 3,
+      "reported_account_count": 3,
+      "expected_action_count": null,
+      "derived_action_count": null,
+      "reported_action_count": null,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": false,
+      "recovered": true
+    },
+    {
+      "case": "accounts-final",
+      "category": "texture_speculative",
+      "expected_accounts": [
+        "A17"
+      ],
+      "observed_accounts": [
+        "A17"
+      ],
+      "derived_account_count": 1,
+      "reported_account_count": 1,
+      "expected_action_count": null,
+      "derived_action_count": null,
+      "reported_action_count": null,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "accounts-final",
+      "category": "buying_stockup",
+      "expected_accounts": [
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "observed_accounts": [
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "derived_account_count": 3,
+      "reported_account_count": 3,
+      "expected_action_count": 6,
+      "derived_action_count": 6,
+      "reported_action_count": 6,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": false,
+      "recovered": true
+    },
+    {
+      "case": "accounts-final",
+      "category": "cart_readdition",
+      "expected_accounts": [
+        "A01"
+      ],
+      "observed_accounts": [
+        "A01"
+      ],
+      "derived_account_count": 1,
+      "reported_account_count": 1,
+      "expected_action_count": 1,
+      "derived_action_count": 1,
+      "reported_action_count": 1,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "accounts-final",
+      "category": "gift_receipt",
+      "expected_accounts": [
+        "A14"
+      ],
+      "observed_accounts": [
+        "A14"
+      ],
+      "derived_account_count": 1,
+      "reported_account_count": 1,
+      "expected_action_count": 1,
+      "derived_action_count": 1,
+      "reported_action_count": 1,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "accounts-final",
+      "category": "return_considered",
+      "expected_accounts": [
+        "A15"
+      ],
+      "observed_accounts": [
+        "A15"
+      ],
+      "derived_account_count": 1,
+      "reported_account_count": 1,
+      "expected_action_count": 1,
+      "derived_action_count": 1,
+      "reported_action_count": 1,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "accounts-final",
+      "category": "return_completed",
+      "expected_accounts": [],
+      "observed_accounts": [],
+      "derived_account_count": 0,
+      "reported_account_count": 0,
+      "expected_action_count": 0,
+      "derived_action_count": 0,
+      "reported_action_count": 0,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "accounts-final",
+      "category": "replacement_intended",
+      "expected_accounts": [
+        "A16"
+      ],
+      "observed_accounts": [
+        "A16"
+      ],
+      "derived_account_count": 1,
+      "reported_account_count": 1,
+      "expected_action_count": 1,
+      "derived_action_count": 1,
+      "reported_action_count": 1,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "accounts-final",
+      "category": "replacement_completed",
+      "expected_accounts": [],
+      "observed_accounts": [],
+      "derived_account_count": 0,
+      "reported_account_count": 0,
+      "expected_action_count": 0,
+      "derived_action_count": 0,
+      "reported_action_count": 0,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "atomic-initial",
+      "category": "hydration",
+      "expected_accounts": [
+        "A04",
+        "A08",
+        "A09"
+      ],
+      "observed_accounts": [
+        "A04",
+        "A08",
+        "A09"
+      ],
+      "derived_account_count": 3,
+      "reported_account_count": 3,
+      "expected_action_count": null,
+      "derived_action_count": null,
+      "reported_action_count": null,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "atomic-initial",
+      "category": "texture_direct",
+      "expected_accounts": [
+        "A03",
+        "A04"
+      ],
+      "observed_accounts": [
+        "A03",
+        "A04"
+      ],
+      "derived_account_count": 2,
+      "reported_account_count": 2,
+      "expected_action_count": null,
+      "derived_action_count": null,
+      "reported_action_count": null,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "atomic-initial",
+      "category": "texture_speculative",
+      "expected_accounts": [],
+      "observed_accounts": [],
+      "derived_account_count": 0,
+      "reported_account_count": 0,
+      "expected_action_count": null,
+      "derived_action_count": null,
+      "reported_action_count": null,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": false,
+      "recovered": true
+    },
+    {
+      "case": "atomic-initial",
+      "category": "buying_stockup",
+      "expected_accounts": [
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "observed_accounts": [
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "derived_account_count": 3,
+      "reported_account_count": 3,
+      "expected_action_count": 6,
+      "derived_action_count": 6,
+      "reported_action_count": 6,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "atomic-initial",
+      "category": "cart_readdition",
+      "expected_accounts": [
+        "A01"
+      ],
+      "observed_accounts": [
+        "A01"
+      ],
+      "derived_account_count": 1,
+      "reported_account_count": 1,
+      "expected_action_count": 1,
+      "derived_action_count": 1,
+      "reported_action_count": 1,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "atomic-initial",
+      "category": "gift_receipt",
+      "expected_accounts": [],
+      "observed_accounts": [],
+      "derived_account_count": 0,
+      "reported_account_count": 0,
+      "expected_action_count": 0,
+      "derived_action_count": 0,
+      "reported_action_count": 0,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "atomic-initial",
+      "category": "return_considered",
+      "expected_accounts": [],
+      "observed_accounts": [],
+      "derived_account_count": 0,
+      "reported_account_count": 0,
+      "expected_action_count": 0,
+      "derived_action_count": 0,
+      "reported_action_count": 0,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "atomic-initial",
+      "category": "return_completed",
+      "expected_accounts": [],
+      "observed_accounts": [],
+      "derived_account_count": 0,
+      "reported_account_count": 0,
+      "expected_action_count": 0,
+      "derived_action_count": 0,
+      "reported_action_count": 0,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "atomic-initial",
+      "category": "replacement_intended",
+      "expected_accounts": [],
+      "observed_accounts": [],
+      "derived_account_count": 0,
+      "reported_account_count": 0,
+      "expected_action_count": 0,
+      "derived_action_count": 0,
+      "reported_action_count": 0,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "atomic-initial",
+      "category": "replacement_completed",
+      "expected_accounts": [],
+      "observed_accounts": [],
+      "derived_account_count": 0,
+      "reported_account_count": 0,
+      "expected_action_count": 0,
+      "derived_action_count": 0,
+      "reported_action_count": 0,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "atomic-final",
+      "category": "hydration",
+      "expected_accounts": [
+        "A04",
+        "A08",
+        "A09",
+        "A13"
+      ],
+      "observed_accounts": [
+        "A04",
+        "A08",
+        "A09",
+        "A13"
+      ],
+      "derived_account_count": 4,
+      "reported_account_count": 4,
+      "expected_action_count": null,
+      "derived_action_count": null,
+      "reported_action_count": null,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": false,
+      "recovered": true
+    },
+    {
+      "case": "atomic-final",
+      "category": "texture_direct",
+      "expected_accounts": [
+        "A03",
+        "A04",
+        "A13"
+      ],
+      "observed_accounts": [
+        "A03",
+        "A04",
+        "A13"
+      ],
+      "derived_account_count": 3,
+      "reported_account_count": 3,
+      "expected_action_count": null,
+      "derived_action_count": null,
+      "reported_action_count": null,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": false,
+      "recovered": true
+    },
+    {
+      "case": "atomic-final",
+      "category": "texture_speculative",
+      "expected_accounts": [
+        "A17"
+      ],
+      "observed_accounts": [
+        "A17"
+      ],
+      "derived_account_count": 1,
+      "reported_account_count": 1,
+      "expected_action_count": null,
+      "derived_action_count": null,
+      "reported_action_count": null,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": false,
+      "recovered": true
+    },
+    {
+      "case": "atomic-final",
+      "category": "buying_stockup",
+      "expected_accounts": [
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "observed_accounts": [
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "derived_account_count": 3,
+      "reported_account_count": 3,
+      "expected_action_count": 6,
+      "derived_action_count": 6,
+      "reported_action_count": 6,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": false,
+      "recovered": true
+    },
+    {
+      "case": "atomic-final",
+      "category": "cart_readdition",
+      "expected_accounts": [
+        "A01"
+      ],
+      "observed_accounts": [
+        "A01"
+      ],
+      "derived_account_count": 1,
+      "reported_account_count": 1,
+      "expected_action_count": 1,
+      "derived_action_count": 1,
+      "reported_action_count": 1,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "atomic-final",
+      "category": "gift_receipt",
+      "expected_accounts": [
+        "A14"
+      ],
+      "observed_accounts": [
+        "A14"
+      ],
+      "derived_account_count": 1,
+      "reported_account_count": 1,
+      "expected_action_count": 1,
+      "derived_action_count": 1,
+      "reported_action_count": 1,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "atomic-final",
+      "category": "return_considered",
+      "expected_accounts": [
+        "A15"
+      ],
+      "observed_accounts": [
+        "A15"
+      ],
+      "derived_account_count": 1,
+      "reported_account_count": 1,
+      "expected_action_count": 1,
+      "derived_action_count": 1,
+      "reported_action_count": 1,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "atomic-final",
+      "category": "return_completed",
+      "expected_accounts": [],
+      "observed_accounts": [],
+      "derived_account_count": 0,
+      "reported_account_count": 0,
+      "expected_action_count": 0,
+      "derived_action_count": 0,
+      "reported_action_count": 0,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "atomic-final",
+      "category": "replacement_intended",
+      "expected_accounts": [
+        "A16"
+      ],
+      "observed_accounts": [
+        "A16"
+      ],
+      "derived_account_count": 1,
+      "reported_account_count": 1,
+      "expected_action_count": 1,
+      "derived_action_count": 1,
+      "reported_action_count": 1,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    },
+    {
+      "case": "atomic-final",
+      "category": "replacement_completed",
+      "expected_accounts": [],
+      "observed_accounts": [],
+      "derived_account_count": 0,
+      "reported_account_count": 0,
+      "expected_action_count": 0,
+      "derived_action_count": 0,
+      "reported_action_count": 0,
+      "internal_consistency": true,
+      "source_set_pass": true,
+      "action_count_pass": true,
+      "pass": true,
+      "prior_pass": true,
+      "recovered": false
+    }
+  ],
+  "summary": {
+    "checks": 40,
+    "pass": 40,
+    "fail": 0,
+    "recovered": 11,
+    "regressions": 0
+  },
+  "calls": [
+    {
+      "case": "accounts-initial",
+      "thread_id": "01a085b6-6295-7692-91f1-46fbbbbeb4e3",
+      "started_at": "2026-09-09T10:28:37.383Z",
+      "finished_at": "2026-09-09T10:29:18.601Z",
+      "prompt_sha256": "d02054621b3217cbf24060ebab5a51de973fde3ce132657767618d3a28e88633",
+      "usage": {
+        "input_tokens": 27751,
+        "cached_input_tokens": 1408,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1828,
+        "reasoning_output_tokens": 516
+      },
+      "total_tokens": 29579
+    },
+    {
+      "case": "accounts-final",
+      "thread_id": "01a085b7-0375-7bb3-8aa4-f17a215540f3",
+      "started_at": "2026-09-09T10:29:18.714Z",
+      "finished_at": "2026-09-09T10:30:02.889Z",
+      "prompt_sha256": "d557b34c2afce5c617f04ae88cbbfbb05039bd7263116c89b3862fd96462d32b",
+      "usage": {
+        "input_tokens": 33732,
+        "cached_input_tokens": 1408,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1962,
+        "reasoning_output_tokens": 516
+      },
+      "total_tokens": 35694
+    },
+    {
+      "case": "atomic-initial",
+      "thread_id": "01a085b7-b066-72e2-af64-4989b8cf95de",
+      "started_at": "2026-09-09T10:30:02.994Z",
+      "finished_at": "2026-09-09T10:30:48.667Z",
+      "prompt_sha256": "0fbc9aad63f23eac93057905d43e3144bead1bbec5f6888a4428c3a2132bc17a",
+      "usage": {
+        "input_tokens": 37332,
+        "cached_input_tokens": 1408,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1883,
+        "reasoning_output_tokens": 516
+      },
+      "total_tokens": 39215
+    },
+    {
+      "case": "atomic-final",
+      "thread_id": "01a085b8-6341-7bb3-8f18-d0b92dce8fa7",
+      "started_at": "2026-09-09T10:30:48.779Z",
+      "finished_at": "2026-09-09T10:31:44.127Z",
+      "prompt_sha256": "fd2312c002aa816726b4a85b763e1b1f2cdcbbc61657a24f0e4c31223f5d8690",
+      "usage": {
+        "input_tokens": 51930,
+        "cached_input_tokens": 16768,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1996,
+        "reasoning_output_tokens": 516
+      },
+      "total_tokens": 53926
+    }
+  ]
+}

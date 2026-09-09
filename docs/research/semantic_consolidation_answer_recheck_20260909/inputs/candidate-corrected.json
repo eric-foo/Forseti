@@ -1,0 +1,462 @@
+{
+  "authored_at": "2026-09-09T07:47:58.134Z",
+  "comparison_not_yet_read": false,
+  "scope": "12 initial source accounts; local experimental record, not production schema",
+  "records": [
+    {
+      "key": "A01",
+      "id": "reddit:1n9da6u:ncm3hhd",
+      "disposition": "interpretable",
+      "subjects": [
+        {
+          "subject": "Experiment Softwear",
+          "account": "Removed balm from FF cart, then put it back because of the parent recommendation. Crusty lips and wallet complaint are current context/humor; thanks to balm is anticipatory, not a use result.",
+          "topics": [],
+          "actions": [
+            {
+              "kind": "cart_readdition",
+              "status": "reported",
+              "reason": "Explicitly attributed to parent recommendation"
+            }
+          ]
+        }
+      ],
+      "retained": "FF meaning unresolved. No completed purchase. Parent recommends Softwear, compares Eadem, reports sensitive skin and backups; those are parent testimony only.",
+      "relation": {
+        "kind": "recommendation_response",
+        "parent_context": "context_5f002acbf9eb1cd7bfc3",
+        "native_parent": "nclxocd",
+        "child_claim": "Recommendation prompted cart readdition, not experienced benefit"
+      },
+      "uncertainty": "Softwear resolves from parent; no formula version or first-use evidence."
+    },
+    {
+      "key": "A02",
+      "id": "reddit:1n9da6u:ncly8vq",
+      "disposition": "interpretable",
+      "subjects": [
+        {
+          "subject": "Dr. Idriss lip exfoliator (context-resolved, uncertain)",
+          "account": "Likely owns the exfoliator discussed in the parent; cannot stand its feeling and always skips it.",
+          "topics": [
+            "texture"
+          ],
+          "actions": [
+            {
+              "kind": "ownership",
+              "status": "reported"
+            },
+            {
+              "kind": "avoid_use",
+              "status": "reported",
+              "reason": "Disliked feeling"
+            }
+          ]
+        },
+        {
+          "subject": "Dr. Idriss Barrier Baste balm (context-resolved)",
+          "account": "Loves the baste balm; no particular benefit asserted.",
+          "topics": [],
+          "actions": []
+        }
+      ],
+      "retained": "“That one” is not explicit: surrounding baste-balm contrast favors Dr. Idriss exfoliator but does not prove referent. Preserve uncertainty; exclude uncertain avoid-use from definite target counts. No Experiment complaint is established."
+    },
+    {
+      "key": "A03",
+      "id": "reddit:1i30kik:m7jkz2b",
+      "disposition": "interpretable",
+      "subjects": [
+        {
+          "subject": "Regimen Lab Wave Serum",
+          "account": "Likes Wave and finds it less sticky than Experiment Super Saturated.",
+          "topics": [
+            "texture"
+          ],
+          "actions": []
+        },
+        {
+          "subject": "Experiment Super Saturated",
+          "account": "Still uses it despite the relative stickiness because the author thinks it has a little more glycerin.",
+          "topics": [
+            "texture"
+          ],
+          "actions": [
+            {
+              "kind": "continued_use",
+              "status": "reported",
+              "reason": "Believed higher glycerin, explicitly uncertain"
+            }
+          ]
+        }
+      ],
+      "retained": "Comparison is relative stickiness, not hydration superiority or switching. Parent Level Serum purchase and repurchase intention belong to another actor. Glycerin amounts are not verified formulation facts."
+    },
+    {
+      "key": "A04",
+      "id": "junip:7540631",
+      "disposition": "interpretable",
+      "subjects": [
+        {
+          "subject": "Experiment Super Saturated",
+          "account": "Sister introduced brand through Super Saturated; author loved it and ordered their own. Lightweight, refreshing, fast drying, very hydrating without pores feeling clogged; suitable before makeup.",
+          "topics": [
+            "hydration",
+            "texture",
+            "reaction"
+          ],
+          "actions": [
+            {
+              "kind": "purchase",
+              "status": "reported",
+              "reason": "Own order after sister introduction and favorable experience"
+            }
+          ]
+        },
+        {
+          "subject": "Experiment Buffer Jelly",
+          "account": "Bought seeking more nighttime hydration/repair. Initially worried about thick/oily appearance, then woke with glowy, clean skin; tiny amount needed.",
+          "topics": [
+            "texture",
+            "appearance",
+            "quantity"
+          ],
+          "actions": [
+            {
+              "kind": "purchase",
+              "status": "reported",
+              "reason": "Desired greater nighttime hydration/repair"
+            }
+          ]
+        },
+        {
+          "subject": "Experiment face wash (exact SKU unresolved)",
+          "account": "Immediately bought face wash; reports no more breakouts, makeup comes off with one dollop without separate remover, and hydrated skin.",
+          "topics": [
+            "cleansing",
+            "hydration",
+            "reaction",
+            "quantity"
+          ],
+          "actions": [
+            {
+              "kind": "purchase",
+              "status": "reported"
+            }
+          ]
+        },
+        {
+          "subject": "Experiment mesh moisturizer (exact SKU unresolved)",
+          "account": "Bought immediately at launch; no use outcome given.",
+          "topics": [],
+          "actions": [
+            {
+              "kind": "purchase",
+              "status": "reported"
+            }
+          ]
+        },
+        {
+          "subject": "Experiment brand",
+          "account": "Loves colorful products on bathroom counter, calls them quirky/delightful; enthusiastic brand and scientist appreciation.",
+          "topics": [
+            "packaging"
+          ],
+          "actions": []
+        }
+      ],
+      "retained": "Chronology is not proof that one benefit caused all later purchases. Product-page title does not make all clauses Super Saturated claims. Source-scope Refill label does not establish an extra repurchase. Combo/sensitive survey stays context, not a condition on every benefit."
+    },
+    {
+      "key": "A05",
+      "id": "junip:1569510",
+      "disposition": "interpretable",
+      "subjects": [
+        {
+          "subject": "Experiment Avant Guard",
+          "account": "Had paused formerly almost-nightly disposable sheet masks to pursue sustainability; discovering reusable mask through TikTok creator led to immediate checkout. Almost perfect fit except cheeks/nose; easy cleaning. Having mask motivates use of other hydrating/moisturizing products, which author says have helped repair barrier.",
+          "topics": [
+            "sustainability",
+            "fit",
+            "cleaning"
+          ],
+          "actions": [
+            {
+              "kind": "purchase",
+              "status": "reported",
+              "reason": "Reusable-mask discovery through TikTok in sustainability context"
+            },
+            {
+              "kind": "use",
+              "status": "reported"
+            }
+          ]
+        }
+      ],
+      "retained": "Other products are direct referent of barrier-repair statement; do not claim mask independently repairs barrier. Small acid-lime variant in metadata, no shade preference inferred. Sustainability and creator discovery coexist; no isolated causal coefficient."
+    },
+    {
+      "key": "A06",
+      "id": "junip:14942664",
+      "disposition": "interpretable",
+      "subjects": [
+        {
+          "subject": "Experiment Continuum",
+          "account": "Reports neck ingrown-hair control after shaving: shave, moisturize, apply Continuum next morning. Previously ingrowns every time; calls this a game changer and identifies it with desired exfoliation/barrier healing.",
+          "topics": [
+            "reaction",
+            "exfoliation",
+            "barrier"
+          ],
+          "actions": [
+            {
+              "kind": "use",
+              "status": "reported",
+              "condition": "Neck; morning after shaving and moisturizing"
+            }
+          ]
+        }
+      ],
+      "retained": "Single self-report of changed neck condition, not objective prevention efficacy. Combo survey not treated as efficacy condition; no purchase event inferred."
+    },
+    {
+      "key": "A07",
+      "id": "junip:6884815",
+      "disposition": "unresolved",
+      "subjects": [],
+      "retained": "Exact body is “undefined...”. Do not convert metadata or product association into customer approval, purchase, or experience. Possible capture/parser artifact; missing meaningful body retained as limitation."
+    },
+    {
+      "key": "A08",
+      "id": "junip:4653282",
+      "disposition": "interpretable",
+      "subjects": [
+        {
+          "subject": "Experiment Super Saturated",
+          "account": "51-year-old with challenging skin calls it awesome paired with tretinoin and other actives; reports skin left very hydrated.",
+          "topics": [
+            "hydration"
+          ],
+          "actions": [
+            {
+              "kind": "use",
+              "status": "reported",
+              "condition": "With tretinoin and other actives"
+            }
+          ]
+        }
+      ],
+      "retained": "Do not infer irritation prevention, barrier repair, clinical compatibility or that age/skin type caused outcome."
+    },
+    {
+      "key": "A09",
+      "id": "junip:1866323",
+      "disposition": "interpretable",
+      "subjects": [
+        {
+          "subject": "Experiment Avant Guard",
+          "account": "Locks in hydration from Super Saturated; fit is “not the best” on very small head, especially nose, leading to one-star deduction.",
+          "topics": [
+            "hydration",
+            "fit"
+          ],
+          "actions": [
+            {
+              "kind": "use",
+              "status": "reported",
+              "condition": "Over Super Saturated on very small head"
+            }
+          ],
+          "topic_attribution": {
+            "hydration": {
+              "subjects": [
+                "Experiment Avant Guard",
+                "Experiment Super Saturated"
+              ],
+              "scope": "joint_use",
+              "outcome_allocation": "not_separable",
+              "condition": "Avant Guard used over Super Saturated"
+            }
+          }
+        }
+      ],
+      "retained": "Dry/acne-prone survey is context. No independent Super Saturated hydration event or repurchase counted from this adjunct-use clause."
+    },
+    {
+      "key": "A10",
+      "id": "junip:3515905",
+      "disposition": "interpretable",
+      "subjects": [
+        {
+          "subject": "Experiment Buffer Jelly",
+          "account": "Loves it, reports locking in hydrating products, little goes far, and waking with glowing skin when used at night as final routine step.",
+          "topics": [
+            "hydration",
+            "quantity",
+            "appearance"
+          ],
+          "actions": [
+            {
+              "kind": "use",
+              "status": "reported",
+              "condition": "Final nighttime step over hydrating products"
+            }
+          ]
+        }
+      ],
+      "retained": "Routine conditional, no measured effect or inferred purchase event."
+    },
+    {
+      "key": "A11",
+      "id": "junip:6638709",
+      "disposition": "interpretable",
+      "subjects": [
+        {
+          "subject": "Experiment Softwear",
+          "account": "Influencer recommended it. Author loved it for months and called it best balm; liked thick texture/sheen despite lip-rubbing resistance. Woke with dead skin needing daily rubbing/brushing; tentatively viewed that as working. Later reports perioral dermatitis, rough tiny bumps and prescribed steroid cream. After recovery, rechallenge flared within 24 hours, worse; author attributes this to Softwear. Three unopened stocked-up tubes left, perceived $70 CAD loss. Still recommends trying at reasonable price while warning sensitive lips; says lips had never been sensitive and prior reaction unprecedented.",
+          "topics": [
+            "texture",
+            "appearance",
+            "reaction",
+            "exfoliation",
+            "value"
+          ],
+          "actions": [
+            {
+              "kind": "repeat_purchase_stockup",
+              "status": "reported",
+              "reason": "During months of liking it; three unopened tubes remain"
+            },
+            {
+              "kind": "rechallenge",
+              "status": "reported",
+              "condition": "After treatment/recovery"
+            },
+            {
+              "kind": "recommendation",
+              "status": "reported",
+              "condition": "Try with warning; adverse outcome remains"
+            }
+          ]
+        }
+      ],
+      "retained": "Keep temporal reversal and coexisting qualified recommendation. “Confirmed caused” is author belief supported by their reported rechallenge, not clinical causation. Survey says Combo + Sensitive while body says lips never sensitive; different scopes, do not erase either. No count of purchase occasions or diagnosis verification."
+    },
+    {
+      "key": "A12",
+      "id": "reddit:1i30kik:m7j6no0",
+      "disposition": "interpretable",
+      "subjects": [
+        {
+          "subject": "Regimen Lab Cream 2.0",
+          "account": "Recently got cream after overdoing tret, seeking healing moisturizer; favorable experience motivates trying more of line, and author impressed by formulations.",
+          "topics": [],
+          "actions": [
+            {
+              "kind": "acquisition",
+              "status": "reported",
+              "reason": "Sought healing moisturizer after heavy tret use"
+            },
+            {
+              "kind": "try_more",
+              "status": "intended"
+            }
+          ]
+        },
+        {
+          "subject": "Regimen Lab cleanser",
+          "account": "Picked up to use; nice but pretty small. Greater interest in serums/moisturizers.",
+          "topics": [
+            "quantity"
+          ],
+          "actions": [
+            {
+              "kind": "acquisition",
+              "status": "reported"
+            }
+          ]
+        },
+        {
+          "subject": "Regimen Lab brand",
+          "account": "Author believes products address market gaps in science-based formulations.",
+          "topics": [],
+          "actions": []
+        }
+      ],
+      "retained": "Post establishes Regimen Lab, not Experiment. Seeking healing is not an explicit healed outcome. Future trial is not acquisition; no market-gap fact established."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "question": "Does this sample support Super Saturated hydration despite sensory tradeoffs?",
+      "statement": "Two selected accounts report hydration in different routines; a third uses it despite finding Wave less sticky. Hydration and texture are separate judgments; there is no demonstrated comparative hydration advantage.",
+      "refs": [
+        "A04",
+        "A08",
+        "A03"
+      ],
+      "conflict_posture": "none_observed",
+      "limits": "Only checked initial sample; routines differ, no cross-person causal link between glycerin and hydration. A07 is unreadable."
+    },
+    {
+      "id": "F2",
+      "question": "What accompanies Avant Guard use?",
+      "statement": "Both selected mask accounts preserve a nose-fit exception alongside favorable use. One ties it to very small head and one also names cheeks. Sustainability/discovery and adjunct-product barrier benefit remain separate.",
+      "refs": [
+        "A05",
+        "A09"
+      ],
+      "conflict_posture": "mixed",
+      "limits": "Mixed attributes, not opposed overall votes. No claim of mask-alone barrier repair."
+    },
+    {
+      "id": "F3",
+      "question": "What do the selected Buffer Jelly accounts agree on?",
+      "statement": "Two accounts report nighttime glow and small amount needed. Only A10 explicitly says it locks in hydration; A04 sought more hydration but reports glow/clean skin.",
+      "refs": [
+        "A04",
+        "A10"
+      ],
+      "conflict_posture": "none_observed",
+      "limits": "Source-specific routine and motivation remain visible; no hydration corroboration from desire alone."
+    },
+    {
+      "id": "F4",
+      "question": "Can recommendation response and actual Softwear experience be kept distinct?",
+      "statement": "One reply explicitly credits a recommendation with cart readdition. A different account reports initial enthusiasm, stock-up and later adverse reaction/rechallenge while retaining a qualified recommendation. These are distinct behaviors, not two successful purchases or proof of safe efficacy.",
+      "refs": [
+        "A01",
+        "A11"
+      ],
+      "conflict_posture": "mixed",
+      "limits": "Parent is context only; adverse reaction causal attribution is individual. No prevalence or material-resonance award."
+    },
+    {
+      "id": "F5",
+      "question": "Do subjects and ambiguous referents survive coherent accounts?",
+      "statement": "Regimen Lab acquisitions and intended expansion (A12), Wave comparison (A03), and likely Dr. Idriss avoidance/Baste approval (A02) stay separate from Experiment actions. A02 referent remains uncertain.",
+      "refs": [
+        "A02",
+        "A03",
+        "A12"
+      ],
+      "conflict_posture": "none_observed",
+      "limits": "Routing observation about records, not a competitor advantage. A06 Continuum report and A04 other-product details retained outside these findings."
+    }
+  ],
+  "common_limits": "Exact evidence, actor/time/engagement and context resolve by id in sample.json. Formula versions unknown unless explicit. Scores are unassessed native resonance, never customer headcounts. Accounts are selected source observations, not representative customers; each narrative keeps clauses separately addressable by subject. Raw retained details remain active evidence even when absent from findings.",
+  "revision": {
+    "account": "A09",
+    "before": "fit poor",
+    "after": "fit is “not the best”",
+    "source": "junip:1866323",
+    "reason": "Preserve qualified severity; one allowed targeted revision."
+  },
+  "same_sample_revision": {
+    "commission": "Owner-authorized same-sample revision, 2026-09-09",
+    "original_snapshot": "prior-probe/candidate-corrected.json",
+    "changed_record": "A09",
+    "change": "Add joint-product hydration attribution; fit and behavior remain solely with Avant Guard."
+  }
+}

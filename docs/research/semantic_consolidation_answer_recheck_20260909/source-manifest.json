@@ -1,0 +1,77 @@
+{
+  "source_root": "C:/Users/vmon7/.codex/worktrees/a7d8/orca",
+  "source_revision": "df9ebeee64e0b084f25bf3ed58c41237945a2880",
+  "destination_root": "C:\\Users\\vmon7\\.codex\\worktrees\\cf6f\\orca",
+  "branch": "codex/semantic-answer-recheck-20260909",
+  "base_revision": "bf2c7d3761bd216962f5f3044f8121d749fa457e",
+  "source_clean": true,
+  "destination_initial_clean": true,
+  "write_verified": true,
+  "original_freeze_verified": true,
+  "files": [
+    {
+      "name": "sample.json",
+      "sha256": "7fcce869f91759ffb4e0942ae0c5996889981fe8679dd9012fab941feb0f84e8"
+    },
+    {
+      "name": "experiment.json",
+      "sha256": "b63a8ed90bcef731d64f6cda8b72e96dbdb85a19307e7b02212b4bda96246af0"
+    },
+    {
+      "name": "measurement.json",
+      "sha256": "776b7ab44d491e365561da8cdf09f73dd6567c140d342b71038ffd7d24f6d675"
+    },
+    {
+      "name": "candidate-corrected.json",
+      "sha256": "716dee607ef6da9a4d7628bea4f6fc380183621fc2afb5226be2bd7edbac0cee"
+    },
+    {
+      "name": "candidate-later.json",
+      "sha256": "ceab8bbefe57b62c5fcf524e4f464af6f4ca6136ce7378b0ab89f65a1b784507"
+    },
+    {
+      "name": "baseline-initial.json",
+      "sha256": "c3fdbf1cf5e30dd57531cc185d5b64f9fb6639aabd937aece38b0638d3f76306"
+    },
+    {
+      "name": "baseline-later.json",
+      "sha256": "c46ef7574cb7af39db01f87e3d2985401da0a9fa6804fabc45f46f9ba2cc39be"
+    },
+    {
+      "name": "product-map.json",
+      "sha256": "d6eace331c07d1c10ec5a12539a7169357e15562a7b2e3134ed9923a01570bc7"
+    },
+    {
+      "name": "runs/accounts-initial/response.json",
+      "sha256": "6a78d1fe16e1f19f9d0e6cd9840f35523f263e8c5ca2aceb4e8e3ee741c620b0"
+    },
+    {
+      "name": "runs/atomic-initial/response.json",
+      "sha256": "151287117a5fa5cd4805f65abe831c25def2576db888358063ea697a181c56fa"
+    },
+    {
+      "name": "runs/accounts-final-ledger.json",
+      "sha256": "49856ab198bae3ea7a901517386d7d9d47d60d3841ad4b901477df8b6a62621b"
+    },
+    {
+      "name": "runs/atomic-final-ledger.json",
+      "sha256": "f38d8ab816c401a68d2e809f2e96e3f9c025cfa4deac6e8c49a4501f5ec15b26"
+    },
+    {
+      "name": "runs/accounts-consumer-initial/response.json",
+      "sha256": "53da8627a3ef5cb3e2919217c55fc33b25268af25b0eac808ba6e6951141e660"
+    },
+    {
+      "name": "runs/accounts-consumer-final/response.json",
+      "sha256": "d886a575ad68e423aa04c0923a9f87b866bb94ca5295fbfacf6bc9d755be11fa"
+    },
+    {
+      "name": "runs/atomic-consumer-initial/response.json",
+      "sha256": "ceffb09be5d89b27ed9d9f2148db56b40f0597891b7ff7c1b33523850297e310"
+    },
+    {
+      "name": "runs/atomic-consumer-final/response.json",
+      "sha256": "766c038bb7331bea224550f6a78bd9bea082b312dea7b153849d2a79113930ae"
+    }
+  ]
+}

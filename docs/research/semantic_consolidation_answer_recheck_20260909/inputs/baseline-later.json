@@ -1,0 +1,1432 @@
+{
+  "dispositions": [
+    {
+      "disposition": "context_only",
+      "disposition_reason": "Wave hydration and CREAM pilling; no Experiment comparison. Preserve exact body and parent in source accounting; no Experiment outcome promoted.",
+      "evidence_id": "reddit:1i30kik:m7j3q3q"
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Source-local Experiment meaning; preserve the stated conditions and speaker competence.",
+      "evidence_id": "reddit:1i30kik:m7kd5t6"
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Free receipt and two-use timing are independent facts, neither itself a trust judgment. Soft skin is texture, and magical appraisal differs from brand conversion. Restore the explicit soft-blanket feel and calming description while preserving co-use, disclosure and untested forecasts.",
+      "evidence_id": "junip:8950945"
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "The proposal preserves packaging, smell, texture, tolerance, preservative opinion, brand inference, prospective substitution, redness and efficacy limits, but the 'I think' science-first inference needs qualified uncertainty, future replacement is speculative, and overall great-product judgment is omitted.",
+      "evidence_id": "junip:13599983"
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "The cleanser review documents unsuccessful technique variations, severe eye discomfort, comparative dryness and unresolved defect-versus-technique uncertainty.",
+      "evidence_id": "junip:6567933"
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Plumping/hydration, irritation/sensitivity, congestion/bumps/texture, cheek nourishment/reactivity and sticky/shiny/slick outcomes require separate units. Split predictions about other users from personal advice and preserve the source’s unusual routine-upgrade enthusiasm and conditional shine acceptance.",
+      "evidence_id": "junip:6685187"
+    }
+  ],
+  "units": [
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Author says they have not tried any Experiment product; 30% versus 10% plus other humectants is their explanation, not verified composition.",
+        "Source-local context, not an outcome attributed to the named subject: The author has not tried Experiment products because the brand does not ship to where they live.",
+        "Author’s location is unstated; source-time access account; not universal shipping policy."
+      ],
+      "container_id": "reddit:1i30kik",
+      "emerging_axis_labels": [],
+      "evidence_id": "reddit:1i30kik:m7kd5t6",
+      "evidence_posture": "speculation",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "reddit:1i30kik:m7kd5t6::u1",
+      "statement": "Without trying Super Saturated, the author thinks Wave Serum must be thinner based on stated glycerin concentrations.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "uncertain"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Body disclosure preserved despite native rewarded=false; no independence inference."
+      ],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u1",
+      "statement": "The reviewer received Buffer Jelly free for an honest review to be posted later.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Two uses; free product."
+      ],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u2",
+      "statement": "The reviewer experiences Buffer Jelly as a blend of a barrier serum and nourishing, soothing face oil.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Two uses; free product."
+      ],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u3",
+      "statement": "Buffer Jelly changes from a jelly-like substance to a soft fluid oil on the reviewer's skin.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u4",
+      "statement": "Buffer Jelly has a silky slip unlike the dry or tacky feel the reviewer dislikes in most oils while massaging.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Two uses; nighttime moisturizer co-use"
+      ],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u5",
+      "statement": "The reviewer adds a drop of Buffer Jelly to their nighttime moisturizer.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Two uses; free product."
+      ],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u6",
+      "statement": "The reviewer wakes with very soft skin after Buffer Jelly mixed into moisturizer.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Self-reported rosacea; two uses."
+      ],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "first_hand",
+      "polarity": "negated",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u7",
+      "statement": "The reviewer wakes without redness after Buffer Jelly mixed into moisturizer.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Two uses."
+      ],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "first_hand",
+      "polarity": "negated",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u8",
+      "statement": "The reviewer wakes without irritation after Buffer Jelly mixed into moisturizer.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Two uses."
+      ],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "first_hand",
+      "polarity": "negated",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u9",
+      "statement": "The reviewer wakes without clogged pores after Buffer Jelly mixed into moisturizer.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit",
+        "portfolio_product_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Untested future application."
+      ],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "speculation",
+      "polarity": "uncertain",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u10",
+      "statement": "The reviewer thinks Buffer Jelly will also be ideal after dermaplaning.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "uncertain"
+    },
+    {
+      "axis_ids": [
+        "packaging_dispensing_durability"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u11",
+      "statement": "The reviewer was surprised by Buffer Jelly's small bottle.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "packaging_dispensing_durability"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Packaging explanation is conjecture."
+      ],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "speculation",
+      "polarity": "uncertain",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u12",
+      "statement": "The reviewer thinks Buffer Jelly only looks small because Experiment uses reduced packaging.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "uncertain"
+    },
+    {
+      "axis_ids": [
+        "price_value_quantity_access"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "observable_statement",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u13",
+      "statement": "The reviewer states Buffer Jelly contains a full one ounce of product.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "price_value_quantity_access"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Only two uses; not measured depletion."
+      ],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "speculation",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u14",
+      "statement": "The reviewer expects that one ounce of Buffer Jelly oil will last a very long time.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "qualified"
+    },
+    {
+      "axis_ids": [
+        "repeat_purchase_switching_destinations"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u15",
+      "statement": "The reviewer considers themselves converted to Experiment after Buffer Jelly.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Body disclosure preserved despite native rewarded=false; no independence inference."
+      ],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u16",
+      "statement": "The reviewer had used Buffer Jelly twice when they chose to post this review immediately.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u17",
+      "statement": "The reviewer considers Buffer Jelly magical.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Two uses; free product."
+      ],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u18",
+      "statement": "Buffer Jelly feels like an exceptionally soft blanket on the reviewer’s face.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Two uses."
+      ],
+      "container_id": "junip:review:8950945",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:8950945",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:8950945::u19",
+      "statement": "The reviewer finds Buffer Jelly calming and soothing.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "packaging_dispensing_durability"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:13599983",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:13599983",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:13599983::u1",
+      "statement": "The reviewer finds Continuum’s packaging minimal.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "packaging_dispensing_durability"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:13599983",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:13599983",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:13599983::u2",
+      "statement": "The reviewer finds Continuum’s packaging easy to use.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:13599983",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:13599983",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:13599983::u3",
+      "statement": "Continuum has a very mild chemical smell when dispensed.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:13599983",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:13599983",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:13599983::u4",
+      "statement": "The reviewer likes Continuum’s light gel-serum texture.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:13599983",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:13599983",
+      "evidence_posture": "first_hand",
+      "polarity": "negated",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:13599983::u5",
+      "statement": "Continuum causes no sensitivity on application for the reviewer.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "formula_consistency_quality_service_trust"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Personal ingredient preference; general preservative claims not established by use"
+      ],
+      "container_id": "junip:review:13599983",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:13599983",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:13599983::u6",
+      "statement": "The reviewer approves of Continuum’s paraben preservative system.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "formula_consistency_quality_service_trust"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Reviewer inference about brand approach"
+      ],
+      "container_id": "junip:review:13599983",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:13599983",
+      "evidence_posture": "speculation",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:13599983::u7",
+      "statement": "The reviewer interprets Continuum’s use of parabens as evidence of the brand’s science-first formulation approach.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "qualified"
+    },
+    {
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Future substitution; currently uses both categories regularly"
+      ],
+      "container_id": "junip:review:13599983",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:13599983",
+      "evidence_posture": "speculation",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:13599983::u8",
+      "statement": "The reviewer expects Continuum may replace their separate azelaic-acid and salicylic-acid products to simplify their routine.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "qualified"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Nighttime use; small visible redness change"
+      ],
+      "container_id": "junip:review:13599983",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:13599983",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:13599983::u9",
+      "statement": "The reviewer’s active acne looks slightly less red the morning after nighttime Continuum use.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Author says objective efficacy is hard to gauge"
+      ],
+      "container_id": "junip:review:13599983",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:13599983",
+      "evidence_posture": "first_hand",
+      "polarity": "uncertain",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:13599983::u10",
+      "statement": "The reviewer cannot judge Continuum’s effectiveness for treating acne.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "uncertain"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Author says objective efficacy is hard to gauge"
+      ],
+      "container_id": "junip:review:13599983",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:13599983",
+      "evidence_posture": "first_hand",
+      "polarity": "uncertain",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:13599983::u11",
+      "statement": "The reviewer cannot judge Continuum’s effectiveness for post-acne pigmentation.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "uncertain"
+    },
+    {
+      "axis_ids": [
+        "repeat_purchase_switching_destinations"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:13599983",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:13599983",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:13599983::u12",
+      "statement": "The reviewer intends to make Continuum a routine staple.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:13599983",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:13599983",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:13599983::u13",
+      "statement": "The reviewer considers Continuum a great product overall.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6567933",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6567933",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6567933::u1",
+      "statement": "Plasma Wash has a silky texture the reviewer finds beautiful and aptly described as plasma.",
+      "subject_product_ids": [
+        "experiment-shopify-8086723035328"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Quarter-sized and two-quarter-sized amounts",
+        "Wet and dry face",
+        "Lathering in hands, on face, and no pre-lather"
+      ],
+      "container_id": "junip:review:6567933",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6567933",
+      "evidence_posture": "first_hand",
+      "polarity": "negated",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6567933::u2",
+      "statement": "The reviewer could not get a satisfactory cleanse from Plasma Wash despite trying different amounts and techniques.",
+      "subject_product_ids": [
+        "experiment-shopify-8086723035328"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Multiple amounts and wet/dry-skin techniques"
+      ],
+      "container_id": "junip:review:6567933",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6567933",
+      "evidence_posture": "first_hand",
+      "polarity": "negated",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6567933::u3",
+      "statement": "Plasma Wash did not foam or bubble across the reviewer’s application attempts.",
+      "subject_product_ids": [
+        "experiment-shopify-8086723035328"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6567933",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6567933",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6567933::u4",
+      "statement": "Plasma Wash seemed to absorb into the reviewer’s skin and disappear during cleansing.",
+      "subject_product_ids": [
+        "experiment-shopify-8086723035328"
+      ],
+      "uncertainty_posture": "qualified"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Contact with water"
+      ],
+      "container_id": "junip:review:6567933",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6567933",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6567933::u5",
+      "statement": "The reviewer found Plasma Wash cream-like and more viscous on contact with water.",
+      "subject_product_ids": [
+        "experiment-shopify-8086723035328"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Eyes closed while cleansing",
+        "Usually no eye makeup"
+      ],
+      "container_id": "junip:review:6567933",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6567933",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6567933::u6",
+      "statement": "Plasma Wash burned the reviewer’s eyes severely, worse than cleansers used in a long time.",
+      "subject_product_ids": [
+        "experiment-shopify-8086723035328"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "repeat_purchase_switching_destinations",
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Return considered, not completed"
+      ],
+      "container_id": "junip:review:6567933",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6567933",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6567933::u7",
+      "statement": "The eye burning made the reviewer consider returning Plasma Wash.",
+      "subject_product_ids": [
+        "experiment-shopify-8086723035328"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "After one wash",
+        "Unnamed glycerin-based cleanser comparator"
+      ],
+      "container_id": "junip:review:6567933",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6567933",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6567933::u8",
+      "statement": "One Plasma Wash cleanse leaves the reviewer’s face feeling less clean than their favorite glycerin-based cleanser.",
+      "subject_product_ids": [
+        "experiment-shopify-8086723035328"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "After one wash",
+        "Unnamed glycerin-based cleanser comparator"
+      ],
+      "container_id": "junip:review:6567933",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6567933",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6567933::u9",
+      "statement": "One Plasma Wash cleanse leaves the reviewer’s face feeling less moisturized than their favorite glycerin-based cleanser.",
+      "subject_product_ids": [
+        "experiment-shopify-8086723035328"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "After two washes"
+      ],
+      "container_id": "junip:review:6567933",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6567933",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6567933::u10",
+      "statement": "A second Plasma Wash cleanse leaves the reviewer’s skin feeling even drier.",
+      "subject_product_ids": [
+        "experiment-shopify-8086723035328"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Because repeated washing increases dryness"
+      ],
+      "container_id": "junip:review:6567933",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6567933",
+      "evidence_posture": "first_hand",
+      "polarity": "negated",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6567933::u11",
+      "statement": "The reviewer does not consider Plasma Wash suitable for their double cleansing.",
+      "subject_product_ids": [
+        "experiment-shopify-8086723035328"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "formula_consistency_quality_service_trust"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Prior ingredient-based expectation"
+      ],
+      "container_id": "junip:review:6567933",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6567933",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6567933::u12",
+      "statement": "The reviewer expected Plasma Wash to suit them because their favorite cleanser is also glycerin-based.",
+      "subject_product_ids": [
+        "experiment-shopify-8086723035328"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "formula_consistency_quality_service_trust"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Competing possible explanations"
+      ],
+      "container_id": "junip:review:6567933",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6567933",
+      "evidence_posture": "speculation",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6567933::u13",
+      "statement": "The reviewer is uncertain whether their Plasma Wash is defective or whether they are using it incorrectly.",
+      "subject_product_ids": [
+        "experiment-shopify-8086723035328"
+      ],
+      "uncertainty_posture": "qualified"
+    },
+    {
+      "axis_ids": [
+        "formula_consistency_quality_service_trust"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Reported social-media experiences are not independently verified"
+      ],
+      "container_id": "junip:review:6567933",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6567933",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6567933::u14",
+      "statement": "Positive Plasma Wash experiences seen on social media conflict with the reviewer’s own experience and leave them confused.",
+      "subject_product_ids": [
+        "experiment-shopify-8086723035328"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Oily T-zone and very dry sensitive cheeks with mild rosacea."
+      ],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u1",
+      "statement": "Super Saturated keeps the reviewer’s skin plump through a twelve-hour shift.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Oily T-zone and very dry sensitive cheeks with mild rosacea."
+      ],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u2",
+      "statement": "Super Saturated keeps the reviewer’s skin hydrated through a twelve-hour shift.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u3",
+      "statement": "Super Saturated improves the reviewer's visible skin appearance.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Personal causal attribution."
+      ],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u4",
+      "statement": "The reviewer attributes reduced irritation to Super Saturated’s moisture retention.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "qualified"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Personal causal attribution."
+      ],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u5",
+      "statement": "The reviewer attributes reduced sensitivity to Super Saturated’s moisture retention.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "qualified"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "negated",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u6",
+      "statement": "Super Saturated does not cause the reviewer’s feared forehead congestion.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "negated",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u7",
+      "statement": "Super Saturated does not cause the forehead bumps the reviewer associates with congestion.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "negated",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u8",
+      "statement": "Super Saturated does not cause the forehead texture the reviewer associates with congestion.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u9",
+      "statement": "Super Saturated nourishes the reviewer’s very dry cheeks.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u10",
+      "statement": "Super Saturated keeps the reviewer’s sensitive cheeks with mild rosacea less reactive.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Perceived oil change, not sebum measurement."
+      ],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u11",
+      "statement": "The reviewer has noticed less natural oil production since starting Super Saturated.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "qualified"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u12",
+      "statement": "Super Saturated leaves the reviewer’s face sticky.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u13",
+      "statement": "Super Saturated leaves the reviewer’s face shiny.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u14",
+      "statement": "Super Saturated leaves the reviewer’s face slick.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u15",
+      "statement": "The reviewer sometimes wears one pump of Super Saturated outside while accepting extra shine.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Prediction and advice about others, not observed prevalence."
+      ],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "speculation",
+      "polarity": "uncertain",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u16",
+      "statement": "The reviewer predicts most people will use Super Saturated only at night because of its sticky feel.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "uncertain"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Prediction and advice about others, not observed prevalence."
+      ],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "speculation",
+      "polarity": "uncertain",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u17",
+      "statement": "The reviewer predicts people will not want to go out wearing Super Saturated unless using a small amount.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "uncertain"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Dislike of sticky feel"
+      ],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u18",
+      "statement": "The reviewer advises people who dislike stickiness to avoid Super Saturated.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "formula_consistency_quality_service_trust",
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u19",
+      "statement": "The reviewer regards the stickiness as an expected acceptable tradeoff for their benefits.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u20",
+      "statement": "After hundreds of products and years as a skincare enthusiast, the reviewer considers Super Saturated a rare improvement to their carefully selected routine and calls its moisture retention life changing.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [
+        "overall_product_evaluation"
+      ],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u21",
+      "statement": "The reviewer says they cannot say enough good about Super Saturated.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6685187",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6685187",
+      "evidence_posture": "speculation",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6685187::u22",
+      "statement": "The reviewer believes accepting Super Saturated’s stickiness can do wonders for skin.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "qualified"
+    }
+  ]
+}

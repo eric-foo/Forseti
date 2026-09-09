@@ -1,0 +1,35 @@
+{
+  "source": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/successor-return/depth-corrected/bundle.json",
+  "source_sha256": "70f9832476212eb612e858c3057aa69310b83bd06857b1b4d1e7fe7203535daa",
+  "pointer": "/product_identity_catalog/products",
+  "products": [
+    {
+      "id": "experiment-shopify-5913452937408",
+      "name": "Avant Guard"
+    },
+    {
+      "id": "experiment-shopify-7299389030592",
+      "name": "Super Saturated"
+    },
+    {
+      "id": "experiment-shopify-7476098007232",
+      "name": "Buffer Jelly [experiment-shopify-7476098007232]"
+    },
+    {
+      "id": "experiment-shopify-7758608105664",
+      "name": "Softwear"
+    },
+    {
+      "id": "experiment-shopify-8086723035328",
+      "name": "Plasma Wash"
+    },
+    {
+      "id": "experiment-shopify-8193821802688",
+      "name": "Molecular Mesh"
+    },
+    {
+      "id": "experiment-shopify-8555927306432",
+      "name": "Continuum"
+    }
+  ]
+}

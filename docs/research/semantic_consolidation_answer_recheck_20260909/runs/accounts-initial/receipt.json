@@ -1,0 +1,43 @@
+{
+  "case": "accounts-initial",
+  "started_at": "2026-09-09T10:28:37.383Z",
+  "finished_at": "2026-09-09T10:29:18.601Z",
+  "model": "gpt-5.5",
+  "reasoning_effort": "high",
+  "executable": "C:/Users/vmon7/AppData/Local/OpenAI/Codex/bin/8e5b6932251c2c1c/codex.exe",
+  "args": [
+    "exec",
+    "--json",
+    "-C",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\cf6f\\orca",
+    "--model",
+    "gpt-5.5",
+    "-c",
+    "model_reasoning_effort=\"high\"",
+    "--disable",
+    "shell_tool",
+    "--output-schema",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\cf6f\\orca\\docs\\research\\semantic_consolidation_answer_recheck_20260909\\answer.schema.json",
+    "--output-last-message",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\cf6f\\orca\\docs\\research\\semantic_consolidation_answer_recheck_20260909\\runs\\accounts-initial\\response.json",
+    "-"
+  ],
+  "code": 0,
+  "signal": null,
+  "thread_id": "01a085b6-6295-7692-91f1-46fbbbbeb4e3",
+  "usage": {
+    "input_tokens": 27751,
+    "cached_input_tokens": 1408,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1828,
+    "reasoning_output_tokens": 516
+  },
+  "turn_count": 1,
+  "unexpected_tool_events": 0,
+  "prompt_sha256": "d02054621b3217cbf24060ebab5a51de973fde3ce132657767618d3a28e88633",
+  "full_stdin_sha256": "d02054621b3217cbf24060ebab5a51de973fde3ce132657767618d3a28e88633",
+  "schema_sha256": "134b4a63fa1c4ca8a551ce486322734fa68358cb176703e1c33a51cdfd0dd051",
+  "response_sha256": "98bb2ea24847fd028a18bc6a2c394d45b2e2e398ced99efbfb0909b02140eb47",
+  "events_sha256": "793b2ce8ac24500e4beb408733c7040bae767907c13582082f7a8ae868dfc30d",
+  "native_error_types": []
+}

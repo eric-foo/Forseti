@@ -1,0 +1,121 @@
+{
+  "type": "object",
+  "properties": {
+    "answers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "Q1",
+              "Q2",
+              "Q3"
+            ]
+          },
+          "answer": {
+            "type": "string"
+          },
+          "source_accounts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "answer",
+          "source_accounts",
+          "limitations"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "counts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "enum": [
+              "hydration",
+              "texture_direct",
+              "texture_speculative",
+              "buying_stockup",
+              "cart_readdition",
+              "gift_receipt",
+              "return_considered",
+              "return_completed",
+              "replacement_intended",
+              "replacement_completed"
+            ]
+          },
+          "source_accounts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "source_account_count": {
+            "type": "integer"
+          },
+          "product_action_assertions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "account": {
+                  "type": "string"
+                },
+                "product": {
+                  "type": "string"
+                },
+                "action": {
+                  "type": "string"
+                },
+                "basis": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "account",
+                "product",
+                "action",
+                "basis"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "product_action_assertion_count": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "source_accounts",
+          "source_account_count",
+          "product_action_assertions",
+          "product_action_assertion_count"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "answers",
+    "counts"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,41 @@
+{
+  "frozen_at": "2026-09-09T10:28:24.347Z",
+  "files": [
+    {
+      "name": "run.mjs",
+      "sha256": "63c8d3b7976b2663f6669ae3169f35da04ddefc280e740c552e5831aeaca5b58"
+    },
+    {
+      "name": "definitions.json",
+      "sha256": "0f02213cf572196fb68aec078a0fdf252c0ea14b7cbf08607df8ebe515b8fb23"
+    },
+    {
+      "name": "expected.json",
+      "sha256": "4c55e2af92f0eb346a3d907ed78f849aaf7de8375e7e5939c5e8af02b59eedcf"
+    },
+    {
+      "name": "source-manifest.json",
+      "sha256": "c47faf0e3ca9c633b4ba10d0ce8849c805254ff4be40e57ad9e8503b7f78dc43"
+    },
+    {
+      "name": "answer.schema.json",
+      "sha256": "134b4a63fa1c4ca8a551ce486322734fa68358cb176703e1c33a51cdfd0dd051"
+    },
+    {
+      "name": "runs/accounts-initial/prompt.txt",
+      "sha256": "d02054621b3217cbf24060ebab5a51de973fde3ce132657767618d3a28e88633"
+    },
+    {
+      "name": "runs/accounts-final/prompt.txt",
+      "sha256": "d557b34c2afce5c617f04ae88cbbfbb05039bd7263116c89b3862fd96462d32b"
+    },
+    {
+      "name": "runs/atomic-initial/prompt.txt",
+      "sha256": "0fbc9aad63f23eac93057905d43e3144bead1bbec5f6888a4428c3a2132bc17a"
+    },
+    {
+      "name": "runs/atomic-final/prompt.txt",
+      "sha256": "fd2312c002aa816726b4a85b763e1b1f2cdcbbc61657a24f0e4c31223f5d8690"
+    }
+  ]
+}
