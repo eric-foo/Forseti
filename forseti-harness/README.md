@@ -28,6 +28,23 @@ Cleaning, or Judgment behavior.
 
 ## Unattended Model Attempts
 
+Normal semantic consolidation starts and resumes with
+`python runners/run_semantic_evidence_integration.py advance --source <materialized-source.json> --run-dir <run-root>`.
+The provider-free command carries extraction compilation, mandatory independent
+row verification, policy-v2 reconciliation/convergence and finalization through
+their native gates in one invocation wherever accepted responses permit it.
+The active agent dispatches the complete compatible `judgment_requests` set
+together, preserves independent judgment boundaries, publishes at the exact
+returned response paths, and advances again. Avoid a controller return for each
+preparation/submit/check seam. Use returned prompt/schema paths and hashes;
+native validation remains required. Accepted files are immutable restart state;
+same-input reruns preserve their bytes, and invalid/staged work blocks explicitly
+with exit 2. `SEMANTIC_JUDGMENT_REQUIRED` is pending semantic work, not completion.
+Keep the same source and packing options on resume. Per-stage commands below
+remain available for historical replay and scoped recovery. The owning
+[semantic contract](../forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md)
+retains source/reopen, current-corpus finalization and unsupported v34 boundaries.
+
 Current method-v12 semantic reconciliation preparation writes each prompt's
 `.schema.json` alongside its `.md` file. Current response v3 requires keyed
 candidate decisions and original-label assignments. The model chooses nodes,

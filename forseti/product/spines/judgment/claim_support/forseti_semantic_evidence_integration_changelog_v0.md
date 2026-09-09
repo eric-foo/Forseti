@@ -24,6 +24,16 @@ contract or its linked owning source. This history creates no new review step.
 
 ## Changelog
 
+- `v124` / 2026-09-10 — made `advance` the normal provider-free execution and
+  resume entrypoint for supported consolidation. It carries deterministic
+  compilation, verification preparation/application, policy-v2 hierarchy and
+  convergence, and finalization to the complete ready judgment set or terminal
+  view. Existing accepted artifacts remain the restart surface; native validators,
+  independent judgments, current-corpus identity and owner-only reopen boundaries
+  remain in force. No model dispatch, semantic retry, fixed call quota, or new
+  judgment stage is introduced. Review closure distinguishes lost accepted
+  responses from fresh work, reports zero-claim and deterministic-staging blockers
+  with their actual recovery boundaries, and binds every visited level's hash.
 - `v123` / 2026-09-09 — placed actionable instruction-reader usage at the
   Evidence Consolidation operating entry, including the line-range fallback for
   a section too large to return and the distinction between navigation and a

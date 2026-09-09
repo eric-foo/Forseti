@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v123
-effective_date: 2026-09-09
+version: v124
+effective_date: 2026-09-10
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v123
+# Semantic Evidence Integration Contract v124
 
 ## Purpose
 
@@ -2231,7 +2231,52 @@ materialization. Large source, prompt, response, and compilation artifacts
 remain under the spec's external run root; a compact repository receipt may
 bind their hashes.
 
-Current-route operations are:
+Normal Evidence Consolidation uses `advance --source <materialized-source.json>
+--run-dir <run-root>` in `run_semantic_evidence_integration.py`. Use that same
+invocation, including its packing options, for initial preparation and every
+resume. It composes operations 7–14 below: extraction compilation, independent
+whole-row verification, policy-v2 reconciliation levels and convergence/retention,
+then the native final view. Each invocation carries all deterministically ready
+steps to the complete next judgment request set, an actionable blocker, or the
+current-corpus final view. A command returning is not itself a reason for a new
+controller turn. The lower-level commands remain available for historical replay
+and explicitly scoped recovery; they are not the normal controller sequence.
+
+The run root contains `bundle.json`, `extraction/`, `verification/`,
+`reconciliation/level-NNNN/`, and `view.json`. Each stage uses its existing
+prompt, schema, response, stage and compilation artifacts. The returned requests
+bind their exact prompt/schema bytes, input identity and response destination;
+the returned `judgment_requests`, transitions and artifact hashes identify ready
+and persisted work. `artifacts` identifies the current outputs; `transitions`
+binds every visited stage/compilation path and its raw-byte hash, including prior
+levels. Consumers resolve accepted outputs through those returned paths and
+their native lineage bindings, never by globbing the run root; unrelated paths
+outside the walked lineage are not inspected or granted authority.
+Resume
+revalidates the materialized source and accepted lineage, preserves matching
+stored outputs, and prepares only missing deterministic artifacts. Different
+source, packing, method or prompt identities cannot replace existing work.
+Invalid, missing and staged work remain distinguishable. A response that a
+stage's accepted compilation already binds stays accepted work: if it later
+goes missing or invalid, the run blocks on restoring that artifact instead of
+re-requesting a judgment the run has already closed. A blocker exits nonzero;
+a judgment-required return supplies every currently ready request and never
+credits a missing answer. No semantic retry, response selection, identity reset,
+new acquisition, synthesis authorization, or global relation-closure claim is
+implied. Finalization still applies its native terminal and completeness gates.
+
+If verification leaves no active claim-bearing rows, `advance` returns the
+actionable `NO_CLAIM_BEARING_EVIDENCE` blocker before creating reconciliation
+levels. Inspect the verified dispositions and obtain an explicit disposition
+under existing owner authority; unchanged reruns cannot resolve it. This exposes
+the supported route's existing limitation; it does not authorize an empty view,
+new judgment, or acquisition. A crash-left deterministic `.tmp` is also blocked,
+with the exact recovery instruction: preserve and move that unaccepted staging
+file outside its output directory, then rerun to validate existing outputs and
+rebuild missing artifacts. Accepted outputs must not be overwritten or removed.
+Staged semantic responses retain their separate explicit-recovery boundary.
+
+Current-route operations are (the individually callable seams):
 
 1. `audit-phase-a-source` verifies the final seal, every terminal route
    artifact, every route classification, and every hash-pinned source binding.
@@ -2301,7 +2346,7 @@ Current-route operations are:
    compiling a partial corpus. `status` reports valid, missing, duplicate, and
    invalid responses so an interrupted run can resume honestly.
 9. `submit-batches` validates all agent responses and exact alias coverage.
-10. For method v7 or v8, `prepare-row-verification` renders byte-bounded independent
+10. For method v7 and later, `prepare-row-verification` renders byte-bounded independent
     checks for every primary claim-bearing row, and
     `submit-row-verification` requires exactly one `accept`, complete-row
     `replace`, or `unresolved` decision per row before writing the sole active
@@ -2319,7 +2364,8 @@ Current-route operations are:
     complete old/new verified compilations establish the leaf-complete equality
     and narrow deterministic-rederivation proof above. It writes a new terminal
     compilation and migration manifest and makes zero provider calls.
-16. The opt-in v34 route instead runs `prepare-relation-closure` over the
+16. The historical v34 route, unsupported for normal runs under the owner-only
+    reopen boundary above, ran `prepare-relation-closure` over the
     terminal normal-retention frontier, validates each large-run response with
     `validate-relation-closure-response`, runs `submit-relation-closure` only
     after exact global pair-relation coverage, and uses
@@ -2413,9 +2459,13 @@ judgment blocks. This is an anomaly audit, not a new gold case, a prevalence
 sample, a deterministic semantic verdict, or a license to relax the
 pre-authored cases after seeing output.
 
-The controller is the active agent task. It assigns immutable batch IDs to at
-most three no-API semantic subagents and treats the response directory as the
-durable resume surface. Repository code prepares, validates, and reports work;
+The controller is the active agent task. It calls `advance`, dispatches compatible
+ready requests together to at most three no-API semantic subagents, and advances
+again when results arrive. Extraction and its independent verification remain
+separate judgments; reconciliation levels respect their input dependencies.
+It treats accepted response artifacts as the durable resume surface. It does not
+narrate or return for each deterministic preparation, submit, or check operation.
+Repository code prepares, validates, and reports work;
 it does not invoke a model through an API or headless CLI. A worker writes a
 temporary response and publishes it only after completing the file.
 `publish-batch-response` enforces this boundary: it accepts only a validated
@@ -2425,8 +2475,9 @@ cannot provide the no-replace link both fail closed. Missing batches may be
 reassigned when no accepted output exists. No
 lease, daemon, mutable queue service, or claim-marker subsystem is required.
 The returned JSON is untrusted until the corresponding validator accepts it.
-Status is derived from validated response files and reports remaining work per
-static worker partition; a dead worker never becomes a completed batch.
+Status is derived from validated response files and reports the complete ready
+remainder globally for current bundles; historical v4 retains its static
+partitions. A dead worker never becomes a completed batch.
 
 If exact prompt packing exposes more work than the available no-API judgment
 lane can execute as one bounded run, the status remains

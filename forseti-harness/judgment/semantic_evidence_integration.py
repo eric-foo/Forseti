@@ -4150,8 +4150,10 @@ def apply_row_verification(
     compilation: Mapping[str, Any],
     stage: Mapping[str, Any],
     responses: Sequence[Mapping[str, Any]],
+    *,
+    require_all: bool = True,
 ) -> dict[str, Any]:
-    """Apply exactly one accept/replace/unresolved decision per claim row."""
+    """Apply complete verification, or validate partial responses without a compilation."""
     expected_stage, _ = prepare_row_verification(
         bundle,
         compilation,
@@ -4221,7 +4223,7 @@ def apply_row_verification(
             {"batch_id": batch_id, "raw_response_sha256": _sha256(response)}
         )
         seen_batches.add(batch_id)
-    if seen_batches != set(expected_batches):
+    if require_all and seen_batches != set(expected_batches):
         raise SemanticIntegrationError(
             "row verification does not cover every claim-bearing row"
         )
@@ -4243,6 +4245,18 @@ def apply_row_verification(
                 "disposition_reason": disposition["disposition_reason"],
                 "semantic_units": [],
             }
+            continue
+        if evidence_id not in decisions:
+            if require_all:
+                # The input-row substitution below belongs only to partial
+                # validation, never to an accepted verification compilation.
+                raise SemanticIntegrationError(
+                    f"row verification lacks a decision for claim-bearing row {evidence_id}"
+                )
+            # Partial validation uses the already validated input row only to
+            # check replacements through the ordinary structural compiler. It
+            # produces no manifest or accepted compilation for missing judgments.
+            active_rows[evidence_id] = proposed[evidence_id]
             continue
         decision = decisions[evidence_id]
         decision_counts[decision["decision"]] += 1
@@ -4272,6 +4286,12 @@ def apply_row_verification(
         for batch in bundle["batches"]
     ]
     verified = validate_batch_responses(bundle, active_responses)
+    if not require_all:
+        return {
+            "status": "SEMANTIC_ROW_VERIFICATION_RESPONSES_VALID",
+            "stage_sha256": stage["stage_sha256"],
+            "validated_batch_ids": sorted(seen_batches),
+        }
     verified["raw_response_manifest"] = compilation["raw_response_manifest"]
     manifest = {
         "schema_version": ROW_VERIFICATION_MANIFEST_VERSION,

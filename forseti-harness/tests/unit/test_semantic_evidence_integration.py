@@ -10717,6 +10717,341 @@ def test_v5_flows_through_unchanged_v2_downstream_interfaces() -> None:
     assert packet["model_api_calls"] == 0
 
 
+def _advance_replay_fixture(tmp_path, *, count=4, rows_per_batch=2, alternate=False):
+    """Capture native-valid orchestration fixtures; these are not model-quality proof."""
+    source = _source_v10(count=count)
+    source["semantic_method_version"] = semantic_module.METHOD_VERSION_V13
+    if alternate:
+        for item in source["captured_items"]:
+            if item.get("accounting_disposition") == "assess":
+                item["text"] = "I did not find the balm drying during winter use."
+    source = materialize_source_v3(source)
+    source_path = tmp_path / "source.json"
+    source_path.write_text(json.dumps(source), encoding="utf-8")
+    bundle = build_bundle(source, max_prompt_bytes=30_000,
+                          max_evidence_per_work_unit=rows_per_batch)
+    extraction = _keyed_responses(bundle)
+    for response in extraction:
+        for eid in response["decisions_by_evidence_id"]:
+            row = _claim_row(eid)
+            row.pop("evidence_id")
+            unit = row["semantic_units"][0]
+            unit["subject_product_ids"] = ["summer-fridays-lip-butter-balm"]
+            if alternate:
+                unit.update(statement="The balm was not drying during winter use.",
+                            polarity="negated", conditions=["during winter use"])
+            response["decisions_by_evidence_id"][eid] = row
+    raw = validate_batch_responses(bundle, extraction)
+    verification, _ = prepare_row_verification(bundle, raw)
+    verification_responses = [_keyed_row_review_response(row) for row in _row_verification_responses(verification)]
+    verified = apply_row_verification(bundle, raw, verification, verification_responses)
+    replay = {"extraction": extraction, "verification": verification_responses}
+    nodes = verified
+    for level, terminal in [(1, False), (2, True)]:
+        stage, _ = prepare_reconciliation_stage(bundle, nodes,
+            reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+            authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4)
+        level_responses = (_group_level_responses(stage, terminal=True) if terminal
+                           else _singleton_reconciliation_responses(stage))
+        for response in level_responses:
+            for node in response["semantic_nodes"]:
+                node["subject_product_ids"] = ["summer-fridays-lip-butter-balm"]
+                if alternate:
+                    node["bounded_meaning"] = "The balm was not drying during winter use."
+            # Replay v2 remains natively admitted at current stages. Do not
+            # relabel these answers as current keyed-provider output.
+        nodes = validate_reconciliation_stage(bundle, stage, level_responses)
+        replay[f"reconciliation/level-{level:04d}"] = level_responses
+    assert is_terminal_reconciliation_compilation(nodes)
+    expected = finalize_v3_view(bundle, verified, nodes)
+    return source_path, replay, expected
+
+
+def _publish_advance_replay(run_dir, phase, responses):
+    directory = run_dir / phase / "responses"
+    directory.mkdir(parents=True, exist_ok=True)
+    for response in responses:
+        path = directory / f"{response['batch_id']}.json"
+        with path.open("x", encoding="utf-8") as handle:
+            json.dump(response, handle)
+
+
+def _advance_cli(source_path, run_dir, capsys, *, rows_per_batch=2):
+    from runners.run_semantic_evidence_integration import main
+    code = main(["advance", "--source", str(source_path),
+                 "--run-dir", str(run_dir), "--max-prompt-bytes", "30000",
+                 "--max-evidence-per-work-unit", str(rows_per_batch)])
+    return code, json.loads(capsys.readouterr().out)
+
+
+@pytest.mark.parametrize("count,rows_per_batch,alternate", [(4, 2, False), (7, 3, True)])
+def test_advance_public_route_complete_requests_terminal_and_resume(tmp_path, capsys, count, rows_per_batch, alternate):
+    source, replay, expected = _advance_replay_fixture(tmp_path, count=count,
+        rows_per_batch=rows_per_batch, alternate=alternate)
+    run_dir = tmp_path / "run"
+    call = lambda: _advance_cli(source, run_dir, capsys, rows_per_batch=rows_per_batch)
+    code, result = call()
+    assert code == 0 and result["status"] == "SEMANTIC_JUDGMENT_REQUIRED"
+    assert {row["batch_id"] for row in result["judgment_requests"]} == {row["batch_id"] for row in replay["extraction"]}
+    for request in result["judgment_requests"]:
+        assert _digest(Path(request["prompt_path"]).read_bytes()) == request["prompt_sha256"]
+        assert _digest(Path(request["response_schema_path"]).read_bytes()) == request["response_schema_sha256"]
+    _publish_advance_replay(run_dir, "extraction", replay["extraction"])
+    code, result = call()
+    assert code == 0 and result["phase"] == "verification"
+    assert [row["operation"] for row in result["transitions"]][-2:] == ["submit-batches", "prepare-row-verification"]
+    assert len(result["judgment_requests"]) == len(replay["verification"]) > 1
+    _publish_advance_replay(run_dir, "verification", replay["verification"][:1])
+    accepted = {p: (p.read_bytes(), p.stat().st_mtime_ns) for p in run_dir.rglob("*") if p.is_file()}
+    code, result = call()
+    assert code == 0 and {row["batch_id"] for row in result["judgment_requests"]} == {row["batch_id"] for row in replay["verification"][1:]}
+    assert all((p.read_bytes(), p.stat().st_mtime_ns) == value for p, value in accepted.items())
+    _publish_advance_replay(run_dir, "verification", replay["verification"][1:])
+    code, result = call()
+    assert code == 0 and result["phase"] == "reconciliation"
+    assert [row["operation"] for row in result["transitions"]][-2:] == ["submit-row-verification", "prepare-reconciliation-level"]
+    _publish_advance_replay(run_dir, "reconciliation/level-0001", replay["reconciliation/level-0001"])
+    code, result = call()
+    assert code == 0 and Path(result["judgment_requests"][0]["binding_path"]).parent.name == "level-0002"
+    _publish_advance_replay(run_dir, "reconciliation/level-0002", replay["reconciliation/level-0002"])
+    code, result = call()
+    assert code == 0 and result["status"] == "SEMANTIC_EVIDENCE_INTEGRATION_COMPLETE", result
+    assert result["judgment_requests"] == []
+    assert [row["operation"] for row in result["transitions"]][-2:] == ["submit-reconciliation-level", "finalize-v3"]
+    assert json.loads(Path(result["artifacts"]["view"]["path"]).read_text()) == expected
+    assert result["view_sha256"] == expected["view_sha256"]
+    for transition in result["transitions"]:
+        assert _digest(Path(transition["artifact"]).read_bytes()) == transition["sha256"]
+    completed = {p: (p.read_bytes(), p.stat().st_mtime_ns) for p in run_dir.rglob("*") if p.is_file()}
+    code, repeated = call()
+    assert code == 0 and repeated["view_sha256"] == result["view_sha256"]
+    assert all(row["disposition"] == "reused" for row in repeated["transitions"])
+    assert all((p.read_bytes(), p.stat().st_mtime_ns) == value for p, value in completed.items())
+    foreign = run_dir / "reconciliation/level-0003/compilation.json"
+    foreign.parent.mkdir(parents=True)
+    foreign.write_text("not an accepted compilation", encoding="utf-8")
+    code, repeated = call()
+    assert code == 0 and repeated["view_sha256"] == expected["view_sha256"]
+    assert str(foreign) not in {row["artifact"] for row in repeated["transitions"]}
+    assert str(foreign) not in {row["path"] for row in repeated["artifacts"].values()}
+    assert foreign.read_text() == "not an accepted compilation"
+
+
+@pytest.mark.parametrize("phase", ["extraction", "verification", "reconciliation/level-0001"])
+def test_advance_invalid_response_reaches_native_validator(tmp_path, capsys, phase):
+    source, replay, _ = _advance_replay_fixture(tmp_path)
+    run_dir = tmp_path / "run"
+    for prior in replay:
+        if prior == phase:
+            break
+        _publish_advance_replay(run_dir, prior, replay[prior])
+    invalid = deepcopy(replay[phase][0])
+    if phase == "extraction":
+        invalid["decisions_by_evidence_id"].pop(next(iter(invalid["decisions_by_evidence_id"])))
+        error = "every keyed evidence id"
+    elif phase == "verification":
+        invalid["decisions_by_evidence_id"].pop(next(iter(invalid["decisions_by_evidence_id"])))
+        error = "every assigned row"
+    else:
+        invalid["semantic_nodes"][0]["child_relations"][0]["child_ref"] = "foreign-ref"
+        error = "unknown, duplicate, or invalid child"
+    _publish_advance_replay(run_dir, phase, [invalid])
+    code, result = _advance_cli(source, run_dir, capsys)
+    assert code == 2 and result["status"] == "SEMANTIC_ADVANCE_BLOCKED", result
+    problems = result["response_state"]["problems"]
+    assert len(problems) == 1 and error in problems[0]["error"], result
+    assert all(row["batch_id"] != invalid["batch_id"] for row in result["judgment_requests"])
+    assert not (run_dir / "view.json").exists()
+
+
+def test_advance_staged_stale_missing_and_interrupted_state(tmp_path, capsys, monkeypatch):
+    import runners.run_semantic_evidence_integration as runner
+    source, replay, _ = _advance_replay_fixture(tmp_path)
+    run_dir = tmp_path / "run"
+    native = runner._retain_advance_artifact
+    def interrupt(path, value, **kwargs):
+        result = native(path, value, **kwargs)
+        if path == run_dir / "verification" / "stage.json":
+            raise OSError("injected interruption after persisted verification stage")
+        return result
+    _publish_advance_replay(run_dir, "extraction", replay["extraction"])
+    monkeypatch.setattr(runner, "_retain_advance_artifact", interrupt)
+    code, result = _advance_cli(source, run_dir, capsys)
+    assert code == 2 and "injected interruption" in result["error"]
+    retained = (run_dir / "extraction" / "compilation.json").read_bytes()
+    monkeypatch.setattr(runner, "_retain_advance_artifact", native)
+    code, result = _advance_cli(source, run_dir, capsys)
+    assert code == 0 and result["phase"] == "verification"
+    assert (run_dir / "extraction" / "compilation.json").read_bytes() == retained
+    request = result["judgment_requests"][0]
+    staged = Path(request["response_path"] + ".tmp")
+    staged.parent.mkdir(parents=True, exist_ok=True)
+    staged.write_text("unfinished")
+    code, result = _advance_cli(source, run_dir, capsys)
+    assert code == 2 and result["response_state"]["problems"][0]["kind"] == "staged"
+    assert request["batch_id"] not in result["response_state"]["missing_batch_ids"]
+    materialized = json.loads(source.read_text())
+    materialized["captured_items"][0]["text"] += " stale"
+    source.write_text(json.dumps(materialized))
+    code, result = _advance_cli(source, run_dir, capsys)
+    assert code == 2 and "stored source_sha256" in result["error"]
+    source.unlink()
+    code, result = _advance_cli(source, run_dir, capsys)
+    assert code == 2 and "No such file" in result["error"]
+
+
+def test_advance_signal_rejects_broken_post_build_variant(tmp_path, capsys, monkeypatch):
+    import runners.run_semantic_evidence_integration as runner
+    source, replay, _ = _advance_replay_fixture(tmp_path)
+    run_dir = tmp_path / "run"
+    for phase, responses in replay.items():
+        _publish_advance_replay(run_dir, phase, responses)
+    native = runner.is_terminal_reconciliation_compilation
+    monkeypatch.setattr(runner, "is_terminal_reconciliation_compilation", lambda compilation: True)
+    code, result = _advance_cli(source, run_dir, capsys)
+    # Deliberately skip convergence: the consumer signal must reject it, with
+    # the finalizer (not a missing response or setup guard) catching the defect.
+    assert code == 2 and "terminal" in result["error"]
+    assert result["transitions"][-1]["operation"] == "submit-reconciliation-level"
+    monkeypatch.setattr(runner, "is_terminal_reconciliation_compilation", native)
+    code, result = _advance_cli(source, run_dir, capsys)
+    assert code == 0 and result["status"] == "SEMANTIC_EVIDENCE_INTEGRATION_COMPLETE", result
+
+
+def test_advance_live_instructions_and_partial_validation_are_not_completion(tmp_path):
+    root = Path(__file__).resolve().parents[3]
+    for locator in ["forseti-harness/README.md",
+                    "docs/workflows/phase_a_customer_evidence_completion_path_v0.md",
+                    "forseti/product/spines/judgment/claim_support/forseti_semantic_evidence_integration_contract_v0.md"]:
+        text = (root / locator).read_text(encoding="utf-8-sig")
+        assert "advance --source" in text and "judgment_requests" in text
+    source_path, replay, _ = _advance_replay_fixture(tmp_path)
+    bundle = build_bundle(json.loads(source_path.read_text()), max_prompt_bytes=30_000,
+                          max_evidence_per_work_unit=2)
+    raw = validate_batch_responses(bundle, replay["extraction"])
+    stage, _ = prepare_row_verification(bundle, raw)
+    receipt = apply_row_verification(bundle, raw, stage, replay["verification"][:1], require_all=False)
+    assert receipt["validated_batch_ids"] == [replay["verification"][0]["batch_id"]]
+    assert "compilation_sha256" not in receipt and "row_verification_manifest" not in receipt
+    with pytest.raises(SemanticIntegrationError, match="does not cover every"):
+        apply_row_verification(bundle, raw, stage, replay["verification"][:1])
+
+
+@pytest.mark.parametrize("phase", ["extraction", "verification", "reconciliation/level-0001"])
+@pytest.mark.parametrize("damage", ["missing", "invalid"])
+def test_advance_blocks_when_an_accepted_compilations_response_is_lost(tmp_path, capsys, phase, damage):
+    source, replay, _ = _advance_replay_fixture(tmp_path)
+    run_dir = tmp_path / "run"
+    for prior, responses in replay.items():
+        _publish_advance_replay(run_dir, prior, responses)
+        if prior == phase:
+            break
+    code, result = _advance_cli(source, run_dir, capsys)
+    assert code == 0 and result["status"] == "SEMANTIC_JUDGMENT_REQUIRED", result
+    compilation = run_dir / phase / "compilation.json"
+    accepted = compilation.read_bytes()
+    victim = run_dir / phase / "responses" / f"{replay[phase][0]['batch_id']}.json"
+    if damage == "missing":
+        victim.unlink()
+    else:
+        victim.write_text("invalid JSON", encoding="utf-8")
+    code, result = _advance_cli(source, run_dir, capsys)
+    # A response already bound by an accepted compilation is lost accepted work,
+    # never a fresh judgment request that would re-answer a closed question.
+    assert code == 2 and result["status"] == "SEMANTIC_ADVANCE_BLOCKED", result
+    assert result["judgment_requests"] == []
+    assert str(compilation) in result["action"]
+    assert compilation.read_bytes() == accepted
+    assert not (run_dir / "view.json").exists()
+    if victim.exists():
+        victim.unlink()
+    _publish_advance_replay(run_dir, phase, [replay[phase][0]])
+    code, restored = _advance_cli(source, run_dir, capsys)
+    assert code == 0 and restored["status"] == "SEMANTIC_JUDGMENT_REQUIRED", restored
+    assert compilation.read_bytes() == accepted
+
+
+@pytest.mark.parametrize("disposition", ["context_only", "unresolved"])
+def test_advance_no_claims_names_the_blocker_before_reconciliation(tmp_path, capsys, disposition):
+    source_path, _, _ = _advance_replay_fixture(tmp_path)
+    bundle = build_bundle(json.loads(source_path.read_text()), max_prompt_bytes=30_000,
+                          max_evidence_per_work_unit=2)
+    responses = _keyed_responses(bundle)
+    for response in responses:
+        for row in response["decisions_by_evidence_id"].values():
+            row["disposition"] = disposition
+    run_dir = tmp_path / "run"
+    _publish_advance_replay(run_dir, "extraction", responses)
+    code, result = _advance_cli(source_path, run_dir, capsys)
+    assert code == 2 and result["blocker_code"] == "NO_CLAIM_BEARING_EVIDENCE", result
+    assert result["judgment_requests"] == []
+    assert "evidence_dispositions" in result["action"]
+    assert "unchanged inputs cannot clear" in result["action"]
+    assert not (run_dir / "reconciliation").exists()
+    assert not (run_dir / "view.json").exists()
+    accepted = (run_dir / "verification/compilation.json").read_bytes()
+    code, repeated = _advance_cli(source_path, run_dir, capsys)
+    assert code == 2 and repeated["blocker_code"] == result["blocker_code"]
+    assert (run_dir / "verification/compilation.json").read_bytes() == accepted
+
+
+@pytest.mark.parametrize("window", ["before_link", "after_link"])
+def test_advance_deterministic_staging_recovery_preserves_accepted_bytes(tmp_path, capsys, monkeypatch, window):
+    import runners.run_semantic_evidence_integration as runner
+    source, _, _ = _advance_replay_fixture(tmp_path)
+    run_dir = tmp_path / "run"
+    bundle_path = run_dir / "bundle.json"
+    staged = run_dir / "bundle.json.tmp"
+    native_link, native_unlink = runner.os.link, Path.unlink
+    def fail_link(src, dst):
+        if dst == bundle_path:
+            raise OSError("injected before-link interruption")
+        return native_link(src, dst)
+    def fail_unlink(path, *args, **kwargs):
+        if path == staged:
+            raise OSError("injected after-link interruption")
+        return native_unlink(path, *args, **kwargs)
+    with monkeypatch.context() as patch:
+        if window == "before_link":
+            patch.setattr(runner.os, "link", fail_link)
+        else:
+            patch.setattr(Path, "unlink", fail_unlink)
+        code, result = _advance_cli(source, run_dir, capsys)
+    assert code == 2 and str(staged) in result["error"]
+    assert "Preserve and move" in result["error"]
+    staged_bytes = staged.read_bytes()
+    accepted = (bundle_path.read_bytes(), bundle_path.stat().st_mtime_ns) if bundle_path.exists() else None
+    code, result = _advance_cli(source, run_dir, capsys)
+    assert code == 2 and "outside its output directory" in result["error"]
+    # Execute the exact instructed recovery, preserving the interrupted bytes.
+    preserved = tmp_path / "preserved-bundle.json.tmp"
+    staged.rename(preserved)
+    code, resumed = _advance_cli(source, run_dir, capsys)
+    assert code == 0 and resumed["phase"] == "extraction", resumed
+    assert preserved.read_bytes() == staged_bytes == bundle_path.read_bytes()
+    if accepted:
+        assert (bundle_path.read_bytes(), bundle_path.stat().st_mtime_ns) == accepted
+
+
+def test_advance_phase_wide_problem_names_scope_without_inventing_a_batch(tmp_path, capsys, monkeypatch):
+    import runners.run_semantic_evidence_integration as runner
+    source, replay, _ = _advance_replay_fixture(tmp_path)
+    run_dir = tmp_path / "run"
+    for phase in ["extraction", "verification"]:
+        _publish_advance_replay(run_dir, phase, replay[phase])
+    native = runner.apply_row_verification
+    def combined_failure(bundle, compiled, stage, responses, **kwargs):
+        if kwargs.get("require_all") is False and len(responses) > 1:
+            raise SemanticIntegrationError("injected aggregate incompatibility")
+        return native(bundle, compiled, stage, responses, **kwargs)
+    monkeypatch.setattr(runner, "apply_row_verification", combined_failure)
+    code, result = _advance_cli(source, run_dir, capsys)
+    assert code == 2 and result["judgment_requests"] == []
+    assert result["response_state"]["problems"] == [{"kind": "invalid", "batch_id": None,
+        "path": str(run_dir / "verification"), "error": "injected aggregate incompatibility"}]
+    assert not (run_dir / "verification/compilation.json").exists()
+
+
 def test_frozen_v8_repair_replay_keeps_parent_and_active_content_bound() -> None:
     bundle, _, repaired, _ = _terminal_repair_migration_fixture()
     frozen = deepcopy(repaired)

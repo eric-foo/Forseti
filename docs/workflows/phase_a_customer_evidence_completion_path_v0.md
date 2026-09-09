@@ -679,6 +679,32 @@ ID through `source_groups` and preserve its truth-support or influence layer.
 
 ## Operating path
 
+For authorized Evidence Consolidation, use the public composed entrypoint:
+
+```powershell
+python forseti-harness/runners/run_semantic_evidence_integration.py advance --source <materialized-source.json> --run-dir <run-root>
+```
+
+Keep the same source and packing options on resume (`--max-prompt-bytes` and
+`--max-evidence-per-work-unit` when explicitly selected). Dispatch the complete
+compatible `judgment_requests` set together through the existing active-agent
+lane, preserving independent extraction/verifier judgments, then call `advance`
+again on the published results. Do not split preparation, submission, validation,
+normal reconciliation levels/convergence, and final compilation into trivial
+controller turns. The operation carries those deterministic steps through their
+native gates, reports exact prompt/schema/response and accepted-artifact bindings,
+and stops at required meaning judgment, an actionable failure, or `view.json`.
+There is no fixed model-call quota. Existing per-stage commands are recovery and
+historical replay seams, not the normal execution sequence.
+
+Accepted artifacts under `extraction/`, `verification/`, and
+`reconciliation/level-NNNN/` are revalidated and reused on restart. Invalid or
+staged artifacts block with their paths; missing responses remain judgment work.
+Do not replace accepted answers or rerun completed semantic work to clear a
+mechanical interruption. Source/identity changes require the existing explicit
+successor/reopen authority. The final view remains bound to the current corpus;
+the command grants no acquisition, global v34 closure, seal, or synthesis authority.
+
 ```text
 SERP map
   -> native customer-evidence acquisition
