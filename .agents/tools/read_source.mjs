@@ -41,7 +41,7 @@ export async function readSources(requests, { maxOutputBytes = DEFAULT_OUTPUT_BY
       const text = await fs.readFile(request.path, 'utf8');
       const lines = text.match(/[^\n]*\n|[^\n]+$/g) || [];
       const outline = headings(lines.map(line => line.replace(/\n$/, '')));
-      Object.assign(nav, { file_bytes: bytes(text), total_lines: lines.length,
+      Object.assign(nav, { file_bytes: bytes(text), total_lines: lines.length, from: 1, to: lines.length,
         headings: outline });
       let from = 1;
       let to = lines.length;
@@ -61,7 +61,8 @@ export async function readSources(requests, { maxOutputBytes = DEFAULT_OUTPUT_BY
           throw new Error('Supply an existing inclusive from/to line range');
       }
       const body = lines.slice(from - 1, to).join('');
-      Object.assign(nav, { selected_bytes: bytes(body), from, to });
+      Object.assign(nav, { selected_bytes: bytes(body), from, to,
+        headings: outline.filter(h => h.line >= from && h.line <= to) });
       selected.push({ path: request.path, from, to, text: body });
     } catch (error) {
       nav.error = error.code || error.message;
@@ -75,7 +76,7 @@ export async function readSources(requests, { maxOutputBytes = DEFAULT_OUTPUT_BY
   const fallback = { status: 'not_read', reason: navigation.some(n => n.error)
     ? 'request_error' : 'output_budget_exceeded', max_output_bytes: maxOutputBytes,
     requested_output_bytes: bytes(result),
-    next: 'Select an exact heading or inclusive from/to lines; next_heading_line locates omitted navigation. Source bodies were not emitted.',
+    next: 'Select a heading or from/to lines. Continue omitted navigation with from: next_heading_line and to: this source’s to. No source bodies emitted.',
     sources: navigation };
   for (const nav of navigation) {
     nav.heading_count = nav.headings?.length || 0;
@@ -87,6 +88,10 @@ export async function readSources(requests, { maxOutputBytes = DEFAULT_OUTPUT_BY
     nav.next_heading_line = nav.headings.pop().line;
     nav.headings_omitted++;
   }
+  // A complete heading list must not carry omission guidance; replacing the
+  // message with a shorter one cannot breach the budget the loop just met.
+  if (!navigation.some(n => n.headings_omitted)) fallback.next =
+    'Select an exact heading or inclusive from/to lines; source bodies were not emitted.';
   if (bytes(encode(fallback)) > maxOutputBytes) return encode({ status: 'not_read',
     reason: fallback.reason, max_output_bytes: maxOutputBytes,
     requested_output_bytes: fallback.requested_output_bytes,

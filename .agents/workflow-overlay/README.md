@@ -18,8 +18,8 @@ Use `.agents/tools/read_source.mjs` for additional repository instruction reads:
 `node .agents/tools/read_source.mjs --file .agents/workflow-overlay/source-loading.md --heading "Bounded instruction reader"`.
 Then read that file’s "Rule", "Forseti Start Preflight", and "Routine Read Shapes
 (overlay high-traffic files)" sections, plus the task’s applicable pack or protocol.
-These are the existing starting requirements; reading the reader’s usage section
-alone does not complete them. That source owns selection, output bounds, and
+These pointers expose the starting requirements and their read shapes; the usage section
+alone does not complete those reads. That source owns selection, output bounds, and
 honest incomplete-read handling.
 
 ## Behavioral Admission
