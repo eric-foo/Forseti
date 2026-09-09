@@ -20,6 +20,8 @@ from harness_utils import hash_file, sha256_text
 from judgment.claim_meaning import (
     CLAIM_CONFIRMATION_CRITERION, CLAIM_INTERPRETATION_GUIDANCE, CLAIM_MEANING_POLICY,
     CLAIM_REF_SCOPE_NOTE,
+    CONTEXTUAL_CLAIM_MEANING_POLICY, CONTEXTUAL_CLAIM_INTERPRETATION_GUIDANCE,
+    CONTEXTUAL_CLAIM_CONFIRMATION_CRITERION, CONTEXTUAL_CLAIM_REF_INSTRUCTION,
 )
 from judgment.phase_a_evidence_consumer import (
     EvidenceConsumerError,
@@ -35,10 +37,11 @@ SELECTION_SPEC_VERSION = "phase_a_evidence_selection_spec_v2"
 CUSTOMER_PULL_FRONTIER_VERSION = "phase_a_customer_pull_point_frontier_v1"
 LEGACY_SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v1"
 PREVIOUS_SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v2"
-SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v3"
+PREVIOUS_SELECTION_MANIFEST_VERSION_V3 = "phase_a_evidence_selection_manifest_v3"
+SELECTION_MANIFEST_VERSION = "phase_a_evidence_selection_manifest_v4"
 SUPPORTED_SELECTION_MANIFEST_VERSIONS = {
     LEGACY_SELECTION_MANIFEST_VERSION, PREVIOUS_SELECTION_MANIFEST_VERSION,
-    SELECTION_MANIFEST_VERSION,
+    PREVIOUS_SELECTION_MANIFEST_VERSION_V3, SELECTION_MANIFEST_VERSION,
 }
 PARENT_CONTEXT_POLICY = "linked_parent_context_v1"
 SELECTION_BATCH_MANIFEST_VERSION = "phase_a_evidence_selection_batch_manifest_v1"
@@ -319,18 +322,30 @@ def _compact(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
 
 
+def _contextual_meaning(manifest: Mapping[str, Any]) -> bool:
+    return (manifest.get("schema_version") == SELECTION_MANIFEST_VERSION
+            or manifest.get("claim_meaning_policy") == CONTEXTUAL_CLAIM_MEANING_POLICY)
+
+
 def _meaning_guidance(manifest: Mapping[str, Any]) -> str:
     """Historical manifests retain their original prompt and adjudication basis."""
-    if (manifest.get("schema_version") == SELECTION_MANIFEST_VERSION
+    if _contextual_meaning(manifest):
+        return CONTEXTUAL_CLAIM_INTERPRETATION_GUIDANCE
+    if (manifest.get("schema_version") == PREVIOUS_SELECTION_MANIFEST_VERSION_V3
             or manifest.get("claim_meaning_policy") == CLAIM_MEANING_POLICY):
         return CLAIM_INTERPRETATION_GUIDANCE
     return ""
 
 
+def _confirmation_criterion(manifest: Mapping[str, Any]) -> str:
+    return (CONTEXTUAL_CLAIM_CONFIRMATION_CRITERION if _contextual_meaning(manifest)
+            else CLAIM_CONFIRMATION_CRITERION)
+
+
 def _meaning_prompt(template: str, manifest: Mapping[str, Any], *, confirmation: bool = False) -> str:
     guidance = _meaning_guidance(manifest)
     if guidance and confirmation:
-        guidance += "\n\n" + CLAIM_CONFIRMATION_CRITERION
+        guidance += "\n\n" + _confirmation_criterion(manifest)
     return guidance + "\n\n" + template if guidance else template
 
 
@@ -340,6 +355,8 @@ def _relation_ref_instruction(manifest: Mapping[str, Any]) -> str:
     Historical manifests keep the unscoped wording their responses were judged
     under; only manifests carrying the current meaning standard get the note.
     """
+    if _contextual_meaning(manifest):
+        return CONTEXTUAL_CLAIM_REF_INSTRUCTION
     if _meaning_guidance(manifest):
         return RELATION_REF_INSTRUCTION + CLAIM_REF_SCOPE_NOTE
     return RELATION_REF_INSTRUCTION
@@ -1212,19 +1229,20 @@ def relation_adjudication_basis(
         "policy": [RELATION_PROMPT, BOUNDED_POINT_RELATION_DEFINITIONS,
                    PRESELECTION_RELATION_CONFIRMATION_PROMPT,
                    PRESELECTION_CONFIRMATION_BATCH_PROMPT,
-                   RELATION_REF_INSTRUCTION, POINT_ACTOR_SCOPE_GUIDANCE,
+                   (CONTEXTUAL_CLAIM_REF_INSTRUCTION if _contextual_meaning(manifest)
+                    else RELATION_REF_INSTRUCTION), POINT_ACTOR_SCOPE_GUIDANCE,
                    _policy_guidance(spec, candidates)] + (
-                       [_meaning_guidance(manifest), CLAIM_CONFIRMATION_CRITERION,
+                       [_meaning_guidance(manifest), _confirmation_criterion(manifest),
                         _relation_ref_instruction(manifest)]
                        if _meaning_guidance(manifest) else []
                    ),
         "judgment_projection_columns": {
             "relation": RELATION_PROMPT_COLUMNS,
             "legacy_relation": LEGACY_RELATION_PROMPT_COLUMNS,
-            "current_confirmation": CURRENT_RELATION_CONFIRMATION_COLUMNS,
-            "current_legacy_confirmation": CURRENT_LEGACY_RELATION_CONFIRMATION_COLUMNS,
-            "confirmation": RELATION_CONFIRMATION_COLUMNS,
-            "legacy_confirmation": LEGACY_RELATION_CONFIRMATION_COLUMNS,
+            "current_confirmation": CURRENT_RELATION_CONFIRMATION_COLUMNS + (("source_body",) if _contextual_meaning(manifest) else ()),
+            "current_legacy_confirmation": CURRENT_LEGACY_RELATION_CONFIRMATION_COLUMNS + (("source_body",) if _contextual_meaning(manifest) else ()),
+            "confirmation": RELATION_CONFIRMATION_COLUMNS + (("source_body",) if _contextual_meaning(manifest) else ()),
+            "legacy_confirmation": LEGACY_RELATION_CONFIRMATION_COLUMNS + (("source_body",) if _contextual_meaning(manifest) else ()),
         },
     })
 
@@ -4199,6 +4217,7 @@ def _confirmation_prompt_projection(
     presentation: Sequence[tuple[str, Mapping[str, Any]]],
     *,
     include_relation_refs: bool = False,
+    source_bodies: Mapping[str, str | None] | None = None,
 ) -> tuple[bool, tuple[str, ...], list[list[Any]], list[list[str]]]:
     context_aware, projected, context_rows = _project_parent_context(
         [row for _, row in presentation]
@@ -4231,6 +4250,10 @@ def _confirmation_prompt_projection(
         ]
         for (row_id, _), row in zip(presentation, projected, strict=True)
     ]
+    if source_bodies is not None:
+        columns = (*columns, "source_body")
+        for row, (_, original) in zip(rows, presentation, strict=True):
+            row.append(source_bodies[original["candidate_id"]])
     return context_aware, columns, rows, context_rows
 
 
@@ -4239,9 +4262,10 @@ def _relation_confirmation_prompt_envelope(
     presentation: Sequence[tuple[str, Mapping[str, Any]]],
     *,
     point_context_rows: Sequence[Sequence[str]] = (),
+    source_bodies: Mapping[str, str | None] | None = None,
 ) -> dict[str, Any]:
     context_aware, columns, rows, context_rows = _confirmation_prompt_projection(
-        presentation
+        presentation, source_bodies=source_bodies
     )
     envelope = {
         "bounded_point": bounded_claim,
@@ -4347,7 +4371,13 @@ def _prepare_quotes_from_labeled(
     }
     actor_scope = _point_actor_scope(manifest["spec"], labeled)
     if _meaning_guidance(manifest):
-        quote_manifest["claim_meaning_policy"] = CLAIM_MEANING_POLICY
+        quote_manifest["claim_meaning_policy"] = (
+            CONTEXTUAL_CLAIM_MEANING_POLICY if _contextual_meaning(manifest) else CLAIM_MEANING_POLICY
+        )
+    if _contextual_meaning(manifest):
+        quote_manifest["confirmation_source_bodies"] = {
+            row["selected_id"]: row["source_body"] for row in quote_rows
+        }
     if actor_scope is not None:
         _validate_actor_relations(actor_scope, labeled)
         quote_manifest["point_actor_scope"] = actor_scope
@@ -4512,9 +4542,12 @@ def prepare_preselection_relation_confirmation(
         presentation,
         value_policy,
     ) = _preselection_confirmation_state(manifest, sources, first_pass_response)
+    bodies = _bundle_bodies(sources) if _contextual_meaning(manifest) else None
     context_aware, columns, rows, context_rows = _confirmation_prompt_projection(
         presentation,
         include_relation_refs=include_relation_refs,
+        source_bodies=({row["candidate_id"]: bodies.get((row["source_id"], row["evidence_id"]))
+                        for _, row in presentation} if bodies is not None else None),
     )
     envelope = {
         "bounded_point": manifest["spec"]["bounded_claim"],
@@ -4990,6 +5023,9 @@ def prepare_batched_preselection_relation_confirmations(
     ) = _preselection_confirmation_state(
         selection_manifest, sources, first_response
     )
+    bodies = _bundle_bodies(sources) if _contextual_meaning(selection_manifest) else None
+    confirmation_bodies = ({row["candidate_id"]: bodies.get((row["source_id"], row["evidence_id"]))
+                            for _, row in presentation} if bodies is not None else None)
     prompts_and_schemas: list[tuple[str, dict[str, Any]]] = []
     batches = []
     _, _, point_context_rows = _project_parent_context(candidates)
@@ -5003,6 +5039,7 @@ def prepare_batched_preselection_relation_confirmations(
         context_aware, columns, rows, context_rows = _confirmation_prompt_projection(
             subset,
             include_relation_refs=include_relation_refs,
+            source_bodies=confirmation_bodies,
         )
         envelope = {
             "batch_id": confirmation_batch_id,
@@ -5299,10 +5336,21 @@ def prepare_selected_relation_confirmation(
     presentation = _confirmation_row_presentation(
         selected, quote_manifest["selected_rows_sha256"]
     )
+    confirmation_bodies = None
+    if _contextual_meaning(quote_manifest):
+        bodies = quote_manifest.get("confirmation_source_bodies")
+        if (not isinstance(bodies, Mapping)
+                or set(bodies) != {row["selected_id"] for row in selected}
+                or any(body is not None and not isinstance(body, str) for body in bodies.values())
+                or {key: sha256_text(body) if body is not None else None for key, body in bodies.items()}
+                != quote_manifest.get("quote_body_sha256")):
+            raise EvidenceConsumerError("manifest_verification", "confirmation source bodies changed")
+        confirmation_bodies = {row["candidate_id"]: bodies[row["selected_id"]] for row in selected}
     envelope = _relation_confirmation_prompt_envelope(
         quote_manifest["bounded_claim"],
         presentation,
         point_context_rows=quote_manifest.get("point_parent_context_rows", []),
+        source_bodies=confirmation_bodies,
     )
     _attach_actor_scope(envelope, quote_manifest.get("point_actor_scope"), [row for _, row in presentation], table="selected")
     prompt = _meaning_prompt(RELATION_CONFIRMATION_PROMPT, quote_manifest, confirmation=True).format(envelope=_compact(envelope))

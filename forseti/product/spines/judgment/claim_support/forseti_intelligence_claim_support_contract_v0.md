@@ -82,6 +82,15 @@ improvement in context without naming a particular benefit or establishing a
 measured effect. Generic approval alone does not establish hydration. These
 illustrate a general judgment rule, not phrase-specific exemptions.
 
+Interpret the whole source account, not grammatical tense alone. Advice such
+as “this will help” can communicate an experience-informed benefit endorsement
+within a customer's account of use; an untried hope remains anticipation.
+Customer testimony needs no formal first-person event narrative or scientific
+proof to count as testimony. This does not establish objective causation or
+make public authorship a blanket truth guarantee. Original source wording
+controls interpretation when a normalized summary omits or overstates it;
+context cannot donate another actor's experience or an unrelated benefit.
+
 Neither a broader shared meaning nor the word `or` is an automatic defect.
 An arbitrary collection of unlike benefits is not a shared claim, however,
 and abstraction must not erase opposition, material scope, conditions,
@@ -196,6 +205,16 @@ Every synthesized claim carries one `conflict_posture`:
 - `mixed`: credible support exists in opposing directions;
 - `contradicted`: stronger or more directly fitted evidence defeats the proposed
   direction.
+
+Counterevidence is meaningful contrary experience, behavior, or judgment for
+the bounded proposition, not simply failure to satisfy its positive description.
+Never-tried plans are context for regular use and may support interest; tried
+and abandoned use can oppose current regular use. Experienced lack of recovery
+can oppose a recovery claim, including “not yet”; do not invent a minimum trial
+duration to dismiss it. Conversely, an attitude claim needs no trial before a
+source can oppose it. These examples apply the claim-specific comparison, not
+a universal eligibility rule. Relevant material establishing neither side stays
+adjacent, and out-of-scope material stays excluded.
 
 Material opposing evidence is referenced separately. More evidence in both
 directions strengthens the finding that the experience is split; it does not

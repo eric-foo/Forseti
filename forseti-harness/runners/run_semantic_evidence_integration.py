@@ -15,11 +15,13 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     BUNDLE_VERSION_V4,
     METHOD_VERSION_V12,
     METHOD_VERSION_V13,
+    METHOD_VERSION_V14,
     RECONCILIATION_AUTHORING_LEGACY,
     RECONCILIATION_AUTHORING_IDENTITY_V1,
     RECONCILIATION_AUTHORING_IDENTITY_V2,
     RECONCILIATION_AUTHORING_IDENTITY_V3,
     RECONCILIATION_AUTHORING_IDENTITY_V4,
+    RECONCILIATION_AUTHORING_IDENTITY_V5,
     RECONCILIATION_POLICY_VERSION_V2,
     SOURCE_VERSION_V3,
     SemanticIntegrationError,
@@ -1416,9 +1418,11 @@ def prepare_reconciliation_level(
     compilation = _load_object(compilation_path)
     if authoring_revision is None:
         authoring_revision = (
-            RECONCILIATION_AUTHORING_IDENTITY_V4
+            (RECONCILIATION_AUTHORING_IDENTITY_V5
+             if bundle.get("method_version") == METHOD_VERSION_V14
+             else RECONCILIATION_AUTHORING_IDENTITY_V4)
             if response_version == RECONCILIATION_RESPONSE_VERSION_V3
-            or (bundle.get("method_version") in {METHOD_VERSION_V12, METHOD_VERSION_V13}
+            or (bundle.get("method_version") in {METHOD_VERSION_V12, METHOD_VERSION_V13, METHOD_VERSION_V14}
                 and response_version != RECONCILIATION_RESPONSE_VERSION_V2)
             else RECONCILIATION_AUTHORING_LEGACY
         )
@@ -2777,7 +2781,7 @@ def _parser() -> argparse.ArgumentParser:
         help="Render requests for an immutable partially completed stage without repartitioning.")
     reconcile_level.add_argument("--response-version",
         choices=[RECONCILIATION_RESPONSE_VERSION_V2, RECONCILIATION_RESPONSE_VERSION_V3],
-        help="Defaults to decision-only v3 for method v12; explicit v2 is historical replay.")
+        help="Defaults to decision-only v3 for methods v12-v14; explicit v2 is historical replay.")
     reconcile_level.add_argument("--authoring-revision",
         choices=[
             RECONCILIATION_AUTHORING_LEGACY,
@@ -2785,8 +2789,9 @@ def _parser() -> argparse.ArgumentParser:
             RECONCILIATION_AUTHORING_IDENTITY_V2,
             RECONCILIATION_AUTHORING_IDENTITY_V3,
             RECONCILIATION_AUTHORING_IDENTITY_V4,
+            RECONCILIATION_AUTHORING_IDENTITY_V5,
         ],
-        help="Normal requests only: defaults to exact identity namespaces for method-v12 response-v3; legacy reproduces historical requests.")
+        help="Normal requests only: defaults to authoring v5 for method-v14 response-v3, v4 for earlier decision authoring; legacy reproduces historical requests.")
     reconcile_level.add_argument(
         "--reconciliation-policy",
         choices=[RECONCILIATION_POLICY_VERSION_V2],

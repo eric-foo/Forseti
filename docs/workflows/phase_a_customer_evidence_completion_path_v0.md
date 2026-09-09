@@ -63,15 +63,15 @@ This is a conceptual and completion boundary between acquisition and Deliver,
 not a new globally numbered phase: historical Phase A, Phase B, Turn B,
 Understanding, and Deliver vocabulary is not renumbered or migrated.
 
-For new cross-company authoring, use `phase_a_semantic_integration_run_v11`
-(integration method v13, verifier v12). The supplied `CURRENT_AXES` inventory
+For new cross-company authoring, use `phase_a_semantic_integration_run_v12`
+(integration method v14, verifier v13). The supplied `CURRENT_AXES` inventory
 owns output IDs; shared examples describe concepts, never another company's
 required IDs. Preserve a supported meaning even when it needs an emerging-axis
 label instead of an existing axis. See the semantic-integration contract v81
-for the owning rule. Contract v122 adds meaning-boundary guidance to the existing
-producer and verifier and versions new Decision State prompts as manifest v2;
-old v1 manifests retain their original batching prompts. Historical run v10 /
-method v12 and earlier artifacts keep
+for the owning rule. Contract v123 uses contextual meaning guidance in the existing producer,
+verifier, formation and selection. Decision State remains manifest v2;
+old v1 manifests retain their original batching prompts. Historical run v11 /
+method v13 and earlier artifacts keep
 their original identity and replay; do not edit frozen outputs or relabel old
 responses as a new-method proof. This correction does not establish the cause
 of Dieux's provider timeout. All new model attempts use `high` under the
@@ -98,14 +98,14 @@ stage identity and does not make a structurally valid answer semantically right.
 
 Frozen verifier-v8 compilations replay unchanged where the current verifier is
 v9, whose change was response transport only. New verification still uses v9;
-methods v11/v12/v13 retain their stricter verifier pairing. The semantic-integration
+methods v11/v12/v13/v14 retain their stricter verifier pairing. The semantic-integration
 contract's v77 replay clarification owns the exact version/hash acceptance and
 unchanged active-row/lineage checks. Replay does not establish current-method
 execution or semantic truth and requires no provider re-verification merely to
 change a version label.
 
 The existing calibration entry point follows the production-owned
-`SEMANTIC_METHODS_V7_PLUS` set, including current method v13, rather than a
+`SEMANTIC_METHODS_V7_PLUS` set, including current method v14, rather than a
 separate historical allowlist. Primary and cold-repeat evaluation both require
 their own exact row-verified compilation for those methods. Contract v79 owns
 this compatibility correction; it neither changes semantic prompts nor makes
@@ -444,25 +444,27 @@ decision or definition; explicit model-authored completion is separate below.
 Native consumers reject missing, foreign,
 duplicate, orphan or prohibited assignments, and incompatible identities.
 Structural exactness does not establish semantic warrant.
-Normal method-v12 response-v3 requests at `prepare-reconciliation-level` select
-`exact_identity_namespaces_v4`: each exact subject/comparator/version set tuple
+Normal method-v14 response-v3 requests at `prepare-reconciliation-level` select
+`exact_identity_namespaces_v5`: each exact subject/comparator/version set tuple
 gets an opaque prefix and each candidate may attach only to keys in its own
 class. Compatible evidence may share any number of model-authored keys; matching
 identity does not justify merging meanings. The same rule applies at later
 levels and in convergence. The native one-leaf/one-child-path rule is exposed
 through exact shared-leaf groups, and fresh current batches cap at 96 candidates so output and connected
 repair scope remain bounded without truncation. It adds request bytes, not
-another provider stage. V4 adds the shared supported-meaning standard: form a
-useful assertion each support establishes without inventing a stronger status
-label or threshold. Current selection manifest v3 applies that standard when
-interpreting the fixed claim; it does not broaden the claim or relax source facts.
+another provider stage. V5 uses the shared contextual standard: interpret whole source accounts,
+preserve genuine expectations, and distinguish contrary experience or judgment
+from mere non-membership. Current selection manifest v4 uses the same standard
+and supplies original row-owned source text in existing confirmation requests.
+It does not broaden the fixed claim or relax source facts.
 New packing includes those bytes; resumed stages keep their frozen membership
 and fail without truncation when they cannot fit.
 Use `--authoring-revision exact_identity_namespaces_v1`, `exact_identity_namespaces_v2`,
-or `exact_identity_namespaces_v3` for their respective prior namespaced
+`exact_identity_namespaces_v3`, or `exact_identity_namespaces_v4` for prior namespaced
 replay and `--authoring-revision legacy` for older normal prompt/schema replay;
-low-level Python callers select `RECONCILIATION_AUTHORING_IDENTITY_V4` explicitly
-for current generation. Explicit response-v2 and older-method public defaults,
+low-level Python callers select `RECONCILIATION_AUTHORING_IDENTITY_V5` explicitly
+for current generation. Method-v12/v13 public defaults remain authoring v4.
+Explicit response-v2 and older-method public defaults,
 missing-definition requests and local repairs keep their historical behavior.
 For a verified method-v7 continuation, explicitly request response v3 on a fresh
 stage to use that same decision compiler, source-role guidance and identity-v4

@@ -2,13 +2,13 @@
 artifact_role: authority
 status: current
 owner: Judgment / claim support
-version: v122
+version: v123
 effective_date: 2026-09-08
 depends_on:
   - forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md
 ---
 
-# Semantic Evidence Integration Contract v122
+# Semantic Evidence Integration Contract v123
 
 ## Purpose
 
@@ -146,8 +146,8 @@ shape requires one exact stored subject/comparator orientation; retain opposite
 orientations separately without relabeling child identity. This is a transport
 constraint, not a claim that the meanings differ or represent separate events.
 
-Current authoring uses run v11 / integration method v13 / row-verification
-method v12. `CURRENT_AXES` alone supplies valid output axis IDs. Category names
+Current authoring uses run v12 / integration method v14 / row-verification
+method v13. `CURRENT_AXES` alone supplies valid output axis IDs. Category names
 in the semantic examples below describe meaning, not fixed identifiers or
 mandatory assignments across companies. The agent selects supplied IDs by the
 unit's meaning and the supplied labels; it never imports Summer Fridays IDs
@@ -158,12 +158,12 @@ Earlier run/method identities and their prompt bytes remain historical replay,
 not current cross-company authoring. No frozen output is rewritten or silently
 promoted into the new generation.
 
-Method v13 teaches the existing normalization stage to preserve source-attributed
-outcomes, forecasts, earlier interest, and distinct action objects without adding
-an analyst's unstated threshold. Verifier v12 checks those same boundaries in
-the whole row. Neither stage infers a purchase from use or turns resuming use
-into a merchandise return. Prior method/verifier texts retain their original
-identities; the new generation adds instruction bytes, not another model stage.
+Method v14 teaches normalization to interpret source accounts contextually,
+including experience-informed advice, genuine expectations, earlier interest,
+and distinct action objects. Verifier v13 checks each proposed unit against
+that same source context. Neither tense alone nor a normalized summary decides
+whether an experience was reported. Prior method/verifier texts retain their
+original identities; this adds instruction bytes, not another model stage.
 
 Upstream `product_candidates` are hypotheses, not product truth. For the
 current method, every admitted item also carries source-pinned product context
@@ -1896,8 +1896,8 @@ responses share the existing validator and downstream node-compilation-v2
 shape, without replacing raw provider artifacts. No normal-path semantic provider
 stage is added. Mechanical assembly does not prove that chosen meanings belong together.
 
-Normal method-v12/v13 response-v3 preparation now selects
-`exact_identity_namespaces_v4` at the public `prepare-reconciliation-level`
+Normal method-v14 response-v3 preparation selects
+`exact_identity_namespaces_v5` at the public `prepare-reconciliation-level`
 entrypoint. The separately selected `authoring_revision` is not a response or
 stage schema revision. Each exact tuple of subject, comparator and version
 **sets, with their roles preserved**, gets a code-derived opaque prefix. Every
@@ -1915,7 +1915,7 @@ limit. The cap bounds output and connected-repair scope; it does not choose a
 meaning, truncate context, weaken the native consumer, or promise provider
 success. V3 presents exact shared-leaf groups instead of asking the model to
 reconstruct them. V4 retains those groups and adds the shared supported-meaning
-guidance described below. New stage packing includes the instruction bytes; immutable resumed
+guidance. V5 substitutes the contextual standard described below. New stage packing includes the instruction bytes; immutable resumed
 stages retain their membership and fail visibly if whitespace compaction cannot
 fit the complete prompt. Native identity checks remain unchanged for all
 relations. The restriction removes an incidental signal previously carried by
@@ -1923,13 +1923,15 @@ attempted incompatible merges; equal upstream-discrepancy discovery sensitivity
 is not claimed. It adds request bytes, not a provider call or a new review stage.
 
 Use `--authoring-revision exact_identity_namespaces_v1`, `exact_identity_namespaces_v2`,
-or `exact_identity_namespaces_v3` to reproduce the corresponding prior
+`exact_identity_namespaces_v3`, or `exact_identity_namespaces_v4` to reproduce the corresponding prior
 namespaced normal requests, or `--authoring-revision legacy` to reproduce the
 older unrestricted normal requests.
 The low-level Python preparation APIs retain their historical default for replay;
-current callers explicitly select `RECONCILIATION_AUTHORING_IDENTITY_V4`.
-V4 uses its role-specific shared formation instruction once; v13's explicit
-prior authoring revisions retain their original full-method preamble.
+current callers explicitly select `RECONCILIATION_AUTHORING_IDENTITY_V5`.
+V5 uses its contextual formation instruction once. Method-v12/v13 public
+defaults remain v4, and historical authoring prompts retain their original bytes.
+Prior authoring revisions explicitly chosen under v14 receive its contextual
+producer preamble.
 Explicit response-v2 and older methods retain historical public defaults.
 Missing-definition and local-repair requests use the unchanged historical
 renderer/schema and can preserve existing opaque keys. Accepted work keeps its
@@ -1937,43 +1939,42 @@ actual original prompt, schema, attempt and correction receipts; newly rendered
 unused requests are never substituted as its provenance. Neither namespace
 compliance nor native acceptance proves source-supported meaning preservation.
 
-Current normal authoring and selection consume the same supported-meaning
-standard from `judgment/claim_meaning.py`. Claim formation chooses a useful
-shared assertion without introducing an analyst's stronger status label or
-threshold. Selection interprets the already-bound claim through ordinary
-paraphrase and context-supported entailment; it cannot broaden the claim to
-admit evidence. A missing required qualifier is insufficient support, not by
-itself an opposing report. Source-authored causal attribution may support a
-reported-experience claim while the analyst's causal ceiling remains intact.
-An evidentiary limit ("does not establish X") is not a source fact asserting
-that X did not happen. Evaluate a report at its stated time; later action does
-not erase an earlier reported state unless the claim requires its persistence.
-Actual identity, condition, time, intensity, uncertainty and action-state
-differences remain material. This applies the owning claim-support contract;
-it adds no lexical semantic classifier, evidence filter or provider stage.
+Current normal authoring and selection consume the contextual meaning standard
+from `judgment/claim_meaning.py`. It applies the owning claim-support contract's
+whole-account interpretation and claim-specific counterevidence distinction.
+Formation chooses a useful shared assertion each support communicates; selection
+interprets the fixed finding without broadening it. Experienced advice may
+express a reported benefit; genuine hopes remain hopes. Never-tried plans do
+not oppose routine use, whereas experienced abandonment can. Experienced lack
+of recovery remains eligible counterevidence. The model makes these judgments;
+there is no lexical classifier, blanket customer truth score, or added stage.
 
-A row whose own relevant precondition never arose for its speaker does not
-report an incompatible outcome. The model distinguishes that absence of an
-occasion from actual counterevidence. Ref-selection rules constrain which
-stored meanings may be cited, without overriding their context-supported
-interpretation or donating another meaning's unstated facts.
+Selection manifest v4 binds `contextual_claim_meaning_v2` in first-pass,
+confirmation, and adjudication reuse. Existing confirmation requests include
+each candidate's full original `source_body` from the already-bound source,
+alongside normalized meanings and bound parent context. Missing body is null,
+not evidence of absence. The model grounds its label in the original account;
+source text may clarify supplied meanings but does not license foreign refs or
+rewrite saved normalization. The existing `point_scope_reason` states the
+single bounded meaning. Confirmation applies the contextual relation standard
+to each row rather than manufacturing opposition by negating the support
+criterion. No relevant experience differs from contrary experience; attitudes
+remain judged as attitudes.
 
-Selection manifest v3 binds this guidance in new first-pass and confirmation
-requests and in adjudication reuse eligibility. Confirmation first states one meaning criterion in the
-existing `point_scope_reason` before applying it across rows, without adding
-a field or provider stage. Quote manifests also carry
-`claim_meaning_policy: supported_claim_meaning_v1` for the selected-row
-confirmation route. Selection v1/v2 and explicit prior reconciliation authoring
-revisions keep their original prompts and adjudication basis. New instructions
-do not reinterpret frozen responses or establish semantic correctness merely
-because a response passes structural validation.
+Current quote manifests carry the same policy and a selected-id-keyed
+`confirmation_source_bodies` map so the selected-row confirmation consumer has
+the same original wording without reopening Collection. Keys, value types, raw
+body hashes, and manifest identity are validated; current-policy missing or
+tampered maps fail. Candidate identity and order are unchanged. Full bodies add
+request and selected-manifest bytes; existing byte bounds split batches or fail
+without clipping. No provider call or recurring review step is added.
 
-The current development revision updates the v3 policy basis, so prior v3
-adjudications under different instruction bytes require a fresh adjudication;
-stored prompts and responses remain evidence of their actual attempt. Historical
-v1/v2 replay is unchanged. Each confirmation batch states its own criterion.
-The combined response retains the first batch's reason, while attempt records
-preserve all reasons; there is no cross-batch semantic consistency proof.
+Selection v1/v2/v3, the v1 meaning policy, and prior reconciliation authoring
+revisions retain their original prompts and adjudication basis. New attempts
+must use new version identities, never reinterpret or restamp frozen responses.
+Each confirmation batch states its own criterion; combined responses retain
+the first batch's reason and attempt records preserve every reason. Structural
+validation is not a cross-batch semantic consistency proof.
 
 Current response-v3 generation requires a nonempty node list when any assigned
 candidate must remain a finding under the existing retention rule. This prevents

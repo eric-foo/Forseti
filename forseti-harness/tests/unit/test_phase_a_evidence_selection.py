@@ -345,11 +345,11 @@ def test_adjudication_rejects_changed_basis_after_honest_repins(tmp_path: Path, 
         spec["point_actor_scope"] = {"mode": "identified_actor", "source_id": "full-corpus", "independence_key": "origin:0"}
         spec["admit_semantic_refs"] = [{"source_id": "full-corpus", "semantic_unit_ref": "community_post:0::hydration"}]
     elif mutation == "claim_meaning_guidance":
-        monkeypatch.setattr(evidence_selection, "CLAIM_INTERPRETATION_GUIDANCE", "Changed meaning policy.")
+        monkeypatch.setattr(evidence_selection, "CONTEXTUAL_CLAIM_INTERPRETATION_GUIDANCE", "Changed meaning policy.")
     elif mutation == "claim_confirmation_criterion":
-        monkeypatch.setattr(evidence_selection, "CLAIM_CONFIRMATION_CRITERION", "Changed confirmation criterion.")
+        monkeypatch.setattr(evidence_selection, "CONTEXTUAL_CLAIM_CONFIRMATION_CRITERION", "Changed confirmation criterion.")
     elif mutation == "claim_ref_scope_note":
-        monkeypatch.setattr(evidence_selection, "CLAIM_REF_SCOPE_NOTE", " Changed ref scope note.")
+        monkeypatch.setattr(evidence_selection, "CONTEXTUAL_CLAIM_REF_INSTRUCTION", "Changed ref instruction.")
     elif mutation == "policy":
         monkeypatch.setattr(evidence_selection, "POINT_ACTOR_SCOPE_GUIDANCE", "A genuinely different actor rule.")
     else:
@@ -3309,7 +3309,7 @@ def test_selection_v1_replays_exact_publication_inventory(tmp_path: Path, legacy
 def test_selection_date_replay_cannot_launder_rehashed_inventory(tmp_path: Path, mutation: str) -> None:
     spec, sources, raw_path = _materialized_missing_date_source(tmp_path)
     _, _, manifest = prepare_evidence_selection(spec, sources)
-    assert manifest["schema_version"] == "phase_a_evidence_selection_manifest_v3"
+    assert manifest["schema_version"] == "phase_a_evidence_selection_manifest_v4"
     expected = _candidate_rows(sources, spec)
     expected[0]["publication_time"] = (
         "2099-01-01" if mutation == "invented_date" else "2026-07-29T08:17:00+0000"
@@ -3558,8 +3558,10 @@ def _quote_response(quote_manifest: dict, sources: list[dict]) -> dict:
 
 def test_current_meaning_guidance_reaches_single_and_batched_native_consumers(tmp_path: Path) -> None:
     from judgment.claim_meaning import (
-        CLAIM_CONFIRMATION_CRITERION, CLAIM_INTERPRETATION_GUIDANCE, CLAIM_MEANING_POLICY,
-        CLAIM_REF_SCOPE_NOTE,
+        CONTEXTUAL_CLAIM_CONFIRMATION_CRITERION as CLAIM_CONFIRMATION_CRITERION,
+        CONTEXTUAL_CLAIM_INTERPRETATION_GUIDANCE as CLAIM_INTERPRETATION_GUIDANCE,
+        CONTEXTUAL_CLAIM_MEANING_POLICY as CLAIM_MEANING_POLICY,
+        CONTEXTUAL_CLAIM_REF_INSTRUCTION as CLAIM_REF_SCOPE_NOTE,
     )
 
     spec, sources = _write_source(tmp_path, 5)
@@ -3591,7 +3593,7 @@ def test_current_meaning_guidance_reaches_single_and_batched_native_consumers(tm
     # The ref-provenance rule travels with its scope note wherever it is injected,
     # so it cannot read as a general ban on reading source-supported meaning.
     for rendered in [confirm_prompt, *(item[0] for item in confirmation_prompts)]:
-        assert rendered.count(evidence_selection.RELATION_REF_INSTRUCTION + CLAIM_REF_SCOPE_NOTE) == 1
+        assert rendered.count(CLAIM_REF_SCOPE_NOTE) == 1
     for rendered, bound in [
         (prompt, manifest), (confirm_prompt, confirmation), (selected_prompt, selected_confirmation),
         *((item[0], bound) for item, bound in zip(batches, batch_manifest["batches"], strict=True)),
@@ -3630,7 +3632,7 @@ def test_historical_selection_meaning_replay_keeps_frozen_prompt_and_basis(tmp_p
     spec, sources = _write_source(tmp_path, 5)
     prompt, _, manifest = prepare_evidence_selection(spec, sources)
     # Digests captured from the unchanged d2fc32a4 native entry points with this fixture.
-    original_prompt = prompt.removeprefix(evidence_selection.CLAIM_INTERPRETATION_GUIDANCE + "\n\n")
+    original_prompt = prompt.removeprefix(evidence_selection.CONTEXTUAL_CLAIM_INTERPRETATION_GUIDANCE + "\n\n")
     assert evidence_selection.sha256_text(original_prompt) == "9917a82eb57742846340bacbd4aef3d46f8d4f087d570207b6443df76958205d"
     manifest["schema_version"] = version
     manifest["prompt_sha256"] = evidence_selection.sha256_text(original_prompt)
@@ -3698,6 +3700,173 @@ def _confirmation_response(
             )
         ]
     }
+
+
+def test_contextual_confirmation_projects_only_whole_row_owned_bodies(tmp_path):
+    spec, sources = _write_source(tmp_path, 5)
+    spec["relation_response_mode"] = "positional"
+    sources[0]["bundle"]["evidence_units"][0]["text"] = "  Original premise. " + "Unclipped detail. " * 800 + "End condition.  "
+    sources[0]["bundle"]["evidence_units"][1]["text"] = None
+    _reseal(sources[0])
+    candidates = _candidate_rows(sources, spec)
+    original_inventory = copy.deepcopy(candidates)
+    bodies = evidence_selection._bundle_bodies(sources)
+    first_prompt, _, manifest = prepare_evidence_selection(spec, sources)
+    assert "source_body" not in json.loads(first_prompt.split("SELECTION_ENVELOPE_JSON:\n")[1])["candidate_columns"]
+    first = _positional_relation_response(candidates)
+    prompt, _, confirmation = prepare_preselection_relation_confirmation(manifest, sources, first)
+    envelope = json.loads(prompt.split("PRESELECTION_RELATION_CONFIRMATION_ENVELOPE_JSON:\n")[1])
+    by_id = {row["candidate_id"]: row for row in candidates}
+    for values, candidate_id in zip(envelope["candidate_rows"], confirmation["confirmation_candidate_ids"], strict=True):
+        row = by_id[candidate_id]
+        assert values[envelope["candidate_columns"].index("source_body")] == bodies[(row["source_id"], row["evidence_id"])]
+    _, _, quote = finalize_relations_prepare_quotes(manifest, sources, first)
+    selected_prompt, _, selected_confirmation = prepare_selected_relation_confirmation(quote)
+    selected_envelope = json.loads(selected_prompt.split("SELECTED_RELATION_CONFIRMATION_ENVELOPE_JSON:\n")[1])
+    by_selected = {row["selected_id"]: row for row in quote["selected_rows"]}
+    for values, selected_id in zip(selected_envelope["selected_rows"], selected_confirmation["confirmation_row_selected_ids"], strict=True):
+        row = by_selected[selected_id]
+        assert values[selected_envelope["selected_columns"].index("source_body")] == bodies[(row["source_id"], row["evidence_id"])]
+    assert _candidate_rows(sources, spec) == original_inventory
+    assert all("source_body" not in row for row in quote["selected_rows"])
+
+
+@pytest.mark.parametrize("mutation", ["missing", "wrong_type", "foreign_id", "changed_body"])
+def test_contextual_selected_confirmation_rejects_unbound_bodies(tmp_path, mutation):
+    spec, sources = _write_source(tmp_path, 5)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    _, _, quote = finalize_relations_prepare_quotes(manifest, sources, _relation_response(_candidate_rows(sources, spec)))
+    bodies = quote["confirmation_source_bodies"]
+    if mutation == "missing":
+        del quote["confirmation_source_bodies"]
+    elif mutation == "wrong_type":
+        bodies[next(iter(bodies))] = ["not an original body"]
+    elif mutation == "foreign_id":
+        bodies["foreign"] = bodies.pop(next(iter(bodies)))
+    else:
+        bodies[next(iter(bodies))] = "Altered body with unchanged normalized meaning."
+    quote.pop("manifest_sha256")
+    quote["manifest_sha256"] = _canonical_hash(quote)
+    with pytest.raises(EvidenceConsumerError, match="confirmation source bodies changed"):
+        prepare_selected_relation_confirmation(quote)
+
+
+@pytest.mark.parametrize("batched", [False, True])
+def test_contextual_confirmation_rejects_body_identity_mismatch(tmp_path, batched):
+    spec, sources = _write_source(tmp_path, 5)
+    spec["relation_response_mode"] = "positional"
+    sources[0]["bundle"]["evidence_units"][0]["source_ref"] = "https://foreign.invalid/body"
+    _reseal(sources[0])
+    candidates = _candidate_rows(sources, spec)
+    if batched:
+        manifest, _ = prepare_evidence_selection_batches(spec, sources, batch_size=2)
+        responses = {batch["batch_id"]: _batched_positional_relation_response(candidates[batch["start_index"]:batch["start_index"]+batch["candidate_count"]], batch["batch_id"]) for batch in manifest["batches"]}
+        call = lambda: prepare_batched_preselection_relation_confirmations(manifest, sources, responses, batch_size=2)
+    else:
+        _, _, manifest = prepare_evidence_selection(spec, sources)
+        call = lambda: prepare_preselection_relation_confirmation(manifest, sources, _positional_relation_response(candidates))
+    with pytest.raises(EvidenceConsumerError) as caught:
+        call()
+    assert caught.value.boundary == "body_identity_mismatch"
+
+
+def test_contextual_confirmation_splits_complete_bodies_and_fails_if_one_cannot_fit(tmp_path):
+    spec, sources = _write_source(tmp_path, 5)
+    spec["relation_response_mode"] = "positional"
+    for index, row in enumerate(sources[0]["bundle"]["evidence_units"]):
+        row["text"] = f"Original row {index}: " + "Source context. " * 1000 + "Unclipped end."
+    _reseal(sources[0])
+    candidates = _candidate_rows(sources, spec)
+    manifest, _ = prepare_evidence_selection_batches(spec, sources, batch_size=5)
+    responses = {batch["batch_id"]: _batched_positional_relation_response(candidates[batch["start_index"]:batch["start_index"]+batch["candidate_count"]], batch["batch_id"]) for batch in manifest["batches"]}
+    singles, single_prompts = prepare_batched_preselection_relation_confirmations(manifest, sources, responses, batch_size=1)
+    limit = max(len(prompt.encode()) + len(evidence_selection._compact(schema).encode()) for prompt, schema in single_prompts)
+    split, prompts = prepare_batched_preselection_relation_confirmations(manifest, sources, responses, batch_size=5, max_request_bytes=limit)
+    assert len(split["batches"]) == len(singles["batches"]) > 1
+    assert prompts == single_prompts
+    with pytest.raises(EvidenceConsumerError, match="no evidence was truncated"):
+        prepare_batched_preselection_relation_confirmations(manifest, sources, responses, batch_size=5, max_request_bytes=limit - 100)
+
+
+def test_contextual_confirmation_rejects_original_body_change_with_unchanged_meaning(tmp_path):
+    spec, sources = _write_source(tmp_path, 5)
+    _, _, manifest = prepare_evidence_selection(spec, sources)
+    first = _relation_response(_candidate_rows(sources, spec))
+    prepared = prepare_preselection_relation_confirmation(manifest, sources, first)
+    original_meanings = copy.deepcopy(sources[0]["packet"]["source_groups"])
+    sources[0]["bundle"]["evidence_units"][0]["text"] += " A changed source-owned qualification."
+    _reseal(sources[0])
+    assert sources[0]["packet"]["source_groups"] == original_meanings
+    with pytest.raises(EvidenceConsumerError) as caught:
+        prepare_preselection_relation_confirmation(manifest, sources, first)
+    assert caught.value.boundary == "manifest_verification"
+    assert prepared[2]["selection_manifest_sha256"] == manifest["manifest_sha256"]
+
+
+@pytest.mark.parametrize("changed_policy", ["CONTEXTUAL_CLAIM_INTERPRETATION_GUIDANCE", "CONTEXTUAL_CLAIM_CONFIRMATION_CRITERION", "CONTEXTUAL_CLAIM_REF_INSTRUCTION"])
+def test_selection_v3_preserves_exact_pre_contextual_prompt_basis_and_quote_replay(tmp_path, monkeypatch, changed_policy):
+    spec, sources = _write_source(tmp_path, 5)
+    prompt, _, manifest = prepare_evidence_selection(spec, sources)
+    historical_prompt = prompt.replace(evidence_selection.CONTEXTUAL_CLAIM_INTERPRETATION_GUIDANCE, evidence_selection.CLAIM_INTERPRETATION_GUIDANCE, 1)
+    # Frozen e2eb5837 native request and path-normalized adjudication basis.
+    assert evidence_selection.sha256_text(historical_prompt) == "e6654dde8ef6164f661397c0000ad4f7cadc8c91e8bc38a9c760e30f025d84d3"
+    manifest.update(schema_version="phase_a_evidence_selection_manifest_v3", prompt_sha256=evidence_selection.sha256_text(historical_prompt))
+    manifest.pop("manifest_sha256")
+    manifest["manifest_sha256"] = _canonical_hash(manifest)
+    candidates = _candidate_rows(sources, spec)
+    portable = copy.deepcopy(manifest)
+    portable["sources"][0].update(packet_path="fixture/packet.json", bundle_path="fixture/bundle.json")
+    assert evidence_selection.relation_adjudication_basis(portable, candidates) == "68488504a453ea0acc34be9e1af3d716f921e97a931676adaf6dc22940e49c75"
+    first = _relation_response(candidates)
+    confirmation = prepare_preselection_relation_confirmation(manifest, sources, first)
+    assert confirmation[2]["prompt_sha256"] == "e32da18eb1e5e4992c85ca0822519c100d26e6f2bcc35ff6ba3922b2629146ed"
+    _, _, quote = finalize_relations_prepare_quotes(manifest, sources, first)
+    assert quote["claim_meaning_policy"] == evidence_selection.CLAIM_MEANING_POLICY
+    assert "confirmation_source_bodies" not in quote
+    selected = prepare_selected_relation_confirmation(quote)
+    assert selected[2]["prompt_sha256"] == "2fc52e4aa375d71b284702356a64097ad41e441528095b54ba415b83f4c4c9b2"
+    artifact = finalize_quotes(quote, sources, _quote_response(quote, sources))
+    monkeypatch.setattr(evidence_selection, changed_policy, "Changed current policy.")
+    assert evidence_selection.relation_adjudication_basis(portable, candidates) == "68488504a453ea0acc34be9e1af3d716f921e97a931676adaf6dc22940e49c75"
+    assert prepare_preselection_relation_confirmation(manifest, sources, first) == confirmation
+    assert prepare_selected_relation_confirmation(quote) == selected
+    assert finalize_quotes(quote, sources, _quote_response(quote, sources)) == artifact
+
+
+def test_selection_v3_batched_confirmation_keeps_original_prompts_without_source_bodies(tmp_path):
+    spec, sources = _write_source(tmp_path, 5)
+    spec["relation_response_mode"] = "positional"
+    manifest, prompts = prepare_evidence_selection_batches(spec, sources, batch_size=2)
+    selection = manifest["selection_manifest"]
+    selection.update(schema_version="phase_a_evidence_selection_manifest_v3")
+    single_prompt = prepare_evidence_selection(spec, sources)[0]
+    selection["prompt_sha256"] = evidence_selection.sha256_text(single_prompt.replace(evidence_selection.CONTEXTUAL_CLAIM_INTERPRETATION_GUIDANCE, evidence_selection.CLAIM_INTERPRETATION_GUIDANCE, 1))
+    selection.pop("manifest_sha256")
+    selection["manifest_sha256"] = _canonical_hash(selection)
+    manifest["selection_manifest_sha256"] = selection["manifest_sha256"]
+    for batch, (prompt, _) in zip(manifest["batches"], prompts, strict=True):
+        batch["prompt_sha256"] = evidence_selection.sha256_text(prompt.replace(evidence_selection.CONTEXTUAL_CLAIM_INTERPRETATION_GUIDANCE, evidence_selection.CLAIM_INTERPRETATION_GUIDANCE, 1))
+    assert [row["prompt_sha256"] for row in manifest["batches"]] == [
+        "1796d3a1a1138c83e680241619c03400e8b8e8879b5241e337c709b9bb43846a",
+        "0b59498794340151f4a2a29d027621e37d78eeabde3622d8722baeae84688099",
+        "8ffedac78ee93a76223f6feee4c0c9a298af5214e73f97ce9e3ea2d72ede0592",
+    ]
+    manifest.pop("manifest_sha256")
+    manifest["manifest_sha256"] = _canonical_hash(manifest)
+    candidates = _candidate_rows(sources, spec)
+    responses = {batch["batch_id"]: _batched_positional_relation_response(candidates[batch["start_index"]:batch["start_index"]+batch["candidate_count"]], batch["batch_id"]) for batch in manifest["batches"]}
+    confirmation, rendered = prepare_batched_preselection_relation_confirmations(manifest, sources, responses, batch_size=2)
+    assert [row["prompt_sha256"] for row in confirmation["batches"]] == [
+        "50a9143c01f661335d3f3df11c8306d2b5897f3e97697db473d878f83047a58a",
+        "8c05ceabdec8cc999e381f0b8a2a272359ca22fd4a9ab0e1039efc924594fbc6",
+    ]
+    for prompt, _ in rendered:
+        envelope = json.loads(prompt.split("PRESELECTION_RELATION_CONFIRMATION_BATCH_ENVELOPE_JSON:\n")[1])
+        assert "source_body" not in envelope["candidate_columns"]
+        assert evidence_selection.CONTEXTUAL_CLAIM_INTERPRETATION_GUIDANCE not in prompt
+    _, _, quote = finalize_batched_relations_prepare_quotes(manifest, sources, responses)
+    assert quote["claim_meaning_policy"] == evidence_selection.CLAIM_MEANING_POLICY
+    assert "confirmation_source_bodies" not in quote
 
 
 # This shadows the imported module function on purpose so the tests that
@@ -3817,6 +3986,7 @@ def test_selected_relation_confirmation_hides_first_pass_labels_and_rejects_flip
         "product_version_ids",
         "source_role",
         "same_evidence_companion_meanings",
+        "source_body",
         "source_id",
         "independence_key",
         "independence_posture",

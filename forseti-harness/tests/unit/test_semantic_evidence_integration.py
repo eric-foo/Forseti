@@ -2539,7 +2539,8 @@ def test_current_reconciliation_preserves_literal_conditions_and_bounded_scope(m
         validate_reconciliation_stage(bundle, stage, wrong_kind)
 
 
-@pytest.mark.parametrize("method", [semantic_module.METHOD_VERSION_V12, semantic_module.METHOD_VERSION_V13])
+@pytest.mark.parametrize("method", [semantic_module.METHOD_VERSION_V12, semantic_module.METHOD_VERSION_V13,
+                                    semantic_module.METHOD_VERSION_V14])
 def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: Path, method: str) -> None:
     from runners.run_semantic_evidence_integration import prepare_reconciliation_level
 
@@ -2556,17 +2557,22 @@ def test_current_reconciliation_schema_is_persisted_at_public_prepare(tmp_path: 
     raw = validate_batch_responses(bundle, responses)
     verification, _ = prepare_row_verification(bundle, raw)
     verified = apply_row_verification(bundle, raw, verification, _row_verification_responses(verification))
-    stage, prompts = prepare_reconciliation_stage(bundle, verified,
-        authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4)
+    authoring = (semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V5
+                 if method == semantic_module.METHOD_VERSION_V14
+                 else semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4)
+    guidance = (semantic_module.CONTEXTUAL_CLAIM_FORMATION_GUIDANCE
+                if method == semantic_module.METHOD_VERSION_V14
+                else semantic_module.CLAIM_FORMATION_GUIDANCE)
+    stage, prompts = prepare_reconciliation_stage(bundle, verified, authoring_revision=authoring)
     bp, cp = tmp_path / "bundle.json", tmp_path / "compiled.json"
     bp.write_text(json.dumps(bundle), encoding="utf-8")
     cp.write_text(json.dumps(verified), encoding="utf-8")
     prepared = prepare_reconciliation_level(bundle_path=bp, compilation_path=cp,
         stage_out=tmp_path / "stage.json", prompt_dir=tmp_path / "prompts")
-    assert prepared["authoring_revision"] == semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4
+    assert prepared["authoring_revision"] == authoring
     assert json.loads((tmp_path / "stage.json").read_text()) == stage
     for prompt in prompts:
-        assert prompt["prompt"].count(semantic_module.CLAIM_FORMATION_GUIDANCE) == 1
+        assert prompt["prompt"].count(guidance) == 1
         assert semantic_module.MEANING_BOUNDARY_GUIDANCE not in prompt["prompt"]
         path = tmp_path / "prompts" / prompt["batch_id"]
         assert path.with_suffix(".md").read_bytes() == (prompt["prompt"] + "\n").encode("utf-8")
@@ -3167,6 +3173,7 @@ def test_v13_explicit_historical_authoring_preserves_reviewed_foreign_prompts(tm
     semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V2,
     semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3,
     semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4,
+    semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V5,
 ])
 def test_identity_current_caps_batches_and_states_source_restriction(monkeypatch, revision):
     # The cap must be exercised above one with a remainder: at one, an
@@ -3208,7 +3215,8 @@ def test_identity_current_caps_batches_and_states_source_restriction(monkeypatch
 
 @pytest.mark.parametrize("overlap", ["none", "partial", "all"])
 @pytest.mark.parametrize("revision", [semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V3,
-                                       semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4])
+                                       semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4,
+                                       semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V5])
 def test_identity_rendered_restrictions_match_native_consumer(tmp_path, overlap, revision):
     from itertools import combinations
     from runners.run_semantic_evidence_integration import prepare_reconciliation_level
@@ -9497,6 +9505,7 @@ def test_v10_schema_requires_one_subject_without_changing_v9_replay() -> None:
     (semantic_module.METHOD_VERSION_V11, semantic_module.ROW_VERIFICATION_METHOD_VERSION_V10),
     (semantic_module.METHOD_VERSION_V12, semantic_module.ROW_VERIFICATION_METHOD_VERSION_V11),
     (semantic_module.METHOD_VERSION_V13, semantic_module.ROW_VERIFICATION_METHOD_VERSION_V12),
+    (semantic_module.METHOD_VERSION_V14, semantic_module.ROW_VERIFICATION_METHOD_VERSION_V13),
 ])
 def test_supplied_axis_vocabulary_reaches_all_current_consumers(axis_id, label, method, verifier) -> None:
     source = _source_v10(count=1)
@@ -9573,6 +9582,84 @@ def test_supplied_axis_vocabulary_reaches_all_current_consumers(axis_id, label, 
     forged["compilation_sha256"] = _canonical_hash(forged)
     with pytest.raises(SemanticIntegrationError, match="does not bind the current verification method"):
         prepare_reconciliation_stage(bundle, forged)
+
+
+def test_v14_contextual_guidance_replaces_boundaries_without_rewriting_history() -> None:
+    # Captured before v14/v13-verifier were introduced, including every older
+    # method/verifier text and alias, not derived from the new policy.
+    historical = {
+        name: hashlib.sha256(value.encode()).hexdigest()
+        for name, value in vars(semantic_module).items()
+        if isinstance(value, str)
+        and (name.startswith("METHOD_TEXT") or name.startswith("ROW_VERIFICATION_METHOD_TEXT"))
+        and name not in {"METHOD_TEXT_V14", "ROW_VERIFICATION_METHOD_TEXT_V13"}
+    }
+    assert _canonical_hash(historical) == "f193a78f9e96ef998ebcd3c9befb0c8d529f49adbb44e7aeb7fa463344d88834"
+    method = semantic_module.METHOD_TEXT_V14
+    verifier = semantic_module.ROW_VERIFICATION_METHOD_TEXT_V13
+    guidance = semantic_module.CONTEXTUAL_CLAIM_MEANING_GUIDANCE
+    assert method.startswith("SEMANTIC EVIDENCE INTEGRATION METHOD V14\n")
+    assert verifier.startswith("SEMANTIC EVIDENCE ROW VERIFICATION METHOD V13\n")
+    assert method.count(guidance) == verifier.count(guidance) == 1
+    assert semantic_module.MEANING_BOUNDARY_GUIDANCE not in method
+    assert "A prediction does not establish an observed outcome." not in method
+    assert "Check the integration method's meaning criterion" not in verifier
+    # The attribution-specific field boundary is unrelated and stays intact.
+    assert "A baseline trait, vague product-category wording" in verifier
+    assert "not isolated words or grammatical tense" in guidance
+
+
+@pytest.mark.parametrize("method,expected_hash", [
+    (semantic_module.METHOD_VERSION_V12, "79556c70d4ce3ca58a5f9f029e4c827972c503c628a459dd1a265bff65b3419b"),
+    (semantic_module.METHOD_VERSION_V13, "0a150ca415c287bf6f6e9630f3ae9eb389601ae94f777a660768e6384592d19d"),
+])
+def test_v14_keeps_prior_v4_authoring_bytes(method, expected_hash):
+    bundle, _, stage, _, _ = _decision_reconciliation_fixture(method=method)
+    prompt = semantic_module.prepare_reconciliation_prompts(
+        bundle, stage, authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4)[0]
+    assert hashlib.sha256(prompt["prompt"].encode()).hexdigest() == expected_hash
+
+
+@pytest.mark.parametrize("revision", [None, "legacy", "exact_identity_namespaces_v1",
+                                    "exact_identity_namespaces_v2", "exact_identity_namespaces_v3",
+                                    "exact_identity_namespaces_v4", "exact_identity_namespaces_v5"])
+def test_v14_authoring_and_resume_use_contextual_guidance_with_unchanged_shapes(tmp_path, revision):
+    from runners.run_semantic_evidence_integration import prepare_reconciliation_level
+
+    bundle, compiled, _, _, response = _decision_reconciliation_fixture(method=semantic_module.METHOD_VERSION_V14)
+    stage, prompts = prepare_reconciliation_stage(bundle, compiled,
+        reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2, authoring_revision=revision)
+    assert prompts == semantic_module.prepare_reconciliation_prompts(bundle, stage, authoring_revision=revision)
+    guidance = semantic_module.CONTEXTUAL_CLAIM_MEANING_GUIDANCE
+    if revision == semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V5:
+        assert prompts[0]["prompt"].count(semantic_module.CONTEXTUAL_CLAIM_FORMATION_GUIDANCE) == 1
+        assert semantic_module.CLAIM_FORMATION_GUIDANCE not in prompts[0]["prompt"]
+        assert prompts[0]["response_schema"] == semantic_module.prepare_reconciliation_prompts(
+            bundle, stage, authoring_revision=semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V4)[0]["response_schema"]
+    else:
+        assert prompts[0]["prompt"].startswith(guidance + "\n\n")
+    assert semantic_module.MEANING_BOUNDARY_GUIDANCE not in prompts[0]["prompt"]
+    if revision is None:
+        assert "NORMAL_AUTHORING_REVISION" not in prompts[0]["prompt"]
+    response["stage_sha256"] = stage["stage_sha256"]
+    # This transport fixture normally stops at a nonterminal node. Supply its
+    # terminal fields here to exercise method-v14's finalization dispatch too.
+    response["semantic_nodes"][0].update(
+        terminal_proposition=True, claim_kind="customer_experience",
+        opposition_checked=False, causal_ceiling="descriptive_only")
+    accepted = validate_reconciliation_stage(bundle, stage, [response])
+    assert finalize_v3_view(bundle, compiled, accepted)["propositions"]
+    for name, value in [("bundle", bundle), ("compiled", compiled), ("stage", stage)]:
+        (tmp_path / f"{name}.json").write_text(json.dumps(value), encoding="utf-8")
+    result = prepare_reconciliation_level(bundle_path=tmp_path/"bundle.json",
+        compilation_path=tmp_path/"compiled.json", existing_stage_path=tmp_path/"stage.json",
+        stage_out=tmp_path/"out.json", prompt_dir=tmp_path/"prompts", authoring_revision=revision)
+    expected_revision = revision or semantic_module.RECONCILIATION_AUTHORING_IDENTITY_V5
+    expected = semantic_module.prepare_reconciliation_prompts(bundle, stage, authoring_revision=expected_revision)[0]
+    assert result["authoring_revision"] == expected_revision
+    assert json.loads((tmp_path/"out.json").read_text()) == stage
+    assert (tmp_path/"prompts"/f"{expected['batch_id']}.md").read_bytes() == (expected["prompt"] + "\n").encode()
+    assert json.loads((tmp_path/"prompts"/f"{expected['batch_id']}.schema.json").read_text()) == expected["response_schema"]
 
 
 def test_v11_preserves_historical_method_bytes_and_replay() -> None:
