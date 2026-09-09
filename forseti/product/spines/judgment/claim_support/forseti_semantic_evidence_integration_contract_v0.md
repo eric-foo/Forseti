@@ -66,13 +66,17 @@ or graph database.
 **Instruction loading for this stage.** From the repository root, use
 `node .agents/tools/read_source.mjs --file PATH --heading "SECTION"`
 with the actual instruction file and section name; omit `--heading` when the
-needed section is not yet known. Read complete relevant sections. A `not_read`
-response is navigation, not a completed read: follow its returned guidance to
-obtain the needed instructions, or report the specific source gap before
-relying on missing content. Reuse instructions already loaded in this task
-unless they changed or the decision requires a fresh check. The reader limits
-instruction output only; it does not reduce the admitted evidence set, authorize
-sampling, or waive any consolidation or completeness requirement.
+needed section is not yet known. If a selected section is too large, replace
+`--heading` with explicit inclusive `--from N --to N` lines and read successive
+ranges until the whole relevant section is covered. A `not_read` response never
+counts as a completed read. Check per-source `error` first and correct an invalid
+request; otherwise use the returned headings or line bounds to narrow the read.
+If the source is unavailable or even one line cannot be returned, report the
+specific unread source gap instead of repeating the same request or relying on
+missing content. Reuse instructions already loaded in this task unless they
+changed or the decision requires a fresh check. The reader limits instruction
+output only; it does not reduce the admitted evidence set, authorize sampling,
+or waive any consolidation or completeness requirement.
 
 For broad consumer-brand Understanding:
 
