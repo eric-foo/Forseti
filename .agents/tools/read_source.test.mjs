@@ -53,6 +53,7 @@ test('navigation is bounded and omitted headings are explicit', async () => {
   assert.equal(result.status, 'not_read');
   assert.ok(result.sources[0].headings_omitted > 0);
   assert.equal(result.sources[0].heading_count, 100);
+  assert.equal(result.sources[0].next_heading_line, result.sources[0].headings.length * 2 + 1);
   assert.ok(Buffer.byteLength(output) <= 1024);
 });
 test('code-fence headings cannot terminate selected sections', async () => {
@@ -101,6 +102,22 @@ test('library import works when the host hides the process global', () => {
   const script = 'globalThis.process = undefined; await import(' + JSON.stringify(moduleURL) + '); console.log("imported")';
   const result = execFileSync(process.execPath, ['--input-type=module', '-e', script], { encoding: 'utf8' });
   assert.equal(result.trim(), 'imported');
+});
+
+
+test('navigation retains every heading when all fit, including late intelligence rules', async () => {
+  const many = path.join(directory, 'complete-navigation.md');
+  await fs.writeFile(many, Array.from({ length: 26 }, (_, i) => '## Rule ' + i + '\n' + 'x'.repeat(400)).join('\n'));
+  const output = await readSources([{ path: many }]);
+  const result = JSON.parse(output);
+  assert.equal(result.status, 'not_read');
+  assert.equal(result.sources[0].headings.length, 26);
+  assert.equal(result.sources[0].headings_omitted, 0);
+  assert.equal(result.sources[0].headings.at(-1).title, 'Rule 25');
+  assert.ok(Buffer.byteLength(output) <= 8192);
+  const selected = await read([{ path: many, heading: result.sources[0].headings.at(-1).title }]);
+  assert.equal(selected.status, 'read');
+  assert.ok(selected.sources[0].text.startsWith('## Rule 25\n'));
 });
 
 test.after(async () => {

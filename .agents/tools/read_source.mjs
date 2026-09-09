@@ -75,16 +75,16 @@ export async function readSources(requests, { maxOutputBytes = DEFAULT_OUTPUT_BY
   const fallback = { status: 'not_read', reason: navigation.some(n => n.error)
     ? 'request_error' : 'output_budget_exceeded', max_output_bytes: maxOutputBytes,
     requested_output_bytes: bytes(result),
-    next: 'Select an exact heading or inclusive from/to lines; source bodies were not emitted.',
+    next: 'Select an exact heading or inclusive from/to lines; next_heading_line locates omitted navigation. Source bodies were not emitted.',
     sources: navigation };
   for (const nav of navigation) {
     nav.heading_count = nav.headings?.length || 0;
-    nav.headings = nav.headings?.slice(0, 12) || [];
+    nav.headings = nav.headings || [];
     nav.headings_omitted = nav.heading_count - nav.headings.length;
   }
   while (bytes(encode(fallback)) > maxOutputBytes && navigation.some(n => n.headings.length)) {
     const nav = navigation.reduce((a, b) => a.headings.length >= b.headings.length ? a : b);
-    nav.headings.pop();
+    nav.next_heading_line = nav.headings.pop().line;
     nav.headings_omitted++;
   }
   if (bytes(encode(fallback)) > maxOutputBytes) return encode({ status: 'not_read',
