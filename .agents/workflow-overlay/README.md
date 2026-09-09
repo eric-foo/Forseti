@@ -16,7 +16,11 @@ This overlay is the project authority for Forseti. Skills may provide task-local
 
 Use `.agents/tools/read_source.mjs` for additional repository instruction reads:
 `node .agents/tools/read_source.mjs --file .agents/workflow-overlay/source-loading.md --heading "Bounded instruction reader"`.
-That source owns selection, output bounds, and honest incomplete-read handling.
+Then read that file’s "Rule", "Forseti Start Preflight", and "Routine Read Shapes
+(overlay high-traffic files)" sections, plus the task’s applicable pack or protocol.
+These pointers expose the starting requirements and their read shapes; the usage section
+alone does not complete those reads. That source owns selection, output bounds, and
+honest incomplete-read handling.
 
 ## Behavioral Admission
 

@@ -53,6 +53,8 @@ test('navigation is bounded and omitted headings are explicit', async () => {
   assert.equal(result.status, 'not_read');
   assert.ok(result.sources[0].headings_omitted > 0);
   assert.equal(result.sources[0].heading_count, 100);
+  assert.equal(result.sources[0].next_heading_line, result.sources[0].headings.length * 2 + 1);
+  assert.match(result.next, /next_heading_line/);
   assert.ok(Buffer.byteLength(output) <= 1024);
 });
 test('code-fence headings cannot terminate selected sections', async () => {
@@ -101,6 +103,82 @@ test('library import works when the host hides the process global', () => {
   const script = 'globalThis.process = undefined; await import(' + JSON.stringify(moduleURL) + '); console.log("imported")';
   const result = execFileSync(process.execPath, ['--input-type=module', '-e', script], { encoding: 'utf8' });
   assert.equal(result.trim(), 'imported');
+});
+
+
+test('navigation retains every heading when all fit, including late intelligence rules', async () => {
+  const many = path.join(directory, 'complete-navigation.md');
+  await fs.writeFile(many, Array.from({ length: 26 }, (_, i) => '## Rule ' + i + '\n' + 'x'.repeat(400)).join('\n'));
+  const output = await readSources([{ path: many }]);
+  const result = JSON.parse(output);
+  assert.equal(result.status, 'not_read');
+  assert.equal(result.sources[0].headings.length, 26);
+  assert.equal(result.sources[0].headings_omitted, 0);
+  assert.doesNotMatch(result.next, /next_heading_line/);
+  assert.equal(result.sources[0].headings.at(-1).title, 'Rule 25');
+  assert.ok(Buffer.byteLength(output) <= 8192);
+  const selected = await read([{ path: many, heading: result.sources[0].headings.at(-1).title }]);
+  assert.equal(selected.status, 'read');
+  assert.ok(selected.sources[0].text.startsWith('## Rule 25\n'));
+});
+
+
+test('omitted navigation advances through the selected range without dropping late rules', async () => {
+  const paged = path.join(directory, 'paged.md');
+  const text = Array.from({ length: 100 }, (_, i) => '## Rule ' + i + '\n' + 'x'.repeat(100)).join('\n');
+  await fs.writeFile(paged, text);
+  let request = { path: paged };
+  const found = [];
+  for (let attempt = 0; attempt < 101; attempt++) {
+    const output = await readSources([request], { maxOutputBytes: 1024 });
+    assert.ok(Buffer.byteLength(output) <= 1024);
+    const result = JSON.parse(output);
+    const nav = result.sources[0];
+    if (result.status === 'read') {
+      assert.equal(nav.text, text.split('\n').slice(nav.from - 1, nav.to).join('\n'));
+      found.push(...[...nav.text.matchAll(/^## Rule (\d+)/gm)].map(m => Number(m[1])));
+      break;
+    }
+    found.push(...nav.headings.map(h => Number(h.title.slice(5))));
+    if (!nav.headings_omitted) break;
+    assert.ok(nav.next_heading_line > (request.from || 1), 'continuation must make progress');
+    request = { path: paged, from: nav.next_heading_line, to: nav.to };
+  }
+  assert.deepEqual(found, Array.from({ length: 100 }, (_, i) => i));
+});
+
+test('batched cursors identify each source first omitted heading and preserve selection bounds', async () => {
+  const paths = [];
+  for (let file = 0; file < 3; file++) {
+    const p = path.join(directory, 'batch-' + file + '.md');
+    await fs.writeFile(p, Array.from({ length: 30 }, (_, i) => '## F' + file + '-' + i + '\n' + 'x'.repeat(200)).join('\n'));
+    paths.push(p);
+  }
+  const result = await read(paths.map(p => ({ path: p, from: 11, to: 50 })), { maxOutputBytes: 2048 });
+  assert.equal(result.status, 'not_read');
+  for (const nav of result.sources) {
+    assert.ok(nav.headings.every(h => h.line >= 11 && h.line <= 50));
+    assert.equal(nav.heading_count, 20);
+    if (nav.headings_omitted) {
+      assert.equal(nav.next_heading_line, 11 + nav.headings.length * 2);
+      const next = await read([{ path: nav.path, from: nav.next_heading_line, to: nav.to }], { maxOutputBytes: 2048 });
+      if (next.status === 'not_read') assert.equal(next.sources[0].headings[0].line, nav.next_heading_line);
+      else assert.equal(next.sources[0].from, nav.next_heading_line);
+    }
+  }
+});
+
+test('invalid selectors still provide usable continuation bounds', async () => {
+  const p = path.join(directory, 'invalid-selector.md');
+  await fs.writeFile(p, Array.from({ length: 50 }, (_, i) => '## Rule ' + i + '\n' + 'x'.repeat(200)).join('\n'));
+  const failed = await read([{ path: p, heading: 'Absent' }], { maxOutputBytes: 1024 });
+  assert.equal(failed.reason, 'request_error');
+  const nav = failed.sources[0];
+  assert.ok(nav.headings_omitted > 0);
+  assert.equal(nav.to, 100);
+  const next = await read([{ path: p, from: nav.next_heading_line, to: nav.to }], { maxOutputBytes: 1024 });
+  assert.notEqual(next.reason, 'request_error');
+  assert.equal(next.sources[0].headings[0].line, nav.next_heading_line);
 });
 
 test.after(async () => {
