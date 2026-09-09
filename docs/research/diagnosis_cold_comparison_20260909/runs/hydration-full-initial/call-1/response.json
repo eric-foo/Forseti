@@ -1,0 +1,53 @@
+{
+  "retrieval_requests": [],
+  "report": "The initial evidence and the retrieval-stage evidence support the same diagnosis. Retrieval returned A07 unchanged as “undefined...”; its testimony remains unavailable. No separate second-stage experience evidence was supplied, and another retrieval is unnecessary.\n\nSS hydration is independently repeated by two credited retailer accounts, A04 and A08: A04 reports strong hydration before makeup without a clogged-pore feeling; A08 reports hydrated skin at age 51 while using SS with tretinoin and other actives. This supports reported hydration across these two accounts, not isolated efficacy, duration, or current-formula performance. A09 supplies one distinct mask-plus-SS retention report, without separable allocation. Hydration conflict posture is none_observed within the readable evidence, with A07 unresolved.\n\nTexture has different, potentially compatible characterizations: A03 finds SS stickier than Wave Serum; A04 calls SS lightweight, refreshing and fast-drying. These are two first-hand accounts, but do not independently repeat either precise texture proposition. Relative stickiness does not necessarily contradict lightweight or fast-drying feel. A03’s independence is unavailable; cross-venue corroboration of a shared precise proposition is not established. No focal non-user texture speculation or bare agreeing reply is present.\n\nExplicit consequences: A03 continues SS despite comparative stickiness, attributing continued use to a tentative belief in greater glycerin content. This is loyalty alongside complaint, not a purchase report. A04 ordered SS after a sister’s introduction, bought Buffer Jelly seeking greater nighttime hydration/repair, and subsequently bought face wash and mesh moisturizer. Refill metadata does not establish narrated repurchase; the bundled account cannot establish hydration as the sole motive for every acquisition. A09 deducted one star for mask fit on a very small head, especially around the nose; no return or replacement is reported. No focal explicit repurchase, abandonment or other remedy action is narrated.\n\nOther-product evidence stays separate. A04 and A10 independently repeat reported overnight glow with Buffer Jelly within retailer reviews; A10 additionally reports retention of unspecified hydrating products as a final nighttime step. Neither establishes SS hydration or texture. A04’s clean morning skin concerns Buffer Jelly, while makeup removal, hydration and cessation of breakouts concern the face wash. Avant Guard fit criticism concerns the mask.\n\nEngagement supplies no additional experience corroboration: A03 has Reddit score 6, explicitly marked material_positive=false/not_interpreted, with observation time unavailable. All five focal Junip accounts have 0 up-votes and 0 down-votes at their recorded observation times. No resonance upgrade is warranted; scores are neither experience counts nor evidence of prevalence or buying effects.\n\nMaterial context separately: parent commenter hillary_____k (2025-01-16T22:43:50.034000+0000; Reddit score 24, observation time unavailable) reports buying Regimen Lab Level Serum at Black Friday, brighter/even skin and emphatic future repurchase intention. This distinct actor’s other-product testimony and engagement do not support SS. The Regimen Lab thread opener supplies reference context and brand curiosity, not SS testimony; its actor, time and engagement are unavailable in the supplied context. Product/variant and skin-type metadata resolve scope only. Repeated context and retrieved A07 are the same sources, not additional origins or events.\n\nAll formula versions remain unknown; metadata variant labels do not resolve formula version. Counts are focal source-account counts, not origin or event counts. The evidence supports bounded descriptive experiences and individual reported reasons, not objective superiority, representative prevalence or causation.",
+  "source_index": [
+    {
+      "key": "A03",
+      "findings": "Community post reddit:1i30kik:m7jkz2b, Iusedtobealawyer, 2025-01-17T00:01:33.633000+0000: Wave Serum feels less sticky than SS; continues SS because of tentatively believed higher glycerin (“I think”). First-hand comparative texture, no hydration outcome or acquisition. SS SKU/formula unknown; independence unavailable. Reddit score 6, observation time unavailable, material_positive=false/not_interpreted. Parent Level Serum testimony belongs to another actor/product."
+    },
+    {
+      "key": "A04",
+      "findings": "Retailer review junip:7540631, customer 202931541, 2025-03-22T05:41:14.060Z: SS lightweight, refreshing, fast-drying and very hydrating without clogged-pore feeling before makeup. Metadata: Combo + Sensitive, SS Refill; formula unknown. Ordered SS after sister’s introduction; bought Buffer Jelly seeking greater nighttime hydration/repair, reporting glowing/clean morning skin and tiny-amount use despite initial thick/oily concern. Then bought face wash, reporting makeup removal, hydration and no more breakouts; bought mesh moisturizer immediately on release and enjoys colorful packaging. No narrated SS repurchase established by refill label. Credited origin; votes 0 up/0 down observed 2025-03-23T19:29:50.304Z."
+    },
+    {
+      "key": "A07",
+      "findings": "Retailer review junip:6884815, customer 122992865, 2025-01-17T19:37:33.185Z: initial and retrieved body both “undefined...”; hydration, texture and behavior unavailable, excluded from substantive counts. Metadata identifies SS First Time, Combo skin and verified buyer, but supplies no testimony or narrated acquisition. Formula unknown; credited origin, retrieval is no new source. Votes 0 up/0 down observed 2025-01-17T19:38:55.428Z."
+    },
+    {
+      "key": "A08",
+      "findings": "Retailer review junip:4653282, customer 152576810, 2024-02-02T16:19:10.538Z: age 51 with challenging skin, reports SS leaves skin hydrated alongside tretinoin and other actives. Direct hydration report with co-use condition; does not isolate SS efficacy. No texture or buying consequence stated. Metadata: SS First Time, Combo + Acne Prone; formula unknown. Credited origin; votes 0 up/0 down observed 2024-02-02T16:19:13.795Z."
+    },
+    {
+      "key": "A09",
+      "findings": "Retailer review junip:1866323, customer 55537943, 2022-12-09T01:12:27.660Z: Avant Guard locks in hydration from SS, a joint mask-serum retention outcome without separable allocation. Deducted one star for poor fit on very small head, especially nose; no return/replacement. Metadata: Avant Guard Small Head, Dry + Acne Prone; SS SKU and formula unknown. Credited origin; votes 0 up/0 down observed 2022-12-09T01:12:27.825Z."
+    },
+    {
+      "key": "A10",
+      "findings": "Retailer review junip:3515905, customer 97396127, 2023-07-21T01:56:31.936Z: product context resolves Buffer Jelly, which reportedly locks in unspecified hydrating products; little goes a long way, used as final nighttime step with glowing skin on waking. No explicit SS experience, acquisition or repurchase; cannot corroborate SS hydration/texture. Metadata: Combo skin; formula unknown. Credited origin; votes 0 up/0 down observed 2023-07-21T01:56:36.684Z."
+    }
+  ],
+  "counts": [
+    {
+      "name": "ss_hydration_direct",
+      "source_accounts": ["A04", "A08"],
+      "count": 2
+    },
+    {
+      "name": "ss_hydration_joint",
+      "source_accounts": ["A09"],
+      "count": 1
+    },
+    {
+      "name": "ss_texture_direct",
+      "source_accounts": ["A03", "A04"],
+      "count": 2
+    },
+    {
+      "name": "ss_texture_speculative",
+      "source_accounts": [],
+      "count": 0
+    }
+  ],
+  "product_action_assertions": null
+}

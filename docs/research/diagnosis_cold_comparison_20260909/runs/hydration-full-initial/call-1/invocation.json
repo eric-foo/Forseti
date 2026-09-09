@@ -1,0 +1,23 @@
+{
+  "executable": "C:/Users/vmon7/AppData/Local/OpenAI/Codex/bin/fd4c151a749f3ab4/codex.exe",
+  "args": [
+    "exec",
+    "--json",
+    "-C",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\hydration-full-initial\\call-1",
+    "--disable",
+    "shell_tool",
+    "--output-schema",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\response.schema.json",
+    "--output-last-message",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\hydration-full-initial\\call-1\\response.json",
+    "-"
+  ],
+  "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\hydration-full-initial\\call-1",
+  "started_at": "2026-09-09T12:57:27.233Z",
+  "stdin_sha256": "c3c2e71cadc517ea8b55a72bd49638f0068a6b8fdc5fadd3db17ad7dc9c1272c",
+  "no_resume": true,
+  "model_override": null,
+  "reasoning_override": null,
+  "retrieval_round": 1
+}

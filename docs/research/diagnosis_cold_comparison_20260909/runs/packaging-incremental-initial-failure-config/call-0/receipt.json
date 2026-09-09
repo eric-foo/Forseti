@@ -1,0 +1,17 @@
+{
+  "case": "packaging",
+  "arm": "incremental",
+  "stage": "initial",
+  "round": 0,
+  "started_at": "2026-09-09T12:54:56.714Z",
+  "finished_at": "2026-09-09T12:54:56.979Z",
+  "wall_ms": 260.2594,
+  "code": 1,
+  "signal": null,
+  "thread_id": null,
+  "usage": null,
+  "turn_count": 0,
+  "unexpected_tools": [],
+  "errors": [],
+  "stdin_sha256": "8677668a67a4cad17a2082766eff87801ea25f2413dc959804a08819c9182e4b"
+}

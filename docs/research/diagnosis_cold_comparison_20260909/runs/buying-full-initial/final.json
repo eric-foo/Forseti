@@ -1,0 +1,76 @@
+{
+  "retrieval_requests": [],
+  "report": "Initial stage: two focal accounts narrate completed Experiment acquisition, comprising five product acquisition categories: A04’s Super Saturated, Buffer Jelly, face wash and mesh moisturizer, plus A05’s Avant Guard checkout. These are source-account and assertion-category counts, not verified transaction or event counts. No second-stage evidence was supplied; second-stage results cannot be assessed.\n\nA04 describes sister-led discovery and satisfaction preceding broader buying: lightweight, fast-drying hydration before makeup; purchase of Buffer Jelly for greater nighttime hydration/repair; then face wash and immediate purchase of the newly released mesh moisturizer. Packaging colors also attract praise, but are not expressly isolated as a purchase cause. The wash reportedly removed makeup, left skin hydrated and coincided with cessation of breakouts; no longer needing makeup remover constitutes a reported completed routine substitution. This is one actor’s sequence, not independent corroboration of each benefit or proof of causation. The wash and mesh descriptions are consistent with Plasma Wash and Molecular Mesh, but exact purchased SKUs/formulas are unconfirmed. Review metadata targeting a Super Saturated refill does not establish an additional purchase or repurchase.\n\nA05 explicitly connects immediate Avant Guard checkout to discovering a reusable mask through a TikTok creator after reducing disposable sheet masks for sustainability. Subsequent use reportedly encouraged hydrating/moisturizing products that helped the skin barrier; this is joint-use testimony, not an isolated mask effect. Fit was imperfect at cheek sides and nose despite easy cleaning and enthusiasm. These two credited Junip actors independently repeat only the broad proposition of completed Experiment buying. Their particular buying reasons are different and individually reported; both reviews have 0 upvotes and 0 downvotes.\n\nA01 reports re-adding Experiment balm to an FF cart because of a comment, with cost humor and anticipated lip benefit. Parent context identifies Softwear; checkout, receipt, use and efficacy are not established. A02’s aversion and habitual skipping concern the Dr. Idriss exfoliator in parent context, alongside love for its baste balm—not Experiment rejection. A12 acquired Regimen Lab cream 2.0 and cleanser after overusing tret, praises the formulations, criticizes cleanser size and intends to explore more of that brand. Neither supplies Experiment acquisition evidence.\n\nMaterial context-only testimony: cowrunamuck (Reddit, September 5, 2025; score 21) reports two Softwear backups because of enthusiasm and earlier shipping inconvenience, praises smooth/moisturized lips despite sensitive skin, and prefers its scent-free character to Eadem’s disliked scent/taste. RowanVC (same thread/date; score 42) praises Softwear and Experiment broadly, while describing Dr. Idriss exfoliator tackiness and layering it with lanolin or another balm for soft lips. These distinct contextual actors repeat favorable Softwear evaluations within one thread; their testimony cannot be assigned to A01/A02 or included in focal buying/stock-up counts. A general balm stash is not explicit Experiment stockpiling. Thread/post context resolves A12 to Regimen Lab; that post’s actor and engagement are unavailable.\n\nFocal Reddit scores are A01 13, A02 4 and A12 12; observation times are unavailable and supplied engagement posture is not interpreted/material-positive false. Context scores likewise lack observation times. These values do not establish verified experiences, independence, prevalence or buying effects. No precise buying reason is independently repeated or corroborated across source roles here. No focal explicit gift, contemplated/completed return, Experiment stockpile or prospective routine replacement appears. Complaint coexists with enthusiasm in A05 and other-brand loyalty in A12; these qualifications do not negate their narrated actions. No focal adverse Experiment skin outcome is reported. Repurchase, transaction verification, formula versions, durable outcomes and broader prevalence remain unestablished.",
+  "source_index": [
+    {
+      "key": "A01",
+      "findings": "boxybrown84; Reddit r/Sephora thread 1n9da6u, comment ncm3hhd; 2025-09-05. Explicitly re-added Experiment balm to FF cart because of a comment; parent cowrunamuck identifies Softwear. Cost humor and anticipated relief for crusty lips do not establish checkout, use or efficacy. Score 13, observation time unavailable, no awarded material resonance; independence unavailable. Parent’s two backups and performance testimony belong to that context-only actor."
+    },
+    {
+      "key": "A02",
+      "findings": "PamelaDamnela; Reddit thread 1n9da6u, comment ncly8vq; 2025-09-05. Owns but routinely skips an intolerable-feeling product; RowanVC parent resolves reference to Dr. Idriss lip exfoliator, with affection for its baste balm. This is a brief personal aversion report, not detailed Experiment testimony or acquisition evidence. Score 4, observation time unavailable; independence unavailable. Parent’s Softwear praise and layered-use results remain separate."
+    },
+    {
+      "key": "A04",
+      "findings": "Junip customer 202931541, review 7540631; 2025-03-22; credited origin. Narrates four Experiment acquisition categories: ordered Super Saturated after sister introduction/satisfaction, bought Buffer Jelly seeking stronger nighttime hydration/repair, bought face wash, immediately bought released mesh moisturizer. Reports pre-makeup hydration without clogged-feeling pores, glowy/clean skin after Jelly, and wash removing makeup, hydrating and ending breakouts; makeup remover rendered unnecessary is completed routine substitution. Loves packaging colors. Single-actor sequence cannot isolate causality or prove repurchase. Metadata: combo/sensitive skin, verified buyer, unrewarded, Super Saturated Refill target; refill is not another narrated acquisition. Wash/mesh exact SKU and all formula versions unconfirmed. Up/down votes 0/0 observed 2025-03-23."
+    },
+    {
+      "key": "A05",
+      "findings": "Junip customer 44968672, review 1569510; 2022-11-03; credited origin. Explicit Avant Guard checkout after TikTok creator discovery in a sustainability-motivated reduction of disposable sheet masking. Reports use, easy cleaning, imperfect cheek/nose fit, and motivation to use hydrating/moisturizing products helping the barrier; effects cannot be attributed to mask alone. No explicit completed replacement of a currently used routine product. Metadata identifies Acid Lime/SMALL, verified buyer, unrewarded; formula/version unknown. Up/down votes 0/0 observed 2022-11-03."
+    },
+    {
+      "key": "A12",
+      "findings": "eratch; Reddit r/SkincareAddictionLux thread 1i30kik, comment m7j6no0; 2025-01-16. Post context identifies Regimen Lab, not Experiment. Narrates getting cream 2.0 seeking healing after excessive tret and acquiring cleanser; praises formulation experience, calls cleanser nice but small, and intends further exploration, especially serums/moisturizers. No completed further purchase, return or Experiment action established. Score 12, observation time unavailable; independence unavailable."
+    }
+  ],
+  "counts": [
+    {
+      "name": "experiment_acquisition_focal",
+      "source_accounts": [
+        "A04",
+        "A05"
+      ],
+      "count": 2
+    },
+    {
+      "name": "cart_readdition",
+      "source_accounts": [
+        "A01"
+      ],
+      "count": 1
+    },
+    {
+      "name": "stockup_focal",
+      "source_accounts": [],
+      "count": 0
+    },
+    {
+      "name": "gift_receipt",
+      "source_accounts": [],
+      "count": 0
+    },
+    {
+      "name": "return_considered",
+      "source_accounts": [],
+      "count": 0
+    },
+    {
+      "name": "return_completed",
+      "source_accounts": [],
+      "count": 0
+    },
+    {
+      "name": "routine_replacement_intended",
+      "source_accounts": [],
+      "count": 0
+    },
+    {
+      "name": "routine_replacement_completed",
+      "source_accounts": [
+        "A04"
+      ],
+      "count": 1
+    }
+  ],
+  "product_action_assertions": 5
+}

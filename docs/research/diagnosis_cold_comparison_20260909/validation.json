@@ -1,0 +1,110 @@
+{
+  "checked_at": "2026-09-09T13:10:01.476Z",
+  "frozen_files_in_git_index": [
+    {
+      "name": "sources.json",
+      "sha256": "3a808ae157cfee08fc08210b5408348ed72371542bfbf7501209782824a544e9",
+      "pass": true
+    },
+    {
+      "name": "original-native.json",
+      "sha256": "77df41012e569679ea9c33abb30e74c5f796493b0b17c407012d3ebdabf39492",
+      "pass": true
+    },
+    {
+      "name": "source-validation.json",
+      "sha256": "806ebeb5d4de789a820368f8e8e223ba7e3aee33a2dc00496ef166eb1a92719c",
+      "pass": true
+    },
+    {
+      "name": "experiment.json",
+      "sha256": "5138e46899ee37181bb47626d5e516e071606291262573bf2f5bb57080d02b16",
+      "pass": true
+    },
+    {
+      "name": "expected.json",
+      "sha256": "e5122cdb99c5ea2cdc92646a71bdc0d16963665d1ef85456bf5cf83856f2034d",
+      "pass": true
+    },
+    {
+      "name": "count-definitions.json",
+      "sha256": "81a6e2312611d175ea30e8f886ada875c81a516b10088ac8a3d0ad3f1db256ac",
+      "pass": true
+    },
+    {
+      "name": "response.schema.json",
+      "sha256": "10116811053f00600e9e5f643c0ee3c442673b70a6c2af0985ae625c2c404458",
+      "pass": true
+    },
+    {
+      "name": "common.txt",
+      "sha256": "52d6ef24c515e281ae150dab37a0ebda3bf485029ba8ffc023c5a52a1f0db33e",
+      "pass": true
+    },
+    {
+      "name": "authority-context.txt",
+      "sha256": "4d918de0de55acd8570edcd2d703f3df9c0dfd387296a2f29aa0c089b112c482",
+      "pass": true
+    },
+    {
+      "name": "run.mjs",
+      "sha256": "6036326d30be737d77c48688e2818d2ab12de51dfb637e461f4429d002fd89d1",
+      "pass": true
+    }
+  ],
+  "measurement_reproduction": {
+    "processSuccess": true,
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "interrupted": false,
+    "killed": false,
+    "outputTruncated": false,
+    "error": null,
+    "terminationError": null,
+    "stdout": "{\"frozen\":true,\"cold_calls\":15,\"count_failures\":[{\"case\":\"buying\",\"arm\":\"full\",\"stage\":\"initial\",\"name\":\"routine_replacement_completed\",\"expected\":[],\"observed\":[\"A04\"],\"count\":1,\"pass\":false},{\"case\":\"buying\",\"arm\":\"incremental\",\"stage\":\"initial\",\"name\":\"routine_replacement_completed\",\"expected\":[],\"observed\":[\"A04\"],\"count\":1,\"pass\":false},{\"case\":\"buying\",\"arm\":\"incremental\",\"stage\":\"update\",\"name\":\"routine_replacement_completed\",\"expected\":[],\"observed\":[\"A04\"],\"count\":1,\"pass\":false}],\"durable_totals_reproduced\":true}\n",
+    "stderr": ""
+  },
+  "diff_check": {
+    "processSuccess": true,
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "interrupted": false,
+    "killed": false,
+    "outputTruncated": false,
+    "error": null,
+    "terminationError": null,
+    "stdout": "",
+    "stderr": ""
+  },
+  "source_hashes": "source-validation.json",
+  "semantic_adjudication": "results.json",
+  "quality_pass": false,
+  "quality_limit": "Three frozen count mismatches, shared temporal fixture defect and R01 omission preserved; technical reproducibility does not imply diagnosis quality pass.",
+  "scope": "Only commissioned sample directory and nearest research index; no production source change.",
+  "review": "Different-vendor review and author adjudication pending; no merge authorized by this validation.",
+  "prior_diff_failure": {
+    "processSuccess": false,
+    "exitCode": 2,
+    "signal": null,
+    "timedOut": false,
+    "interrupted": false,
+    "killed": false,
+    "outputTruncated": false,
+    "error": {
+      "stack": "Error: Command failed: git diff --cached --check\n\n    at genericNodeError (node:internal/errors:986:15)\n    at wrappedFn (node:internal/errors:540:14)\n    at ChildProcess.exithandler (node:child_process:417:12)\n    at ChildProcess.emit (node:events:514:28)\n    at maybeClose (node:internal/child_process:1141:16)\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)",
+      "message": "Command failed: git diff --cached --check\n",
+      "code": 2,
+      "killed": false,
+      "signal": null,
+      "cmd": "git diff --cached --check",
+      "name": "Error"
+    },
+    "terminationError": null,
+    "stdout": "docs/research/diagnosis_cold_comparison_20260909/runs/buying-full-initial-failure-config/call-0/stderr.log:3: new blank line at EOF.\ndocs/research/diagnosis_cold_comparison_20260909/runs/buying-incremental-initial-failure-config/call-0/stderr.log:3: new blank line at EOF.\ndocs/research/diagnosis_cold_comparison_20260909/runs/hydration-full-initial-failure-config/call-0/stderr.log:3: new blank line at EOF.\ndocs/research/diagnosis_cold_comparison_20260909/runs/hydration-incremental-initial-failure-config/call-0/stderr.log:3: new blank line at EOF.\ndocs/research/diagnosis_cold_comparison_20260909/runs/packaging-full-initial-failure-config/call-0/stderr.log:3: new blank line at EOF.\ndocs/research/diagnosis_cold_comparison_20260909/runs/packaging-incremental-initial-failure-config/call-0/stderr.log:3: new blank line at EOF.\n",
+    "stderr": ""
+  },
+  "native_log_whitespace_disposition": "Six native stderr files end with one blank line. Preserved bytes; only blank-at-eof whitespace exempted for stderr.log in this sample .gitattributes. No shared rule changed.",
+  "staged_file_count": 192
+}

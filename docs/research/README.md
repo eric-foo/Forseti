@@ -18,6 +18,8 @@ Do not use this folder for implementation, automation, scraping tools, datasets,
 
 ## Research Areas
 
+- [Cold diagnosis comparison](diagnosis_cold_comparison_20260909/report.md): three paired real-evidence incremental/full-reread tests, frozen sources, native usage, first-pass failures and quality limits. Sample-only runner/sidecars are explicitly authorized by its commission; no production adoption.
+
 - `docs/research/consulting-judgment-corpus/`: consulting-judgment corpus material.
 - `docs/research/answer_engine/`: answer-engine/AEO probe evidence, including the Phase-0 feasibility report and JSON sidecar. Research/proposed evidence only; the current route is scanning README -> answer-engine source-family spec -> this folder, with no product authority, gate-recordable method, validation/readiness/proof claim, capture authorization, scraping authorization, or implementation authorization.
 - `docs/research/judgment-spine/`: Judgment Spine parent contract, harness specs, case indexes, and case-learning artifacts.

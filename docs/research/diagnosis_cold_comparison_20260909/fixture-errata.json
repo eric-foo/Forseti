@@ -1,0 +1,19 @@
+{
+  "discovered_at": "2026-09-09T12:59:52.991Z",
+  "frozen_inputs_unchanged": true,
+  "defects": [
+    {
+      "field": "sources.json records Axx engagement.observed_at for retailer accounts",
+      "source_field_used": "unit.native_review_metadata.updated_at",
+      "problem": "Review metadata update time is not evidence of engagement observation time. The fixture incorrectly named it observed_at; source hash/body checks do not validate this interpretation.",
+      "correct_interpretation": "0 up/down vote values are preserved native values; engagement observation time is unavailable in this projection. Keep review update time separately labelled if retained.",
+      "impact": "Shared host-induced temporal provenance error. Grade reader date claims accordingly, do not credit them as source-supported. Prevents a clean end-to-end quality/adoption signal; no correction or rerun hides the first pass."
+    }
+  ],
+  "oracle_note": {
+    "count": "buying routine_replacement_completed",
+    "frozen_expected": [],
+    "source": "A04: no more makeup remover needed",
+    "ambiguity": "Supports reported functional redundancy of makeup remover. Does not explicitly establish that the actor stopped/substituted a prior remover. Frozen strict event interpretation excludes it; a functional interpretation is defensible and must be disclosed separately, not silently scored as a substantive diagnosis failure."
+  }
+}

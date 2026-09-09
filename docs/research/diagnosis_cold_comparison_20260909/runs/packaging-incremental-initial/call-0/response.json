@@ -1,0 +1,120 @@
+{
+  "retrieval_requests": [],
+  "report": "Initial stage: Packaging receives repeated positive reception within one Experiment-owned TikTok thread, alongside one detailed arrival-leak complaint. A later stage was not supplied and cannot be assessed.\n\nPackaging praise spans appearance (P00, P38, P40), general packaging approval (P21, P26, P39), and excitement about refillability (P42). These support distinct-account recurrence of favorable reception in this thread, not verified performance or cross-venue corroboration. P00’s combined chic/environmentally friendly statement has 296 displayed likes, substantial visible resonance without identifying which part attracted endorsement. P01 is the brand’s agreement, not independent customer corroboration. P03 is P00’s same author elaborating with qualified recycling/reuse assertions. P02 questions environmental friendliness and recyclability; neither recyclability nor environmental benefit is established by the supplied evidence. Environmental reception is therefore qualified/contested, with factual performance unresolved.\n\nFailure and remedy: P06 alone reports an unspecified product arriving leaked with a loose top, requiring opening and cleaning and prompting concern about oxygen exposure. This establishes one reported arrival failure; it does not establish a SKU, version, defect rate, verified cause or product damage. Its 12 likes are raw endorsement, not 12 additional experiences; available exposure context is insufficient to award a firm material-resonance posture. No other supplied focal account corroborates arrival leakage or a loose top. P07, the brand, says short exposure is not an issue and offers a replacement upon email contact (12 likes). This directly records an offer and brand reassurance, not independent safety verification, replacement dispatch, delivery or resolution. No opposing leak experience is supplied; the bounded failure finding has conflict posture none_observed, while overall packaging reception includes both praise and complaint.\n\nConsequences: P17 reports an all-Experiment routine and Continuum in the mail, supporting explicit brand loyalty and a pending shipment without attributing either to packaging. P20’s broad buying declaration does not verify completed checkout. P32 expresses conditional saving interest; P38 anticipates trying the product. P42 reports receipt and newly discovering refillability, not a repeat purchase. P04 and P27 request refill bundles, with P27 specifically naming Continuum and Super Saturated; neither establishes buying or repurchase. P15 intends to reuse an empty for Lexapro storage (150 likes), not a completed reuse or validated storage application. P29 asks about getting a sticker in a refill. No explicit future repeat-purchase intent, abandonment, return, replacement dispatch or packaging-caused purchase is supplied. No focal account here combines an explicit leak complaint with an explicit loyalty statement; aggregate enthusiasm must not erase the complaint.\n\nScope and limits: Most packaging comments and the leak leave SKU/version unknown; the product catalog cannot assign them. P17’s routine concerns the brand broadly, and P27’s two-product bundle request does not establish joint use. All observations are TikTok comments on https://www.tiktok.com/@experimentwrld/video/7639858768146222366, captured 2026-09-09T11:56:25.935Z. Source-index dates below are displayed month-day only; publication year is unavailable. Likes are capture-time displayed values, not verified experience, independent origins, prevalence or buying effects. P00/P03 share one actor; P01/P07 share the brand actor. Counts below count qualifying focal source keys under the requested definitions, not independent-human or event counts. No context-only records were supplied. The capture notes 47 displayed comment bodies and 72 advertised comments, but only the 19 supplied focal records are available here; unprovided comments and unexpanded branches cannot support findings or zeros beyond this bounded set. Native comment IDs are unavailable; profile URLs, exact bodies and observed reply grouping identify records.",
+  "source_index": [
+    {
+      "key": "P00",
+      "findings": "@randomdude7551, 5-15; 296 likes. Calls unspecified metal packaging chic and environmentally friendly. Strong visible resonance for the combined statement, not environmental verification or buying evidence. Same actor as P03."
+    },
+    {
+      "key": "P01",
+      "findings": "@experimentwrld, brand/creator, 5-15; 39 likes. Agrees with P00’s packaging praise; owned endorsement, not independent customer corroboration. Same actor as P07."
+    },
+    {
+      "key": "P02",
+      "findings": "@person1234567556987, 5-15; 0 likes. Questions P00’s environmental/recyclability claim. Expresses uncertainty, not demonstrated non-recyclability or a use failure; SKU unknown."
+    },
+    {
+      "key": "P03",
+      "findings": "@randomdude7551, 5-15; 2 likes. Says aluminum is almost always recyclable, inner part likely recyclable, pump likely not, and pump/shell reusable. Qualified, unverified component claims for unspecified packaging; elaboration by P00’s actor, not a new origin."
+    },
+    {
+      "key": "P04",
+      "findings": "@flamingpanda5, 5-20; 0 likes. Requests refill bundles in P00’s branch. Product unspecified; request does not establish purchase, use or repurchase."
+    },
+    {
+      "key": "P06",
+      "findings": "@jasminesingh1102, 5-15; 12 likes. Reports arrival leakage and a loose top; opened and cleaned product, then asks whether oxygen exposure makes it unusable. Detailed single-actor failure report; SKU/version, actual damage and causal mechanism unverified. Receives P07’s replacement offer."
+    },
+    {
+      "key": "P07",
+      "findings": "@experimentwrld, brand/creator, 5-16; 12 likes. Responds to P06 that short exposure is not an issue and offers a replacement via hey@experimentbeauty.com. Offer only: no dispatch, delivery or resolution reported; reassurance is brand testimony. Same actor as P01."
+    },
+    {
+      "key": "P15",
+      "findings": "@bmdubs, 5-15; 150 likes. Intends to use an empty container for Lexapro. Material visible resonance for a proposed reuse; SKU unknown, reuse not completed, storage suitability not established."
+    },
+    {
+      "key": "P17",
+      "findings": "@mostlyconceptual, 5-16; 1 like. Reports newfound brand loyalty, an all-Experiment skincare routine and Continuum in the mail. Routine’s individual products and joint-use details unknown; shipment not receipt, and no packaging attribution or explicit repurchase intent."
+    },
+    {
+      "key": "P20",
+      "findings": "@countryboiiloveyouuuxoxo, 5-15; 7 likes. Declares buying everything from the brand. Broad buying enthusiasm/declaration; no specified SKU, confirmed checkout, repurchase or explicit packaging motive."
+    },
+    {
+      "key": "P21",
+      "findings": "@beautybought, display name Evie | BeautyBought Reviews, 5-17; 1 like. Praises products and packaging they can feel good about. General favorable reception; no specific environmental proof, product identity or purchasing consequence."
+    },
+    {
+      "key": "P26",
+      "findings": "@adam_thomas6, 5-21; 1 like. Calls packaging great but asks what the product does for skin. Positive packaging reception alongside unresolved efficacy interest; no demonstrated skin benefit or failure, SKU unknown."
+    },
+    {
+      "key": "P27",
+      "findings": "@sofieeee120, 5-24; 1 like. Requests a bundle of Continuum and Super Saturated refills. Specific two-product bundle interest, not evidence of joint use, completed purchase or explicit repeat-purchase intent."
+    },
+    {
+      "key": "P29",
+      "findings": "@allthegr8namesaretaken, 5-17; 2 likes. Asks how to get the sticker in their refill. Preserves a refill/sticker question; exact issue, SKU and transaction status unresolved, with no leak allegation."
+    },
+    {
+      "key": "P32",
+      "findings": "@josemarbp, 5-18; 3 likes. Calls the unspecified referent genius and says they might save up for it. Conditional financial interest; exact admired feature, purchase and repurchase unestablished."
+    },
+    {
+      "key": "P38",
+      "findings": "@taylorelissa, 5-16; 1 like. Calls package cute and anticipates trying it. Appearance praise and trial interest; SKU, acquisition and use outcome unknown."
+    },
+    {
+      "key": "P39",
+      "findings": "@morco11111, 5-29; 1 like. Praises taking packaging as seriously as formulas. General approval for unspecified packaging; no comparative test, failure experience or buying consequence."
+    },
+    {
+      "key": "P40",
+      "findings": "@danaisabellaaa, 5-15; 1 like. Terse cuteness praise in the packaging thread. Context supports aesthetic reception, but no specified SKU, verified use or buying effect."
+    },
+    {
+      "key": "P42",
+      "findings": "@__whitneyjade, 5-20; 1 like. Reports receiving theirs that day and excitement upon discovering refillability. Receipt and newfound feature awareness; SKU/version unknown, with no refill purchase, repurchase or packaging-caused acquisition."
+    }
+  ],
+  "counts": [
+    {
+      "name": "arrival_leak",
+      "source_accounts": ["P06"],
+      "count": 1
+    },
+    {
+      "name": "explicit_loose_top",
+      "source_accounts": ["P06"],
+      "count": 1
+    },
+    {
+      "name": "bare_arrival_agreement",
+      "source_accounts": [],
+      "count": 0
+    },
+    {
+      "name": "replacement_offered",
+      "source_accounts": ["P07"],
+      "count": 1
+    },
+    {
+      "name": "replacement_sent",
+      "source_accounts": [],
+      "count": 0
+    },
+    {
+      "name": "retailer_leak",
+      "source_accounts": [],
+      "count": 0
+    },
+    {
+      "name": "repurchase_intended",
+      "source_accounts": [],
+      "count": 0
+    }
+  ],
+  "product_action_assertions": null
+}

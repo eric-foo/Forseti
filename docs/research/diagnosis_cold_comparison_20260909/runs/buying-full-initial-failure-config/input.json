@@ -1,0 +1,246 @@
+{
+  "case": "buying",
+  "question": "Diagnose actual Experiment buying, checkout and stock-up evidence and its reported reasons. Distinguish cart actions, gifts, intentions, use, other-brand actions, remedies and adverse outcomes that coexist with loyalty.",
+  "count_definitions": {
+    "experiment_acquisition_focal": "Focal accounts explicitly narrating completed Experiment acquisition/checkout/stock-up. Exclude context-only accounts, metadata alone, use alone, gifts and other brands.",
+    "cart_readdition": "Focal accounts explicitly returning an item to cart.",
+    "stockup_focal": "Focal accounts explicitly stockpiling Experiment product.",
+    "gift_receipt": "Focal explicit gifted receipt.",
+    "return_considered": "Focal contemplated product return.",
+    "return_completed": "Focal completed product return.",
+    "routine_replacement_intended": "Focal prospective product substitution in routine.",
+    "routine_replacement_completed": "Focal completed routine substitution."
+  },
+  "products": [
+    {
+      "id": "experiment-shopify-5913452937408",
+      "name": "Avant Guard"
+    },
+    {
+      "id": "experiment-shopify-7299389030592",
+      "name": "Super Saturated"
+    },
+    {
+      "id": "experiment-shopify-7476098007232",
+      "name": "Buffer Jelly [experiment-shopify-7476098007232]"
+    },
+    {
+      "id": "experiment-shopify-7758608105664",
+      "name": "Softwear"
+    },
+    {
+      "id": "experiment-shopify-8086723035328",
+      "name": "Plasma Wash"
+    },
+    {
+      "id": "experiment-shopify-8193821802688",
+      "name": "Molecular Mesh"
+    },
+    {
+      "id": "experiment-shopify-8555927306432",
+      "name": "Continuum"
+    }
+  ],
+  "stage": "initial",
+  "focal_keys": [
+    "A01",
+    "A02",
+    "A04",
+    "A05",
+    "A12"
+  ],
+  "sources": {
+    "records": [
+      {
+        "key": "A01",
+        "id": "reddit:1n9da6u:ncm3hhd",
+        "text": "Just took Experiment balm out of my FF cart, but your comment made me put it right back in. My wallet hates you, but my crusty lips thank you",
+        "actor_identity": "boxybrown84",
+        "independence_key": "reddit:author:boxybrown84",
+        "independence_posture": "unavailable",
+        "publication_time": "2025-09-05T19:51:50.755000+0000",
+        "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1n9da6u-projection.json#$.comments[4]",
+        "source_role": "community_post",
+        "container_id": "reddit:1n9da6u",
+        "engagement": {
+          "material_positive": false,
+          "native_score": "13",
+          "posture": "not_interpreted"
+        },
+        "context_refs": [
+          "context_5f002acbf9eb1cd7bfc3",
+          "context_99d43abe0dbe462c3b55"
+        ]
+      },
+      {
+        "key": "A02",
+        "id": "reddit:1n9da6u:ncly8vq",
+        "text": "I have that one too, I cant stand the feeling so I always skip it. I love the baste balm tho",
+        "actor_identity": "PamelaDamnela",
+        "independence_key": "reddit:author:pameladamnela",
+        "independence_posture": "unavailable",
+        "publication_time": "2025-09-05T19:25:41.099000+0000",
+        "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1n9da6u-projection.json#$.comments[1]",
+        "source_role": "community_post",
+        "container_id": "reddit:1n9da6u",
+        "engagement": {
+          "material_positive": false,
+          "native_score": "4",
+          "posture": "not_interpreted"
+        },
+        "context_refs": [
+          "context_ff821dc553240c0290fa",
+          "context_99d43abe0dbe462c3b55"
+        ]
+      },
+      {
+        "key": "A04",
+        "id": "junip:7540631",
+        "text": "Review title: Hydrating, refreshing, fast drying, PERFECT\n\nReview body: My sister introduced me to this brand through the “super saturated” product. I fell in love with it and ordered some for myself. It was so lightweight and refreshing and fast-drying but also super hydrating without making my pores feel clogged. It was the perfect hydration to have pre- makeup application. Anyway, at night I wanted something even more hydrating and repairing because it turns out my skin really needed this… so I bought the buffer jelly! I was worried because it seemed so thick and oily, but OMG I WOKE UP WOTH THE MOST GLOWY AND CLEAN SKIN! And you only need like the tiniest little amount! Obviously I immediately bought the face wash and….. bam… no more breakouts and no more makeup remover needed. One little dollop and my makeup is washed right off AND my skin is hydrated. So when they came out with the mesh moisturizer, I bought it immediately. ALSO, the colors! I love my bathroom counter. It’s so quirky and delightful now. Thank you Experiment lady scientists! You are life changing! I love you and I want to have brunch with you.",
+        "actor_identity": "202931541",
+        "independence_key": "junip:customer:202931541",
+        "independence_posture": "credited",
+        "publication_time": "2025-03-22T05:41:14.060Z",
+        "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:7540631",
+        "source_role": "retailer_review",
+        "container_id": "junip:review:7540631",
+        "engagement": {
+          "up_votes": 0,
+          "down_votes": 0,
+          "observed_at": "2025-03-23T19:29:50.304Z"
+        },
+        "context_refs": [
+          "context_c2af7db629fb3d188eab",
+          "context_9f8ce97d6af21888fd08"
+        ]
+      },
+      {
+        "key": "A05",
+        "id": "junip:1569510",
+        "text": "Review title: Loving the Sustainability and Results!\n\nReview body: I’ve been trying to be more sustainable in my beauty routine, so I haven’t done a sheet mask in a while which breaks my soul (I used to use sheet masks practically every night). When I discovered this reusable sheet mask from a creator on TikTok, I instantly checked out and was so excited to try it. The mask was almost a perfect fit (except for the sides of my cheeks and nose) and I love how easy it was to clean. Having this product in my routine motivates me to use some of my more hydrating/moisturizing products that have been helping to repair my skin barrier. My skin says thank you!!!",
+        "actor_identity": "44968672",
+        "independence_key": "junip:customer:44968672",
+        "independence_posture": "credited",
+        "publication_time": "2022-11-03T23:08:43.403Z",
+        "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:1569510",
+        "source_role": "retailer_review",
+        "container_id": "junip:review:1569510",
+        "engagement": {
+          "up_votes": 0,
+          "down_votes": 0,
+          "observed_at": "2022-11-03T23:08:43.499Z"
+        },
+        "context_refs": [
+          "context_c6f9d306eb781c59b11e",
+          "context_0541d2895243cbe02f89"
+        ]
+      },
+      {
+        "key": "A12",
+        "id": "reddit:1i30kik:m7j6no0",
+        "text": "I recently got their cream 2.0 after going a little too heavy handed with my tret and was looking for a healing moisturizer. Based off of my experience with that one product, I’m going to try more from the line! Really impressed with the formulations, and it sounds like their products are really trying to fill gaps in the market where there isn’t science based formulations.\n\nAlong with the cream 2.0, I also picked up their cleanser to use as well. The cleanser is nice too, but pretty small. At this point, I’m more interested in the serums/moisturizer options!",
+        "actor_identity": "eratch",
+        "independence_key": "reddit:author:eratch",
+        "independence_posture": "unavailable",
+        "publication_time": "2025-01-16T22:43:32.384000+0000",
+        "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1i30kik-projection.json#$.comments[17]",
+        "source_role": "community_post",
+        "container_id": "reddit:1i30kik",
+        "engagement": {
+          "material_positive": false,
+          "native_score": "12",
+          "posture": "not_interpreted"
+        },
+        "context_refs": [
+          "context_66e864c836942282c210"
+        ]
+      }
+    ],
+    "contexts": [
+      {
+        "bundle_pointer": "/semantic_work_unit_projection/context_registry/126",
+        "text_sha256": "9f607d431f852e6f89a394ad5faa8398a0e16328f23b2e0527ba034131a75493",
+        "context_id": "context_0541d2895243cbe02f89",
+        "context_type": "source_scope",
+        "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_40",
+        "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:1569510:metadata",
+        "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [], \"target_title\": \"Avant Guard - Acid Lime / SMALL 🐸\", \"verified_buyer\": true}"
+      },
+      {
+        "bundle_pointer": "/semantic_work_unit_projection/context_registry/2089",
+        "text_sha256": "69f45ea405df6b60bbac92e6347baaecaee5312d70a35a4a6ddab27914e9f9b2",
+        "context_id": "context_5f002acbf9eb1cd7bfc3",
+        "context_type": "parent_text",
+        "source_artifact_id": "local-native-1n9da6u-projection-20260909",
+        "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1n9da6u-projection.json#$.comments[3]",
+        "text": "Experiment Softwear is by far my favorite lip balm ever. I don’t notice the exfoliation other than in how smooth and moisturized my lips are, and I can’t use pretty much any other exfoliant anywhere else on my face because my skin is so sensitive. It is superior to every other lip balm I’ve tried, even the Eadem. I like the Eadem ones okay, and they are also moisturizing, but I hate hate hate their scent/taste. Experiment Softwear is clear and scent free. It is the absolutely BEST. I can’t recommend it enough. I literally have two backups because I love it so much and it used to be harder to get since I’d have to have it shipped from Experiment’s website. So excited it’s at Sephora now!!",
+        "native_identity": {
+          "id": "t1_nclxocd",
+          "author": "cowrunamuck",
+          "score": "21",
+          "created": "2025-09-05T19:22:52.383000+0000"
+        }
+      },
+      {
+        "bundle_pointer": "/semantic_work_unit_projection/context_registry/2241",
+        "text_sha256": "2070ef56d5641eecf7f8884cd75242cb43f03bd517d82674abee1593cec7bcff",
+        "context_id": "context_66e864c836942282c210",
+        "context_type": "post_text",
+        "source_artifact_id": "local-native-1i30kik-projection-20260909",
+        "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1i30kik-projection.json#$.post",
+        "text": "{\"url\":\"https://www.reddit.com/r/SkincareAddictionLux/comments/1i30kik/has_anyone_tried_regimenlab/\",\"title\":\"Has anyone tried regimenlab?\",\"text\":\"It’s been popping out on my insta as advertised, and to be fair some brands that advertise on instagram are not bad at all (Biossance for example does a lot of ad there). I saw their website and looks cool, they advertise a lot a new formulation of soluble Azelaic acid as well.\\n\\nBut I’ve never seen this brand before. So I thought about asking here if anyone has?\"}"
+      },
+      {
+        "bundle_pointer": "/semantic_work_unit_projection/context_registry/3365",
+        "text_sha256": "7afc598f1e91cef6aa901deb90916e366cac58ec3b31f2c5a1bc93a08da840b2",
+        "context_id": "context_99d43abe0dbe462c3b55",
+        "context_type": "post_text",
+        "source_artifact_id": "local-native-1n9da6u-projection-20260909",
+        "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1n9da6u-projection.json#$.post",
+        "text": "{\"url\":\"https://www.reddit.com/r/Sephora/comments/1n9da6u/have_you_tried_an_exfoliating_lip_balmtreatment/\",\"title\":\"Have you tried an exfoliating lip balm/treatment yet?\",\"text\":\"If you have, do you feel like they helped?\"}"
+      },
+      {
+        "bundle_pointer": "/semantic_work_unit_projection/context_registry/3478",
+        "text_sha256": "74fff10697c6675ecb0a60b4c2281254263f7545b024c7266f74fe9374d1095e",
+        "context_id": "context_9f8ce97d6af21888fd08",
+        "context_type": "source_scope",
+        "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_16",
+        "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:7540631:metadata",
+        "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [{\"created_at\": \"2025-03-22T05:41:14.282Z\", \"id\": 4588657, \"meta\": {}, \"name\": \"Skin Type\", \"question_id\": 864, \"type\": \"survey_answer\", \"updated_at\": \"2025-03-22T05:41:14.282Z\", \"value\": \"Combo + Sensitive\", \"value_type\": \"radio\"}], \"target_title\": \"Super Saturated - Refill\", \"verified_buyer\": true}"
+      },
+      {
+        "bundle_pointer": "/semantic_work_unit_projection/context_registry/4201",
+        "text_sha256": "8ae6ed8f5bd45c918909673c2ce7964c9bc9af1301adf9d3133b52e0a4160902",
+        "context_id": "context_c2af7db629fb3d188eab",
+        "context_type": "product_page",
+        "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_16",
+        "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:7540631",
+        "text": "Super Saturated | id=2682694 | remote_id=7299389030592 | remote_handle=super-saturated"
+      },
+      {
+        "bundle_pointer": "/semantic_work_unit_projection/context_registry/4311",
+        "text_sha256": "f2c873cf7233fc9c036308f503810fa93f7803e7edc97e05c71360dd5f40f8b3",
+        "context_id": "context_c6f9d306eb781c59b11e",
+        "context_type": "product_page",
+        "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_40",
+        "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:1569510",
+        "text": "Avant Guard | id=2516750 | remote_id=5913452937408 | remote_handle=avant-guard"
+      },
+      {
+        "bundle_pointer": "/semantic_work_unit_projection/context_registry/5540",
+        "text_sha256": "a74d3d05d1d29c9bca8da41c3b73b9a61d44972125c0de600c9c16fb742ca1d8",
+        "context_id": "context_ff821dc553240c0290fa",
+        "context_type": "parent_text",
+        "source_artifact_id": "local-native-1n9da6u-projection-20260909",
+        "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1n9da6u-projection.json#$.comments[0]",
+        "text": "I’ve tried Experiment and Dr. Idriss. Experiment’s Softwear is one of the best lip balms I personally have ever used, and I have a stash of lip balms that’s embarrassing (I have been on a quest). Experiment as a brand knocks it out of the park with every single product. They are small but mighty… not a lot of products, but what they do have they do very well. Love them!\n\nThe Dr. Idriss lip exfoliator is good. It’s tacky/sticky, and she designed it to use via her lip basting method, so layering something over it is needed. You don’t necessarily need to use her Barrier Baste product, any nice thick lip mask/balm will do. But the Barrier Baste is nice as well. I often just use Lansinoh pure lanolin over the Idriss exfoliator, though, or a different lip mask. Wake up to soft lips.",
+        "native_identity": {
+          "id": "t1_ncls0z6",
+          "author": "RowanVC",
+          "score": "42",
+          "created": "2025-09-05T18:54:23.656000+0000"
+        }
+      }
+    ]
+  }
+}
