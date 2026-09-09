@@ -1,0 +1,37 @@
+{
+  "started_at": "2026-09-09T18:36:09.101Z",
+  "finished_at": "2026-09-09T18:36:09.447Z",
+  "executable": "C:\\Program Files\\nodejs\\node.exe",
+  "args": [
+    "-e",
+    "setTimeout(()=>process.exit(0),250)"
+  ],
+  "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca\\docs\\research\\diagnosis_fully_batched_coordination_20260909\\supervised_execution",
+  "pid": 77432,
+  "exit": 0,
+  "signal": null,
+  "error": null,
+  "wall_ms": 346,
+  "stdout_bytes": 0,
+  "stderr_bytes": 0,
+  "last_output_elapsed_ms": null,
+  "review_events": [
+    {
+      "type": "review_required",
+      "pid": 77432,
+      "state": "running",
+      "elapsed_ms": 87,
+      "stdout_bytes": 0,
+      "stderr_bytes": 0,
+      "last_output_elapsed_ms": null,
+      "exit": null,
+      "signal": null,
+      "error": null,
+      "meaning": "Expected-duration review interval elapsed. This is not proof of a stall. No restart, cancellation or success is inferred."
+    }
+  ],
+  "launches": 1,
+  "restarts": 0,
+  "termination_requested": false,
+  "process_success": true
+}

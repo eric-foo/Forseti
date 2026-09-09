@@ -1,0 +1,20 @@
+{
+  "started_at": "2026-09-09T18:36:09.536Z",
+  "finished_at": "2026-09-09T18:36:09.539Z",
+  "executable": "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca\\docs\\research\\diagnosis_fully_batched_coordination_20260909\\supervised_execution\\intentionally-nonexistent.exe",
+  "args": [],
+  "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca\\docs\\research\\diagnosis_fully_batched_coordination_20260909\\supervised_execution",
+  "pid": null,
+  "exit": -4058,
+  "signal": null,
+  "error": "ENOENT",
+  "wall_ms": 3,
+  "stdout_bytes": 0,
+  "stderr_bytes": 0,
+  "last_output_elapsed_ms": null,
+  "review_events": [],
+  "launches": 1,
+  "restarts": 0,
+  "termination_requested": false,
+  "process_success": false
+}

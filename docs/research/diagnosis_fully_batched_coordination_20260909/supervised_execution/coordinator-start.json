@@ -1,0 +1,15 @@
+{
+  "session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-06-01-01a0867d-6954-7e30-bac7-2c28f7cc3400.jsonl",
+  "started_at": "2026-09-09T18:28:42.927Z",
+  "base_counter": {
+    "timestamp": "2026-09-09T18:28:15.112Z",
+    "usage": {
+      "input_tokens": 8995030,
+      "cached_input_tokens": 8248832,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 66273,
+      "reasoning_output_tokens": 20849,
+      "total_tokens": 9061303
+    }
+  }
+}

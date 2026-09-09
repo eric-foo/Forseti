@@ -1,0 +1,37 @@
+{
+  "frozen_at": "2026-09-09T18:36:08.922Z",
+  "files": [
+    {
+      "path": "supervisor.mjs",
+      "sha256": "f3eee447da1c2db5d41cfc1a19101da643b239cd212fd5c1a40969fb5fdaec34"
+    },
+    {
+      "path": "run.mjs",
+      "sha256": "ef49e4b055d0dce403f774019a052393a4b8a4c54635b372b43b9637c41f3108"
+    },
+    {
+      "path": "dogfood.mjs",
+      "sha256": "b36ef3785f9c5a78cd0baaff70ed86d2c340318cececda62d088ca2b65884651"
+    },
+    {
+      "path": "README.md",
+      "sha256": "de2cb62c145a1208042ff2838c3a7af834c3b3bb64b6e644d1ad6f0dbd66386f"
+    },
+    {
+      "path": "../lib.mjs",
+      "sha256": "a25d892f5132822ca7ce2bddff35fac93ff7b917d1470544fb154f15207aefde"
+    },
+    {
+      "path": "../verification_experiment/verifier.schema.json",
+      "sha256": "44d8c204983e7b33323e59b2a8332606d337b21892746d78fdf033ae3a039881"
+    },
+    {
+      "path": "../verification_experiment/runs/hydration-control/verifier/stdin.txt",
+      "sha256": "3a4fe35da7a802c220899a9b5ec19e77a50e851122489b126fde061e33ee10c7"
+    },
+    {
+      "path": "../verification_experiment/runs/hydration-control/verifier-input.json",
+      "sha256": "37a5d2b72939128f68e894bd353d2f6d4f9142807b491bac7696ea67639c251e"
+    }
+  ]
+}
