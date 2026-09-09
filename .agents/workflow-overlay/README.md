@@ -12,6 +12,12 @@ authority_boundary: retrieval_only
 
 This overlay is the project authority for Forseti. Skills may provide task-local mechanics, but Forseti-specific facts and constraints must come from this folder or another Forseti-owned source named here.
 
+## Reading the next instruction source
+
+Use `.agents/tools/read_source.mjs` for additional repository instruction reads:
+`node .agents/tools/read_source.mjs --file .agents/workflow-overlay/source-loading.md --heading "Bounded instruction reader"`.
+That source owns selection, output bounds, and honest incomplete-read handling.
+
 ## Behavioral Admission
 
 Every behavioral rule in this overlay is subordinate to the Smallest Complete
