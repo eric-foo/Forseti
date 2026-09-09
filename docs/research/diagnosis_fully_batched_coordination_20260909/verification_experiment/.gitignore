@@ -1,0 +1,6 @@
+!*.log
+!*.jsonl
+!runs/
+!runs/**
+!judges/
+!judges/**

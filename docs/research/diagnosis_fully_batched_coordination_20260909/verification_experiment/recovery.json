@@ -1,0 +1,77 @@
+{
+  "reason": "Four verifiers rooted pointers at /answer/report in their actual input; the host incorrectly assumed answer-relative pointers. Every exact substring matched once. Normalize only that wrapper prefix, with no semantic edits, dropped corrections or model retries.",
+  "recovered": [
+    {
+      "id": "hydration-r1",
+      "original_error": "Missing pointer",
+      "pointers": [
+        {
+          "original": "/answer/report",
+          "normalized": "/report"
+        }
+      ],
+      "verifier_response_sha256": "778a4da3ae19eae31f408bd11927536a551704b1d0092a320d404ce97411c2a0",
+      "generator_and_verifier_reruns": 0
+    },
+    {
+      "id": "hydration-control",
+      "original_error": "Missing pointer",
+      "pointers": [
+        {
+          "original": "/answer/report",
+          "normalized": "/report"
+        },
+        {
+          "original": "/answer/report",
+          "normalized": "/report"
+        }
+      ],
+      "verifier_response_sha256": "7dea1ccf9578891bb1f5e35244d03d3401f49ff2af72191b9fc5571b93ca37cd",
+      "generator_and_verifier_reruns": 0
+    },
+    {
+      "id": "packaging-r3",
+      "original_error": "Missing pointer",
+      "pointers": [
+        {
+          "original": "/answer/report",
+          "normalized": "/report"
+        },
+        {
+          "original": "/answer/report",
+          "normalized": "/report"
+        },
+        {
+          "original": "/answer/report",
+          "normalized": "/report"
+        },
+        {
+          "original": "/answer/report",
+          "normalized": "/report"
+        }
+      ],
+      "verifier_response_sha256": "be9f9ade8c69ee20a9f142d0a686c96afe24eeb7fe4a6b11fda2c48cd0b026a8",
+      "generator_and_verifier_reruns": 0
+    },
+    {
+      "id": "packaging-r2",
+      "original_error": "Missing pointer",
+      "pointers": [
+        {
+          "original": "/answer/report",
+          "normalized": "/report"
+        },
+        {
+          "original": "/answer/report",
+          "normalized": "/report"
+        },
+        {
+          "original": "/answer/report",
+          "normalized": "/report"
+        }
+      ],
+      "verifier_response_sha256": "579951ea104d83a8e8802a4b921dec6465b96c259f3e8caa149b7927daf71914",
+      "generator_and_verifier_reruns": 0
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "base": "runs/hydration-r3/verifier",
+  "role": "verifier",
+  "effort": "high",
+  "started_at": "2026-09-09T14:33:54.284Z",
+  "finished_at": "2026-09-09T14:34:16.983Z",
+  "code": 0,
+  "signal": null,
+  "id": "01a08696-f32f-70f0-84cf-9c56a902c00e",
+  "usage": {
+    "input_tokens": 38368,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 373,
+    "reasoning_output_tokens": 315
+  },
+  "turns": 1
+}

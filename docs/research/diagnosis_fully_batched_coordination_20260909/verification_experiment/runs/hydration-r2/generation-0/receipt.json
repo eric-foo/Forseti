@@ -1,0 +1,18 @@
+{
+  "base": "runs/hydration-r2/generation-0",
+  "role": "generator",
+  "effort": "medium",
+  "started_at": "2026-09-09T14:32:11.440Z",
+  "finished_at": "2026-09-09T14:33:47.625Z",
+  "code": 0,
+  "signal": null,
+  "id": "01a08695-61dc-7763-8cbe-7e375862df4f",
+  "usage": {
+    "input_tokens": 36072,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2727,
+    "reasoning_output_tokens": 167
+  },
+  "turns": 1
+}

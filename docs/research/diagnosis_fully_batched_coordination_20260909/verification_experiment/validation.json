@@ -1,0 +1,15 @@
+{
+  "verified_at": "2026-09-09T14:44:24.053Z",
+  "status": "GATE PASS",
+  "native_calls": 24,
+  "paired_answers": 10,
+  "checks": [
+    "frozen identity and unchanged source/prompt input",
+    "native coldness, actual settings and complete accounting",
+    "all baseline and corrected pairs plus deterministic masking",
+    "exact-once correction replay, no unrelated mutation",
+    "first-pass source-backed quality with author adjudication"
+  ],
+  "cutoff": "2026-09-09T14:43:58.348Z",
+  "publication": "Existing draft PR #1587; final durable and remote readback returned by closeout."
+}

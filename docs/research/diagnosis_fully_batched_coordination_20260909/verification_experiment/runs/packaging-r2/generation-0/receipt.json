@@ -1,0 +1,18 @@
+{
+  "base": "runs/packaging-r2/generation-0",
+  "role": "generator",
+  "effort": "medium",
+  "started_at": "2026-09-09T14:34:03.374Z",
+  "finished_at": "2026-09-09T14:35:46.292Z",
+  "code": 0,
+  "signal": null,
+  "id": "01a08697-1597-7282-a2b4-8e6fed6c77e9",
+  "usage": {
+    "input_tokens": 31276,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 3129,
+    "reasoning_output_tokens": 129
+  },
+  "turns": 1
+}

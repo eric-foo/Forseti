@@ -1,0 +1,18 @@
+{
+  "base": "runs/packaging-r1/verifier",
+  "role": "verifier",
+  "effort": "high",
+  "started_at": "2026-09-09T14:35:47.756Z",
+  "finished_at": "2026-09-09T14:36:26.315Z",
+  "code": 0,
+  "signal": null,
+  "id": "01a08698-ade1-7cd3-a0de-684f9f381cf8",
+  "usage": {
+    "input_tokens": 34262,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 958,
+    "reasoning_output_tokens": 897
+  },
+  "turns": 1
+}

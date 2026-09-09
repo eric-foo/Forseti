@@ -1,0 +1,294 @@
+[
+  {
+    "case": "hydration",
+    "summary": "The evidence supports three direct SS hydration accounts, one joint mask–serum account, three direct texture accounts and one speculative texture account. Material overstatements concern reduced congestion and reduced redness; the remaining diagnoses preserve the relevant product boundaries, conditions and behavior.",
+    "pairs": [
+      {
+        "pair_id": "pair-18ee2c6373",
+        "answers": [
+          {
+            "label": "A",
+            "material_errors": [
+              {
+                "label": "noncausation_of_congestion_promoted_to_reduction",
+                "answer_excerpt": "plus less irritation, congestion and perceived oil production",
+                "source_keys": [
+                  "A13"
+                ],
+                "source_excerpt": "It has not caused the congestion on my forehead that results in textured skin and bumps",
+                "reason": "The main diagnosis claims reduced congestion, whereas the source reports hydration without causing congestion. The accurate source-index wording limits but does not erase this stronger benefit claim."
+              }
+            ],
+            "nonmaterial_notes": [
+              "A14’s 'softer, calmer skin' is a reasonable broad paraphrase given the title 'Calming, Soothing, Buttery Soft Sorcery' and the reported soft skin without irritation; it does not specify a reduction in redness."
+            ]
+          },
+          {
+            "label": "B",
+            "material_errors": [],
+            "nonmaterial_notes": []
+          }
+        ]
+      },
+      {
+        "pair_id": "pair-8ff855b660",
+        "answers": [
+          {
+            "label": "A",
+            "material_errors": [
+              {
+                "label": "absence_of_redness_promoted_to_reduction",
+                "answer_excerpt": "gives silky jelly-to-oil slip and soft, less red skin",
+                "source_keys": [
+                  "A14"
+                ],
+                "source_excerpt": "I have rosacea and I've been adding a drop of this to my moisturizer at night and I wake up with super soft skin with no redness, irritation, or clogged pores.",
+                "reason": "The source reports no redness after joint use, without establishing prior redness or a decrease. 'Less red' adds a comparative improvement; rosacea and the calming title do not establish that specific change. Accurate wording in the source index does not erase the overstatement."
+              }
+            ],
+            "nonmaterial_notes": [
+              "The phrase 'duration, reduced oil, irritation and congestion claims' does not unambiguously assert reduced congestion; the source index expressly preserves 'no forehead congestion'."
+            ]
+          },
+          {
+            "label": "B",
+            "material_errors": [],
+            "nonmaterial_notes": [
+              "The phrase 'duration, reduced oil, irritation and congestion claims' is imprecise but remains consistent with the source index’s explicit 'no forehead congestion'."
+            ]
+          }
+        ]
+      },
+      {
+        "pair_id": "pair-5591cdfe2e",
+        "answers": [
+          {
+            "label": "A",
+            "material_errors": [],
+            "nonmaterial_notes": [
+              "The paired answers are identical. 'Soft, calm skin' preserves A14’s reported condition without asserting a comparative redness improvement."
+            ]
+          },
+          {
+            "label": "B",
+            "material_errors": [],
+            "nonmaterial_notes": [
+              "The paired answers are identical. 'Soft, calm skin' preserves A14’s reported condition without asserting a comparative redness improvement."
+            ]
+          }
+        ]
+      },
+      {
+        "pair_id": "pair-6a6ed59901",
+        "answers": [
+          {
+            "label": "A",
+            "material_errors": [],
+            "nonmaterial_notes": [
+              "The paired answers are identical; no material distinction is warranted."
+            ]
+          },
+          {
+            "label": "B",
+            "material_errors": [],
+            "nonmaterial_notes": [
+              "The paired answers are identical; no material distinction is warranted."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "case": "buying",
+    "summary": "No material diagnostic errors found in the supplied answers. They preserve three focal Experiment acquisition accounts, distinguish other actions and intentions, retain contextual stock-up testimony, and report adverse outcomes alongside loyalty without establishing broader causation.",
+    "pairs": [
+      {
+        "pair_id": "pair-725682e9ae",
+        "answers": [
+          {
+            "label": "A",
+            "material_errors": [],
+            "nonmaterial_notes": [
+              "“Wash-associated absence of breakouts” preserves A04’s reported “bam… no more breakouts” in context."
+            ]
+          },
+          {
+            "label": "B",
+            "material_errors": [],
+            "nonmaterial_notes": [
+              "“Wash-associated cessation of breakouts” is supported by A04’s “bam… no more breakouts”; the wording difference does not change the diagnosis."
+            ]
+          }
+        ]
+      },
+      {
+        "pair_id": "pair-87ad3d351b",
+        "answers": [
+          {
+            "label": "A",
+            "material_errors": [],
+            "nonmaterial_notes": [
+              "The completed-routine count omits A05 despite preserving its prior sheet-mask cessation in the source index. Under the supplied assessment rule, this stopping-versus-replacement accounting discrepancy is nonmaterial.",
+              "Calling A14–A16 “additions” lacks a supplied historical boundary, but does not change their current behavioral classification."
+            ]
+          },
+          {
+            "label": "B",
+            "material_errors": [],
+            "nonmaterial_notes": [
+              "The completed-routine count omits A05 despite preserving its prior sheet-mask cessation in the source index. Under the supplied assessment rule, this stopping-versus-replacement accounting discrepancy is nonmaterial.",
+              "Calling A14–A16 “additions” lacks a supplied historical boundary, but does not change their current behavioral classification."
+            ]
+          }
+        ]
+      },
+      {
+        "pair_id": "pair-8f25fb5f96",
+        "answers": [
+          {
+            "label": "A",
+            "material_errors": [],
+            "nonmaterial_notes": []
+          },
+          {
+            "label": "B",
+            "material_errors": [],
+            "nonmaterial_notes": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "case": "packaging",
+    "summary": "All answers preserve the current failure counts, product distinctions, loyalty and remedy evidence. Five answers invent an initial/addition boundary; pair-9838fe726d B also overstates independent cross-role corroboration.",
+    "pairs": [
+      {
+        "pair_id": "pair-d8b100092b",
+        "answers": [
+          {
+            "label": "A",
+            "material_errors": [
+              {
+                "label": "unsupported_historical_evidence_boundary",
+                "answer_excerpt": "Initial stage is reconstructed as the supplied focal set before additions P08–P13 and R01; no separate initial-stage record was supplied.",
+                "source_keys": [
+                  "reader_input.stage",
+                  "reader_input.method",
+                  "reader_input.focal_keys"
+                ],
+                "source_excerpt": "\"stage\":\"updated\"\n\"method\":\"Reread the complete initial and added source set and construct the current diagnosis.\"\n\"focal_keys\":[\"P00\",\"P01\",\"P02\",\"P03\",\"P04\",\"P06\",\"P07\",\"P15\",\"P17\",\"P20\",\"P21\",\"P26\",\"P27\",\"P29\",\"P32\",\"P38\",\"P39\",\"P40\",\"P42\",\"P08\",\"P09\",\"P10\",\"P11\",\"P12\",\"P13\",\"R01\"]",
+                "reason": "The current set supplies no historical membership boundary. Treating record order as that boundary invents an initial single-report diagnosis and subsequent gains in recurrence, replacement shipment and repurchase intent. Calling this a reconstruction does not establish the asserted history."
+              }
+            ],
+            "nonmaterial_notes": [
+              "A and B are identical and receive the same findings. Their current counts and descriptive community/retailer evidence are supported."
+            ]
+          },
+          {
+            "label": "B",
+            "material_errors": [
+              {
+                "label": "unsupported_historical_evidence_boundary",
+                "answer_excerpt": "Initial stage is reconstructed as the supplied focal set before additions P08–P13 and R01; no separate initial-stage record was supplied.",
+                "source_keys": [
+                  "reader_input.stage",
+                  "reader_input.method",
+                  "reader_input.focal_keys"
+                ],
+                "source_excerpt": "\"stage\":\"updated\"\n\"method\":\"Reread the complete initial and added source set and construct the current diagnosis.\"\n\"focal_keys\":[\"P00\",\"P01\",\"P02\",\"P03\",\"P04\",\"P06\",\"P07\",\"P15\",\"P17\",\"P20\",\"P21\",\"P26\",\"P27\",\"P29\",\"P32\",\"P38\",\"P39\",\"P40\",\"P42\",\"P08\",\"P09\",\"P10\",\"P11\",\"P12\",\"P13\",\"R01\"]",
+                "reason": "The current set supplies no historical membership boundary. Treating record order as that boundary invents an initial single-report diagnosis and subsequent gains in recurrence, replacement shipment and repurchase intent. Calling this a reconstruction does not establish the asserted history."
+              }
+            ],
+            "nonmaterial_notes": [
+              "A and B are identical and receive the same findings. Their current counts and descriptive community/retailer evidence are supported."
+            ]
+          }
+        ]
+      },
+      {
+        "pair_id": "pair-9838fe726d",
+        "answers": [
+          {
+            "label": "A",
+            "material_errors": [
+              {
+                "label": "unsupported_historical_evidence_boundary",
+                "answer_excerpt": "The initial comparison below uses the visible core preceding the appended P08–P13 and R01 records; it is a reconstruction, not a separately verified initial report.",
+                "source_keys": [
+                  "reader_input.stage",
+                  "reader_input.method",
+                  "reader_input.focal_keys"
+                ],
+                "source_excerpt": "\"stage\":\"updated\"\n\"method\":\"Reread the complete initial and added source set and construct the current diagnosis.\"\n\"focal_keys\":[\"P00\",\"P01\",\"P02\",\"P03\",\"P04\",\"P06\",\"P07\",\"P15\",\"P17\",\"P20\",\"P21\",\"P26\",\"P27\",\"P29\",\"P32\",\"P38\",\"P39\",\"P40\",\"P42\",\"P08\",\"P09\",\"P10\",\"P11\",\"P12\",\"P13\",\"R01\"]",
+                "reason": "Record order does not identify initial versus added evidence. The resulting account of P06 alone initially and six accounts plus retailer evidence subsequently invents how diagnostic support developed, despite the reconstruction caveat."
+              }
+            ],
+            "nonmaterial_notes": [
+              "Preserving broader community and retailer closure/leak evidence while withholding independent cross-role corroboration is appropriate; no supported behavior is lost."
+            ]
+          },
+          {
+            "label": "B",
+            "material_errors": [
+              {
+                "label": "unsupported_historical_evidence_boundary",
+                "answer_excerpt": "The initial comparison below uses the visible core preceding the appended P08–P13 and R01 records; it is a reconstruction, not a separately verified initial report.",
+                "source_keys": [
+                  "reader_input.stage",
+                  "reader_input.method",
+                  "reader_input.focal_keys"
+                ],
+                "source_excerpt": "\"stage\":\"updated\"\n\"method\":\"Reread the complete initial and added source set and construct the current diagnosis.\"\n\"focal_keys\":[\"P00\",\"P01\",\"P02\",\"P03\",\"P04\",\"P06\",\"P07\",\"P15\",\"P17\",\"P20\",\"P21\",\"P26\",\"P27\",\"P29\",\"P32\",\"P38\",\"P39\",\"P40\",\"P42\",\"P08\",\"P09\",\"P10\",\"P11\",\"P12\",\"P13\",\"R01\"]",
+                "reason": "Record order does not identify initial versus added evidence. The resulting account of P06 alone initially and six accounts plus retailer evidence subsequently invents how diagnostic support developed, despite the reconstruction caveat."
+              },
+              {
+                "label": "unsupported_independent_cross_role_corroboration",
+                "answer_excerpt": "the retailer review corroborates only the broader problem of loose closures and leakage, under a different product/use condition.\n\nR01 independently reports Softwear–Void's lid repeatedly unscrewing",
+                "source_keys": [
+                  "P06",
+                  "P13",
+                  "R01",
+                  "forseti_intelligence_claim_support_contract_v0.md"
+                ],
+                "source_excerpt": "P06: \"author_url\":\"/@jasminesingh1102\"\nP13: \"author_url\":\"/@betterxthanxnew\"\nR01: \"actor_identity\":\"215817888\"\nContract: \"Exact, possible, confirmed, or unavailable same-actor overlap cannot be used to manufacture independent-origin credit.\"",
+                "reason": "The separate retailer identifier does not establish independence from the TikTok actors. Descriptive recurrence across roles is supported, but the main diagnosis grants corroboration and explicitly calls R01 independent. The later unverified-identity caveat limits, but does not erase, that stronger support claim."
+              }
+            ],
+            "nonmaterial_notes": []
+          }
+        ]
+      },
+      {
+        "pair_id": "pair-b8e18222bd",
+        "answers": [
+          {
+            "label": "A",
+            "material_errors": [],
+            "nonmaterial_notes": [
+              "The complete-set diagnosis requires no historical reconstruction. It preserves broader retailer leakage evidence without assigning Softwear to the unidentified TikTok complaints."
+            ]
+          },
+          {
+            "label": "B",
+            "material_errors": [
+              {
+                "label": "unsupported_historical_evidence_boundary",
+                "answer_excerpt": "Stage comparison treats P00–P42 in the supplied pre-addition list as initial evidence, and P08–P13 plus R01 as additions.",
+                "source_keys": [
+                  "reader_input.stage",
+                  "reader_input.method",
+                  "reader_input.focal_keys"
+                ],
+                "source_excerpt": "\"stage\":\"updated\"\n\"method\":\"Reread the complete initial and added source set and construct the current diagnosis.\"\n\"focal_keys\":[\"P00\",\"P01\",\"P02\",\"P03\",\"P04\",\"P06\",\"P07\",\"P15\",\"P17\",\"P20\",\"P21\",\"P26\",\"P27\",\"P29\",\"P32\",\"P38\",\"P39\",\"P40\",\"P42\",\"P08\",\"P09\",\"P10\",\"P11\",\"P12\",\"P13\",\"R01\"]",
+                "reason": "No pre-addition list or historical membership boundary is supplied. The answer invents initial counts and a transition from isolated leakage to recurring complaints with additional remedy and loyalty evidence. Correct current counts do not validate that historical diagnosis."
+              }
+            ],
+            "nonmaterial_notes": []
+          }
+        ]
+      }
+    ]
+  }
+]

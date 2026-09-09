@@ -1,0 +1,685 @@
+{
+  "reader_input": {
+    "case": "packaging",
+    "question": "Diagnose packaging reception, reported failure modes, their support and limits, and explicit buying, loyalty and remedy consequences. Keep product scope and source ownership precise.",
+    "count_definitions": {
+      "arrival_leak": "Focal TikTok accounts reporting or contextually agreeing to arrival leak, including bare agreements, excluding brand response/retailer.",
+      "explicit_loose_top": "Focal TikTok accounts explicitly describing loose or improperly screwed top.",
+      "bare_arrival_agreement": "Only terse same/same way agreement with no further report.",
+      "replacement_offered": "Brand offer to send service replacement.",
+      "replacement_sent": "Customer explicitly reports replacement sent; not confirmed delivered.",
+      "retailer_leak": "Retailer accounts reporting packaging leakage.",
+      "repurchase_intended": "Explicit future repeat purchase intent."
+    },
+    "products": [
+      {
+        "id": "experiment-shopify-5913452937408",
+        "name": "Avant Guard"
+      },
+      {
+        "id": "experiment-shopify-7299389030592",
+        "name": "Super Saturated"
+      },
+      {
+        "id": "experiment-shopify-7476098007232",
+        "name": "Buffer Jelly [experiment-shopify-7476098007232]"
+      },
+      {
+        "id": "experiment-shopify-7758608105664",
+        "name": "Softwear"
+      },
+      {
+        "id": "experiment-shopify-8086723035328",
+        "name": "Plasma Wash"
+      },
+      {
+        "id": "experiment-shopify-8193821802688",
+        "name": "Molecular Mesh"
+      },
+      {
+        "id": "experiment-shopify-8555927306432",
+        "name": "Continuum"
+      }
+    ],
+    "stage": "updated",
+    "focal_keys": [
+      "P00",
+      "P01",
+      "P02",
+      "P03",
+      "P04",
+      "P06",
+      "P07",
+      "P15",
+      "P17",
+      "P20",
+      "P21",
+      "P26",
+      "P27",
+      "P29",
+      "P32",
+      "P38",
+      "P39",
+      "P40",
+      "P42",
+      "P08",
+      "P09",
+      "P10",
+      "P11",
+      "P12",
+      "P13",
+      "R01"
+    ],
+    "method": "Reread the complete initial and added source set and construct the current diagnosis.",
+    "sources": {
+      "records": [
+        {
+          "key": "P00",
+          "author_url": "/@randomdude7551",
+          "body": "Metal packaging is sooo chic (and environmentally friendly)",
+          "body_level": "comment-level-1",
+          "observation_index": 0,
+          "text": "randomdude7551\n\nMetal packaging is sooo chic (and environmentally friendly)\n5-15\n\nReply\n\n296",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 296
+          },
+          "parent_key": null
+        },
+        {
+          "key": "P01",
+          "author_url": "/@experimentwrld",
+          "body": "Agree 1000%",
+          "body_level": "comment-level-2",
+          "observation_index": 1,
+          "text": "Experiment Beauty\n\n· Creator\n\nAgree 1000%\n5-15\nReply\n39",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 39
+          },
+          "parent_key": "P00"
+        },
+        {
+          "key": "P02",
+          "author_url": "/@person1234567556987",
+          "body": "is it environmentally friendly though? is it recyclable?",
+          "body_level": "comment-level-2",
+          "observation_index": 2,
+          "text": "person\n\nis it environmentally friendly though? is it recyclable?\n5-15\nReply\n0",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 0
+          },
+          "parent_key": "P00"
+        },
+        {
+          "key": "P03",
+          "author_url": "/@randomdude7551",
+          "body": "Aluminum packaging like this is almost always recyclable, the inner part likely is as well. The pump likely isn’t but it and the outer aluminum shell are reusable",
+          "body_level": "comment-level-2",
+          "observation_index": 3,
+          "text": "randomdude7551\n\nAluminum packaging like this is almost always recyclable, the inner part likely is as well. The pump likely isn’t but it and the outer aluminum shell are reusable\n5-15\nReply\n2",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 2
+          },
+          "parent_key": "P00"
+        },
+        {
+          "key": "P04",
+          "author_url": "/@flamingpanda5",
+          "body": "Pls started selling the refills as bundles as well! 🙏🏽",
+          "body_level": "comment-level-2",
+          "observation_index": 4,
+          "text": "flamingpanda5\n\nPls started selling the refills as bundles as well! 🙏🏽\n5-20\nReply\n0",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 0
+          },
+          "parent_key": "P00"
+        },
+        {
+          "key": "P06",
+          "author_url": "/@jasminesingh1102",
+          "body": "my product came leaked the top part was loose so i had to open it and clean so it was exposed to oxygen. is it not good to use anymore?",
+          "body_level": "comment-level-1",
+          "observation_index": 6,
+          "text": "Jasmine ✨️\n\nmy product came leaked the top part was loose so i had to open it and clean so it was exposed to oxygen. is it not good to use anymore?\n5-15\n\nReply\n\n12",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 12
+          },
+          "parent_key": null
+        },
+        {
+          "key": "P07",
+          "author_url": "/@experimentwrld",
+          "body": "Oh no, we're sorry to hear that! Short term exposure is not an issue, but please reach out to hey@experimentbeauty.com and we’ll happily send a replacement. 🔬",
+          "body_level": "comment-level-2",
+          "observation_index": 7,
+          "text": "Experiment Beauty\n\n· Creator\n\nOh no, we're sorry to hear that! Short term exposure is not an issue, but please reach out to hey@experimentbeauty.com and we’ll happily send a replacement. 🔬\n5-16\nReply\n12",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 12
+          },
+          "parent_key": "P06"
+        },
+        {
+          "key": "P15",
+          "author_url": "/@bmdubs",
+          "body": "Gonna use my empty to hold my lexapro🤭",
+          "body_level": "comment-level-1",
+          "observation_index": 15,
+          "text": "brooke🩵✨🏹\n\nGonna use my empty to hold my lexapro🤭\n5-15\n\nReply\n\n150",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 150
+          },
+          "parent_key": null
+        },
+        {
+          "key": "P17",
+          "author_url": "/@mostlyconceptual",
+          "body": "I'm so obsessed with literally everything from you guys. I've never really been brand loyal but my skincare routine is all experiment rn and continuum is in the mail as we speak 😅😅",
+          "body_level": "comment-level-1",
+          "observation_index": 17,
+          "text": "cb\n\nI'm so obsessed with literally everything from you guys. I've never really been brand loyal but my skincare routine is all experiment rn and continuum is in the mail as we speak 😅😅\n5-16\n\nReply\n\n1",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 1
+          },
+          "parent_key": null
+        },
+        {
+          "key": "P20",
+          "author_url": "/@countryboiiloveyouuuxoxo",
+          "body": "I’m buying everrrrrything from yall!",
+          "body_level": "comment-level-1",
+          "observation_index": 20,
+          "text": "CountryboiiLoveyouuu\n\nI’m buying everrrrrything from yall!\n5-15\n\nReply\n\n7",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 7
+          },
+          "parent_key": null
+        },
+        {
+          "key": "P21",
+          "author_url": "/@beautybought",
+          "body": "Thank you so much for consistently giving us amazing products in packaging we can feel good about",
+          "body_level": "comment-level-1",
+          "observation_index": 21,
+          "text": "Evie | BeautyBought Reviews\n\nThank you so much for consistently giving us amazing products in packaging we can feel good about\n5-17\n\nReply\n\n1",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 1
+          },
+          "parent_key": null
+        },
+        {
+          "key": "P26",
+          "author_url": "/@adam_thomas6",
+          "body": "ok so the packaging is great.. but what does it do for your skin?",
+          "body_level": "comment-level-1",
+          "observation_index": 26,
+          "text": "Adam\n\nok so the packaging is great.. but what does it do for your skin?\n5-21\n\nReply\n\n1",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 1
+          },
+          "parent_key": null
+        },
+        {
+          "key": "P27",
+          "author_url": "/@sofieeee120",
+          "body": "any chance you would bundle a continuum and super saturated refills?",
+          "body_level": "comment-level-1",
+          "observation_index": 27,
+          "text": "Sofieeee120\n\nany chance you would bundle a continuum and super saturated refills?\n5-24\n\nReply\n\n1",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 1
+          },
+          "parent_key": null
+        },
+        {
+          "key": "P29",
+          "author_url": "/@allthegr8namesaretaken",
+          "body": "Wait how do I get the sticker in my refill 😂😭",
+          "body_level": "comment-level-1",
+          "observation_index": 29,
+          "text": "Brooklyn\n\nWait how do I get the sticker in my refill 😂😭\n5-17\n\nReply\n\n2",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 2
+          },
+          "parent_key": null
+        },
+        {
+          "key": "P32",
+          "author_url": "/@josemarbp",
+          "body": "This is genius i might have to save up for that",
+          "body_level": "comment-level-1",
+          "observation_index": 32,
+          "text": "mariobsmh\n\nThis is genius i might have to save up for that\n5-18\n\nReply\n\n3",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 3
+          },
+          "parent_key": null
+        },
+        {
+          "key": "P38",
+          "author_url": "/@taylorelissa",
+          "body": "this is such a cute package can’t wait to try it",
+          "body_level": "comment-level-1",
+          "observation_index": 38,
+          "text": "☁︎⊹ elissa ⊹☁︎\n\nthis is such a cute package can’t wait to try it\n5-16\n\nReply\n\n1",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 1
+          },
+          "parent_key": null
+        },
+        {
+          "key": "P39",
+          "author_url": "/@morco11111",
+          "body": "Love this! Thank you for taking the package just as seriously as your formulas 🥰",
+          "body_level": "comment-level-1",
+          "observation_index": 39,
+          "text": "morco1111\n\nLove this! Thank you for taking the package just as seriously as your formulas 🥰\n5-29\n\nReply\n\n1",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 1
+          },
+          "parent_key": null
+        },
+        {
+          "key": "P40",
+          "author_url": "/@danaisabellaaa",
+          "body": "it’s SOOOO CUTE",
+          "body_level": "comment-level-1",
+          "observation_index": 40,
+          "text": "Dana Patterson✨\n\nit’s SOOOO CUTE\n5-15\n\nReply\n\n1",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 1
+          },
+          "parent_key": null
+        },
+        {
+          "key": "P42",
+          "author_url": "/@__whitneyjade",
+          "body": "Wattttt im so excited about this because I just received mine today and I had no idea it’s refillable like this! 😍",
+          "body_level": "comment-level-1",
+          "observation_index": 42,
+          "text": "whitney | bevs & beauty\n\nWattttt im so excited about this because I just received mine today and I had no idea it’s refillable like this! 😍\n5-20\n\nReply\n\n1",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 1
+          },
+          "parent_key": null
+        },
+        {
+          "key": "P08",
+          "author_url": "/@savi.glow",
+          "body": "That happened to mine too, I ordered it from Sephora and they sent a replacement for free ☺️",
+          "body_level": "comment-level-2",
+          "observation_index": 8,
+          "text": "Savannah\n\nThat happened to mine too, I ordered it from Sephora and they sent a replacement for free ☺️\n5-16\nReply\n5",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 5
+          },
+          "parent_key": "P06"
+        },
+        {
+          "key": "P09",
+          "author_url": "/@user851526p",
+          "body": "sadly same.",
+          "body_level": "comment-level-2",
+          "observation_index": 9,
+          "text": "user851526\n\nsadly same.\n5-16\nReply\n4",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 4
+          },
+          "parent_key": "P06"
+        },
+        {
+          "key": "P10",
+          "author_url": "/@lara_jlue",
+          "body": "Mine came the same way 😭",
+          "body_level": "comment-level-2",
+          "observation_index": 10,
+          "text": "lara\n\nMine came the same way 😭\n5-16\nReply\n4",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 4
+          },
+          "parent_key": "P06"
+        },
+        {
+          "key": "P11",
+          "author_url": "/@bert181818",
+          "body": "Same",
+          "body_level": "comment-level-2",
+          "observation_index": 11,
+          "text": "bert181818\n\nSame\n5-16\nReply\n2",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 2
+          },
+          "parent_key": "P06"
+        },
+        {
+          "key": "P12",
+          "author_url": "/@boyauditsskincare",
+          "body": "Same",
+          "body_level": "comment-level-2",
+          "observation_index": 12,
+          "text": "BoyAuditsSkincare\n\nSame\n7-30\nReply\n0",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 0
+          },
+          "parent_key": "P06"
+        },
+        {
+          "key": "P13",
+          "author_url": "/@betterxthanxnew",
+          "body": "Same here, ordered mine from Sephora and the top was not screwed down properly. Major leak 😭",
+          "body_level": "comment-level-2",
+          "observation_index": 13,
+          "text": "betterxthanxnew\n\nSame here, ordered mine from Sephora and the top was not screwed down properly. Major leak 😭\n5-18\nReply\n0",
+          "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+          "observed_at": "2026-09-09T11:56:25.935Z",
+          "engagement": {
+            "metric": "displayed likes",
+            "value": 0
+          },
+          "parent_key": "P06"
+        },
+        {
+          "key": "R01",
+          "source_partition": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/successor-return/retailer-coding-rebuild/partition-01.json",
+          "source_partition_sha256": "fbc6df3321ba842a9d8a85502581ad2943e5ead5ac1279e5fa2d9310ad05565d",
+          "evidence_id": "junip:13200181",
+          "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_05",
+          "source_row_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:13200181",
+          "actor_identity": "215817888",
+          "publication_time": "2026-05-10T02:01:45.837Z",
+          "native_title": "Love the product, hate the packaging",
+          "native_body": "I do actually love this product across the board. The problem is with the packaging. The lid keeps coming unscrewed and tonight it came loose in my pocket at work so it seeped onto my brand new underwear, and also onto my work shirt and of course there’s now a spot on my jeans. Worse, once I collected all the loose product onto my pinkie I had no way to put it back into the package. I hate complaining about packaging because that’s not made in house. That’s ordered from a manufacturer, so. I don’t know if maybe it should do a whole click lock when you screw the cap on, or if a doe foot option might be worth it? I just hate that because void is my favorite I’ve lost a lot of it to the lid coming off so I will repurchase. I love it so so much, but I’m very annoyed to lose so much product when it’s not that cheap.",
+          "native_product_context": {
+            "product": {
+              "created_at": "2024-03-18T11:58:42.783Z",
+              "deleted_at": null,
+              "group_owner": false,
+              "id": 6813901,
+              "published": true,
+              "rating_average": 4.7009063444108765,
+              "rating_count": 331,
+              "rating_distribution": {
+                "1": 9,
+                "2": 7,
+                "3": 10,
+                "4": 22,
+                "5": 283
+              },
+              "recommended_count": 308,
+              "recommended_percentage": 93.05135951661632,
+              "remote_handle": "softwear",
+              "remote_id": "7758608105664",
+              "title": "Softwear",
+              "type": "product",
+              "unreviewable": false,
+              "updated_at": "2026-09-04T19:52:43.289Z"
+            },
+            "target_title": "Softwear - Void"
+          },
+          "native_metadata": {
+            "rating": 3,
+            "recommendation": {
+              "field": "would_recommend",
+              "value": true
+            },
+            "incentive": {
+              "rewarded": false,
+              "verified_buyer": true,
+              "origin": "native"
+            }
+          }
+        }
+      ],
+      "contexts": [],
+      "source_limits": [
+        "47 displayed comment bodies;72 advertised total is not completeness proof.",
+        "Arrival-leak and metal-packaging reply branches expanded; other reply branches remain outside this bounded follow-up.",
+        "No native comment IDs exposed; profile URL plus exact body and observed reply grouping are preserved.",
+        "Displayed month-day lacks year; no inferred complaint SKU, independent-human count, causal mechanism or population rate."
+      ]
+    }
+  },
+  "answer": {
+    "retrieval_requests": [],
+    "report": "Packaging reception is mixed: aesthetic and refill enthusiasm coexist with leakage complaints, while the Softwear reviewer explicitly retains loyalty despite product loss. The precise arrival-leak proposition gains distinct-account agreement within one TikTok thread; the retailer review corroborates only the broader problem of loose closures and leakage, under a different product/use condition.\n\nStage boundary: the supplied input is labeled updated but does not explicitly enumerate the initial-stage membership. The initial comparison below uses the visible core preceding the appended P08–P13 and R01 records; it is a reconstruction, not a separately verified initial report.\n\nInitial core: P00 calls metal packaging chic and environmentally friendly (296 displayed likes); P01 is brand agreement, and P03 is the same actor as P00 speculating about component recyclability/reuse. P02 questions recyclability. Thus aesthetic enthusiasm has visible resonance and recurs across distinct commenters, but actual environmental performance is unverified. P21, P26, P38–P40 also praise packaging, with P26 asking what the product does for skin. P15's planned empty-container reuse has 150 likes, but no completed reuse is reported. P04 and P27 request refill bundles; P29 asks about a refill sticker; P42 reports receipt and newly discovered refillability. These do not establish completed refill purchases or environmental benefits. P06 alone reports arrival leakage with a loose top, cleanup and concern about oxygen exposure (12 likes). P07 offers a replacement and says short exposure is not an issue (12 likes): this is an owned service response and assurance, not independent safety testing or fulfilled remedy.\n\nUpdated evidence: P08–P13 add six distinct visible TikTok accounts agreeing with P06's arrival-leak experience. Seven focal accounts now report or contextually agree to arrival leakage. Only P06 and P13 explicitly describe an improperly secured top; P13 specifies a major leak on a Sephora order. P08 adds a Sephora order and a free replacement reportedly sent, without confirmation of delivery. P09–P12 are four bare agreements: they support contextual recurrence of arrival leakage, but cannot each inherit the parent's closure details, cleanup or oxygen concern. This is distinct-account recurrence concentrated in one brand-hosted thread, not seven verified independent humans, seven proven separate events, or a population failure rate. No focal arrival complaint names its SKU/version; the product catalog and nearby named products cannot supply that identity.\n\nR01 independently reports Softwear–Void's lid repeatedly unscrewing, including leakage in a pocket at work, stained clothing, unrecoverable product and costly waste. This adds a retailer-review role and a different use condition. It supports recurrence across source roles of reported closure/leak problems, subject to unverified cross-platform identity; it does not establish that Softwear was the TikTok product, that its leakage occurred on arrival, or that both have one manufacturing cause. R01 proposes a click-lock or doe-foot option, not an implemented remedy. The review is three stars, verified-buyer metadata, not rewarded, and would_recommend=true; helpful-vote engagement is unavailable. Product-wide rating aggregates are not engagement with this complaint.\n\nConsequences: P17 reports an all-Experiment routine and Continuum in transit; P20 expresses broad buying enthusiasm; P32 may save up; P38 intends to try. These do not establish packaging-caused buying. P42 reports receipt, with refillability discovered afterward. P04/P27 show bundle requests, not checkout. R01 explicitly intends to repurchase because Void remains a favorite despite leakage, annoyance and price concern; no completed repurchase is shown. P07 offers service replacement, while P08 reports one sent by Sephora. No refund, abandonment, switching, confirmed replacement delivery or resolved defect is reported.\n\nThe evidence supports split reception rather than a uniformly good or bad packaging verdict. Positive appearance does not contradict a functional failure, and R01's loyalty does not erase its complaint. Recyclability remains questioned rather than technically established; product efficacy and oxygen safety are unresolved here. Likes indicate raw audience response, not verified experiences, independence, prevalence or buying effects. P00's 296 and P15's 150 visibly stand out within this capture; other focal comments range from 0–39 likes, without sufficient exposure context for a universal resonance threshold.\n\nProvenance and limits: all P records are comments on https://www.tiktok.com/@experimentwrld/video/7639858768146222366, observed 2026-09-09T11:56:25.935Z. Their displayed dates lack years; source_index preserves month-day dates and displayed likes. Profile URLs identify visible accounts, not verified people. P01/P07 share the brand account; P00/P03 share one commenter. No context-only records were supplied. The capture contains 47 displayed bodies against 72 advertised comments; that is not completeness proof. Only the arrival-leak and metal-packaging reply branches were expanded. Native comment IDs are unavailable. Counts below use the updated focal source-key sets, not independent-origin or event counts.",
+    "source_index": [
+      {
+        "key": "P00",
+        "findings": "@randomdude7551; 5-15; 296 likes. Calls metal packaging chic and environmentally friendly; strong visible aesthetic/environmental-message resonance, not verified sustainability. SKU/version unknown; same actor as P03."
+      },
+      {
+        "key": "P01",
+        "findings": "@experimentwrld, brand/creator; 5-15; 39 likes. Agrees with P00; owned endorsement, not independent customer or environmental corroboration. Same actor as P07."
+      },
+      {
+        "key": "P02",
+        "findings": "@person1234567556987; 5-15; 0 likes. Questions environmental friendliness and recyclability under P00; unresolved challenge, not evidence that packaging is unrecyclable."
+      },
+      {
+        "key": "P03",
+        "findings": "@randomdude7551; 5-15; 2 likes. Says aluminum is almost always recyclable, inner component likely recyclable, pump likely not, and pump/shell reusable. Speculative component claims; same origin as P00, not independent confirmation."
+      },
+      {
+        "key": "P04",
+        "findings": "@flamingpanda5; 5-20; 0 likes. Requests refill bundles; SKU unknown. Expressed offer preference, no reported purchase."
+      },
+      {
+        "key": "P06",
+        "findings": "@jasminesingh1102; 5-15; 12 likes. Reports arrival leak and loose top, opening/cleaning, and asks whether oxygen exposure makes product unusable. SKU/version unknown; no demonstrated damage from exposure. Parent of P07–P13."
+      },
+      {
+        "key": "P07",
+        "findings": "@experimentwrld, brand/creator; 5-16; 12 likes. Replies to P06 that short exposure is not an issue; offers replacement through hey@experimentbeauty.com. Offer only, no shipment or delivery evidence; assurance is brand-owned."
+      },
+      {
+        "key": "P15",
+        "findings": "@bmdubs; 5-15; 150 likes. Plans to use an empty package for Lexapro. Resonant reuse intention, not completed reuse or evidence of storage suitability; SKU unknown."
+      },
+      {
+        "key": "P17",
+        "findings": "@mostlyconceptual; 5-16; 1 like. Reports newly strong brand loyalty, an all-Experiment routine and Continuum in the mail. No receipt/use of Continuum or packaging-attributed purchase motive established."
+      },
+      {
+        "key": "P20",
+        "findings": "@countryboiiloveyouuuxoxo; 5-15; 7 likes. Says 'I’m buying everrrrrything'; broad buying enthusiasm, without specific completed checkout or packaging motive."
+      },
+      {
+        "key": "P21",
+        "findings": "@beautybought; 5-17; 1 like. Praises products and packaging they can feel good about. General approval, not a specific environmental test or buying consequence; SKU unknown."
+      },
+      {
+        "key": "P26",
+        "findings": "@adam_thomas6; 5-21; 1 like. Calls packaging great but asks what product does for skin; aesthetic approval alongside unresolved efficacy interest, not use testimony."
+      },
+      {
+        "key": "P27",
+        "findings": "@sofieeee120; 5-24; 1 like. Requests a Continuum and Super Saturated refill bundle. Named-product bundle interest, not reported purchase, joint use or repurchase."
+      },
+      {
+        "key": "P29",
+        "findings": "@allthegr8namesaretaken; 5-17; 2 likes. Asks how to get the sticker in their refill. Sticker/refill question; no established defect, remedy or completed transaction; SKU unknown."
+      },
+      {
+        "key": "P32",
+        "findings": "@josemarbp; 5-18; 3 likes. Calls the presentation genius and may save up for it. Tentative interest with a budget consideration; no completed buying or exact SKU."
+      },
+      {
+        "key": "P38",
+        "findings": "@taylorelissa; 5-16; 1 like. Calls package cute and cannot wait to try it. Appearance praise plus trial intention; no reported use or completed acquisition."
+      },
+      {
+        "key": "P39",
+        "findings": "@morco11111; 5-29; 1 like. Praises attention to packaging alongside formulas. General approval, not comparative formula testing or buying evidence."
+      },
+      {
+        "key": "P40",
+        "findings": "@danaisabellaaa; 5-15; 1 like. Calls it very cute; contextual aesthetic approval only, with SKU/version unknown."
+      },
+      {
+        "key": "P42",
+        "findings": "@__whitneyjade; 5-20; 1 like. Reports receiving theirs that day and only now discovering refillability; excited response. Receipt reported, refill use/purchase unreported, SKU unknown; awareness follows acquisition."
+      },
+      {
+        "key": "P08",
+        "findings": "@savi.glow; 5-16; 5 likes. Agrees with P06's arrival problem, reports ordering from Sephora and a free replacement sent. More than bare agreement; no explicit loose-top detail, confirmed delivery or resolution; SKU unknown."
+      },
+      {
+        "key": "P09",
+        "findings": "@user851526p; 5-16; 4 likes. 'sadly same' under P06: bare contextual arrival-leak agreement. No independently stated closure detail, retailer, remedy or SKU."
+      },
+      {
+        "key": "P10",
+        "findings": "@lara_jlue; 5-16; 4 likes. 'Mine came the same way' under P06: bare arrival-leak agreement. Does not explicitly describe loose top, cleanup, exposure or remedy; SKU unknown."
+      },
+      {
+        "key": "P11",
+        "findings": "@bert181818; 5-16; 2 likes. 'Same' under P06: bare contextual arrival-leak agreement, without failure mechanism, remedy or SKU details."
+      },
+      {
+        "key": "P12",
+        "findings": "@boyauditsskincare; 7-30; 0 likes. 'Same' under P06: later displayed month-day, bare contextual arrival-leak agreement. No additional details or positive engagement; year and SKU unknown."
+      },
+      {
+        "key": "P13",
+        "findings": "@betterxthanxnew; 5-18; 0 likes. Reports Sephora order, top not screwed down properly and major leak. Explicit second loose-top account within P06's thread; no remedy or SKU/version stated."
+      },
+      {
+        "key": "R01",
+        "findings": "Retailer review junip:13200181; actor 215817888; published 2026-05-10T02:01:45.837Z. Softwear–Void, version unknown: lid repeatedly unscrews; pocket leakage at work stained underwear, shirt and jeans, with unrecoverable product and costly loss. Suggests click-lock/doe-foot alternatives. Loves product, Void is favorite, explicitly will repurchase despite annoyance. Three stars; would_recommend=true; verified_buyer=true; rewarded=false; review engagement unavailable. In-use leakage, not arrival testimony; repetition does not quantify incidents. Cross-platform actor overlap unverified."
+      }
+    ],
+    "counts": [
+      {
+        "name": "arrival_leak",
+        "source_accounts": [
+          "P06",
+          "P08",
+          "P09",
+          "P10",
+          "P11",
+          "P12",
+          "P13"
+        ],
+        "count": 7
+      },
+      {
+        "name": "explicit_loose_top",
+        "source_accounts": [
+          "P06",
+          "P13"
+        ],
+        "count": 2
+      },
+      {
+        "name": "bare_arrival_agreement",
+        "source_accounts": [
+          "P09",
+          "P10",
+          "P11",
+          "P12"
+        ],
+        "count": 4
+      },
+      {
+        "name": "replacement_offered",
+        "source_accounts": [
+          "P07"
+        ],
+        "count": 1
+      },
+      {
+        "name": "replacement_sent",
+        "source_accounts": [
+          "P08"
+        ],
+        "count": 1
+      },
+      {
+        "name": "retailer_leak",
+        "source_accounts": [
+          "R01"
+        ],
+        "count": 1
+      },
+      {
+        "name": "repurchase_intended",
+        "source_accounts": [
+          "R01"
+        ],
+        "count": 1
+      }
+    ],
+    "product_action_assertions": null
+  },
+  "retrieval_rounds": 0
+}

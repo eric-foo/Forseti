@@ -1,0 +1,18 @@
+{
+  "base": "runs/buying-r2/generation-0",
+  "role": "generator",
+  "effort": "medium",
+  "started_at": "2026-09-09T14:32:11.212Z",
+  "finished_at": "2026-09-09T14:33:39.707Z",
+  "code": 0,
+  "signal": null,
+  "id": "01a08695-600f-7961-bbd9-1f2939a18b17",
+  "usage": {
+    "input_tokens": 34772,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2523,
+    "reasoning_output_tokens": 205
+  },
+  "turns": 1
+}

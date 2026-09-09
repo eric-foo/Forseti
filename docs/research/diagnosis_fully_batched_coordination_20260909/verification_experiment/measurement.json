@@ -1,0 +1,1723 @@
+{
+  "measured_at": "2026-09-09T14:44:23.282Z",
+  "frozen": true,
+  "calls": [
+    {
+      "base": "judges/buying",
+      "role": "judge",
+      "effort": "high",
+      "started_at": "2026-09-09T14:39:30.197Z",
+      "finished_at": "2026-09-09T14:40:08.939Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a0869c-13f8-7471-8b79-ea197ae27058",
+      "usage": {
+        "input_tokens": 65131,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 852,
+        "reasoning_output_tokens": 351,
+        "total_tokens": 65983
+      },
+      "turns": 1,
+      "path": "judges/buying",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-39-31-01a0869c-13f8-7471-8b79-ea197ae27058.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "high",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:40:05.484Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "243233ae7f026407a19c95973b5262be01f0e69089c306644dbe558d428ce0f3",
+          "3a403b9823b9c54a59053f809051fd3d95d25b8b79b63acd06fc33b7e89e933b"
+        ],
+        "native_session_sha256": "71d94304ca27542573aaf403a2f13a6a0eaa2d47c8026fdef136f68f6d39f183"
+      },
+      "bytes": {
+        "stdin": 171457,
+        "events": 3105,
+        "stderr": 1959
+      },
+      "wall_ms": 38742
+    },
+    {
+      "base": "judges/hydration",
+      "role": "judge",
+      "effort": "high",
+      "started_at": "2026-09-09T14:39:30.314Z",
+      "finished_at": "2026-09-09T14:40:32.573Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a0869c-1406-7d10-af0a-2d707e464f5f",
+      "usage": {
+        "input_tokens": 83267,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1650,
+        "reasoning_output_tokens": 797,
+        "total_tokens": 84917
+      },
+      "turns": 1,
+      "path": "judges/hydration",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-39-31-01a0869c-1406-7d10-af0a-2d707e464f5f.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "high",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:40:29.332Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "f121672b76a02537253d88e3a8cd0bb8e82a1e6e2b13dbd9397ff6a176d3427d",
+          "3b97e193430253ee96e509c01e0f5274d18a667aa8f39a5e0af8ec66958a2284"
+        ],
+        "native_session_sha256": "292ee07634cc19acc76f74e1aa84566a2a4c9b6645b06d5e06223a545ff62bb3"
+      },
+      "bytes": {
+        "stdin": 232028,
+        "events": 4938,
+        "stderr": 1959
+      },
+      "wall_ms": 62259
+    },
+    {
+      "base": "judges/packaging",
+      "role": "judge",
+      "effort": "high",
+      "started_at": "2026-09-09T14:39:29.849Z",
+      "finished_at": "2026-09-09T14:40:53.435Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a0869c-1271-7281-ba09-74bfdd59d0be",
+      "usage": {
+        "input_tokens": 57075,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2405,
+        "reasoning_output_tokens": 516,
+        "total_tokens": 59480
+      },
+      "turns": 1,
+      "path": "judges/packaging",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-39-31-01a0869c-1271-7281-ba09-74bfdd59d0be.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "high",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:40:50.988Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "cc86b7a9b5a05df629794819a76f41c9ecef8f1ee17ed77978076ecfb2b5c1f6",
+          "480cb5d4dc9c08c562960c8c4bb297a7f916c5e7f7f450c7b6d3bfbe4734e55f"
+        ],
+        "native_session_sha256": "6a235948068627b6312c7fa3c1cdca2d3f5563cf1e473083a9e0bb3bad62580c"
+      },
+      "bytes": {
+        "stdin": 139623,
+        "events": 10366,
+        "stderr": 1959
+      },
+      "wall_ms": 83586
+    },
+    {
+      "base": "runs/buying-r1/generation-0",
+      "role": "generator",
+      "effort": "medium",
+      "started_at": "2026-09-09T14:32:10.940Z",
+      "finished_at": "2026-09-09T14:33:49.389Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08695-6011-7691-a63a-f8a8d9b43239",
+      "usage": {
+        "input_tokens": 34772,
+        "cached_input_tokens": 17792,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2853,
+        "reasoning_output_tokens": 292,
+        "total_tokens": 37625
+      },
+      "turns": 1,
+      "path": "runs/buying-r1/generation-0",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-32-12-01a08695-6011-7691-a63a-f8a8d9b43239.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "medium",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:33:46.039Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "80ca5c9b26704eae3eb89920d9ad9b5fea87d5347d24410d5eb242117d27d62b",
+          "c13f03b1d0fcf87dd9367eda62c152c2a7e93c921afc7feaf6461c428bc9cc00"
+        ],
+        "native_session_sha256": "a5074384aa3df79be7b0770f0eca30734ac9da409f0b25ad15c2c965396fb21f"
+      },
+      "bytes": {
+        "stdin": 47093,
+        "events": 12783,
+        "stderr": 1959
+      },
+      "wall_ms": 98449
+    },
+    {
+      "base": "runs/buying-r1/verifier",
+      "role": "verifier",
+      "effort": "high",
+      "started_at": "2026-09-09T14:33:49.402Z",
+      "finished_at": "2026-09-09T14:34:16.672Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08696-df0c-7352-9e4a-ecc408bd9cbb",
+      "usage": {
+        "input_tokens": 37180,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 572,
+        "reasoning_output_tokens": 431,
+        "total_tokens": 37752
+      },
+      "turns": 1,
+      "path": "runs/buying-r1/verifier",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-33-49-01a08696-df0c-7352-9e4a-ecc408bd9cbb.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "high",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:34:13.795Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "a9ecb07b01670a5ed2cda7fc81519024ca4ef03109a62d91b94952f51a78aee5",
+          "faee3e7a760e641141603fadc3a2cdf3334ddb772ec38c61e8105e951127a040"
+        ],
+        "native_session_sha256": "9ef2b6b57305bb090cf3f1f6001ef11229aefea74d9f4571645f8351ca559e46"
+      },
+      "bytes": {
+        "stdin": 59336,
+        "events": 1302,
+        "stderr": 1959
+      },
+      "wall_ms": 27270
+    },
+    {
+      "base": "runs/buying-r2/generation-0",
+      "role": "generator",
+      "effort": "medium",
+      "started_at": "2026-09-09T14:32:11.212Z",
+      "finished_at": "2026-09-09T14:33:39.707Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08695-600f-7961-bbd9-1f2939a18b17",
+      "usage": {
+        "input_tokens": 34772,
+        "cached_input_tokens": 12288,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2523,
+        "reasoning_output_tokens": 205,
+        "total_tokens": 37295
+      },
+      "turns": 1,
+      "path": "runs/buying-r2/generation-0",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-32-12-01a08695-600f-7961-bbd9-1f2939a18b17.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "medium",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:33:36.775Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "9994247604c76690893b0a904aab1caf2f5c0f33614dcdffc26be86b506cb51e",
+          "8943ea7f24d5883d2c517ac399ab60ee730df4d9b9a63198a9f26f36963bfcf9"
+        ],
+        "native_session_sha256": "3a73b26a2c06b041f799a9cee2c3ed70d5c17acd7380407ad809078424bbe7c4"
+      },
+      "bytes": {
+        "stdin": 47093,
+        "events": 12061,
+        "stderr": 1959
+      },
+      "wall_ms": 88495
+    },
+    {
+      "base": "runs/buying-r2/verifier",
+      "role": "verifier",
+      "effort": "high",
+      "started_at": "2026-09-09T14:33:39.725Z",
+      "finished_at": "2026-09-09T14:34:00.393Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08696-ba7d-7cb1-9d5e-f917a317c060",
+      "usage": {
+        "input_tokens": 37132,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 292,
+        "reasoning_output_tokens": 235,
+        "total_tokens": 37424
+      },
+      "turns": 1,
+      "path": "runs/buying-r2/verifier",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-33-40-01a08696-ba7d-7cb1-9d5e-f917a317c060.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "high",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:33:57.250Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "678f714ef522736f451c14029fcdad3b40760d6096f78d244d461885278e47be",
+          "79b6c8cd72ddbb540e57a3a937f9bfebca12673f083ab8431880a7b02f0d4f24"
+        ],
+        "native_session_sha256": "5d3b966cd180c347fdcedfc7ee5a68afaa2a01708b508422d9a119ef69671012"
+      },
+      "bytes": {
+        "stdin": 59234,
+        "events": 877,
+        "stderr": 1959
+      },
+      "wall_ms": 20668
+    },
+    {
+      "base": "runs/buying-r3/generation-0",
+      "role": "generator",
+      "effort": "medium",
+      "started_at": "2026-09-09T14:32:11.270Z",
+      "finished_at": "2026-09-09T14:33:44.748Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08695-60f9-76d3-bbcc-76182092a9f6",
+      "usage": {
+        "input_tokens": 34772,
+        "cached_input_tokens": 17792,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2570,
+        "reasoning_output_tokens": 274,
+        "total_tokens": 37342
+      },
+      "turns": 1,
+      "path": "runs/buying-r3/generation-0",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-32-12-01a08695-60f9-76d3-bbcc-76182092a9f6.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "medium",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:33:42.036Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "da312e9818b3dcec070ac2746bd226e1a86355d10711f1770ef2166c99f7642a",
+          "2c567d0b3795849040c655f7cd94679c90abe4f8411f101f4c71eb9c3a39f5aa"
+        ],
+        "native_session_sha256": "ffda0f372e955926dc27855eba2bef073d2ece5ff69db6aa313578a5a2410dc6"
+      },
+      "bytes": {
+        "stdin": 47093,
+        "events": 11898,
+        "stderr": 1959
+      },
+      "wall_ms": 93478
+    },
+    {
+      "base": "runs/buying-r3/verifier",
+      "role": "verifier",
+      "effort": "high",
+      "started_at": "2026-09-09T14:33:44.758Z",
+      "finished_at": "2026-09-09T14:34:03.366Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08696-ccd1-7351-a560-34c1dd7a3157",
+      "usage": {
+        "input_tokens": 37110,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 297,
+        "reasoning_output_tokens": 242,
+        "total_tokens": 37407
+      },
+      "turns": 1,
+      "path": "runs/buying-r3/verifier",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-33-45-01a08696-ccd1-7351-a560-34c1dd7a3157.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "high",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:34:00.294Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "029cca836924e8c9685754208831ad128d89105fcfea080967aa3a4d543f2b4a",
+          "759b42260b9d2031d15fe7b7c67ad48ae0553a0bb3b205feef852da9a9328c24"
+        ],
+        "native_session_sha256": "635f13a139fcb99594227acd5ab76c92168887388ac2be536a64477e2535b4d8"
+      },
+      "bytes": {
+        "stdin": 59069,
+        "events": 871,
+        "stderr": 1959
+      },
+      "wall_ms": 18608
+    },
+    {
+      "base": "runs/hydration-control/verifier",
+      "role": "verifier",
+      "effort": "high",
+      "started_at": "2026-09-09T14:34:16.680Z",
+      "finished_at": "2026-09-09T14:34:44.148Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08697-4a2c-75e2-bd12-ca90b20600a4",
+      "usage": {
+        "input_tokens": 38463,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 554,
+        "reasoning_output_tokens": 338,
+        "total_tokens": 39017
+      },
+      "turns": 1,
+      "path": "runs/hydration-control/verifier",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-34-17-01a08697-4a2c-75e2-bd12-ca90b20600a4.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "high",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:34:40.546Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "1db7fbd7b0b7173be3235439c69ae944c75cef1129301b45f6a824d1e4a12ba0",
+          "220597879f577f0b2f16c1bcd54e2bf59d0764ddf7c2ff005dffcdd9ecdfbe7b"
+        ],
+        "native_session_sha256": "4d4e4322a808cf52df73879c5c80f4023ac1ac8b053e69b6dab3a71679411046"
+      },
+      "bytes": {
+        "stdin": 62157,
+        "events": 1764,
+        "stderr": 1959
+      },
+      "wall_ms": 27468
+    },
+    {
+      "base": "runs/hydration-r1/generation-0",
+      "role": "generator",
+      "effort": "medium",
+      "started_at": "2026-09-09T14:32:11.231Z",
+      "finished_at": "2026-09-09T14:32:29.789Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08695-600f-7d70-b54e-d9a5a30ccbae",
+      "usage": {
+        "input_tokens": 36072,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 199,
+        "reasoning_output_tokens": 106,
+        "total_tokens": 36271
+      },
+      "turns": 1,
+      "path": "runs/hydration-r1/generation-0",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-32-12-01a08695-600f-7d70-b54e-d9a5a30ccbae.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "medium",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:32:26.820Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "19423f51d362f07266bbcda05b70ea7260b2e36f31dc24522d936ea0439ba82e",
+          "bfd9c9e1f3618f15f50be079bf31863ed6243752aef906d2b61ed8816602b1e2"
+        ],
+        "native_session_sha256": "b5871cdc6038c4bd949d8a0773dc87b14319eed4c77ae3c59a1644c56158b026"
+      },
+      "bytes": {
+        "stdin": 50228,
+        "events": 1076,
+        "stderr": 1959
+      },
+      "wall_ms": 18558
+    },
+    {
+      "base": "runs/hydration-r1/generation-1",
+      "role": "generator",
+      "effort": "medium",
+      "started_at": "2026-09-09T14:32:29.802Z",
+      "finished_at": "2026-09-09T14:33:56.652Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08695-a92a-7d23-85cf-c7585a71e2a3",
+      "usage": {
+        "input_tokens": 36777,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2526,
+        "reasoning_output_tokens": 0,
+        "total_tokens": 39303
+      },
+      "turns": 1,
+      "path": "runs/hydration-r1/generation-1",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-32-30-01a08695-a92a-7d23-85cf-c7585a71e2a3.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "medium",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:33:53.614Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "293f5a6c540f43b76fa178deefccb8c9455c1f5651008f9aedbc92de44c534ad",
+          "f60dea4a059ca276d133f0008b042ce1c39034d5d9655a096c635d16214fa12e"
+        ],
+        "native_session_sha256": "ce8e8004c3d95c83672f524d0b0bc65ecaf1a77f129a82be08d06453e4b60d84"
+      },
+      "bytes": {
+        "stdin": 52785,
+        "events": 12394,
+        "stderr": 1959
+      },
+      "wall_ms": 86850
+    },
+    {
+      "base": "runs/hydration-r1/verifier",
+      "role": "verifier",
+      "effort": "high",
+      "started_at": "2026-09-09T14:33:56.666Z",
+      "finished_at": "2026-09-09T14:34:20.324Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08696-fb63-70b3-b0a3-3febed8e988e",
+      "usage": {
+        "input_tokens": 38477,
+        "cached_input_tokens": 17664,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 468,
+        "reasoning_output_tokens": 334,
+        "total_tokens": 38945
+      },
+      "turns": 1,
+      "path": "runs/hydration-r1/verifier",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-33-57-01a08696-fb63-70b3-b0a3-3febed8e988e.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "high",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:34:17.457Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "dcb518ff69079bf84b44f49973618af9fbefe617ee6c1f2a9ad21aab0ae1b926",
+          "498c83d159a1b5a8a80205bb26fda128e5fd53377bee892a1b129c9fe8471fb7"
+        ],
+        "native_session_sha256": "e072a4e6bfc1f209fa28a8f1b10a7ce210444eae3feb47851192e836381f3291"
+      },
+      "bytes": {
+        "stdin": 62201,
+        "events": 1222,
+        "stderr": 1959
+      },
+      "wall_ms": 23658
+    },
+    {
+      "base": "runs/hydration-r2/generation-0",
+      "role": "generator",
+      "effort": "medium",
+      "started_at": "2026-09-09T14:32:11.440Z",
+      "finished_at": "2026-09-09T14:33:47.625Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08695-61dc-7763-8cbe-7e375862df4f",
+      "usage": {
+        "input_tokens": 36072,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2727,
+        "reasoning_output_tokens": 167,
+        "total_tokens": 38799
+      },
+      "turns": 1,
+      "path": "runs/hydration-r2/generation-0",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-32-12-01a08695-61dc-7763-8cbe-7e375862df4f.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "medium",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:33:45.006Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "6f2a723f3e3730e2307756deeddbca9f06f8da6693e89c7b682fab9e113f5fb6",
+          "b3c7481614049d8fa734d0f0ee454020abf9b7e123057b839e81e9dee4e9beb9"
+        ],
+        "native_session_sha256": "c73d23241587f8056350c22bdf386745f84aaef59cf83e5bbdf6bdd752cd0580"
+      },
+      "bytes": {
+        "stdin": 50228,
+        "events": 12368,
+        "stderr": 1959
+      },
+      "wall_ms": 96185
+    },
+    {
+      "base": "runs/hydration-r2/verifier",
+      "role": "verifier",
+      "effort": "high",
+      "started_at": "2026-09-09T14:33:47.637Z",
+      "finished_at": "2026-09-09T14:34:10.346Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08696-d9b8-7052-9dbb-492b55cb1c55",
+      "usage": {
+        "input_tokens": 38509,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 377,
+        "reasoning_output_tokens": 322,
+        "total_tokens": 38886
+      },
+      "turns": 1,
+      "path": "runs/hydration-r2/verifier",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-33-48-01a08696-d9b8-7052-9dbb-492b55cb1c55.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "high",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:34:07.287Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "ec4785ef0ef2bda59b21948f8d5df7edbfd785858cc8aee49ca63c1d29a41092",
+          "b7fe00c138d0f210fe2871ab9fd545274cbf187a429badca309af4875512e979"
+        ],
+        "native_session_sha256": "4583c5cc57212dfe4d7772b3afb3b7675c60339b0ba0fa5e62c24ff5315c3235"
+      },
+      "bytes": {
+        "stdin": 62171,
+        "events": 864,
+        "stderr": 1959
+      },
+      "wall_ms": 22709
+    },
+    {
+      "base": "runs/hydration-r3/generation-0",
+      "role": "generator",
+      "effort": "medium",
+      "started_at": "2026-09-09T14:32:11.459Z",
+      "finished_at": "2026-09-09T14:32:30.601Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08695-6273-7941-ae10-6bc4ee66dffb",
+      "usage": {
+        "input_tokens": 36072,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 199,
+        "reasoning_output_tokens": 106,
+        "total_tokens": 36271
+      },
+      "turns": 1,
+      "path": "runs/hydration-r3/generation-0",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-32-13-01a08695-6273-7941-ae10-6bc4ee66dffb.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "medium",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:32:27.047Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "bc35e665edae87a7b18f45999625b30d94ce4b983d8bd90b5ed99e578340f0bd",
+          "089a00b00017b2ff7369078e48162774e4d5a9e2c4caadcab4f66fc2b65a9b12"
+        ],
+        "native_session_sha256": "5a61b1d01fb8cf5012845784df9e704e2f14b92ac0b5171082d2f37ece207a71"
+      },
+      "bytes": {
+        "stdin": 50228,
+        "events": 1042,
+        "stderr": 1959
+      },
+      "wall_ms": 19142
+    },
+    {
+      "base": "runs/hydration-r3/generation-1",
+      "role": "generator",
+      "effort": "medium",
+      "started_at": "2026-09-09T14:32:30.609Z",
+      "finished_at": "2026-09-09T14:33:54.277Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08695-ab7c-7ab3-8358-60841d9a9c0c",
+      "usage": {
+        "input_tokens": 36777,
+        "cached_input_tokens": 12288,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2458,
+        "reasoning_output_tokens": 39,
+        "total_tokens": 39235
+      },
+      "turns": 1,
+      "path": "runs/hydration-r3/generation-1",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-32-31-01a08695-ab7c-7ab3-8358-60841d9a9c0c.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "medium",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:33:51.536Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "8e01e3423646bcd0484493bfa7c358bd906082b5225a628739de4d19a9ed41a4",
+          "8693a68713825b1f500af45f6506ffce90c17ba6baf92629c09133f9085673af"
+        ],
+        "native_session_sha256": "99373e47fb9609e876249d32d008f9b7c8ce5e0f4794d55e092a729433416f92"
+      },
+      "bytes": {
+        "stdin": 52751,
+        "events": 11801,
+        "stderr": 1959
+      },
+      "wall_ms": 83668
+    },
+    {
+      "base": "runs/hydration-r3/verifier",
+      "role": "verifier",
+      "effort": "high",
+      "started_at": "2026-09-09T14:33:54.284Z",
+      "finished_at": "2026-09-09T14:34:16.983Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08696-f32f-70f0-84cf-9c56a902c00e",
+      "usage": {
+        "input_tokens": 38368,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 373,
+        "reasoning_output_tokens": 315,
+        "total_tokens": 38741
+      },
+      "turns": 1,
+      "path": "runs/hydration-r3/verifier",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-33-55-01a08696-f32f-70f0-84cf-9c56a902c00e.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "high",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:34:13.800Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "75fa9dfca545acbb1e0fb9bc668564b890a89105de8434f32bd2e6437d94794c",
+          "d8d2a6fb86e515cb8b7ef09c800c9cf1f482694b001c126fc49664525b70b636"
+        ],
+        "native_session_sha256": "19a76115cb5573be0391b82d71c39189f9458e9314fe2d431e861fbe514c2527"
+      },
+      "bytes": {
+        "stdin": 61603,
+        "events": 883,
+        "stderr": 1959
+      },
+      "wall_ms": 22699
+    },
+    {
+      "base": "runs/packaging-r1/generation-0",
+      "role": "generator",
+      "effort": "medium",
+      "started_at": "2026-09-09T14:34:00.404Z",
+      "finished_at": "2026-09-09T14:35:47.750Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08697-0b1e-7d53-adbb-9532065180b2",
+      "usage": {
+        "input_tokens": 31276,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3257,
+        "reasoning_output_tokens": 62,
+        "total_tokens": 34533
+      },
+      "turns": 1,
+      "path": "runs/packaging-r1/generation-0",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-34-01-01a08697-0b1e-7d53-adbb-9532065180b2.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "medium",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:35:45.182Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "630030e16fb7a02ffb2bdda9f5a9592bcebc181ad17db58203646db71ae8192c",
+          "4cef8bee5e27d55e3625d459c458ca1165376ed91010c97a6dc2c0af35e779a3"
+        ],
+        "native_session_sha256": "cb605bd9d7adedb4c7887f69414c4bf7961b1e75be753c8965622aea08458538"
+      },
+      "bytes": {
+        "stdin": 35740,
+        "events": 14296,
+        "stderr": 1959
+      },
+      "wall_ms": 107346
+    },
+    {
+      "base": "runs/packaging-r1/verifier",
+      "role": "verifier",
+      "effort": "high",
+      "started_at": "2026-09-09T14:35:47.756Z",
+      "finished_at": "2026-09-09T14:36:26.315Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08698-ade1-7cd3-a0de-684f9f381cf8",
+      "usage": {
+        "input_tokens": 34262,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 958,
+        "reasoning_output_tokens": 897,
+        "total_tokens": 35220
+      },
+      "turns": 1,
+      "path": "runs/packaging-r1/verifier",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-35-48-01a08698-ade1-7cd3-a0de-684f9f381cf8.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "high",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:36:23.355Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "0e53a6018b9737021e26fc14da42b151f2da6cea0f95e05dd175621a9052bbdc",
+          "2df8d090096a1403f074cf6f3f121fd92125f1f41ba2e6d4e806c98ee188925d"
+        ],
+        "native_session_sha256": "3e7e9e6564f6a498a6b2cbbfb0979665303db3d98f650990153fcde342672ffa"
+      },
+      "bytes": {
+        "stdin": 48879,
+        "events": 890,
+        "stderr": 1959
+      },
+      "wall_ms": 38559
+    },
+    {
+      "base": "runs/packaging-r2/generation-0",
+      "role": "generator",
+      "effort": "medium",
+      "started_at": "2026-09-09T14:34:03.374Z",
+      "finished_at": "2026-09-09T14:35:46.292Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08697-1597-7282-a2b4-8e6fed6c77e9",
+      "usage": {
+        "input_tokens": 31276,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3129,
+        "reasoning_output_tokens": 129,
+        "total_tokens": 34405
+      },
+      "turns": 1,
+      "path": "runs/packaging-r2/generation-0",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-34-03-01a08697-1597-7282-a2b4-8e6fed6c77e9.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "medium",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:35:43.823Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "a3deaf667c91ff8f6af62213e4278809d6528f12a4493703c2de0401c83279db",
+          "3ed62545511c75ebb43a4c215c7dddabb203aec8304f649bb47e2abef6b12d50"
+        ],
+        "native_session_sha256": "75ff75df210562ace5e3e5c58e4282faacc8b68e8fef63dbab634c8dbee468b0"
+      },
+      "bytes": {
+        "stdin": 35740,
+        "events": 13720,
+        "stderr": 1959
+      },
+      "wall_ms": 102918
+    },
+    {
+      "base": "runs/packaging-r2/verifier",
+      "role": "verifier",
+      "effort": "high",
+      "started_at": "2026-09-09T14:35:46.296Z",
+      "finished_at": "2026-09-09T14:36:38.142Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08698-a784-7ca1-b5a9-fe83d26a89fe",
+      "usage": {
+        "input_tokens": 34092,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1435,
+        "reasoning_output_tokens": 1034,
+        "total_tokens": 35527
+      },
+      "turns": 1,
+      "path": "runs/packaging-r2/verifier",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-35-46-01a08698-a784-7ca1-b5a9-fe83d26a89fe.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "high",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:36:35.238Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "04e63d5116ad5a867f833994b57db421fd0257e15e82e14637d25cd2a248edcc",
+          "7988d5791616999bd301c7a592cc0f877e702639cc7adc6b2abe73adf2e10063"
+        ],
+        "native_session_sha256": "4802234ce72d368ad83238311f8e5640bb705e560440a8798914d29d90aee955"
+      },
+      "bytes": {
+        "stdin": 48300,
+        "events": 2696,
+        "stderr": 1959
+      },
+      "wall_ms": 51846
+    },
+    {
+      "base": "runs/packaging-r3/generation-0",
+      "role": "generator",
+      "effort": "medium",
+      "started_at": "2026-09-09T14:34:10.351Z",
+      "finished_at": "2026-09-09T14:35:42.250Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08697-3162-7ef0-9cd0-138c5d565c0e",
+      "usage": {
+        "input_tokens": 31276,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2753,
+        "reasoning_output_tokens": 110,
+        "total_tokens": 34029
+      },
+      "turns": 1,
+      "path": "runs/packaging-r3/generation-0",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-34-11-01a08697-3162-7ef0-9cd0-138c5d565c0e.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "medium",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:35:39.733Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "6a62a22edb09875155f7b4b900a6ae07655385d204e7b2620b2fabd466ef1c26",
+          "a37a44345e8267a63c76d809b6b33665956c3255db04749540af72cce7cc8914"
+        ],
+        "native_session_sha256": "1570846a2460239a599e8bc23dc2c3a265e9df47c47e17378b6157f9522da049"
+      },
+      "bytes": {
+        "stdin": 35740,
+        "events": 12189,
+        "stderr": 1959
+      },
+      "wall_ms": 91899
+    },
+    {
+      "base": "runs/packaging-r3/verifier",
+      "role": "verifier",
+      "effort": "high",
+      "started_at": "2026-09-09T14:35:42.257Z",
+      "finished_at": "2026-09-09T14:36:22.799Z",
+      "code": 0,
+      "signal": null,
+      "id": "01a08698-9923-7052-8c08-9710109cff49",
+      "usage": {
+        "input_tokens": 33972,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1025,
+        "reasoning_output_tokens": 516,
+        "total_tokens": 34997
+      },
+      "turns": 1,
+      "path": "runs/packaging-r3/verifier",
+      "native_session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-35-43-01a08698-9923-7052-8c08-9710109cff49.jsonl",
+      "actual_settings": {
+        "model": "gpt-6-astra",
+        "effort": "high",
+        "cli_version": "0.153.4",
+        "originator": "Codex Desktop",
+        "service_tier": "unavailable"
+      },
+      "counter_at": "2026-09-09T14:36:19.819Z",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_outputs": 0,
+      "cold": {
+        "exact_stdin": true,
+        "no_prior_history": true,
+        "extra_user_context_hashes": [
+          "9aa2d3a1984423d00b4ba243a140306cb2a6908fd9fc8ab82bbb6ecbf651ff15",
+          "836abe3d44b5e06a4a0f49dfb06c199579cd562535762351e91e0fd8c49185ce",
+          "4b0743444c134a3dd331b7486587488465eb5fa47501cd8cd73b2eecbcb12e1c"
+        ],
+        "native_session_sha256": "6fcaf36f1f515a98da87ef1e1570fc69c617039f2f39a3b8f408f9d0224023a2"
+      },
+      "bytes": {
+        "stdin": 47634,
+        "events": 2970,
+        "stderr": 1959
+      },
+      "wall_ms": 40542
+    }
+  ],
+  "pairs": [
+    {
+      "run_id": "hydration-control",
+      "case": "hydration",
+      "positive_control": true,
+      "baseline_label": "A",
+      "corrected_label": "B",
+      "pair_id": "pair-18ee2c6373",
+      "before_material_errors": [
+        {
+          "label": "noncausation_of_congestion_promoted_to_reduction",
+          "answer_excerpt": "plus less irritation, congestion and perceived oil production",
+          "source_keys": [
+            "A13"
+          ],
+          "source_excerpt": "It has not caused the congestion on my forehead that results in textured skin and bumps",
+          "reason": "The main diagnosis claims reduced congestion, whereas the source reports hydration without causing congestion. The accurate source-index wording limits but does not erase this stronger benefit claim."
+        }
+      ],
+      "after_material_errors": [],
+      "before_notes": [
+        "A14’s 'softer, calmer skin' is a reasonable broad paraphrase given the title 'Calming, Soothing, Buttery Soft Sorcery' and the reported soft skin without irritation; it does not specify a reduction in redness."
+      ],
+      "after_notes": []
+    },
+    {
+      "run_id": "hydration-r1",
+      "case": "hydration",
+      "positive_control": false,
+      "baseline_label": "A",
+      "corrected_label": "B",
+      "pair_id": "pair-8ff855b660",
+      "before_material_errors": [
+        {
+          "label": "absence_of_redness_promoted_to_reduction",
+          "answer_excerpt": "gives silky jelly-to-oil slip and soft, less red skin",
+          "source_keys": [
+            "A14"
+          ],
+          "source_excerpt": "I have rosacea and I've been adding a drop of this to my moisturizer at night and I wake up with super soft skin with no redness, irritation, or clogged pores.",
+          "reason": "The source reports no redness after joint use, without establishing prior redness or a decrease. 'Less red' adds a comparative improvement; rosacea and the calming title do not establish that specific change. Accurate wording in the source index does not erase the overstatement."
+        }
+      ],
+      "after_material_errors": [],
+      "before_notes": [
+        "The phrase 'duration, reduced oil, irritation and congestion claims' does not unambiguously assert reduced congestion; the source index expressly preserves 'no forehead congestion'."
+      ],
+      "after_notes": [
+        "The phrase 'duration, reduced oil, irritation and congestion claims' is imprecise but remains consistent with the source index’s explicit 'no forehead congestion'."
+      ]
+    },
+    {
+      "run_id": "hydration-r2",
+      "case": "hydration",
+      "positive_control": false,
+      "baseline_label": "A",
+      "corrected_label": "B",
+      "pair_id": "pair-5591cdfe2e",
+      "before_material_errors": [],
+      "after_material_errors": [],
+      "before_notes": [
+        "The paired answers are identical. 'Soft, calm skin' preserves A14’s reported condition without asserting a comparative redness improvement."
+      ],
+      "after_notes": [
+        "The paired answers are identical. 'Soft, calm skin' preserves A14’s reported condition without asserting a comparative redness improvement."
+      ]
+    },
+    {
+      "run_id": "hydration-r3",
+      "case": "hydration",
+      "positive_control": false,
+      "baseline_label": "B",
+      "corrected_label": "A",
+      "pair_id": "pair-6a6ed59901",
+      "before_material_errors": [],
+      "after_material_errors": [],
+      "before_notes": [
+        "The paired answers are identical; no material distinction is warranted."
+      ],
+      "after_notes": [
+        "The paired answers are identical; no material distinction is warranted."
+      ]
+    },
+    {
+      "run_id": "buying-r1",
+      "case": "buying",
+      "positive_control": false,
+      "baseline_label": "A",
+      "corrected_label": "B",
+      "pair_id": "pair-725682e9ae",
+      "before_material_errors": [],
+      "after_material_errors": [],
+      "before_notes": [
+        "“Wash-associated absence of breakouts” preserves A04’s reported “bam… no more breakouts” in context."
+      ],
+      "after_notes": [
+        "“Wash-associated cessation of breakouts” is supported by A04’s “bam… no more breakouts”; the wording difference does not change the diagnosis."
+      ]
+    },
+    {
+      "run_id": "buying-r2",
+      "case": "buying",
+      "positive_control": false,
+      "baseline_label": "B",
+      "corrected_label": "A",
+      "pair_id": "pair-87ad3d351b",
+      "before_material_errors": [],
+      "after_material_errors": [],
+      "before_notes": [
+        "The completed-routine count omits A05 despite preserving its prior sheet-mask cessation in the source index. Under the supplied assessment rule, this stopping-versus-replacement accounting discrepancy is nonmaterial.",
+        "Calling A14–A16 “additions” lacks a supplied historical boundary, but does not change their current behavioral classification."
+      ],
+      "after_notes": [
+        "The completed-routine count omits A05 despite preserving its prior sheet-mask cessation in the source index. Under the supplied assessment rule, this stopping-versus-replacement accounting discrepancy is nonmaterial.",
+        "Calling A14–A16 “additions” lacks a supplied historical boundary, but does not change their current behavioral classification."
+      ]
+    },
+    {
+      "run_id": "buying-r3",
+      "case": "buying",
+      "positive_control": false,
+      "baseline_label": "A",
+      "corrected_label": "B",
+      "pair_id": "pair-8f25fb5f96",
+      "before_material_errors": [],
+      "after_material_errors": [],
+      "before_notes": [],
+      "after_notes": []
+    },
+    {
+      "run_id": "packaging-r1",
+      "case": "packaging",
+      "positive_control": false,
+      "baseline_label": "B",
+      "corrected_label": "A",
+      "pair_id": "pair-d8b100092b",
+      "before_material_errors": [
+        {
+          "label": "unsupported_historical_evidence_boundary",
+          "answer_excerpt": "Initial stage is reconstructed as the supplied focal set before additions P08–P13 and R01; no separate initial-stage record was supplied.",
+          "source_keys": [
+            "reader_input.stage",
+            "reader_input.method",
+            "reader_input.focal_keys"
+          ],
+          "source_excerpt": "\"stage\":\"updated\"\n\"method\":\"Reread the complete initial and added source set and construct the current diagnosis.\"\n\"focal_keys\":[\"P00\",\"P01\",\"P02\",\"P03\",\"P04\",\"P06\",\"P07\",\"P15\",\"P17\",\"P20\",\"P21\",\"P26\",\"P27\",\"P29\",\"P32\",\"P38\",\"P39\",\"P40\",\"P42\",\"P08\",\"P09\",\"P10\",\"P11\",\"P12\",\"P13\",\"R01\"]",
+          "reason": "The current set supplies no historical membership boundary. Treating record order as that boundary invents an initial single-report diagnosis and subsequent gains in recurrence, replacement shipment and repurchase intent. Calling this a reconstruction does not establish the asserted history."
+        }
+      ],
+      "after_material_errors": [
+        {
+          "label": "unsupported_historical_evidence_boundary",
+          "answer_excerpt": "Initial stage is reconstructed as the supplied focal set before additions P08–P13 and R01; no separate initial-stage record was supplied.",
+          "source_keys": [
+            "reader_input.stage",
+            "reader_input.method",
+            "reader_input.focal_keys"
+          ],
+          "source_excerpt": "\"stage\":\"updated\"\n\"method\":\"Reread the complete initial and added source set and construct the current diagnosis.\"\n\"focal_keys\":[\"P00\",\"P01\",\"P02\",\"P03\",\"P04\",\"P06\",\"P07\",\"P15\",\"P17\",\"P20\",\"P21\",\"P26\",\"P27\",\"P29\",\"P32\",\"P38\",\"P39\",\"P40\",\"P42\",\"P08\",\"P09\",\"P10\",\"P11\",\"P12\",\"P13\",\"R01\"]",
+          "reason": "The current set supplies no historical membership boundary. Treating record order as that boundary invents an initial single-report diagnosis and subsequent gains in recurrence, replacement shipment and repurchase intent. Calling this a reconstruction does not establish the asserted history."
+        }
+      ],
+      "before_notes": [
+        "A and B are identical and receive the same findings. Their current counts and descriptive community/retailer evidence are supported."
+      ],
+      "after_notes": [
+        "A and B are identical and receive the same findings. Their current counts and descriptive community/retailer evidence are supported."
+      ]
+    },
+    {
+      "run_id": "packaging-r2",
+      "case": "packaging",
+      "positive_control": false,
+      "baseline_label": "B",
+      "corrected_label": "A",
+      "pair_id": "pair-9838fe726d",
+      "before_material_errors": [
+        {
+          "label": "unsupported_historical_evidence_boundary",
+          "answer_excerpt": "The initial comparison below uses the visible core preceding the appended P08–P13 and R01 records; it is a reconstruction, not a separately verified initial report.",
+          "source_keys": [
+            "reader_input.stage",
+            "reader_input.method",
+            "reader_input.focal_keys"
+          ],
+          "source_excerpt": "\"stage\":\"updated\"\n\"method\":\"Reread the complete initial and added source set and construct the current diagnosis.\"\n\"focal_keys\":[\"P00\",\"P01\",\"P02\",\"P03\",\"P04\",\"P06\",\"P07\",\"P15\",\"P17\",\"P20\",\"P21\",\"P26\",\"P27\",\"P29\",\"P32\",\"P38\",\"P39\",\"P40\",\"P42\",\"P08\",\"P09\",\"P10\",\"P11\",\"P12\",\"P13\",\"R01\"]",
+          "reason": "Record order does not identify initial versus added evidence. The resulting account of P06 alone initially and six accounts plus retailer evidence subsequently invents how diagnostic support developed, despite the reconstruction caveat."
+        },
+        {
+          "label": "unsupported_independent_cross_role_corroboration",
+          "answer_excerpt": "the retailer review corroborates only the broader problem of loose closures and leakage, under a different product/use condition.\n\nR01 independently reports Softwear–Void's lid repeatedly unscrewing",
+          "source_keys": [
+            "P06",
+            "P13",
+            "R01",
+            "forseti_intelligence_claim_support_contract_v0.md"
+          ],
+          "source_excerpt": "P06: \"author_url\":\"/@jasminesingh1102\"\nP13: \"author_url\":\"/@betterxthanxnew\"\nR01: \"actor_identity\":\"215817888\"\nContract: \"Exact, possible, confirmed, or unavailable same-actor overlap cannot be used to manufacture independent-origin credit.\"",
+          "reason": "The separate retailer identifier does not establish independence from the TikTok actors. Descriptive recurrence across roles is supported, but the main diagnosis grants corroboration and explicitly calls R01 independent. The later unverified-identity caveat limits, but does not erase, that stronger support claim."
+        }
+      ],
+      "after_material_errors": [
+        {
+          "label": "unsupported_historical_evidence_boundary",
+          "answer_excerpt": "The initial comparison below uses the visible core preceding the appended P08–P13 and R01 records; it is a reconstruction, not a separately verified initial report.",
+          "source_keys": [
+            "reader_input.stage",
+            "reader_input.method",
+            "reader_input.focal_keys"
+          ],
+          "source_excerpt": "\"stage\":\"updated\"\n\"method\":\"Reread the complete initial and added source set and construct the current diagnosis.\"\n\"focal_keys\":[\"P00\",\"P01\",\"P02\",\"P03\",\"P04\",\"P06\",\"P07\",\"P15\",\"P17\",\"P20\",\"P21\",\"P26\",\"P27\",\"P29\",\"P32\",\"P38\",\"P39\",\"P40\",\"P42\",\"P08\",\"P09\",\"P10\",\"P11\",\"P12\",\"P13\",\"R01\"]",
+          "reason": "Record order does not identify initial versus added evidence. The resulting account of P06 alone initially and six accounts plus retailer evidence subsequently invents how diagnostic support developed, despite the reconstruction caveat."
+        }
+      ],
+      "before_notes": [],
+      "after_notes": [
+        "Preserving broader community and retailer closure/leak evidence while withholding independent cross-role corroboration is appropriate; no supported behavior is lost."
+      ]
+    },
+    {
+      "run_id": "packaging-r3",
+      "case": "packaging",
+      "positive_control": false,
+      "baseline_label": "B",
+      "corrected_label": "A",
+      "pair_id": "pair-b8e18222bd",
+      "before_material_errors": [
+        {
+          "label": "unsupported_historical_evidence_boundary",
+          "answer_excerpt": "Stage comparison treats P00–P42 in the supplied pre-addition list as initial evidence, and P08–P13 plus R01 as additions.",
+          "source_keys": [
+            "reader_input.stage",
+            "reader_input.method",
+            "reader_input.focal_keys"
+          ],
+          "source_excerpt": "\"stage\":\"updated\"\n\"method\":\"Reread the complete initial and added source set and construct the current diagnosis.\"\n\"focal_keys\":[\"P00\",\"P01\",\"P02\",\"P03\",\"P04\",\"P06\",\"P07\",\"P15\",\"P17\",\"P20\",\"P21\",\"P26\",\"P27\",\"P29\",\"P32\",\"P38\",\"P39\",\"P40\",\"P42\",\"P08\",\"P09\",\"P10\",\"P11\",\"P12\",\"P13\",\"R01\"]",
+          "reason": "No pre-addition list or historical membership boundary is supplied. The answer invents initial counts and a transition from isolated leakage to recurring complaints with additional remedy and loyalty evidence. Correct current counts do not validate that historical diagnosis."
+        }
+      ],
+      "after_material_errors": [],
+      "before_notes": [],
+      "after_notes": [
+        "The complete-set diagnosis requires no historical reconstruction. It preserves broader retailer leakage evidence without assigning Softwear to the unidentified TikTok complaints."
+      ]
+    }
+  ],
+  "raw_outcomes": {
+    "fresh": {
+      "pairs": 9,
+      "before_material_errors": 5,
+      "after_material_errors": 2,
+      "answers_with_errors_before": 4,
+      "answers_with_errors_after": 2
+    },
+    "positive_control": {
+      "pairs": 1,
+      "before_material_errors": 1,
+      "after_material_errors": 0,
+      "answers_with_errors_before": 1,
+      "answers_with_errors_after": 0
+    }
+  },
+  "totals": {
+    "generators": {
+      "launches": 11,
+      "model_calls": 11,
+      "input_tokens": 379914,
+      "cached_input_tokens": 60160,
+      "output_tokens": 25194,
+      "reasoning_output_tokens": 1490,
+      "total_tokens": 405108,
+      "serial_wall_ms": 886988
+    },
+    "verifiers": {
+      "launches": 10,
+      "model_calls": 10,
+      "input_tokens": 367565,
+      "cached_input_tokens": 17664,
+      "output_tokens": 6351,
+      "reasoning_output_tokens": 4664,
+      "total_tokens": 373916,
+      "serial_wall_ms": 294027
+    },
+    "judges": {
+      "launches": 3,
+      "model_calls": 3,
+      "input_tokens": 205473,
+      "cached_input_tokens": 0,
+      "output_tokens": 4907,
+      "reasoning_output_tokens": 1664,
+      "total_tokens": 210380,
+      "serial_wall_ms": 184587
+    },
+    "coordinator": {
+      "input_tokens": 1989393,
+      "cached_input_tokens": 1951488,
+      "output_tokens": 26232,
+      "reasoning_output_tokens": 7968,
+      "total_tokens": 2015625
+    },
+    "combined": 3005029
+  },
+  "cohort_costs": {
+    "fresh": {
+      "generators": {
+        "launches": 11,
+        "model_calls": 11,
+        "input_tokens": 379914,
+        "cached_input_tokens": 60160,
+        "output_tokens": 25194,
+        "reasoning_output_tokens": 1490,
+        "total_tokens": 405108,
+        "serial_wall_ms": 886988
+      },
+      "verifiers": {
+        "launches": 9,
+        "model_calls": 9,
+        "input_tokens": 329102,
+        "cached_input_tokens": 17664,
+        "output_tokens": 5797,
+        "reasoning_output_tokens": 4326,
+        "total_tokens": 334899,
+        "serial_wall_ms": 266559
+      }
+    },
+    "positive_control": {
+      "generators": {
+        "launches": 0,
+        "model_calls": 0,
+        "input_tokens": 0,
+        "cached_input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_output_tokens": 0,
+        "total_tokens": 0,
+        "serial_wall_ms": 0
+      },
+      "verifiers": {
+        "launches": 1,
+        "model_calls": 1,
+        "input_tokens": 38463,
+        "cached_input_tokens": 0,
+        "output_tokens": 554,
+        "reasoning_output_tokens": 338,
+        "total_tokens": 39017,
+        "serial_wall_ms": 27468
+      }
+    }
+  },
+  "coordinator": {
+    "session": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-06-01-01a0867d-6954-7e30-bac7-2c28f7cc3400.jsonl",
+    "turn_started_at": "2026-09-09T14:28:30.859Z",
+    "base_counter": {
+      "timestamp": "2026-09-09T14:28:28.805Z",
+      "usage": {
+        "input_tokens": 3150179,
+        "cached_input_tokens": 3058176,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 25008,
+        "reasoning_output_tokens": 4400,
+        "total_tokens": 3175187
+      }
+    },
+    "last_counter": {
+      "timestamp": "2026-09-09T14:43:58.348Z",
+      "usage": {
+        "input_tokens": 5139572,
+        "cached_input_tokens": 5009664,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 51240,
+        "reasoning_output_tokens": 12368,
+        "total_tokens": 5190812
+      }
+    },
+    "turn_counters": [
+      {
+        "timestamp": "2026-09-09T14:28:42.995Z",
+        "usage": {
+          "input_tokens": 3255673,
+          "cached_input_tokens": 3163008,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 25236,
+          "reasoning_output_tokens": 4400,
+          "total_tokens": 3280909
+        }
+      },
+      {
+        "timestamp": "2026-09-09T14:31:59.245Z",
+        "usage": {
+          "input_tokens": 3364613,
+          "cached_input_tokens": 3268352,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 31592,
+          "reasoning_output_tokens": 5926,
+          "total_tokens": 3396205
+        }
+      },
+      {
+        "timestamp": "2026-09-09T14:32:20.636Z",
+        "usage": {
+          "input_tokens": 3480082,
+          "cached_input_tokens": 3377152,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 31810,
+          "reasoning_output_tokens": 6085,
+          "total_tokens": 3511892
+        }
+      },
+      {
+        "timestamp": "2026-09-09T14:34:09.496Z",
+        "usage": {
+          "input_tokens": 3595827,
+          "cached_input_tokens": 3492480,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 35152,
+          "reasoning_output_tokens": 6601,
+          "total_tokens": 3630979
+        }
+      },
+      {
+        "timestamp": "2026-09-09T14:34:40.318Z",
+        "usage": {
+          "input_tokens": 3715004,
+          "cached_input_tokens": 3608064,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 35972,
+          "reasoning_output_tokens": 7159,
+          "total_tokens": 3750976
+        }
+      },
+      {
+        "timestamp": "2026-09-09T14:36:14.906Z",
+        "usage": {
+          "input_tokens": 3835084,
+          "cached_input_tokens": 3727104,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 38811,
+          "reasoning_output_tokens": 7675,
+          "total_tokens": 3873895
+        }
+      },
+      {
+        "timestamp": "2026-09-09T14:37:17.466Z",
+        "usage": {
+          "input_tokens": 3958096,
+          "cached_input_tokens": 3847040,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 40776,
+          "reasoning_output_tokens": 8169,
+          "total_tokens": 3998872
+        }
+      },
+      {
+        "timestamp": "2026-09-09T14:37:31.579Z",
+        "usage": {
+          "input_tokens": 4083416,
+          "cached_input_tokens": 3969920,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 41131,
+          "reasoning_output_tokens": 8469,
+          "total_tokens": 4124547
+        }
+      },
+      {
+        "timestamp": "2026-09-09T14:37:48.726Z",
+        "usage": {
+          "input_tokens": 4209775,
+          "cached_input_tokens": 4095104,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 41600,
+          "reasoning_output_tokens": 8562,
+          "total_tokens": 4251375
+        }
+      },
+      {
+        "timestamp": "2026-09-09T14:39:39.085Z",
+        "usage": {
+          "input_tokens": 4337067,
+          "cached_input_tokens": 4221312,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 44707,
+          "reasoning_output_tokens": 9075,
+          "total_tokens": 4381774
+        }
+      },
+      {
+        "timestamp": "2026-09-09T14:40:11.567Z",
+        "usage": {
+          "input_tokens": 4467544,
+          "cached_input_tokens": 4348416,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 45299,
+          "reasoning_output_tokens": 9252,
+          "total_tokens": 4512843
+        }
+      },
+      {
+        "timestamp": "2026-09-09T14:40:46.720Z",
+        "usage": {
+          "input_tokens": 4598788,
+          "cached_input_tokens": 4478720,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 45377,
+          "reasoning_output_tokens": 9290,
+          "total_tokens": 4644165
+        }
+      },
+      {
+        "timestamp": "2026-09-09T14:40:54.847Z",
+        "usage": {
+          "input_tokens": 4730166,
+          "cached_input_tokens": 4609792,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 45534,
+          "reasoning_output_tokens": 9358,
+          "total_tokens": 4775700
+        }
+      },
+      {
+        "timestamp": "2026-09-09T14:41:03.286Z",
+        "usage": {
+          "input_tokens": 4861768,
+          "cached_input_tokens": 4740992,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 45688,
+          "reasoning_output_tokens": 9358,
+          "total_tokens": 4907456
+        }
+      },
+      {
+        "timestamp": "2026-09-09T14:42:00.609Z",
+        "usage": {
+          "input_tokens": 4999112,
+          "cached_input_tokens": 4872448,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 47506,
+          "reasoning_output_tokens": 10816,
+          "total_tokens": 5046618
+        }
+      },
+      {
+        "timestamp": "2026-09-09T14:43:58.348Z",
+        "usage": {
+          "input_tokens": 5139572,
+          "cached_input_tokens": 5009664,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 51240,
+          "reasoning_output_tokens": 12368,
+          "total_tokens": 5190812
+        }
+      }
+    ],
+    "session_settings": {
+      "model": "gpt-6-astra",
+      "effort": "high",
+      "cli_version": "0.153.4",
+      "originator": "Codex Desktop",
+      "service_tier": "unavailable"
+    }
+  },
+  "elapsed": {
+    "supervised_ms": 522529,
+    "turn_to_cutoff_ms": 927489
+  },
+  "coldness": "Actual native prompt equals saved stdin; no prior assistant/tool messages or tool use; fresh unique native sessions. Nine normal generator prompts are byte-identical to earlier full-update construction. Judges receive neither method labels nor verifier rationales.",
+  "accounting": "Current turn baseline native counter subtracted; context reprocessing remains charged. Input+output; cached and reasoning are subsets. Includes all fresh generation, verifier and judge calls. Positive-control generation is historical and excluded; its verifier cost is included separately. Costs after one pinned final available counter remain for parent finalization, with no recursive report rewrite. No token savings inferred from bytes."
+}

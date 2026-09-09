@@ -1,0 +1,586 @@
+{
+  "reader_input": {
+    "case": "hydration",
+    "question": "Diagnose Super Saturated hydration and texture, including joint-use outcomes and the relevance or non-relevance of other-product evidence. Explain support, conditions, contradictions and explicit behavior consequences.",
+    "count_definitions": {
+      "ss_hydration_direct": "Focal accounts directly reporting SS hydration; exclude a mask-serum joint result and generic hydrating interest.",
+      "ss_hydration_joint": "Focal accounts reporting joint mask plus SS hydration/retention, without separable allocation.",
+      "ss_texture_direct": "Focal accounts first-hand reporting SS feel/texture including comparisons and lightweight/fast-drying.",
+      "ss_texture_speculative": "Focal non-user SS texture comparison or speculation."
+    },
+    "products": [
+      {
+        "id": "experiment-shopify-5913452937408",
+        "name": "Avant Guard"
+      },
+      {
+        "id": "experiment-shopify-7299389030592",
+        "name": "Super Saturated"
+      },
+      {
+        "id": "experiment-shopify-7476098007232",
+        "name": "Buffer Jelly [experiment-shopify-7476098007232]"
+      },
+      {
+        "id": "experiment-shopify-7758608105664",
+        "name": "Softwear"
+      },
+      {
+        "id": "experiment-shopify-8086723035328",
+        "name": "Plasma Wash"
+      },
+      {
+        "id": "experiment-shopify-8193821802688",
+        "name": "Molecular Mesh"
+      },
+      {
+        "id": "experiment-shopify-8555927306432",
+        "name": "Continuum"
+      }
+    ],
+    "stage": "updated",
+    "focal_keys": [
+      "A03",
+      "A04",
+      "A07",
+      "A08",
+      "A09",
+      "A10",
+      "A13",
+      "A14",
+      "A15",
+      "A17",
+      "A18"
+    ],
+    "method": "Reread the complete initial and added source set and construct the current diagnosis.",
+    "sources": {
+      "records": [
+        {
+          "key": "A03",
+          "id": "reddit:1i30kik:m7jkz2b",
+          "text": "I like the Wave Serum. It’s less sticky than Experiment Super Saturated although I still use Super Saturated because it has a little more glycerin- I think.",
+          "actor_identity": "Iusedtobealawyer",
+          "independence_key": "reddit:author:iusedtobealawyer",
+          "independence_posture": "unavailable",
+          "publication_time": "2025-01-17T00:01:33.633000+0000",
+          "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1i30kik-projection.json#$.comments[1]",
+          "source_role": "community_post",
+          "container_id": "reddit:1i30kik",
+          "engagement": {
+            "material_positive": false,
+            "native_score": "6",
+            "posture": "not_interpreted"
+          },
+          "context_refs": [
+            "context_923f44db652c9ae6a2d3",
+            "context_66e864c836942282c210"
+          ]
+        },
+        {
+          "key": "A04",
+          "id": "junip:7540631",
+          "text": "Review title: Hydrating, refreshing, fast drying, PERFECT\n\nReview body: My sister introduced me to this brand through the “super saturated” product. I fell in love with it and ordered some for myself. It was so lightweight and refreshing and fast-drying but also super hydrating without making my pores feel clogged. It was the perfect hydration to have pre- makeup application. Anyway, at night I wanted something even more hydrating and repairing because it turns out my skin really needed this… so I bought the buffer jelly! I was worried because it seemed so thick and oily, but OMG I WOKE UP WOTH THE MOST GLOWY AND CLEAN SKIN! And you only need like the tiniest little amount! Obviously I immediately bought the face wash and….. bam… no more breakouts and no more makeup remover needed. One little dollop and my makeup is washed right off AND my skin is hydrated. So when they came out with the mesh moisturizer, I bought it immediately. ALSO, the colors! I love my bathroom counter. It’s so quirky and delightful now. Thank you Experiment lady scientists! You are life changing! I love you and I want to have brunch with you.",
+          "actor_identity": "202931541",
+          "independence_key": "junip:customer:202931541",
+          "independence_posture": "credited",
+          "publication_time": "2025-03-22T05:41:14.060Z",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:7540631",
+          "source_role": "retailer_review",
+          "container_id": "junip:review:7540631",
+          "engagement": {
+            "up_votes": 0,
+            "down_votes": 0,
+            "observed_at": null
+          },
+          "context_refs": [
+            "context_c2af7db629fb3d188eab",
+            "context_9f8ce97d6af21888fd08"
+          ],
+          "review_updated_at": "2025-03-23T19:29:50.304Z"
+        },
+        {
+          "key": "A07",
+          "id": "junip:6884815",
+          "text": "undefined...",
+          "actor_identity": "122992865",
+          "independence_key": "junip:customer:122992865",
+          "independence_posture": "credited",
+          "publication_time": "2025-01-17T19:37:33.185Z",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6884815",
+          "source_role": "retailer_review",
+          "container_id": "junip:review:6884815",
+          "engagement": {
+            "up_votes": 0,
+            "down_votes": 0,
+            "observed_at": null
+          },
+          "context_refs": [
+            "context_6e6952a9b60f219c0cc0",
+            "context_c3f4eb636a1573296571"
+          ],
+          "review_updated_at": "2025-01-17T19:38:55.428Z"
+        },
+        {
+          "key": "A08",
+          "id": "junip:4653282",
+          "text": "Review title: Amazing results!\n\nReview body: I’m 51 with challenging skin. This is awesome when paired with my Tretinoin and other actives. My skin is left so hydrated when I use it. Thank you!",
+          "actor_identity": "152576810",
+          "independence_key": "junip:customer:152576810",
+          "independence_posture": "credited",
+          "publication_time": "2024-02-02T16:19:10.538Z",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:4653282",
+          "source_role": "retailer_review",
+          "container_id": "junip:review:4653282",
+          "engagement": {
+            "up_votes": 0,
+            "down_votes": 0,
+            "observed_at": null
+          },
+          "context_refs": [
+            "context_a4701d4e157129c1e60a",
+            "context_a828425d106404cc69c2"
+          ],
+          "review_updated_at": "2024-02-02T16:19:13.795Z"
+        },
+        {
+          "key": "A09",
+          "id": "junip:1866323",
+          "text": "Review title: Soooo good for locking...\n\nReview body: Soooo good for locking in all the hydration from the super saturated serum. Took one star off because the fit isn’t the best on my very small head lol. Especially around my nose.",
+          "actor_identity": "55537943",
+          "independence_key": "junip:customer:55537943",
+          "independence_posture": "credited",
+          "publication_time": "2022-12-09T01:12:27.660Z",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:1866323",
+          "source_role": "retailer_review",
+          "container_id": "junip:review:1866323",
+          "engagement": {
+            "up_votes": 0,
+            "down_votes": 0,
+            "observed_at": null
+          },
+          "context_refs": [
+            "context_8babbfbe424dc9a7bbdc",
+            "context_0ac8e97ebf5ee504ff6e"
+          ],
+          "review_updated_at": "2022-12-09T01:12:27.825Z"
+        },
+        {
+          "key": "A10",
+          "id": "junip:3515905",
+          "text": "Review title: Love it!\n\nReview body: This is brilliant at locking in all my hydrating products! A little goes a long way. I use it at night as the final step in my skin care routine and I wake up with glowing skin!",
+          "actor_identity": "97396127",
+          "independence_key": "junip:customer:97396127",
+          "independence_posture": "credited",
+          "publication_time": "2023-07-21T01:56:31.936Z",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:3515905",
+          "source_role": "retailer_review",
+          "container_id": "junip:review:3515905",
+          "engagement": {
+            "up_votes": 0,
+            "down_votes": 0,
+            "observed_at": null
+          },
+          "context_refs": [
+            "context_53b72bbd53a33db75460",
+            "context_9d15b009c39e903de01c"
+          ],
+          "review_updated_at": "2023-07-21T01:56:36.684Z"
+        },
+        {
+          "key": "A13",
+          "id": "junip:6685187",
+          "text": "Review title: Glazed donut skin\n\nReview body: This has been a game changer for my skin care routine. I’ve been a skin care enthusiast for years now and have used hundreds of products- it’s rare to find something that levels up my finely curated routine but this did. The moisture retention that my skin has had with this is life changing. I can get through a 12 hour shift with my skin still feeling plump and hydrated by the end. Not only does it visibly look better, but as a result my irritation and sensitivity is kept at bay as well. My background is that I have a very oily T zone and very dry sensitive cheeks with mild rosacea. It’s very hard for me to get the right balance between hydrating my dry cheeks without causing congestion on my forehead and breakouts from the excess oil. This product does that. It has not caused the congestion on my forehead that results in textured skin and bumps, while at the same time it nourishes my cheeks and keeps the reactivity threshold low. I’ve also noticed a decrease in the natural oil production of my skin since starting this. Honestly I can’t say enough good about this product. For the people complaining you really need to understand what you’re buying so your expectations are set accordingly…the term “glazed donut” is the perfect example of what this product does to your face. You will be sticky shiny and slick. You will not want to go out with this on your face (unless you use a small amount). For most people, this will be a night use product only because of how sticky it feels. However for me, theres days I feel comfortable putting a pump on my skin and going out a little extra shiny. Please don’t buy a product claiming to be sticky then being upset when its sticky- thats the point of this. If you don’t like sticky then avoid this product- but just know the stickiness can do wonders for your skin if you give it a chance.",
+          "actor_identity": "231128721",
+          "independence_key": "junip:customer:231128721",
+          "independence_posture": "credited",
+          "publication_time": "2024-12-06T17:47:38.986Z",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6685187",
+          "source_role": "retailer_review",
+          "container_id": "junip:review:6685187",
+          "engagement": {
+            "up_votes": 0,
+            "down_votes": 0,
+            "observed_at": null
+          },
+          "context_refs": [
+            "context_c2c45a70758599286997",
+            "context_4e920e85a310fbd75187"
+          ],
+          "review_updated_at": "2024-12-06T17:49:20.110Z"
+        },
+        {
+          "key": "A14",
+          "id": "junip:8950945",
+          "text": "Review title: Calming, Soothing, Buttery Soft Sorcery\n\nReview body: For 100% transparency, I did receive this product free for an honest review at a later date but I've used it twice and needed to post this review here and now. This stuff is magical! Basically they took a barrier repair serum and a soothing, nourishing face oil and smooshed them together into this little dropper bottle to make a product that feels like someone's grandma crocheted the softest blanket ever just for your face. I really can't properly describe the texture. It does start out as a jelly-like substance that turns into a soft, fluidy oil as soon as it hits the skin. But where most oils seem to have a dryness or a taciness to them that make them feel disgusting while you're massaging them in, Buffer Jelly has a silky slip to it that just feels like heaven. I have rosacea and I've been adding a drop of this to my moisturizer at night and I wake up with super soft skin with no redness, irritation, or clogged pores. I think this will also be perfection for after dermaplaning. I was surprised by how small this bottle is when I first got it but I think it's simply deception due to Experiment using reduced packaging, because this is a full 1oz of product, which for an oil will last a VERY long time. So it's official, I'm an Experiment convert...",
+          "actor_identity": "344086099",
+          "independence_key": "junip:customer:344086099",
+          "independence_posture": "credited",
+          "publication_time": "2025-08-05T19:45:57.174Z",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:8950945",
+          "source_role": "retailer_review",
+          "container_id": "junip:review:8950945",
+          "engagement": {
+            "up_votes": 0,
+            "down_votes": 0,
+            "observed_at": null
+          },
+          "context_refs": [
+            "context_2856fb9f627c121e5cbd",
+            "context_6aca0285482c6a50e43d"
+          ],
+          "review_updated_at": "2025-08-20T04:38:18.471Z"
+        },
+        {
+          "key": "A15",
+          "id": "junip:6567933",
+          "text": "Review title: Confused\n\nReview body: First, the texture is beautiful, it's so silky and plasma is the perfect descriptor for it! Unfortunately, I could not get a good cleanse out of this product, no matter how I used it. I tried a little bit (a quarter size), lathered in my hands, onto to wet skin; I tried the same on dry skin. I tried lathering on my face instead of in my hands first. I tried using a lot of product (2 quarters size), on wet face, on a dry face, lathering, not lathering... Every way I tried it didn't foam/bubble at all and almost seemed to be absorbing into my skin, it was disappearing. It was like rubbing a cream on my face that became more viscous after coming in contact with the water. That alone would not have been warranting of 2 stars, but this burned my eyes like no other cleanser I've used in a long time. I mean, badly, to the point I considered returning it. I don't really wear eye makeup ever so I just cleanse with my eyes closed, but boy was that a disappointment. Overall, this leaves my face feeling not as clean, and not as moisturized after one wash than my apparent all time fav cleanser(which is also a glycerin based cleanser, which is why I thought this one would be good for me). After two, it's just even drier feeling so I don't find it appropriate for a double cleanse. I'm unsure if I got a defective product somehow, or if I'm using the product wrong because I see so many great experiences from people on social media I'm genuinely confused...",
+          "actor_identity": "210150638",
+          "independence_key": "junip:customer:210150638",
+          "independence_posture": "credited",
+          "publication_time": "2024-11-04T16:36:31.007Z",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6567933",
+          "source_role": "retailer_review",
+          "container_id": "junip:review:6567933",
+          "engagement": {
+            "up_votes": 0,
+            "down_votes": 0,
+            "observed_at": null
+          },
+          "context_refs": [
+            "context_a1e603f2d330d39599e8",
+            "context_bc1ebb9bd971b58bdaa2"
+          ],
+          "review_updated_at": "2024-11-04T16:36:31.684Z"
+        },
+        {
+          "key": "A17",
+          "id": "reddit:1i30kik:m7kd5t6",
+          "text": "Among the ones I tested, Zerafite Wrinkle Defence feels most similar to C.R.E.A.M (it also has ceramides, cholesterol and free fatty acids but at 1:1:1 molar ratio) but more like a standard moisturiser - more emollient, less pilling prone. It's still thick and a bit waxy. With C.R.E.A.M, it's easier to use it when I mix it with a drop of the Wave Serum. They packed more ceramides in C.R.E.A.M (2.5%), but it also meant they needed to work harder just to make it stable -> silicones -> pilling for some. And I agree with another poster: sometimes it feels I would like/need an extra layer over it. Especially of something oily.\n\nRest: I do like Wave Serum a lot! I'm in general into hydrating serums, and I like glycerin (tackiness alert if someone is into watery stuff). I wish they sold it in larger bottles. I think it must be thinner than Super Saturated (30% glycerin), Wave is 10% glycerin + other humectants. I haven't tried anything from Experiment Beauty yet, they don't ship here.\n\nAzelaic Advanced- I've been using it for over a month. It works well for me. Good tolerance. Some people can't go past the smell of it, but to me, it isn't particularly offensive.\n\nVit. X - I just can't with vit. C and co edition. Level - fine, but I think tret + Azelaic Advanced + Eucerin Spot Corrector have me covered. Tabula Rasa - a very fine gel cleanser, I like it",
+          "actor_identity": "Live_Rhubarb_7560",
+          "independence_key": "reddit:author:live_rhubarb_7560",
+          "independence_posture": "unavailable",
+          "publication_time": "2025-01-17T02:43:20.878000+0000",
+          "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1i30kik-projection.json#$.comments[22]",
+          "source_role": "community_post",
+          "container_id": "reddit:1i30kik",
+          "engagement": {
+            "material_positive": false,
+            "native_score": "7",
+            "posture": "not_interpreted"
+          },
+          "context_refs": [
+            "context_5fdff30c4bd1cda94bad",
+            "context_f05862db0ee1dcb8c8c6",
+            "context_66e864c836942282c210"
+          ]
+        },
+        {
+          "key": "A18",
+          "id": "reddit:1i30kik:m7j3q3q",
+          "text": "Wave serum is great. The most hydrating thing I've ever put on my face.\n\nC.r.e.a.m. moisturizer has amazing ingredients, but for me it wasn't great at actually locking in moisture at night. My face was drier in the morning than it was with my other moisturizer. And in the day it pilled under sunscreen. So unfortunately that one wasn't for me.",
+          "actor_identity": "orchidmommy",
+          "independence_key": "reddit:author:orchidmommy",
+          "independence_posture": "unavailable",
+          "publication_time": "2025-01-16T22:28:28.054000+0000",
+          "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1i30kik-projection.json#$.comments[19]",
+          "source_role": "community_post",
+          "container_id": "reddit:1i30kik",
+          "engagement": {
+            "material_positive": false,
+            "native_score": "10",
+            "posture": "not_interpreted"
+          },
+          "context_refs": [
+            "context_66e864c836942282c210"
+          ]
+        }
+      ],
+      "contexts": [
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/266",
+          "text_sha256": "d0f9a057944e211a175614501dd623b48ba3def971d30a101eacd4c313531b6c",
+          "context_id": "context_0ac8e97ebf5ee504ff6e",
+          "context_type": "source_scope",
+          "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_39",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:1866323:metadata",
+          "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [{\"created_at\": \"2022-12-09T01:12:27.782Z\", \"id\": 337525, \"meta\": {}, \"name\": \"Skin Type\", \"question_id\": 864, \"type\": \"survey_answer\", \"updated_at\": \"2022-12-09T01:12:27.782Z\", \"value\": \"Dry + Acne Prone\", \"value_type\": \"radio\"}], \"target_title\": \"Avant Guard - Small Head\", \"verified_buyer\": true}"
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/889",
+          "text_sha256": "b23a6c92f2d26808f6713d4eb00ddafdcb83f1e3cb138ea3a966e5079dad7e55",
+          "context_id": "context_2856fb9f627c121e5cbd",
+          "context_type": "product_page",
+          "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_12",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:8950945",
+          "text": "Buffer Jelly | id=4026185 | remote_id=7476098007232 | remote_handle=buffer-jelly"
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/1751",
+          "text_sha256": "615effcc5e1dbacc4a168d7b1ee8c186a9b68fcca69bc1b7e2c7258b92c8f4d2",
+          "context_id": "context_4e920e85a310fbd75187",
+          "context_type": "source_scope",
+          "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_19",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6685187:metadata",
+          "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [{\"created_at\": \"2024-12-06T17:47:39.253Z\", \"id\": 4147441, \"meta\": {}, \"name\": \"Skin Type\", \"question_id\": 864, \"type\": \"survey_answer\", \"updated_at\": \"2024-12-06T17:47:39.253Z\", \"value\": \"Oily + Sensitive\", \"value_type\": \"radio\"}], \"target_title\": \"Super Saturated\", \"verified_buyer\": false}"
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/1854",
+          "text_sha256": "b23a6c92f2d26808f6713d4eb00ddafdcb83f1e3cb138ea3a966e5079dad7e55",
+          "context_id": "context_53b72bbd53a33db75460",
+          "context_type": "product_page",
+          "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_31",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:3515905",
+          "text": "Buffer Jelly | id=4026185 | remote_id=7476098007232 | remote_handle=buffer-jelly"
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/2108",
+          "text_sha256": "2f53b1979db1a0458556ef544f6abc89e4ae4dd8843dd49205a8a5d947209c0f",
+          "context_id": "context_5fdff30c4bd1cda94bad",
+          "context_type": "parent_text",
+          "source_artifact_id": "local-native-1i30kik-projection-20260909",
+          "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1i30kik-projection.json#$.comments[21]",
+          "text": "What moisturizer do you like better than the Regimen Lab CREAM? I haven’t try it but I was thinking about getting it.",
+          "native_identity": {
+            "id": "t1_m7jv3dh",
+            "author": "Skin_Fanatic",
+            "score": "2",
+            "created": "2025-01-17T00:57:57.153000+0000"
+          }
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/2241",
+          "text_sha256": "2070ef56d5641eecf7f8884cd75242cb43f03bd517d82674abee1593cec7bcff",
+          "context_id": "context_66e864c836942282c210",
+          "context_type": "post_text",
+          "source_artifact_id": "local-native-1i30kik-projection-20260909",
+          "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1i30kik-projection.json#$.post",
+          "text": "{\"url\":\"https://www.reddit.com/r/SkincareAddictionLux/comments/1i30kik/has_anyone_tried_regimenlab/\",\"title\":\"Has anyone tried regimenlab?\",\"text\":\"It’s been popping out on my insta as advertised, and to be fair some brands that advertise on instagram are not bad at all (Biossance for example does a lot of ad there). I saw their website and looks cool, they advertise a lot a new formulation of soluble Azelaic acid as well.\\n\\nBut I’ve never seen this brand before. So I thought about asking here if anyone has?\"}"
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/2332",
+          "text_sha256": "89f4f0c69eb78336b8cf71f29cf77a49cdc78f68f3dcf66bacbccb2ce3707b2d",
+          "context_id": "context_6aca0285482c6a50e43d",
+          "context_type": "source_scope",
+          "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_12",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:8950945:metadata",
+          "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [{\"created_at\": \"2025-08-05T19:45:57.296Z\", \"id\": 4955370, \"meta\": {}, \"name\": \"Skin Type\", \"question_id\": 864, \"type\": \"survey_answer\", \"updated_at\": \"2025-08-05T19:45:57.296Z\", \"value\": \"Combo + Acne Prone\", \"value_type\": \"radio\"}], \"target_title\": \"Buffer Jelly\", \"verified_buyer\": false}"
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/2406",
+          "text_sha256": "8ae6ed8f5bd45c918909673c2ce7964c9bc9af1301adf9d3133b52e0a4160902",
+          "context_id": "context_6e6952a9b60f219c0cc0",
+          "context_type": "product_page",
+          "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_17",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6884815",
+          "text": "Super Saturated | id=2682694 | remote_id=7299389030592 | remote_handle=super-saturated"
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/3063",
+          "text_sha256": "f2c873cf7233fc9c036308f503810fa93f7803e7edc97e05c71360dd5f40f8b3",
+          "context_id": "context_8babbfbe424dc9a7bbdc",
+          "context_type": "product_page",
+          "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_39",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:1866323",
+          "text": "Avant Guard | id=2516750 | remote_id=5913452937408 | remote_handle=avant-guard"
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/3197",
+          "text_sha256": "716f6fddc053a2ec76a591af774410173a7e1e6e604a5a40a6bd373c316daab4",
+          "context_id": "context_923f44db652c9ae6a2d3",
+          "context_type": "parent_text",
+          "source_artifact_id": "local-native-1i30kik-projection-20260909",
+          "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1i30kik-projection.json#$.comments[0]",
+          "text": "I bought their Level Serum during the black friday sale and absolutely love it. My skin is so bright and even. It’s an incredible product and I will 1000% repurchase",
+          "native_identity": {
+            "id": "t1_m7j6ppe",
+            "author": "hillary_____k",
+            "score": "24",
+            "created": "2025-01-16T22:43:50.034000+0000"
+          }
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/3429",
+          "text_sha256": "4e98470e4b6fb30f7f2ef95762d01be3f7ae914d6f39947a7f762266fa497e64",
+          "context_id": "context_9d15b009c39e903de01c",
+          "context_type": "source_scope",
+          "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_31",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:3515905:metadata",
+          "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [{\"created_at\": \"2023-07-21T01:56:36.659Z\", \"id\": 1766872, \"meta\": {}, \"name\": \"Skin Type\", \"question_id\": 864, \"type\": \"survey_answer\", \"updated_at\": \"2023-07-21T01:56:36.659Z\", \"value\": \"Combo\", \"value_type\": \"radio\"}], \"target_title\": \"Buffer Jelly\", \"verified_buyer\": true}"
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/3478",
+          "text_sha256": "74fff10697c6675ecb0a60b4c2281254263f7545b024c7266f74fe9374d1095e",
+          "context_id": "context_9f8ce97d6af21888fd08",
+          "context_type": "source_scope",
+          "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_16",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:7540631:metadata",
+          "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [{\"created_at\": \"2025-03-22T05:41:14.282Z\", \"id\": 4588657, \"meta\": {}, \"name\": \"Skin Type\", \"question_id\": 864, \"type\": \"survey_answer\", \"updated_at\": \"2025-03-22T05:41:14.282Z\", \"value\": \"Combo + Sensitive\", \"value_type\": \"radio\"}], \"target_title\": \"Super Saturated - Refill\", \"verified_buyer\": true}"
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/3517",
+          "text_sha256": "af40b3118925dc419071ef6da2a619a603baf20ac6d5d5a376bdf25379c345e4",
+          "context_id": "context_a1e603f2d330d39599e8",
+          "context_type": "product_page",
+          "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_20",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6567933",
+          "text": "Plasma Wash | id=8648416 | remote_id=8086723035328 | remote_handle=plasma-wash"
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/3575",
+          "text_sha256": "8ae6ed8f5bd45c918909673c2ce7964c9bc9af1301adf9d3133b52e0a4160902",
+          "context_id": "context_a4701d4e157129c1e60a",
+          "context_type": "product_page",
+          "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_27",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:4653282",
+          "text": "Super Saturated | id=2682694 | remote_id=7299389030592 | remote_handle=super-saturated"
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/3647",
+          "text_sha256": "6cb024e038f00cdf03695a72c1bba3d497556dac2d1b0569f7fee8927c79ce11",
+          "context_id": "context_a828425d106404cc69c2",
+          "context_type": "source_scope",
+          "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_27",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:4653282:metadata",
+          "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [{\"created_at\": \"2024-02-02T16:19:13.758Z\", \"id\": 2495691, \"meta\": {}, \"name\": \"Skin Type\", \"question_id\": 864, \"type\": \"survey_answer\", \"updated_at\": \"2024-02-02T16:19:13.758Z\", \"value\": \"Combo + Acne Prone\", \"value_type\": \"radio\"}], \"target_title\": \"Super Saturated - First Time\", \"verified_buyer\": true}"
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/4058",
+          "text_sha256": "2733888b7eb34fc535d0d51902b8910744c5e3bf1790a7c46d78914dd7898c85",
+          "context_id": "context_bc1ebb9bd971b58bdaa2",
+          "context_type": "source_scope",
+          "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_20",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6567933:metadata",
+          "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [{\"created_at\": \"2024-11-04T16:36:31.257Z\", \"id\": 4089692, \"meta\": {}, \"name\": \"Skin Type\", \"question_id\": 864, \"type\": \"survey_answer\", \"updated_at\": \"2024-11-04T16:36:31.257Z\", \"value\": \"Combo + Acne Prone\", \"value_type\": \"radio\"}], \"target_title\": \"Plasma Wash\", \"verified_buyer\": true}"
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/4201",
+          "text_sha256": "8ae6ed8f5bd45c918909673c2ce7964c9bc9af1301adf9d3133b52e0a4160902",
+          "context_id": "context_c2af7db629fb3d188eab",
+          "context_type": "product_page",
+          "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_16",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:7540631",
+          "text": "Super Saturated | id=2682694 | remote_id=7299389030592 | remote_handle=super-saturated"
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/4205",
+          "text_sha256": "8ae6ed8f5bd45c918909673c2ce7964c9bc9af1301adf9d3133b52e0a4160902",
+          "context_id": "context_c2c45a70758599286997",
+          "context_type": "product_page",
+          "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_19",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6685187",
+          "text": "Super Saturated | id=2682694 | remote_id=7299389030592 | remote_handle=super-saturated"
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/4231",
+          "text_sha256": "93da5acd8a81431337906edb363025733995e13770d309c0f5ee5ca3da024925",
+          "context_id": "context_c3f4eb636a1573296571",
+          "context_type": "source_scope",
+          "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_17",
+          "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6884815:metadata",
+          "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [{\"created_at\": \"2025-01-17T19:38:49.805Z\", \"id\": 4241980, \"meta\": {}, \"name\": \"Skin Type\", \"question_id\": 864, \"type\": \"survey_answer\", \"updated_at\": \"2025-01-17T19:38:49.805Z\", \"value\": \"Combo\", \"value_type\": \"radio\"}], \"target_title\": \"Super Saturated - First Time\", \"verified_buyer\": true}"
+        },
+        {
+          "bundle_pointer": "/semantic_work_unit_projection/context_registry/5205",
+          "text_sha256": "9f2dfeec1e6e6a0670e66885fdee132bfb3ab1d9497cf276c758919eb3e15094",
+          "context_id": "context_f05862db0ee1dcb8c8c6",
+          "context_type": "parent_text",
+          "source_artifact_id": "local-native-1i30kik-projection-20260909",
+          "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1i30kik-projection.json#$.comments[19]",
+          "text": "Wave serum is great. The most hydrating thing I've ever put on my face.\n\nC.r.e.a.m. moisturizer has amazing ingredients, but for me it wasn't great at actually locking in moisture at night. My face was drier in the morning than it was with my other moisturizer. And in the day it pilled under sunscreen. So unfortunately that one wasn't for me.",
+          "native_identity": {
+            "id": "t1_m7j3q3q",
+            "author": "orchidmommy",
+            "score": "10",
+            "created": "2025-01-16T22:28:28.054000+0000"
+          }
+        }
+      ]
+    }
+  },
+  "answer": {
+    "retrieval_requests": [],
+    "report": "Updated diagnosis: Super Saturated (SS) hydration is independently repeated across three credited retailer-review actors (A04, A08, A13), under different conditions. A04 describes lightweight, refreshing, fast-drying hydration before makeup without perceived clogging; A08 reports hydration alongside tretinoin and other actives; A13 reports moisture retention through a 12-hour shift with oily T-zone/dry sensitive cheeks and mild rosacea. These support reported hydration, not measured efficacy or an independently repeated 12-hour effect. No direct SS hydration failure appears in this supplied set. A07's unavailable review body cannot support either direction.\n\nA09 separately reports Avant Guard retaining hydration from SS, with poor fit on a very small head, especially around the nose, prompting a one-star deduction. This supports a joint mask–serum outcome; it does not isolate either product's contribution or add a direct SS hydration account.\n\nTexture is mixed/conditional: A03 finds SS stickier than Wave but continues using SS because of its reportedly higher glycerin content, expressed uncertainly. A13 describes sticky, shiny, slick SS and accepts that feel for its benefits, sometimes wearing a pump outside; their assertion that most people should use it only at night is advice, not population evidence. A04 instead describes lightweight, fast-drying wear suited to makeup preparation. These descriptions can coexist, but application amount, routine and skin differences have not been shown to explain the variation. Stickiness recurs in two first-hand accounts across community and retailer roles, but A03's independence posture is unavailable, preventing confident cross-venue independent-origin credit. A17 merely speculates that Wave must be thinner: they explicitly have never tried Experiment because it does not ship to their location. Neither that speculation nor generic interest in hydrating serums corroborates SS experience.\n\nOther-product boundaries matter. A10's overnight retention and glow concern Buffer Jelly; A14's silky jelly-to-oil texture and soft, calm skin concern gifted Buffer Jelly used twice with moisturizer. They cannot corroborate SS hydration or texture. A15 praises Plasma Wash's silky texture but reports inadequate cleansing, eye burning and increased dryness, especially after two washes. This opposes A04's favorable face-wash experience at the cleanser scope, not SS hydration. A18's exceptional hydration praise concerns Wave; its overnight retention failure and sunscreen pilling concern C.R.E.A.M. A17's C.R.E.A.M/Wave mixing practice and other-product experiences likewise remain outside SS evidence.\n\nExplicit consequences: A04 narrates ordering SS after introduction by their sister, buying Buffer Jelly for greater nighttime hydration/repair, then buying face wash and immediately buying the mesh moisturizer. This is one actor's purchase narrative and brand enthusiasm, not proof that hydration independently caused every acquisition. A03 continues SS despite comparative stickiness. A13 accepts stickiness and adjusts willingness to wear it outside; no repurchase is narrated. A14 reports receiving a free product and becoming a brand convert, not purchasing or repurchasing. A15 considered returning Plasma Wash; no completed return or remedy is established. A09's rating penalty is explicit. Metadata labels such as verified buyer, First Time and Refill do not independently narrate buying or repeat purchases.\n\nEngagement: every focal Junip review has 0 up-votes and 0 down-votes, observation time unavailable. Reddit native scores are A03=6, A17=7 and A18=10; each is explicitly marked material_positive=false and not_interpreted, with engagement observation time unavailable. No resonance promotion is warranted. Scores do not establish experiences, independence, prevalence or buying effects. Review update timestamps do not establish additional testimony or events. Exact formula versions remain unknown; named products and metadata variants do not establish formula continuity.\n\nMaterial context, separately: product mappings resolve A08/A13 to SS, A09 to Avant Guard Small Head, A10/A14 to Buffer Jelly and A15 to Plasma Wash. A04 targets SS Refill; A07/A08 target SS First Time. Metadata describes A14 as rewarded=false despite the review's explicit free-product disclosure; preserve that discrepancy and the disclosure. Context-only hillary_____k reports buying Regimen Lab Level during Black Friday, brighter/even skin and a strong repurchase intention (2025-01-16; score 24), not an SS result or completed repurchase. Context-only Skin_Fanatic asks about C.R.E.A.M and says they have not tried it (2025-01-17; score 2). Their engagement observation times are unavailable. The shared Reddit post asks about Regimen Lab following Instagram advertising; its actor, date and engagement are unavailable here. These contexts supply no additional SS testimony. context_f05862db0ee1dcb8c8c6 repeats A18 exactly and is the same source, not another origin. A03/A17/A18 share one thread.\n\nStage limitation: only the updated stage and its 11 focal records are identified in the supplied request. Initial-stage membership and diagnosis are unavailable, so an exact initial-stage result or before/after change cannot be reconstructed without inventing the baseline. The counts below describe the supplied updated focal set; they count source accounts, not independent origins or real-world events.",
+    "source_index": [
+      {
+        "key": "A03",
+        "findings": "Iusedtobealawyer, Reddit, 2025-01-17: first-hand SS is stickier than Wave; continues SS because it has more glycerin, qualified by 'I think.' No direct hydration result or purchase/repurchase narrated. Native score 6, material_positive=false; independence unavailable. Shares thread with A17/A18. SS version unknown."
+      },
+      {
+        "key": "A04",
+        "findings": "Junip actor 202931541, 2025-03-22: SS lightweight, refreshing, fast-drying and hydrating without perceived clogging, suitable before makeup. Ordered SS after sister's introduction; bought Buffer Jelly seeking greater nighttime hydration/repair, reporting glowing/clean skin; bought face wash, reporting makeup removal, hydration and no more breakouts; immediately bought mesh moisturizer. Strong brand/color enthusiasm accompanies purchases. Metadata: SS Refill, Combo + Sensitive, verified buyer; refill label alone proves no repurchase. Votes 0/0; formula unknown."
+      },
+      {
+        "key": "A07",
+        "findings": "Junip actor 122992865, 2025-01-17: body is only 'undefined...'—usable testimony unavailable. Context identifies SS First Time, Combo skin and verified-buyer metadata, which cannot supply hydration, texture or acquisition testimony. Excluded from all requested counts. Votes 0/0; formula unknown."
+      },
+      {
+        "key": "A08",
+        "findings": "Junip actor 152576810, 2024-02-02: age 51 with challenging skin; reports SS leaves skin hydrated when paired with tretinoin and other actives. Direct hydration report within a routine, not an isolated efficacy test; no texture or buying consequence narrated. Metadata: SS First Time, Combo + Acne Prone, verified buyer. Votes 0/0; formula unknown."
+      },
+      {
+        "key": "A09",
+        "findings": "Junip actor 55537943, 2022-12-09: Avant Guard locks in hydration from SS; joint retention outcome without separable allocation. Very small head, poor fit especially at nose; deducted one star. Metadata: Avant Guard Small Head, Dry + Acne Prone, verified buyer. No completed remedy or repurchase narrated. Votes 0/0; SS SKU/formula unknown."
+      },
+      {
+        "key": "A10",
+        "findings": "Junip actor 97396127, 2023-07-21: context identifies Buffer Jelly; small amount as final nighttime step locks in hydrating products and yields morning glow. SS is not identified among those products; contributes no SS hydration/texture testimony. Metadata: Combo, verified buyer. No buying consequence narrated. Votes 0/0; formula unknown."
+      },
+      {
+        "key": "A13",
+        "findings": "Junip actor 231128721, 2024-12-06: SS retention/plump hydration through a 12-hour shift; oily T-zone, dry sensitive cheeks and mild rosacea. Reports less irritation/reactivity, no forehead congestion and reduced oil production. Sticky, shiny, slick feel accepted alongside benefits; sometimes wears a pump outside, advises smaller amounts or night use. Advice/generalization and causal explanation exceed the individually observed outcomes. No repurchase narrated. Metadata: Oily + Sensitive, verified_buyer=false. Votes 0/0; formula unknown."
+      },
+      {
+        "key": "A14",
+        "findings": "Junip actor 344086099, 2025-08-05: explicitly gifted Buffer Jelly, used twice; jelly becomes fluid oil with silky slip. A drop mixed into nighttime moisturizer reportedly yields soft skin without redness, irritation or clogged pores despite rosacea. Dermaplaning suitability and long bottle life are expectations, not tested results. Small-bottle concern is qualified by stated 1oz volume/reduced packaging; declares brand conversion, no purchase. Metadata rewarded=false conflicts with gift disclosure. No SS testimony. Votes 0/0; formula unknown."
+      },
+      {
+        "key": "A15",
+        "findings": "Junip actor 210150638, 2024-11-04: Plasma Wash has beautiful silky texture but inadequate cleansing across amounts, wet/dry application and lathering methods; disappears without foam, burns eyes badly, leaves skin less clean/moisturized than favored glycerin cleanser and drier after two washes. Considered return; completion unknown. Unsure about defect versus misuse despite positive social-media reports. Contradicts favorable cleanser experience in A04, not SS. Votes 0/0; formula unknown."
+      },
+      {
+        "key": "A17",
+        "findings": "Live_Rhubarb_7560, Reddit, 2025-01-17: likes Wave/glycerin and wants larger Wave bottles; infers Wave thinner than SS from stated 10% versus 30% glycerin. Explicit Experiment non-user due to shipping exclusion: speculative SS texture only. First-hand other-product details include Zerafite being more emollient/less pilling-prone than C.R.E.A.M yet thick/waxy, mixing Wave into C.R.E.A.M for easier use, and sometimes wanting an oily layer; favorable Azelaic tolerance, acceptable smell, dislike of Vit. X, adequate Level and favorable Tabula Rasa. None establishes SS experience. Score 7, material_positive=false; independence unavailable; same thread as A03/A18."
+      },
+      {
+        "key": "A18",
+        "findings": "orchidmommy, Reddit, 2025-01-16: Wave is their most hydrating facial product; C.R.E.A.M retains moisture less well overnight than another moisturizer and pills under sunscreen, leading to stated dissatisfaction. No SS testimony or completed switching/return established. Score 10, material_positive=false; independence unavailable. Repeated verbatim in context_f05862db0ee1dcb8c8c6, same actor/source; shared thread with A03/A17."
+      }
+    ],
+    "counts": [
+      {
+        "name": "ss_hydration_direct",
+        "source_accounts": [
+          "A04",
+          "A08",
+          "A13"
+        ],
+        "count": 3
+      },
+      {
+        "name": "ss_hydration_joint",
+        "source_accounts": [
+          "A09"
+        ],
+        "count": 1
+      },
+      {
+        "name": "ss_texture_direct",
+        "source_accounts": [
+          "A03",
+          "A04",
+          "A13"
+        ],
+        "count": 3
+      },
+      {
+        "name": "ss_texture_speculative",
+        "source_accounts": [
+          "A17"
+        ],
+        "count": 1
+      }
+    ],
+    "product_action_assertions": null
+  },
+  "retrieval_rounds": 0
+}

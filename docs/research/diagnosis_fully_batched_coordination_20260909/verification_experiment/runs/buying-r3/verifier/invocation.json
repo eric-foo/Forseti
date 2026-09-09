@@ -1,0 +1,24 @@
+{
+  "executable": "C:/Users/vmon7/AppData/Local/OpenAI/Codex/bin/fd4c151a749f3ab4/codex.exe",
+  "args": [
+    "exec",
+    "--json",
+    "--model",
+    "gpt-6-astra",
+    "-c",
+    "model_reasoning_effort=\"high\"",
+    "-C",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca\\docs\\research\\diagnosis_fully_batched_coordination_20260909\\verification_experiment/runs/buying-r3/verifier",
+    "--disable",
+    "shell_tool",
+    "--output-schema",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca\\docs\\research\\diagnosis_fully_batched_coordination_20260909\\verification_experiment/verifier.schema.json",
+    "--output-last-message",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca\\docs\\research\\diagnosis_fully_batched_coordination_20260909\\verification_experiment/runs/buying-r3/verifier/response.json",
+    "-"
+  ],
+  "role": "verifier",
+  "effort": "high",
+  "no_resume": true,
+  "stdin_sha256": "9fb123ac62c171ac251fe8bce1e566694cf7d5ca5240b0902a8a37dc328cf8a2"
+}

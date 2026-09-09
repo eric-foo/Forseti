@@ -1,0 +1,96 @@
+{
+  "case": "hydration",
+  "summary": "The evidence supports three direct SS hydration accounts, one joint mask–serum account, three direct texture accounts and one speculative texture account. Material overstatements concern reduced congestion and reduced redness; the remaining diagnoses preserve the relevant product boundaries, conditions and behavior.",
+  "pairs": [
+    {
+      "pair_id": "pair-18ee2c6373",
+      "answers": [
+        {
+          "label": "A",
+          "material_errors": [
+            {
+              "label": "noncausation_of_congestion_promoted_to_reduction",
+              "answer_excerpt": "plus less irritation, congestion and perceived oil production",
+              "source_keys": ["A13"],
+              "source_excerpt": "It has not caused the congestion on my forehead that results in textured skin and bumps",
+              "reason": "The main diagnosis claims reduced congestion, whereas the source reports hydration without causing congestion. The accurate source-index wording limits but does not erase this stronger benefit claim."
+            }
+          ],
+          "nonmaterial_notes": [
+            "A14’s 'softer, calmer skin' is a reasonable broad paraphrase given the title 'Calming, Soothing, Buttery Soft Sorcery' and the reported soft skin without irritation; it does not specify a reduction in redness."
+          ]
+        },
+        {
+          "label": "B",
+          "material_errors": [],
+          "nonmaterial_notes": []
+        }
+      ]
+    },
+    {
+      "pair_id": "pair-8ff855b660",
+      "answers": [
+        {
+          "label": "A",
+          "material_errors": [
+            {
+              "label": "absence_of_redness_promoted_to_reduction",
+              "answer_excerpt": "gives silky jelly-to-oil slip and soft, less red skin",
+              "source_keys": ["A14"],
+              "source_excerpt": "I have rosacea and I've been adding a drop of this to my moisturizer at night and I wake up with super soft skin with no redness, irritation, or clogged pores.",
+              "reason": "The source reports no redness after joint use, without establishing prior redness or a decrease. 'Less red' adds a comparative improvement; rosacea and the calming title do not establish that specific change. Accurate wording in the source index does not erase the overstatement."
+            }
+          ],
+          "nonmaterial_notes": [
+            "The phrase 'duration, reduced oil, irritation and congestion claims' does not unambiguously assert reduced congestion; the source index expressly preserves 'no forehead congestion'."
+          ]
+        },
+        {
+          "label": "B",
+          "material_errors": [],
+          "nonmaterial_notes": [
+            "The phrase 'duration, reduced oil, irritation and congestion claims' is imprecise but remains consistent with the source index’s explicit 'no forehead congestion'."
+          ]
+        }
+      ]
+    },
+    {
+      "pair_id": "pair-5591cdfe2e",
+      "answers": [
+        {
+          "label": "A",
+          "material_errors": [],
+          "nonmaterial_notes": [
+            "The paired answers are identical. 'Soft, calm skin' preserves A14’s reported condition without asserting a comparative redness improvement."
+          ]
+        },
+        {
+          "label": "B",
+          "material_errors": [],
+          "nonmaterial_notes": [
+            "The paired answers are identical. 'Soft, calm skin' preserves A14’s reported condition without asserting a comparative redness improvement."
+          ]
+        }
+      ]
+    },
+    {
+      "pair_id": "pair-6a6ed59901",
+      "answers": [
+        {
+          "label": "A",
+          "material_errors": [],
+          "nonmaterial_notes": [
+            "The paired answers are identical; no material distinction is warranted."
+          ]
+        },
+        {
+          "label": "B",
+          "material_errors": [],
+          "nonmaterial_notes": [
+            "The paired answers are identical; no material distinction is warranted."
+          ]
+        }
+      ]
+    }
+  ]
+}

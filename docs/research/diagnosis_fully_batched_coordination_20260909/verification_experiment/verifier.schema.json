@@ -1,0 +1,58 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "corrections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pointer": {
+            "type": "string"
+          },
+          "old_text": {
+            "type": "string"
+          },
+          "new_text": {
+            "type": "string"
+          },
+          "source_keys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "source_excerpt": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "pointer",
+          "old_text",
+          "new_text",
+          "source_keys",
+          "source_excerpt",
+          "reason"
+        ]
+      }
+    },
+    "unresolved_material_issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "summary": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "corrections",
+    "unresolved_material_issues",
+    "summary"
+  ]
+}

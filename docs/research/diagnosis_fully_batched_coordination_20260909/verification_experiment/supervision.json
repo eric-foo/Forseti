@@ -1,0 +1,26 @@
+{
+  "started_at": "2026-09-09T14:32:10.924Z",
+  "finished_at": "2026-09-09T14:40:53.453Z",
+  "semantic_retries": 0,
+  "first_pass_job_failures": [
+    {
+      "id": "hydration-r1",
+      "error": "Missing pointer"
+    },
+    {
+      "id": "hydration-control",
+      "error": "Missing pointer"
+    },
+    {
+      "id": "packaging-r3",
+      "error": "Missing pointer"
+    },
+    {
+      "id": "packaging-r2",
+      "error": "Missing pointer"
+    }
+  ],
+  "recovery": "recovery.json",
+  "job_failures": [],
+  "judge_failures": []
+}

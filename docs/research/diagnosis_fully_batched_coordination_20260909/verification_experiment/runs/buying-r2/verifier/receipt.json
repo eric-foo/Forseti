@@ -1,0 +1,18 @@
+{
+  "base": "runs/buying-r2/verifier",
+  "role": "verifier",
+  "effort": "high",
+  "started_at": "2026-09-09T14:33:39.725Z",
+  "finished_at": "2026-09-09T14:34:00.393Z",
+  "code": 0,
+  "signal": null,
+  "id": "01a08696-ba7d-7cb1-9d5e-f917a317c060",
+  "usage": {
+    "input_tokens": 37132,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 292,
+    "reasoning_output_tokens": 235
+  },
+  "turns": 1
+}
