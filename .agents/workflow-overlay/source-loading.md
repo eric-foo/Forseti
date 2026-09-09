@@ -211,6 +211,34 @@ materially change the current claim, route, blocker, or edit boundary.
   authoring adds "Prompt Source Capsules". Full read: editing source-loading
   doctrine.
 
+### Bounded instruction reader
+
+Use `.agents/tools/read_source.mjs` for additional repository instruction reads,
+including batches of overlay files. This replaces ad hoc whole-file printing;
+it adds no review, receipt, or separate preflight. The default combined output
+budget is 8192 UTF-8 bytes, including returned source text and metadata. It is
+a payload bound, not a tokenizer count or a task deadline.
+
+CLI: `node .agents/tools/read_source.mjs --file PATH --heading "Heading title"`.
+Repeat `--file` for a combined request. For an oversized or ambiguous section,
+use explicit inclusive `--from N --to N` lines. A small whole-file request may
+omit selectors. In Node REPL, import `readSources` from that module and emit
+only its returned string with `nodeRepl.write(await readSources(requests))`;
+requests use `{path, heading}` or `{path, from, to}`.
+
+An oversized combined request emits no source bodies. Its `not_read` result
+reports sizes and bounded heading navigation; it is not source consumption.
+Narrow the request and read every section needed for the claim. Never treat
+truncation or a navigation result as a completed read. The explicit
+`maxOutputBytes` / `--max-output-bytes` option accepts 1024 through 32768 bytes
+when a known source unit needs a different bound; it is not permission to
+bulk-load unrelated instructions. Existing full-read requirements still apply
+through appropriately scoped successive reads.
+
+The guard covers this reader, not arbitrary tool output or automatically
+supplied app context. Keep command execution buffers separate from emitted
+output budgets: restricting a child process buffer can terminate useful work.
+
 ### High-Context Guard
 
 Before the route, blocker, edit boundary, source-loading unit, or strict claim is
