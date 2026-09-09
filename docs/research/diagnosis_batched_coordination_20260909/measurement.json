@@ -1,0 +1,2589 @@
+{
+  "measured_at": "2026-09-09T13:33:47.251Z",
+  "frozen_bytes_verified": true,
+  "coldness": [
+    {
+      "path": "runs/buying-full-initial/call-0",
+      "thread_id": "01a0865c-c460-7bf3-9a05-116cb7704749",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\72b7\\orca\\docs\\research\\diagnosis_batched_coordination_20260909\\runs\\buying-full-initial\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "ba69e2b156a7cbe716fc25b926d4e0b170c1acdd436c753c72793ff8c96fe659",
+      "automatic_user_context_hashes": [
+        "40f04f80cdc654bbde878da201954e2fe9d9451949fd90b58befc0dbdab5673d"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "b0bf91290b28191a75b04c977f783ba8985a66625fcf610b0311a7e09a175d4b"
+    },
+    {
+      "path": "runs/buying-full-update/call-0",
+      "thread_id": "01a0865d-dfac-7b70-979b-5a84c86b9d20",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\72b7\\orca\\docs\\research\\diagnosis_batched_coordination_20260909\\runs\\buying-full-update\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "8f85ebb5ddeb34e302a22ce3f293532c5ff0ea5fcd60dd463a238bebaaf7c994",
+      "automatic_user_context_hashes": [
+        "28a93ee6a474d608c01d4a822db3eaff9b0eb39a4d711b155301d710a3204429"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "e7a7b8f432a00bee57182a317d403dc29b96452f47a119b54238503a59424e4c"
+    },
+    {
+      "path": "runs/buying-incremental-initial/call-0",
+      "thread_id": "01a0865c-c426-7cd2-92cd-fbc02468ca94",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\72b7\\orca\\docs\\research\\diagnosis_batched_coordination_20260909\\runs\\buying-incremental-initial\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "ba69e2b156a7cbe716fc25b926d4e0b170c1acdd436c753c72793ff8c96fe659",
+      "automatic_user_context_hashes": [
+        "a13ff9ad65176fbc94baec1ddb11a6427a011f4179e65c92be959121cc74be36"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "f19a19eb966b7f8ad0a2d7be3041cb87c0cd6ba61d1f7c12fd46ecf72d0c2541"
+    },
+    {
+      "path": "runs/buying-incremental-update/call-0",
+      "thread_id": "01a0865d-d226-7633-a1c3-48984d550e7c",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\72b7\\orca\\docs\\research\\diagnosis_batched_coordination_20260909\\runs\\buying-incremental-update\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "cbd6d432ddaf8399a41b6903bf7bdabc9595d428eb62153ea2183bca9ac6224f",
+      "automatic_user_context_hashes": [
+        "e9bf5b75c1a749d64f09645221650057705ca5524d530b888fbe28e724c5bc97"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "29d2ede43668df4f3df89e4c8867af443cf095b30161e29d162ef08ca4d78c53"
+    },
+    {
+      "path": "runs/hydration-full-initial/call-0",
+      "thread_id": "01a0865c-c3d3-7df0-bc32-e3d9c4a34cf6",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\72b7\\orca\\docs\\research\\diagnosis_batched_coordination_20260909\\runs\\hydration-full-initial\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "b4ff4be1594c24d7256b2d9a4a0158a89bcf27f19fd7e496d9866cbbd76d225b",
+      "automatic_user_context_hashes": [
+        "694ca189af46cd57d2d8d53dcf143c1271599256c2fe228b09188f69cbd05fa3"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "35543eae10e42944e27f7ccc7328b856d23ad5aa0d5eff7d27924008adfa3a6a"
+    },
+    {
+      "path": "runs/hydration-full-update/call-0",
+      "thread_id": "01a0865d-b417-77a1-851b-bcf340de732d",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\72b7\\orca\\docs\\research\\diagnosis_batched_coordination_20260909\\runs\\hydration-full-update\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "18327047270beaff4483b80ad4fe8316467a2f31406c885615ab7e4e99b87bd8",
+      "automatic_user_context_hashes": [
+        "f22d526952ebf74fc4bd0e818b6a297050aa06574791f16742732ecbaf00bcae"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "ad6f729ff1909d6db03e46ef643bee642544a648dc9ba84bd86eb4417315c4c1"
+    },
+    {
+      "path": "runs/hydration-incremental-initial/call-0",
+      "thread_id": "01a0865c-c406-71c3-9eb2-632903e01c44",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\72b7\\orca\\docs\\research\\diagnosis_batched_coordination_20260909\\runs\\hydration-incremental-initial\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "b4ff4be1594c24d7256b2d9a4a0158a89bcf27f19fd7e496d9866cbbd76d225b",
+      "automatic_user_context_hashes": [
+        "8ef54736c385717d7f0534ea9a3bac6a7d069b838cfd95b568753594d3f46e34"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "c0a4605abd3287ccc766db1b216e09020ff684534b569d671441b2dcdc0f94d2"
+    },
+    {
+      "path": "runs/hydration-incremental-initial/call-1",
+      "thread_id": "01a0865c-f986-75c1-a5d7-f6afaf72b42f",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\72b7\\orca\\docs\\research\\diagnosis_batched_coordination_20260909\\runs\\hydration-incremental-initial\\call-1",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "c1ee7a11cf9458ca2dea14fa28bc45b559830a99b00d16c20b28b06de1bd2a0f",
+      "automatic_user_context_hashes": [
+        "a949b25aa16d1e98530352c534149f823c34973ffdeabcf260e70063b7c9ad84"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "50fa8f4296d167fdb397c8588a8d8b16e8725f2629e47a60b6af310841ef0748"
+    },
+    {
+      "path": "runs/hydration-incremental-update/call-0",
+      "thread_id": "01a0865d-dd1d-75b3-885e-7d0332a5c23e",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\72b7\\orca\\docs\\research\\diagnosis_batched_coordination_20260909\\runs\\hydration-incremental-update\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "22cee948b162e6bc9f55b8da818c434f0404475bd26d8c2c155c1d7a9588dcda",
+      "automatic_user_context_hashes": [
+        "1d5e7da3618f77eb851cd03c9553576335bbf87910b9602cfe99b773bd98c557"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "362d370b3a3ab2c0289f5a408c722428169e899ed2c03ca579498767d17a5e55"
+    },
+    {
+      "path": "runs/packaging-full-initial/call-0",
+      "thread_id": "01a0865c-c3be-7932-bdf5-4e00b09d83d1",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\72b7\\orca\\docs\\research\\diagnosis_batched_coordination_20260909\\runs\\packaging-full-initial\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "8677668a67a4cad17a2082766eff87801ea25f2413dc959804a08819c9182e4b",
+      "automatic_user_context_hashes": [
+        "7c86804bb154aa4260210d7c1fbd9850f78b9d171ec393030127683c4cd67b7f"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "49fe7df89d22a9eaeb2dd23717a116689ac1e06875856abc896511487fca8ab7"
+    },
+    {
+      "path": "runs/packaging-full-update/call-0",
+      "thread_id": "01a0865d-e7ab-7b91-88eb-2089487abe43",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\72b7\\orca\\docs\\research\\diagnosis_batched_coordination_20260909\\runs\\packaging-full-update\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "256f982b7adda54a1959efd1543010860026d048e5f225466a60ce581b510ee7",
+      "automatic_user_context_hashes": [
+        "a3c8d17bfb6f6460e7debe961b4f8a7a202bb326302ff7a244555e169ff64af3"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "6e68acfe4afe891157974ed24aecf638b5e09b730ab19d23d6cb4d61e410bbdc"
+    },
+    {
+      "path": "runs/packaging-incremental-initial/call-0",
+      "thread_id": "01a0865c-c3b8-7cf3-b6ef-8699da3029fb",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\72b7\\orca\\docs\\research\\diagnosis_batched_coordination_20260909\\runs\\packaging-incremental-initial\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "8677668a67a4cad17a2082766eff87801ea25f2413dc959804a08819c9182e4b",
+      "automatic_user_context_hashes": [
+        "c549cc11562feadb2cac0cccaf1348e73198ba2607a16c6cff6d96381ae0fca2"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "aea24fd5ca8b275cadf141360d03f8adc19f9e2075ce049a1d1049a9dd9d10ff"
+    },
+    {
+      "path": "runs/packaging-incremental-update/call-0",
+      "thread_id": "01a0865d-fd8a-7cc3-a913-f24f1383da2c",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\72b7\\orca\\docs\\research\\diagnosis_batched_coordination_20260909\\runs\\packaging-incremental-update\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "4a45487346f3e393e5ea27f5eb353daf74fa22d91b712f6e4b7a4d045235be91",
+      "automatic_user_context_hashes": [
+        "7eeec10fc937ec61733837563e0789792c6781b7a0318dc47d47cd4c03790fd8"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "24da477918644e0d145b5e318a92a6fdcdccd9aec347f132e6ee7c900691a09c"
+    }
+  ],
+  "count_checks": [
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "name": "experiment_acquisition_focal",
+      "expected": [
+        "A04",
+        "A05"
+      ],
+      "observed": [
+        "A04",
+        "A05"
+      ],
+      "count": 2,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "name": "cart_readdition",
+      "expected": [
+        "A01"
+      ],
+      "observed": [
+        "A01"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "name": "stockup_focal",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "name": "gift_receipt",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "name": "return_considered",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "name": "return_completed",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "name": "routine_replacement_intended",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "name": "routine_replacement_completed",
+      "expected": [],
+      "observed": [
+        "A02",
+        "A05"
+      ],
+      "count": 2,
+      "pass": false
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "name": "product_action_assertions",
+      "expected": 5,
+      "observed": 5,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "name": "experiment_acquisition_focal",
+      "expected": [
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "observed": [
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "count": 3,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "name": "cart_readdition",
+      "expected": [
+        "A01"
+      ],
+      "observed": [
+        "A01"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "name": "stockup_focal",
+      "expected": [
+        "A11"
+      ],
+      "observed": [
+        "A11"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "name": "gift_receipt",
+      "expected": [
+        "A14"
+      ],
+      "observed": [
+        "A14"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "name": "return_considered",
+      "expected": [
+        "A15"
+      ],
+      "observed": [
+        "A15"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "name": "return_completed",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "name": "routine_replacement_intended",
+      "expected": [
+        "A16"
+      ],
+      "observed": [
+        "A16"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "name": "routine_replacement_completed",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "name": "product_action_assertions",
+      "expected": 6,
+      "observed": 6,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "experiment_acquisition_focal",
+      "expected": [
+        "A04",
+        "A05"
+      ],
+      "observed": [
+        "A04",
+        "A05"
+      ],
+      "count": 2,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "cart_readdition",
+      "expected": [
+        "A01"
+      ],
+      "observed": [
+        "A01"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "stockup_focal",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "gift_receipt",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "return_considered",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "return_completed",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "routine_replacement_intended",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "routine_replacement_completed",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "product_action_assertions",
+      "expected": 5,
+      "observed": 5,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "experiment_acquisition_focal",
+      "expected": [
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "observed": [
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "count": 3,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "cart_readdition",
+      "expected": [
+        "A01"
+      ],
+      "observed": [
+        "A01"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "stockup_focal",
+      "expected": [
+        "A11"
+      ],
+      "observed": [
+        "A11"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "gift_receipt",
+      "expected": [
+        "A14"
+      ],
+      "observed": [
+        "A14"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "return_considered",
+      "expected": [
+        "A15"
+      ],
+      "observed": [
+        "A15"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "return_completed",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "routine_replacement_intended",
+      "expected": [
+        "A16"
+      ],
+      "observed": [
+        "A16"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "routine_replacement_completed",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "product_action_assertions",
+      "expected": 6,
+      "observed": 6,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "name": "ss_hydration_direct",
+      "expected": [
+        "A04",
+        "A08"
+      ],
+      "observed": [
+        "A04",
+        "A08"
+      ],
+      "count": 2,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "name": "ss_hydration_joint",
+      "expected": [
+        "A09"
+      ],
+      "observed": [
+        "A09"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "name": "ss_texture_direct",
+      "expected": [
+        "A03",
+        "A04"
+      ],
+      "observed": [
+        "A03",
+        "A04"
+      ],
+      "count": 2,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "name": "ss_texture_speculative",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "update",
+      "name": "ss_hydration_direct",
+      "expected": [
+        "A04",
+        "A08",
+        "A13"
+      ],
+      "observed": [
+        "A04",
+        "A08",
+        "A13"
+      ],
+      "count": 3,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "update",
+      "name": "ss_hydration_joint",
+      "expected": [
+        "A09"
+      ],
+      "observed": [
+        "A09"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "update",
+      "name": "ss_texture_direct",
+      "expected": [
+        "A03",
+        "A04",
+        "A13"
+      ],
+      "observed": [
+        "A03",
+        "A04",
+        "A13"
+      ],
+      "count": 3,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "update",
+      "name": "ss_texture_speculative",
+      "expected": [
+        "A17"
+      ],
+      "observed": [
+        "A17"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "ss_hydration_direct",
+      "expected": [
+        "A04",
+        "A08"
+      ],
+      "observed": [
+        "A04",
+        "A08"
+      ],
+      "count": 2,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "ss_hydration_joint",
+      "expected": [
+        "A09"
+      ],
+      "observed": [
+        "A09"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "ss_texture_direct",
+      "expected": [
+        "A03",
+        "A04"
+      ],
+      "observed": [
+        "A03",
+        "A04"
+      ],
+      "count": 2,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "ss_texture_speculative",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "ss_hydration_direct",
+      "expected": [
+        "A04",
+        "A08",
+        "A13"
+      ],
+      "observed": [
+        "A04",
+        "A08",
+        "A13"
+      ],
+      "count": 3,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "ss_hydration_joint",
+      "expected": [
+        "A09"
+      ],
+      "observed": [
+        "A09"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "ss_texture_direct",
+      "expected": [
+        "A03",
+        "A04",
+        "A13"
+      ],
+      "observed": [
+        "A03",
+        "A04",
+        "A13"
+      ],
+      "count": 3,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "ss_texture_speculative",
+      "expected": [
+        "A17"
+      ],
+      "observed": [
+        "A17"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "name": "arrival_leak",
+      "expected": [
+        "P06"
+      ],
+      "observed": [
+        "P06"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "name": "explicit_loose_top",
+      "expected": [
+        "P06"
+      ],
+      "observed": [
+        "P06"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "name": "bare_arrival_agreement",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "name": "replacement_offered",
+      "expected": [
+        "P07"
+      ],
+      "observed": [
+        "P07"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "name": "replacement_sent",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "name": "retailer_leak",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "name": "repurchase_intended",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "update",
+      "name": "arrival_leak",
+      "expected": [
+        "P06",
+        "P08",
+        "P09",
+        "P10",
+        "P11",
+        "P12",
+        "P13"
+      ],
+      "observed": [
+        "P06",
+        "P08",
+        "P09",
+        "P10",
+        "P11",
+        "P12",
+        "P13"
+      ],
+      "count": 7,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "update",
+      "name": "explicit_loose_top",
+      "expected": [
+        "P06",
+        "P13"
+      ],
+      "observed": [
+        "P06",
+        "P13"
+      ],
+      "count": 2,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "update",
+      "name": "bare_arrival_agreement",
+      "expected": [
+        "P09",
+        "P10",
+        "P11",
+        "P12"
+      ],
+      "observed": [
+        "P09",
+        "P10",
+        "P11",
+        "P12"
+      ],
+      "count": 4,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "update",
+      "name": "replacement_offered",
+      "expected": [
+        "P07"
+      ],
+      "observed": [
+        "P07"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "update",
+      "name": "replacement_sent",
+      "expected": [
+        "P08"
+      ],
+      "observed": [
+        "P08"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "update",
+      "name": "retailer_leak",
+      "expected": [
+        "R01"
+      ],
+      "observed": [
+        "R01"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "update",
+      "name": "repurchase_intended",
+      "expected": [
+        "R01"
+      ],
+      "observed": [
+        "R01"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "arrival_leak",
+      "expected": [
+        "P06"
+      ],
+      "observed": [
+        "P06"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "explicit_loose_top",
+      "expected": [
+        "P06"
+      ],
+      "observed": [
+        "P06"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "bare_arrival_agreement",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "replacement_offered",
+      "expected": [
+        "P07"
+      ],
+      "observed": [
+        "P07"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "replacement_sent",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "retailer_leak",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "repurchase_intended",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "arrival_leak",
+      "expected": [
+        "P06",
+        "P08",
+        "P09",
+        "P10",
+        "P11",
+        "P12",
+        "P13"
+      ],
+      "observed": [
+        "P06",
+        "P08",
+        "P09",
+        "P10",
+        "P11",
+        "P12",
+        "P13"
+      ],
+      "count": 7,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "explicit_loose_top",
+      "expected": [
+        "P06",
+        "P13"
+      ],
+      "observed": [
+        "P06",
+        "P13"
+      ],
+      "count": 2,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "bare_arrival_agreement",
+      "expected": [
+        "P09",
+        "P10",
+        "P11",
+        "P12"
+      ],
+      "observed": [
+        "P09",
+        "P10",
+        "P11",
+        "P12"
+      ],
+      "count": 4,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "replacement_offered",
+      "expected": [
+        "P07"
+      ],
+      "observed": [
+        "P07"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "replacement_sent",
+      "expected": [
+        "P08"
+      ],
+      "observed": [
+        "P08"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "retailer_leak",
+      "expected": [
+        "R01"
+      ],
+      "observed": [
+        "R01"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "repurchase_intended",
+      "expected": [
+        "R01"
+      ],
+      "observed": [
+        "R01"
+      ],
+      "count": 1,
+      "pass": true
+    }
+  ],
+  "receipts": [
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "round": 0,
+      "started_at": "2026-09-09T13:30:21.186Z",
+      "finished_at": "2026-09-09T13:31:34.006Z",
+      "wall_ms": 72819.3364,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0865c-c460-7bf3-9a05-116cb7704749",
+      "usage": {
+        "input_tokens": 30881,
+        "cached_input_tokens": 17792,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1938,
+        "reasoning_output_tokens": 106
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "ba69e2b156a7cbe716fc25b926d4e0b170c1acdd436c753c72793ff8c96fe659",
+      "path": "runs/buying-full-initial/call-0",
+      "normalized_usage": {
+        "input_tokens": 30881,
+        "cached_input_tokens": 17792,
+        "output_tokens": 1938,
+        "total_tokens": 32819
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 106,
+      "model_runtime_ms": 68469,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:31:31.183Z",
+        "usage": {
+          "input_tokens": 30881,
+          "cached_input_tokens": 17792,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1938,
+          "reasoning_output_tokens": 106,
+          "total_tokens": 32819
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T21-30-22-01a0865c-c460-7bf3-9a05-116cb7704749.jsonl"
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "round": 0,
+      "started_at": "2026-09-09T13:31:34.080Z",
+      "finished_at": "2026-09-09T13:33:06.290Z",
+      "wall_ms": 92208.3012,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0865d-dfac-7b70-979b-5a84c86b9d20",
+      "usage": {
+        "input_tokens": 34659,
+        "cached_input_tokens": 17664,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2766,
+        "reasoning_output_tokens": 236
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "8f85ebb5ddeb34e302a22ce3f293532c5ff0ea5fcd60dd463a238bebaaf7c994",
+      "path": "runs/buying-full-update/call-0",
+      "normalized_usage": {
+        "input_tokens": 34659,
+        "cached_input_tokens": 17664,
+        "output_tokens": 2766,
+        "total_tokens": 37425
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 236,
+      "model_runtime_ms": 89291,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:33:03.764Z",
+        "usage": {
+          "input_tokens": 34659,
+          "cached_input_tokens": 17664,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2766,
+          "reasoning_output_tokens": 236,
+          "total_tokens": 37425
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T21-31-34-01a0865d-dfac-7b70-979b-5a84c86b9d20.jsonl"
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "round": 0,
+      "started_at": "2026-09-09T13:30:21.172Z",
+      "finished_at": "2026-09-09T13:31:30.357Z",
+      "wall_ms": 69184.3761,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0865c-c426-7cd2-92cd-fbc02468ca94",
+      "usage": {
+        "input_tokens": 30796,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1942,
+        "reasoning_output_tokens": 26
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "ba69e2b156a7cbe716fc25b926d4e0b170c1acdd436c753c72793ff8c96fe659",
+      "path": "runs/buying-incremental-initial/call-0",
+      "normalized_usage": {
+        "input_tokens": 30796,
+        "cached_input_tokens": 0,
+        "output_tokens": 1942,
+        "total_tokens": 32738
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 26,
+      "model_runtime_ms": 65361,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:31:27.838Z",
+        "usage": {
+          "input_tokens": 30796,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1942,
+          "reasoning_output_tokens": 26,
+          "total_tokens": 32738
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T21-30-22-01a0865c-c426-7cd2-92cd-fbc02468ca94.jsonl"
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "round": 0,
+      "started_at": "2026-09-09T13:31:30.428Z",
+      "finished_at": "2026-09-09T13:33:16.362Z",
+      "wall_ms": 105933.2098,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0865d-d226-7633-a1c3-48984d550e7c",
+      "usage": {
+        "input_tokens": 32815,
+        "cached_input_tokens": 17664,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3093,
+        "reasoning_output_tokens": 66
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "cbd6d432ddaf8399a41b6903bf7bdabc9595d428eb62153ea2183bca9ac6224f",
+      "path": "runs/buying-incremental-update/call-0",
+      "normalized_usage": {
+        "input_tokens": 32815,
+        "cached_input_tokens": 17664,
+        "output_tokens": 3093,
+        "total_tokens": 35908
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 66,
+      "model_runtime_ms": 102560,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:33:13.565Z",
+        "usage": {
+          "input_tokens": 32815,
+          "cached_input_tokens": 17664,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 3093,
+          "reasoning_output_tokens": 66,
+          "total_tokens": 35908
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T21-31-30-01a0865d-d226-7633-a1c3-48984d550e7c.jsonl"
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "round": 0,
+      "started_at": "2026-09-09T13:30:21.166Z",
+      "finished_at": "2026-09-09T13:31:22.652Z",
+      "wall_ms": 61484.909700000004,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0865c-c3d3-7df0-bc32-e3d9c4a34cf6",
+      "usage": {
+        "input_tokens": 31512,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1658,
+        "reasoning_output_tokens": 43
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "b4ff4be1594c24d7256b2d9a4a0158a89bcf27f19fd7e496d9866cbbd76d225b",
+      "path": "runs/hydration-full-initial/call-0",
+      "normalized_usage": {
+        "input_tokens": 31512,
+        "cached_input_tokens": 0,
+        "output_tokens": 1658,
+        "total_tokens": 33170
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 43,
+      "model_runtime_ms": 56273,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:31:18.916Z",
+        "usage": {
+          "input_tokens": 31512,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1658,
+          "reasoning_output_tokens": 43,
+          "total_tokens": 33170
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T21-30-22-01a0865c-c3d3-7df0-bc32-e3d9c4a34cf6.jsonl"
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "update",
+      "round": 0,
+      "started_at": "2026-09-09T13:31:22.724Z",
+      "finished_at": "2026-09-09T13:32:58.959Z",
+      "wall_ms": 96233.41339999999,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0865d-b417-77a1-851b-bcf340de732d",
+      "usage": {
+        "input_tokens": 35959,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2838,
+        "reasoning_output_tokens": 59
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "18327047270beaff4483b80ad4fe8316467a2f31406c885615ab7e4e99b87bd8",
+      "path": "runs/hydration-full-update/call-0",
+      "normalized_usage": {
+        "input_tokens": 35959,
+        "cached_input_tokens": 0,
+        "output_tokens": 2838,
+        "total_tokens": 38797
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 59,
+      "model_runtime_ms": 93202,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:32:56.496Z",
+        "usage": {
+          "input_tokens": 35959,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2838,
+          "reasoning_output_tokens": 59,
+          "total_tokens": 38797
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T21-31-23-01a0865d-b417-77a1-851b-bcf340de732d.jsonl"
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "round": 0,
+      "started_at": "2026-09-09T13:30:21.179Z",
+      "finished_at": "2026-09-09T13:30:34.970Z",
+      "wall_ms": 13790.3621,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0865c-c406-71c3-9eb2-632903e01c44",
+      "usage": {
+        "input_tokens": 31427,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 102,
+        "reasoning_output_tokens": 27
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "b4ff4be1594c24d7256b2d9a4a0158a89bcf27f19fd7e496d9866cbbd76d225b",
+      "path": "runs/hydration-incremental-initial/call-0",
+      "normalized_usage": {
+        "input_tokens": 31427,
+        "cached_input_tokens": 0,
+        "output_tokens": 102,
+        "total_tokens": 31529
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 27,
+      "model_runtime_ms": 9808,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:30:32.165Z",
+        "usage": {
+          "input_tokens": 31427,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 102,
+          "reasoning_output_tokens": 27,
+          "total_tokens": 31529
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T21-30-22-01a0865c-c406-71c3-9eb2-632903e01c44.jsonl"
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "round": 1,
+      "started_at": "2026-09-09T13:30:34.973Z",
+      "finished_at": "2026-09-09T13:31:33.358Z",
+      "wall_ms": 58384.3353,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0865c-f986-75c1-a5d7-f6afaf72b42f",
+      "usage": {
+        "input_tokens": 32205,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1560,
+        "reasoning_output_tokens": 0
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "c1ee7a11cf9458ca2dea14fa28bc45b559830a99b00d16c20b28b06de1bd2a0f",
+      "path": "runs/hydration-incremental-initial/call-1",
+      "normalized_usage": {
+        "input_tokens": 32205,
+        "cached_input_tokens": 0,
+        "output_tokens": 1560,
+        "total_tokens": 33765
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 0,
+      "model_runtime_ms": 54322,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:31:29.904Z",
+        "usage": {
+          "input_tokens": 32205,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1560,
+          "reasoning_output_tokens": 0,
+          "total_tokens": 33765
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T21-30-35-01a0865c-f986-75c1-a5d7-f6afaf72b42f.jsonl"
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "update",
+      "round": 0,
+      "started_at": "2026-09-09T13:31:33.425Z",
+      "finished_at": "2026-09-09T13:33:16.465Z",
+      "wall_ms": 103038.4632,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0865d-dd1d-75b3-885e-7d0332a5c23e",
+      "usage": {
+        "input_tokens": 33478,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3067,
+        "reasoning_output_tokens": 60
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "22cee948b162e6bc9f55b8da818c434f0404475bd26d8c2c155c1d7a9588dcda",
+      "path": "runs/hydration-incremental-update/call-0",
+      "normalized_usage": {
+        "input_tokens": 33478,
+        "cached_input_tokens": 0,
+        "output_tokens": 3067,
+        "total_tokens": 36545
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 60,
+      "model_runtime_ms": 100204,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:33:13.988Z",
+        "usage": {
+          "input_tokens": 33478,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 3067,
+          "reasoning_output_tokens": 60,
+          "total_tokens": 36545
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T21-31-33-01a0865d-dd1d-75b3-885e-7d0332a5c23e.jsonl"
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "round": 0,
+      "started_at": "2026-09-09T13:30:21.151Z",
+      "finished_at": "2026-09-09T13:31:35.852Z",
+      "wall_ms": 74699.45300000001,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0865c-c3be-7932-bdf5-4e00b09d83d1",
+      "usage": {
+        "input_tokens": 29803,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2173,
+        "reasoning_output_tokens": 68
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "8677668a67a4cad17a2082766eff87801ea25f2413dc959804a08819c9182e4b",
+      "path": "runs/packaging-full-initial/call-0",
+      "normalized_usage": {
+        "input_tokens": 29803,
+        "cached_input_tokens": 0,
+        "output_tokens": 2173,
+        "total_tokens": 31976
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 68,
+      "model_runtime_ms": 71186,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:31:33.272Z",
+        "usage": {
+          "input_tokens": 29803,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2173,
+          "reasoning_output_tokens": 68,
+          "total_tokens": 31976
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T21-30-21-01a0865c-c3be-7932-bdf5-4e00b09d83d1.jsonl"
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "update",
+      "round": 0,
+      "started_at": "2026-09-09T13:31:35.923Z",
+      "finished_at": "2026-09-09T13:33:15.076Z",
+      "wall_ms": 99152.6805,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0865d-e7ab-7b91-88eb-2089487abe43",
+      "usage": {
+        "input_tokens": 31254,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2996,
+        "reasoning_output_tokens": 57
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "256f982b7adda54a1959efd1543010860026d048e5f225466a60ce581b510ee7",
+      "path": "runs/packaging-full-update/call-0",
+      "normalized_usage": {
+        "input_tokens": 31254,
+        "cached_input_tokens": 0,
+        "output_tokens": 2996,
+        "total_tokens": 34250
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 57,
+      "model_runtime_ms": 95843,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:33:12.411Z",
+        "usage": {
+          "input_tokens": 31254,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2996,
+          "reasoning_output_tokens": 57,
+          "total_tokens": 34250
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T21-31-36-01a0865d-e7ab-7b91-88eb-2089487abe43.jsonl"
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "round": 0,
+      "started_at": "2026-09-09T13:30:21.159Z",
+      "finished_at": "2026-09-09T13:31:41.493Z",
+      "wall_ms": 80334.3211,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0865c-c3b8-7cf3-b6ef-8699da3029fb",
+      "usage": {
+        "input_tokens": 29809,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2334,
+        "reasoning_output_tokens": 75
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "8677668a67a4cad17a2082766eff87801ea25f2413dc959804a08819c9182e4b",
+      "path": "runs/packaging-incremental-initial/call-0",
+      "normalized_usage": {
+        "input_tokens": 29809,
+        "cached_input_tokens": 0,
+        "output_tokens": 2334,
+        "total_tokens": 32143
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 75,
+      "model_runtime_ms": 76760,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:31:38.693Z",
+        "usage": {
+          "input_tokens": 29809,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2334,
+          "reasoning_output_tokens": 75,
+          "total_tokens": 32143
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T21-30-21-01a0865c-c3b8-7cf3-b6ef-8699da3029fb.jsonl"
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "update",
+      "round": 0,
+      "started_at": "2026-09-09T13:31:41.555Z",
+      "finished_at": "2026-09-09T13:33:30.529Z",
+      "wall_ms": 108972.673,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0865d-fd8a-7cc3-a913-f24f1383da2c",
+      "usage": {
+        "input_tokens": 30537,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3315,
+        "reasoning_output_tokens": 66
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "4a45487346f3e393e5ea27f5eb353daf74fa22d91b712f6e4b7a4d045235be91",
+      "path": "runs/packaging-incremental-update/call-0",
+      "normalized_usage": {
+        "input_tokens": 30537,
+        "cached_input_tokens": 0,
+        "output_tokens": 3315,
+        "total_tokens": 33852
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 66,
+      "model_runtime_ms": 105770,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:33:27.823Z",
+        "usage": {
+          "input_tokens": 30537,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 3315,
+          "reasoning_output_tokens": 66,
+          "total_tokens": 33852
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T21-31-41-01a0865d-fd8a-7cc3-a913-f24f1383da2c.jsonl"
+    }
+  ],
+  "arm_totals": {
+    "incremental": {
+      "input_tokens": 221067,
+      "cached_input_tokens": 17664,
+      "output_tokens": 15413,
+      "total_tokens": 236480,
+      "wall_ms_sum": 539637.7406,
+      "native_runtime_ms_sum": 514785,
+      "launches": 7,
+      "unmetered_calls": 0
+    },
+    "full": {
+      "input_tokens": 194068,
+      "cached_input_tokens": 35456,
+      "output_tokens": 14369,
+      "total_tokens": 208437,
+      "wall_ms_sum": 496598.09420000005,
+      "native_runtime_ms_sum": 474264,
+      "launches": 6,
+      "unmetered_calls": 0
+    }
+  },
+  "per_case": {
+    "packaging": {
+      "incremental": {
+        "total": {
+          "input_tokens": 60346,
+          "cached_input_tokens": 0,
+          "output_tokens": 5649,
+          "total_tokens": 65995,
+          "wall_ms_sum": 189306.9941,
+          "native_runtime_ms_sum": 182530,
+          "launches": 2,
+          "unmetered_calls": 0
+        },
+        "initial": {
+          "input_tokens": 29809,
+          "cached_input_tokens": 0,
+          "output_tokens": 2334,
+          "total_tokens": 32143,
+          "wall_ms_sum": 80334.3211,
+          "native_runtime_ms_sum": 76760,
+          "launches": 1,
+          "unmetered_calls": 0
+        },
+        "update": {
+          "input_tokens": 30537,
+          "cached_input_tokens": 0,
+          "output_tokens": 3315,
+          "total_tokens": 33852,
+          "wall_ms_sum": 108972.673,
+          "native_runtime_ms_sum": 105770,
+          "launches": 1,
+          "unmetered_calls": 0
+        }
+      },
+      "full": {
+        "total": {
+          "input_tokens": 61057,
+          "cached_input_tokens": 0,
+          "output_tokens": 5169,
+          "total_tokens": 66226,
+          "wall_ms_sum": 173852.1335,
+          "native_runtime_ms_sum": 167029,
+          "launches": 2,
+          "unmetered_calls": 0
+        },
+        "initial": {
+          "input_tokens": 29803,
+          "cached_input_tokens": 0,
+          "output_tokens": 2173,
+          "total_tokens": 31976,
+          "wall_ms_sum": 74699.45300000001,
+          "native_runtime_ms_sum": 71186,
+          "launches": 1,
+          "unmetered_calls": 0
+        },
+        "update": {
+          "input_tokens": 31254,
+          "cached_input_tokens": 0,
+          "output_tokens": 2996,
+          "total_tokens": 34250,
+          "wall_ms_sum": 99152.6805,
+          "native_runtime_ms_sum": 95843,
+          "launches": 1,
+          "unmetered_calls": 0
+        }
+      }
+    },
+    "hydration": {
+      "incremental": {
+        "total": {
+          "input_tokens": 97110,
+          "cached_input_tokens": 0,
+          "output_tokens": 4729,
+          "total_tokens": 101839,
+          "wall_ms_sum": 175213.1606,
+          "native_runtime_ms_sum": 164334,
+          "launches": 3,
+          "unmetered_calls": 0
+        },
+        "initial": {
+          "input_tokens": 63632,
+          "cached_input_tokens": 0,
+          "output_tokens": 1662,
+          "total_tokens": 65294,
+          "wall_ms_sum": 72174.6974,
+          "native_runtime_ms_sum": 64130,
+          "launches": 2,
+          "unmetered_calls": 0
+        },
+        "update": {
+          "input_tokens": 33478,
+          "cached_input_tokens": 0,
+          "output_tokens": 3067,
+          "total_tokens": 36545,
+          "wall_ms_sum": 103038.4632,
+          "native_runtime_ms_sum": 100204,
+          "launches": 1,
+          "unmetered_calls": 0
+        }
+      },
+      "full": {
+        "total": {
+          "input_tokens": 67471,
+          "cached_input_tokens": 0,
+          "output_tokens": 4496,
+          "total_tokens": 71967,
+          "wall_ms_sum": 157718.32309999998,
+          "native_runtime_ms_sum": 149475,
+          "launches": 2,
+          "unmetered_calls": 0
+        },
+        "initial": {
+          "input_tokens": 31512,
+          "cached_input_tokens": 0,
+          "output_tokens": 1658,
+          "total_tokens": 33170,
+          "wall_ms_sum": 61484.909700000004,
+          "native_runtime_ms_sum": 56273,
+          "launches": 1,
+          "unmetered_calls": 0
+        },
+        "update": {
+          "input_tokens": 35959,
+          "cached_input_tokens": 0,
+          "output_tokens": 2838,
+          "total_tokens": 38797,
+          "wall_ms_sum": 96233.41339999999,
+          "native_runtime_ms_sum": 93202,
+          "launches": 1,
+          "unmetered_calls": 0
+        }
+      }
+    },
+    "buying": {
+      "incremental": {
+        "total": {
+          "input_tokens": 63611,
+          "cached_input_tokens": 17664,
+          "output_tokens": 5035,
+          "total_tokens": 68646,
+          "wall_ms_sum": 175117.5859,
+          "native_runtime_ms_sum": 167921,
+          "launches": 2,
+          "unmetered_calls": 0
+        },
+        "initial": {
+          "input_tokens": 30796,
+          "cached_input_tokens": 0,
+          "output_tokens": 1942,
+          "total_tokens": 32738,
+          "wall_ms_sum": 69184.3761,
+          "native_runtime_ms_sum": 65361,
+          "launches": 1,
+          "unmetered_calls": 0
+        },
+        "update": {
+          "input_tokens": 32815,
+          "cached_input_tokens": 17664,
+          "output_tokens": 3093,
+          "total_tokens": 35908,
+          "wall_ms_sum": 105933.2098,
+          "native_runtime_ms_sum": 102560,
+          "launches": 1,
+          "unmetered_calls": 0
+        }
+      },
+      "full": {
+        "total": {
+          "input_tokens": 65540,
+          "cached_input_tokens": 35456,
+          "output_tokens": 4704,
+          "total_tokens": 70244,
+          "wall_ms_sum": 165027.63760000002,
+          "native_runtime_ms_sum": 157760,
+          "launches": 2,
+          "unmetered_calls": 0
+        },
+        "initial": {
+          "input_tokens": 30881,
+          "cached_input_tokens": 17792,
+          "output_tokens": 1938,
+          "total_tokens": 32819,
+          "wall_ms_sum": 72819.3364,
+          "native_runtime_ms_sum": 68469,
+          "launches": 1,
+          "unmetered_calls": 0
+        },
+        "update": {
+          "input_tokens": 34659,
+          "cached_input_tokens": 17664,
+          "output_tokens": 2766,
+          "total_tokens": 37425,
+          "wall_ms_sum": 92208.3012,
+          "native_runtime_ms_sum": 89291,
+          "launches": 1,
+          "unmetered_calls": 0
+        }
+      }
+    }
+  },
+  "overhead": {
+    "source": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T21-27-29-01a0865a-240b-73c2-8028-45fea9d93369.jsonl",
+    "root_start": "2026-09-09T13:27:30.537Z",
+    "last_counter": {
+      "timestamp": "2026-09-09T13:33:47.232Z",
+      "usage": {
+        "input_tokens": 2383325,
+        "cached_input_tokens": 2248832,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 9650,
+        "reasoning_output_tokens": 1872,
+        "total_tokens": 2392975
+      }
+    },
+    "native_counter_events": [
+      {
+        "timestamp": "2026-09-09T13:27:41.570Z",
+        "usage": {
+          "input_tokens": 32330,
+          "cached_input_tokens": 19072,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 128,
+          "reasoning_output_tokens": 0,
+          "total_tokens": 32458
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:27:50.568Z",
+        "usage": {
+          "input_tokens": 69145,
+          "cached_input_tokens": 51200,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 298,
+          "reasoning_output_tokens": 0,
+          "total_tokens": 69443
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:28:01.303Z",
+        "usage": {
+          "input_tokens": 111399,
+          "cached_input_tokens": 87808,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 546,
+          "reasoning_output_tokens": 24,
+          "total_tokens": 111945
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:28:14.705Z",
+        "usage": {
+          "input_tokens": 158157,
+          "cached_input_tokens": 129920,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 902,
+          "reasoning_output_tokens": 24,
+          "total_tokens": 159059
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:28:26.128Z",
+        "usage": {
+          "input_tokens": 208897,
+          "cached_input_tokens": 176512,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1180,
+          "reasoning_output_tokens": 38,
+          "total_tokens": 210077
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:28:39.627Z",
+        "usage": {
+          "input_tokens": 264469,
+          "cached_input_tokens": 227072,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1364,
+          "reasoning_output_tokens": 38,
+          "total_tokens": 265833
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:28:52.759Z",
+        "usage": {
+          "input_tokens": 330612,
+          "cached_input_tokens": 282496,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1732,
+          "reasoning_output_tokens": 104,
+          "total_tokens": 332344
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:29:04.518Z",
+        "usage": {
+          "input_tokens": 401639,
+          "cached_input_tokens": 348416,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2030,
+          "reasoning_output_tokens": 170,
+          "total_tokens": 403669
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:29:42.529Z",
+        "usage": {
+          "input_tokens": 480988,
+          "cached_input_tokens": 419328,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 3200,
+          "reasoning_output_tokens": 213,
+          "total_tokens": 484188
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:30:21.168Z",
+        "usage": {
+          "input_tokens": 566772,
+          "cached_input_tokens": 498560,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 4377,
+          "reasoning_output_tokens": 238,
+          "total_tokens": 571149
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:30:47.152Z",
+        "usage": {
+          "input_tokens": 654099,
+          "cached_input_tokens": 584192,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 5157,
+          "reasoning_output_tokens": 461,
+          "total_tokens": 659256
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:30:59.490Z",
+        "usage": {
+          "input_tokens": 742369,
+          "cached_input_tokens": 671360,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 5460,
+          "reasoning_output_tokens": 545,
+          "total_tokens": 747829
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:31:08.589Z",
+        "usage": {
+          "input_tokens": 840083,
+          "cached_input_tokens": 759424,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 5676,
+          "reasoning_output_tokens": 599,
+          "total_tokens": 845759
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:31:16.617Z",
+        "usage": {
+          "input_tokens": 947784,
+          "cached_input_tokens": 856960,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 5868,
+          "reasoning_output_tokens": 622,
+          "total_tokens": 953652
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:31:56.387Z",
+        "usage": {
+          "input_tokens": 1062428,
+          "cached_input_tokens": 964480,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 7066,
+          "reasoning_output_tokens": 868,
+          "total_tokens": 1069494
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:32:09.534Z",
+        "usage": {
+          "input_tokens": 1179237,
+          "cached_input_tokens": 1078912,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 7365,
+          "reasoning_output_tokens": 950,
+          "total_tokens": 1186602
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:32:17.118Z",
+        "usage": {
+          "input_tokens": 1300516,
+          "cached_input_tokens": 1195520,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 7550,
+          "reasoning_output_tokens": 986,
+          "total_tokens": 1308066
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:32:23.143Z",
+        "usage": {
+          "input_tokens": 1425293,
+          "cached_input_tokens": 1316608,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 7663,
+          "reasoning_output_tokens": 1020,
+          "total_tokens": 1432956
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:32:36.108Z",
+        "usage": {
+          "input_tokens": 1553746,
+          "cached_input_tokens": 1441152,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 8037,
+          "reasoning_output_tokens": 1313,
+          "total_tokens": 1561783
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:32:46.095Z",
+        "usage": {
+          "input_tokens": 1683211,
+          "cached_input_tokens": 1569408,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 8204,
+          "reasoning_output_tokens": 1346,
+          "total_tokens": 1691415
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:33:00.711Z",
+        "usage": {
+          "input_tokens": 1817664,
+          "cached_input_tokens": 1698688,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 8625,
+          "reasoning_output_tokens": 1452,
+          "total_tokens": 1826289
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:33:10.585Z",
+        "usage": {
+          "input_tokens": 1952752,
+          "cached_input_tokens": 1832960,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 8853,
+          "reasoning_output_tokens": 1568,
+          "total_tokens": 1961605
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:33:26.093Z",
+        "usage": {
+          "input_tokens": 2090765,
+          "cached_input_tokens": 1967872,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 9246,
+          "reasoning_output_tokens": 1800,
+          "total_tokens": 2100011
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:33:32.286Z",
+        "usage": {
+          "input_tokens": 2234106,
+          "cached_input_tokens": 2105728,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 9341,
+          "reasoning_output_tokens": 1832,
+          "total_tokens": 2243447
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:33:47.232Z",
+        "usage": {
+          "input_tokens": 2383325,
+          "cached_input_tokens": 2248832,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 9650,
+          "reasoning_output_tokens": 1872,
+          "total_tokens": 2392975
+        }
+      }
+    ],
+    "boundary": "Coordinator preparation, recovery, grading and lifecycle combined; separate phase attribution unavailable. Excludes subsequent coordinator calls/final reply; not allocated to either arm. Cached input and reasoning output are subsets, not added twice."
+  },
+  "savings_boundary": "Model stages only, including their initial findings. End-to-end method savings NOT established; common coordinator overhead separately measured and cannot be assigned counterfactually to arms. Failed CLI config launches expose no usage and no model session; no invented token estimate."
+}

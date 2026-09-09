@@ -1,0 +1,148 @@
+{
+  "retrieval_requests": [],
+  "report": "Stage comparison uses the first 19 focal records as the initial set and P08–P13 plus R01 as additions, as indicated by the supplied ordering; no separate initial-stage artifact was supplied.\n\nInitial stage: Packaging reception is favorable but qualified. P00’s metal-packaging praise has 296 displayed likes, supporting resonance with that statement, not verified environmental performance. P03 is the same actor elaborating with tentative recyclability/reuse claims; P01 is brand agreement, not independent confirmation. P02 questions recyclability. Distinct accounts praise appearance and packaging care, while P26 asks what the product actually does for skin. P15’s planned empty-container reuse has 150 likes but is not completed reuse or evidence of suitability for medication storage. Refill-bundle requests, sticker confusion and P42’s discovery of refillability after receipt expose specific interests and information gaps. Exact packaging SKU/version remains unknown: Continuum is explicitly named in P17’s shipment and P27’s bundle request, but those references cannot identify every commenter’s product.\n\nInitially, P06 alone reports an arrival leak with a loose top, cleanup and concern about oxygen exposure (12 likes). The narrow arrival-failure proposition is initially isolated as firsthand testimony; engagement is visible, but exposure context is insufficient to confidently award material resonance. P07 offers a replacement and says short exposure is not an issue: these are brand service/advice statements, not independently verified product safety or a fulfilled remedy. Initial counts: arrival_leak 1; explicit_loose_top 1; bare_arrival_agreement 0; replacement_offered 1; replacement_sent 0; retailer_leak 0; repurchase_intended 0.\n\nUpdated stage: Arrival leakage recurs across seven distinct visible TikTok accounts: P06, P08–P13. P06 and P13 independently describe loose/improperly screwed tops; P08 contextually confirms the problem and adds a free Sephora replacement sent. P09–P12 provide only terse agreement. Thus reported arrival leakage is independently repeated at the visible-account level within one reply branch, with four materially thinner observations. These are not seven verified independent humans or necessarily seven independently investigated events. Only two explicitly describe the closure problem; context cannot donate that detail, oxygen exposure or cleanup to all replies. Engagement for these seven is respectively 12, 5, 4, 4, 2, 0 and 0 displayed likes. P08 reports dispatch, not delivery or successful replacement use.\n\nR01 separately reports Softwear–Void’s lid repeatedly unscrewing, including an in-pocket work leak, stained clothing, unrecoverable product and cost frustration. This adds retailer-role recurrence for the broader reported loose-closure/leakage problem across community comments and a retailer review, subject to unresolved cross-venue actor overlap. It does not corroborate arrival leakage, the unidentified TikTok SKU or a shared engineering cause. Its three-star review also explicitly recommends the product and intends repurchase because Void is a favorite. Complaint and loyalty coexist. Suggested click-lock/doe-foot changes are the reviewer’s proposals, not remedies implemented. Review helpfulness/likes and capture time are unavailable; verified-buyer and unrewarded metadata are not engagement or additional acquisition assertions.\n\nBuying and loyalty consequences remain individually bounded. P17 reports an all-Experiment routine and Continuum in transit; P20 expresses broad buying intent, P32 tentative saving interest and P38 eagerness to try. None establishes packaging-caused checkout. P42 reports receipt and subsequent refillability discovery, which cannot establish that refillability motivated the acquisition. P04/P27 request bundles, not purchases. R01 alone explicitly intends repeat purchase; no completed repurchase, abandonment, return, delivered replacement or packaging-driven switch is established.\n\nReception is mixed across attributes: aesthetic/refill enthusiasm coexists with closure complaints and environmental/efficacy questions. Environmental benefits are unverified; the questions do not themselves disprove them. No supplied account directly denies arrival leakage, but this bounded selection cannot establish its prevalence. Manufacturing responsibility in R01 is the reviewer’s attribution, not verified root cause. All TikTok records share one brand-video venue, observed 2026-09-09T11:56:25.935Z; displayed dates lack a year. The capture contains 47 displayed bodies against 72 advertised comments, with only the specified branches expanded. Native comment IDs are unavailable. No context-only records were supplied. Counts below are updated focal source-account counts, not origin or event counts.",
+  "source_index": [
+    {
+      "key": "P00",
+      "findings": "TikTok @randomdude7551, 5-15; 296 displayed likes. Calls unidentified metal packaging chic and environmentally friendly: substantial visible resonance, not environmental verification or buying evidence. Same actor as P03."
+    },
+    {
+      "key": "P01",
+      "findings": "TikTok brand @experimentwrld, 5-15; 39 likes. Agrees with P00’s packaging praise; owned endorsement, not independent customer or environmental corroboration. Same brand actor as P07."
+    },
+    {
+      "key": "P02",
+      "findings": "TikTok @person1234567556987, 5-15; 0 likes. Questions environmental friendliness and recyclability under P00; uncertainty, not a demonstrated environmental failure."
+    },
+    {
+      "key": "P03",
+      "findings": "TikTok @randomdude7551, 5-15; 2 likes. Tentatively claims aluminum/inner recyclability and pump/shell reuse while doubting pump recyclability. Same origin as P00; no verified material/disposal assessment."
+    },
+    {
+      "key": "P04",
+      "findings": "TikTok @flamingpanda5, 5-20; 0 likes. Requests refill bundles; unspecified product, no reported purchase or repeat-purchase commitment."
+    },
+    {
+      "key": "P06",
+      "findings": "TikTok @jasminesingh1102, 5-15; 12 likes. Unspecified product arrived leaking with loose top; opened and cleaned it, asks whether oxygen exposure makes it unusable. Detailed arrival/closure report; actual degradation unknown. Parent of P07–P13."
+    },
+    {
+      "key": "P07",
+      "findings": "TikTok brand @experimentwrld, 5-16; 12 likes. Replies to P06 that short exposure is not an issue and offers replacement via customer-service email. Offer only, no dispatch/delivery; brand reassurance is not independent safety evidence."
+    },
+    {
+      "key": "P15",
+      "findings": "TikTok @bmdubs, 5-15; 150 likes. Plans to reuse an unspecified empty package for Lexapro; endorsed reuse intention, not completed reuse, repurchase or demonstrated storage suitability."
+    },
+    {
+      "key": "P17",
+      "findings": "TikTok @mostlyconceptual, 5-16; 1 like. Reports newfound brand loyalty, all-Experiment skincare routine and Continuum in the mail. Shipment and loyalty are explicit; packaging motivation and completed Continuum use are not."
+    },
+    {
+      "key": "P20",
+      "findings": "TikTok @countryboiiloveyouuuxoxo, 5-15; 7 likes. Says they are buying everything from the brand; broad expressed buying intention, no confirmed checkout, SKU, repeat purchase or explicit packaging attribution."
+    },
+    {
+      "key": "P21",
+      "findings": "TikTok @beautybought, 5-17; 1 like. Praises products and packaging they can feel good about. Broad positive reception; no substantiated environmental attribute or buying consequence."
+    },
+    {
+      "key": "P26",
+      "findings": "TikTok @adam_thomas6, 5-21; 1 like. Calls packaging great but asks about skin benefits. Packaging approval alongside an unanswered efficacy question; not a negative use report."
+    },
+    {
+      "key": "P27",
+      "findings": "TikTok @sofieeee120, 5-24; 1 like. Requests a Continuum and Super Saturated refill bundle. Named-product bundle interest, not acquisition, joint use or repurchase."
+    },
+    {
+      "key": "P29",
+      "findings": "TikTok @allthegr8namesaretaken, 5-17; 2 likes. Asks how to get the sticker in their refill; specific refill/sticker uncertainty, SKU unknown and no explicit additional purchase."
+    },
+    {
+      "key": "P32",
+      "findings": "TikTok @josemarbp, 5-18; 3 likes. Calls the subject genius and might save up for it. Tentative interest with an affordability consideration; no purchase or definite saving action."
+    },
+    {
+      "key": "P38",
+      "findings": "TikTok @taylorelissa, 5-16; 1 like. Calls package cute and looks forward to trying it. Aesthetic approval and trial intention, not confirmed acquisition/use."
+    },
+    {
+      "key": "P39",
+      "findings": "TikTok @morco11111, 5-29; 1 like. Appreciates packaging receiving attention comparable to formulas. Positive reception without specific performance or purchase testimony."
+    },
+    {
+      "key": "P40",
+      "findings": "TikTok @danaisabellaaa, 5-15; 1 like. Contextual cuteness praise; product/version unknown, no use or buying consequence."
+    },
+    {
+      "key": "P42",
+      "findings": "TikTok @__whitneyjade, 5-20; 1 like. Reports receiving theirs that day and only now discovering refillability. Receipt and enthusiasm explicit; SKU unknown, refill purchase absent and refillability-driven acquisition unsupported."
+    },
+    {
+      "key": "P08",
+      "findings": "TikTok @savi.glow, 5-16; 5 likes. Under P06, says the same happened to theirs, ordered from Sephora, which sent a free replacement. Contextual arrival-leak confirmation plus remedy dispatch; no explicit loose-top detail or confirmed replacement delivery."
+    },
+    {
+      "key": "P09",
+      "findings": "TikTok @user851526p, 5-16; 4 likes. 'sadly same' under P06: bare contextual arrival-leak agreement, no independently specified closure, cleanup, oxygen or remedy details."
+    },
+    {
+      "key": "P10",
+      "findings": "TikTok @lara_jlue, 5-16; 4 likes. Says theirs came the same way under P06. Bare arrival agreement, no separately described failure mechanism or remedy."
+    },
+    {
+      "key": "P11",
+      "findings": "TikTok @bert181818, 5-16; 2 likes. 'Same' under P06: bare contextual arrival-leak agreement only; product and detailed conditions unknown."
+    },
+    {
+      "key": "P12",
+      "findings": "TikTok @boyauditsskincare, 7-30; 0 likes. Later displayed 'Same' under P06: bare contextual arrival-leak agreement with no resonance credit or additional failure/remedy detail."
+    },
+    {
+      "key": "P13",
+      "findings": "TikTok @betterxthanxnew, 5-18; 0 likes. Reports Sephora order with improperly screwed top and major leak under P06. Second explicit closure/arrival-leak account despite zero likes; SKU/version and remedy unknown."
+    },
+    {
+      "key": "R01",
+      "findings": "Retailer review junip:13200181, actor 215817888, published 2026-05-10T02:01:45.837Z; Softwear–Void, version unknown. Repeated lid loosening and work-pocket seepage stained underwear, shirt and jeans; lost product could not be returned to package. Loves favorite Void and explicitly will repurchase despite cost/loss frustration; suggests click-lock or doe-foot, neither implemented. Three stars, would_recommend=true, verified buyer, unrewarded. Engagement/capture time unavailable; metadata is not an acquisition narration. Different use condition/product scope from unidentified TikTok arrival complaints; cross-venue actor overlap unresolved."
+    }
+  ],
+  "counts": [
+    {
+      "name": "arrival_leak",
+      "source_accounts": ["P06", "P08", "P09", "P10", "P11", "P12", "P13"],
+      "count": 7
+    },
+    {
+      "name": "explicit_loose_top",
+      "source_accounts": ["P06", "P13"],
+      "count": 2
+    },
+    {
+      "name": "bare_arrival_agreement",
+      "source_accounts": ["P09", "P10", "P11", "P12"],
+      "count": 4
+    },
+    {
+      "name": "replacement_offered",
+      "source_accounts": ["P07"],
+      "count": 1
+    },
+    {
+      "name": "replacement_sent",
+      "source_accounts": ["P08"],
+      "count": 1
+    },
+    {
+      "name": "retailer_leak",
+      "source_accounts": ["R01"],
+      "count": 1
+    },
+    {
+      "name": "repurchase_intended",
+      "source_accounts": ["R01"],
+      "count": 1
+    }
+  ],
+  "product_action_assertions": null
+}

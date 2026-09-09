@@ -1,0 +1,249 @@
+{
+  "baseline_folder": "C:/Users/vmon7/.codex/worktrees/8efc/orca/docs/research/diagnosis_cold_comparison_20260909",
+  "native_counter": {
+    "timestamp": "2026-09-09T13:14:17.484Z",
+    "usage": {
+      "input_tokens": 11156224,
+      "cached_input_tokens": 10932608,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 38355,
+      "reasoning_output_tokens": 8409,
+      "total_tokens": 11194579
+    }
+  },
+  "elapsed_ms": 1591408,
+  "reader_totals": {
+    "incremental": {
+      "input_tokens": 256697,
+      "cached_input_tokens": 12288,
+      "output_tokens": 17956,
+      "total_tokens": 274653,
+      "wall_ms_sum": 630264.7218,
+      "native_runtime_ms_sum": 597321,
+      "launches": 11,
+      "unmetered_calls": 3
+    },
+    "full": {
+      "input_tokens": 227511,
+      "cached_input_tokens": 0,
+      "output_tokens": 15902,
+      "total_tokens": 243413,
+      "wall_ms_sum": 564808.1934999999,
+      "native_runtime_ms_sum": 536512,
+      "launches": 10,
+      "unmetered_calls": 3
+    }
+  },
+  "source_checks": {
+    "verified_at": "2026-09-09T12:52:05.973Z",
+    "bundle": {
+      "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/successor-return/depth-corrected/bundle.json",
+      "sha256": "70f9832476212eb612e858c3057aa69310b83bd06857b1b4d1e7fe7203535daa"
+    },
+    "accounts": [
+      {
+        "id": "reddit:1n9da6u:ncm3hhd",
+        "bundle_pointer": "/evidence_units/2930",
+        "text_sha256": "520147aad49e4b86a389ad7b8162d1971a9267ed22b601caeaa75b0ef0a1fed0",
+        "pass": true
+      },
+      {
+        "id": "reddit:1n9da6u:ncly8vq",
+        "bundle_pointer": "/evidence_units/2926",
+        "text_sha256": "cc9e40cf55a67fd7976c65ab0c45aa1aeadd2835f7dfb3f4223a2919764f0816",
+        "pass": true
+      },
+      {
+        "id": "reddit:1i30kik:m7jkz2b",
+        "bundle_pointer": "/evidence_units/2553",
+        "text_sha256": "ea71d4429447f732d2ceeba19ee5c129e1c1306c40b5b8fb1b7a633883b76356",
+        "pass": true
+      },
+      {
+        "id": "junip:7540631",
+        "bundle_pointer": "/evidence_units/1920",
+        "text_sha256": "961988dc9d8bd32864ef27a3b04f0e4e9afc0a2a0237aaf2db9f2123dd46e5f3",
+        "pass": true
+      },
+      {
+        "id": "junip:1569510",
+        "bundle_pointer": "/evidence_units/682",
+        "text_sha256": "2a07f7c01e1e987079028f687297cddda3be00c8f535a75e135d886fc61907ec",
+        "pass": true
+      },
+      {
+        "id": "junip:14942664",
+        "bundle_pointer": "/evidence_units/681",
+        "text_sha256": "811c337095e51cebf6883b977ca9e51701c74f17cffeb2d8ad08b60e8126e799",
+        "pass": true
+      },
+      {
+        "id": "junip:6884815",
+        "bundle_pointer": "/evidence_units/1836",
+        "text_sha256": "c11fc6d0e6b40460532072e74daa29d0eeb8b36ef20f0a5cb38f6791ad8d2919",
+        "pass": true
+      },
+      {
+        "id": "junip:4653282",
+        "bundle_pointer": "/evidence_units/1332",
+        "text_sha256": "c4bf870b55eec6fb086525d19f77fd6e80774d05247292180fbe09c879696ab4",
+        "pass": true
+      },
+      {
+        "id": "junip:1866323",
+        "bundle_pointer": "/evidence_units/758",
+        "text_sha256": "3b4e7b91cae91ce618c5b695435aea85e23a4493da6fea10c1adfb1fc2dc613e",
+        "pass": true
+      },
+      {
+        "id": "junip:3515905",
+        "bundle_pointer": "/evidence_units/1132",
+        "text_sha256": "e73aa5c979987de17607eb2fb1e4e86a6fda29fbe7e947cb81d472753b9349df",
+        "pass": true
+      },
+      {
+        "id": "junip:6638709",
+        "bundle_pointer": "/evidence_units/1754",
+        "text_sha256": "55a7f4691aa4cd804ff51aac7ba804f7547300c890c1d7e91542e890f7829a7c",
+        "pass": true
+      },
+      {
+        "id": "reddit:1i30kik:m7j6no0",
+        "bundle_pointer": "/evidence_units/2548",
+        "text_sha256": "c0c78ecfaf8f6e616b8af331d8cb51e9013ba5ddf3102859fa3f1124655054c2",
+        "pass": true
+      },
+      {
+        "id": "junip:6685187",
+        "bundle_pointer": "/evidence_units/1774",
+        "text_sha256": "414174d1fe90fc91619b398b30e07d2ef6b434e705e7e368a74b3759e2134328",
+        "pass": true
+      },
+      {
+        "id": "junip:8950945",
+        "bundle_pointer": "/evidence_units/2108",
+        "text_sha256": "a3409caaec63d98d99a1dbe24789bd65023a9427392d1ca20304fd8635c17f04",
+        "pass": true
+      },
+      {
+        "id": "junip:6567933",
+        "bundle_pointer": "/evidence_units/1721",
+        "text_sha256": "d4d75db7e0cbbd7d782d477e90c952f90dabf53bd2ebc5b4c3d204adef2a8e9a",
+        "pass": true
+      },
+      {
+        "id": "junip:13599983",
+        "bundle_pointer": "/evidence_units/542",
+        "text_sha256": "ab6a1ea48cc70cfc1ca7f8ed6e7a8aab6a07ad5df7317022d05f76f0c0624385",
+        "pass": true
+      },
+      {
+        "id": "reddit:1i30kik:m7kd5t6",
+        "bundle_pointer": "/evidence_units/2562",
+        "text_sha256": "18a153ff116039ec1239eaf383be176a2446220be4e830e46199c67d96b3e0b6",
+        "pass": true
+      },
+      {
+        "id": "reddit:1i30kik:m7j3q3q",
+        "bundle_pointer": "/evidence_units/2546",
+        "text_sha256": "9f2dfeec1e6e6a0670e66885fdee132bfb3ab1d9497cf276c758919eb3e15094",
+        "pass": true
+      }
+    ],
+    "context_count": 31,
+    "all_context_bodies_match": true,
+    "native_checks": [
+      {
+        "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1i30kik-projection.json",
+        "sha256": "483eb6c7d4c027ef029cc4a6043293af2f160f0b40d8a9b8287ec5001b071ab7",
+        "pass": true
+      },
+      {
+        "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1n9da6u-projection.json",
+        "sha256": "6eee486eb6ebff619b1c5bf9db5b10cc28a6efdaf47bc4f5c93bdd58a07ebdad",
+        "pass": true
+      }
+    ],
+    "retailer": {
+      "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/successor-return/retailer-coding-rebuild/partition-01.json",
+      "sha256": "fbc6df3321ba842a9d8a85502581ad2943e5ead5ac1279e5fa2d9310ad05565d",
+      "body_match": true
+    },
+    "native_pack": {
+      "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/packaging-diagnosis-sample-20260909/docs/research/packaging_diagnosis_sample_20260909/native.json",
+      "sha256": "77df41012e569679ea9c33abb30e74c5f796493b0b17c407012d3ebdabf39492"
+    },
+    "source_sample": {
+      "path": "C:/Users/vmon7/.codex/worktrees/a7d8/orca/docs/research/semantic_consolidation_sample_20260909/sample.json",
+      "sha256": "7fcce869f91759ffb4e0942ae0c5996889981fe8679dd9012fab941feb0f84e8"
+    }
+  },
+  "packaging": [
+    {
+      "name": "packaging-incremental-update",
+      "report": "Initial stage: The 19 focal records supported repeated favorable packaging reception within one Experiment-owned TikTok thread: appearance, general approval and refillability enthusiasm. P00’s combined chic/environmentally friendly praise drew 296 displayed likes; environmental claims remained contested by P02 and qualified by the same actor’s elaboration in P03. Recyclability and environmental benefit were unverified. P06 alone reported an unspecified product arriving leaked with a loose top, requiring cleaning and raising an oxygen-exposure concern. P07 offered replacement and brand reassurance; dispatch or resolution was not established. Initial counts were arrival_leak=1, explicit_loose_top=1, bare_arrival_agreement=0, replacement_offered=1, replacement_sent=0, retailer_leak=0 and repurchase_intended=0. This stage is assessed from the supplied prior findings; earlier exact records were not re-retrieved.\n\nUpdated stage: Arrival leakage now has recurrence across seven distinct visible TikTok accounts: P06 and P08–P13. P06 and P13 explicitly describe loose/improperly screwed tops; P08 contextually reports the same arrival problem and adds a free replacement sent by Sephora. P09–P12 are four bare agreements in P06’s branch. These agreements support contextual recurrence of the arrival complaint but add no independently specified mechanism, severity or remedy. P06 and P13 provide the detailed recurrence for improperly secured tops accompanying leakage. All remain concentrated in one brand-owned thread; distinct account identities do not verify distinct humans. The complaint SKU/version remains unknown, and agreement cannot silently inherit every detail of P06’s experience.\n\nR01 adds a different condition and known product: retailer-review actor 215817888 reports Softwear–Void’s lid repeatedly unscrewing, including leakage in a pocket at work onto underwear, shirt and jeans, product loss and inability to return recovered product to the package. This supplies cross-role corroboration of the broader reported problem of closures coming loose with leakage across TikTok customer comments and a retailer review, subject to unresolved cross-venue identity overlap. It does not corroborate arrival leakage, identify the TikTok product as Softwear, or establish one shared defect mechanism. Formula/package version is unknown. No opposing leakage experience appears in this bounded set; failure reports have conflict posture none_observed. Overall reception remains mixed: packaging praise coexists with complaints, and environmental reception is contested.\n\nConsequences: P07’s brand replacement offer remains an offer; its reassurance about brief oxygen exposure is not independent product-safety verification. P08 explicitly reports Sephora sent a free replacement, with delivery and resolution unknown. R01 explicitly intends to repurchase despite annoyance about losing an expensive favorite, loves the product, and has would_recommend=true metadata alongside a 3-star rating. Complaint and loyalty therefore coexist within one account. R01 proposes a click-lock or doe-foot alternative; neither is an implemented remedy. Repurchase is future intent, not completed action. P17’s all-Experiment routine and Continuum in the mail show loyalty/pending shipment without packaging attribution. P20’s buying declaration, P32’s conditional saving interest and P38’s trial anticipation do not verify checkout. P04/P27 request refill bundles; P27 names Continuum and Super Saturated without establishing joint use or repurchase. P42 reports receipt and newly discovered refillability, not a refill purchase. P15 proposes empty-container reuse for Lexapro; completion and suitability are unknown. P29’s refill/sticker question remains unresolved. No explicit packaging-caused acquisition, abandonment or return is supplied.\n\nEngagement and limits: Initial displayed likes remain P00 296, P01 39, P02 0, P03 2, P04 0, P06 12, P07 12, P15 150, P17 1, P20 7, P21 1, P26 1, P27 1, P29 2, P32 3, P38 1, P39 1, P40 1 and P42 1. Additions show P08 5, P09 4, P10 4, P11 2, P12 0 and P13 0. P00 and P15 have substantial visible resonance for their respective combined praise and proposed reuse; other values lack sufficient exposure context for firm material-resonance judgments. Likes establish neither verified experience, independence, prevalence nor buying effects. R01 engagement and capture time are unavailable; its 3-star rating and recommendation are author testimony, while product-wide rating aggregates are not engagement on this review or corroboration of its complaint.\n\nAll TikTok records share https://www.tiktok.com/@experimentwrld/video/7639858768146222366 and capture time 2026-09-09T11:56:25.935Z; displayed month-day dates lack years. Native comment IDs are unavailable. P00/P03 share an actor, and P01/P07 share the brand actor. R01 is identified by junip:13200181, published 2026-05-10T02:01:45.837Z. No context-only accounts were supplied. The 26 focal records do not constitute all 47 displayed bodies or 72 advertised comments; only the arrival-leak and metal-packaging branches were expanded. Counts below are updated qualifying focal source-key counts, not origin or event counts. No prevalence, verified causal mechanism, damage from oxygen exposure or population-level buying effect is established.",
+      "R01": {
+        "key": "R01",
+        "findings": "Retailer review junip:13200181, actor 215817888; published 2026-05-10T02:01:45.837Z; engagement/capture time unavailable. Softwear–Void, package/formula version unknown. Reports recurrent lid unscrewing, workplace pocket leakage onto underwear/shirt/jeans, substantial product loss and inability to put recovered product back. Proposes click-lock or doe-foot remedy. Explicitly loves favorite Void and will repurchase despite annoyance/cost; future intent, not completed repurchase. Rating 3; would_recommend=true; native verified_buyer=true, rewarded=false. Metadata is not narrated acquisition. Supports broader closure/leakage recurrence, not arrival leakage; cross-venue actor overlap unresolved."
+      }
+    },
+    {
+      "name": "packaging-full-update",
+      "report": "Packaging reception is positive on appearance and refillability, while failure reports become recurrent in the added evidence. The record supports reported experiences and preferences, not defect prevalence, verified environmental performance or packaging-caused purchasing.\n\nStage comparison: the saved input identifies only an updated stage, without an explicit earlier-stage manifest. Taking the first block (P00–P42 as listed) as initial and the appended P08–P13/R01 as additions, the initial block contains one arrival-leak report (P06), a brand replacement offer (P07), aesthetic/environmental praise, refill requests and buying/loyalty expressions. Its arrival-leak finding is isolated testimony; likes do not supply additional experiences. The additions bring arrival-leak reporting/contextual agreement to seven distinct TikTok profiles in the same reply branch. Only P06 and P13 explicitly describe loose/improperly screwed tops; P08 adds a free replacement reportedly sent, and four replies are bare agreements. This establishes distinct-account recurrence of the broad arrival-leak proposition within one conversation, with unequal detail and unverified human independence. It does not establish seven loose-top diagnoses or seven independently investigated incidents.\n\nR01 separately reports Softwear–Void’s lid repeatedly unscrewing, leakage during pocket carriage at work, clothing stains and unrecoverable product loss. TikTok complaint SKU/version remains unknown; R01 therefore adds retailer-review corroboration for the broader proposition that Experiment packaging leakage is reported across customer source roles, not corroboration of a particular SKU’s arrival defect. Loose closures recur descriptively in P06/P13/R01 under different or unknown product and use conditions; a shared manufacturing cause is unestablished. No supplied evidence isolates a batch, version or joint-use condition.\n\nReception is conditional/mixed: several profiles praise packaging, but those statements do not contradict specific leakage reports. P00’s aesthetic/environmental praise has 296 displayed likes; P15’s proposed reuse has 150. These show endorsement of the statements, not verified recyclability, safe reuse, experiences or buying effects. P03 is the same actor as P00 and offers explicitly uncertain component-recyclability claims; P01 is brand agreement, not independent customer corroboration. P02 questions recyclability. P26 praises packaging while asking what the product does for skin. Refill requests and refillability excitement are distinct from proven environmental benefit.\n\nConsequences remain source-specific. P06 reports opening/cleaning after leakage and worries about oxygen exposure. P07 says short exposure is not an issue and offers a replacement conditional on contacting support; neither safety nor fulfillment is independently verified. P08 says Sephora sent a free replacement, without confirming delivery. R01 remains strongly attached to Void and explicitly intends repurchase despite leakage, lost product and cost frustration; click-lock/doe-foot suggestions are proposed remedies, not implemented fixes. No return, abandonment or completed complaint-driven repurchase is reported. P17 reports an all-Experiment routine and Continuum in transit; P20 expresses buying enthusiasm, P32 tentative saving interest, P38 anticipation of trying, and P42 receipt plus newly discovered refillability. These do not establish packaging as the cause of acquisition or loyalty.\n\nCounts below apply to the full updated focal set and count source-account records as requested, not origins or events. P00/P03 share one actor, as do brand records P01/P07. All TikTok records come from the same brand-video conversation, captured 2026-09-09T11:56:25.935Z; displayed publication dates lack years. All raw focal likes are retained in the index. The supplied capture reports 47 displayed bodies against 72 advertised comments; this is not completeness proof, and other reply branches remain outside the follow-up. Native comment IDs are unavailable. No context-only records were supplied; the video itself cannot supply missing product testimony. R01’s review engagement is unavailable; its rating and recommendation are review metadata, not endorsement counts.",
+      "R01": {
+        "key": "R01",
+        "findings": "Junip review 13200181, actor 215817888, published 2026-05-10T02:01:45.837Z, Softwear–Void, version unknown. Reports lid repeatedly unscrewing, a pocket-at-work leak staining underwear/shirt/jeans, inability to return recovered product to the package and substantial loss. Loves Void and explicitly intends repurchase despite cost frustration; suggests click-lock or doe-foot alternatives. Rating 3/5, would recommend true, native verified-buyer flag true, rewarded false; review endorsement engagement unavailable. Product aggregate ratings are not this review’s engagement. Different product/condition from unidentified TikTok arrival reports; recurrent lid loss is one account’s narrative, not an enumerated event count."
+      }
+    }
+  ],
+  "other_final_reports": [
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "report": "Initial stage: A04 and A08 independently report Super Saturated (SS) hydration in retailer reviews: before makeup and alongside tretinoin/other actives, respectively. A09 reports hydration retention from Avant Guard mask plus SS, without separable allocation. Texture evidence comprises A04’s lightweight, refreshing, fast-drying experience and A03’s first-hand comparison that Wave is less sticky than SS. A07’s frozen record contains only 'undefined...'; its testimony remains unavailable. Initial counts were direct hydration 2, joint hydration 1, direct texture 2, speculative texture 0. This update retains earlier findings from the supplied prior assessment; earlier records were not retrieved again.\n\nUpdated stage: A13 raises direct SS hydration support to three credited retailer origins (A04, A08, A13), with three source-account reports. The repeated proposition is reported hydration during use, not measured or standalone efficacy. A13 uniquely reports plump, hydrated skin after a 12-hour shift, less irritation/reactivity and oil production, and hydration of dry sensitive cheeks without forehead congestion despite an oily T-zone and mild rosacea. Those specific benefits and duration are not independently repeated. A09 remains the sole joint mask–SS retention report. No readable focal account opposes SS hydration; conflict posture is none_observed within this bounded set, with A07 unassessable. There is no cross-venue corroboration of SS hydration. Formula versions and actual used SS SKU variants remain unresolved.\n\nTexture is conditional and mixed in assessment. A13 directly describes SS as sticky, shiny and slick, tolerates a pump for some daytime outings, and associates its moisture benefits with accepting that feel. Advice that most people should reserve it for night or use less is the reviewer’s generalization, not observed population behavior. A03 and A13 both report SS stickiness, but A03’s independence is uncredited/unavailable; this is recurrence across two named accounts and venues, not established cross-venue independent corroboration. A13 does not repeat the Wave comparison. A04’s lightweight/fast-drying report differs from A13’s pronounced tackiness but can coexist with relative stickiness; no evidenced condition fully explains the variation. A17 adds speculation that Wave must be thinner than SS based on claimed glycerin percentages, explicitly having never tried Experiment because it does not ship there. It cannot corroborate actual SS texture, hydration or composition. Direct texture now has three focal accounts; speculation has one. No supplied bare agreement independently establishes an SS proposition.\n\nExplicit consequences remain bounded: A03 continues SS despite relative stickiness, citing a tentative higher-glycerin belief. A04 ordered SS after a sister’s introduction, bought Buffer Jelly seeking more nighttime hydration/repair, and subsequently bought face wash and mesh moisturizer. Daytime SS satisfaction coexists with seeking nighttime support; neither abandonment nor SS repurchase is explicit, and Refill metadata cannot establish repurchase. A13 describes continued use and occasional daytime tolerance, without explicit repurchase. A09’s fit complaint led to a one-star deduction, not a narrated return or remedy acquisition. A14 received free Buffer Jelly and calls themself a convert after two uses; this is neither paid purchase nor repurchase. A15 considered returning Plasma Wash because of severe eye burning but does not report completing a return. A17’s shipping barrier explains non-trial, without a narrated failed checkout. No explicit SS repurchase appears in the supplied evidence.\n\nOther-product evidence cannot donate SS testimony. A04 and A10 describe Buffer Jelly’s nighttime benefits; A10’s retained hydrating products are unnamed. A14 adds Buffer Jelly’s jelly-to-oil transition, silky slip and softer, calmer morning skin when mixed into moisturizer, after only two uses. Its receipt free for review is explicit despite metadata saying rewarded=false. A15 reports Plasma Wash’s pleasing silky texture alongside poor cleansing, severe eye burning and greater dryness after repeated washing; defect or misuse is the reviewer’s unresolved hypothesis. This opposes A04’s favorable face-wash experience at the cleansing/hydration level, subject to the earlier account’s product reference and unknown versions; it does not contradict SS hydration. A18 praises Wave hydration but reports inadequate nighttime moisture retention and sunscreen pilling from C.R.E.A.M. A17 separately describes needing an additional oily layer with C.R.E.A.M and its own mixed-product workaround. These are detailed other-product reports in the same Reddit conversation, with independence unavailable, not SS corroboration.\n\nEngagement: all eight focal Junip accounts have 0 up-votes and 0 down-votes at the observation times retained in the index. Reddit native scores are A03=6, A17=7 and A18=10; observation times are unavailable and each is marked not materially positive/not interpreted. No material resonance credit is supported. Scores and votes establish neither verified experience, independence, prevalence nor buying effects.\n\nMaterial context outside focal counts: hillary_____k’s parent comment t1_m7j6ppe (2025-01-16T22:43:50.034Z; score 24, observation time unavailable) reports a Black Friday Level Serum purchase, brighter/even skin and emphatic future repurchase intention, not completed repurchase or SS testimony. Engagement materiality is unresolved. Skin_Fanatic’s t1_m7jv3dh (2025-01-17T00:57:57.153Z; score 2, observation time unavailable) asks about alternatives to untried C.R.E.A.M and expresses consideration, not use or purchase. The Regimen Lab thread opener reports Instagram exposure and asks about the brand; actor, publication time and engagement are unavailable. Context_f05862db0ee1dcb8c8c6 repeats focal A18 exactly: it is the same actor and observation, not another source. Product pages resolve references and metadata supplies review targets/skin types; neither adds testimony. Counts below are focal source-account counts, not independent-origin or event counts."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "report": "The updated evidence supports reported Super Saturated (SS) hydration across three credited retailer-review origins, with materially different texture experiences. The supplied input does not identify initial-stage membership or provide a separate initial-stage record, so an initial diagnosis or exact stage-to-stage change cannot be reconstructed reliably. The diagnosis below covers all 11 supplied focal accounts.\n\nSS hydration: A04, A08 and A13 independently report hydration, all as retailer reviews; this is independently repeated reported experience, not cross-venue corroboration or measured efficacy. A04 describes lightweight, refreshing, fast-drying hydration without perceived pore clogging, suitable before makeup. A08 reports hydration while pairing SS with tretinoin and other actives, not an isolated-product test. A13 describes retention through a 12-hour shift, plumpness, less irritation/reactivity and perceived oil reduction with oily-T-zone/dry-sensitive-cheek skin and mild rosacea. Only A13 establishes those particular duration and skin-change details. No direct SS hydration opposition appears in the available text, but A07's body is unavailable. A09 separately reports Avant Guard retaining hydration from SS: one joint-use observation, without separable allocation or evidence of incremental efficacy versus SS alone.\n\nSS texture: A04's lightweight/fast-drying experience contrasts with A13's sticky, shiny, slick finish. A13 describes amount-dependent daytime acceptability and suggests night use for most people; that generalization is the reviewer's, not an established population finding. A03 reports SS is stickier than Wave while continuing SS use because of its presumed higher glycerin content. This supplies another visible actor's first-hand sticky-texture report, but its independence posture is unavailable; cross-venue independent corroboration is therefore not established. The precise Wave-versus-SS comparison has only one first-hand source. A17's thinner-Wave comparison is explicitly speculative: they have never tried Experiment because it does not ship to their location. Generic interest in hydrating serums and ingredient percentages cannot establish SS hydration or texture. Texture conflict is mixed; dose, routine, skin and unknown formulas may matter, but the evidence does not resolve the difference.\n\nOther-product boundaries: A10's overnight retention/glow and A14's silky jelly-to-oil texture and soothing outcomes concern Buffer Jelly, not SS. A14 used a gifted product twice, mixed into moisturizer; after-dermaplaning benefit is anticipated. A15 praises Plasma Wash's silky texture while reporting poor cleansing, severe eye burning and dryness, especially after two washes. This opposes A04's positive cleanser experience, not SS hydration. A18's exceptional Wave hydration and C.R.E.A.M moisture-retention/pilling complaints likewise do not establish SS performance. A17 offers related C.R.E.A.M experience and agreement about needing another layer, not agreement about SS.\n\nBehavior: A04 narrates ordering SS after introduction through a sister, buying Buffer Jelly to seek greater nighttime hydration/repair, then buying the face wash and mesh moisturizer. The account bundles multiple benefits and brand affection; it does not isolate hydration as the cause of every purchase. Its Refill metadata does not independently narrate repurchase. A03 explicitly continues SS despite relative stickiness. A09 deducts a star for mask fit around the nose on a very small head. A13 accommodates stickiness through amount/use timing and advises sticky-averse readers to avoid it; no purchase abandonment is narrated. A14 declares conversion after free receipt, not a paid purchase. A15 considers returning the cleanser but does not report a completed return. Complaint and loyalty coexist; no completed SS repurchase, return or abandonment is established.\n\nEngagement and provenance: All eight focal Junip records have 0 upvotes and 0 downvotes at their supplied observations. Reddit scores are A03=6, A17=7 and A18=10, with observation time unavailable and material_positive=false/not_interpreted. These provide no awarded material resonance and are not verified experiences, independent origins, prevalence or buying effects. Reddit accounts share one thread, and their independence postures are unavailable. Focal counts below count qualifying source accounts, not underlying events. Formula/version is unknown throughout; metadata identifies SS Refill for A04 and First Time for A07/A08 but cannot establish the version used or donate testimony.\n\nMaterial context, outside focal counts: hillary_____k (2025-01-16, score 24) reports buying Regimen Lab Level Serum at Black Friday, brighter/even skin and definite future repurchase intention—not completed repurchase or SS evidence. Skin_Fanatic (2025-01-17, score 2) asks about C.R.E.A.M alternatives while considering trying it; this is interest, not use. Their engagement observation times and independence are unavailable. The shared post asks about Regimen Lab after Instagram advertising; its author, date and engagement are unavailable. Context_f05862db0ee1dcb8c8c6 repeats A18 exactly and adds no source or origin. Product-page and review metadata resolve product references only. A14's explicit free-product disclosure remains material despite rewarded=false metadata."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "report": "Initial stage: A04 and A05 narrated completed Experiment buying, comprising five product-action categories: four acquisitions in A04 and one checkout in A05. A01 narrated cart readdition only. Updated stage: A11 adds one Softwear stock-up category, bringing acquisition accounts to three and product_action_assertions to six. These count narrated categories per focal account, not units, transactions or independently established purchase events. A14 adds gifted receipt, A15 contemplated return, and A16 intended routine substitution. No completed return is reported.\n\nA04’s retrieved wording supports retaining completed functional routine replacement: after buying the face wash, the reviewer reports makeup washing off and “no more makeup remover needed.” This describes an achieved replacement of the remover’s function, without establishing disposal or cessation of a named product. Thus completed routine replacement remains A04 alone in both stages; prospective replacement changes from none to A16.\n\nThe three credited buying origins are distinct Junip retailer reviewers. Completed Experiment buying is independently repeated within that role, with no focal cross-role corroboration. A04 describes sister-led discovery and satisfaction followed by purchases across products; A05 describes instant Avant Guard checkout after TikTok discovery in a sustainability context; A11 explicitly links Softwear stockpiling to months of loving it. A04 and A11 support the shared reported reason of favorable experience preceding further Experiment buying, across different products and acquisition categories. They do not repeat a specific benefit-driven buying claim. Influencer recommendation in A11 does not explicitly establish the initial purchase or its cause. No likes or bare agreement establish checkout, repurchase or purchase motivation.\n\nThe update materially qualifies favorable experience. A11 reports dermatitis after months of Softwear use, prescribed steroid cream, recovery and a worse flare within 24 hours of retrying. The reviewer attributes this to Softwear; it is a detailed individual adverse-event account, not an independently confirmed diagnosis or causal finding. Three unopened stocked tubes and a reported $70 CAD loss coexist with affection, envy of people able to use it, and a qualified recommendation. This is not evidence of buying again after the reaction. A15 reports unsuccessful cleansing across multiple application methods, severe eye burning and dryness, and considers returning Plasma Wash; no return is completed. These outcomes oppose A04’s favorable face-wash account if its unnamed wash is Plasma Wash, a likely but unresolved mapping. Versions and conditions are insufficient to explain the difference.\n\nA14’s gifted Buffer Jelly report describes two uses mixed into nighttime moisturizer, followed by soft skin without redness, irritation or clogged pores in a reviewer with rosacea. It provides another distinct-actor favorable nighttime skin report alongside A04, but does not independently establish A04’s exact glow/hydration outcomes or Buffer Jelly’s separate contribution. Conversion language is enthusiasm, not purchase. A16 reports tolerable Continuum use and less-red active acne overnight, while explicitly withholding conclusions about acne or pigmentation effectiveness. Replacing existing azelaic- and salicylic-acid products remains prospective. A05’s fit complaint still coexists with satisfaction and continued masking; barrier benefits remain inseparable from jointly used products.\n\nOther-brand boundaries remain unchanged: A02’s disliked, skipped product and favored baste balm concern Dr. Idriss; A12’s cream 2.0 and cleanser acquisitions concern Regimen Lab. Neither establishes Experiment buying. A01’s Softwear cart readdition is attributed to a recommendation, with no checkout, receipt or use reported.\n\nContext-only evidence remains outside focal counts: cowrunamuck (context_5f002acbf9eb1cd7bfc3, Reddit, September 5, 2025, score 21) reports two Softwear backups, affection and previously harder access, smooth/moisturized lips, and preference over Eadem’s scent/taste. This supplies a separate contextual stock-holding account, not another focal acquisition or A01 experience. RowanVC (context_ff821dc553240c0290fa, same thread/date, score 42) praises Softwear and Experiment, but the balm stash is not explicitly Experiment stock; Dr. Idriss tackiness, layering and resulting soft lips concern another product. These are distinct contextual actors in one shared thread, not additional independent people each time referenced. Product pages resolve scope; metadata adds no acquisition. A14’s explicit free receipt remains material despite rewarded=false metadata.\n\nRaw engagement: A01/A02/A12 scores are 13/4/12, supplied as material_positive=false and not_interpreted, with observation times unavailable. A04/A05/A11/A14/A15/A16 each have 0 up and 0 down votes, observed respectively March 23, 2025; November 3, 2022; November 25, 2024; August 20, 2025; November 4, 2024; and June 11, 2026. Context scores 21 and 42 lack observation times and sufficient exposure context for material resonance credit. Engagement establishes neither verified experiences, independence, prevalence nor buying effects.\n\nConflict posture is none_observed for the narrow narrated-buying proposition and mixed for broader favorable experience. Specific remedies, adverse outcomes and reasons remain source-bound. Earlier findings for A01/A02/A05/A12 and their context are carried from the supplied prior findings; their exact records were not re-retrieved. A04 and all four additions were assessed from exact supplied records. Formula versions remain unknown; other-brand cream 2.0 is the exception.",
+      "actionCount": {
+        "name": "routine_replacement_completed",
+        "source_accounts": [
+          "A04"
+        ],
+        "count": 1
+      },
+      "A02": {
+        "key": "A02",
+        "findings": "Reddit PamelaDamnela, September 5, 2025; reddit:1n9da6u:ncly8vq. Earlier findings report owning but skipping a disliked-feeling product and loving the baste balm; parent resolves Dr. Idriss exfoliator/Barrier Baste, not Experiment, with precise SKU/version unknown. No Experiment acquisition, return or substitution. Score 4, material_positive=false, observation time unavailable. RowanVC’s layering and separate Softwear praise cannot be assigned to A02. Exact text not re-retrieved."
+      },
+      "A05": {
+        "key": "A05",
+        "findings": "Junip customer 44968672, November 3, 2022; junip:1569510, credited origin. Earlier findings report instant Avant Guard checkout after TikTok discovery, in a sustainability context following prior near-nightly disposable masking: one acquisition category. Reports continued use and easy cleaning, with imperfect cheek/nose fit alongside satisfaction. Barrier improvement involves other hydrating/moisturizing products in the routine, leaving mask contribution unresolved. No explicit completed routine substitution, gift or return. Metadata: Acid Lime/SMALL, verified buyer, unrewarded; version unknown. Votes 0/0 observed November 3, 2022. Exact text not re-retrieved."
+      }
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "report": "The supplied updated set supports completed Experiment acquisition in three focal accounts: A04, A05 and A11, totaling six distinct account–product acquisition categories. It does not establish six purchase events. The apparent initial subset is A01/A02/A04/A05/A12 and the additions are A11/A14/A15/A16; no separate initial-stage manifest was supplied, so the stage comparison uses that grouping.\n\nInitial stage: A04 narrates buying Super Saturated, Buffer Jelly, face wash (apparently Plasma Wash) and mesh moisturizer (apparently Molecular Mesh). Sister-led discovery and positive Super Saturated experience precede expansion; greater nighttime hydration/repair is an explicit reason for Buffer Jelly. Subsequent praise includes cleansing, makeup removal, hydration and packaging colors, but not every attribute is explicitly a purchase cause. A05 narrates immediate Avant Guard checkout following TikTok discovery in the context of wanting a sustainable alternative to disposable sheet masks. These are two credited retailer origins reporting acquisition, with different product-specific reasons. A01 reports comment-induced Softwear cart readdition only. A02's skipped product and favored baste balm concern Dr. Idriss in context. A12's cream 2.0 and cleanser acquisitions concern Regimen Lab, not Experiment.\n\nUpdated stage: A11 adds explicit Softwear stock-up during months of loving it, followed by reported dermatitis, prescribed steroid cream, a worse flare within 24 hours of retrying, and three unopened tubes described as a $70 CAD loss. This is adverse experience alongside enduring affection and qualified recommendation. A14 adds gifted Buffer Jelly receipt and favorable experience after two uses mixed into moisturizer, not purchase. A15 adds contemplated Plasma Wash return after poor cleansing, dryness and severe eye burning, without a completed return. A16 adds intended Continuum substitution for existing azelaic- and salicylic-acid products, without completed substitution or narrated acquisition. A04 reports no further makeup-remover need; that does not explicitly establish actually discontinuing a separate routine product.\n\nCorroboration is proposition-specific. Completed acquisition repeats across three credited retailer accounts; specific motivations mostly remain individual self-attributions. A04 and A11 both link further acquisition to prior product satisfaction, but across different products. Context-only cowrunamuck independently reports Softwear backups because of love and former shipping inconvenience, qualitatively repeating A11's satisfaction-linked stock-up reason in another customer venue. It adds no focal count and does not establish a distinct source-role route to cross-venue corroboration. Its detailed recommendation explains A01's cart reference without donating product experience or checkout to A01. No bare agreeing reply here establishes additional Experiment buying.\n\nPerformance evidence is mixed: A04's favorable face-wash account opposes A15's Plasma Wash experience, subject to the inferred face-wash identification. Softwear praise coexists with A11's serious adverse report; context-only sensitive-skin tolerance does not invalidate it. Buffer Jelly praise repeats in A04 and gifted A14, but A14's two-use, moisturizer-mixed experience cannot isolate its effect. Formulas/versions and most purchased variants remain unknown. These selected self-reports establish neither market prevalence nor general causal buying effects; A11's causation claim remains the reviewer's attribution.\n\nEngagement: A01/A02/A12 have native Reddit scores 13/4/12, with observation times unavailable and supplied engagement explicitly uninterpreted. Every focal Junip review has 0 up-votes and 0 down-votes at its supplied observation timestamp. Context-only cowrunamuck and RowanVC have scores 21 and 42 respectively, with observation times unavailable. These are raw audience signals, not verified experiences, independent buyers or buying consequences; material resonance is not established. A01, A02 and both contextual commenters share one thread but have different visible handles; Reddit independence remains unverified. No supplied context duplicates a focal actor.",
+      "actionCount": {
+        "name": "routine_replacement_completed",
+        "source_accounts": [],
+        "count": 0
+      },
+      "A02": {
+        "key": "A02",
+        "findings": "PamelaDamnela, Reddit, 2025-09-05; score 4, observation time unavailable. Owns but skips 'that one' because of its feel; loves baste balm. Parent resolves these to Dr. Idriss exfoliator and Barrier Baste, not Experiment buying. Context-only RowanVC (score 42, same thread, distinct handle) praises Experiment Softwear and the brand, separately describes sticky Dr. Idriss exfoliator layered with lanolin/other balm and soft lips afterward. Their general balm stash is not an explicit Experiment stock-up."
+      },
+      "A05": {
+        "key": "A05",
+        "findings": "Junip customer 44968672, 2022-11-03; 0 up/0 down observed that date. Explicit immediate checkout of reusable Avant Guard following TikTok creator discovery, against a stated sustainability goal and discontinued frequent disposable masking. Reports almost-perfect fit except cheek sides/nose, easy cleaning, and motivation to use other hydrating/moisturizing products credited with barrier improvement; mask-alone benefit unproven. Metadata identifies Acid Lime/SMALL, verified buyer. One acquisition category; no explicit repurchase."
+      }
+    }
+  ]
+}

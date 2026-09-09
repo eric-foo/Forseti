@@ -1,0 +1,25 @@
+{
+  "at": "2026-09-09T13:37:18.464Z",
+  "repo": {
+    "processSuccess": false,
+    "exitCode": 4,
+    "signal": null,
+    "timedOut": false,
+    "interrupted": false,
+    "killed": false,
+    "outputTruncated": false,
+    "error": {
+      "stack": "Error: Command failed: gh repo view --json nameWithOwner,url\nTo get started with GitHub CLI, please run:  gh auth login\nAlternatively, populate the GH_TOKEN environment variable with a GitHub API authentication token.\n\n    at genericNodeError (node:internal/errors:986:15)\n    at wrappedFn (node:internal/errors:540:14)\n    at ChildProcess.exithandler (node:child_process:417:12)\n    at ChildProcess.emit (node:events:514:28)\n    at maybeClose (node:internal/child_process:1141:16)\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)",
+      "message": "Command failed: gh repo view --json nameWithOwner,url\nTo get started with GitHub CLI, please run:  gh auth login\nAlternatively, populate the GH_TOKEN environment variable with a GitHub API authentication token.\n",
+      "code": 4,
+      "killed": false,
+      "signal": null,
+      "cmd": "gh repo view --json nameWithOwner,url",
+      "name": "Error"
+    },
+    "terminationError": null,
+    "stdout": "",
+    "stderr": "To get started with GitHub CLI, please run:  gh auth login\nAlternatively, populate the GH_TOKEN environment variable with a GitHub API authentication token.\n"
+  },
+  "scope": "Remote metadata lookup only. Report/validation/commit independent; no attempted push or PR."
+}

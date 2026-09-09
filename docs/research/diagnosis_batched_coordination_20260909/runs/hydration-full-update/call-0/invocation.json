@@ -1,0 +1,27 @@
+{
+  "executable": "C:/Users/vmon7/AppData/Local/OpenAI/Codex/bin/fd4c151a749f3ab4/codex.exe",
+  "args": [
+    "exec",
+    "--json",
+    "--model",
+    "gpt-6-astra",
+    "-c",
+    "model_reasoning_effort=\"medium\"",
+    "-C",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\72b7\\orca\\docs\\research\\diagnosis_batched_coordination_20260909\\runs\\hydration-full-update\\call-0",
+    "--disable",
+    "shell_tool",
+    "--output-schema",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\72b7\\orca\\docs\\research\\diagnosis_batched_coordination_20260909\\response.schema.json",
+    "--output-last-message",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\72b7\\orca\\docs\\research\\diagnosis_batched_coordination_20260909\\runs\\hydration-full-update\\call-0\\response.json",
+    "-"
+  ],
+  "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\72b7\\orca\\docs\\research\\diagnosis_batched_coordination_20260909\\runs\\hydration-full-update\\call-0",
+  "started_at": "2026-09-09T13:31:22.724Z",
+  "stdin_sha256": "18327047270beaff4483b80ad4fe8316467a2f31406c885615ab7e4e99b87bd8",
+  "no_resume": true,
+  "model_override": "gpt-6-astra",
+  "reasoning_override": "medium",
+  "retrieval_round": 0
+}
