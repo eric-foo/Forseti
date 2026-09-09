@@ -22,6 +22,7 @@ from judgment.semantic_evidence_integration import (  # noqa: E402
     RECONCILIATION_AUTHORING_IDENTITY_V4,
     RECONCILIATION_POLICY_VERSION_V2,
     SOURCE_VERSION_V3,
+    SEMANTIC_METHODS_V7_PLUS,
     SemanticIntegrationError,
     apply_row_verification,
     apply_row_repair,
@@ -1105,6 +1106,212 @@ def submit_batches(
         "compiled_out": str(compiled_out),
         "model_api_calls": 0,
     }
+
+
+def _retain_advance_artifact(path: Path, value: Any, *, raw: bool = False) -> bool:
+    """Revalidate existing bytes; publish new deterministic output without replacement."""
+    data = value if raw else (
+        json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True).encode("utf-8")
+        + b"\n"
+    )
+    staged = path.with_name(path.name + ".tmp")
+    if staged.exists():
+        raise ValueError(f"staged artifact requires explicit recovery: {staged}")
+    if path.exists():
+        matches = path.read_bytes() == data if raw else _load_object(path) == value
+        if not matches:
+            raise ValueError(f"persisted artifact differs from current inputs: {path}")
+        return False
+    _write_new(staged, data)
+    # As at response publication, no-replace is a filesystem guarantee. A
+    # crash leaves an explicit staged artifact, never a truncated accepted file.
+    os.link(staged, path)
+    staged.unlink()
+    return True
+
+
+def advance_semantic_run(
+    *, source_path: Path, run_dir: Path,
+    max_batch_chars: int = 80_000, max_prompt_bytes: int | None = None,
+    max_evidence_per_work_unit: int = 120,
+) -> dict[str, Any]:
+    """Carry the supported provider-free route to its next real judgment boundary.
+
+    Native source/bundle, prompts, responses, stages, compilations and view are
+    the restart surface. No cursor can bypass revalidation of that lineage.
+    """
+    run_dir = run_dir.resolve()
+    transitions: list[dict[str, Any]] = []
+    artifacts: dict[str, Any] = {}
+    state: dict[str, Any] = {
+        "status": "SEMANTIC_ADVANCE_BLOCKED", "run_dir": str(run_dir),
+        "artifacts": artifacts, "transitions": transitions,
+        "judgment_requests": [], "model_api_calls": 0,
+    }
+
+    def retain(name: str, path: Path, value: dict[str, Any], operation: str) -> None:
+        created = _retain_advance_artifact(path, value)
+        artifacts[name] = {"path": str(path), "sha256": hash_file(path)}
+        transitions.append({"operation": operation, "disposition": "written" if created else "reused",
+                            "artifact": str(path)})
+
+    def requests_for(phase: str, directory: Path, prompts: list[dict[str, Any]],
+                     binding_path: Path, binding_hash: str) -> list[dict[str, Any]]:
+        requests = []
+        expected_files: set[Path] = set()
+        for prompt in prompts:
+            batch_id = prompt["batch_id"]
+            path = directory / "prompts" / f"{batch_id}.md"
+            expected_files.add(path)
+            _retain_advance_artifact(path, (prompt["prompt"] + "\n").encode("utf-8"), raw=True)
+            request = {
+                "phase": phase, "batch_id": batch_id,
+                "binding_path": str(binding_path), "binding_sha256": binding_hash,
+                "prompt_path": str(path), "prompt_sha256": hash_file(path),
+                "response_path": str(directory / "responses" / f"{batch_id}.json"),
+            }
+            if "response_schema" in prompt:
+                schema_path = path.with_suffix(".schema.json")
+                expected_files.add(schema_path)
+                _retain_advance_artifact(schema_path, prompt["response_schema"])
+                request.update(response_schema_path=str(schema_path), response_schema_sha256=hash_file(schema_path))
+            requests.append(request)
+        prompt_dir = directory / "prompts"
+        if prompt_dir.exists() and set(prompt_dir.iterdir()) != expected_files:
+            raise ValueError(f"unexpected or staged prompt artifact: {prompt_dir}")
+        return requests
+
+    def read_responses(directory: Path, requests: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+        expected = {row["batch_id"] for row in requests}
+        responses, problems = [], []
+        for path in sorted((directory / "responses").glob("*")):
+            if path.name.endswith(".json.tmp"):
+                problems.append({"kind": "staged", "path": str(path), "batch_id": path.name[:-9]})
+                continue
+            try:
+                if path.suffix != ".json" or path.stem not in expected:
+                    raise ValueError("unexpected response artifact; use the returned exact response path")
+                response = _load_object(path)
+                if response.get("batch_id") != path.stem:
+                    raise ValueError("response filename and batch identity differ")
+                responses.append(response)
+            except (OSError, ValueError) as exc:
+                problems.append({"kind": "invalid", "path": str(path), "batch_id": path.stem, "error": str(exc)})
+        return responses, problems
+
+    def boundary(phase: str, requests: list[dict[str, Any]], responses: list[dict[str, Any]],
+                 problems: list[dict[str, Any]], validate: Any) -> bool:
+        valid: set[str] = set()
+        if responses:
+            try:
+                # Validate the ready set together. In particular, do not
+                # reconstruct a full verification corpus once per response.
+                validate(responses)
+                valid = {row["batch_id"] for row in responses}
+            except (ValueError, SemanticIntegrationError) as combined_error:
+                for response in responses:
+                    try:
+                        validate([response])
+                        valid.add(response["batch_id"])
+                    except (ValueError, SemanticIntegrationError) as exc:
+                        problems.append({"kind": "invalid", "batch_id": response["batch_id"], "error": str(exc)})
+                if len(valid) == len(responses):
+                    problems.append({"kind": "invalid", "error": str(combined_error)})
+        pending = [row for row in requests if row["batch_id"] not in valid]
+        staged_ids = {row.get("batch_id") for row in problems if row["kind"] == "staged"}
+        invalid_ids = {row.get("batch_id") for row in problems if row["kind"] == "invalid"}
+        state.update(phase=phase, response_state={
+            "valid_batch_ids": sorted(valid), "missing_batch_ids": [row["batch_id"] for row in pending
+                if row["batch_id"] not in staged_ids | invalid_ids], "problems": problems,
+            "accepted_responses": [{"path": row["response_path"], "sha256": hash_file(Path(row["response_path"]))}
+                for row in requests if row["batch_id"] in valid],
+        })
+        state["judgment_requests"] = [row for row in pending if row["batch_id"] not in staged_ids | invalid_ids]
+        if problems:
+            state.update(status="SEMANTIC_ADVANCE_BLOCKED", action="Resolve the named invalid/staged artifacts explicitly; do not retry or replace accepted answers.")
+            return True
+        if pending:
+            state.update(status="SEMANTIC_JUDGMENT_REQUIRED", action="Dispatch the complete ready request set with independent judgment boundaries, then advance again.")
+            return True
+        return False
+
+    try:
+        source = _load_object(source_path)
+        if source.get("schema_version") != SOURCE_VERSION_V3 or "source_sha256" not in source:
+            raise ValueError("advance requires Collection's hash-bound materialized v3 source")
+        bundle = build_bundle(source, max_batch_chars=max_batch_chars,
+            max_prompt_bytes=max_prompt_bytes, max_evidence_per_work_unit=max_evidence_per_work_unit)
+        if bundle.get("method_version") not in SEMANTIC_METHODS_V7_PLUS:
+            raise ValueError("advance requires a row-verified semantic method (v7 or later)")
+        state.update(bundle_sha256=bundle["bundle_sha256"], corpus_sha256=bundle["corpus_sha256"])
+        artifacts["source"] = {"path": str(source_path.resolve()), "sha256": hash_file(source_path)}
+        bundle_path = run_dir / "bundle.json"
+        retain("bundle", bundle_path, bundle, "prepare-batches")
+        directory = run_dir / "extraction"
+        requests = requests_for("extraction", directory, build_batch_prompts(bundle), bundle_path, bundle["bundle_sha256"])
+        responses, problems = read_responses(directory, requests)
+        # Keep run_status the authority for extraction states. It verifies the
+        # immutable bundle/projection once, even when no response exists yet.
+        status = run_status(bundle=bundle, batch_responses=[*responses, *(
+            {"batch_id": row.get("batch_id"), "staged_artifact": True}
+            for row in problems if row["kind"] == "staged"
+        ), *(
+            {"batch_id": row.get("batch_id"), "invalid_file_error": row["error"]}
+            for row in problems if row["kind"] == "invalid"
+        )])
+        state["extraction_status"] = status
+        invalid = {row["batch_id"]: row["error"] for row in status["invalid_responses"]}
+
+        def validate_extraction(rows: list[dict[str, Any]]) -> None:
+            for row in rows:
+                if row["batch_id"] in invalid:
+                    raise ValueError(invalid[row["batch_id"]])
+
+        if boundary("extraction", requests, responses, problems, validate_extraction):
+            return state
+        compiled = validate_batch_responses(bundle, responses)
+        retain("batch_compilation", directory / "compilation.json", compiled, "submit-batches")
+        directory = run_dir / "verification"
+        stage, prompts = prepare_row_verification(bundle, compiled)
+        stage_path = directory / "stage.json"
+        retain("verification_stage", stage_path, stage, "prepare-row-verification")
+        requests = requests_for("verification", directory, prompts, stage_path, stage["stage_sha256"])
+        verification_responses, problems = read_responses(directory, requests)
+        if boundary("verification", requests, verification_responses, problems,
+                    lambda rows: apply_row_verification(bundle, compiled, stage, rows, require_all=False)):
+            return state
+        verified = apply_row_verification(bundle, compiled, stage, verification_responses)
+        retain("verified_compilation", directory / "compilation.json", verified, "submit-row-verification")
+        nodes = verified
+        level = 1
+        while True:
+            directory = run_dir / "reconciliation" / f"level-{level:04d}"
+            stage, prompts = prepare_reconciliation_stage(bundle, nodes,
+                reconciliation_policy_version=RECONCILIATION_POLICY_VERSION_V2,
+                authoring_revision=(RECONCILIATION_AUTHORING_IDENTITY_V4
+                    if bundle.get("method_version") in {METHOD_VERSION_V12, METHOD_VERSION_V13}
+                    else RECONCILIATION_AUTHORING_LEGACY))
+            stage_path = directory / "stage.json"
+            retain("reconciliation_stage", stage_path, stage, "prepare-reconciliation-level")
+            requests = requests_for("reconciliation", directory, prompts, stage_path, stage["stage_sha256"])
+            level_responses, problems = read_responses(directory, requests)
+            if boundary("reconciliation", requests, level_responses, problems,
+                        lambda rows: validate_reconciliation_stage(bundle, stage, rows, require_all=False)):
+                return state
+            nodes = validate_reconciliation_stage(bundle, stage, level_responses)
+            retain("node_compilation", directory / "compilation.json", nodes, "submit-reconciliation-level")
+            if is_terminal_reconciliation_compilation(nodes):
+                break
+            level += 1
+        view = finalize_v3_view(bundle, verified, nodes)
+        retain("view", run_dir / "view.json", view, "finalize-v3")
+        state.update(status="SEMANTIC_EVIDENCE_INTEGRATION_COMPLETE", phase="complete",
+                     view_sha256=view["view_sha256"], judgment_requests=[],
+                     action="Use the current-corpus view under existing seal and synthesis authorization.")
+    except (OSError, ValueError, SemanticIntegrationError) as exc:
+        state.update(status="SEMANTIC_ADVANCE_BLOCKED", error=str(exc), judgment_requests=[],
+                     action="Resolve the named input or persisted-artifact failure; rerun the same advance invocation.")
+    return state
 
 
 def prepare_row_verification_run(
@@ -2604,6 +2811,13 @@ def finalize_evidence_selection_quotes_run(
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
+    advance = sub.add_parser("advance", help="Advance supported consolidation to all ready judgments or the final view.")
+    advance.add_argument("--source", type=Path, required=True)
+    advance.add_argument("--run-dir", type=Path, required=True)
+    advance.add_argument("--max-batch-chars", type=int, default=80_000)
+    advance.add_argument("--max-prompt-bytes", type=int)
+    advance.add_argument("--max-evidence-per-work-unit", type=int, default=120)
+
     materialize = sub.add_parser("materialize-v3")
     materialize.add_argument("--source", type=Path, required=True)
     materialize.add_argument("--repo-root", type=Path, required=True)
@@ -3168,7 +3382,12 @@ def _parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
-        if args.command == "materialize-v3":
+        if args.command == "advance":
+            result = advance_semantic_run(source_path=args.source,
+                run_dir=args.run_dir, max_batch_chars=args.max_batch_chars,
+                max_prompt_bytes=args.max_prompt_bytes,
+                max_evidence_per_work_unit=args.max_evidence_per_work_unit)
+        elif args.command == "materialize-v3":
             result = materialize_v3(
                 source_path=args.source,
                 repo_root=args.repo_root,
@@ -3659,6 +3878,8 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"status": "error", "error": str(exc)}, indent=2, sort_keys=True))
         return 2
     print(json.dumps(result, indent=2, sort_keys=True))
+    if args.command == "advance" and result.get("status") == "SEMANTIC_ADVANCE_BLOCKED":
+        return 2
     if args.command == "evaluate-calibration" and result.get("status") != "SEMANTIC_CALIBRATION_PASS":
         return 3
     return 0
