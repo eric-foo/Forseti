@@ -1,0 +1,6 @@
+{
+  "first_attempt": "GATE FAIL after initial commit, before push: Committed byte mismatch docs/research/README.md",
+  "cause": "Git normalized CRLF in the nearest research index. A fresh committed-versus-working read confirmed exact text equality after line-ending normalization. Every sample artifact passed byte-for-byte readback before the index check.",
+  "correction": "Keep strict byte identity for all experiment artifacts; compare the nearest research index after CRLF normalization. No index content or experimental answer is changed.",
+  "accounting": "Retain the existing final available measurement cutoff on recovery. Recovery and final publication remain explicit post-cutoff residual for parent finalization; no recursive token rewrite."
+}

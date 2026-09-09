@@ -10,13 +10,13 @@ function scoped(names){for(const name of names)assert(name===index||name.startsW
 async function verifyCommit(){
  const names=git('ls-tree','-r','--name-only','HEAD','--',scope,index).toString().trim().split(/\r?\n/);
  const disk=(await files()).map(p=>path.relative(root,p).replaceAll('\\','/'));
- for(const name of [...disk,index]){assert(names.includes(name),'Untracked/ignored experiment artifact '+name);assert(sha(git('show','HEAD:'+name))===sha(await fs.readFile(root+'/'+name)),'Committed byte mismatch '+name);}
+ for(const name of [...disk,index]){assert(names.includes(name),'Untracked/ignored experiment artifact '+name);const committed=git('show','HEAD:'+name),local=await fs.readFile(root+'/'+name);if(name===index)assert(committed.toString().replaceAll('\r\n','\n')===local.toString().replaceAll('\r\n','\n'),'Committed index content mismatch');else assert(sha(committed)===sha(local),'Committed byte mismatch '+name);}
  return {tracked_files:names.length,report_sha256:sha(git('show','HEAD:'+scope+'/report.md'))};
 }
 try{
  assert(git('branch','--show-current').toString().trim()===branch,'Wrong branch');
  // Freeze one final available counter at entry, then reproduce it without advancing it.
- run(process.execPath,[dir+'/measure.mjs']);run(process.execPath,[dir+'/report.mjs']);
+ if(process.argv.includes('--retain-cutoff'))run(process.execPath,[dir+'/measure.mjs','--check']);else run(process.execPath,[dir+'/measure.mjs']);run(process.execPath,[dir+'/report.mjs']);
  run(process.execPath,[dir+'/measure.mjs','--check']);
  const judges=await read('judge-results.json');
  const adjudication=await read('author-adjudication.json');
