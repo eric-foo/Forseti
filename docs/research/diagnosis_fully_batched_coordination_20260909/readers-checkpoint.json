@@ -1,0 +1,161 @@
+{
+  "file": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T22-06-01-01a0867d-6954-7e30-bac7-2c28f7cc3400.jsonl",
+  "first": "2026-09-09T14:06:01.906Z",
+  "last": "2026-09-09T14:12:11.249Z",
+  "counters": [
+    {
+      "timestamp": "2026-09-09T14:06:13.364Z",
+      "usage": {
+        "input_tokens": 32479,
+        "cached_input_tokens": 19072,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 169,
+        "reasoning_output_tokens": 0,
+        "total_tokens": 32648
+      }
+    },
+    {
+      "timestamp": "2026-09-09T14:06:21.819Z",
+      "usage": {
+        "input_tokens": 70385,
+        "cached_input_tokens": 51328,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 352,
+        "reasoning_output_tokens": 0,
+        "total_tokens": 70737
+      }
+    },
+    {
+      "timestamp": "2026-09-09T14:06:34.669Z",
+      "usage": {
+        "input_tokens": 111645,
+        "cached_input_tokens": 89088,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 637,
+        "reasoning_output_tokens": 19,
+        "total_tokens": 112282
+      }
+    },
+    {
+      "timestamp": "2026-09-09T14:06:50.585Z",
+      "usage": {
+        "input_tokens": 155987,
+        "cached_input_tokens": 130176,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1054,
+        "reasoning_output_tokens": 31,
+        "total_tokens": 157041
+      }
+    },
+    {
+      "timestamp": "2026-09-09T14:06:55.269Z",
+      "usage": {
+        "input_tokens": 210761,
+        "cached_input_tokens": 174336,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1138,
+        "reasoning_output_tokens": 47,
+        "total_tokens": 211899
+      }
+    },
+    {
+      "timestamp": "2026-09-09T14:07:09.320Z",
+      "usage": {
+        "input_tokens": 269898,
+        "cached_input_tokens": 228992,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1499,
+        "reasoning_output_tokens": 47,
+        "total_tokens": 271397
+      }
+    },
+    {
+      "timestamp": "2026-09-09T14:07:20.048Z",
+      "usage": {
+        "input_tokens": 337238,
+        "cached_input_tokens": 288000,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1757,
+        "reasoning_output_tokens": 69,
+        "total_tokens": 338995
+      }
+    },
+    {
+      "timestamp": "2026-09-09T14:09:17.646Z",
+      "usage": {
+        "input_tokens": 409173,
+        "cached_input_tokens": 355200,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 5534,
+        "reasoning_output_tokens": 103,
+        "total_tokens": 414707
+      }
+    },
+    {
+      "timestamp": "2026-09-09T14:09:22.109Z",
+      "usage": {
+        "input_tokens": 485396,
+        "cached_input_tokens": 427008,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 5600,
+        "reasoning_output_tokens": 121,
+        "total_tokens": 490996
+      }
+    },
+    {
+      "timestamp": "2026-09-09T14:09:43.421Z",
+      "usage": {
+        "input_tokens": 561861,
+        "cached_input_tokens": 503040,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 5853,
+        "reasoning_output_tokens": 134,
+        "total_tokens": 567714
+      }
+    },
+    {
+      "timestamp": "2026-09-09T14:11:40.626Z",
+      "usage": {
+        "input_tokens": 638791,
+        "cached_input_tokens": 579328,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 9398,
+        "reasoning_output_tokens": 497,
+        "total_tokens": 648189
+      }
+    },
+    {
+      "timestamp": "2026-09-09T14:12:05.569Z",
+      "usage": {
+        "input_tokens": 719359,
+        "cached_input_tokens": 656128,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 10091,
+        "reasoning_output_tokens": 1013,
+        "total_tokens": 729450
+      }
+    }
+  ],
+  "last_counter": {
+    "timestamp": "2026-09-09T14:12:05.569Z",
+    "usage": {
+      "input_tokens": 719359,
+      "cached_input_tokens": 656128,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 10091,
+      "reasoning_output_tokens": 1013,
+      "total_tokens": 729450
+    }
+  },
+  "settings": {
+    "model": "gpt-6-astra",
+    "effort": "high",
+    "cli_version": "0.153.4",
+    "originator": "Codex Desktop",
+    "service_tier": "unavailable"
+  },
+  "id": "01a0867d-6954-7e30-bac7-2c28f7cc3400",
+  "tool_calls": 12,
+  "tool_outputs": 13,
+  "model_calls": 12
+}

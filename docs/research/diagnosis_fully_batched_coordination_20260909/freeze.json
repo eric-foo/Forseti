@@ -1,0 +1,102 @@
+{
+  "frozen_at": "2026-09-09T14:09:32.775Z",
+  "files": [
+    {
+      "name": "sources.json",
+      "sha256": "70be89523d15f3622e8f0103eedde839a76206aa84fd5222788b2db67472db1f"
+    },
+    {
+      "name": "experiment.json",
+      "sha256": "5138e46899ee37181bb47626d5e516e071606291262573bf2f5bb57080d02b16"
+    },
+    {
+      "name": "count-definitions.json",
+      "sha256": "d466138ab4106d8b64ee0300b0d806b5b5d0f697e488725592d7b51e768804ea"
+    },
+    {
+      "name": "common.txt",
+      "sha256": "52d6ef24c515e281ae150dab37a0ebda3bf485029ba8ffc023c5a52a1f0db33e"
+    },
+    {
+      "name": "authority-context.txt",
+      "sha256": "4d918de0de55acd8570edcd2d703f3df9c0dfd387296a2f29aa0c089b112c482"
+    },
+    {
+      "name": "response.schema.json",
+      "sha256": "10116811053f00600e9e5f643c0ee3c442673b70a6c2af0985ae625c2c404458"
+    },
+    {
+      "name": "run.mjs",
+      "sha256": "6098acaf3e9ed9f346f1d445cd4159fc24bbb0dea8953c75bd2162050e0b42fc"
+    },
+    {
+      "name": "source-validation.json",
+      "sha256": "a8436c8bc0e999669d4c5b836a0c7006430bdf49b6b3ee135f925e43d8167d15"
+    },
+    {
+      "name": "quality-standard.txt",
+      "sha256": "3f81c7c3d26f83cb877396fb49f6087badd140df636ab67d372c4c3f49abd942"
+    },
+    {
+      "name": "judge.schema.json",
+      "sha256": "703d537ded3bfa9f2b1f63374a99092f64ceaa43d6105fe0bdbb242b82b40861"
+    },
+    {
+      "name": "lib.mjs",
+      "sha256": "a25d892f5132822ca7ce2bddff35fac93ff7b917d1470544fb154f15207aefde"
+    },
+    {
+      "name": "prepare.mjs",
+      "sha256": "c220cda8225b2d988c7d21d7713f1112f6e4cf99e25085b32496e9d8ddbcfc02"
+    },
+    {
+      "name": "supervise.mjs",
+      "sha256": "64d881fb9ce8143d62db4aefc48891e91d279622d429d724efb5ebed472a4d0c"
+    }
+  ],
+  "prior": "C:/Users/vmon7/.codex/worktrees/72b7/orca/docs/research/diagnosis_batched_coordination_20260909",
+  "root": "C:\\Users\\vmon7\\.codex\\worktrees\\5b2b\\orca",
+  "base": "46fbf6ffdc576b20014fab8ceea3fcedbf837a0c",
+  "settings": {
+    "executable": "C:/Users/vmon7/AppData/Local/OpenAI/Codex/bin/fd4c151a749f3ab4/codex.exe",
+    "readers": "gpt-6-astra / medium / CLI 0.153.4",
+    "judges": "gpt-6-astra / high / CLI 0.153.4"
+  },
+  "quality_standard": "quality-standard.txt",
+  "semantic_retries": 0,
+  "source_validation_keys": [
+    "verified_at",
+    "pins",
+    "account_bodies",
+    "context_bodies",
+    "packaging_bodies",
+    "retailer_body_match",
+    "corrections"
+  ],
+  "raw_reverified": [
+    {
+      "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/successor-return/depth-corrected/bundle.json",
+      "sha256": "70f9832476212eb612e858c3057aa69310b83bd06857b1b4d1e7fe7203535daa"
+    },
+    {
+      "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1i30kik-projection.json",
+      "sha256": "483eb6c7d4c027ef029cc4a6043293af2f160f0b40d8a9b8287ec5001b071ab7"
+    },
+    {
+      "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1n9da6u-projection.json",
+      "sha256": "6eee486eb6ebff619b1c5bf9db5b10cc28a6efdaf47bc4f5c93bdd58a07ebdad"
+    },
+    {
+      "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/successor-return/retailer-coding-rebuild/partition-01.json",
+      "sha256": "fbc6df3321ba842a9d8a85502581ad2943e5ead5ac1279e5fa2d9310ad05565d"
+    },
+    {
+      "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/packaging-diagnosis-sample-20260909/docs/research/packaging_diagnosis_sample_20260909/native.json",
+      "sha256": "77df41012e569679ea9c33abb30e74c5f796493b0b17c407012d3ebdabf39492"
+    },
+    {
+      "path": "C:/Users/vmon7/.codex/worktrees/a7d8/orca/docs/research/semantic_consolidation_sample_20260909/sample.json",
+      "sha256": "7fcce869f91759ffb4e0942ae0c5996889981fe8679dd9012fab941feb0f84e8"
+    }
+  ]
+}

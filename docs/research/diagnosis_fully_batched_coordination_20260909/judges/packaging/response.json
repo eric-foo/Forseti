@@ -1,0 +1,28 @@
+{
+  "case": "packaging",
+  "material_errors": 0,
+  "summary": "No material errors were found in any answer. Both arms correctly diagnose favorable aesthetic reception, unresolved environmental claims, and initially isolated arrival leakage. Both updates correctly strengthen arrival-leak support to seven visible accounts within one thread, distinguish two explicit loose-top reports from four bare agreements, and retain zero-like evidence. All requested counts and source sets are correct. Remedies remain a conditional brand offer versus a customer-reported replacement sent, without confirmed delivery. Softwear–Void’s pocket leakage, proposed closure changes, and repurchase intention despite dissatisfaction remain separate from the unidentified TikTok product and arrival conditions. Buying enthusiasm, trial/reuse intentions, receipt, and brand loyalty are appropriately distinguished from completed purchases and packaging-driven behavior. Engagement is not converted into independent experiences, and missing retailer engagement remains unavailable. The incremental update explicitly flags unresolved cross-venue actor overlap; the full update emphasizes product and use-condition limits. Neither difference materially changes the diagnosis. These answers establish no causal advantage for either arm.",
+  "issues": [],
+  "answer_verdicts": [
+    {
+      "answer": "incremental-initial",
+      "material_errors": 0,
+      "diagnostic_quality": "Accurate and complete for the initial evidence; preserves support, product uncertainty, and behavior boundaries."
+    },
+    {
+      "answer": "incremental-update",
+      "material_errors": 0,
+      "diagnostic_quality": "Accurately incorporates all additions and explains their material diagnostic effects while preserving ownership and scope."
+    },
+    {
+      "answer": "full-initial",
+      "material_errors": 0,
+      "diagnostic_quality": "Accurate initial diagnosis with clear separation of reception, isolated failure, remedies, and loyalty."
+    },
+    {
+      "answer": "full-update",
+      "material_errors": 0,
+      "diagnostic_quality": "Accurate complete-set diagnosis; correct counts and appropriately bounded recurrence, retailer failure, and repurchase interpretation."
+    }
+  ]
+}

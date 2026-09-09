@@ -1,0 +1,86 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "case": {
+      "type": "string"
+    },
+    "material_errors": {
+      "type": "integer"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "material": {
+            "type": "boolean"
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "source_keys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "answer_excerpt": {
+            "type": "string"
+          },
+          "source_excerpt": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "material",
+          "answers",
+          "source_keys",
+          "answer_excerpt",
+          "source_excerpt",
+          "rationale"
+        ]
+      }
+    },
+    "answer_verdicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "answer": {
+            "type": "string"
+          },
+          "material_errors": {
+            "type": "integer"
+          },
+          "diagnostic_quality": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "answer",
+          "material_errors",
+          "diagnostic_quality"
+        ]
+      }
+    }
+  },
+  "required": [
+    "case",
+    "material_errors",
+    "summary",
+    "issues",
+    "answer_verdicts"
+  ]
+}

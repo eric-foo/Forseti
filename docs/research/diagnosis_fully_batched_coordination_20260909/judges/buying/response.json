@@ -1,0 +1,53 @@
+{
+  "case": "buying",
+  "material_errors": 1,
+  "summary": "One material support error was found: full-initial categorically denies cross-venue support for completed Experiment buying despite the contextual Softwear-backup account and focal retailer acquisitions. This understates support breadth without changing focal counts or establishing repeated purchase motives.\n\nOtherwise, both arms preserve the decisive buying distinctions. Initial acquisition counts are two accounts; updated counts are three, with one focal stock-up, gift, contemplated return and intended substitution. Both updates retain adverse Softwear outcomes alongside affection, separate remedies from Experiment buying, and preserve joint-use and efficacy limitations. Engagement is not inflated into experiences or assigned review-update observation dates.\n\nThe zero-versus-one routine-discontinuation discrepancy is nonmaterial here because every answer preserves A05’s prior cessation and avoids claiming Experiment caused it. Full-update’s historical-comparison disclaimer is unnecessary against the supplied case but does not change its current diagnosis. Incremental-update provides the clearer stage comparison. These descriptive differences establish neither a causal arm advantage nor different-vendor review.",
+  "issues": [
+    {
+      "material": true,
+      "answers": ["full-initial"],
+      "source_keys": ["A04", "A05", "context_5f002acbf9eb1cd7bfc3"],
+      "answer_excerpt": "This selected set cannot establish prevalence, cross-venue corroboration of completed Experiment buying, repeat-purchase rates, or independent recurrence of any precise buying reason.",
+      "source_excerpt": "A04: “I fell in love with it and ordered some for myself.” A05: “I instantly checked out”. Context cowrunamuck: “I literally have two backups because I love it so much and it used to be harder to get since I’d have to have it shipped from Experiment’s website.”",
+      "rationale": "The categorical cross-venue denial overlooks the contextual actor’s completed Softwear stocking. At the same broad brand-acquisition scope the answer already accepts, three distinct attributed origins span retailer-review and community roles. Including that context changes support from retailer-only repetition to cross-role corroboration, while focal acquisition remains two. It does not establish repeated product-specific motives, prevalence or purchase-event counts."
+    },
+    {
+      "material": false,
+      "answers": ["incremental-initial", "incremental-update", "full-initial"],
+      "source_keys": ["A05"],
+      "answer_excerpt": "All three: {\"name\":\"routine_replacement_completed\",\"source_accounts\":[],\"count\":0}. Incremental-update: “Prior cessation does not establish completed Experiment-driven substitution.” Full-initial: “A05 had already paused disposable sheet masks for sustainability”.",
+      "source_excerpt": "“I’ve been trying to be more sustainable in my beauty routine, so I haven’t done a sheet mask in a while which breaks my soul (I used to use sheet masks practically every night).”",
+      "rationale": "The supplied definition includes actual discontinuation and does not require Experiment-caused substitution, so A05 supports one completed discontinuation, as full-update records. However, all three answers explicitly preserve the prior cessation. Correcting the count changes classification from zero to one without changing reported behavior, chronology or Experiment attribution; this is not a material diagnostic failure."
+    },
+    {
+      "material": false,
+      "answers": ["full-update"],
+      "source_keys": ["initial_keys", "addition_keys"],
+      "answer_excerpt": "The initial-stage roster and separate initial-stage record are not supplied, so an exact historical stage comparison cannot be established without inventing that boundary.",
+      "source_excerpt": "\"initial_keys\":[\"A01\",\"A02\",\"A04\",\"A05\",\"A12\"],\"addition_keys\":[\"A11\",\"A14\",\"A15\",\"A16\"]",
+      "rationale": "The adjudication packet explicitly supplies the stage boundary, so this disclaimer cannot limit the requested comparison. Removing it permits the acquisition comparison of two to three and identification of the added behaviors. The answer nevertheless correctly attributes those behaviors and current counts; its disclaimer does not materially distort the product diagnosis."
+    }
+  ],
+  "answer_verdicts": [
+    {
+      "answer": "incremental-initial",
+      "material_errors": 0,
+      "diagnostic_quality": "Accurate, bounded initial diagnosis; nonmaterial discontinuation-count discrepancy."
+    },
+    {
+      "answer": "incremental-update",
+      "material_errors": 0,
+      "diagnostic_quality": "Strong updated diagnosis and stage comparison; preserves contextual support and adverse outcomes."
+    },
+    {
+      "answer": "full-initial",
+      "material_errors": 1,
+      "diagnostic_quality": "Accurate behavior accounting, but materially understates cross-role support for broad completed buying."
+    },
+    {
+      "answer": "full-update",
+      "material_errors": 0,
+      "diagnostic_quality": "Strong current diagnosis and definition-aligned discontinuation count; unnecessary historical-boundary disclaimer."
+    }
+  ]
+}

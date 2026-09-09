@@ -1,0 +1,38 @@
+{
+  "authority": "Run-authoritative commission materiality rules and frozen claim-support authority; no semantic retries or reader edits.",
+  "raw_judge_material_candidates": 3,
+  "accepted_material_errors": 1,
+  "case_material_errors": {"packaging": 0, "hydration": 1, "buying": 0},
+  "incremental_material_errors": 0,
+  "full_material_errors": 1,
+  "decisions": [
+    {
+      "case": "hydration",
+      "candidate": "Full-update denial of available initial/addition boundaries",
+      "disposition": "Rejected: judge input-boundary error",
+      "reason": "The full-update reader actually received case, question, definitions, products, updated stage, all focal keys, method and complete sources. It did not receive initial_keys, addition_keys or prior findings. Those boundaries were supplied to the judge only. The reader correctly refused to reconstruct an unavailable historical split. The requested full-update method rereads the complete source set; it does not require inventing the initial boundary.",
+      "evidence": "adjudication-evidence.json; runs/hydration-full-update/input.json; judges/hydration/input.json"
+    },
+    {
+      "case": "hydration",
+      "candidate": "Full-update upgrades non-congestion to congestion improvement",
+      "disposition": "Accepted material diagnostic overstatement",
+      "reason": "The main diagnosis says A13 reports less irritation, congestion and perceived oil production, then calls these improvements. A13 says hydration does not cause forehead congestion, not that existing congestion improved. That changes the reported product benefit. Accurate non-congestion wording in the source index and single-account qualification limit the error but do not remove the contradictory stronger claim from the diagnosis. Only the full-update answer has this observed error; the judge found none in either incremental answer.",
+      "evidence": "adjudication-evidence.json; judges/hydration/response.json; runs/hydration-full-update/final.json; sources.json A13"
+    },
+    {
+      "case": "buying",
+      "candidate": "Full-initial denial of cross-venue corroboration",
+      "disposition": "Rejected as material diagnostic failure; formal support-posture difference retained",
+      "reason": "The answer explicitly preserves cowrunamuck's two backups and reported reason as contextual community evidence, separately from the two focal retailer acquisitions. It explains distinct visible accounts and unavailable independence credit before withholding formal cross-venue corroboration. The judge credits three independent origins across roles, but the context identity exposes username/date/score rather than independently credited linkage across the anonymous retailer identities. The claim-support contract forbids manufacturing independence when overlap is unavailable. This conservative posture does not erase the actual community buying evidence or change focal counts, behavior or reported reasons. Broader descriptive cross-role evidence can be stated; formal independent corroboration is not forced by these supplied identities.",
+      "evidence": "buying-decisive-evidence.json; adjudication-evidence.json; judges/buying/response.json; runs/buying-full-initial/final.json"
+    }
+  ],
+  "additional_judge_limitations": [
+    "Hydration's nonmaterial unsupported-retrieval-history finding is not upheld: saved stage receipts show actual retrieval for both initial readers and full update; incremental update receives its own initial findings. The judge lacked operational retrieval history.",
+    "Buying's nonmaterial full-update historical-boundary criticism has the same judge-versus-reader input mismatch as hydration.",
+    "The routine-discontinuation count discrepancy is retained as nonmaterial because the prior cessation is explicitly preserved and no Experiment-caused substitution is invented, following the owner instruction."
+  ],
+  "success_disposition": "Substantial combined token reduction is measured, and no material error was found in the incremental arm. The strict no-new-material-error condition across all generated answers is not met because the full hydration update contains one material benefit overstatement. This does not establish a causal coordination or arm effect, and no adoption follows.",
+  "review_boundary": "Same-vendor experimental judges and this author adjudication do not satisfy the required different-vendor operator-courier review before merge."
+}

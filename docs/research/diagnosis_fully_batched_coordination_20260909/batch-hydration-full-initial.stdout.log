@@ -1,0 +1,4 @@
+{"started":"hydration","arm":"full","stage":"initial","round":0,"started_at":"2026-09-09T14:09:33.951Z"}
+{"finished":"hydration","arm":"full","stage":"initial","round":0,"code":0,"usage":{"input_tokens":31522,"cached_input_tokens":0,"cache_write_input_tokens":0,"output_tokens":229,"reasoning_output_tokens":58},"tools":0}
+{"started":"hydration","arm":"full","stage":"initial","round":1,"started_at":"2026-09-09T14:09:54.347Z"}
+{"finished":"hydration","arm":"full","stage":"initial","round":1,"code":0,"usage":{"input_tokens":32305,"cached_input_tokens":0,"cache_write_input_tokens":0,"output_tokens":1610,"reasoning_output_tokens":0},"tools":0}

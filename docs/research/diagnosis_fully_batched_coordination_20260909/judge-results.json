@@ -1,0 +1,169 @@
+[
+  {
+    "case": "packaging",
+    "material_errors": 0,
+    "summary": "No material errors were found in any answer. Both arms correctly diagnose favorable aesthetic reception, unresolved environmental claims, and initially isolated arrival leakage. Both updates correctly strengthen arrival-leak support to seven visible accounts within one thread, distinguish two explicit loose-top reports from four bare agreements, and retain zero-like evidence. All requested counts and source sets are correct. Remedies remain a conditional brand offer versus a customer-reported replacement sent, without confirmed delivery. Softwear–Void’s pocket leakage, proposed closure changes, and repurchase intention despite dissatisfaction remain separate from the unidentified TikTok product and arrival conditions. Buying enthusiasm, trial/reuse intentions, receipt, and brand loyalty are appropriately distinguished from completed purchases and packaging-driven behavior. Engagement is not converted into independent experiences, and missing retailer engagement remains unavailable. The incremental update explicitly flags unresolved cross-venue actor overlap; the full update emphasizes product and use-condition limits. Neither difference materially changes the diagnosis. These answers establish no causal advantage for either arm.",
+    "issues": [],
+    "answer_verdicts": [
+      {
+        "answer": "incremental-initial",
+        "material_errors": 0,
+        "diagnostic_quality": "Accurate and complete for the initial evidence; preserves support, product uncertainty, and behavior boundaries."
+      },
+      {
+        "answer": "incremental-update",
+        "material_errors": 0,
+        "diagnostic_quality": "Accurately incorporates all additions and explains their material diagnostic effects while preserving ownership and scope."
+      },
+      {
+        "answer": "full-initial",
+        "material_errors": 0,
+        "diagnostic_quality": "Accurate initial diagnosis with clear separation of reception, isolated failure, remedies, and loyalty."
+      },
+      {
+        "answer": "full-update",
+        "material_errors": 0,
+        "diagnostic_quality": "Accurate complete-set diagnosis; correct counts and appropriately bounded recurrence, retailer failure, and repurchase interpretation."
+      }
+    ]
+  },
+  {
+    "case": "hydration",
+    "material_errors": 2,
+    "summary": "No material errors were found in incremental-initial, full-initial or incremental-update. Both arms correctly count direct hydration, joint hydration, direct texture and speculative texture: initially 2/1/2/0, updated 3/1/3/1. They preserve joint-use attribution, product ownership, unavailable testimony, engagement limits and purchase-versus-intention distinctions. Incremental-update accurately explains the added support and conditional texture evidence. Full-update largely reaches the same diagnosis but incorrectly denies the supplied baseline and briefly upgrades non-congestion into congestion improvement. Its source index preserves the narrower congestion claim, limiting but not eliminating that inconsistency. Unsupported retrieval-history statements do not change the product diagnosis. These observed answer differences provide no causal proof of a coordination effect or substitute for different-vendor review.",
+    "issues": [
+      {
+        "material": true,
+        "answers": [
+          "full-update"
+        ],
+        "source_keys": [
+          "initial_keys",
+          "addition_keys"
+        ],
+        "answer_excerpt": "Initial stage: its membership and separate source boundary were not supplied, so an initial-stage diagnosis, counts or change from baseline cannot be reconstructed reliably.",
+        "source_excerpt": "\"initial_keys\":[\"A03\",\"A04\",\"A07\",\"A08\",\"A09\",\"A10\"],\"addition_keys\":[\"A13\",\"A14\",\"A15\",\"A17\",\"A18\"]",
+        "rationale": "The authoritative case explicitly supplies both boundaries. The answer consequently withholds an available comparison: direct hydration increases from two to three accounts, direct texture from two to three, speculation from zero to one, and joint hydration stays at one. This changes the requested interpretation of how support develops across stages, although its updated counts are correct."
+      },
+      {
+        "material": true,
+        "answers": [
+          "full-update"
+        ],
+        "source_keys": [
+          "A13"
+        ],
+        "answer_excerpt": "plus less irritation, congestion and perceived oil production. The 12-hour duration and those additional improvements remain single-account reports.",
+        "source_excerpt": "It has not caused the congestion on my forehead that results in textured skin and bumps",
+        "rationale": "Avoiding product-induced congestion becomes an improvement in congestion. That changes SS's reported benefit from hydration without provoking congestion to reducing congestion. The answer correctly limits this to one account, and its source index accurately preserves non-congestion, but neither resolves the stronger claim in the main diagnosis."
+      },
+      {
+        "material": false,
+        "answers": [
+          "incremental-initial",
+          "incremental-update",
+          "full-initial",
+          "full-update"
+        ],
+        "source_keys": [
+          "A07"
+        ],
+        "answer_excerpt": "incremental-initial: \"retrieval adds no testimony or account\"; incremental-update: \"remained 'undefined...' after retrieval\"; full-initial: \"A07 remains unavailable after retrieval\"; full-update: \"Original and retrieved body both remain 'undefined...'\"",
+        "source_excerpt": "\"text\":\"undefined...\"",
+        "rationale": "The supplied evidence establishes unavailable substantive testimony but supplies no separate retrieval result supporting this procedural history. These statements are unsupported within the frozen record. They are nonmaterial here because every answer correctly excludes A07 from substantive counts and neither invents an experience nor treats missing testimony as a negative result."
+      }
+    ],
+    "answer_verdicts": [
+      {
+        "answer": "incremental-initial",
+        "material_errors": 0,
+        "diagnostic_quality": "Accurate, appropriately bounded initial diagnosis and counts."
+      },
+      {
+        "answer": "full-initial",
+        "material_errors": 0,
+        "diagnostic_quality": "Accurate initial diagnosis, substantively equivalent to incremental-initial."
+      },
+      {
+        "answer": "incremental-update",
+        "material_errors": 0,
+        "diagnostic_quality": "Accurate complete-set diagnosis with a clear, supported stage comparison."
+      },
+      {
+        "answer": "full-update",
+        "material_errors": 2,
+        "diagnostic_quality": "Mostly accurate updated diagnosis and counts; baseline denial and congestion-benefit inflation materially weaken it."
+      }
+    ]
+  },
+  {
+    "case": "buying",
+    "material_errors": 1,
+    "summary": "One material support error was found: full-initial categorically denies cross-venue support for completed Experiment buying despite the contextual Softwear-backup account and focal retailer acquisitions. This understates support breadth without changing focal counts or establishing repeated purchase motives.\n\nOtherwise, both arms preserve the decisive buying distinctions. Initial acquisition counts are two accounts; updated counts are three, with one focal stock-up, gift, contemplated return and intended substitution. Both updates retain adverse Softwear outcomes alongside affection, separate remedies from Experiment buying, and preserve joint-use and efficacy limitations. Engagement is not inflated into experiences or assigned review-update observation dates.\n\nThe zero-versus-one routine-discontinuation discrepancy is nonmaterial here because every answer preserves A05’s prior cessation and avoids claiming Experiment caused it. Full-update’s historical-comparison disclaimer is unnecessary against the supplied case but does not change its current diagnosis. Incremental-update provides the clearer stage comparison. These descriptive differences establish neither a causal arm advantage nor different-vendor review.",
+    "issues": [
+      {
+        "material": true,
+        "answers": [
+          "full-initial"
+        ],
+        "source_keys": [
+          "A04",
+          "A05",
+          "context_5f002acbf9eb1cd7bfc3"
+        ],
+        "answer_excerpt": "This selected set cannot establish prevalence, cross-venue corroboration of completed Experiment buying, repeat-purchase rates, or independent recurrence of any precise buying reason.",
+        "source_excerpt": "A04: “I fell in love with it and ordered some for myself.” A05: “I instantly checked out”. Context cowrunamuck: “I literally have two backups because I love it so much and it used to be harder to get since I’d have to have it shipped from Experiment’s website.”",
+        "rationale": "The categorical cross-venue denial overlooks the contextual actor’s completed Softwear stocking. At the same broad brand-acquisition scope the answer already accepts, three distinct attributed origins span retailer-review and community roles. Including that context changes support from retailer-only repetition to cross-role corroboration, while focal acquisition remains two. It does not establish repeated product-specific motives, prevalence or purchase-event counts."
+      },
+      {
+        "material": false,
+        "answers": [
+          "incremental-initial",
+          "incremental-update",
+          "full-initial"
+        ],
+        "source_keys": [
+          "A05"
+        ],
+        "answer_excerpt": "All three: {\"name\":\"routine_replacement_completed\",\"source_accounts\":[],\"count\":0}. Incremental-update: “Prior cessation does not establish completed Experiment-driven substitution.” Full-initial: “A05 had already paused disposable sheet masks for sustainability”.",
+        "source_excerpt": "“I’ve been trying to be more sustainable in my beauty routine, so I haven’t done a sheet mask in a while which breaks my soul (I used to use sheet masks practically every night).”",
+        "rationale": "The supplied definition includes actual discontinuation and does not require Experiment-caused substitution, so A05 supports one completed discontinuation, as full-update records. However, all three answers explicitly preserve the prior cessation. Correcting the count changes classification from zero to one without changing reported behavior, chronology or Experiment attribution; this is not a material diagnostic failure."
+      },
+      {
+        "material": false,
+        "answers": [
+          "full-update"
+        ],
+        "source_keys": [
+          "initial_keys",
+          "addition_keys"
+        ],
+        "answer_excerpt": "The initial-stage roster and separate initial-stage record are not supplied, so an exact historical stage comparison cannot be established without inventing that boundary.",
+        "source_excerpt": "\"initial_keys\":[\"A01\",\"A02\",\"A04\",\"A05\",\"A12\"],\"addition_keys\":[\"A11\",\"A14\",\"A15\",\"A16\"]",
+        "rationale": "The adjudication packet explicitly supplies the stage boundary, so this disclaimer cannot limit the requested comparison. Removing it permits the acquisition comparison of two to three and identification of the added behaviors. The answer nevertheless correctly attributes those behaviors and current counts; its disclaimer does not materially distort the product diagnosis."
+      }
+    ],
+    "answer_verdicts": [
+      {
+        "answer": "incremental-initial",
+        "material_errors": 0,
+        "diagnostic_quality": "Accurate, bounded initial diagnosis; nonmaterial discontinuation-count discrepancy."
+      },
+      {
+        "answer": "incremental-update",
+        "material_errors": 0,
+        "diagnostic_quality": "Strong updated diagnosis and stage comparison; preserves contextual support and adverse outcomes."
+      },
+      {
+        "answer": "full-initial",
+        "material_errors": 1,
+        "diagnostic_quality": "Accurate behavior accounting, but materially understates cross-role support for broad completed buying."
+      },
+      {
+        "answer": "full-update",
+        "material_errors": 0,
+        "diagnostic_quality": "Strong current diagnosis and definition-aligned discontinuation count; unnecessary historical-boundary disclaimer."
+      }
+    ]
+  }
+]

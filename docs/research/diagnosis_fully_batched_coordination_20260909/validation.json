@@ -1,0 +1,15 @@
+{
+  "verified_at": "2026-09-09T14:17:41.442Z",
+  "checks": [
+    "frozen script/input/quality hashes",
+    "six raw source hashes",
+    "exact account/context splits",
+    "unique cold sessions and actual input identity",
+    "observed reader medium and judge high settings on CLI 0.153.4",
+    "native reader/judge/coordinator totals and both earlier baselines",
+    "saved first-pass judgments with materiality standard",
+    "complete logs including empty files"
+  ],
+  "semantic_quality": "judge-results.json",
+  "cutoff": "2026-09-09T14:17:16.836Z"
+}

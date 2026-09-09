@@ -1,0 +1,107 @@
+{
+  "verified_at": "2026-09-09T13:29:42.481Z",
+  "pins": [
+    {
+      "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/successor-return/depth-corrected/bundle.json",
+      "sha256": "70f9832476212eb612e858c3057aa69310b83bd06857b1b4d1e7fe7203535daa"
+    },
+    {
+      "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1i30kik-projection.json",
+      "sha256": "483eb6c7d4c027ef029cc4a6043293af2f160f0b40d8a9b8287ec5001b071ab7"
+    },
+    {
+      "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1n9da6u-projection.json",
+      "sha256": "6eee486eb6ebff619b1c5bf9db5b10cc28a6efdaf47bc4f5c93bdd58a07ebdad"
+    },
+    {
+      "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/successor-return/retailer-coding-rebuild/partition-01.json",
+      "sha256": "fbc6df3321ba842a9d8a85502581ad2943e5ead5ac1279e5fa2d9310ad05565d"
+    },
+    {
+      "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/packaging-diagnosis-sample-20260909/docs/research/packaging_diagnosis_sample_20260909/native.json",
+      "sha256": "77df41012e569679ea9c33abb30e74c5f796493b0b17c407012d3ebdabf39492"
+    },
+    {
+      "path": "C:/Users/vmon7/.codex/worktrees/a7d8/orca/docs/research/semantic_consolidation_sample_20260909/sample.json",
+      "sha256": "7fcce869f91759ffb4e0942ae0c5996889981fe8679dd9012fab941feb0f84e8"
+    }
+  ],
+  "account_bodies": 18,
+  "context_bodies": 31,
+  "packaging_bodies": 25,
+  "retailer_body_match": true,
+  "corrections": [
+    {
+      "key": "A04",
+      "old_observed_at": "2025-03-23T19:29:50.304Z",
+      "new_observed_at": null,
+      "review_updated_at": "2025-03-23T19:29:50.304Z"
+    },
+    {
+      "key": "A05",
+      "old_observed_at": "2022-11-03T23:08:43.499Z",
+      "new_observed_at": null,
+      "review_updated_at": "2022-11-03T23:08:43.499Z"
+    },
+    {
+      "key": "A06",
+      "old_observed_at": "2026-09-04T06:26:00.467Z",
+      "new_observed_at": null,
+      "review_updated_at": "2026-09-04T06:26:00.467Z"
+    },
+    {
+      "key": "A07",
+      "old_observed_at": "2025-01-17T19:38:55.428Z",
+      "new_observed_at": null,
+      "review_updated_at": "2025-01-17T19:38:55.428Z"
+    },
+    {
+      "key": "A08",
+      "old_observed_at": "2024-02-02T16:19:13.795Z",
+      "new_observed_at": null,
+      "review_updated_at": "2024-02-02T16:19:13.795Z"
+    },
+    {
+      "key": "A09",
+      "old_observed_at": "2022-12-09T01:12:27.825Z",
+      "new_observed_at": null,
+      "review_updated_at": "2022-12-09T01:12:27.825Z"
+    },
+    {
+      "key": "A10",
+      "old_observed_at": "2023-07-21T01:56:36.684Z",
+      "new_observed_at": null,
+      "review_updated_at": "2023-07-21T01:56:36.684Z"
+    },
+    {
+      "key": "A11",
+      "old_observed_at": "2024-11-25T23:23:46.773Z",
+      "new_observed_at": null,
+      "review_updated_at": "2024-11-25T23:23:46.773Z"
+    },
+    {
+      "key": "A13",
+      "old_observed_at": "2024-12-06T17:49:20.110Z",
+      "new_observed_at": null,
+      "review_updated_at": "2024-12-06T17:49:20.110Z"
+    },
+    {
+      "key": "A14",
+      "old_observed_at": "2025-08-20T04:38:18.471Z",
+      "new_observed_at": null,
+      "review_updated_at": "2025-08-20T04:38:18.471Z"
+    },
+    {
+      "key": "A15",
+      "old_observed_at": "2024-11-04T16:36:31.684Z",
+      "new_observed_at": null,
+      "review_updated_at": "2024-11-04T16:36:31.684Z"
+    },
+    {
+      "key": "A16",
+      "old_observed_at": "2026-06-11T21:01:10.039Z",
+      "new_observed_at": null,
+      "review_updated_at": "2026-06-11T21:01:10.039Z"
+    }
+  ]
+}

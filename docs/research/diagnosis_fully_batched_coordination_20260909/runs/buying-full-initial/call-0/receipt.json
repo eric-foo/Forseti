@@ -1,0 +1,23 @@
+{
+  "case": "buying",
+  "arm": "full",
+  "stage": "initial",
+  "round": 0,
+  "started_at": "2026-09-09T14:09:34.010Z",
+  "finished_at": "2026-09-09T14:10:46.685Z",
+  "wall_ms": 72673.3063,
+  "code": 0,
+  "signal": null,
+  "thread_id": "01a08680-aca2-7f33-ad17-18b0bb8423ec",
+  "usage": {
+    "input_tokens": 30891,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2016,
+    "reasoning_output_tokens": 39
+  },
+  "turn_count": 1,
+  "unexpected_tools": [],
+  "errors": [],
+  "stdin_sha256": "ba69e2b156a7cbe716fc25b926d4e0b170c1acdd436c753c72793ff8c96fe659"
+}
