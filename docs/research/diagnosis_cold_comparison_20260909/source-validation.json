@@ -1,0 +1,144 @@
+{
+  "verified_at": "2026-09-09T12:52:05.973Z",
+  "bundle": {
+    "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/successor-return/depth-corrected/bundle.json",
+    "sha256": "70f9832476212eb612e858c3057aa69310b83bd06857b1b4d1e7fe7203535daa"
+  },
+  "accounts": [
+    {
+      "id": "reddit:1n9da6u:ncm3hhd",
+      "bundle_pointer": "/evidence_units/2930",
+      "text_sha256": "520147aad49e4b86a389ad7b8162d1971a9267ed22b601caeaa75b0ef0a1fed0",
+      "pass": true
+    },
+    {
+      "id": "reddit:1n9da6u:ncly8vq",
+      "bundle_pointer": "/evidence_units/2926",
+      "text_sha256": "cc9e40cf55a67fd7976c65ab0c45aa1aeadd2835f7dfb3f4223a2919764f0816",
+      "pass": true
+    },
+    {
+      "id": "reddit:1i30kik:m7jkz2b",
+      "bundle_pointer": "/evidence_units/2553",
+      "text_sha256": "ea71d4429447f732d2ceeba19ee5c129e1c1306c40b5b8fb1b7a633883b76356",
+      "pass": true
+    },
+    {
+      "id": "junip:7540631",
+      "bundle_pointer": "/evidence_units/1920",
+      "text_sha256": "961988dc9d8bd32864ef27a3b04f0e4e9afc0a2a0237aaf2db9f2123dd46e5f3",
+      "pass": true
+    },
+    {
+      "id": "junip:1569510",
+      "bundle_pointer": "/evidence_units/682",
+      "text_sha256": "2a07f7c01e1e987079028f687297cddda3be00c8f535a75e135d886fc61907ec",
+      "pass": true
+    },
+    {
+      "id": "junip:14942664",
+      "bundle_pointer": "/evidence_units/681",
+      "text_sha256": "811c337095e51cebf6883b977ca9e51701c74f17cffeb2d8ad08b60e8126e799",
+      "pass": true
+    },
+    {
+      "id": "junip:6884815",
+      "bundle_pointer": "/evidence_units/1836",
+      "text_sha256": "c11fc6d0e6b40460532072e74daa29d0eeb8b36ef20f0a5cb38f6791ad8d2919",
+      "pass": true
+    },
+    {
+      "id": "junip:4653282",
+      "bundle_pointer": "/evidence_units/1332",
+      "text_sha256": "c4bf870b55eec6fb086525d19f77fd6e80774d05247292180fbe09c879696ab4",
+      "pass": true
+    },
+    {
+      "id": "junip:1866323",
+      "bundle_pointer": "/evidence_units/758",
+      "text_sha256": "3b4e7b91cae91ce618c5b695435aea85e23a4493da6fea10c1adfb1fc2dc613e",
+      "pass": true
+    },
+    {
+      "id": "junip:3515905",
+      "bundle_pointer": "/evidence_units/1132",
+      "text_sha256": "e73aa5c979987de17607eb2fb1e4e86a6fda29fbe7e947cb81d472753b9349df",
+      "pass": true
+    },
+    {
+      "id": "junip:6638709",
+      "bundle_pointer": "/evidence_units/1754",
+      "text_sha256": "55a7f4691aa4cd804ff51aac7ba804f7547300c890c1d7e91542e890f7829a7c",
+      "pass": true
+    },
+    {
+      "id": "reddit:1i30kik:m7j6no0",
+      "bundle_pointer": "/evidence_units/2548",
+      "text_sha256": "c0c78ecfaf8f6e616b8af331d8cb51e9013ba5ddf3102859fa3f1124655054c2",
+      "pass": true
+    },
+    {
+      "id": "junip:6685187",
+      "bundle_pointer": "/evidence_units/1774",
+      "text_sha256": "414174d1fe90fc91619b398b30e07d2ef6b434e705e7e368a74b3759e2134328",
+      "pass": true
+    },
+    {
+      "id": "junip:8950945",
+      "bundle_pointer": "/evidence_units/2108",
+      "text_sha256": "a3409caaec63d98d99a1dbe24789bd65023a9427392d1ca20304fd8635c17f04",
+      "pass": true
+    },
+    {
+      "id": "junip:6567933",
+      "bundle_pointer": "/evidence_units/1721",
+      "text_sha256": "d4d75db7e0cbbd7d782d477e90c952f90dabf53bd2ebc5b4c3d204adef2a8e9a",
+      "pass": true
+    },
+    {
+      "id": "junip:13599983",
+      "bundle_pointer": "/evidence_units/542",
+      "text_sha256": "ab6a1ea48cc70cfc1ca7f8ed6e7a8aab6a07ad5df7317022d05f76f0c0624385",
+      "pass": true
+    },
+    {
+      "id": "reddit:1i30kik:m7kd5t6",
+      "bundle_pointer": "/evidence_units/2562",
+      "text_sha256": "18a153ff116039ec1239eaf383be176a2446220be4e830e46199c67d96b3e0b6",
+      "pass": true
+    },
+    {
+      "id": "reddit:1i30kik:m7j3q3q",
+      "bundle_pointer": "/evidence_units/2546",
+      "text_sha256": "9f2dfeec1e6e6a0670e66885fdee132bfb3ab1d9497cf276c758919eb3e15094",
+      "pass": true
+    }
+  ],
+  "context_count": 31,
+  "all_context_bodies_match": true,
+  "native_checks": [
+    {
+      "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1i30kik-projection.json",
+      "sha256": "483eb6c7d4c027ef029cc4a6043293af2f160f0b40d8a9b8287ec5001b071ab7",
+      "pass": true
+    },
+    {
+      "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1n9da6u-projection.json",
+      "sha256": "6eee486eb6ebff619b1c5bf9db5b10cc28a6efdaf47bc4f5c93bdd58a07ebdad",
+      "pass": true
+    }
+  ],
+  "retailer": {
+    "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/successor-return/retailer-coding-rebuild/partition-01.json",
+    "sha256": "fbc6df3321ba842a9d8a85502581ad2943e5ead5ac1279e5fa2d9310ad05565d",
+    "body_match": true
+  },
+  "native_pack": {
+    "path": "C:/Users/vmon7/Desktop/projects/orca/worktrees/packaging-diagnosis-sample-20260909/docs/research/packaging_diagnosis_sample_20260909/native.json",
+    "sha256": "77df41012e569679ea9c33abb30e74c5f796493b0b17c407012d3ebdabf39492"
+  },
+  "source_sample": {
+    "path": "C:/Users/vmon7/.codex/worktrees/a7d8/orca/docs/research/semantic_consolidation_sample_20260909/sample.json",
+    "sha256": "7fcce869f91759ffb4e0942ae0c5996889981fe8679dd9012fab941feb0f84e8"
+  }
+}

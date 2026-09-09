@@ -1,0 +1,1217 @@
+{
+  "adjudicated_at": "2026-09-09T13:03:15.982Z",
+  "grader": "Coordinator, exposed to output after frozen expected.json; raw source adjudication, not independent review or automatic semantic scoring.",
+  "adoption_signal": "NOT_SUPPORTED_ON_THIS_SAMPLE",
+  "reason": "No meaningful economic win; incremental uses more model-stage tokens and runtime overall. Both retain core distinctions but shared fixture provenance error and shared omissions prevent a clean quality pass. One strict action-count discrepancy persists only in incremental final, with an explicitly caveated functional reading that is defensible; do not inflate it into proven general inferiority.",
+  "core_quality": [
+    {
+      "case": "packaging",
+      "initial": "Both preserve one arrival-leak account, one offer, unknown SKU, praise/environmental uncertainty and behavior distinctions.",
+      "final": "Both preserve seven contextual arrival complaints, two explicit loose tops, four bare agreements, offered versus sent replacement, separate Softwear pocket leak and repurchase intention alongside complaint.",
+      "source_sets": "All frozen initial/final sets match both arms.",
+      "omission": "Both omit R01 belief that packaging comes from an outside manufacturer and resulting reluctance to complain, present in frozen criterion. No independently verified supply-chain claim should be inferred. This is shared loss of an explanatory qualifier, not incremental regression.",
+      "corroboration_caution": "Cross-role descriptive recurrence is supported at broad brand packaging leakage scope. Unknown TikTok SKU and cross-venue identity prevent upgrading to same-SKU defect or verified independent-origin prevalence; both retain those limitations."
+    },
+    {
+      "case": "hydration",
+      "initial": "Both correctly preserve A04/A08 direct hydration, A09 joint mask-serum outcome, A03/A04 texture and unreadable A07, after each makes one redundant A07 retrieval.",
+      "final": "Both preserve A13 conditional stickiness/duration/skin context, A17 non-user speculation, A18 repeated context identity, A14 gifted joint-use Buffer Jelly and A15 adverse Plasma Wash rather than SS opposition.",
+      "source_sets": "All frozen initial/final sets match both arms.",
+      "difference": "Full initially explicitly joins A04/A10 on overnight Buffer Jelly glow; incremental retains both reports but does not state that corroboration. In final, both preserve the relevant other-product reports and A04/A15 cleanser opposition.",
+      "shared_error": "All retailer observation timestamps inherit host fixture mislabelling of native updated_at. No credit for those dates."
+    },
+    {
+      "case": "buying",
+      "initial": "Both correctly count A04/A05 acquisition (five product categories), A01 cart only, contextual Softwear backups separately and other-brand scope. Both additionally count A04 as completed routine replacement under a functional interpretation.",
+      "final": "Both correctly add A11 stock-up (three accounts/six categories), A14 gift, A15 contemplated return, A16 intended substitution and adverse experience with loyalty. Full revises A04 completed count to empty; incremental retrieves A04 and retains a explicitly qualified functional count.",
+      "source_sets": "Only strict routine_replacement_completed differs from frozen expectation: both initial and incremental final. All acquisition/stock-up/cart/gift/return/intended sets match.",
+      "interpretation": "A04 reports no more makeup remover needed. It supports achieved functional redundancy; it does not explicitly report stopping an existing product. Full final is more conservative for actual behavior, while incremental explicitly says cessation is not established. Frozen count wording failed to exclude functional replacement explicitly, so classify as a strict-oracle mismatch plus a design ambiguity, not an unambiguous material regression.",
+      "corroboration_difference": "Full final explicitly compares contextual cowrunamuck backups with A11 satisfaction-linked stock-up; incremental retains that contextual testimony but joins only A04/A11 for broader satisfaction-before-buying. Full wording says independently but also admits Reddit independence unverified and says no distinct source-role route despite community/retailer roles. Keep qualified descriptive recurrence; neither unqualified independent corroboration nor a clean comparative quality win follows."
+    }
+  ],
+  "update_regressions": {
+    "unambiguous_material_incremental_only": [],
+    "strict_frozen_count_difference": [
+      "buying routine_replacement_completed"
+    ],
+    "limitations": "One pair per case; source overlap and shared input defects. Absence of an observed unambiguous regression is not general non-inferiority."
+  },
+  "shared_failures": [
+    {
+      "id": "F1",
+      "kind": "host_fixture_provenance",
+      "sources": "All focal retailer records Axx",
+      "finding": "Review updated_at mislabeled engagement observed_at; every hydration/buying stage repeats unsupported temporal provenance. See fixture-errata.json."
+    },
+    {
+      "id": "F2",
+      "kind": "reader_omission",
+      "sources": [
+        "R01"
+      ],
+      "stages": [
+        "packaging incremental final",
+        "packaging full final"
+      ],
+      "finding": "Outside-manufacturer belief and reluctance to complain omitted from report and source index by both."
+    }
+  ],
+  "test_design_limits": [
+    "Full update lacks explicit initial/addition manifest while receiving complete source records; full hydration correctly declines reconstructing a stage history. Judge final diagnosis only; separate saved initial result provides initial-stage answer. No disadvantage is scored for declining an unavailable historical split.",
+    "Focal counts intentionally exclude contextual accounts, which remain source-bearing in prose. Do not present focal counts as whole-neighborhood totals.",
+    "Selection rank is within commissioned preserved sample, not full-corpus top-engagement coverage. Original sample was purposive and not engagement-first.",
+    "Configured CLI instruction/tool context is included in measured input; bytes were identical across paired initial stdin but native total input differs slightly due runtime envelopes.",
+    "No prompt tuning or semantic rerun. Infrastructure executable correction preserved all frozen evidence/questions/expected bytes. Three retrieval calls remain charged."
+  ],
+  "review_status": "Different-vendor operator-courier review and author adjudication remain required before merge; experimental readers do not satisfy that review.",
+  "criterion_adjudication": [
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 1,
+      "source_keys": [
+        "P00",
+        "P01",
+        "P02",
+        "P03",
+        "P15",
+        "P21",
+        "P26",
+        "P38",
+        "P39",
+        "P40",
+        "P42"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Packaging praise (296 likes P00,150 P15) and refill/reuse appeal do not verify sustainability or purchase causation; P01 is brand agreement; P03 same actor as P00."
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 2,
+      "source_keys": [
+        "P06",
+        "P07"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Leak on arrival, loose top, cleaning/oxygen concern; brand reassurance is attributed and replacement OFFER, no completion. Unknown complaint SKU despite Continuum video context."
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 3,
+      "source_keys": [
+        "P08",
+        "P09",
+        "P10",
+        "P11",
+        "P12",
+        "P13"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "Seven distinct visible complaint profiles in same thread; P08 reports Sephora sent replacement, not receipt proof. Four bare agreements support contextual recurrence, not every detail. P06/P13 explicitly loose top. Likes not seven verified independent humans or prevalence."
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 4,
+      "source_keys": [
+        "R01"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "Softwear Void lid repeatedly unscrews in pocket, loss/stained clothes, cannot refill lost product; hates packaging while loves product/favorite shade and INTENDS repurchase; supplier explanation unverified, suggestions tentative. Different setting/SKU cannot corroborate exact arrival failure mechanism."
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 5,
+      "source_keys": [
+        "P04",
+        "P17",
+        "P20",
+        "P27",
+        "P29",
+        "P32",
+        "P42"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Refill bundle requests, shipped Continuum, broad buying language, saving intention and received product are distinct; no proof packaging causes completed sales."
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 1,
+      "source_keys": [
+        "P00",
+        "P01",
+        "P02",
+        "P03",
+        "P15",
+        "P21",
+        "P26",
+        "P38",
+        "P39",
+        "P40",
+        "P42"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Packaging praise (296 likes P00,150 P15) and refill/reuse appeal do not verify sustainability or purchase causation; P01 is brand agreement; P03 same actor as P00."
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 2,
+      "source_keys": [
+        "P06",
+        "P07"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Leak on arrival, loose top, cleaning/oxygen concern; brand reassurance is attributed and replacement OFFER, no completion. Unknown complaint SKU despite Continuum video context."
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 3,
+      "source_keys": [
+        "P08",
+        "P09",
+        "P10",
+        "P11",
+        "P12",
+        "P13"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Seven distinct visible complaint profiles in same thread; P08 reports Sephora sent replacement, not receipt proof. Four bare agreements support contextual recurrence, not every detail. P06/P13 explicitly loose top. Likes not seven verified independent humans or prevalence."
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 4,
+      "source_keys": [
+        "R01"
+      ],
+      "result": "partial_shared_supplier_rationale_omission",
+      "basis": "Softwear Void lid repeatedly unscrews in pocket, loss/stained clothes, cannot refill lost product; hates packaging while loves product/favorite shade and INTENDS repurchase; supplier explanation unverified, suggestions tentative. Different setting/SKU cannot corroborate exact arrival failure mechanism."
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 5,
+      "source_keys": [
+        "P04",
+        "P17",
+        "P20",
+        "P27",
+        "P29",
+        "P32",
+        "P42"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Refill bundle requests, shipped Continuum, broad buying language, saving intention and received product are distinct; no proof packaging causes completed sales."
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 1,
+      "source_keys": [
+        "P00",
+        "P01",
+        "P02",
+        "P03",
+        "P15",
+        "P21",
+        "P26",
+        "P38",
+        "P39",
+        "P40",
+        "P42"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Packaging praise (296 likes P00,150 P15) and refill/reuse appeal do not verify sustainability or purchase causation; P01 is brand agreement; P03 same actor as P00."
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 2,
+      "source_keys": [
+        "P06",
+        "P07"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Leak on arrival, loose top, cleaning/oxygen concern; brand reassurance is attributed and replacement OFFER, no completion. Unknown complaint SKU despite Continuum video context."
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 3,
+      "source_keys": [
+        "P08",
+        "P09",
+        "P10",
+        "P11",
+        "P12",
+        "P13"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "Seven distinct visible complaint profiles in same thread; P08 reports Sephora sent replacement, not receipt proof. Four bare agreements support contextual recurrence, not every detail. P06/P13 explicitly loose top. Likes not seven verified independent humans or prevalence."
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 4,
+      "source_keys": [
+        "R01"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "Softwear Void lid repeatedly unscrews in pocket, loss/stained clothes, cannot refill lost product; hates packaging while loves product/favorite shade and INTENDS repurchase; supplier explanation unverified, suggestions tentative. Different setting/SKU cannot corroborate exact arrival failure mechanism."
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 5,
+      "source_keys": [
+        "P04",
+        "P17",
+        "P20",
+        "P27",
+        "P29",
+        "P32",
+        "P42"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Refill bundle requests, shipped Continuum, broad buying language, saving intention and received product are distinct; no proof packaging causes completed sales."
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 1,
+      "source_keys": [
+        "P00",
+        "P01",
+        "P02",
+        "P03",
+        "P15",
+        "P21",
+        "P26",
+        "P38",
+        "P39",
+        "P40",
+        "P42"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Packaging praise (296 likes P00,150 P15) and refill/reuse appeal do not verify sustainability or purchase causation; P01 is brand agreement; P03 same actor as P00."
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 2,
+      "source_keys": [
+        "P06",
+        "P07"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Leak on arrival, loose top, cleaning/oxygen concern; brand reassurance is attributed and replacement OFFER, no completion. Unknown complaint SKU despite Continuum video context."
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 3,
+      "source_keys": [
+        "P08",
+        "P09",
+        "P10",
+        "P11",
+        "P12",
+        "P13"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Seven distinct visible complaint profiles in same thread; P08 reports Sephora sent replacement, not receipt proof. Four bare agreements support contextual recurrence, not every detail. P06/P13 explicitly loose top. Likes not seven verified independent humans or prevalence."
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 4,
+      "source_keys": [
+        "R01"
+      ],
+      "result": "partial_shared_supplier_rationale_omission",
+      "basis": "Softwear Void lid repeatedly unscrews in pocket, loss/stained clothes, cannot refill lost product; hates packaging while loves product/favorite shade and INTENDS repurchase; supplier explanation unverified, suggestions tentative. Different setting/SKU cannot corroborate exact arrival failure mechanism."
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 5,
+      "source_keys": [
+        "P04",
+        "P17",
+        "P20",
+        "P27",
+        "P29",
+        "P32",
+        "P42"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Refill bundle requests, shipped Continuum, broad buying language, saving intention and received product are distinct; no proof packaging causes completed sales."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 1,
+      "source_keys": [
+        "A04"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "SS light/refreshing/fast drying/hydrating pre-makeup and no clogged feeling; separate Buffer Jelly night glow, face-wash makeup removal/hydration, immediate moisturizer purchase. Four product acquisitions, no automatic repurchase from refill label."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 2,
+      "source_keys": [
+        "A08"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "SS hydration paired tretinoin/other actives, age51 challenging skin; condition preserved, no isolated effect proof."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 3,
+      "source_keys": [
+        "A09"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Avant Guard mask locks hydration FROM SS serum in joint use; no separable allocation of full outcome. Small head/nose fit complaint belongs mask."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 4,
+      "source_keys": [
+        "A03"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Wave less sticky than SS, still uses SS for tentative glycerin rationale; parent Level purchase/brightness is another product, not hydration testimony by A03."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 5,
+      "source_keys": [
+        "A07"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Unreadable undefined... supplies no benefit; cannot turn into generic praise."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 6,
+      "source_keys": [
+        "A10"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Buffer Jelly nighttime locking hydrating products and glow not SS corroboration."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 7,
+      "source_keys": [
+        "A13"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "SS12h plump hydration, oily T zone/dry sensitive rosacea cheeks, no congestion, less oil/irritation self report; sticky shiny slick with amount/day/night qualifiers. Do not erase conflict with A04 by inventing a proven condition. General advice most people only at night is reviewers extrapolation."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 8,
+      "source_keys": [
+        "A14"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "Gifted Buffer Jelly twice-used jelly-to-oil silky texture; drop with moisturizer at night, rosacea no redness/irritation/clogs; dermaplaning forecast not completed use, reduced-packaging explanation attributed."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 9,
+      "source_keys": [
+        "A15"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "Plasma Wash silky praise WITH failed cleansing across quantities/wet/dry, severe eye burn, drier/not moisturized, return considered only, defective/use uncertainty. Not adverse SS evidence."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 10,
+      "source_keys": [
+        "A17",
+        "A18"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "Regimen Lab Wave hydration, CREAM dry/pill concerns and other products remain separate. A17 never tried Experiment/no shipping; SS thickness comparison speculative. A18 repeated in A17 parent context counts once."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 1,
+      "source_keys": [
+        "A04"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "SS light/refreshing/fast drying/hydrating pre-makeup and no clogged feeling; separate Buffer Jelly night glow, face-wash makeup removal/hydration, immediate moisturizer purchase. Four product acquisitions, no automatic repurchase from refill label."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 2,
+      "source_keys": [
+        "A08"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "SS hydration paired tretinoin/other actives, age51 challenging skin; condition preserved, no isolated effect proof."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 3,
+      "source_keys": [
+        "A09"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Avant Guard mask locks hydration FROM SS serum in joint use; no separable allocation of full outcome. Small head/nose fit complaint belongs mask."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 4,
+      "source_keys": [
+        "A03"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Wave less sticky than SS, still uses SS for tentative glycerin rationale; parent Level purchase/brightness is another product, not hydration testimony by A03."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 5,
+      "source_keys": [
+        "A07"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Unreadable undefined... supplies no benefit; cannot turn into generic praise."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 6,
+      "source_keys": [
+        "A10"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Buffer Jelly nighttime locking hydrating products and glow not SS corroboration."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 7,
+      "source_keys": [
+        "A13"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "SS12h plump hydration, oily T zone/dry sensitive rosacea cheeks, no congestion, less oil/irritation self report; sticky shiny slick with amount/day/night qualifiers. Do not erase conflict with A04 by inventing a proven condition. General advice most people only at night is reviewers extrapolation."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 8,
+      "source_keys": [
+        "A14"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Gifted Buffer Jelly twice-used jelly-to-oil silky texture; drop with moisturizer at night, rosacea no redness/irritation/clogs; dermaplaning forecast not completed use, reduced-packaging explanation attributed."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 9,
+      "source_keys": [
+        "A15"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Plasma Wash silky praise WITH failed cleansing across quantities/wet/dry, severe eye burn, drier/not moisturized, return considered only, defective/use uncertainty. Not adverse SS evidence."
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 10,
+      "source_keys": [
+        "A17",
+        "A18"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Regimen Lab Wave hydration, CREAM dry/pill concerns and other products remain separate. A17 never tried Experiment/no shipping; SS thickness comparison speculative. A18 repeated in A17 parent context counts once."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 1,
+      "source_keys": [
+        "A04"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "SS light/refreshing/fast drying/hydrating pre-makeup and no clogged feeling; separate Buffer Jelly night glow, face-wash makeup removal/hydration, immediate moisturizer purchase. Four product acquisitions, no automatic repurchase from refill label."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 2,
+      "source_keys": [
+        "A08"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "SS hydration paired tretinoin/other actives, age51 challenging skin; condition preserved, no isolated effect proof."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 3,
+      "source_keys": [
+        "A09"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Avant Guard mask locks hydration FROM SS serum in joint use; no separable allocation of full outcome. Small head/nose fit complaint belongs mask."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 4,
+      "source_keys": [
+        "A03"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Wave less sticky than SS, still uses SS for tentative glycerin rationale; parent Level purchase/brightness is another product, not hydration testimony by A03."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 5,
+      "source_keys": [
+        "A07"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Unreadable undefined... supplies no benefit; cannot turn into generic praise."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 6,
+      "source_keys": [
+        "A10"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Buffer Jelly nighttime locking hydrating products and glow not SS corroboration."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 7,
+      "source_keys": [
+        "A13"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "SS12h plump hydration, oily T zone/dry sensitive rosacea cheeks, no congestion, less oil/irritation self report; sticky shiny slick with amount/day/night qualifiers. Do not erase conflict with A04 by inventing a proven condition. General advice most people only at night is reviewers extrapolation."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 8,
+      "source_keys": [
+        "A14"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "Gifted Buffer Jelly twice-used jelly-to-oil silky texture; drop with moisturizer at night, rosacea no redness/irritation/clogs; dermaplaning forecast not completed use, reduced-packaging explanation attributed."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 9,
+      "source_keys": [
+        "A15"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "Plasma Wash silky praise WITH failed cleansing across quantities/wet/dry, severe eye burn, drier/not moisturized, return considered only, defective/use uncertainty. Not adverse SS evidence."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 10,
+      "source_keys": [
+        "A17",
+        "A18"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "Regimen Lab Wave hydration, CREAM dry/pill concerns and other products remain separate. A17 never tried Experiment/no shipping; SS thickness comparison speculative. A18 repeated in A17 parent context counts once."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 1,
+      "source_keys": [
+        "A04"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "SS light/refreshing/fast drying/hydrating pre-makeup and no clogged feeling; separate Buffer Jelly night glow, face-wash makeup removal/hydration, immediate moisturizer purchase. Four product acquisitions, no automatic repurchase from refill label."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 2,
+      "source_keys": [
+        "A08"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "SS hydration paired tretinoin/other actives, age51 challenging skin; condition preserved, no isolated effect proof."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 3,
+      "source_keys": [
+        "A09"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Avant Guard mask locks hydration FROM SS serum in joint use; no separable allocation of full outcome. Small head/nose fit complaint belongs mask."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 4,
+      "source_keys": [
+        "A03"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Wave less sticky than SS, still uses SS for tentative glycerin rationale; parent Level purchase/brightness is another product, not hydration testimony by A03."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 5,
+      "source_keys": [
+        "A07"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Unreadable undefined... supplies no benefit; cannot turn into generic praise."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 6,
+      "source_keys": [
+        "A10"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Buffer Jelly nighttime locking hydrating products and glow not SS corroboration."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 7,
+      "source_keys": [
+        "A13"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "SS12h plump hydration, oily T zone/dry sensitive rosacea cheeks, no congestion, less oil/irritation self report; sticky shiny slick with amount/day/night qualifiers. Do not erase conflict with A04 by inventing a proven condition. General advice most people only at night is reviewers extrapolation."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 8,
+      "source_keys": [
+        "A14"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Gifted Buffer Jelly twice-used jelly-to-oil silky texture; drop with moisturizer at night, rosacea no redness/irritation/clogs; dermaplaning forecast not completed use, reduced-packaging explanation attributed."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 9,
+      "source_keys": [
+        "A15"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Plasma Wash silky praise WITH failed cleansing across quantities/wet/dry, severe eye burn, drier/not moisturized, return considered only, defective/use uncertainty. Not adverse SS evidence."
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 10,
+      "source_keys": [
+        "A17",
+        "A18"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Regimen Lab Wave hydration, CREAM dry/pill concerns and other products remain separate. A17 never tried Experiment/no shipping; SS thickness comparison speculative. A18 repeated in A17 parent context counts once."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 1,
+      "source_keys": [
+        "A01"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Parent cowrunamuck has two Softwear backups and21 points; focal boxybrown84 cart readdition13 points explicitly attributed to comment, not checkout. Context source separate from focal acquisition count."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 2,
+      "source_keys": [
+        "A02"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Parent RowanVC42 points praises Softwear and describes Dr Idriss exfoliator layering; reply feeling/skip refers in context to Idriss, not secure Softwear aversion. Preserve uncertainty if needed; no completed buying here."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 3,
+      "source_keys": [
+        "A04"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Four explicit product acquisitions: SS ordered after sister introduced; Buffer Jelly bought for more nighttime hydration/repair; face wash immediately bought, then Mesh immediately bought on launch. Reported sequence not population marketing causation or proven repurchase."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 4,
+      "source_keys": [
+        "A05"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Avant Guard instant checkout after creator discovery in sustainability/sheet-mask context; almost fit except cheeks/nose, easy clean, motivates hydrating-product use; no attribution solely to influencer versus sustainability."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 5,
+      "source_keys": [
+        "A12"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Regimen Lab CREAM2.0 and cleanser acquisition, future line exploration; other brand not Experiment purchase."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 6,
+      "source_keys": [
+        "A11"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "Softwear stock-up three unopened tubes/$70CAD after months love; thick texture liked despite resistance, dead skin removal; reported dermatitis and steroid prescription, rechallenge flare within24h, source causal attribution not independently proven medical causation; loyalty and caution coexist, no documented return."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 7,
+      "source_keys": [
+        "A14"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "Gifted Buffer Jelly, two uses, not bought despite convert enthusiasm; hedged future dermaplaning."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 8,
+      "source_keys": [
+        "A15"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "Plasma Wash return considered not completed, adverse cleansing/burning/dryness with silk praise."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "criterion": 9,
+      "source_keys": [
+        "A16"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "Continuum may replace azelaic/salicylic products, not service replacement nor completed switch; mild smell/lightgel/0sensitivity, reduced redness self report but cannot gauge acne/pigmentation objectively. Future staple not repurchase."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 1,
+      "source_keys": [
+        "A01"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Parent cowrunamuck has two Softwear backups and21 points; focal boxybrown84 cart readdition13 points explicitly attributed to comment, not checkout. Context source separate from focal acquisition count."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 2,
+      "source_keys": [
+        "A02"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Parent RowanVC42 points praises Softwear and describes Dr Idriss exfoliator layering; reply feeling/skip refers in context to Idriss, not secure Softwear aversion. Preserve uncertainty if needed; no completed buying here."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 3,
+      "source_keys": [
+        "A04"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Four explicit product acquisitions: SS ordered after sister introduced; Buffer Jelly bought for more nighttime hydration/repair; face wash immediately bought, then Mesh immediately bought on launch. Reported sequence not population marketing causation or proven repurchase."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 4,
+      "source_keys": [
+        "A05"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Avant Guard instant checkout after creator discovery in sustainability/sheet-mask context; almost fit except cheeks/nose, easy clean, motivates hydrating-product use; no attribution solely to influencer versus sustainability."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 5,
+      "source_keys": [
+        "A12"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Regimen Lab CREAM2.0 and cleanser acquisition, future line exploration; other brand not Experiment purchase."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 6,
+      "source_keys": [
+        "A11"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Softwear stock-up three unopened tubes/$70CAD after months love; thick texture liked despite resistance, dead skin removal; reported dermatitis and steroid prescription, rechallenge flare within24h, source causal attribution not independently proven medical causation; loyalty and caution coexist, no documented return."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 7,
+      "source_keys": [
+        "A14"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Gifted Buffer Jelly, two uses, not bought despite convert enthusiasm; hedged future dermaplaning."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 8,
+      "source_keys": [
+        "A15"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Plasma Wash return considered not completed, adverse cleansing/burning/dryness with silk praise."
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "final",
+      "criterion": 9,
+      "source_keys": [
+        "A16"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Continuum may replace azelaic/salicylic products, not service replacement nor completed switch; mild smell/lightgel/0sensitivity, reduced redness self report but cannot gauge acne/pigmentation objectively. Future staple not repurchase."
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 1,
+      "source_keys": [
+        "A01"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Parent cowrunamuck has two Softwear backups and21 points; focal boxybrown84 cart readdition13 points explicitly attributed to comment, not checkout. Context source separate from focal acquisition count."
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 2,
+      "source_keys": [
+        "A02"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Parent RowanVC42 points praises Softwear and describes Dr Idriss exfoliator layering; reply feeling/skip refers in context to Idriss, not secure Softwear aversion. Preserve uncertainty if needed; no completed buying here."
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 3,
+      "source_keys": [
+        "A04"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Four explicit product acquisitions: SS ordered after sister introduced; Buffer Jelly bought for more nighttime hydration/repair; face wash immediately bought, then Mesh immediately bought on launch. Reported sequence not population marketing causation or proven repurchase."
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 4,
+      "source_keys": [
+        "A05"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Avant Guard instant checkout after creator discovery in sustainability/sheet-mask context; almost fit except cheeks/nose, easy clean, motivates hydrating-product use; no attribution solely to influencer versus sustainability."
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 5,
+      "source_keys": [
+        "A12"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Regimen Lab CREAM2.0 and cleanser acquisition, future line exploration; other brand not Experiment purchase."
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 6,
+      "source_keys": [
+        "A11"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "Softwear stock-up three unopened tubes/$70CAD after months love; thick texture liked despite resistance, dead skin removal; reported dermatitis and steroid prescription, rechallenge flare within24h, source causal attribution not independently proven medical causation; loyalty and caution coexist, no documented return."
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 7,
+      "source_keys": [
+        "A14"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "Gifted Buffer Jelly, two uses, not bought despite convert enthusiasm; hedged future dermaplaning."
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 8,
+      "source_keys": [
+        "A15"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "Plasma Wash return considered not completed, adverse cleansing/burning/dryness with silk praise."
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "criterion": 9,
+      "source_keys": [
+        "A16"
+      ],
+      "result": "not_yet_supplied",
+      "basis": "Continuum may replace azelaic/salicylic products, not service replacement nor completed switch; mild smell/lightgel/0sensitivity, reduced redness self report but cannot gauge acne/pigmentation objectively. Future staple not repurchase."
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 1,
+      "source_keys": [
+        "A01"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Parent cowrunamuck has two Softwear backups and21 points; focal boxybrown84 cart readdition13 points explicitly attributed to comment, not checkout. Context source separate from focal acquisition count."
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 2,
+      "source_keys": [
+        "A02"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Parent RowanVC42 points praises Softwear and describes Dr Idriss exfoliator layering; reply feeling/skip refers in context to Idriss, not secure Softwear aversion. Preserve uncertainty if needed; no completed buying here."
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 3,
+      "source_keys": [
+        "A04"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Four explicit product acquisitions: SS ordered after sister introduced; Buffer Jelly bought for more nighttime hydration/repair; face wash immediately bought, then Mesh immediately bought on launch. Reported sequence not population marketing causation or proven repurchase."
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 4,
+      "source_keys": [
+        "A05"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Avant Guard instant checkout after creator discovery in sustainability/sheet-mask context; almost fit except cheeks/nose, easy clean, motivates hydrating-product use; no attribution solely to influencer versus sustainability."
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 5,
+      "source_keys": [
+        "A12"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Regimen Lab CREAM2.0 and cleanser acquisition, future line exploration; other brand not Experiment purchase."
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 6,
+      "source_keys": [
+        "A11"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Softwear stock-up three unopened tubes/$70CAD after months love; thick texture liked despite resistance, dead skin removal; reported dermatitis and steroid prescription, rechallenge flare within24h, source causal attribution not independently proven medical causation; loyalty and caution coexist, no documented return."
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 7,
+      "source_keys": [
+        "A14"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Gifted Buffer Jelly, two uses, not bought despite convert enthusiasm; hedged future dermaplaning."
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 8,
+      "source_keys": [
+        "A15"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Plasma Wash return considered not completed, adverse cleansing/burning/dryness with silk praise."
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "final",
+      "criterion": 9,
+      "source_keys": [
+        "A16"
+      ],
+      "result": "core_meaning_preserved",
+      "basis": "Continuum may replace azelaic/salicylic products, not service replacement nor completed switch; mild smell/lightgel/0sensitivity, reduced redness self report but cannot gauge acne/pigmentation objectively. Future staple not repurchase."
+    }
+  ]
+}

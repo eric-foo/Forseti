@@ -1,0 +1,85 @@
+{
+  "retrieval_requests": [],
+  "report": "Initial stage: A04 and A05 narrated completed Experiment buying, comprising five product-action categories: four acquisitions in A04 and one checkout in A05. A01 narrated cart readdition only. Updated stage: A11 adds one Softwear stock-up category, bringing acquisition accounts to three and product_action_assertions to six. These count narrated categories per focal account, not units, transactions or independently established purchase events. A14 adds gifted receipt, A15 contemplated return, and A16 intended routine substitution. No completed return is reported.\n\nA04’s retrieved wording supports retaining completed functional routine replacement: after buying the face wash, the reviewer reports makeup washing off and “no more makeup remover needed.” This describes an achieved replacement of the remover’s function, without establishing disposal or cessation of a named product. Thus completed routine replacement remains A04 alone in both stages; prospective replacement changes from none to A16.\n\nThe three credited buying origins are distinct Junip retailer reviewers. Completed Experiment buying is independently repeated within that role, with no focal cross-role corroboration. A04 describes sister-led discovery and satisfaction followed by purchases across products; A05 describes instant Avant Guard checkout after TikTok discovery in a sustainability context; A11 explicitly links Softwear stockpiling to months of loving it. A04 and A11 support the shared reported reason of favorable experience preceding further Experiment buying, across different products and acquisition categories. They do not repeat a specific benefit-driven buying claim. Influencer recommendation in A11 does not explicitly establish the initial purchase or its cause. No likes or bare agreement establish checkout, repurchase or purchase motivation.\n\nThe update materially qualifies favorable experience. A11 reports dermatitis after months of Softwear use, prescribed steroid cream, recovery and a worse flare within 24 hours of retrying. The reviewer attributes this to Softwear; it is a detailed individual adverse-event account, not an independently confirmed diagnosis or causal finding. Three unopened stocked tubes and a reported $70 CAD loss coexist with affection, envy of people able to use it, and a qualified recommendation. This is not evidence of buying again after the reaction. A15 reports unsuccessful cleansing across multiple application methods, severe eye burning and dryness, and considers returning Plasma Wash; no return is completed. These outcomes oppose A04’s favorable face-wash account if its unnamed wash is Plasma Wash, a likely but unresolved mapping. Versions and conditions are insufficient to explain the difference.\n\nA14’s gifted Buffer Jelly report describes two uses mixed into nighttime moisturizer, followed by soft skin without redness, irritation or clogged pores in a reviewer with rosacea. It provides another distinct-actor favorable nighttime skin report alongside A04, but does not independently establish A04’s exact glow/hydration outcomes or Buffer Jelly’s separate contribution. Conversion language is enthusiasm, not purchase. A16 reports tolerable Continuum use and less-red active acne overnight, while explicitly withholding conclusions about acne or pigmentation effectiveness. Replacing existing azelaic- and salicylic-acid products remains prospective. A05’s fit complaint still coexists with satisfaction and continued masking; barrier benefits remain inseparable from jointly used products.\n\nOther-brand boundaries remain unchanged: A02’s disliked, skipped product and favored baste balm concern Dr. Idriss; A12’s cream 2.0 and cleanser acquisitions concern Regimen Lab. Neither establishes Experiment buying. A01’s Softwear cart readdition is attributed to a recommendation, with no checkout, receipt or use reported.\n\nContext-only evidence remains outside focal counts: cowrunamuck (context_5f002acbf9eb1cd7bfc3, Reddit, September 5, 2025, score 21) reports two Softwear backups, affection and previously harder access, smooth/moisturized lips, and preference over Eadem’s scent/taste. This supplies a separate contextual stock-holding account, not another focal acquisition or A01 experience. RowanVC (context_ff821dc553240c0290fa, same thread/date, score 42) praises Softwear and Experiment, but the balm stash is not explicitly Experiment stock; Dr. Idriss tackiness, layering and resulting soft lips concern another product. These are distinct contextual actors in one shared thread, not additional independent people each time referenced. Product pages resolve scope; metadata adds no acquisition. A14’s explicit free receipt remains material despite rewarded=false metadata.\n\nRaw engagement: A01/A02/A12 scores are 13/4/12, supplied as material_positive=false and not_interpreted, with observation times unavailable. A04/A05/A11/A14/A15/A16 each have 0 up and 0 down votes, observed respectively March 23, 2025; November 3, 2022; November 25, 2024; August 20, 2025; November 4, 2024; and June 11, 2026. Context scores 21 and 42 lack observation times and sufficient exposure context for material resonance credit. Engagement establishes neither verified experiences, independence, prevalence nor buying effects.\n\nConflict posture is none_observed for the narrow narrated-buying proposition and mixed for broader favorable experience. Specific remedies, adverse outcomes and reasons remain source-bound. Earlier findings for A01/A02/A05/A12 and their context are carried from the supplied prior findings; their exact records were not re-retrieved. A04 and all four additions were assessed from exact supplied records. Formula versions remain unknown; other-brand cream 2.0 is the exception.",
+  "source_index": [
+    {
+      "key": "A01",
+      "findings": "Reddit boxybrown84, September 5, 2025; reddit:1n9da6u:ncm3hhd. Earlier supplied findings report removal then readdition of Experiment balm to an FF cart because of another commenter’s recommendation; parent context identifies Softwear, version unknown. Cart action only: no acquisition, receipt or use. Score 13, material_positive=false, observation time unavailable. Cowrunamuck’s contextual backups and experience belong to that separate actor in the shared thread. Exact focal text not re-retrieved."
+    },
+    {
+      "key": "A02",
+      "findings": "Reddit PamelaDamnela, September 5, 2025; reddit:1n9da6u:ncly8vq. Earlier findings report owning but skipping a disliked-feeling product and loving the baste balm; parent resolves Dr. Idriss exfoliator/Barrier Baste, not Experiment, with precise SKU/version unknown. No Experiment acquisition, return or substitution. Score 4, material_positive=false, observation time unavailable. RowanVC’s layering and separate Softwear praise cannot be assigned to A02. Exact text not re-retrieved."
+    },
+    {
+      "key": "A04",
+      "findings": "Junip customer 202931541, March 22, 2025; junip:7540631, credited origin; exact record retrieved. Four acquisition categories: Super Saturated after sister introduction and favorable experience; Buffer Jelly for more nighttime hydration/repair; face wash after Buffer Jelly satisfaction; mesh moisturizer immediately at launch. Wash/mesh likely Plasma Wash/Molecular Mesh but body leaves full names unstated; versions unknown. Reports lightweight, fast-drying, non-clogging pre-makeup hydration, tiny-amount Buffer Jelly use and morning glow, then makeup removal, hydration and no more breakouts with wash. 'No more makeup remover needed' supports completed functional substitution, without proving cessation of a named remover. Colorful packaging is liked; its buying influence is not isolated. Combo+sensitive, verified-buyer/unrewarded and Super Saturated Refill metadata add no repurchase. Votes 0/0 observed March 23, 2025. A15 conditionally opposes the wash outcomes."
+    },
+    {
+      "key": "A05",
+      "findings": "Junip customer 44968672, November 3, 2022; junip:1569510, credited origin. Earlier findings report instant Avant Guard checkout after TikTok discovery, in a sustainability context following prior near-nightly disposable masking: one acquisition category. Reports continued use and easy cleaning, with imperfect cheek/nose fit alongside satisfaction. Barrier improvement involves other hydrating/moisturizing products in the routine, leaving mask contribution unresolved. No explicit completed routine substitution, gift or return. Metadata: Acid Lime/SMALL, verified buyer, unrewarded; version unknown. Votes 0/0 observed November 3, 2022. Exact text not re-retrieved."
+    },
+    {
+      "key": "A12",
+      "findings": "Reddit eratch, January 16, 2025; reddit:1i30kik:m7j6no0. Earlier findings and thread context identify Regimen Lab acquisitions: cream 2.0 sought after excessive tret use and an unnamed cleanser. Favorable cream experience prompts intent to try more; cleanser is nice but small, with stronger interest in serums/moisturizers. No Experiment acquisition, completed future buying, return or explicit substitution. Score 12, material_positive=false, observation time unavailable; independence posture unavailable. Exact text not re-retrieved."
+    },
+    {
+      "key": "A11",
+      "findings": "Junip customer 178058824, November 25, 2024; junip:6638709, credited origin. Softwear, version unknown: explicitly stocked up during months of loving it, leaving three unopened tubes and reported $70 CAD loss; one acquisition/stock-up category, not three events or a separately narrated initial purchase. Influencer recommendation preceded use, but purchase causation is not explicit. Initially best-ever balm; liked thick consistency and sheen despite lip-rubbing resistance and daily dead-skin removal. Reports later perioral dermatitis, rough bumpy lips, prescribed steroid cream, recovery, then worse flare within 24 hours of retrying. Source asserts Softwear caused it; independent medical confirmation unavailable. Affection and qualified recommendation persist, but no post-reaction purchase or return is narrated. No prior sensitive lips/reaction reported; combo+sensitive metadata does not erase that distinction. Verified buyer/unrewarded; votes 0/0 observed November 25, 2024."
+    },
+    {
+      "key": "A14",
+      "findings": "Junip customer 344086099, August 5, 2025; junip:8950945, credited origin. Explicit free Buffer Jelly receipt for an honest review; two uses, no narrated purchase. Describes jelly-to-oil silky slip; with rosacea, mixes one drop into nighttime moisturizer and reports soft skin without morning redness, irritation or clogged pores. Joint use prevents isolating contribution. Post-dermaplaning benefit is a prediction. Initially surprised by small bottle, then attributes this to reduced packaging and anticipates long use from 1 oz; longevity untested. 'Experiment convert' expresses enthusiasm, not buying. Version unknown; metadata combo+acne-prone, verified_buyer=false, rewarded=false, which does not negate disclosed gifting. Votes 0/0 observed August 20, 2025."
+    },
+    {
+      "key": "A15",
+      "findings": "Junip customer 210150638, November 4, 2024; junip:6567933, credited origin. Context identifies Plasma Wash, version unknown. Likes silky texture but reports poor cleansing/no foam or apparent absorption across wet/dry skin, different amounts and lathering methods; severe eye burning prompted contemplated return only. Usually wears no eye makeup. Feels less clean and moisturized than an unnamed favored glycerin cleanser; second wash feels drier, so rejects double-cleanse suitability. Wonders about defect or misuse given positive social-media reports; neither explanation is established and those reports are not additional testimony. No explicit acquisition beyond verified-buyer metadata, completed return or substitution. Combo+acne-prone/unrewarded metadata; votes 0/0 observed November 4, 2024. Opposes A04’s wash outcomes if product mapping matches."
+    },
+    {
+      "key": "A16",
+      "findings": "Junip customer 529373073, May 29, 2026; junip:13599983, credited origin. Continuum use, version unknown; no explicitly narrated acquisition. Reports easy packaging, mild chemical smell, light gel-serum texture and no sensitivity; praises parabens and interprets them as science-first formulation. Existing azelaic- and salicylic-acid products will 'probably' be replaced for simplicity: intended substitution only. Reports less-red active acne after nighttime use but explicitly cannot judge acne or post-acne pigmentation effectiveness objectively. Future staple language establishes intent, not repurchase. Metadata Continuum–First Time, verified buyer, unrewarded, combo+acne-prone adds no purchase assertion. Votes 0/0 observed June 11, 2026."
+    }
+  ],
+  "counts": [
+    {
+      "name": "experiment_acquisition_focal",
+      "source_accounts": ["A04", "A05", "A11"],
+      "count": 3
+    },
+    {
+      "name": "cart_readdition",
+      "source_accounts": ["A01"],
+      "count": 1
+    },
+    {
+      "name": "stockup_focal",
+      "source_accounts": ["A11"],
+      "count": 1
+    },
+    {
+      "name": "gift_receipt",
+      "source_accounts": ["A14"],
+      "count": 1
+    },
+    {
+      "name": "return_considered",
+      "source_accounts": ["A15"],
+      "count": 1
+    },
+    {
+      "name": "return_completed",
+      "source_accounts": [],
+      "count": 0
+    },
+    {
+      "name": "routine_replacement_intended",
+      "source_accounts": ["A16"],
+      "count": 1
+    },
+    {
+      "name": "routine_replacement_completed",
+      "source_accounts": ["A04"],
+      "count": 1
+    }
+  ],
+  "product_action_assertions": 6
+}

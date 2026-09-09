@@ -1,0 +1,23 @@
+{
+  "executable": "C:/Users/vmon7/AppData/Local/OpenAI/Codex/bin/codex.exe",
+  "args": [
+    "exec",
+    "--json",
+    "-C",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\buying-incremental-initial\\call-0",
+    "--disable",
+    "shell_tool",
+    "--output-schema",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\response.schema.json",
+    "--output-last-message",
+    "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\buying-incremental-initial\\call-0\\response.json",
+    "-"
+  ],
+  "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\buying-incremental-initial\\call-0",
+  "started_at": "2026-09-09T12:54:56.762Z",
+  "stdin_sha256": "088eff5bef8456a09bcbc5f1955744e36e62958b4d7cfb04742783d8cd9fccba",
+  "no_resume": true,
+  "model_override": null,
+  "reasoning_override": null,
+  "retrieval_round": 0
+}

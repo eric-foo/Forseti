@@ -1,0 +1,45 @@
+{
+  "frozen_at": "2026-09-09T12:54:56.603Z",
+  "files": [
+    {
+      "name": "sources.json",
+      "sha256": "3a808ae157cfee08fc08210b5408348ed72371542bfbf7501209782824a544e9"
+    },
+    {
+      "name": "original-native.json",
+      "sha256": "77df41012e569679ea9c33abb30e74c5f796493b0b17c407012d3ebdabf39492"
+    },
+    {
+      "name": "source-validation.json",
+      "sha256": "806ebeb5d4de789a820368f8e8e223ba7e3aee33a2dc00496ef166eb1a92719c"
+    },
+    {
+      "name": "experiment.json",
+      "sha256": "5138e46899ee37181bb47626d5e516e071606291262573bf2f5bb57080d02b16"
+    },
+    {
+      "name": "expected.json",
+      "sha256": "e5122cdb99c5ea2cdc92646a71bdc0d16963665d1ef85456bf5cf83856f2034d"
+    },
+    {
+      "name": "count-definitions.json",
+      "sha256": "81a6e2312611d175ea30e8f886ada875c81a516b10088ac8a3d0ad3f1db256ac"
+    },
+    {
+      "name": "response.schema.json",
+      "sha256": "10116811053f00600e9e5f643c0ee3c442673b70a6c2af0985ae625c2c404458"
+    },
+    {
+      "name": "common.txt",
+      "sha256": "52d6ef24c515e281ae150dab37a0ebda3bf485029ba8ffc023c5a52a1f0db33e"
+    },
+    {
+      "name": "authority-context.txt",
+      "sha256": "4d918de0de55acd8570edcd2d703f3df9c0dfd387296a2f29aa0c089b112c482"
+    },
+    {
+      "name": "run.mjs",
+      "sha256": "9924d5b96a9cd81762af57e221e9a9c6bbc673e631af23e7271d30a54f721f29"
+    }
+  ]
+}

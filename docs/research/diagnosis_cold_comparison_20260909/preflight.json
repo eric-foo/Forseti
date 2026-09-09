@@ -1,0 +1,115 @@
+{
+  "at": "2026-09-09T12:50:28.606Z",
+  "root": "C:/Users/vmon7/.codex/worktrees/8efc/orca",
+  "head": "46fbf6ffdc576b20014fab8ceea3fcedbf837a0c",
+  "branch": "codex/diagnosis-cold-comparison-20260909",
+  "clean_start": true,
+  "competing_writer": "No writer commissioned in this allocated root; clean status and worktree inventory observed",
+  "checks": [
+    {
+      "args": [
+        "rev-parse",
+        "--show-toplevel"
+      ],
+      "processSuccess": true,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "interrupted": false,
+      "killed": false,
+      "outputTruncated": false,
+      "error": null,
+      "terminationError": null,
+      "stdout": "C:/Users/vmon7/.codex/worktrees/8efc/orca\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rev-parse",
+        "HEAD"
+      ],
+      "processSuccess": true,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "interrupted": false,
+      "killed": false,
+      "outputTruncated": false,
+      "error": null,
+      "terminationError": null,
+      "stdout": "46fbf6ffdc576b20014fab8ceea3fcedbf837a0c\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "branch",
+        "--show-current"
+      ],
+      "processSuccess": true,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "interrupted": false,
+      "killed": false,
+      "outputTruncated": false,
+      "error": null,
+      "terminationError": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "status",
+        "--porcelain=v1"
+      ],
+      "processSuccess": true,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "interrupted": false,
+      "killed": false,
+      "outputTruncated": false,
+      "error": null,
+      "terminationError": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "worktree",
+        "list",
+        "--porcelain"
+      ],
+      "processSuccess": true,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "interrupted": false,
+      "killed": false,
+      "outputTruncated": false,
+      "error": null,
+      "terminationError": null,
+      "stdout": "worktree C:/Users/vmon7/Desktop/projects/orca\nHEAD e2e3a41bd87f22fddd932f2732e1fbb0fd930748\ndetached\n\nworktree C:/tmp/forseti-customer-evidence-corpus-v1-20260904\nHEAD d083d089265d9f1d510df563bbd30c4e35b114ac\nbranch refs/heads/codex/customer-evidence-corpus-v1-20260904\n\nworktree C:/tmp/forseti-dieux-material-axis-discovery-closure-20260806\nHEAD 0e731ccc7611e52468924bac0b7d13d22041bf87\nbranch refs/heads/codex/dieux-material-axis-discovery-closure-20260806\n\nworktree C:/tmp/forseti-dogfood-economy-20260908\nHEAD f5887e5845eb3263ceb2ec7e1adf6a4322136c0e\nbranch refs/heads/codex/dogfood-evidence-economy\n\nworktree C:/tmp/forseti-dogfood-quality-20260908\nHEAD 480d0ff09f211266c00c233c5f0d0a0a6f655eed\nbranch refs/heads/codex/dogfood-evidence-consolidation-20260908\n\nworktree C:/tmp/forseti-packing-spine-silver-commission\nHEAD 536768a58f77bbb1aa9559e2add8c600f2277231\nbranch refs/heads/claude/wip-packing-spine-silver-commission\n\nworktree C:/tmp/forseti-phase-a-product-catalog-v4-20260809\nHEAD 27b3c56df791110e2aea0d3a242893cd4986fb94\nbranch refs/heads/codex/phase-a-product-catalog-v4-20260809\n\nworktree C:/tmp/forseti-reddit-engagement-qualification\nHEAD 3edeb29af5e383407668811ecf749cf8fddde43a\nbranch refs/heads/codex/reddit-engagement-qualification\n\nworktree C:/tmp/forseti-semantic-verifier-preservation-v4-20260811\nHEAD 200fe86773b71de80eb2d1e5996c5bd9f757a61e\nbranch refs/heads/codex/semantic-verifier-preservation-v4\n\nworktree C:/tmp/forseti-tiktok-filter-activity-model\nHEAD ff5b78e6daf3b222275706b19548b909894f8119\nbranch refs/heads/codex/tiktok-direct-run-metronome\n\nworktree C:/tmp/phase-a-rev-parent\nHEAD 53676d7a6902b876590ddbbd6b10434ae59dee91\ndetached\n\nworktree C:/Users/vmon7/.codex/worktrees/3841/orca\nHEAD 7abe132332b8bc919c3a7ea70f846a329ba05205\ndetached\n\nworktree C:/Users/vmon7/.codex/worktrees/399d/orca\nHEAD 8832adc6123ef7d0ba2295aa353fbf7ca7dbf507\nbranch refs/heads/codex/semantic-prevention-20260907\n\nworktree C:/Users/vmon7/.codex/worktrees/6fec/orca\nHEAD e85c332bee81b9fb32e9d76e11dcf8a4fa3626b3\nbranch refs/heads/codex/experiment-beauty-acquisition-seal-20260905\n\nworktree C:/Users/vmon7/.codex/worktrees/78cc/orca\nHEAD a75d9e44a3aa43bd23fff22a1dcc04410973b896\nbranch refs/heads/codex/blind-proof-continuation\n\nworktree C:/Users/vmon7/.codex/worktrees/78cc/orca/docs/_inbox/standing-run-process-20260906/landed-verification\nHEAD 0b3fdd0bff35285661142223fcd6321d15900081\ndetached\n\nworktree C:/Users/vmon7/.codex/worktrees/78cc/orca/docs/_inbox/standing-run-process-20260906/reconciliation-source-restrictions/runtime-code\nHEAD cc9c6c0320c516e3f24e9a4e31fcfde4c6145184\ndetached\n\nworktree C:/Users/vmon7/.codex/worktrees/78cc/orca/docs/_inbox/standing-run-process-20260906/worktree\nHEAD c47ae825023b744127e29042588397c2062fe8b9\nbranch refs/heads/codex/standing-run-process\n\nworktree C:/Users/vmon7/.codex/worktrees/8360/orca\nHEAD ada8958b6408aa8725b073b6000864bcf25381cc\nbranch refs/heads/codex/verified-v8-replay-20260907\n\nworktree C:/Users/vmon7/.codex/worktrees/8efc/orca\nHEAD 46fbf6ffdc576b20014fab8ceea3fcedbf837a0c\ndetached\n\nworktree C:/Users/vmon7/.codex/worktrees/954f/orca\nHEAD f9fbffa057c1f62e9b9d7d59f1fdec5c4c42d6e0\nbranch refs/heads/codex/semantic-consolidation-sample-20260909\n\nworktree C:/Users/vmon7/.codex/worktrees/a7d8/orca\nHEAD df9ebeee64e0b084f25bf3ed58c41237945a2880\nbranch refs/heads/codex/semantic-consolidation-matched-20260909\n\nworktree C:/Users/vmon7/.codex/worktrees/b947/orca\nHEAD f9fbffa057c1f62e9b9d7d59f1fdec5c4c42d6e0\nbranch refs/heads/codex/reconciliation-placement-comparison-20260909\n\nworktree C:/Users/vmon7/.codex/worktrees/cb76/orca\nHEAD 5cf8cdb52ef7ace2b300996cfefc066a99f8c765\nbranch refs/heads/codex/contextual-evidence-interpretation\n\nworktree C:/Users/vmon7/.codex/worktrees/cf6f/orca\nHEAD ef5931ee1d35b2138d980d72bed0961b3bf067a3\nbranch refs/heads/codex/semantic-answer-recheck-20260909\n\nworktree C:/Users/vmon7/.codex/worktrees/d46c/orca\nHEAD d23a6583dafa4a8407a77222d054276a2d979ca6\nbranch refs/heads/codex/material-saturation-gate-20260905\n\nworktree C:/Users/vmon7/.codex/worktrees/dd6e/orca\nHEAD 4f567f4f3cf63a0348c2fce11d8df6932eb19c4c\nbranch refs/heads/codex/phase-a-continuation-20260908\n\nworktree C:/Users/vmon7/.codex/worktrees/df21/orca\nHEAD b0e7d96931a4b4a1ef71840ff0eed77dc50fd732\nbranch refs/heads/codex/node-fallback-result-integrity\n\nworktree C:/Users/vmon7/.codex/worktrees/e348/orca\nHEAD e303fc52a0f7a252210847b67d8f4883bbbd66a4\nbranch refs/heads/codex/phase-a-collection-consolidation-boundary-20260905\n\nworktree C:/Users/vmon7/.codex/worktrees/eaaa/orca\nHEAD 5c1ad049ed6204368b416fd8b558aaf40df522ba\nbranch refs/heads/codex/dieux-phase-a-review-record-20260904\n\nworktree C:/Users/vmon7/.codex/worktrees/method-change-routing/orca\nHEAD b232e7f6c9c77ca556711a233d8362cd7c802dec\ndetached\n\nworktree C:/Users/vmon7/.codex/worktrees/phase-a-efficient-validation-procedure\nHEAD e455231eecb82f47c5c1ec9acd3de29512e061be\nbranch refs/heads/codex/phase-a-efficient-validation-procedure\n\nworktree C:/Users/vmon7/.codex/worktrees/phase-a-hype-trust-axis\nHEAD aec6e007cb62a2ee3e17cd8c6c389443dd3509f5\nbranch refs/heads/codex/hype-trust-axis\n\nworktree C:/Users/vmon7/.codex/worktrees/provider-auth-diagnostics/orca\nHEAD 565791c449dccc08a70968db2b95cd4d53259587\nbranch refs/heads/codex/provider-auth-diagnostics\n\nworktree C:/Users/vmon7/.codex/worktrees/provider-preloaded-context/orca\nHEAD e00cdc32b662ae754c7fad04cf0e3c1b99ec9596\nbranch refs/heads/codex/reconciliation-source-restrictions\n\nworktree C:/Users/vmon7/.codex/worktrees/shade-color-axis\nHEAD ce3e7a61a3b989ca9705de688d2d214c7cf78b5f\nbranch refs/heads/codex/shade-color-axis\n\nworktree C:/Users/vmon7/AppData/Local/Temp/claude/C--Users-vmon7-Desktop-projects-orca--claude-worktrees-delegated-adversarial-review-b6a435/cecd5413-0eeb-4a0a-bc06-3a9c14e73c86/scratchpad/review-wt\nHEAD 215ef97155f1fddda1ebb2e0c13418aacf798d04\nbranch refs/heads/review/delegated-point-meaning-b6a435\n\nworktree C:/Users/vmon7/Desktop/projects/orca/.claude/worktrees/bounded-semantic-review-c3bbf7\nHEAD f9fbffa057c1f62e9b9d7d59f1fdec5c4c42d6e0\nbranch refs/heads/claude/semantic-adversarial-review-patch-7e3b31\n\nworktree C:/Users/vmon7/Desktop/projects/orca/.claude/worktrees/contextual-evidence-interpretation-review-220cc7\nHEAD bf2c7d3761bd216962f5f3044f8121d749fa457e\nbranch refs/heads/claude/delegate-patch-50c823\n\nworktree C:/Users/vmon7/Desktop/projects/orca/.claude/worktrees/current-row-review-courier-f68549\nHEAD f9fbffa057c1f62e9b9d7d59f1fdec5c4c42d6e0\nbranch refs/heads/claude/current-row-review-courier-f68549\n\nworktree C:/Users/vmon7/Desktop/projects/orca/.claude/worktrees/dogfood-quality-review-c3bb2e\nHEAD ad40b956043823f3a4b522e75bbeffa9eb001e6a\nbranch refs/heads/claude/answer-recheck-report-patch-8c024e\n\nworktree C:/Users/vmon7/Desktop/projects/orca/.claude/worktrees/elastic-elgamal-3d59f4\nHEAD c3af520a4c080976c9f06968fd7ef8a7baddb701\nbranch refs/heads/claude/review-courier-5e1948\n\nworktree C:/Users/vmon7/Desktop/projects/orca/.claude/worktrees/expected-duration-process-review-864a60\nHEAD 9a03e8b670606325fd6b7a092f2934e99133d051\nbranch refs/heads/claude/expected-duration-process-review-864a60\n\nworktree C:/Users/vmon7/Desktop/projects/orca/.claude/worktrees/forseti-pr-1531-review-49468d\nHEAD fda213e44705db64ed025e030984101237b37bff\nbranch refs/heads/claude/forseti-pr1530-review-49468d\n\nworktree C:/Users/vmon7/Desktop/projects/orca/.claude/worktrees/forseti-semantic-review-5437c0\nHEAD edf8efbeea1ef3bd00eb8664f52e730b9ad89515\nbranch refs/heads/claude/delegate-patch-execution-515437\n\nworktree C:/Users/vmon7/Desktop/projects/orca/.claude/worktrees/node-fallback-result-integrity-17804f\nHEAD 4f567f4f3cf63a0348c2fce11d8df6932eb19c4c\ndetached\n\nworktree C:/Users/vmon7/Desktop/projects/orca/.claude/worktrees/phase-a-collection-consolidation-review-f2f00a\nHEAD 8291c669f4990ae7e82310fa858fd76ccd2386e5\nbranch refs/heads/claude/collection-reassessment-review-2a0fc5\n\nworktree C:/Users/vmon7/Desktop/projects/orca/.claude/worktrees/reconciliation-placement-review-b3bd3f\nHEAD f9fbffa057c1f62e9b9d7d59f1fdec5c4c42d6e0\nbranch refs/heads/claude/successor-review-courier-patch-c2f52e\n\nworktree C:/Users/vmon7/Desktop/projects/orca/.claude/worktrees/reconciliation-placement-review-e1c785\nHEAD f9fbffa057c1f62e9b9d7d59f1fdec5c4c42d6e0\nbranch refs/heads/claude/reconciliation-placement-review-e1c785\n\nworktree C:/Users/vmon7/Desktop/projects/orca/.claude/worktrees/review-commission-6e4b68\nHEAD c9dc5d449e483f015398d655fa54c89607918dd3\ndetached\n\nworktree C:/Users/vmon7/Desktop/projects/orca/.claude/worktrees/saved-reader-validation-pr-1565-6d48af\nHEAD c9dc5d449e483f015398d655fa54c89607918dd3\ndetached\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/beauty-collection-process-repair-20260905\nHEAD f14fd53f3da2df419c2ea218bb6cb2b8505530f3\nbranch refs/heads/codex/beauty-collection-process-repair-20260905\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/blocker-scope-continuation-20260908\nHEAD 221747864d79919bff3c1833a6e092fedbe6f70f\nbranch refs/heads/codex/blocker-scope-continuation-20260908\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/collection-decision-reassessment-20260907\nHEAD 076008b1f9975436d3f979a6c3e3af27027acc82\nbranch refs/heads/codex/collection-decision-reassessment-20260907\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/collection-decision-review-20260907\nHEAD 2b801d975a59192376d80af1c7fbe13ab974b140\nbranch refs/heads/codex/collection-decision-review-20260907\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/collection-materiality-decision-effect-20260907\nHEAD 962ff3767fef28beabbeba22c94961920d0d505a\nbranch refs/heads/codex/collection-materiality-decision-effect-20260907\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/collection-materiality-optics-20260908\nHEAD ab2588c4ae4182acf347fcd01194b2d15c7ff7ca\nbranch refs/heads/codex/collection-materiality-optics-20260908\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/collection-shared-search-goals-20260908\nHEAD d5aea9fbe21543f3c5e4eb11567b8c82e7a098ae\nbranch refs/heads/codex/collection-shared-search-goals-20260908\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/collection-shared-search-review-20260908\nHEAD 3299faeaabdaea0fed0811473a4e46cc78ee97d7\nbranch refs/heads/codex/collection-shared-search-review-20260908\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/community-date-validation-20260907\nHEAD c739382ccfa60bb85bd159b1152a10e91f1ebbba\nbranch refs/heads/codex/community-date-validation-20260907\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/dieux-audit-payload-experiment-20260905\nHEAD 5df3be09968210e50396894019e1e3b2db766b2b\nbranch refs/heads/codex/dieux-audit-payload-experiment-20260905\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905\nHEAD caef0cc4f07ae6eb8a5a521b199bfc1e66335978\nbranch refs/heads/codex/experiment-beauty-evidence-repair-20260905\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-current-review-20260909\nHEAD f56026f098c43ab5041439c507cab2ed9f586ed7\ndetached\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/forseti-bloat-cut-20260905\nHEAD 5c2de76aab6f01c6b34f15cef61ac4c8d21db3eb\nbranch refs/heads/codex/forseti-bloat-cut-20260905\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/forseti-bloat-delegated-patch-20260905\nHEAD 5df3be09968210e50396894019e1e3b2db766b2b\nbranch refs/heads/codex/forseti-bloat-delegated-patch-20260905\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/forseti-efficiency-audit-20260905\nHEAD 182269cf4a0df351aaa319389b0d7c2d7a97ebc3\nbranch refs/heads/codex/forseti-efficiency-audit-20260905\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/forseti-efficiency-implementation-20260905\nHEAD 8f450827373bb533b763a9f52a6ffa74258c40a1\nbranch refs/heads/codex/forseti-efficiency-implementation-20260905\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/forseti-efficiency-measurement-20260905\nHEAD 15b9b0c98df8c80f99d2deee287fe8ca4fcdb0b9\nbranch refs/heads/codex/forseti-efficiency-measurement-20260905\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/forseti-risk-comment-bound-20260905\nHEAD bfcc983ac5046360afa6d74733ec627c838b9147\nbranch refs/heads/codex/forseti-risk-comment-bound-20260905\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/intelligence-cycle-doc-bloat-20260905\nHEAD 01650c7f6e756a72416d9ac0a15d40061599ab64\nbranch refs/heads/codex/intelligence-cycle-doc-bloat-20260905\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/intelligence-instruction-aid-20260909\nHEAD 85d980b9840a07b62fdf05875082b5002c1ceaf7\nbranch refs/heads/codex/intelligence-instruction-aid-20260909\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/packaging-diagnosis-sample-20260909\nHEAD cedad397e29ed2ffb22ecd946840aed64ee6176e\nbranch refs/heads/codex/packaging-diagnosis-sample-20260909\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/semantic-contract-history-20260906\nHEAD 6444b536ca0604faf80899a2200b898112f8d989\nbranch refs/heads/codex/semantic-contract-history-20260906\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/shared-evidence-admission-20260906\nHEAD b73ff76a51c58a823de22106c486c7aa733cef28\nbranch refs/heads/codex/shared-evidence-admission-20260906\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/shared-evidence-target-closure-20260907\nHEAD f8d8edde0d8f9144634e0503c1c5ed86c264bcd9\nbranch refs/heads/codex/shared-evidence-target-closure-20260907\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/source-loading-bounded-read-20260909\nHEAD e7472458d87f0238dd6ec9c0fc16af9dbb065d48\nbranch refs/heads/codex/source-loading-bounded-read-20260909\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/source-reader-cold-intelligence-20260909\nHEAD aa2869214b50072a30e5e2a9a30fe37d256a2f4b\nbranch refs/heads/codex/source-reader-cold-intelligence-20260909\n\nworktree C:/Users/vmon7/Desktop/projects/orca/worktrees/tiktok-logged-out-fragrance-bronze\nHEAD 57ab893ffb19f8809f651cbb66df77bcc9ea7edc\nbranch refs/heads/codex/cloakbrowser-0.5.2-upgrade\n\n",
+      "stderr": ""
+    }
+  ],
+  "branch_result": {
+    "processSuccess": true,
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "interrupted": false,
+    "killed": false,
+    "outputTruncated": false,
+    "error": null,
+    "terminationError": null,
+    "stdout": "",
+    "stderr": "Switched to a new branch 'codex/diagnosis-cold-comparison-20260909'\n"
+  },
+  "configured": {
+    "model": "gpt-6-astra",
+    "reasoning": "medium",
+    "service_tier": "default"
+  },
+  "settings_authority": "Commission explicitly requests configured settings; no model or reasoning override."
+}

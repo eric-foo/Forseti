@@ -1,0 +1,3272 @@
+{
+  "measured_at": "2026-09-09T13:09:39.996Z",
+  "frozen_bytes_verified": true,
+  "coldness": [
+    {
+      "path": "runs/buying-full-initial/call-0",
+      "thread_id": "01a0863d-b949-7712-891b-25caefba3f42",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\buying-full-initial\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "088eff5bef8456a09bcbc5f1955744e36e62958b4d7cfb04742783d8cd9fccba",
+      "automatic_user_context_hashes": [
+        "408348984f3518fe9deb80cd5afec0a071dfc1a0f401e5af967fcaf6b601d311"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "beb056a03d637ba29111b4096aecb1d8f58312eb76464f4ee114fb956ccabc79"
+    },
+    {
+      "path": "runs/buying-full-update/call-0",
+      "thread_id": "01a08640-20a4-7961-bf46-acbe12fdaefd",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\buying-full-update\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "e8bc100be26676064706200b02771ca49a892f404f7a4e6ec723ddc50f7f4359",
+      "automatic_user_context_hashes": [
+        "36017a7b9446e00057197eac899ed44cfb2e1eddf0b0303abdc6d1777c370f10"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "675bb6daa3624cf55f1514d9ad94bd3363a397484ff7c9b128c84527fd02b888"
+    },
+    {
+      "path": "runs/buying-incremental-initial/call-0",
+      "thread_id": "01a0863d-b806-7110-8bf8-6898780b9f55",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\buying-incremental-initial\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "088eff5bef8456a09bcbc5f1955744e36e62958b4d7cfb04742783d8cd9fccba",
+      "automatic_user_context_hashes": [
+        "241c032880a72f9b5ec1432b17b811473a7f0dae3b330347191c3b475aa0d9ef"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "2ae6a2f33ca44f45387fea1b9c838fa20e06b4070c959e319ffbb64bd48a1ccc"
+    },
+    {
+      "path": "runs/buying-incremental-update/call-0",
+      "thread_id": "01a08640-209a-72c3-a3be-e60f713374b5",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\buying-incremental-update\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "c7707d4543576ba8f0112320afa153f1d5c4bd8051ee3dd5cbb66c63eea4ad79",
+      "automatic_user_context_hashes": [
+        "3a18e8e27c7e59b5d37e9358c77df9b83125057db3ed5e75e66bdc98914d10a6"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "426ad8fa5b84d032375c7c5857ab1b43993231c182aae5df031b8d290146c035"
+    },
+    {
+      "path": "runs/buying-incremental-update/call-1",
+      "thread_id": "01a08640-6b7f-7a91-963c-395387b40f58",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\buying-incremental-update\\call-1",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "fe8dba123e6fb709c9c27aba1ae543080dae8f719bc69f491690830119e7bf79",
+      "automatic_user_context_hashes": [
+        "36a1662e53dc7d7c05efe270e7fa9e5ef5714a80b65897cd1a75fe491ec61ace"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "e2e333cdaeb10c3fca6309a79437e00d9b7a2c026423f4230193fd5c7ba569c0"
+    },
+    {
+      "path": "runs/hydration-full-initial/call-0",
+      "thread_id": "01a0863d-b856-76d0-8b3f-91930524efd2",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\hydration-full-initial\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "5e6ae90919b2dc8a80e8c6c192ea71dad30e42b23270ebad18807aee1d1e0aaf",
+      "automatic_user_context_hashes": [
+        "530354ce4ea6b91f59d825d48df9b6df43765ebc2a5b5050bfc84e95d649d99e"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "d37c7ca335773d91c3ed09d7d2b622038a49bee7fcffb53b145f58675d89f2d4"
+    },
+    {
+      "path": "runs/hydration-full-initial/call-1",
+      "thread_id": "01a0863e-a50f-7bf1-a0fc-7c2ee8b45464",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\hydration-full-initial\\call-1",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "c3c2e71cadc517ea8b55a72bd49638f0068a6b8fdc5fadd3db17ad7dc9c1272c",
+      "automatic_user_context_hashes": [
+        "f5de64fea8a52bb1ef89aa1d70c1f748d4d62aea489f49eda5d177d8a4c7380e"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "65046b9e8522f0e9b9e9398ac21f0cea40b051a3f1e23fce37c979262fc501b4"
+    },
+    {
+      "path": "runs/hydration-full-update/call-0",
+      "thread_id": "01a08640-2113-73a2-8e8e-3f45b1c2572c",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\hydration-full-update\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "38f781806415d642a992545881746455730974db9af6ebdac056635d942a8545",
+      "automatic_user_context_hashes": [
+        "fbe385543d79c25b6f46791feb0d6f6e1388b3997551457038535072b06efcaf"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "d957c8377e9fc1ff2e6c80b00a4ca925447f9302dead5ff4902489cc184dc675"
+    },
+    {
+      "path": "runs/hydration-incremental-initial/call-0",
+      "thread_id": "01a0863d-b869-7491-9cd1-917289b13818",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\hydration-incremental-initial\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "5e6ae90919b2dc8a80e8c6c192ea71dad30e42b23270ebad18807aee1d1e0aaf",
+      "automatic_user_context_hashes": [
+        "d26a47202d19e9923b86308e8d0602bc36051d6950f8c1732dee9ed0d60d7898"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "4ce8a21696208e905ad07b81bafe3bbac9a81c8771b00e55f12c2c2601803620"
+    },
+    {
+      "path": "runs/hydration-incremental-initial/call-1",
+      "thread_id": "01a0863e-b77f-7000-afc3-8effb83bb5d3",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\hydration-incremental-initial\\call-1",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "40333c0a8f3cbd16a75691067d39b18ef54fb33bef4dc82e9d7ed315acc2a8ba",
+      "automatic_user_context_hashes": [
+        "c673350e260f179242a0c142cab2b75271229f1ebace3067a09d0300e4b68147"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "729b69fbba7a5f7b7af05415a1d315e41dbe3c67d7b5e68d21afee95bb64d23d"
+    },
+    {
+      "path": "runs/hydration-incremental-update/call-0",
+      "thread_id": "01a08640-202a-7370-844d-c3575bb54a1a",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\hydration-incremental-update\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "ae1fa17c10e2f5d277af2436aad6a7cc19f91e7087bf23069589504b2d97adb8",
+      "automatic_user_context_hashes": [
+        "797ecc96e019d745067fe5089d7bdad83652edc2ce05ef3c9518dee6c345bd3f"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "5d201835f75e819acc389f36b70974d1c3d615c33e1cd83f72201c0f15fddd94"
+    },
+    {
+      "path": "runs/packaging-full-initial/call-0",
+      "thread_id": "01a0863d-b855-74b3-94ef-5faf3343679c",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\packaging-full-initial\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "8677668a67a4cad17a2082766eff87801ea25f2413dc959804a08819c9182e4b",
+      "automatic_user_context_hashes": [
+        "9470c7ccf681cd565c8308e02c994acf984771e022f0ac7499f1dc3713d05cb4"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "852edc6e054f34289fdbc36223c196eac2712462aace7d002d5597dc1666e975"
+    },
+    {
+      "path": "runs/packaging-full-update/call-0",
+      "thread_id": "01a08640-20cf-7ef0-91c8-6128863b5642",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\packaging-full-update\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "256f982b7adda54a1959efd1543010860026d048e5f225466a60ce581b510ee7",
+      "automatic_user_context_hashes": [
+        "7518372fea597e1aaa365e9ede67296af5e8a9ebf6c9e3c3744ee2f0eeea41c5"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "5c703dc970dd47c7ab2c70e8745b52f30c8f87f9ff4b17a5e9ea6e875b856a83"
+    },
+    {
+      "path": "runs/packaging-incremental-initial/call-0",
+      "thread_id": "01a0863d-b8d4-7c02-a14d-f1e06bba8ae2",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\packaging-incremental-initial\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "8677668a67a4cad17a2082766eff87801ea25f2413dc959804a08819c9182e4b",
+      "automatic_user_context_hashes": [
+        "0f80c7cea547fe9b7ca005246204b5a44d269f4c380eef2915ebaef5ebbc5307"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "8dba89b51fab0248b7b5ce5f52264de3d85caf705ad7516ce044e9d72b7da270"
+    },
+    {
+      "path": "runs/packaging-incremental-update/call-0",
+      "thread_id": "01a08640-2044-7de1-b426-c7e0d332ee85",
+      "session_meta": {
+        "originator": "codex_exec",
+        "cwd": "C:\\Users\\vmon7\\.codex\\worktrees\\8efc\\orca\\docs\\research\\diagnosis_cold_comparison_20260909\\runs\\packaging-incremental-update\\call-0",
+        "cli_version": "0.153.4"
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "actual_stdin_sha256": "3f5eb44a57127dffdcb37ffbbe48ceda9e631e075b562dd6db8a823928b70266",
+      "automatic_user_context_hashes": [
+        "695dc3b2975e9291d6fe2ba412b08637e0db0c1f631c347188c94e0d2e592f5b"
+      ],
+      "prior_assistant_or_tool_messages": 0,
+      "exact_saved_input": true,
+      "no_resume_or_fork": true,
+      "unexpected_tool_events": 0,
+      "native_session_sha256": "67260e128fdc74ca29a3a8c99e75f62daab5f678ff36c6c59464d832c2cdfd66"
+    }
+  ],
+  "count_checks": [
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "name": "experiment_acquisition_focal",
+      "expected": [
+        "A04",
+        "A05"
+      ],
+      "observed": [
+        "A04",
+        "A05"
+      ],
+      "count": 2,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "name": "cart_readdition",
+      "expected": [
+        "A01"
+      ],
+      "observed": [
+        "A01"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "name": "stockup_focal",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "name": "gift_receipt",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "name": "return_considered",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "name": "return_completed",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "name": "routine_replacement_intended",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "name": "routine_replacement_completed",
+      "expected": [],
+      "observed": [
+        "A04"
+      ],
+      "count": 1,
+      "pass": false
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "name": "product_action_assertions",
+      "expected": 5,
+      "observed": 5,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "name": "experiment_acquisition_focal",
+      "expected": [
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "observed": [
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "count": 3,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "name": "cart_readdition",
+      "expected": [
+        "A01"
+      ],
+      "observed": [
+        "A01"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "name": "stockup_focal",
+      "expected": [
+        "A11"
+      ],
+      "observed": [
+        "A11"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "name": "gift_receipt",
+      "expected": [
+        "A14"
+      ],
+      "observed": [
+        "A14"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "name": "return_considered",
+      "expected": [
+        "A15"
+      ],
+      "observed": [
+        "A15"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "name": "return_completed",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "name": "routine_replacement_intended",
+      "expected": [
+        "A16"
+      ],
+      "observed": [
+        "A16"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "name": "routine_replacement_completed",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "name": "product_action_assertions",
+      "expected": 6,
+      "observed": 6,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "experiment_acquisition_focal",
+      "expected": [
+        "A04",
+        "A05"
+      ],
+      "observed": [
+        "A04",
+        "A05"
+      ],
+      "count": 2,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "cart_readdition",
+      "expected": [
+        "A01"
+      ],
+      "observed": [
+        "A01"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "stockup_focal",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "gift_receipt",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "return_considered",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "return_completed",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "routine_replacement_intended",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "routine_replacement_completed",
+      "expected": [],
+      "observed": [
+        "A04"
+      ],
+      "count": 1,
+      "pass": false
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "product_action_assertions",
+      "expected": 5,
+      "observed": 5,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "experiment_acquisition_focal",
+      "expected": [
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "observed": [
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "count": 3,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "cart_readdition",
+      "expected": [
+        "A01"
+      ],
+      "observed": [
+        "A01"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "stockup_focal",
+      "expected": [
+        "A11"
+      ],
+      "observed": [
+        "A11"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "gift_receipt",
+      "expected": [
+        "A14"
+      ],
+      "observed": [
+        "A14"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "return_considered",
+      "expected": [
+        "A15"
+      ],
+      "observed": [
+        "A15"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "return_completed",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "routine_replacement_intended",
+      "expected": [
+        "A16"
+      ],
+      "observed": [
+        "A16"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "routine_replacement_completed",
+      "expected": [],
+      "observed": [
+        "A04"
+      ],
+      "count": 1,
+      "pass": false
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "product_action_assertions",
+      "expected": 6,
+      "observed": 6,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "name": "ss_hydration_direct",
+      "expected": [
+        "A04",
+        "A08"
+      ],
+      "observed": [
+        "A04",
+        "A08"
+      ],
+      "count": 2,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "name": "ss_hydration_joint",
+      "expected": [
+        "A09"
+      ],
+      "observed": [
+        "A09"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "name": "ss_texture_direct",
+      "expected": [
+        "A03",
+        "A04"
+      ],
+      "observed": [
+        "A03",
+        "A04"
+      ],
+      "count": 2,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "name": "ss_texture_speculative",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "update",
+      "name": "ss_hydration_direct",
+      "expected": [
+        "A04",
+        "A08",
+        "A13"
+      ],
+      "observed": [
+        "A04",
+        "A08",
+        "A13"
+      ],
+      "count": 3,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "update",
+      "name": "ss_hydration_joint",
+      "expected": [
+        "A09"
+      ],
+      "observed": [
+        "A09"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "update",
+      "name": "ss_texture_direct",
+      "expected": [
+        "A03",
+        "A04",
+        "A13"
+      ],
+      "observed": [
+        "A03",
+        "A04",
+        "A13"
+      ],
+      "count": 3,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "update",
+      "name": "ss_texture_speculative",
+      "expected": [
+        "A17"
+      ],
+      "observed": [
+        "A17"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "ss_hydration_direct",
+      "expected": [
+        "A04",
+        "A08"
+      ],
+      "observed": [
+        "A04",
+        "A08"
+      ],
+      "count": 2,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "ss_hydration_joint",
+      "expected": [
+        "A09"
+      ],
+      "observed": [
+        "A09"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "ss_texture_direct",
+      "expected": [
+        "A03",
+        "A04"
+      ],
+      "observed": [
+        "A03",
+        "A04"
+      ],
+      "count": 2,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "ss_texture_speculative",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "ss_hydration_direct",
+      "expected": [
+        "A04",
+        "A08",
+        "A13"
+      ],
+      "observed": [
+        "A04",
+        "A08",
+        "A13"
+      ],
+      "count": 3,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "ss_hydration_joint",
+      "expected": [
+        "A09"
+      ],
+      "observed": [
+        "A09"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "ss_texture_direct",
+      "expected": [
+        "A03",
+        "A04",
+        "A13"
+      ],
+      "observed": [
+        "A03",
+        "A04",
+        "A13"
+      ],
+      "count": 3,
+      "pass": true
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "ss_texture_speculative",
+      "expected": [
+        "A17"
+      ],
+      "observed": [
+        "A17"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "name": "arrival_leak",
+      "expected": [
+        "P06"
+      ],
+      "observed": [
+        "P06"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "name": "explicit_loose_top",
+      "expected": [
+        "P06"
+      ],
+      "observed": [
+        "P06"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "name": "bare_arrival_agreement",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "name": "replacement_offered",
+      "expected": [
+        "P07"
+      ],
+      "observed": [
+        "P07"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "name": "replacement_sent",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "name": "retailer_leak",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "name": "repurchase_intended",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "update",
+      "name": "arrival_leak",
+      "expected": [
+        "P06",
+        "P08",
+        "P09",
+        "P10",
+        "P11",
+        "P12",
+        "P13"
+      ],
+      "observed": [
+        "P06",
+        "P08",
+        "P09",
+        "P10",
+        "P11",
+        "P12",
+        "P13"
+      ],
+      "count": 7,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "update",
+      "name": "explicit_loose_top",
+      "expected": [
+        "P06",
+        "P13"
+      ],
+      "observed": [
+        "P06",
+        "P13"
+      ],
+      "count": 2,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "update",
+      "name": "bare_arrival_agreement",
+      "expected": [
+        "P09",
+        "P10",
+        "P11",
+        "P12"
+      ],
+      "observed": [
+        "P09",
+        "P10",
+        "P11",
+        "P12"
+      ],
+      "count": 4,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "update",
+      "name": "replacement_offered",
+      "expected": [
+        "P07"
+      ],
+      "observed": [
+        "P07"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "update",
+      "name": "replacement_sent",
+      "expected": [
+        "P08"
+      ],
+      "observed": [
+        "P08"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "update",
+      "name": "retailer_leak",
+      "expected": [
+        "R01"
+      ],
+      "observed": [
+        "R01"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "update",
+      "name": "repurchase_intended",
+      "expected": [
+        "R01"
+      ],
+      "observed": [
+        "R01"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "arrival_leak",
+      "expected": [
+        "P06"
+      ],
+      "observed": [
+        "P06"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "explicit_loose_top",
+      "expected": [
+        "P06"
+      ],
+      "observed": [
+        "P06"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "bare_arrival_agreement",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "replacement_offered",
+      "expected": [
+        "P07"
+      ],
+      "observed": [
+        "P07"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "replacement_sent",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "retailer_leak",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "name": "repurchase_intended",
+      "expected": [],
+      "observed": [],
+      "count": 0,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "arrival_leak",
+      "expected": [
+        "P06",
+        "P08",
+        "P09",
+        "P10",
+        "P11",
+        "P12",
+        "P13"
+      ],
+      "observed": [
+        "P06",
+        "P08",
+        "P09",
+        "P10",
+        "P11",
+        "P12",
+        "P13"
+      ],
+      "count": 7,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "explicit_loose_top",
+      "expected": [
+        "P06",
+        "P13"
+      ],
+      "observed": [
+        "P06",
+        "P13"
+      ],
+      "count": 2,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "bare_arrival_agreement",
+      "expected": [
+        "P09",
+        "P10",
+        "P11",
+        "P12"
+      ],
+      "observed": [
+        "P09",
+        "P10",
+        "P11",
+        "P12"
+      ],
+      "count": 4,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "replacement_offered",
+      "expected": [
+        "P07"
+      ],
+      "observed": [
+        "P07"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "replacement_sent",
+      "expected": [
+        "P08"
+      ],
+      "observed": [
+        "P08"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "retailer_leak",
+      "expected": [
+        "R01"
+      ],
+      "observed": [
+        "R01"
+      ],
+      "count": 1,
+      "pass": true
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "update",
+      "name": "repurchase_intended",
+      "expected": [
+        "R01"
+      ],
+      "observed": [
+        "R01"
+      ],
+      "count": 1,
+      "pass": true
+    }
+  ],
+  "receipts": [
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "round": 0,
+      "started_at": "2026-09-09T12:56:26.503Z",
+      "finished_at": "2026-09-09T12:57:35.899Z",
+      "wall_ms": 69395.3654,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0863d-b949-7712-891b-25caefba3f42",
+      "usage": {
+        "input_tokens": 30842,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1813,
+        "reasoning_output_tokens": 51
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "088eff5bef8456a09bcbc5f1955744e36e62958b4d7cfb04742783d8cd9fccba",
+      "path": "runs/buying-full-initial/call-0",
+      "normalized_usage": {
+        "input_tokens": 30842,
+        "cached_input_tokens": 0,
+        "output_tokens": 1813,
+        "total_tokens": 32655
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 51,
+      "model_runtime_ms": 64703,
+      "native_counter": {
+        "timestamp": "2026-09-09T12:57:33.206Z",
+        "usage": {
+          "input_tokens": 30842,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1813,
+          "reasoning_output_tokens": 51,
+          "total_tokens": 32655
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T20-56-27-01a0863d-b949-7712-891b-25caefba3f42.jsonl"
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "initial",
+      "round": 0,
+      "started_at": "2026-09-09T12:54:56.770Z",
+      "finished_at": "2026-09-09T12:54:57.054Z",
+      "wall_ms": 281.9806,
+      "code": 1,
+      "signal": null,
+      "thread_id": null,
+      "usage": null,
+      "turn_count": 0,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "088eff5bef8456a09bcbc5f1955744e36e62958b4d7cfb04742783d8cd9fccba",
+      "path": "runs/buying-full-initial-failure-config/call-0",
+      "normalized_usage": null,
+      "observed_settings": null,
+      "reasoning_output_tokens": null,
+      "model_runtime_ms": null
+    },
+    {
+      "case": "buying",
+      "arm": "full",
+      "stage": "update",
+      "round": 0,
+      "started_at": "2026-09-09T12:59:04.293Z",
+      "finished_at": "2026-09-09T13:00:32.597Z",
+      "wall_ms": 88302.6642,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a08640-20a4-7961-bf46-acbe12fdaefd",
+      "usage": {
+        "input_tokens": 34600,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2463,
+        "reasoning_output_tokens": 128
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "e8bc100be26676064706200b02771ca49a892f404f7a4e6ec723ddc50f7f4359",
+      "path": "runs/buying-full-update/call-0",
+      "normalized_usage": {
+        "input_tokens": 34600,
+        "cached_input_tokens": 0,
+        "output_tokens": 2463,
+        "total_tokens": 37063
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 128,
+      "model_runtime_ms": 84716,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:00:30.061Z",
+        "usage": {
+          "input_tokens": 34600,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2463,
+          "reasoning_output_tokens": 128,
+          "total_tokens": 37063
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T20-59-05-01a08640-20a4-7961-bf46-acbe12fdaefd.jsonl"
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "round": 0,
+      "started_at": "2026-09-09T12:56:26.495Z",
+      "finished_at": "2026-09-09T12:57:40.107Z",
+      "wall_ms": 73610.9433,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0863d-b806-7110-8bf8-6898780b9f55",
+      "usage": {
+        "input_tokens": 30848,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2004,
+        "reasoning_output_tokens": 101
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "088eff5bef8456a09bcbc5f1955744e36e62958b4d7cfb04742783d8cd9fccba",
+      "path": "runs/buying-incremental-initial/call-0",
+      "normalized_usage": {
+        "input_tokens": 30848,
+        "cached_input_tokens": 0,
+        "output_tokens": 2004,
+        "total_tokens": 32852
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 101,
+      "model_runtime_ms": 68798,
+      "native_counter": {
+        "timestamp": "2026-09-09T12:57:37.565Z",
+        "usage": {
+          "input_tokens": 30848,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2004,
+          "reasoning_output_tokens": 101,
+          "total_tokens": 32852
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T20-56-27-01a0863d-b806-7110-8bf8-6898780b9f55.jsonl"
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "initial",
+      "round": 0,
+      "started_at": "2026-09-09T12:54:56.762Z",
+      "finished_at": "2026-09-09T12:54:57.012Z",
+      "wall_ms": 249.34140000000002,
+      "code": 1,
+      "signal": null,
+      "thread_id": null,
+      "usage": null,
+      "turn_count": 0,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "088eff5bef8456a09bcbc5f1955744e36e62958b4d7cfb04742783d8cd9fccba",
+      "path": "runs/buying-incremental-initial-failure-config/call-0",
+      "normalized_usage": null,
+      "observed_settings": null,
+      "reasoning_output_tokens": null,
+      "model_runtime_ms": null
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "round": 0,
+      "started_at": "2026-09-09T12:59:04.284Z",
+      "finished_at": "2026-09-09T12:59:23.592Z",
+      "wall_ms": 19306.0749,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a08640-209a-72c3-a3be-e60f713374b5",
+      "usage": {
+        "input_tokens": 32753,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 209,
+        "reasoning_output_tokens": 90
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "c7707d4543576ba8f0112320afa153f1d5c4bd8051ee3dd5cbb66c63eea4ad79",
+      "path": "runs/buying-incremental-update/call-0",
+      "normalized_usage": {
+        "input_tokens": 32753,
+        "cached_input_tokens": 0,
+        "output_tokens": 209,
+        "total_tokens": 32962
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 90,
+      "model_runtime_ms": 14510,
+      "native_counter": {
+        "timestamp": "2026-09-09T12:59:19.832Z",
+        "usage": {
+          "input_tokens": 32753,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 209,
+          "reasoning_output_tokens": 90,
+          "total_tokens": 32962
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T20-59-05-01a08640-209a-72c3-a3be-e60f713374b5.jsonl"
+    },
+    {
+      "case": "buying",
+      "arm": "incremental",
+      "stage": "update",
+      "round": 1,
+      "started_at": "2026-09-09T12:59:23.595Z",
+      "finished_at": "2026-09-09T13:01:05.537Z",
+      "wall_ms": 101941.99459999999,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a08640-6b7f-7a91-963c-395387b40f58",
+      "usage": {
+        "input_tokens": 33815,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3068,
+        "reasoning_output_tokens": 90
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "fe8dba123e6fb709c9c27aba1ae543080dae8f719bc69f491690830119e7bf79",
+      "path": "runs/buying-incremental-update/call-1",
+      "normalized_usage": {
+        "input_tokens": 33815,
+        "cached_input_tokens": 0,
+        "output_tokens": 3068,
+        "total_tokens": 36883
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 90,
+      "model_runtime_ms": 98803,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:01:02.966Z",
+        "usage": {
+          "input_tokens": 33815,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 3068,
+          "reasoning_output_tokens": 90,
+          "total_tokens": 36883
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T20-59-24-01a08640-6b7f-7a91-963c-395387b40f58.jsonl"
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "round": 0,
+      "started_at": "2026-09-09T12:56:26.487Z",
+      "finished_at": "2026-09-09T12:57:27.229Z",
+      "wall_ms": 60739.6598,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0863d-b856-76d0-8b3f-91930524efd2",
+      "usage": {
+        "input_tokens": 31487,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1632,
+        "reasoning_output_tokens": 120
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "5e6ae90919b2dc8a80e8c6c192ea71dad30e42b23270ebad18807aee1d1e0aaf",
+      "path": "runs/hydration-full-initial/call-0",
+      "normalized_usage": {
+        "input_tokens": 31487,
+        "cached_input_tokens": 0,
+        "output_tokens": 1632,
+        "total_tokens": 33119
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 120,
+      "model_runtime_ms": 56136,
+      "native_counter": {
+        "timestamp": "2026-09-09T12:57:24.650Z",
+        "usage": {
+          "input_tokens": 31487,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1632,
+          "reasoning_output_tokens": 120,
+          "total_tokens": 33119
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T20-56-27-01a0863d-b856-76d0-8b3f-91930524efd2.jsonl"
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "round": 1,
+      "started_at": "2026-09-09T12:57:27.233Z",
+      "finished_at": "2026-09-09T12:58:32.578Z",
+      "wall_ms": 65345.10689999999,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0863e-a50f-7bf1-a0fc-7c2ee8b45464",
+      "usage": {
+        "input_tokens": 33606,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1763,
+        "reasoning_output_tokens": 0
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "c3c2e71cadc517ea8b55a72bd49638f0068a6b8fdc5fadd3db17ad7dc9c1272c",
+      "path": "runs/hydration-full-initial/call-1",
+      "normalized_usage": {
+        "input_tokens": 33606,
+        "cached_input_tokens": 0,
+        "output_tokens": 1763,
+        "total_tokens": 35369
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 0,
+      "model_runtime_ms": 62016,
+      "native_counter": {
+        "timestamp": "2026-09-09T12:58:29.878Z",
+        "usage": {
+          "input_tokens": 33606,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1763,
+          "reasoning_output_tokens": 0,
+          "total_tokens": 35369
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T20-57-27-01a0863e-a50f-7bf1-a0fc-7c2ee8b45464.jsonl"
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "initial",
+      "round": 0,
+      "started_at": "2026-09-09T12:54:56.752Z",
+      "finished_at": "2026-09-09T12:54:57.013Z",
+      "wall_ms": 259.4653,
+      "code": 1,
+      "signal": null,
+      "thread_id": null,
+      "usage": null,
+      "turn_count": 0,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "5e6ae90919b2dc8a80e8c6c192ea71dad30e42b23270ebad18807aee1d1e0aaf",
+      "path": "runs/hydration-full-initial-failure-config/call-0",
+      "normalized_usage": null,
+      "observed_settings": null,
+      "reasoning_output_tokens": null,
+      "model_runtime_ms": null
+    },
+    {
+      "case": "hydration",
+      "arm": "full",
+      "stage": "update",
+      "round": 0,
+      "started_at": "2026-09-09T12:59:04.271Z",
+      "finished_at": "2026-09-09T13:00:44.291Z",
+      "wall_ms": 100019.1535,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a08640-2113-73a2-8e8e-3f45b1c2572c",
+      "usage": {
+        "input_tokens": 35919,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2875,
+        "reasoning_output_tokens": 127
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "38f781806415d642a992545881746455730974db9af6ebdac056635d942a8545",
+      "path": "runs/hydration-full-update/call-0",
+      "normalized_usage": {
+        "input_tokens": 35919,
+        "cached_input_tokens": 0,
+        "output_tokens": 2875,
+        "total_tokens": 38794
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 127,
+      "model_runtime_ms": 96209,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:00:41.704Z",
+        "usage": {
+          "input_tokens": 35919,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2875,
+          "reasoning_output_tokens": 127,
+          "total_tokens": 38794
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T20-59-05-01a08640-2113-73a2-8e8e-3f45b1c2572c.jsonl"
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "round": 0,
+      "started_at": "2026-09-09T12:56:26.482Z",
+      "finished_at": "2026-09-09T12:57:32.183Z",
+      "wall_ms": 65698.837,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0863d-b869-7491-9cd1-917289b13818",
+      "usage": {
+        "input_tokens": 31402,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1816,
+        "reasoning_output_tokens": 93
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "5e6ae90919b2dc8a80e8c6c192ea71dad30e42b23270ebad18807aee1d1e0aaf",
+      "path": "runs/hydration-incremental-initial/call-0",
+      "normalized_usage": {
+        "input_tokens": 31402,
+        "cached_input_tokens": 0,
+        "output_tokens": 1816,
+        "total_tokens": 33218
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 93,
+      "model_runtime_ms": 61361,
+      "native_counter": {
+        "timestamp": "2026-09-09T12:57:29.380Z",
+        "usage": {
+          "input_tokens": 31402,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1816,
+          "reasoning_output_tokens": 93,
+          "total_tokens": 33218
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T20-56-27-01a0863d-b869-7491-9cd1-917289b13818.jsonl"
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "round": 1,
+      "started_at": "2026-09-09T12:57:32.186Z",
+      "finished_at": "2026-09-09T12:58:33.851Z",
+      "wall_ms": 61665.693,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0863e-b77f-7000-afc3-8effb83bb5d3",
+      "usage": {
+        "input_tokens": 33705,
+        "cached_input_tokens": 12288,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1708,
+        "reasoning_output_tokens": 0
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "40333c0a8f3cbd16a75691067d39b18ef54fb33bef4dc82e9d7ed315acc2a8ba",
+      "path": "runs/hydration-incremental-initial/call-1",
+      "normalized_usage": {
+        "input_tokens": 33705,
+        "cached_input_tokens": 12288,
+        "output_tokens": 1708,
+        "total_tokens": 35413
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 0,
+      "model_runtime_ms": 58420,
+      "native_counter": {
+        "timestamp": "2026-09-09T12:58:30.993Z",
+        "usage": {
+          "input_tokens": 33705,
+          "cached_input_tokens": 12288,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1708,
+          "reasoning_output_tokens": 0,
+          "total_tokens": 35413
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T20-57-32-01a0863e-b77f-7000-afc3-8effb83bb5d3.jsonl"
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "initial",
+      "round": 0,
+      "started_at": "2026-09-09T12:54:56.736Z",
+      "finished_at": "2026-09-09T12:54:57.012Z",
+      "wall_ms": 274.5188,
+      "code": 1,
+      "signal": null,
+      "thread_id": null,
+      "usage": null,
+      "turn_count": 0,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "5e6ae90919b2dc8a80e8c6c192ea71dad30e42b23270ebad18807aee1d1e0aaf",
+      "path": "runs/hydration-incremental-initial-failure-config/call-0",
+      "normalized_usage": null,
+      "observed_settings": null,
+      "reasoning_output_tokens": null,
+      "model_runtime_ms": null
+    },
+    {
+      "case": "hydration",
+      "arm": "incremental",
+      "stage": "update",
+      "round": 0,
+      "started_at": "2026-09-09T12:59:04.267Z",
+      "finished_at": "2026-09-09T13:00:57.151Z",
+      "wall_ms": 112883.8838,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a08640-202a-7370-844d-c3575bb54a1a",
+      "usage": {
+        "input_tokens": 33729,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3398,
+        "reasoning_output_tokens": 60
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "ae1fa17c10e2f5d277af2436aad6a7cc19f91e7087bf23069589504b2d97adb8",
+      "path": "runs/hydration-incremental-update/call-0",
+      "normalized_usage": {
+        "input_tokens": 33729,
+        "cached_input_tokens": 0,
+        "output_tokens": 3398,
+        "total_tokens": 37127
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 60,
+      "model_runtime_ms": 109277,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:00:54.542Z",
+        "usage": {
+          "input_tokens": 33729,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 3398,
+          "reasoning_output_tokens": 60,
+          "total_tokens": 37127
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T20-59-05-01a08640-202a-7370-844d-c3575bb54a1a.jsonl"
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "round": 0,
+      "started_at": "2026-09-09T12:56:26.486Z",
+      "finished_at": "2026-09-09T12:57:44.275Z",
+      "wall_ms": 77788.78259999999,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0863d-b855-74b3-94ef-5faf3343679c",
+      "usage": {
+        "input_tokens": 29803,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2268,
+        "reasoning_output_tokens": 42
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "8677668a67a4cad17a2082766eff87801ea25f2413dc959804a08819c9182e4b",
+      "path": "runs/packaging-full-initial/call-0",
+      "normalized_usage": {
+        "input_tokens": 29803,
+        "cached_input_tokens": 0,
+        "output_tokens": 2268,
+        "total_tokens": 32071
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 42,
+      "model_runtime_ms": 73993,
+      "native_counter": {
+        "timestamp": "2026-09-09T12:57:41.817Z",
+        "usage": {
+          "input_tokens": 29803,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2268,
+          "reasoning_output_tokens": 42,
+          "total_tokens": 32071
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T20-56-27-01a0863d-b855-74b3-94ef-5faf3343679c.jsonl"
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "initial",
+      "round": 0,
+      "started_at": "2026-09-09T12:54:56.718Z",
+      "finished_at": "2026-09-09T12:54:56.979Z",
+      "wall_ms": 259.5499,
+      "code": 1,
+      "signal": null,
+      "thread_id": null,
+      "usage": null,
+      "turn_count": 0,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "8677668a67a4cad17a2082766eff87801ea25f2413dc959804a08819c9182e4b",
+      "path": "runs/packaging-full-initial-failure-config/call-0",
+      "normalized_usage": null,
+      "observed_settings": null,
+      "reasoning_output_tokens": null,
+      "model_runtime_ms": null
+    },
+    {
+      "case": "packaging",
+      "arm": "full",
+      "stage": "update",
+      "round": 0,
+      "started_at": "2026-09-09T12:59:04.255Z",
+      "finished_at": "2026-09-09T13:00:46.673Z",
+      "wall_ms": 102416.4653,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a08640-20cf-7ef0-91c8-6128863b5642",
+      "usage": {
+        "input_tokens": 31254,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3088,
+        "reasoning_output_tokens": 187
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "256f982b7adda54a1959efd1543010860026d048e5f225466a60ce581b510ee7",
+      "path": "runs/packaging-full-update/call-0",
+      "normalized_usage": {
+        "input_tokens": 31254,
+        "cached_input_tokens": 0,
+        "output_tokens": 3088,
+        "total_tokens": 34342
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 187,
+      "model_runtime_ms": 98739,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:00:44.063Z",
+        "usage": {
+          "input_tokens": 31254,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 3088,
+          "reasoning_output_tokens": 187,
+          "total_tokens": 34342
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T20-59-05-01a08640-20cf-7ef0-91c8-6128863b5642.jsonl"
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "round": 0,
+      "started_at": "2026-09-09T12:56:26.475Z",
+      "finished_at": "2026-09-09T12:57:48.189Z",
+      "wall_ms": 81713.7789,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a0863d-b8d4-7c02-a14d-f1e06bba8ae2",
+      "usage": {
+        "input_tokens": 29900,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2362,
+        "reasoning_output_tokens": 95
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "8677668a67a4cad17a2082766eff87801ea25f2413dc959804a08819c9182e4b",
+      "path": "runs/packaging-incremental-initial/call-0",
+      "normalized_usage": {
+        "input_tokens": 29900,
+        "cached_input_tokens": 0,
+        "output_tokens": 2362,
+        "total_tokens": 32262
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 95,
+      "model_runtime_ms": 77118,
+      "native_counter": {
+        "timestamp": "2026-09-09T12:57:45.675Z",
+        "usage": {
+          "input_tokens": 29900,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2362,
+          "reasoning_output_tokens": 95,
+          "total_tokens": 32262
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T20-56-27-01a0863d-b8d4-7c02-a14d-f1e06bba8ae2.jsonl"
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "initial",
+      "round": 0,
+      "started_at": "2026-09-09T12:54:56.714Z",
+      "finished_at": "2026-09-09T12:54:56.979Z",
+      "wall_ms": 260.2594,
+      "code": 1,
+      "signal": null,
+      "thread_id": null,
+      "usage": null,
+      "turn_count": 0,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "8677668a67a4cad17a2082766eff87801ea25f2413dc959804a08819c9182e4b",
+      "path": "runs/packaging-incremental-initial-failure-config/call-0",
+      "normalized_usage": null,
+      "observed_settings": null,
+      "reasoning_output_tokens": null,
+      "model_runtime_ms": null
+    },
+    {
+      "case": "packaging",
+      "arm": "incremental",
+      "stage": "update",
+      "round": 0,
+      "started_at": "2026-09-09T12:59:04.248Z",
+      "finished_at": "2026-09-09T13:00:56.908Z",
+      "wall_ms": 112659.3967,
+      "code": 0,
+      "signal": null,
+      "thread_id": "01a08640-2044-7de1-b426-c7e0d332ee85",
+      "usage": {
+        "input_tokens": 30545,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3391,
+        "reasoning_output_tokens": 61
+      },
+      "turn_count": 1,
+      "unexpected_tools": [],
+      "errors": [],
+      "stdin_sha256": "3f5eb44a57127dffdcb37ffbbe48ceda9e631e075b562dd6db8a823928b70266",
+      "path": "runs/packaging-incremental-update/call-0",
+      "normalized_usage": {
+        "input_tokens": 30545,
+        "cached_input_tokens": 0,
+        "output_tokens": 3391,
+        "total_tokens": 33936
+      },
+      "observed_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "service_tier": "not exposed in turn_context",
+        "originator": "codex_exec",
+        "cli_version": "0.153.4"
+      },
+      "reasoning_output_tokens": 61,
+      "model_runtime_ms": 109034,
+      "native_counter": {
+        "timestamp": "2026-09-09T13:00:54.300Z",
+        "usage": {
+          "input_tokens": 30545,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 3391,
+          "reasoning_output_tokens": 61,
+          "total_tokens": 33936
+        }
+      },
+      "native_session_path": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T20-59-05-01a08640-2044-7de1-b426-c7e0d332ee85.jsonl"
+    }
+  ],
+  "arm_totals": {
+    "incremental": {
+      "input_tokens": 256697,
+      "cached_input_tokens": 12288,
+      "output_tokens": 17956,
+      "total_tokens": 274653,
+      "wall_ms_sum": 630264.7218,
+      "native_runtime_ms_sum": 597321,
+      "launches": 11,
+      "unmetered_calls": 3
+    },
+    "full": {
+      "input_tokens": 227511,
+      "cached_input_tokens": 0,
+      "output_tokens": 15902,
+      "total_tokens": 243413,
+      "wall_ms_sum": 564808.1934999999,
+      "native_runtime_ms_sum": 536512,
+      "launches": 10,
+      "unmetered_calls": 3
+    }
+  },
+  "per_case": {
+    "packaging": {
+      "incremental": {
+        "total": {
+          "input_tokens": 60445,
+          "cached_input_tokens": 0,
+          "output_tokens": 5753,
+          "total_tokens": 66198,
+          "wall_ms_sum": 194633.435,
+          "native_runtime_ms_sum": 186152,
+          "launches": 3,
+          "unmetered_calls": 1
+        },
+        "initial": {
+          "input_tokens": 29900,
+          "cached_input_tokens": 0,
+          "output_tokens": 2362,
+          "total_tokens": 32262,
+          "wall_ms_sum": 81974.0383,
+          "native_runtime_ms_sum": 77118,
+          "launches": 2,
+          "unmetered_calls": 1
+        },
+        "update": {
+          "input_tokens": 30545,
+          "cached_input_tokens": 0,
+          "output_tokens": 3391,
+          "total_tokens": 33936,
+          "wall_ms_sum": 112659.3967,
+          "native_runtime_ms_sum": 109034,
+          "launches": 1,
+          "unmetered_calls": 0
+        }
+      },
+      "full": {
+        "total": {
+          "input_tokens": 61057,
+          "cached_input_tokens": 0,
+          "output_tokens": 5356,
+          "total_tokens": 66413,
+          "wall_ms_sum": 180464.7978,
+          "native_runtime_ms_sum": 172732,
+          "launches": 3,
+          "unmetered_calls": 1
+        },
+        "initial": {
+          "input_tokens": 29803,
+          "cached_input_tokens": 0,
+          "output_tokens": 2268,
+          "total_tokens": 32071,
+          "wall_ms_sum": 78048.33249999999,
+          "native_runtime_ms_sum": 73993,
+          "launches": 2,
+          "unmetered_calls": 1
+        },
+        "update": {
+          "input_tokens": 31254,
+          "cached_input_tokens": 0,
+          "output_tokens": 3088,
+          "total_tokens": 34342,
+          "wall_ms_sum": 102416.4653,
+          "native_runtime_ms_sum": 98739,
+          "launches": 1,
+          "unmetered_calls": 0
+        }
+      }
+    },
+    "hydration": {
+      "incremental": {
+        "total": {
+          "input_tokens": 98836,
+          "cached_input_tokens": 12288,
+          "output_tokens": 6922,
+          "total_tokens": 105758,
+          "wall_ms_sum": 240522.9326,
+          "native_runtime_ms_sum": 229058,
+          "launches": 4,
+          "unmetered_calls": 1
+        },
+        "initial": {
+          "input_tokens": 65107,
+          "cached_input_tokens": 12288,
+          "output_tokens": 3524,
+          "total_tokens": 68631,
+          "wall_ms_sum": 127639.0488,
+          "native_runtime_ms_sum": 119781,
+          "launches": 3,
+          "unmetered_calls": 1
+        },
+        "update": {
+          "input_tokens": 33729,
+          "cached_input_tokens": 0,
+          "output_tokens": 3398,
+          "total_tokens": 37127,
+          "wall_ms_sum": 112883.8838,
+          "native_runtime_ms_sum": 109277,
+          "launches": 1,
+          "unmetered_calls": 0
+        }
+      },
+      "full": {
+        "total": {
+          "input_tokens": 101012,
+          "cached_input_tokens": 0,
+          "output_tokens": 6270,
+          "total_tokens": 107282,
+          "wall_ms_sum": 226363.38549999997,
+          "native_runtime_ms_sum": 214361,
+          "launches": 4,
+          "unmetered_calls": 1
+        },
+        "initial": {
+          "input_tokens": 65093,
+          "cached_input_tokens": 0,
+          "output_tokens": 3395,
+          "total_tokens": 68488,
+          "wall_ms_sum": 126344.23199999999,
+          "native_runtime_ms_sum": 118152,
+          "launches": 3,
+          "unmetered_calls": 1
+        },
+        "update": {
+          "input_tokens": 35919,
+          "cached_input_tokens": 0,
+          "output_tokens": 2875,
+          "total_tokens": 38794,
+          "wall_ms_sum": 100019.1535,
+          "native_runtime_ms_sum": 96209,
+          "launches": 1,
+          "unmetered_calls": 0
+        }
+      }
+    },
+    "buying": {
+      "incremental": {
+        "total": {
+          "input_tokens": 97416,
+          "cached_input_tokens": 0,
+          "output_tokens": 5281,
+          "total_tokens": 102697,
+          "wall_ms_sum": 195108.3542,
+          "native_runtime_ms_sum": 182111,
+          "launches": 4,
+          "unmetered_calls": 1
+        },
+        "initial": {
+          "input_tokens": 30848,
+          "cached_input_tokens": 0,
+          "output_tokens": 2004,
+          "total_tokens": 32852,
+          "wall_ms_sum": 73860.2847,
+          "native_runtime_ms_sum": 68798,
+          "launches": 2,
+          "unmetered_calls": 1
+        },
+        "update": {
+          "input_tokens": 66568,
+          "cached_input_tokens": 0,
+          "output_tokens": 3277,
+          "total_tokens": 69845,
+          "wall_ms_sum": 121248.06949999998,
+          "native_runtime_ms_sum": 113313,
+          "launches": 2,
+          "unmetered_calls": 0
+        }
+      },
+      "full": {
+        "total": {
+          "input_tokens": 65442,
+          "cached_input_tokens": 0,
+          "output_tokens": 4276,
+          "total_tokens": 69718,
+          "wall_ms_sum": 157980.0102,
+          "native_runtime_ms_sum": 149419,
+          "launches": 3,
+          "unmetered_calls": 1
+        },
+        "initial": {
+          "input_tokens": 30842,
+          "cached_input_tokens": 0,
+          "output_tokens": 1813,
+          "total_tokens": 32655,
+          "wall_ms_sum": 69677.34599999999,
+          "native_runtime_ms_sum": 64703,
+          "launches": 2,
+          "unmetered_calls": 1
+        },
+        "update": {
+          "input_tokens": 34600,
+          "cached_input_tokens": 0,
+          "output_tokens": 2463,
+          "total_tokens": 37063,
+          "wall_ms_sum": 88302.6642,
+          "native_runtime_ms_sum": 84716,
+          "launches": 1,
+          "unmetered_calls": 0
+        }
+      }
+    }
+  },
+  "overhead": {
+    "source": "C:/Users/vmon7/.codex/sessions/2026/09/09/rollout-2026-09-09T20-47-45-01a08635-c16b-7b22-99ea-c175d65209db.jsonl",
+    "root_start": "2026-09-09T12:47:46.102Z",
+    "last_counter": {
+      "timestamp": "2026-09-09T13:09:39.989Z",
+      "usage": {
+        "input_tokens": 7449257,
+        "cached_input_tokens": 7248256,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 32761,
+        "reasoning_output_tokens": 6115,
+        "total_tokens": 7482018
+      }
+    },
+    "native_counter_events": [
+      {
+        "timestamp": "2026-09-09T12:47:55.240Z",
+        "usage": {
+          "input_tokens": 32550,
+          "cached_input_tokens": 19072,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 72,
+          "reasoning_output_tokens": 0,
+          "total_tokens": 32622
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:48:03.204Z",
+        "usage": {
+          "input_tokens": 65786,
+          "cached_input_tokens": 51456,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 179,
+          "reasoning_output_tokens": 0,
+          "total_tokens": 65965
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:48:09.184Z",
+        "usage": {
+          "input_tokens": 104262,
+          "cached_input_tokens": 84480,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 254,
+          "reasoning_output_tokens": 0,
+          "total_tokens": 104516
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:48:17.470Z",
+        "usage": {
+          "input_tokens": 144230,
+          "cached_input_tokens": 122752,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 434,
+          "reasoning_output_tokens": 0,
+          "total_tokens": 144664
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:48:22.067Z",
+        "usage": {
+          "input_tokens": 184419,
+          "cached_input_tokens": 162560,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 498,
+          "reasoning_output_tokens": 0,
+          "total_tokens": 184917
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:48:30.971Z",
+        "usage": {
+          "input_tokens": 231096,
+          "cached_input_tokens": 202624,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 645,
+          "reasoning_output_tokens": 13,
+          "total_tokens": 231741
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:48:40.077Z",
+        "usage": {
+          "input_tokens": 280082,
+          "cached_input_tokens": 249088,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 787,
+          "reasoning_output_tokens": 13,
+          "total_tokens": 280869
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:48:57.619Z",
+        "usage": {
+          "input_tokens": 337195,
+          "cached_input_tokens": 297856,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1147,
+          "reasoning_output_tokens": 22,
+          "total_tokens": 338342
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:49:06.180Z",
+        "usage": {
+          "input_tokens": 395799,
+          "cached_input_tokens": 354816,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1333,
+          "reasoning_output_tokens": 22,
+          "total_tokens": 397132
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:49:12.911Z",
+        "usage": {
+          "input_tokens": 457615,
+          "cached_input_tokens": 413184,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1454,
+          "reasoning_output_tokens": 22,
+          "total_tokens": 459069
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:49:19.679Z",
+        "usage": {
+          "input_tokens": 525922,
+          "cached_input_tokens": 474880,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1543,
+          "reasoning_output_tokens": 22,
+          "total_tokens": 527465
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:49:27.563Z",
+        "usage": {
+          "input_tokens": 605497,
+          "cached_input_tokens": 542976,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1688,
+          "reasoning_output_tokens": 30,
+          "total_tokens": 607185
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:49:37.827Z",
+        "usage": {
+          "input_tokens": 689480,
+          "cached_input_tokens": 622336,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1885,
+          "reasoning_output_tokens": 42,
+          "total_tokens": 691365
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:49:47.838Z",
+        "usage": {
+          "input_tokens": 778200,
+          "cached_input_tokens": 706176,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2062,
+          "reasoning_output_tokens": 62,
+          "total_tokens": 780262
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:49:59.897Z",
+        "usage": {
+          "input_tokens": 868053,
+          "cached_input_tokens": 794752,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2309,
+          "reasoning_output_tokens": 82,
+          "total_tokens": 870362
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:50:28.745Z",
+        "usage": {
+          "input_tokens": 958874,
+          "cached_input_tokens": 884480,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2980,
+          "reasoning_output_tokens": 350,
+          "total_tokens": 961854
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:50:40.660Z",
+        "usage": {
+          "input_tokens": 1050506,
+          "cached_input_tokens": 975104,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 3193,
+          "reasoning_output_tokens": 374,
+          "total_tokens": 1053699
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:51:04.158Z",
+        "usage": {
+          "input_tokens": 1146162,
+          "cached_input_tokens": 1066496,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 3858,
+          "reasoning_output_tokens": 545,
+          "total_tokens": 1150020
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:51:19.414Z",
+        "usage": {
+          "input_tokens": 1242524,
+          "cached_input_tokens": 1161984,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 4145,
+          "reasoning_output_tokens": 590,
+          "total_tokens": 1246669
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:51:31.309Z",
+        "usage": {
+          "input_tokens": 1339617,
+          "cached_input_tokens": 1258112,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 4447,
+          "reasoning_output_tokens": 606,
+          "total_tokens": 1344064
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:52:06.107Z",
+        "usage": {
+          "input_tokens": 1440672,
+          "cached_input_tokens": 1355008,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 5504,
+          "reasoning_output_tokens": 622,
+          "total_tokens": 1446176
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:53:18.603Z",
+        "usage": {
+          "input_tokens": 1542825,
+          "cached_input_tokens": 1455872,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 7809,
+          "reasoning_output_tokens": 904,
+          "total_tokens": 1550634
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:53:50.089Z",
+        "usage": {
+          "input_tokens": 1647324,
+          "cached_input_tokens": 1557888,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 8733,
+          "reasoning_output_tokens": 1101,
+          "total_tokens": 1656057
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:54:56.784Z",
+        "usage": {
+          "input_tokens": 1752788,
+          "cached_input_tokens": 1662208,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 10692,
+          "reasoning_output_tokens": 1101,
+          "total_tokens": 1763480
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:55:04.402Z",
+        "usage": {
+          "input_tokens": 1860880,
+          "cached_input_tokens": 1767552,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 10844,
+          "reasoning_output_tokens": 1124,
+          "total_tokens": 1871724
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:55:15.702Z",
+        "usage": {
+          "input_tokens": 1970344,
+          "cached_input_tokens": 1875456,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 11019,
+          "reasoning_output_tokens": 1124,
+          "total_tokens": 1981363
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:55:28.404Z",
+        "usage": {
+          "input_tokens": 2086113,
+          "cached_input_tokens": 1984768,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 11310,
+          "reasoning_output_tokens": 1157,
+          "total_tokens": 2097423
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:55:35.921Z",
+        "usage": {
+          "input_tokens": 2202221,
+          "cached_input_tokens": 2100352,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 11468,
+          "reasoning_output_tokens": 1169,
+          "total_tokens": 2213689
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:55:45.535Z",
+        "usage": {
+          "input_tokens": 2318670,
+          "cached_input_tokens": 2216320,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 11654,
+          "reasoning_output_tokens": 1188,
+          "total_tokens": 2330324
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:55:53.617Z",
+        "usage": {
+          "input_tokens": 2435590,
+          "cached_input_tokens": 2332544,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 11796,
+          "reasoning_output_tokens": 1225,
+          "total_tokens": 2447386
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:55:59.837Z",
+        "usage": {
+          "input_tokens": 2552788,
+          "cached_input_tokens": 2449280,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 11874,
+          "reasoning_output_tokens": 1234,
+          "total_tokens": 2564662
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:56:07.141Z",
+        "usage": {
+          "input_tokens": 2672345,
+          "cached_input_tokens": 2566272,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 11978,
+          "reasoning_output_tokens": 1234,
+          "total_tokens": 2684323
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:56:26.508Z",
+        "usage": {
+          "input_tokens": 2792374,
+          "cached_input_tokens": 2685696,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 12437,
+          "reasoning_output_tokens": 1270,
+          "total_tokens": 2804811
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:56:34.931Z",
+        "usage": {
+          "input_tokens": 2913856,
+          "cached_input_tokens": 2805504,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 12599,
+          "reasoning_output_tokens": 1306,
+          "total_tokens": 2926455
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:56:45.076Z",
+        "usage": {
+          "input_tokens": 3038236,
+          "cached_input_tokens": 2926848,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 12798,
+          "reasoning_output_tokens": 1322,
+          "total_tokens": 3051034
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:56:56.758Z",
+        "usage": {
+          "input_tokens": 3163939,
+          "cached_input_tokens": 3051008,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 12970,
+          "reasoning_output_tokens": 1338,
+          "total_tokens": 3176909
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:57:10.656Z",
+        "usage": {
+          "input_tokens": 3295416,
+          "cached_input_tokens": 3176576,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 13214,
+          "reasoning_output_tokens": 1401,
+          "total_tokens": 3308630
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:58:35.033Z",
+        "usage": {
+          "input_tokens": 3428280,
+          "cached_input_tokens": 3307904,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 15939,
+          "reasoning_output_tokens": 1611,
+          "total_tokens": 3444219
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:58:47.519Z",
+        "usage": {
+          "input_tokens": 3564584,
+          "cached_input_tokens": 3440640,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 16165,
+          "reasoning_output_tokens": 1626,
+          "total_tokens": 3580749
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:59:04.263Z",
+        "usage": {
+          "input_tokens": 3710605,
+          "cached_input_tokens": 3576704,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 16496,
+          "reasoning_output_tokens": 1803,
+          "total_tokens": 3727101
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:59:36.301Z",
+        "usage": {
+          "input_tokens": 3858984,
+          "cached_input_tokens": 3722496,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 17262,
+          "reasoning_output_tokens": 2322,
+          "total_tokens": 3876246
+        }
+      },
+      {
+        "timestamp": "2026-09-09T12:59:53.039Z",
+        "usage": {
+          "input_tokens": 4009881,
+          "cached_input_tokens": 3870720,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 17658,
+          "reasoning_output_tokens": 2366,
+          "total_tokens": 4027539
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:00:04.043Z",
+        "usage": {
+          "input_tokens": 4164213,
+          "cached_input_tokens": 4021376,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 17925,
+          "reasoning_output_tokens": 2458,
+          "total_tokens": 4182138
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:00:18.279Z",
+        "usage": {
+          "input_tokens": 4319556,
+          "cached_input_tokens": 4175488,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 18186,
+          "reasoning_output_tokens": 2550,
+          "total_tokens": 4337742
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:00:29.525Z",
+        "usage": {
+          "input_tokens": 4478040,
+          "cached_input_tokens": 4330624,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 18460,
+          "reasoning_output_tokens": 2644,
+          "total_tokens": 4496500
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:00:42.673Z",
+        "usage": {
+          "input_tokens": 4637615,
+          "cached_input_tokens": 4488960,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 18696,
+          "reasoning_output_tokens": 2779,
+          "total_tokens": 4656311
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:00:51.020Z",
+        "usage": {
+          "input_tokens": 4798143,
+          "cached_input_tokens": 4648320,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 18868,
+          "reasoning_output_tokens": 2788,
+          "total_tokens": 4817011
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:01:14.088Z",
+        "usage": {
+          "input_tokens": 4961306,
+          "cached_input_tokens": 4808704,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 19300,
+          "reasoning_output_tokens": 3072,
+          "total_tokens": 4980606
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:01:25.824Z",
+        "usage": {
+          "input_tokens": 5132634,
+          "cached_input_tokens": 4971648,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 19591,
+          "reasoning_output_tokens": 3221,
+          "total_tokens": 5152225
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:01:48.261Z",
+        "usage": {
+          "input_tokens": 5308252,
+          "cached_input_tokens": 5142784,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 20088,
+          "reasoning_output_tokens": 3633,
+          "total_tokens": 5328340
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:02:00.740Z",
+        "usage": {
+          "input_tokens": 5489931,
+          "cached_input_tokens": 5318272,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 20279,
+          "reasoning_output_tokens": 3664,
+          "total_tokens": 5510210
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:03:16.063Z",
+        "usage": {
+          "input_tokens": 5674520,
+          "cached_input_tokens": 5499776,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 22257,
+          "reasoning_output_tokens": 4180,
+          "total_tokens": 5696777
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:03:46.689Z",
+        "usage": {
+          "input_tokens": 5861128,
+          "cached_input_tokens": 5684224,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 22918,
+          "reasoning_output_tokens": 4486,
+          "total_tokens": 5884046
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:05:52.142Z",
+        "usage": {
+          "input_tokens": 6050390,
+          "cached_input_tokens": 5870592,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 26693,
+          "reasoning_output_tokens": 4617,
+          "total_tokens": 6077083
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:06:19.993Z",
+        "usage": {
+          "input_tokens": 6243482,
+          "cached_input_tokens": 6059648,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 27488,
+          "reasoning_output_tokens": 4920,
+          "total_tokens": 6270970
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:07:55.921Z",
+        "usage": {
+          "input_tokens": 6437587,
+          "cached_input_tokens": 6252544,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 30576,
+          "reasoning_output_tokens": 4937,
+          "total_tokens": 6468163
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:08:26.080Z",
+        "usage": {
+          "input_tokens": 6634821,
+          "cached_input_tokens": 6446464,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 31253,
+          "reasoning_output_tokens": 5393,
+          "total_tokens": 6666074
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:08:38.388Z",
+        "usage": {
+          "input_tokens": 6832834,
+          "cached_input_tokens": 6643456,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 31499,
+          "reasoning_output_tokens": 5423,
+          "total_tokens": 6864333
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:08:52.628Z",
+        "usage": {
+          "input_tokens": 7034977,
+          "cached_input_tokens": 6841344,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 31807,
+          "reasoning_output_tokens": 5558,
+          "total_tokens": 7066784
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:09:17.525Z",
+        "usage": {
+          "input_tokens": 7240056,
+          "cached_input_tokens": 7043328,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 32328,
+          "reasoning_output_tokens": 5862,
+          "total_tokens": 7272384
+        }
+      },
+      {
+        "timestamp": "2026-09-09T13:09:39.989Z",
+        "usage": {
+          "input_tokens": 7449257,
+          "cached_input_tokens": 7248256,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 32761,
+          "reasoning_output_tokens": 6115,
+          "total_tokens": 7482018
+        }
+      }
+    ],
+    "boundary": "Coordinator preparation, recovery, grading and lifecycle combined; separate phase attribution unavailable. Excludes subsequent coordinator calls/final reply; not allocated to either arm. Cached input and reasoning output are subsets, not added twice."
+  },
+  "savings_boundary": "Model stages only, including their initial findings. End-to-end method savings NOT established; common coordinator overhead separately measured and cannot be assigned counterfactually to arms. Failed CLI config launches expose no usage and no model session; no invented token estimate."
+}

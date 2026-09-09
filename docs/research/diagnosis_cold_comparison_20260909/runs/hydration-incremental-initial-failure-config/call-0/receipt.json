@@ -1,0 +1,17 @@
+{
+  "case": "hydration",
+  "arm": "incremental",
+  "stage": "initial",
+  "round": 0,
+  "started_at": "2026-09-09T12:54:56.736Z",
+  "finished_at": "2026-09-09T12:54:57.012Z",
+  "wall_ms": 274.5188,
+  "code": 1,
+  "signal": null,
+  "thread_id": null,
+  "usage": null,
+  "turn_count": 0,
+  "unexpected_tools": [],
+  "errors": [],
+  "stdin_sha256": "5e6ae90919b2dc8a80e8c6c192ea71dad30e42b23270ebad18807aee1d1e0aaf"
+}

@@ -1,0 +1,10 @@
+[
+  {
+    "action": "exec --help",
+    "executable": "C:/Users/vmon7/AppData/Local/OpenAI/Codex/bin/8e5b6932251c2c1c/codex.exe",
+    "error": "ENOENT",
+    "exitCode": null,
+    "model_launched": false,
+    "native_tool_result": "Observed startCommand result in coordinator event record; historical executable absent."
+  }
+]
