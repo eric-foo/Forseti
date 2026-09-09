@@ -4247,6 +4247,12 @@ def apply_row_verification(
             }
             continue
         if evidence_id not in decisions:
+            if require_all:
+                # The input-row substitution below belongs only to partial
+                # validation, never to an accepted verification compilation.
+                raise SemanticIntegrationError(
+                    f"row verification lacks a decision for claim-bearing row {evidence_id}"
+                )
             # Partial validation uses the already validated input row only to
             # check replacements through the ordinary structural compiler. It
             # produces no manifest or accepted compilation for missing judgments.

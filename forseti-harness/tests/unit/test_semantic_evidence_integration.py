@@ -10820,11 +10820,21 @@ def test_advance_public_route_complete_requests_terminal_and_resume(tmp_path, ca
     assert [row["operation"] for row in result["transitions"]][-2:] == ["submit-reconciliation-level", "finalize-v3"]
     assert json.loads(Path(result["artifacts"]["view"]["path"]).read_text()) == expected
     assert result["view_sha256"] == expected["view_sha256"]
+    for transition in result["transitions"]:
+        assert _digest(Path(transition["artifact"]).read_bytes()) == transition["sha256"]
     completed = {p: (p.read_bytes(), p.stat().st_mtime_ns) for p in run_dir.rglob("*") if p.is_file()}
     code, repeated = call()
     assert code == 0 and repeated["view_sha256"] == result["view_sha256"]
     assert all(row["disposition"] == "reused" for row in repeated["transitions"])
     assert all((p.read_bytes(), p.stat().st_mtime_ns) == value for p, value in completed.items())
+    foreign = run_dir / "reconciliation/level-0003/compilation.json"
+    foreign.parent.mkdir(parents=True)
+    foreign.write_text("not an accepted compilation", encoding="utf-8")
+    code, repeated = call()
+    assert code == 0 and repeated["view_sha256"] == expected["view_sha256"]
+    assert str(foreign) not in {row["artifact"] for row in repeated["transitions"]}
+    assert str(foreign) not in {row["path"] for row in repeated["artifacts"].values()}
+    assert foreign.read_text() == "not an accepted compilation"
 
 
 @pytest.mark.parametrize("phase", ["extraction", "verification", "reconciliation/level-0001"])
@@ -10925,6 +10935,121 @@ def test_advance_live_instructions_and_partial_validation_are_not_completion(tmp
     assert "compilation_sha256" not in receipt and "row_verification_manifest" not in receipt
     with pytest.raises(SemanticIntegrationError, match="does not cover every"):
         apply_row_verification(bundle, raw, stage, replay["verification"][:1])
+
+
+@pytest.mark.parametrize("phase", ["extraction", "verification", "reconciliation/level-0001"])
+@pytest.mark.parametrize("damage", ["missing", "invalid"])
+def test_advance_blocks_when_an_accepted_compilations_response_is_lost(tmp_path, capsys, phase, damage):
+    source, replay, _ = _advance_replay_fixture(tmp_path)
+    run_dir = tmp_path / "run"
+    for prior, responses in replay.items():
+        _publish_advance_replay(run_dir, prior, responses)
+        if prior == phase:
+            break
+    code, result = _advance_cli(source, run_dir, capsys)
+    assert code == 0 and result["status"] == "SEMANTIC_JUDGMENT_REQUIRED", result
+    compilation = run_dir / phase / "compilation.json"
+    accepted = compilation.read_bytes()
+    victim = run_dir / phase / "responses" / f"{replay[phase][0]['batch_id']}.json"
+    if damage == "missing":
+        victim.unlink()
+    else:
+        victim.write_text("invalid JSON", encoding="utf-8")
+    code, result = _advance_cli(source, run_dir, capsys)
+    # A response already bound by an accepted compilation is lost accepted work,
+    # never a fresh judgment request that would re-answer a closed question.
+    assert code == 2 and result["status"] == "SEMANTIC_ADVANCE_BLOCKED", result
+    assert result["judgment_requests"] == []
+    assert str(compilation) in result["action"]
+    assert compilation.read_bytes() == accepted
+    assert not (run_dir / "view.json").exists()
+    if victim.exists():
+        victim.unlink()
+    _publish_advance_replay(run_dir, phase, [replay[phase][0]])
+    code, restored = _advance_cli(source, run_dir, capsys)
+    assert code == 0 and restored["status"] == "SEMANTIC_JUDGMENT_REQUIRED", restored
+    assert compilation.read_bytes() == accepted
+
+
+@pytest.mark.parametrize("disposition", ["context_only", "unresolved"])
+def test_advance_no_claims_names_the_blocker_before_reconciliation(tmp_path, capsys, disposition):
+    source_path, _, _ = _advance_replay_fixture(tmp_path)
+    bundle = build_bundle(json.loads(source_path.read_text()), max_prompt_bytes=30_000,
+                          max_evidence_per_work_unit=2)
+    responses = _keyed_responses(bundle)
+    for response in responses:
+        for row in response["decisions_by_evidence_id"].values():
+            row["disposition"] = disposition
+    run_dir = tmp_path / "run"
+    _publish_advance_replay(run_dir, "extraction", responses)
+    code, result = _advance_cli(source_path, run_dir, capsys)
+    assert code == 2 and result["blocker_code"] == "NO_CLAIM_BEARING_EVIDENCE", result
+    assert result["judgment_requests"] == []
+    assert "evidence_dispositions" in result["action"]
+    assert "unchanged inputs cannot clear" in result["action"]
+    assert not (run_dir / "reconciliation").exists()
+    assert not (run_dir / "view.json").exists()
+    accepted = (run_dir / "verification/compilation.json").read_bytes()
+    code, repeated = _advance_cli(source_path, run_dir, capsys)
+    assert code == 2 and repeated["blocker_code"] == result["blocker_code"]
+    assert (run_dir / "verification/compilation.json").read_bytes() == accepted
+
+
+@pytest.mark.parametrize("window", ["before_link", "after_link"])
+def test_advance_deterministic_staging_recovery_preserves_accepted_bytes(tmp_path, capsys, monkeypatch, window):
+    import runners.run_semantic_evidence_integration as runner
+    source, _, _ = _advance_replay_fixture(tmp_path)
+    run_dir = tmp_path / "run"
+    bundle_path = run_dir / "bundle.json"
+    staged = run_dir / "bundle.json.tmp"
+    native_link, native_unlink = runner.os.link, Path.unlink
+    def fail_link(src, dst):
+        if dst == bundle_path:
+            raise OSError("injected before-link interruption")
+        return native_link(src, dst)
+    def fail_unlink(path, *args, **kwargs):
+        if path == staged:
+            raise OSError("injected after-link interruption")
+        return native_unlink(path, *args, **kwargs)
+    with monkeypatch.context() as patch:
+        if window == "before_link":
+            patch.setattr(runner.os, "link", fail_link)
+        else:
+            patch.setattr(Path, "unlink", fail_unlink)
+        code, result = _advance_cli(source, run_dir, capsys)
+    assert code == 2 and str(staged) in result["error"]
+    assert "Preserve and move" in result["error"]
+    staged_bytes = staged.read_bytes()
+    accepted = (bundle_path.read_bytes(), bundle_path.stat().st_mtime_ns) if bundle_path.exists() else None
+    code, result = _advance_cli(source, run_dir, capsys)
+    assert code == 2 and "outside its output directory" in result["error"]
+    # Execute the exact instructed recovery, preserving the interrupted bytes.
+    preserved = tmp_path / "preserved-bundle.json.tmp"
+    staged.rename(preserved)
+    code, resumed = _advance_cli(source, run_dir, capsys)
+    assert code == 0 and resumed["phase"] == "extraction", resumed
+    assert preserved.read_bytes() == staged_bytes == bundle_path.read_bytes()
+    if accepted:
+        assert (bundle_path.read_bytes(), bundle_path.stat().st_mtime_ns) == accepted
+
+
+def test_advance_phase_wide_problem_names_scope_without_inventing_a_batch(tmp_path, capsys, monkeypatch):
+    import runners.run_semantic_evidence_integration as runner
+    source, replay, _ = _advance_replay_fixture(tmp_path)
+    run_dir = tmp_path / "run"
+    for phase in ["extraction", "verification"]:
+        _publish_advance_replay(run_dir, phase, replay[phase])
+    native = runner.apply_row_verification
+    def combined_failure(bundle, compiled, stage, responses, **kwargs):
+        if kwargs.get("require_all") is False and len(responses) > 1:
+            raise SemanticIntegrationError("injected aggregate incompatibility")
+        return native(bundle, compiled, stage, responses, **kwargs)
+    monkeypatch.setattr(runner, "apply_row_verification", combined_failure)
+    code, result = _advance_cli(source, run_dir, capsys)
+    assert code == 2 and result["judgment_requests"] == []
+    assert result["response_state"]["problems"] == [{"kind": "invalid", "batch_id": None,
+        "path": str(run_dir / "verification"), "error": "injected aggregate incompatibility"}]
+    assert not (run_dir / "verification/compilation.json").exists()
 
 
 def test_frozen_v8_repair_replay_keeps_parent_and_active_content_bound() -> None:

@@ -1115,8 +1115,13 @@ def _retain_advance_artifact(path: Path, value: Any, *, raw: bool = False) -> bo
         + b"\n"
     )
     staged = path.with_name(path.name + ".tmp")
+    recovery = (
+        f"Preserve and move the unaccepted deterministic staging file {staged} "
+        "outside its output directory, then rerun to revalidate any accepted output "
+        "and rebuild missing artifacts. Do not overwrite or remove accepted output."
+    )
     if staged.exists():
-        raise ValueError(f"staged artifact requires explicit recovery: {staged}")
+        raise ValueError(f"staged deterministic artifact requires recovery. {recovery}")
     if path.exists():
         matches = path.read_bytes() == data if raw else _load_object(path) == value
         if not matches:
@@ -1125,8 +1130,11 @@ def _retain_advance_artifact(path: Path, value: Any, *, raw: bool = False) -> bo
     _write_new(staged, data)
     # As at response publication, no-replace is a filesystem guarantee. A
     # crash leaves an explicit staged artifact, never a truncated accepted file.
-    os.link(staged, path)
-    staged.unlink()
+    try:
+        os.link(staged, path)
+        staged.unlink()
+    except OSError as exc:
+        raise ValueError(f"could not finish publishing deterministic artifact {path}: {exc}. {recovery}") from exc
     return True
 
 
@@ -1153,7 +1161,7 @@ def advance_semantic_run(
         created = _retain_advance_artifact(path, value)
         artifacts[name] = {"path": str(path), "sha256": hash_file(path)}
         transitions.append({"operation": operation, "disposition": "written" if created else "reused",
-                            "artifact": str(path)})
+                            "artifact": str(path), "sha256": artifacts[name]["sha256"]})
 
     def requests_for(phase: str, directory: Path, prompts: list[dict[str, Any]],
                      binding_path: Path, binding_hash: str) -> list[dict[str, Any]]:
@@ -1200,8 +1208,9 @@ def advance_semantic_run(
         return responses, problems
 
     def boundary(phase: str, requests: list[dict[str, Any]], responses: list[dict[str, Any]],
-                 problems: list[dict[str, Any]], validate: Any) -> bool:
+                 problems: list[dict[str, Any]], validate: Any, compilation_path: Path) -> bool:
         valid: set[str] = set()
+        response_paths = {row["batch_id"]: row["response_path"] for row in requests}
         if responses:
             try:
                 # Validate the ready set together. In particular, do not
@@ -1214,9 +1223,11 @@ def advance_semantic_run(
                         validate([response])
                         valid.add(response["batch_id"])
                     except (ValueError, SemanticIntegrationError) as exc:
-                        problems.append({"kind": "invalid", "batch_id": response["batch_id"], "error": str(exc)})
+                        problems.append({"kind": "invalid", "batch_id": response["batch_id"],
+                            "path": response_paths[response["batch_id"]], "error": str(exc)})
                 if len(valid) == len(responses):
-                    problems.append({"kind": "invalid", "error": str(combined_error)})
+                    problems.append({"kind": "invalid", "batch_id": None,
+                        "path": str(compilation_path.parent), "error": str(combined_error)})
         pending = [row for row in requests if row["batch_id"] not in valid]
         staged_ids = {row.get("batch_id") for row in problems if row["kind"] == "staged"}
         invalid_ids = {row.get("batch_id") for row in problems if row["kind"] == "invalid"}
@@ -1227,6 +1238,14 @@ def advance_semantic_run(
                 for row in requests if row["batch_id"] in valid],
         })
         state["judgment_requests"] = [row for row in pending if row["batch_id"] not in staged_ids | invalid_ids]
+        if (problems or pending) and compilation_path.exists():
+            # The accepted compilation already binds every response of this
+            # phase. A response that is now missing or invalid is lost accepted
+            # work, never new judgment work; re-answering it would spend a fresh
+            # semantic judgment on a question this run has already closed.
+            state.update(status="SEMANTIC_ADVANCE_BLOCKED", judgment_requests=[],
+                action=f"Restore the response artifacts bound by the accepted compilation {compilation_path}; do not re-answer or replace accepted work.")
+            return True
         if problems:
             state.update(status="SEMANTIC_ADVANCE_BLOCKED", action="Resolve the named invalid/staged artifacts explicitly; do not retry or replace accepted answers.")
             return True
@@ -1267,7 +1286,8 @@ def advance_semantic_run(
                 if row["batch_id"] in invalid:
                     raise ValueError(invalid[row["batch_id"]])
 
-        if boundary("extraction", requests, responses, problems, validate_extraction):
+        if boundary("extraction", requests, responses, problems, validate_extraction,
+                    directory / "compilation.json"):
             return state
         compiled = validate_batch_responses(bundle, responses)
         retain("batch_compilation", directory / "compilation.json", compiled, "submit-batches")
@@ -1278,10 +1298,17 @@ def advance_semantic_run(
         requests = requests_for("verification", directory, prompts, stage_path, stage["stage_sha256"])
         verification_responses, problems = read_responses(directory, requests)
         if boundary("verification", requests, verification_responses, problems,
-                    lambda rows: apply_row_verification(bundle, compiled, stage, rows, require_all=False)):
+                    lambda rows: apply_row_verification(bundle, compiled, stage, rows, require_all=False),
+                    directory / "compilation.json"):
             return state
         verified = apply_row_verification(bundle, compiled, stage, verification_responses)
         retain("verified_compilation", directory / "compilation.json", verified, "submit-row-verification")
+        if not verified["semantic_units"]:
+            state.update(status="SEMANTIC_ADVANCE_BLOCKED", phase="verification",
+                blocker_code="NO_CLAIM_BEARING_EVIDENCE", judgment_requests=[],
+                error="No active claim-bearing rows remain after verification; the supported reconciliation route cannot produce a proposition view.",
+                action=f"Inspect evidence_dispositions in {directory / 'compilation.json'} and preserve the accepted judgments. Obtain an explicit disposition under existing owner authority; rerunning unchanged inputs cannot clear this blocker.")
+            return state
         nodes = verified
         level = 1
         while True:
@@ -1296,7 +1323,8 @@ def advance_semantic_run(
             requests = requests_for("reconciliation", directory, prompts, stage_path, stage["stage_sha256"])
             level_responses, problems = read_responses(directory, requests)
             if boundary("reconciliation", requests, level_responses, problems,
-                        lambda rows: validate_reconciliation_stage(bundle, stage, rows, require_all=False)):
+                        lambda rows: validate_reconciliation_stage(bundle, stage, rows, require_all=False),
+                        directory / "compilation.json"):
                 return state
             nodes = validate_reconciliation_stage(bundle, stage, level_responses)
             retain("node_compilation", directory / "compilation.json", nodes, "submit-reconciliation-level")

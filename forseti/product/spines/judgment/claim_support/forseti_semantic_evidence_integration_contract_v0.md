@@ -2247,15 +2247,34 @@ The run root contains `bundle.json`, `extraction/`, `verification/`,
 prompt, schema, response, stage and compilation artifacts. The returned requests
 bind their exact prompt/schema bytes, input identity and response destination;
 the returned `judgment_requests`, transitions and artifact hashes identify ready
-and persisted work. Resume
+and persisted work. `artifacts` identifies the current outputs; `transitions`
+binds every visited stage/compilation path and its raw-byte hash, including prior
+levels. Consumers resolve accepted outputs through those returned paths and
+their native lineage bindings, never by globbing the run root; unrelated paths
+outside the walked lineage are not inspected or granted authority.
+Resume
 revalidates the materialized source and accepted lineage, preserves matching
 stored outputs, and prepares only missing deterministic artifacts. Different
 source, packing, method or prompt identities cannot replace existing work.
-Invalid, missing and staged work remain distinguishable. A blocker exits nonzero;
+Invalid, missing and staged work remain distinguishable. A response that a
+stage's accepted compilation already binds stays accepted work: if it later
+goes missing or invalid, the run blocks on restoring that artifact instead of
+re-requesting a judgment the run has already closed. A blocker exits nonzero;
 a judgment-required return supplies every currently ready request and never
 credits a missing answer. No semantic retry, response selection, identity reset,
 new acquisition, synthesis authorization, or global relation-closure claim is
 implied. Finalization still applies its native terminal and completeness gates.
+
+If verification leaves no active claim-bearing rows, `advance` returns the
+actionable `NO_CLAIM_BEARING_EVIDENCE` blocker before creating reconciliation
+levels. Inspect the verified dispositions and obtain an explicit disposition
+under existing owner authority; unchanged reruns cannot resolve it. This exposes
+the supported route's existing limitation; it does not authorize an empty view,
+new judgment, or acquisition. A crash-left deterministic `.tmp` is also blocked,
+with the exact recovery instruction: preserve and move that unaccepted staging
+file outside its output directory, then rerun to validate existing outputs and
+rebuild missing artifacts. Accepted outputs must not be overwritten or removed.
+Staged semantic responses retain their separate explicit-recovery boundary.
 
 Current-route operations are (the individually callable seams):
 
