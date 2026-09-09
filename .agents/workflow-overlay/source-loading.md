@@ -534,6 +534,12 @@ into a finding, explanation, memo input, or recommendation anywhere in the
 intelligence cycle. Capture-only work does not need this pack until it interprets
 what captured material proves.
 
+For evidence consolidation and other work under this pack, use the
+[Bounded instruction reader](#bounded-instruction-reader) to load the applicable
+instructions. Consult its guidance if not already loaded in this task. This is
+an instruction-reading aid; evidence meaning and consolidation remain governed
+by the contracts below.
+
 Start with:
 
 - `forseti/product/spines/judgment/claim_support/forseti_intelligence_claim_support_contract_v0.md`
