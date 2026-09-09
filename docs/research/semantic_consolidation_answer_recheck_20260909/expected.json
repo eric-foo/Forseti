@@ -1,0 +1,103 @@
+{
+  "authority": "Unchanged Q1-Q3 sets and action totals from frozen original experiment.json and measurement.json, checked against sample bodies before calls; evaluator only.",
+  "sets": {
+    "initial": {
+      "hydration": [
+        "A04",
+        "A08",
+        "A09"
+      ],
+      "texture_direct": [
+        "A03",
+        "A04"
+      ],
+      "texture_speculative": [],
+      "buying_stockup": [
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "cart_readdition": [
+        "A01"
+      ],
+      "gift_receipt": [],
+      "return_considered": [],
+      "return_completed": [],
+      "replacement_intended": [],
+      "replacement_completed": []
+    },
+    "final": {
+      "hydration": [
+        "A04",
+        "A08",
+        "A09",
+        "A13"
+      ],
+      "texture_direct": [
+        "A03",
+        "A04",
+        "A13"
+      ],
+      "texture_speculative": [
+        "A17"
+      ],
+      "buying_stockup": [
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "cart_readdition": [
+        "A01"
+      ],
+      "gift_receipt": [
+        "A14"
+      ],
+      "return_considered": [
+        "A15"
+      ],
+      "return_completed": [],
+      "replacement_intended": [
+        "A16"
+      ],
+      "replacement_completed": []
+    }
+  },
+  "buying_assertions": [
+    [
+      "A04",
+      "Super Saturated",
+      "buy"
+    ],
+    [
+      "A04",
+      "Buffer Jelly",
+      "buy"
+    ],
+    [
+      "A04",
+      "Experiment face wash (SKU unresolved)",
+      "buy"
+    ],
+    [
+      "A04",
+      "Molecular Mesh",
+      "buy"
+    ],
+    [
+      "A05",
+      "Avant Guard",
+      "buy"
+    ],
+    [
+      "A11",
+      "Softwear",
+      "stock-up"
+    ]
+  ],
+  "source_basis": {
+    "hydration": "A04 direct; A08 co-use with actives; A09 explicit serum plus mask; A13 later direct hydration",
+    "texture": "A03 direct less-sticky comparison despite ingredient uncertainty; A04 lightweight/fast drying; A13 later sticky/shiny/slick; A17 later explicitly untried",
+    "buying": "A04 four products; A05 instantly checked out mask; A11 stocked tubes, one product-action assertion",
+    "A02": "Source reply and parent permit Softwear or Dr Idriss; accounts record omits explicit Softwear alternative. Outside rerun."
+  }
+}

@@ -1,0 +1,291 @@
+{
+  "authored_at": "2026-09-09T07:49:31.555Z",
+  "comparison_not_yet_read": false,
+  "records": [
+    {
+      "key": "A13",
+      "id": "junip:6685187",
+      "disposition": "interpretable",
+      "subjects": [
+        {
+          "subject": "Experiment Super Saturated",
+          "account": "Experienced skincare enthusiast reports major routine improvement: plump/hydrated skin through 12-hour shift, visibly better skin and lower irritation/sensitivity. Very oily T-zone, very dry sensitive cheeks and mild rosacea; reports nourishing cheeks without forehead congestion/bumps and reduced oil since starting. Describes sticky, shiny, slick finish, advises smaller amount for outings and predicts mostly nighttime use for others; personally sometimes goes out with a pump and extra shine. Praises it strongly and tells stickiness-averse readers to avoid it.",
+          "topics": [
+            "hydration",
+            "texture",
+            "appearance",
+            "reaction"
+          ],
+          "actions": [
+            {
+              "kind": "use",
+              "status": "reported",
+              "condition": "Sometimes a pump for daytime outings despite shine"
+            },
+            {
+              "kind": "avoidance_advice",
+              "status": "reported",
+              "condition": "For people who dislike stickiness"
+            }
+          ],
+          "reported_explanations": [
+            {
+              "reported_reason": "Super Saturated moisture retention",
+              "reported_outcome": "Reduced irritation and sensitivity",
+              "attribution": "single_actor_self_attribution",
+              "causal_ceiling": "Customer-reported explanation; no independent clinical or population causation established",
+              "evidence_id": "junip:6685187",
+              "scope": "Personal experience; oily T-zone, very dry sensitive cheeks and mild rosacea; surrounding 12-hour hydration account"
+            }
+          ]
+        }
+      ],
+      "retained": "12-hour result is personal. “Most people” nighttime behavior, product claimed stickiness, balance mechanism and stickiness doing wonders are author assertions/advice, not established population behavior or mechanism. No completed purchase inferred from use or verified_buyer false. Narrative skin areas remain distinct; survey is Oily + Sensitive."
+    },
+    {
+      "key": "A14",
+      "id": "junip:8950945",
+      "disposition": "interpretable",
+      "subjects": [
+        {
+          "subject": "Experiment Buffer Jelly",
+          "account": "Discloses free product for later honest review; posts early after two uses. Praises jelly transforming to soft fluid oil and silky slip, contrasting oils that feel dry/tacky during massage. With rosacea, adds a drop to night moisturizer and wakes with very soft skin, no redness, irritation or clogged pores. Thinks it will suit post-dermaplaning, untried. Surprised by small bottle, attributes impression to reduced packaging; states full 1oz and predicts very long duration. Calls self Experiment convert.",
+          "topics": [
+            "texture",
+            "appearance",
+            "reaction",
+            "quantity",
+            "packaging"
+          ],
+          "actions": [
+            {
+              "kind": "gift_receipt",
+              "status": "reported",
+              "reason": "Free product for review"
+            },
+            {
+              "kind": "use",
+              "status": "reported",
+              "condition": "Two uses; drop mixed into moisturizer at night"
+            }
+          ]
+        }
+      ],
+      "retained": "Gift disclosure in body overrides any inference from metadata rewarded:false. No purchase, durable loyalty, tested dermaplaning outcome or measured longevity. Barrier-serum/oil hybrid and grandmother blanket are descriptive analogy/claimed character, not independently measured barrier repair; soothing/nourishing praise preserved."
+    },
+    {
+      "key": "A15",
+      "id": "junip:6567933",
+      "disposition": "interpretable",
+      "subjects": [
+        {
+          "subject": "Experiment Plasma Wash",
+          "account": "Likes beautiful silky texture but cannot achieve good cleansing. Tried quarter-size and two-quarter amounts, wet/dry face, hand/face lathering and no lathering; never foams/bubbles, seems to disappear/absorb and resembles cream becoming more viscous with water. Severe eye burning with eyes closed despite rarely wearing eye makeup led to considering return. After one wash feels less clean and moisturized than unnamed favorite glycerin cleanser; after two feels even drier, unsuitable for double cleanse. Unsure whether defective product or wrong use because sees favorable social-media experiences.",
+          "topics": [
+            "texture",
+            "cleansing",
+            "reaction",
+            "hydration"
+          ],
+          "actions": [
+            {
+              "kind": "use",
+              "status": "reported",
+              "condition": "Multiple dosing/lathering/wet-dry trials and one/two washes"
+            },
+            {
+              "kind": "return",
+              "status": "considered",
+              "reason": "Eye burning"
+            }
+          ]
+        },
+        {
+          "subject": "Unnamed favorite glycerin cleanser",
+          "account": "More clean/moisturized feeling after one wash than Plasma Wash; shared glycerin motivated expectation that Plasma Wash would suit author.",
+          "topics": [
+            "cleansing",
+            "hydration"
+          ],
+          "actions": []
+        }
+      ],
+      "retained": "No completed return. Defect/misuse hypotheses and others’ social approval remain uncertain/attributed; not validated counter-testimonials. Non-foaming alone was not reason for two stars; eye burning mattered. No eye-safety clinical conclusion."
+    },
+    {
+      "key": "A16",
+      "id": "junip:13599983",
+      "disposition": "interpretable",
+      "subjects": [
+        {
+          "subject": "Experiment Continuum",
+          "account": "Minimal easy packaging, mild chemical smell when dispensed, light gel-serum and no application sensitivity. Praises paraben preservative choice as effective/gentle and science-first. Uses azelaic/salicylic acids, thinks Continuum will probably replace both for simplicity. After nighttime use, active acne looks a bit less red next morning; expressly cannot gauge acne or post-acne-pigmentation efficacy objectively. Great overall, intends new staple.",
+          "topics": [
+            "packaging",
+            "scent",
+            "texture",
+            "reaction",
+            "appearance"
+          ],
+          "actions": [
+            {
+              "kind": "use",
+              "status": "reported",
+              "condition": "Night use amid existing azelaic/salicylic routine"
+            },
+            {
+              "kind": "replacement",
+              "status": "intended",
+              "reason": "Probable replacement of two products for simplicity"
+            },
+            {
+              "kind": "retention",
+              "status": "intended"
+            }
+          ]
+        }
+      ],
+      "retained": "Intentions are not actual switching/retention. Skin liking salicylic acid is prior ingredient experience; paraben qualities/formulation and science-first rationale are author belief, not verified ingredient/medical facts. Mild redness appearance is not proven acne treatment or pigmentation change."
+    },
+    {
+      "key": "A17",
+      "id": "reddit:1i30kik:m7kd5t6",
+      "disposition": "interpretable",
+      "subjects": [
+        {
+          "subject": "Zerafite Wrinkle Defence versus Regimen Lab C.R.E.A.M",
+          "account": "Among tested products Zerafite feels most similar but more like standard moisturizer, more emollient/less pilling prone; still thick/waxy. Reports ratio/ingredient differences; these are unverified formula assertions.",
+          "topics": [
+            "texture"
+          ],
+          "actions": [
+            {
+              "kind": "use",
+              "status": "reported"
+            }
+          ]
+        },
+        {
+          "subject": "Regimen Lab C.R.E.A.M (version unspecified)",
+          "account": "Easier to use mixed with drop of Wave; sometimes wants oily extra layer, agreeing with another poster. Attributes stability needs to more ceramides (2.5%), silicones and pilling for some.",
+          "topics": [
+            "texture",
+            "hydration"
+          ],
+          "actions": [
+            {
+              "kind": "use",
+              "status": "reported",
+              "condition": "Mixed with drop of Wave"
+            }
+          ]
+        },
+        {
+          "subject": "Regimen Lab Wave Serum",
+          "account": "Likes it a lot and hydrating serums/glycerin generally; warns of tackiness relative to watery preferences, wants larger bottles. Thinks it must be thinner than Super Saturated from claimed 10% versus 30% glycerin plus humectants.",
+          "topics": [
+            "texture",
+            "quantity"
+          ],
+          "actions": []
+        },
+        {
+          "subject": "Experiment brand / Super Saturated comparison",
+          "account": "Has tried no Experiment product; says it does not ship here. Relative thickness/glycerin claim is speculative without Experiment trial.",
+          "topics": [
+            "texture",
+            "access"
+          ],
+          "actions": [
+            {
+              "kind": "non_trial",
+              "status": "reported",
+              "reason": "Reported lack of shipping to unspecified location"
+            }
+          ]
+        },
+        {
+          "subject": "Regimen Lab Azelaic Advanced",
+          "account": "Used over a month, works well/good tolerance, smell not particularly offensive to author despite reported others’ objection.",
+          "topics": [
+            "reaction",
+            "scent"
+          ],
+          "actions": [
+            {
+              "kind": "use",
+              "status": "reported",
+              "condition": "Over a month"
+            }
+          ]
+        },
+        {
+          "subject": "Regimen Lab Vit. X / Level and other routine products",
+          "account": "Cannot with Vit. X/vitamin C; exact failure unclear. Level fine but thinks tret, Azelaic Advanced and Eucerin Spot Corrector suffice.",
+          "topics": [],
+          "actions": []
+        },
+        {
+          "subject": "Regimen Lab Tabula Rasa",
+          "account": "Likes fine gel cleanser.",
+          "topics": [
+            "texture"
+          ],
+          "actions": []
+        }
+      ],
+      "retained": "Parent asks for preferred alternative to CREAM and grandparent A18 reports CREAM problems; no transfer of A18 experience to A17. Version and location unknown. Ingredients, stability/silicone mechanism and others’ intolerance remain attributed/speculative. Wave compared to Super Saturated must not become a second trial-based comparative observation."
+    },
+    {
+      "key": "A18",
+      "id": "reddit:1i30kik:m7j3q3q",
+      "disposition": "interpretable",
+      "subjects": [
+        {
+          "subject": "Regimen Lab Wave Serum",
+          "account": "Great, most hydrating product author has put on face.",
+          "topics": [
+            "hydration"
+          ],
+          "actions": [
+            {
+              "kind": "use",
+              "status": "reported"
+            }
+          ]
+        },
+        {
+          "subject": "Regimen Lab C.r.e.a.m (version unspecified)",
+          "account": "Praises ingredients but not good at locking moisture at night: face drier next morning than with other moisturizer; daytime pilling under sunscreen; concludes not for them.",
+          "topics": [
+            "hydration",
+            "texture"
+          ],
+          "actions": [
+            {
+              "kind": "use",
+              "status": "reported",
+              "condition": "Night; daytime under sunscreen"
+            }
+          ]
+        },
+        {
+          "subject": "Unnamed other moisturizer",
+          "account": "Less morning dryness than CREAM in author comparison.",
+          "topics": [
+            "hydration"
+          ],
+          "actions": []
+        }
+      ],
+      "retained": "No completed switch or purchase explicitly reported; ingredient praise is not performance. Version unspecified, so no automatic contradiction of A12 Cream 2.0 or attribution to Experiment. This text also appears as A17 grandparent context; one source observation, not two."
+    }
+  ],
+  "initial_reuse": "candidate-corrected.json remains unchanged; A17 context includes A18 but is not extra independent customer evidence.",
+  "same_sample_revision": {
+    "commission": "Owner-authorized same-sample revision, 2026-09-09",
+    "original_snapshot": "prior-probe/candidate-later.json",
+    "changed_record": "A13",
+    "change": "Restore explicit moisture-retention explanation in consumer record; no added efficacy claim."
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "scope": "Only model/effort fields from native actor turn_context; no session metadata copied.",
+  "calls": [
+    {
+      "case": "accounts-initial",
+      "thread_id": "01a085b6-6295-7692-91f1-46fbbbbeb4e3",
+      "turn_context": [
+        {
+          "model": "gpt-5.5",
+          "effort": "high"
+        }
+      ]
+    },
+    {
+      "case": "accounts-final",
+      "thread_id": "01a085b7-0375-7bb3-8aa4-f17a215540f3",
+      "turn_context": [
+        {
+          "model": "gpt-5.5",
+          "effort": "high"
+        }
+      ]
+    },
+    {
+      "case": "atomic-initial",
+      "thread_id": "01a085b7-b066-72e2-af64-4989b8cf95de",
+      "turn_context": [
+        {
+          "model": "gpt-5.5",
+          "effort": "high"
+        }
+      ]
+    },
+    {
+      "case": "atomic-final",
+      "thread_id": "01a085b8-6341-7bb3-8f18-d0b92dce8fa7",
+      "turn_context": [
+        {
+          "model": "gpt-5.5",
+          "effort": "high"
+        }
+      ]
+    }
+  ]
+}

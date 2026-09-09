@@ -1,0 +1,546 @@
+{
+  "nodes": [
+    {
+      "id": "experiment_avant_guard_fit_limitations_small_face_nose",
+      "proposition": "Experiment Avant Guard has reported fit limitations around cheeks/nose or nose area in accounts describing smaller facial/head fit, while other use outcomes coexist.",
+      "subjects": [
+        "Experiment Avant Guard"
+      ],
+      "support": [
+        "A05: author reports an almost perfect fit except cheeks/nose, and easy cleaning.",
+        "A09: author reports fit is not the best on a very small head, especially the nose, causing a one-star deduction."
+      ],
+      "opposition": [],
+      "adjacent": [
+        "A05: reusable-mask discovery through a TikTok creator led to immediate checkout in a sustainability context; mask possession motivates use of other hydrating/moisturizing products.",
+        "A09: author reports Avant Guard locks in hydration from Super Saturated in joint use."
+      ],
+      "conditions": [
+        "A09 condition: very small head.",
+        "A05 condition: fit issue localized to cheeks/nose."
+      ],
+      "limitations": [
+        "No generalized fit prevalence claim.",
+        "A05's barrier-repair statement belongs to other products, not Avant Guard independently.",
+        "No shade preference inferred from metadata."
+      ]
+    },
+    {
+      "id": "experiment_softwear_positive_recommendation_and_adverse_rechallenge_neighborhood",
+      "proposition": "Experiment Softwear has a material mixed neighborhood: one account reports recommendation-driven cart readdition without use, while another reports months of liking and stock-up followed by author-attributed perioral dermatitis flare on rechallenge and a qualified recommendation warning sensitive lips.",
+      "subjects": [
+        "Experiment Softwear"
+      ],
+      "support": [
+        "A01: author put Softwear back in their cart because of the parent recommendation; this is recommendation response, not purchase or use outcome.",
+        "A11: author loved Softwear for months, called it best balm, liked thick texture/sheen, stocked up, then reports perioral dermatitis and a worse flare within 24 hours on rechallenge after recovery, attributing it to Softwear; still recommends trying at reasonable price with warning."
+      ],
+      "opposition": [
+        "A11: adverse reaction report includes perioral dermatitis, rough tiny bumps, prescribed steroid cream, and worse rechallenge flare within 24 hours."
+      ],
+      "adjacent": [
+        "A11: daily rubbing/brushing of dead skin was tentatively interpreted by the author as the balm working; preserve as author interpretation, not verified exfoliation.",
+        "A01: parent testimony recommends Softwear, compares Eadem, reports sensitive skin and backups, but parent is context only and not a supplied account."
+      ],
+      "conditions": [
+        "A01 condition: Softwear subject resolved from parent context; no completed purchase or first-use evidence.",
+        "A11 condition: adverse rechallenge after treatment/recovery; recommendation is qualified by price and sensitive-lips warning."
+      ],
+      "limitations": [
+        "This node is retained as an opposed neighborhood, not as shared experience corroboration.",
+        "Parent context is not counted as another account.",
+        "Author-attributed causation is not clinical causation.",
+        "No formula version supplied and no count of purchase occasions inferred from stock-up."
+      ]
+    },
+    {
+      "id": "experiment_super_saturated_hydration_reports",
+      "proposition": "Experiment Super Saturated is reported by multiple accounts as leaving skin hydrated or very hydrated, with one later account also reporting 12-hour plump/hydrated skin and reduced irritation/sensitivity under personal oily/dry sensitive-cheek rosacea conditions; formula/version unknown and conditions vary by account.",
+      "subjects": [
+        "Experiment Super Saturated"
+      ],
+      "support": [
+        "A04: author reports Super Saturated was lightweight, refreshing, fast drying, very hydrating, and did not leave pores feeling clogged.",
+        "A08: author reports Super Saturated left skin very hydrated when paired with tretinoin and other actives.",
+        "A13: experienced skincare enthusiast reports plump/hydrated skin through a 12-hour shift, visibly better skin, lower irritation/sensitivity, nourishing very dry sensitive cheeks without forehead congestion/bumps, and reduced oil since starting."
+      ],
+      "opposition": [],
+      "adjacent": [
+        "A03: author still uses Super Saturated despite finding it stickier than Regimen Lab Wave Serum, because they believe it has a little more glycerin; this is continued use, not a hydration outcome.",
+        "A09: author reports Avant Guard locks in hydration from Super Saturated, but outcome allocation is joint-use and not separable.",
+        "A13: author describes sticky, shiny, slick finish, advises smaller amount for outings, predicts mostly nighttime use for others, and tells stickiness-averse readers to avoid it."
+      ],
+      "conditions": [
+        "A08 condition: used with tretinoin and other actives.",
+        "A04 context: suitable before makeup; no formula version supplied.",
+        "A13 condition: personal experience with very oily T-zone, very dry sensitive cheeks, mild rosacea, and sometimes daytime outing use despite shine."
+      ],
+      "limitations": [
+        "No objective hydration measurement.",
+        "No clinical or population causation from moisture retention, irritation/sensitivity reduction, oil reduction, rosacea context, or congestion absence.",
+        "A09 is adjacent only because its hydration report is explicitly non-separable between Avant Guard and Super Saturated.",
+        "A13's 'most people' nighttime-use prediction, balance mechanism, and stickiness doing wonders are author assertions/advice, not established population behavior or mechanism."
+      ]
+    },
+    {
+      "id": "experiment_buffer_jelly_night_glow_soft_skin_small_amount",
+      "proposition": "Experiment Buffer Jelly is reported by multiple accounts as a nighttime product used in small amounts or drops with waking skin improvements: glowy/glowing skin in earlier accounts and very soft skin without redness, irritation, or clogged pores in a later rosacea-context account.",
+      "subjects": [
+        "Experiment Buffer Jelly"
+      ],
+      "support": [
+        "A04: author bought Buffer Jelly seeking more nighttime hydration/repair, initially worried about thick/oily appearance, then woke with glowy, clean skin and says a tiny amount is needed.",
+        "A10: author reports Buffer Jelly locks in hydrating products, a little goes far, and they wake with glowing skin when used at night as the final routine step.",
+        "A14: free-product reviewer reports after two uses that a drop mixed into night moisturizer led to waking with very soft skin and no redness, irritation, or clogged pores."
+      ],
+      "opposition": [],
+      "adjacent": [
+        "A14: author praises jelly transforming to soft fluid oil and silky slip, contrasts oils that feel dry/tacky during massage, is surprised by small bottle, and predicts long duration.",
+        "A14: post-dermaplaning suitability is predicted but untried."
+      ],
+      "conditions": [
+        "A10 condition: final nighttime step over hydrating products.",
+        "A04 condition: nighttime hydration/repair context; exact final-step routine not stated.",
+        "A14 condition: disclosed free product for later honest review; early review after two uses; a drop mixed into night moisturizer; rosacea context."
+      ],
+      "limitations": [
+        "Hydration/repair motive in A04 is not proof of repaired barrier.",
+        "No measured skin effect, purchase, durable loyalty, tested dermaplaning outcome, or measured longevity inferred for A14.",
+        "A14's barrier-serum/oil hybrid, nourishing/soothing praise, and packaging interpretation remain author description, not independently measured barrier repair or packaging fact.",
+        "No formula version supplied."
+      ]
+    },
+    {
+      "id": "experiment_plasma_wash_uncertain_face_wash_opposed_cleansing_hydration_neighborhood",
+      "proposition": "Experiment Plasma Wash / an unresolved Experiment face wash has a material uncertain opposed neighborhood: A15 reports Plasma Wash poor cleansing, severe eye burning, and increased dryness, while prior A04 reports an Experiment face wash with no more breakouts, makeup removal, and hydrated skin, but the prior exact SKU is unresolved.",
+      "subjects": [
+        "Experiment Plasma Wash",
+        "Experiment face wash (exact SKU unresolved)"
+      ],
+      "support": [
+        "A15: author likes Plasma Wash's beautiful silky texture but cannot achieve good cleansing after multiple dosing/lathering/wet-dry trials; reports severe eye burning with eyes closed, considers return, feels less clean and moisturized than an unnamed favorite glycerin cleanser after one wash, and even drier after two washes.",
+        "A04: author reports an Experiment face wash, exact SKU unresolved, gave no more breakouts, removed makeup with one dollop without separate remover, and left hydrated skin."
+      ],
+      "opposition": [
+        "A15: negative cleansing, eye-burning, and dryness report materially conflicts with a positive face-wash cleansing/hydration neighborhood if A04's unresolved face wash is Plasma Wash.",
+        "A04: positive unresolved face-wash account prevents treating A15 as the only visible Experiment face-wash outcome, but does not safely oppose A15 at exact SKU level."
+      ],
+      "adjacent": [
+        "A15: defect or wrong-use hypotheses and favorable social-media experiences are author uncertainty or attributed context, not validated counter-testimonials.",
+        "A15: unnamed favorite glycerin cleanser felt more clean/moisturized than Plasma Wash and motivated expectation that Plasma Wash would suit the author."
+      ],
+      "conditions": [
+        "A15 condition: multiple dosing/lathering/wet-dry trials; one-wash and two-wash comparisons; severe eye burning despite rarely wearing eye makeup.",
+        "A04 condition: exact face-wash SKU unresolved in prior ledger."
+      ],
+      "limitations": [
+        "This node is retained as a suspected opposed neighborhood because exact prior face-wash overlap is unsafe; it is not a shared exact-product finding.",
+        "No completed return inferred from A15.",
+        "No clinical eye-safety conclusion or defective-product conclusion.",
+        "Prior summary is insufficient to determine whether A04's face wash was Plasma Wash."
+      ]
+    },
+    {
+      "id": "experiment_continuum_local_improvement_and_intended_staple_neighborhood",
+      "proposition": "Experiment Continuum has multiple accounts reporting favorable personal-use outcomes or intended continued/replacement use under different conditions: A06 reports neck ingrown-hair control after shaving, while A16 reports no application sensitivity, slightly less-red active acne next morning, probable replacement intent, and intended staple status.",
+      "subjects": [
+        "Experiment Continuum"
+      ],
+      "support": [
+        "A06: author reports neck ingrown-hair control after shaving when shaving, moisturizing, and applying Continuum the next morning; previously ingrowns happened every time, and author calls it a game changer.",
+        "A16: author reports light gel-serum, no application sensitivity, active acne looking a bit less red the next morning after nighttime use, probable replacement of azelaic/salicylic acids for simplicity, and intended new staple status."
+      ],
+      "opposition": [],
+      "adjacent": [
+        "A16: praises minimal easy packaging, mild chemical smell when dispensed, paraben preservative choice as effective/gentle, and science-first formulation rationale.",
+        "A16: expressly cannot gauge acne or post-acne-pigmentation efficacy objectively."
+      ],
+      "conditions": [
+        "A06 condition: neck, morning after shaving and moisturizing.",
+        "A16 condition: night use amid existing azelaic/salicylic routine."
+      ],
+      "limitations": [
+        "This combines a favorable Continuum neighborhood, not the same exact outcome: ingrown-hair control and next-morning acne redness are distinct bounded meanings.",
+        "A16 replacement and staple are intentions, not actual switching or retention.",
+        "Paraben qualities/formulation and science-first rationale are author belief, not verified ingredient or medical facts.",
+        "No objective acne, pigmentation, or ingrown-hair efficacy claim."
+      ]
+    },
+    {
+      "id": "regimen_lab_wave_hydration_and_tacky_texture_reports",
+      "proposition": "Regimen Lab Wave Serum is reported by multiple accounts as liked and hydrating or comparatively hydrating, while tackiness/stickiness texture limitations coexist; version unknown.",
+      "subjects": [
+        "Regimen Lab Wave Serum"
+      ],
+      "support": [
+        "A03: author likes Regimen Lab Wave Serum and finds it less sticky than Experiment Super Saturated.",
+        "A17: author likes Wave a lot and likes hydrating serums/glycerin generally; warns of tackiness relative to watery preferences and wants larger bottles.",
+        "A18: author reports Wave Serum is great and the most hydrating product they have put on their face."
+      ],
+      "opposition": [],
+      "adjacent": [
+        "A17: author uses Regimen Lab C.R.E.A.M mixed with a drop of Wave.",
+        "A17: claimed 10% versus 30% glycerin comparison to Super Saturated is speculative because the author has tried no Experiment product.",
+        "A03: author still uses Super Saturated despite relative stickiness because they believe it has a little more glycerin."
+      ],
+      "conditions": [
+        "A17 condition: has tried no Experiment product and reports Experiment does not ship to their unspecified location.",
+        "A18 condition: Regimen Lab Wave use reported in context of comparing C.R.E.A.M and other products."
+      ],
+      "limitations": [
+        "A17's Wave-to-Super Saturated thickness/glycerin comparison is not trial-based corroboration.",
+        "Glycerin percentages and formula details remain author assertions unless independently verified elsewhere.",
+        "Hydration reports do not establish objective measurement, purchase, repurchase, or market prevalence."
+      ]
+    },
+    {
+      "id": "regimen_lab_cream_version_unspecified_texture_hydration_limitations",
+      "proposition": "Regimen Lab C.R.E.A.M, version unspecified in the later Reddit accounts, has reported texture or moisture-locking limitations: A17 describes thick/waxy/pilling-prone use considerations, while A18 reports poorer nighttime moisture locking and daytime pilling under sunscreen.",
+      "subjects": [
+        "Regimen Lab C.R.E.A.M (version unspecified)",
+        "Zerafite Wrinkle Defence"
+      ],
+      "support": [
+        "A17: author reports Zerafite feels most similar to C.R.E.A.M but more like a standard moisturizer, more emollient/less pilling prone, while still thick/waxy; says C.R.E.A.M is easier to use mixed with a drop of Wave and attributes stability needs to more ceramides, silicones, and pilling for some.",
+        "A18: author praises C.R.E.A.M ingredients but reports it is not good at locking moisture at night, leaves face drier next morning than another moisturizer, pills under sunscreen in daytime, and concludes it is not for them."
+      ],
+      "opposition": [],
+      "adjacent": [
+        "A12: author recently acquired Regimen Lab Cream 2.0 after overdoing tret, seeking a healing moisturizer, and favorable experience motivates intended trial of more of the line.",
+        "A18: unnamed other moisturizer leaves less morning dryness than C.R.E.A.M in the author's comparison."
+      ],
+      "conditions": [
+        "A17 condition: version unspecified; use mixed with a drop of Wave; parent asks for preferred alternative to C.R.E.A.M.",
+        "A18 condition: version unspecified; nighttime use and daytime under sunscreen.",
+        "A12 condition: Cream 2.0, not automatically the same version as A17/A18."
+      ],
+      "limitations": [
+        "Version mismatch prevents treating A17/A18 as contradiction of A12 Cream 2.0.",
+        "A17 ingredient ratios, stability/silicone mechanism, and others' intolerance are attributed/speculative, not verified formula facts.",
+        "No completed switch or purchase inferred from A18."
+      ]
+    }
+  ],
+  "source_index": [
+    {
+      "account": "A01",
+      "subjects": [
+        "Experiment Softwear"
+      ],
+      "meanings": [
+        "Removed Softwear from FF cart, then readded it because of parent recommendation; no completed purchase and no use result.",
+        "Crusty lips and wallet complaint are current context/humor; thanks to balm is anticipatory."
+      ],
+      "limitations": [
+        "Softwear resolves from parent context; parent testimony is not this account's experience.",
+        "FF meaning unresolved; no formula version."
+      ]
+    },
+    {
+      "account": "A02",
+      "subjects": [
+        "Dr. Idriss lip exfoliator (context-resolved, uncertain)",
+        "Dr. Idriss Barrier Baste balm"
+      ],
+      "meanings": [
+        "Likely owns the exfoliator discussed in parent context and avoids using it because they cannot stand the feeling.",
+        "Loves the Barrier Baste balm without asserting a specific benefit."
+      ],
+      "limitations": [
+        "'That one' is not explicit; exfoliator referent remains uncertain and excluded from definite target counts.",
+        "No Experiment complaint established."
+      ]
+    },
+    {
+      "account": "A03",
+      "subjects": [
+        "Regimen Lab Wave Serum",
+        "Experiment Super Saturated"
+      ],
+      "meanings": [
+        "Likes Regimen Lab Wave Serum and finds it less sticky than Experiment Super Saturated.",
+        "Still uses Experiment Super Saturated despite relative stickiness because author thinks it has a little more glycerin."
+      ],
+      "limitations": [
+        "Comparison is texture/stickiness, not hydration superiority or switching.",
+        "Glycerin amount is author belief, not verified formulation fact.",
+        "Parent Level Serum purchase and repurchase intention are another actor's testimony."
+      ]
+    },
+    {
+      "account": "A04",
+      "subjects": [
+        "Experiment Super Saturated",
+        "Experiment Buffer Jelly",
+        "Experiment face wash (exact SKU unresolved)",
+        "Experiment mesh moisturizer (exact SKU unresolved)",
+        "Experiment brand"
+      ],
+      "meanings": [
+        "Super Saturated: sister introduced brand through it; author loved it, ordered their own, and reports lightweight, refreshing, fast-drying, very hydrating use without clogged-pore feeling and suitable before makeup.",
+        "Buffer Jelly: bought for more nighttime hydration/repair; initial thick/oily appearance concern, then woke with glowy clean skin and needed a tiny amount.",
+        "Face wash: immediate purchase; reports no more breakouts, makeup removed with one dollop without separate remover, and hydrated skin.",
+        "Mesh moisturizer: bought immediately at launch; no use outcome.",
+        "Brand: colorful counter presence, quirky/delightful impression, and scientist appreciation."
+      ],
+      "limitations": [
+        "Chronology does not prove one benefit caused later purchases.",
+        "Product-page title does not make all clauses Super Saturated claims.",
+        "Refill label does not establish repurchase.",
+        "Survey context is not a condition on every benefit."
+      ]
+    },
+    {
+      "account": "A05",
+      "subjects": [
+        "Experiment Avant Guard"
+      ],
+      "meanings": [
+        "Paused formerly almost-nightly disposable sheet masks for sustainability; reusable-mask discovery through TikTok creator led to immediate checkout.",
+        "Reports use, almost perfect fit except cheeks/nose, and easy cleaning.",
+        "Having the mask motivates use of other hydrating/moisturizing products, which author says helped repair barrier."
+      ],
+      "limitations": [
+        "Barrier-repair statement refers to other products, not the mask independently.",
+        "Sustainability and creator discovery coexist; no isolated causal coefficient.",
+        "Small acid-lime metadata variant does not support shade preference."
+      ]
+    },
+    {
+      "account": "A06",
+      "subjects": [
+        "Experiment Continuum"
+      ],
+      "meanings": [
+        "Reports neck ingrown-hair control after shaving when shaving, moisturizing, and applying Continuum the next morning; previously ingrowns happened every time.",
+        "Calls this a game changer and connects it with desired exfoliation/barrier healing."
+      ],
+      "limitations": [
+        "Single self-report, not objective prevention efficacy.",
+        "Condition is neck, morning after shaving and moisturizing.",
+        "No purchase event inferred."
+      ]
+    },
+    {
+      "account": "A07",
+      "subjects": [],
+      "meanings": [
+        "Meaningful body unresolved because exact body is 'undefined...'."
+      ],
+      "limitations": [
+        "Possible capture/parser artifact retained.",
+        "Do not convert metadata or product association into approval, purchase, or experience."
+      ]
+    },
+    {
+      "account": "A08",
+      "subjects": [
+        "Experiment Super Saturated"
+      ],
+      "meanings": [
+        "51-year-old with challenging skin calls Super Saturated awesome when paired with tretinoin and other actives, and reports skin left very hydrated."
+      ],
+      "limitations": [
+        "No irritation-prevention, barrier-repair, clinical compatibility, or age/skin-type causation inferred."
+      ]
+    },
+    {
+      "account": "A09",
+      "subjects": [
+        "Experiment Avant Guard",
+        "Experiment Super Saturated"
+      ],
+      "meanings": [
+        "Avant Guard used over Super Saturated locks in hydration; fit is not the best on very small head, especially nose, causing one-star deduction."
+      ],
+      "limitations": [
+        "Hydration outcome allocation is joint-use and not separable between Avant Guard and Super Saturated.",
+        "Dry/acne-prone survey is context.",
+        "No independent Super Saturated hydration event or repurchase counted from this adjunct-use clause."
+      ]
+    },
+    {
+      "account": "A10",
+      "subjects": [
+        "Experiment Buffer Jelly"
+      ],
+      "meanings": [
+        "Loves Buffer Jelly; reports locking in hydrating products, little goes far, and waking with glowing skin when used at night as final routine step."
+      ],
+      "limitations": [
+        "Routine conditional; no measured effect or inferred purchase event."
+      ]
+    },
+    {
+      "account": "A11",
+      "subjects": [
+        "Experiment Softwear"
+      ],
+      "meanings": [
+        "Influencer recommended Softwear; author loved it for months, called it best balm, liked thick texture/sheen despite lip-rubbing resistance, and stocked up with three unopened tubes remaining.",
+        "Reports waking with dead skin needing daily rubbing/brushing and tentatively interpreted this as working.",
+        "Later reports perioral dermatitis, rough tiny bumps, prescribed steroid cream, and worse flare within 24 hours on rechallenge after recovery; author attributes this to Softwear.",
+        "Still recommends trying at reasonable price while warning sensitive lips; says lips had never been sensitive and prior reaction was unprecedented."
+      ],
+      "limitations": [
+        "Author-attributed cause with reported rechallenge is not clinical causation.",
+        "Survey says combo and sensitive while body says lips never sensitive; scopes coexist.",
+        "No count of purchase occasions or diagnosis verification."
+      ]
+    },
+    {
+      "account": "A12",
+      "subjects": [
+        "Regimen Lab Cream 2.0",
+        "Regimen Lab cleanser",
+        "Regimen Lab brand"
+      ],
+      "meanings": [
+        "Recently acquired Cream 2.0 after overdoing tret, seeking a healing moisturizer; favorable experience motivates intended trial of more of the line and author is impressed by formulations.",
+        "Acquired Regimen Lab cleanser to use; says it is nice but pretty small, with greater interest in serums/moisturizers.",
+        "Believes Regimen Lab products address market gaps in science-based formulations."
+      ],
+      "limitations": [
+        "This record establishes Regimen Lab, not Experiment.",
+        "Seeking healing is not an explicit healed outcome.",
+        "Future trial is intention, not acquisition.",
+        "Market-gap statement is author belief, not established market fact."
+      ]
+    },
+    {
+      "account": "A13",
+      "subjects": [
+        "Experiment Super Saturated"
+      ],
+      "meanings": [
+        "Reports major routine improvement from Super Saturated: plump/hydrated skin through a 12-hour shift, visibly better skin, lower irritation/sensitivity, nourishing very dry sensitive cheeks without forehead congestion/bumps, and reduced oil since starting.",
+        "Describes sticky, shiny, slick finish; advises smaller amount for outings, predicts mostly nighttime use for others, and tells stickiness-averse readers to avoid it.",
+        "Sometimes personally goes out with a pump despite extra shine."
+      ],
+      "limitations": [
+        "12-hour result and irritation/sensitivity improvement are personal reports, not clinical or population causation.",
+        "'Most people' nighttime behavior, balance mechanism, and stickiness doing wonders are author assertions/advice.",
+        "No completed purchase inferred from use or verified_buyer false; formula/version unknown; survey is Oily + Sensitive with mild rosacea context."
+      ]
+    },
+    {
+      "account": "A14",
+      "subjects": [
+        "Experiment Buffer Jelly"
+      ],
+      "meanings": [
+        "Discloses free product for later honest review; after two uses, praises jelly-to-soft-fluid-oil texture and silky slip, contrasting oils that feel dry/tacky during massage.",
+        "With rosacea, adds a drop to night moisturizer and wakes with very soft skin, no redness, irritation, or clogged pores.",
+        "Surprised by small bottle, attributes impression to reduced packaging, states full 1oz, predicts very long duration, and calls self an Experiment convert."
+      ],
+      "limitations": [
+        "Gift disclosure in body controls; no purchase inferred from metadata.",
+        "No durable loyalty, tested dermaplaning outcome, measured longevity, or measured barrier repair.",
+        "Barrier-serum/oil hybrid, grandmother blanket analogy, soothing/nourishing praise, and packaging interpretation remain author descriptions or beliefs."
+      ]
+    },
+    {
+      "account": "A15",
+      "subjects": [
+        "Experiment Plasma Wash",
+        "Unnamed favorite glycerin cleanser"
+      ],
+      "meanings": [
+        "Likes Plasma Wash's beautiful silky texture but cannot achieve good cleansing after multiple amount, wet/dry, hand/face lathering, and no-lather trials; product never foams/bubbles and seems to disappear/absorb.",
+        "Reports severe eye burning with eyes closed, considers return, feels less clean and moisturized than unnamed favorite glycerin cleanser after one wash, and even drier after two washes; says it is unsuitable for double cleanse.",
+        "Unsure whether product is defective or being used wrong because author sees favorable social-media experiences.",
+        "Unnamed favorite glycerin cleanser leaves author feeling more clean/moisturized after one wash than Plasma Wash and shared glycerin motivated expectation."
+      ],
+      "limitations": [
+        "No completed return, validated defect, misuse conclusion, or validated social-media counter-testimonials.",
+        "Non-foaming alone was not the reason for two stars; eye burning mattered.",
+        "No eye-safety clinical conclusion; no formula/version supplied."
+      ]
+    },
+    {
+      "account": "A16",
+      "subjects": [
+        "Experiment Continuum"
+      ],
+      "meanings": [
+        "Reports minimal easy packaging, mild chemical smell when dispensed, light gel-serum texture, and no application sensitivity.",
+        "Uses azelaic/salicylic acids and thinks Continuum will probably replace both for simplicity; after nighttime use, active acne looks a bit less red next morning.",
+        "Calls product great overall and intends it as a new staple; praises paraben preservative choice and science-first formulation."
+      ],
+      "limitations": [
+        "Replacement and staple are intentions, not actual switching or retention.",
+        "Author expressly cannot gauge acne or post-acne-pigmentation efficacy objectively.",
+        "Paraben qualities/formulation and science-first rationale are author belief, not verified ingredient or medical facts.",
+        "Night use occurred amid existing azelaic/salicylic routine."
+      ]
+    },
+    {
+      "account": "A17",
+      "subjects": [
+        "Zerafite Wrinkle Defence versus Regimen Lab C.R.E.A.M",
+        "Regimen Lab C.R.E.A.M (version unspecified)",
+        "Regimen Lab Wave Serum",
+        "Experiment brand / Super Saturated comparison",
+        "Regimen Lab Azelaic Advanced",
+        "Regimen Lab Vit. X / Level and other routine products",
+        "Regimen Lab Tabula Rasa"
+      ],
+      "meanings": [
+        "Zerafite feels most similar to Regimen Lab C.R.E.A.M among tested products, but more like a standard moisturizer, more emollient/less pilling prone, while still thick/waxy; ingredient/ratio differences are author assertions.",
+        "Regimen Lab C.R.E.A.M is easier to use mixed with a drop of Wave; author sometimes wants an oily extra layer and attributes stability needs to more ceramides, silicones, and pilling for some.",
+        "Likes Regimen Lab Wave Serum a lot and hydrating serums/glycerin generally; warns of tackiness relative to watery preferences and wants larger bottles.",
+        "Has tried no Experiment product because Experiment reportedly does not ship to the author's unspecified location; Wave-to-Super Saturated thickness/glycerin comparison is speculative without Experiment trial.",
+        "Regimen Lab Azelaic Advanced used over a month, works well/good tolerance, and smell is not particularly offensive to author despite reports of others objecting.",
+        "Cannot with Regimen Lab Vit. X/vitamin C for unclear reason; Level is fine but author thinks tret, Azelaic Advanced, and Eucerin Spot Corrector suffice; likes Regimen Lab Tabula Rasa as a fine gel cleanser."
+      ],
+      "limitations": [
+        "Parent and grandparent context do not transfer A18's C.R.E.A.M experience to A17.",
+        "Version and location unknown.",
+        "Ingredients, stability/silicone mechanism, and others' intolerance remain attributed/speculative.",
+        "Wave compared to Super Saturated must not become a second trial-based Experiment comparative observation."
+      ]
+    },
+    {
+      "account": "A18",
+      "subjects": [
+        "Regimen Lab Wave Serum",
+        "Regimen Lab C.R.E.A.M (version unspecified)",
+        "Unnamed other moisturizer"
+      ],
+      "meanings": [
+        "Reports Regimen Lab Wave Serum is great and the most hydrating product author has put on their face.",
+        "Praises Regimen Lab C.R.E.A.M ingredients but reports it is not good at locking moisture at night: face is drier next morning than with another moisturizer; daytime pilling occurs under sunscreen; concludes it is not for them.",
+        "Unnamed other moisturizer leaves less morning dryness than C.R.E.A.M in author comparison."
+      ],
+      "limitations": [
+        "No completed switch or purchase explicitly reported; ingredient praise is not performance.",
+        "C.R.E.A.M version unspecified, so no automatic contradiction of A12 Cream 2.0 and no attribution to Experiment.",
+        "This text appears as A17 grandparent context; it remains one source observation, not two."
+      ]
+    }
+  ],
+  "unresolved": [
+    "A07 has no interpretable body beyond 'undefined...' and remains retained as a possible capture/parser artifact.",
+    "A01 FF meaning unresolved; Softwear subject is context-resolved from parent, but parent testimony is not a supplied account.",
+    "A02 'that one' referent remains uncertain; Dr. Idriss exfoliator is likely but not definite.",
+    "A04 face wash and mesh moisturizer exact SKUs remain unresolved.",
+    "No supplied raw sources or audits are available beyond the preserved representation.",
+    "A15 Plasma Wash may or may not be the same product as A04's unresolved Experiment face wash; prior summary is insufficient to determine exact SKU overlap.",
+    "A17 Experiment shipping location is unspecified; no Experiment product trial occurred.",
+    "A17 Regimen Lab C.R.E.A.M version is unspecified, and A18 Regimen Lab C.R.E.A.M version is unspecified.",
+    "A17 Vit. X/vitamin C failure remains unclear.",
+    "A14 post-dermaplaning suitability is predicted but untested."
+  ],
+  "limitations": [
+    "Read-only frozen sample ledger; no tools, repository reads, raw-source rescue, or production validation performed.",
+    "No support posture, independent-origin count, causal strength, or global conflict posture assigned; those are not model choices here.",
+    "Opposition is local to visible supplied accounts, not global coverage.",
+    "Source-account recurrence is not treated as event count, market prevalence, or engagement-derived experience count.",
+    "Formula/version is unknown unless explicitly stated in the preserved representation.",
+    "Read-only frozen sample ledger; no tools, repository reads, raw-source rescue, audits, or production validation performed.",
+    "No support posture, independent-origin count, causal strength, or global conflict posture assigned.",
+    "Local opposition and suspected opposition are retained without claiming global opposition coverage or none_observed.",
+    "Source-account recurrence is not treated as event count, market prevalence, or engagement-derived experience count.",
+    "Formula/version remains unknown unless explicitly supplied; Regimen Lab Cream 2.0 is not merged into unspecified C.R.E.A.M claims."
+  ]
+}

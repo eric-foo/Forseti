@@ -1,0 +1,1544 @@
+{
+  "dispositions": [
+    {
+      "disposition": "context_only",
+      "disposition_reason": "Regimen CREAM and cleanser trial. Preserve exact body and parent in source accounting; no Experiment outcome promoted.",
+      "evidence_id": "reddit:1i30kik:m7j6no0"
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Source-local Experiment meaning; preserve the stated conditions and speaker competence.",
+      "evidence_id": "reddit:1i30kik:m7jkz2b"
+    },
+    {
+      "disposition": "unresolved",
+      "disposition_reason": "Direct reply to ncls0z6, which names both Experiment Softwear and the Dr. Idriss lip exfoliator. The referent of \"that one\" is not safely determinable: the parent's \"tacky/sticky\" description supports the Dr. Idriss reading, while the reply's contrast with \"the baste balm\" does not exclude Softwear. Both readings are preserved -- a disliked feel leading the author to skip the product, plus approval of the Dr. Idriss Barrier Baste balm. No Experiment outcome and no comparator outcome is credited, and the possible negative texture meaning is not discarded.",
+      "evidence_id": "reddit:1n9da6u:ncly8vq"
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Source-local Experiment meaning; preserve the stated conditions and speaker competence.",
+      "evidence_id": "reddit:1n9da6u:ncm3hhd"
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Retain final-nighttime-step placement, small dose, morning glow and love. The separate locking-in statement describes layering function, not another portfolio-selection claim, and keeps brilliant rather than weaker good performance.",
+      "evidence_id": "junip:3515905"
+    },
+    {
+      "disposition": "context_only",
+      "disposition_reason": "The supplied source is only the placeholder “undefined...”; it contains no recoverable product judgment.",
+      "evidence_id": "junip:6884815"
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "The proposal preserves ingrown-hair prevention, exfoliation and barrier beliefs, and the application sequence, but omits both the stated overall condition control and the explicit game-changer evaluation.",
+      "evidence_id": "junip:14942664"
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Physical mask fit is not texture; “isn’t the best” should retain its limited negative wording rather than becoming an unqualified poor-fit claim. Preserve the specific small-head/nose condition and rating consequence.",
+      "evidence_id": "junip:1866323"
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Tretinoin and active compatibility plus hydration are preserved, but the explicit overall product and result evaluation is omitted.",
+      "evidence_id": "junip:4653282"
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "The long source contains independent lightness, refreshment, hydration, no clogging, glow and clean appearance. Preserve discovery-driven purchase and later product sequence, distinguish launch buying from fit, and add omitted strong serum/brand praise.",
+      "evidence_id": "junip:7540631"
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "The sustainable discontinuation, creator-led purchase/excitement and local fit exceptions are separate meanings. Cleaning is a maintenance attribute rather than portfolio fit; keep associated-product barrier help distinct from isolated mask efficacy.",
+      "evidence_id": "junip:1569510"
+    },
+    {
+      "disposition": "claim_bearing",
+      "disposition_reason": "Preserve the favorable months, morning shedding and removal burden, liked texture, delayed dermatitis, treatment and worse re-exposure separately from the reviewer’s causal conclusion. Creator discovery is not retention; keep stock loss, conditional advice, negative-review awareness and emotional consequences without medically certifying causality.",
+      "evidence_id": "junip:6638709"
+    }
+  ],
+  "units": [
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Source-local context, not an outcome attributed to the named subject: The author likes Regimen Lab Wave Serum.",
+        "Named comparator: Regimen Lab Wave Serum; author uses both."
+      ],
+      "container_id": "reddit:1i30kik",
+      "emerging_axis_labels": [],
+      "evidence_id": "reddit:1i30kik:m7jkz2b",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "reddit:1i30kik:m7jkz2b::u1",
+      "statement": "The author finds Regimen Lab Wave Serum less sticky than Super Saturated.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "repeat_purchase_switching_destinations",
+        "portfolio_product_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Continued use despite greater stickiness; reason is the author’s uncertain ingredient belief."
+      ],
+      "container_id": "reddit:1i30kik",
+      "emerging_axis_labels": [],
+      "evidence_id": "reddit:1i30kik:m7jkz2b",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "reddit:1i30kik:m7jkz2b::u2",
+      "statement": "The author continues using Super Saturated because they think it has a little more glycerin than Wave Serum.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "qualified"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Unverified comparative ingredient belief, explicitly “I think”."
+      ],
+      "container_id": "reddit:1i30kik",
+      "emerging_axis_labels": [],
+      "evidence_id": "reddit:1i30kik:m7jkz2b",
+      "evidence_posture": "speculation",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "reddit:1i30kik:m7jkz2b::u3",
+      "statement": "The author thinks Super Saturated has more glycerin than Wave Serum.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "uncertain"
+    },
+    {
+      "axis_ids": [
+        "repeat_purchase_switching_destinations"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Direct reply to nclxocd; reported cart change caused by peer recommendation; not completed purchase or product trial."
+      ],
+      "container_id": "reddit:1n9da6u",
+      "emerging_axis_labels": [],
+      "evidence_id": "reddit:1n9da6u:ncm3hhd",
+      "evidence_posture": "observable_statement",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "reddit:1n9da6u:ncm3hhd::u1",
+      "statement": "After removing Softwear from their Friends and Family sale cart, the author says the parent recommendation made them put it back.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:3515905",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:3515905",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:3515905::u1",
+      "statement": "The reviewer finds Buffer Jelly brilliant at locking in all their hydrating products.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "price_value_quantity_access"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:3515905",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:3515905",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:3515905::u2",
+      "statement": "A little Buffer Jelly goes a long way for the reviewer.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:3515905",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:3515905",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:3515905::u3",
+      "statement": "The reviewer uses Buffer Jelly as the final nighttime skincare step.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:3515905",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:3515905",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:3515905::u4",
+      "statement": "The reviewer wakes with glowing skin after Buffer Jelly.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:3515905",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:3515905",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:3515905::u5",
+      "statement": "The reviewer loves Buffer Jelly.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Neck after shaving"
+      ],
+      "container_id": "junip:review:14942664",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:14942664",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:14942664::u1",
+      "statement": "The reviewer reports that Continuum prevents neck ingrown hairs that previously occurred after every shave.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Neck shaving routine"
+      ],
+      "container_id": "junip:review:14942664",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:14942664",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:14942664::u2",
+      "statement": "The reviewer considers Continuum effective for exfoliating their neck skin.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Neck shaving routine"
+      ],
+      "container_id": "junip:review:14942664",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:14942664",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:14942664::u3",
+      "statement": "The reviewer considers Continuum helpful for healing the skin barrier on their neck.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Next morning after shaving and moisturizing"
+      ],
+      "container_id": "junip:review:14942664",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:14942664",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:14942664::u4",
+      "statement": "The reviewer shaves, applies moisturizer, then applies Continuum the next morning.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Next-morning use after shaving and moisturizer."
+      ],
+      "container_id": "junip:review:14942664",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:14942664",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:14942664::u5",
+      "statement": "The reviewer says their neck skin is finally under control with this Continuum routine.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:14942664",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:14942664",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:14942664::u6",
+      "statement": "The reviewer considers Continuum a game changer for their post-shaving neck care.",
+      "subject_product_ids": [
+        "experiment-shopify-8555927306432"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Combined use"
+      ],
+      "container_id": "junip:review:1866323",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:1866323",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:1866323::u1",
+      "statement": "Avant Guard is effective at retaining hydration from Super Saturated for the reviewer.",
+      "subject_product_ids": [
+        "experiment-shopify-5913452937408",
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Small Head; very small head",
+        "Nose fit"
+      ],
+      "container_id": "junip:review:1866323",
+      "emerging_axis_labels": [
+        "mask_size_fit"
+      ],
+      "evidence_id": "junip:1866323",
+      "evidence_posture": "first_hand",
+      "polarity": "negated",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:1866323::u2",
+      "statement": "The reviewer says Small Head Avant Guard’s fit is not the best on their very small head, especially around the nose.",
+      "subject_product_ids": [
+        "experiment-shopify-5913452937408"
+      ],
+      "uncertainty_posture": "qualified"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Rating reason; very small head and nose fit"
+      ],
+      "container_id": "junip:review:1866323",
+      "emerging_axis_labels": [
+        "mask_size_fit"
+      ],
+      "evidence_id": "junip:1866323",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:1866323::u3",
+      "statement": "The reviewer deducted one rating star for Avant Guard’s fit.",
+      "subject_product_ids": [
+        "experiment-shopify-5913452937408"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit",
+        "portfolio_product_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Age 51; self-described challenging skin; tretinoin and unspecified other actives"
+      ],
+      "container_id": "junip:review:4653282",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:4653282",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:4653282::u1",
+      "statement": "The 51-year-old reviewer with challenging skin finds Super Saturated works well paired with tretinoin and other actives.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:4653282",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:4653282",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:4653282::u2",
+      "statement": "Super Saturated leaves the reviewer's skin very hydrated.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:4653282",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:4653282",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:4653282::u3",
+      "statement": "The reviewer considers Super Saturated awesome overall and its results amazing.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:7540631",
+      "emerging_axis_labels": [
+        "family_discovery"
+      ],
+      "evidence_id": "junip:7540631",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:7540631::u1",
+      "statement": "After their sister introduced Super Saturated, the reviewer fell in love with it and ordered their own.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:7540631",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:7540631",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:7540631::u2",
+      "statement": "Super Saturated feels lightweight.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:7540631",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:7540631",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:7540631::u3",
+      "statement": "Super Saturated feels refreshing.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:7540631",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:7540631",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:7540631::u4",
+      "statement": "Super Saturated dries quickly for the reviewer.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:7540631",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:7540631",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:7540631::u5",
+      "statement": "Super Saturated provides strong hydration.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:7540631",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:7540631",
+      "evidence_posture": "first_hand",
+      "polarity": "negated",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:7540631::u6",
+      "statement": "Super Saturated does not make the reviewer’s pores feel clogged.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:7540631",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:7540631",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:7540631::u7",
+      "statement": "Super Saturated provides the hydration the reviewer wants before makeup.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Purchase motive, not proof of a repair mechanism."
+      ],
+      "container_id": "junip:review:7540631",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:7540631",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:7540631::u8",
+      "statement": "The reviewer bought Buffer Jelly seeking more nighttime hydration and repair despite concern that it looked thick and oily.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:7540631",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:7540631",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:7540631::u9",
+      "statement": "After Buffer Jelly, the reviewer woke with exceptionally glowy skin.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:7540631",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:7540631",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:7540631::u10",
+      "statement": "After Buffer Jelly, the reviewer woke with clean-looking skin.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "price_value_quantity_access"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:7540631",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:7540631",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:7540631::u11",
+      "statement": "Only a tiny amount of Buffer Jelly is needed by the reviewer.",
+      "subject_product_ids": [
+        "experiment-shopify-7476098007232"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Face wash uniquely identifies Plasma Wash in this portfolio account; simultaneous routine limits causal isolation."
+      ],
+      "container_id": "junip:review:7540631",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:7540631",
+      "evidence_posture": "first_hand",
+      "polarity": "negated",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:7540631::u12",
+      "statement": "The reviewer then bought Experiment's face wash and reports no more breakouts afterwards.",
+      "subject_product_ids": [
+        "experiment-shopify-8086723035328"
+      ],
+      "uncertainty_posture": "qualified"
+    },
+    {
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:7540631",
+      "emerging_axis_labels": [
+        "makeup_removal"
+      ],
+      "evidence_id": "junip:7540631",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:7540631::u13",
+      "statement": "One small dollop of the face wash removes the reviewer's makeup, eliminating separate makeup remover.",
+      "subject_product_ids": [
+        "experiment-shopify-8086723035328"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:7540631",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:7540631",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:7540631::u14",
+      "statement": "The face wash leaves the reviewer's skin hydrated.",
+      "subject_product_ids": [
+        "experiment-shopify-8086723035328"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [
+        "No Molecular Mesh use result stated."
+      ],
+      "container_id": "junip:review:7540631",
+      "emerging_axis_labels": [
+        "launch_purchase"
+      ],
+      "evidence_id": "junip:7540631",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:7540631::u15",
+      "statement": "The reviewer immediately bought Molecular Mesh when it launched.",
+      "subject_product_ids": [
+        "experiment-shopify-8193821802688"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "packaging_dispensing_durability"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:7540631",
+      "emerging_axis_labels": [
+        "routine_display_aesthetics"
+      ],
+      "evidence_id": "junip:7540631",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:7540631::u16",
+      "statement": "The reviewer enjoys the colorful Experiment products making their bathroom counter quirky and delightful.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592",
+        "experiment-shopify-7476098007232",
+        "experiment-shopify-8086723035328",
+        "experiment-shopify-8193821802688"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Brand affinity within this review, not evidence of scientist conduct."
+      ],
+      "container_id": "junip:review:7540631",
+      "emerging_axis_labels": [
+        "brand_personal_affinity"
+      ],
+      "evidence_id": "junip:7540631",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:7540631::u17",
+      "statement": "The reviewer loves Experiment’s women scientists, calls them life changing, and playfully wishes to have brunch with them.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:7540631",
+      "emerging_axis_labels": [
+        "overall_product_evaluation"
+      ],
+      "evidence_id": "junip:7540631",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:7540631::u18",
+      "statement": "The reviewer considers Super Saturated perfect.",
+      "subject_product_ids": [
+        "experiment-shopify-7299389030592"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "repeat_purchase_switching_destinations"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Previous disposable-mask routine"
+      ],
+      "container_id": "junip:review:1569510",
+      "emerging_axis_labels": [
+        "sustainability_preference"
+      ],
+      "evidence_id": "junip:1569510",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:1569510::u1",
+      "statement": "The reviewer stopped their formerly almost-nightly sheet-mask ritual to make their beauty routine more sustainable and missed it greatly.",
+      "subject_product_ids": [
+        "experiment-shopify-5913452937408"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:1569510",
+      "emerging_axis_labels": [
+        "creator_discovery",
+        "trial_motivation"
+      ],
+      "evidence_id": "junip:1569510",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:1569510::u2",
+      "statement": "After discovering reusable Avant Guard through an unnamed TikTok creator, the reviewer bought it immediately and was very excited to try it.",
+      "subject_product_ids": [
+        "experiment-shopify-5913452937408"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Native target Acid Lime Small."
+      ],
+      "container_id": "junip:review:1569510",
+      "emerging_axis_labels": [
+        "Mask facial fit"
+      ],
+      "evidence_id": "junip:1569510",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:1569510::u3",
+      "statement": "Avant Guard fits the reviewer almost perfectly overall.",
+      "subject_product_ids": [
+        "experiment-shopify-5913452937408"
+      ],
+      "uncertainty_posture": "qualified"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Native target Acid Lime Small."
+      ],
+      "container_id": "junip:review:1569510",
+      "emerging_axis_labels": [
+        "Mask facial fit"
+      ],
+      "evidence_id": "junip:1569510",
+      "evidence_posture": "first_hand",
+      "polarity": "negated",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:1569510::u4",
+      "statement": "Avant Guard does not fit the reviewer at the sides of the cheeks and nose.",
+      "subject_product_ids": [
+        "experiment-shopify-5913452937408"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:1569510",
+      "emerging_axis_labels": [
+        "cleaning_maintenance"
+      ],
+      "evidence_id": "junip:1569510",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:1569510::u5",
+      "statement": "Avant Guard is easy for the reviewer to clean.",
+      "subject_product_ids": [
+        "experiment-shopify-5913452937408"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results",
+        "portfolio_product_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Benefit attributed to associated unnamed products, not isolated mask efficacy."
+      ],
+      "container_id": "junip:review:1569510",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:1569510",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:1569510::u6",
+      "statement": "Having Avant Guard motivates the reviewer to use hydrating and moisturizing products they associate with repairing their barrier.",
+      "subject_product_ids": [
+        "experiment-shopify-5913452937408"
+      ],
+      "uncertainty_posture": "qualified"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:1569510",
+      "emerging_axis_labels": [
+        "overall_product_evaluation",
+        "sustainability_preference"
+      ],
+      "evidence_id": "junip:1569510",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:1569510::u7",
+      "statement": "The reviewer loves Avant Guard’s sustainability and results.",
+      "subject_product_ids": [
+        "experiment-shopify-5913452937408"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [
+        "creator_discovery"
+      ],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u1",
+      "statement": "The reviewer discovered Softwear through an influencer recommendation.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [
+        "First few months before dermatitis"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [
+        "initial_category_preference"
+      ],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u2",
+      "statement": "During the first few months the reviewer loved Softwear and considered it the best lip balm they had used.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "hydration_barrier_visible_results"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Morning dead-skin removal"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u3",
+      "statement": "The reviewer woke with substantial dead skin on their lips while using Softwear.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "portfolio_product_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Morning dead-skin removal"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u15",
+      "statement": "The reviewer had to rub or brush dead lip skin off every morning while using Softwear.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "speculation",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u4",
+      "statement": "The reviewer speculated the dead-skin shedding meant Softwear was doing its job.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "qualified"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u5",
+      "statement": "The reviewer liked Softwear’s very thick consistency.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u6",
+      "statement": "The reviewer liked Softwear’s sheen.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u7",
+      "statement": "Softwear created resistance when the reviewer rubbed their lips together, which they accommodated by avoiding that action.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Several months of use",
+        "Reported perioral dermatitis; rough lips and tiny bumps"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u8",
+      "statement": "After several months of Softwear use, the reviewer developed what they describe as perioral dermatitis.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Several months of use",
+        "Reported perioral dermatitis; rough lips and tiny bumps"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u16",
+      "statement": "The reviewer’s lips became very rough during the reaction after months of Softwear.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Several months of use",
+        "Reported perioral dermatitis; rough lips and tiny bumps"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u17",
+      "statement": "The reviewer developed tiny lip bumps during the reaction after months of Softwear.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Treatment burden during reported dermatitis"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u9",
+      "statement": "The lip reaction became severe enough that the reviewer obtained a prescribed steroid cream.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Re-exposure after recovery; alternative cause hoped for"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u10",
+      "statement": "After their lips returned to normal, the reviewer retried Softwear hoping something else had caused the dermatitis.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Re-exposure after recovery; within 24 hours"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u18",
+      "statement": "The reviewer’s lips flared within 24 hours of retrying Softwear, worse than before.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Reviewer’s causal conclusion; no independent medical confirmation"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "speculation",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u19",
+      "statement": "The reviewer concluded that Softwear caused their dermatitis after the worse re-exposure flare.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "qualified"
+    },
+    {
+      "axis_ids": [
+        "repeat_purchase_switching_destinations"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Three unopened tubes; stocked during favorable months"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u11",
+      "statement": "The reviewer has three unopened Softwear tubes stocked during the months they loved it.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "price_value_quantity_access"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Reviewer-reported CAD 70 loss"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u20",
+      "statement": "After the reaction, the reviewer considers about CAD 70 spent on unopened Softwear stock wasted.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "price_value_quantity_access"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u12",
+      "statement": "The reviewer considers Softwear reasonably priced.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Conditional recommendation alongside sensitive-lip caution"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u21",
+      "statement": "Despite their own reaction, the reviewer still recommends trying Softwear.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Personal adverse-experience warning"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u22",
+      "statement": "The reviewer cautions people with sensitive lips about trying Softwear.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Novel reaction in reviewer’s own history"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "negated",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u13",
+      "statement": "The reviewer had never previously experienced a reaction like the one after Softwear.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Novel reaction in reviewer’s own history"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "negated",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u23",
+      "statement": "The reviewer had never previously considered their lips sensitive.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "irritation_breakout_active_condition_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "speculation",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u14",
+      "statement": "The reviewer considers other people’s tolerance of Softwear unpredictable.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "qualified"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Other reviewers’ comments; not independent verified observations"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "attribution_or_echo",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u24",
+      "statement": "The reviewer has read other reviews criticizing Softwear’s consistency.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [
+        "texture_finish_layering_routine_fit"
+      ],
+      "comparator_product_ids": [],
+      "conditions": [],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u25",
+      "statement": "The reviewer partly understands criticism of Softwear’s consistency, despite personally liking its thickness.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "qualified"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Following delayed reaction and re-exposure"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [
+        "product_loss_disappointment"
+      ],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u26",
+      "statement": "The reviewer is devastated about the Softwear reaction because they loved the product.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    },
+    {
+      "axis_ids": [],
+      "comparator_product_ids": [],
+      "conditions": [
+        "Following personal adverse experience"
+      ],
+      "container_id": "junip:review:6638709",
+      "emerging_axis_labels": [
+        "product_loss_disappointment"
+      ],
+      "evidence_id": "junip:6638709",
+      "evidence_posture": "first_hand",
+      "polarity": "affirmed",
+      "product_version_ids": [],
+      "semantic_unit_ref": "junip:6638709::u27",
+      "statement": "The reviewer envies people who can use Softwear.",
+      "subject_product_ids": [
+        "experiment-shopify-7758608105664"
+      ],
+      "uncertainty_posture": "asserted"
+    }
+  ]
+}
