@@ -1,0 +1,163 @@
+{
+  "checked_at": "2026-09-09T12:39:14.566Z",
+  "type": "source integrity and authored replay structure; not independent semantic quality",
+  "checks": [
+    {
+      "name": "native capture byte identity",
+      "pass": true
+    },
+    {
+      "name": "exact body T0",
+      "pass": true
+    },
+    {
+      "name": "exact body T6",
+      "pass": true
+    },
+    {
+      "name": "exact body T15",
+      "pass": true
+    },
+    {
+      "name": "exact body T7",
+      "pass": true
+    },
+    {
+      "name": "exact body T8",
+      "pass": true
+    },
+    {
+      "name": "exact body T9",
+      "pass": true
+    },
+    {
+      "name": "exact body T10",
+      "pass": true
+    },
+    {
+      "name": "exact body T11",
+      "pass": true
+    },
+    {
+      "name": "exact body T12",
+      "pass": true
+    },
+    {
+      "name": "exact body T13",
+      "pass": true
+    },
+    {
+      "name": "exact body T2",
+      "pass": true
+    },
+    {
+      "name": "exact body T3",
+      "pass": true
+    },
+    {
+      "name": "exact body T32",
+      "pass": true
+    },
+    {
+      "name": "exact body T42",
+      "pass": true
+    },
+    {
+      "name": "exact body S1",
+      "pass": true
+    },
+    {
+      "name": "all finding references resolve",
+      "pass": true
+    },
+    {
+      "name": "all 47 displayed bodies accounted once",
+      "pass": true
+    },
+    {
+      "name": "corroboration modifies only arrival",
+      "pass": true
+    },
+    {
+      "name": "later context preserves previous findings",
+      "pass": true
+    },
+    {
+      "name": "other product preserves previous findings",
+      "pass": true
+    },
+    {
+      "name": "zero-like detailed report retained",
+      "pass": true
+    },
+    {
+      "name": "unknown retailer engagement stays null",
+      "pass": true
+    },
+    {
+      "name": "no cross-product evidence donation",
+      "pass": true
+    },
+    {
+      "name": "offer and completed remedy separate",
+      "pass": true
+    }
+  ],
+  "changes": [
+    {
+      "stage": "corroboration",
+      "changed_existing": [
+        "arrival"
+      ],
+      "new_findings": [],
+      "retained_existing": [
+        "appearance",
+        "reuse"
+      ]
+    },
+    {
+      "stage": "qualification",
+      "changed_existing": [],
+      "new_findings": [
+        "environment",
+        "interest"
+      ],
+      "retained_existing": [
+        "appearance",
+        "reuse",
+        "arrival"
+      ]
+    },
+    {
+      "stage": "different-product",
+      "changed_existing": [],
+      "new_findings": [
+        "softwear"
+      ],
+      "retained_existing": [
+        "appearance",
+        "reuse",
+        "arrival",
+        "environment",
+        "interest"
+      ]
+    }
+  ],
+  "limitations": [
+    "Author saw full sample before creating initial state. No cold consumer test or matched token trial. Assertions verify this saved example, not general retrieval correctness."
+  ],
+  "pins": [
+    {
+      "file": "native.json",
+      "sha256": "77df41012e569679ea9c33abb30e74c5f796493b0b17c407012d3ebdabf39492"
+    },
+    {
+      "file": "retailer-excerpt.json",
+      "sha256": "24cc9c2ff809e195548c84dabecbfc2461316ee150f1e8cb6bed8baf7db7b3ba"
+    },
+    {
+      "file": "replay.json",
+      "sha256": "54596dddb75bc1c7bd036cddf3f579ae8b41fb0ec016d780a4bc972e2a9e8c69"
+    }
+  ]
+}

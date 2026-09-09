@@ -1,0 +1,50 @@
+{
+  "source_partition": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/successor-return/retailer-coding-rebuild/partition-01.json",
+  "source_partition_sha256": "fbc6df3321ba842a9d8a85502581ad2943e5ead5ac1279e5fa2d9310ad05565d",
+  "evidence_id": "junip:13200181",
+  "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_05",
+  "source_row_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:13200181",
+  "actor_identity": "215817888",
+  "publication_time": "2026-05-10T02:01:45.837Z",
+  "native_title": "Love the product, hate the packaging",
+  "native_body": "I do actually love this product across the board. The problem is with the packaging. The lid keeps coming unscrewed and tonight it came loose in my pocket at work so it seeped onto my brand new underwear, and also onto my work shirt and of course there’s now a spot on my jeans. Worse, once I collected all the loose product onto my pinkie I had no way to put it back into the package. I hate complaining about packaging because that’s not made in house. That’s ordered from a manufacturer, so. I don’t know if maybe it should do a whole click lock when you screw the cap on, or if a doe foot option might be worth it? I just hate that because void is my favorite I’ve lost a lot of it to the lid coming off so I will repurchase. I love it so so much, but I’m very annoyed to lose so much product when it’s not that cheap.",
+  "native_product_context": {
+    "product": {
+      "created_at": "2024-03-18T11:58:42.783Z",
+      "deleted_at": null,
+      "group_owner": false,
+      "id": 6813901,
+      "published": true,
+      "rating_average": 4.7009063444108765,
+      "rating_count": 331,
+      "rating_distribution": {
+        "1": 9,
+        "2": 7,
+        "3": 10,
+        "4": 22,
+        "5": 283
+      },
+      "recommended_count": 308,
+      "recommended_percentage": 93.05135951661632,
+      "remote_handle": "softwear",
+      "remote_id": "7758608105664",
+      "title": "Softwear",
+      "type": "product",
+      "unreviewable": false,
+      "updated_at": "2026-09-04T19:52:43.289Z"
+    },
+    "target_title": "Softwear - Void"
+  },
+  "native_metadata": {
+    "rating": 3,
+    "recommendation": {
+      "field": "would_recommend",
+      "value": true
+    },
+    "incentive": {
+      "rewarded": false,
+      "verified_buyer": true,
+      "origin": "native"
+    }
+  }
+}

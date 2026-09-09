@@ -1,0 +1,602 @@
+{
+  "status": "authored worked replay, not blinded model evaluation or production method",
+  "selection": {
+    "frame": "47 displayed TikTok bodies plus one deliberately selected retailer counterexample",
+    "initial": [
+      "T0",
+      "T15",
+      "T6"
+    ],
+    "reason": "Highest-engagement explicit packaging appearance/reuse seeds in this saved discussion, plus the arrival complaint. Corroboration follows reply context regardless of likes.",
+    "later_groups": [
+      [
+        "T7",
+        "T8",
+        "T9",
+        "T10",
+        "T11",
+        "T12",
+        "T13"
+      ],
+      [
+        "T2",
+        "T3",
+        "T32",
+        "T42"
+      ],
+      [
+        "S1"
+      ]
+    ],
+    "not_selected": [
+      {
+        "id": "T1",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T4",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T5",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T14",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T16",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T17",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T18",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T19",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T20",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T21",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T22",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T23",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T24",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T25",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T26",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T27",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T28",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T29",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T30",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T31",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T33",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T34",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T35",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T36",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T37",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T38",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T39",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T40",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T41",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T43",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T44",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T45",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      },
+      {
+        "id": "T46",
+        "reason": "Outside this diagnostic replay; retained in native.json; not classified as irrelevant or absent."
+      }
+    ],
+    "limits": [
+      "Selection was made after the author saw all records; additions are simulated arrival order, not blinded or historical chronology.",
+      "Not a representative sample, full packaging diagnosis or material-saturation decision."
+    ]
+  },
+  "evidence": [
+    {
+      "id": "T0",
+      "source": "native.json",
+      "author_url": "/@randomdude7551",
+      "body": "Metal packaging is sooo chic (and environmentally friendly)",
+      "body_level": "comment-level-1",
+      "observation_index": 0,
+      "text": "randomdude7551\n\nMetal packaging is sooo chic (and environmentally friendly)\n5-15\n\nReply\n\n296",
+      "displayed_likes": 296,
+      "product": "unknown SKU",
+      "body_sha256": "ddf321db5ae88fe9556d4553e1dc782e0a0644674d16899802b010eadb9574ad"
+    },
+    {
+      "id": "T6",
+      "source": "native.json",
+      "author_url": "/@jasminesingh1102",
+      "body": "my product came leaked the top part was loose so i had to open it and clean so it was exposed to oxygen. is it not good to use anymore?",
+      "body_level": "comment-level-1",
+      "observation_index": 6,
+      "text": "Jasmine ✨️\n\nmy product came leaked the top part was loose so i had to open it and clean so it was exposed to oxygen. is it not good to use anymore?\n5-15\n\nReply\n\n12",
+      "displayed_likes": 12,
+      "product": "unknown SKU",
+      "body_sha256": "b4272404b6c47f250d4429f800c02896304dbe8dbb1b8159967b3a692bede137"
+    },
+    {
+      "id": "T15",
+      "source": "native.json",
+      "author_url": "/@bmdubs",
+      "body": "Gonna use my empty to hold my lexapro🤭",
+      "body_level": "comment-level-1",
+      "observation_index": 15,
+      "text": "brooke🩵✨🏹\n\nGonna use my empty to hold my lexapro🤭\n5-15\n\nReply\n\n150",
+      "displayed_likes": 150,
+      "product": "unknown SKU",
+      "body_sha256": "90c94f306edbb35dcbacf682936598e1cb62a4fd7db65ce70b37ddaa6ad82733"
+    },
+    {
+      "id": "T7",
+      "source": "native.json",
+      "author_url": "/@experimentwrld",
+      "body": "Oh no, we're sorry to hear that! Short term exposure is not an issue, but please reach out to hey@experimentbeauty.com and we’ll happily send a replacement. 🔬",
+      "body_level": "comment-level-2",
+      "observation_index": 7,
+      "text": "Experiment Beauty\n\n· Creator\n\nOh no, we're sorry to hear that! Short term exposure is not an issue, but please reach out to hey@experimentbeauty.com and we’ll happily send a replacement. 🔬\n5-16\nReply\n12",
+      "displayed_likes": 12,
+      "product": "unknown SKU",
+      "body_sha256": "9180a51a670413c626bfc9ffab87909da4e2677ea17c24b342aab8168bc25842"
+    },
+    {
+      "id": "T8",
+      "source": "native.json",
+      "author_url": "/@savi.glow",
+      "body": "That happened to mine too, I ordered it from Sephora and they sent a replacement for free ☺️",
+      "body_level": "comment-level-2",
+      "observation_index": 8,
+      "text": "Savannah\n\nThat happened to mine too, I ordered it from Sephora and they sent a replacement for free ☺️\n5-16\nReply\n5",
+      "displayed_likes": 5,
+      "product": "unknown SKU",
+      "body_sha256": "5003273796afcb82ab0894604bad393e3decdfcb78144056333d0d3c7b067975"
+    },
+    {
+      "id": "T9",
+      "source": "native.json",
+      "author_url": "/@user851526p",
+      "body": "sadly same.",
+      "body_level": "comment-level-2",
+      "observation_index": 9,
+      "text": "user851526\n\nsadly same.\n5-16\nReply\n4",
+      "displayed_likes": 4,
+      "product": "unknown SKU",
+      "body_sha256": "c75e5ce18a6cec54630db9c5b6be239dab7c387d24376fde6faac00fcec12a39"
+    },
+    {
+      "id": "T10",
+      "source": "native.json",
+      "author_url": "/@lara_jlue",
+      "body": "Mine came the same way 😭",
+      "body_level": "comment-level-2",
+      "observation_index": 10,
+      "text": "lara\n\nMine came the same way 😭\n5-16\nReply\n4",
+      "displayed_likes": 4,
+      "product": "unknown SKU",
+      "body_sha256": "fdb79d906ad2bd49b0e218036354f6215468b19b63432c1c511caa64c571f837"
+    },
+    {
+      "id": "T11",
+      "source": "native.json",
+      "author_url": "/@bert181818",
+      "body": "Same",
+      "body_level": "comment-level-2",
+      "observation_index": 11,
+      "text": "bert181818\n\nSame\n5-16\nReply\n2",
+      "displayed_likes": 2,
+      "product": "unknown SKU",
+      "body_sha256": "2a98b1deb68c7223d1367ad0671045f6835d960785aa24ebf18a69d64900cd42"
+    },
+    {
+      "id": "T12",
+      "source": "native.json",
+      "author_url": "/@boyauditsskincare",
+      "body": "Same",
+      "body_level": "comment-level-2",
+      "observation_index": 12,
+      "text": "BoyAuditsSkincare\n\nSame\n7-30\nReply\n0",
+      "displayed_likes": 0,
+      "product": "unknown SKU",
+      "body_sha256": "2a98b1deb68c7223d1367ad0671045f6835d960785aa24ebf18a69d64900cd42"
+    },
+    {
+      "id": "T13",
+      "source": "native.json",
+      "author_url": "/@betterxthanxnew",
+      "body": "Same here, ordered mine from Sephora and the top was not screwed down properly. Major leak 😭",
+      "body_level": "comment-level-2",
+      "observation_index": 13,
+      "text": "betterxthanxnew\n\nSame here, ordered mine from Sephora and the top was not screwed down properly. Major leak 😭\n5-18\nReply\n0",
+      "displayed_likes": 0,
+      "product": "unknown SKU",
+      "body_sha256": "fba76075fe4d27a65f44ef1b35f7350d28d5a525501e09fdd387a6b38fc92658"
+    },
+    {
+      "id": "T2",
+      "source": "native.json",
+      "author_url": "/@person1234567556987",
+      "body": "is it environmentally friendly though? is it recyclable?",
+      "body_level": "comment-level-2",
+      "observation_index": 2,
+      "text": "person\n\nis it environmentally friendly though? is it recyclable?\n5-15\nReply\n0",
+      "displayed_likes": 0,
+      "product": "unknown SKU",
+      "body_sha256": "73e157353150a271692051b4557e9fad53d2285d79635031d33a1f6a28733eee"
+    },
+    {
+      "id": "T3",
+      "source": "native.json",
+      "author_url": "/@randomdude7551",
+      "body": "Aluminum packaging like this is almost always recyclable, the inner part likely is as well. The pump likely isn’t but it and the outer aluminum shell are reusable",
+      "body_level": "comment-level-2",
+      "observation_index": 3,
+      "text": "randomdude7551\n\nAluminum packaging like this is almost always recyclable, the inner part likely is as well. The pump likely isn’t but it and the outer aluminum shell are reusable\n5-15\nReply\n2",
+      "displayed_likes": 2,
+      "product": "unknown SKU",
+      "body_sha256": "acd40d0d9a0268c451ecfc6e86b427277c22c4ca069cd41195d0738057d4e2c5"
+    },
+    {
+      "id": "T32",
+      "source": "native.json",
+      "author_url": "/@josemarbp",
+      "body": "This is genius i might have to save up for that",
+      "body_level": "comment-level-1",
+      "observation_index": 32,
+      "text": "mariobsmh\n\nThis is genius i might have to save up for that\n5-18\n\nReply\n\n3",
+      "displayed_likes": 3,
+      "product": "unknown SKU",
+      "body_sha256": "7df78cfdfa74574a4ba797dfaef2c8e32881a9b61ca810da52277ac181039eb8"
+    },
+    {
+      "id": "T42",
+      "source": "native.json",
+      "author_url": "/@__whitneyjade",
+      "body": "Wattttt im so excited about this because I just received mine today and I had no idea it’s refillable like this! 😍",
+      "body_level": "comment-level-1",
+      "observation_index": 42,
+      "text": "whitney | bevs & beauty\n\nWattttt im so excited about this because I just received mine today and I had no idea it’s refillable like this! 😍\n5-20\n\nReply\n\n1",
+      "displayed_likes": 1,
+      "product": "unknown SKU",
+      "body_sha256": "3e8761cb7408c3422bdafd58152926c39e2cd2274ed58301450b2f9d7ae1cd8a"
+    },
+    {
+      "id": "S1",
+      "source": "retailer-excerpt.json",
+      "evidence_id": "junip:13200181",
+      "body": "I do actually love this product across the board. The problem is with the packaging. The lid keeps coming unscrewed and tonight it came loose in my pocket at work so it seeped onto my brand new underwear, and also onto my work shirt and of course there’s now a spot on my jeans. Worse, once I collected all the loose product onto my pinkie I had no way to put it back into the package. I hate complaining about packaging because that’s not made in house. That’s ordered from a manufacturer, so. I don’t know if maybe it should do a whole click lock when you screw the cap on, or if a doe foot option might be worth it? I just hate that because void is my favorite I’ve lost a lot of it to the lid coming off so I will repurchase. I love it so so much, but I’m very annoyed to lose so much product when it’s not that cheap.",
+      "body_sha256": "5ce7ab8eaed49f17e49d7245848d96d884b8d944a85441e89e93d6df646163ca",
+      "product": "Softwear - Void",
+      "displayed_likes": null
+    }
+  ],
+  "stages": [
+    {
+      "id": "initial",
+      "findings": {
+        "appearance": {
+          "statement": "One packaging compliment attracted 296 displayed likes; it combines chic appearance with an unverified environmental belief.",
+          "sources": [
+            "T0"
+          ],
+          "limit": "Likes do not distinguish which part resonated and are not purchases or independent experience accounts."
+        },
+        "reuse": {
+          "statement": "One commenter proposes reusing the empty container to hold medication; 150 displayed likes.",
+          "sources": [
+            "T15"
+          ],
+          "limit": "Intent and attention, not observed reuse or evidence that this is appropriate storage."
+        },
+        "arrival": {
+          "statement": "One commenter reports an arrival leak with a loose top and asks whether oxygen exposure makes the product unusable.",
+          "sources": [
+            "T6"
+          ],
+          "detailed_reports": [
+            "T6"
+          ],
+          "brief_agreements": [],
+          "remedy_offers": [],
+          "reported_completed_remedies": [],
+          "purchase_loss_reports": [],
+          "product": "unknown SKU",
+          "limit": "A reported experience, not a verified defect mechanism, recurrence rate or lost sale."
+        }
+      }
+    },
+    {
+      "id": "corroboration",
+      "findings": {
+        "appearance": {
+          "statement": "One packaging compliment attracted 296 displayed likes; it combines chic appearance with an unverified environmental belief.",
+          "sources": [
+            "T0"
+          ],
+          "limit": "Likes do not distinguish which part resonated and are not purchases or independent experience accounts."
+        },
+        "reuse": {
+          "statement": "One commenter proposes reusing the empty container to hold medication; 150 displayed likes.",
+          "sources": [
+            "T15"
+          ],
+          "limit": "Intent and attention, not observed reuse or evidence that this is appropriate storage."
+        },
+        "arrival": {
+          "statement": "Arrival leakage has corroborating reports in this discussion: Jasmine and betterxthanxnew describe loose tops/leaks; Savannah reports the same arrival problem and a free replacement.",
+          "sources": [
+            "T6",
+            "T7",
+            "T8",
+            "T9",
+            "T10",
+            "T11",
+            "T12",
+            "T13"
+          ],
+          "detailed_reports": [
+            "T6",
+            "T13"
+          ],
+          "brief_agreements": [
+            "T9",
+            "T10",
+            "T11",
+            "T12"
+          ],
+          "remedy_offers": [
+            "T7"
+          ],
+          "reported_completed_remedies": [
+            "T8"
+          ],
+          "purchase_loss_reports": [],
+          "product": "unknown SKU",
+          "limit": "Distinct displayed profiles are not verified independent people. T11 receives no new-person credit from its changed handle across captures. Same-thread corroboration is not cross-venue recurrence. SKU, defect rate, contamination, and buying loss remain unknown.",
+          "contextual_reports": [
+            "T8"
+          ]
+        }
+      }
+    },
+    {
+      "id": "qualification",
+      "findings": {
+        "appearance": {
+          "statement": "One packaging compliment attracted 296 displayed likes; it combines chic appearance with an unverified environmental belief.",
+          "sources": [
+            "T0"
+          ],
+          "limit": "Likes do not distinguish which part resonated and are not purchases or independent experience accounts."
+        },
+        "reuse": {
+          "statement": "One commenter proposes reusing the empty container to hold medication; 150 displayed likes.",
+          "sources": [
+            "T15"
+          ],
+          "limit": "Intent and attention, not observed reuse or evidence that this is appropriate storage."
+        },
+        "arrival": {
+          "statement": "Arrival leakage has corroborating reports in this discussion: Jasmine and betterxthanxnew describe loose tops/leaks; Savannah reports the same arrival problem and a free replacement.",
+          "sources": [
+            "T6",
+            "T7",
+            "T8",
+            "T9",
+            "T10",
+            "T11",
+            "T12",
+            "T13"
+          ],
+          "detailed_reports": [
+            "T6",
+            "T13"
+          ],
+          "brief_agreements": [
+            "T9",
+            "T10",
+            "T11",
+            "T12"
+          ],
+          "remedy_offers": [
+            "T7"
+          ],
+          "reported_completed_remedies": [
+            "T8"
+          ],
+          "purchase_loss_reports": [],
+          "product": "unknown SKU",
+          "limit": "Distinct displayed profiles are not verified independent people. T11 receives no new-person credit from its changed handle across captures. Same-thread corroboration is not cross-venue recurrence. SKU, defect rate, contamination, and buying loss remain unknown.",
+          "contextual_reports": [
+            "T8"
+          ]
+        },
+        "environment": {
+          "statement": "Environmental appeal is explicitly questioned; the original praising commenter offers qualified recyclability/reuse guesses.",
+          "sources": [
+            "T0",
+            "T2",
+            "T3"
+          ],
+          "limit": "Two profiles discuss the claim; T0 and T3 are one profile. No verified environmental performance and no measured purchase consequence."
+        },
+        "interest": {
+          "statement": "One commenter might save up; another reports receipt and excitement at refillability.",
+          "sources": [
+            "T32",
+            "T42"
+          ],
+          "limit": "Tentative buying interest is not completed purchase. Receipt is not evidence of leak-free arrival. The reason for purchase is unknown."
+        }
+      }
+    },
+    {
+      "id": "different-product",
+      "findings": {
+        "appearance": {
+          "statement": "One packaging compliment attracted 296 displayed likes; it combines chic appearance with an unverified environmental belief.",
+          "sources": [
+            "T0"
+          ],
+          "limit": "Likes do not distinguish which part resonated and are not purchases or independent experience accounts."
+        },
+        "reuse": {
+          "statement": "One commenter proposes reusing the empty container to hold medication; 150 displayed likes.",
+          "sources": [
+            "T15"
+          ],
+          "limit": "Intent and attention, not observed reuse or evidence that this is appropriate storage."
+        },
+        "arrival": {
+          "statement": "Arrival leakage has corroborating reports in this discussion: Jasmine and betterxthanxnew describe loose tops/leaks; Savannah reports the same arrival problem and a free replacement.",
+          "sources": [
+            "T6",
+            "T7",
+            "T8",
+            "T9",
+            "T10",
+            "T11",
+            "T12",
+            "T13"
+          ],
+          "detailed_reports": [
+            "T6",
+            "T13"
+          ],
+          "brief_agreements": [
+            "T9",
+            "T10",
+            "T11",
+            "T12"
+          ],
+          "remedy_offers": [
+            "T7"
+          ],
+          "reported_completed_remedies": [
+            "T8"
+          ],
+          "purchase_loss_reports": [],
+          "product": "unknown SKU",
+          "limit": "Distinct displayed profiles are not verified independent people. T11 receives no new-person credit from its changed handle across captures. Same-thread corroboration is not cross-venue recurrence. SKU, defect rate, contamination, and buying loss remain unknown.",
+          "contextual_reports": [
+            "T8"
+          ]
+        },
+        "environment": {
+          "statement": "Environmental appeal is explicitly questioned; the original praising commenter offers qualified recyclability/reuse guesses.",
+          "sources": [
+            "T0",
+            "T2",
+            "T3"
+          ],
+          "limit": "Two profiles discuss the claim; T0 and T3 are one profile. No verified environmental performance and no measured purchase consequence."
+        },
+        "interest": {
+          "statement": "One commenter might save up; another reports receipt and excitement at refillability.",
+          "sources": [
+            "T32",
+            "T42"
+          ],
+          "limit": "Tentative buying interest is not completed purchase. Receipt is not evidence of leak-free arrival. The reason for purchase is unknown."
+        },
+        "softwear": {
+          "statement": "A Softwear Void reviewer reports repeated cap loosening, leakage in a work pocket, stains and product loss, yet intends to repurchase because they love it.",
+          "sources": [
+            "S1"
+          ],
+          "product": "Softwear - Void",
+          "purchase_loss_reports": [],
+          "repurchase_intent": [
+            "S1"
+          ],
+          "completed_repurchase": [],
+          "limit": "One account, engagement unavailable. Contradicts a blanket claim that packaging complaints necessarily cause abandonment; does not resolve the different, uncertain-SKU arrival discussion. Manufacturer explanation and proposed fixes are reviewer beliefs/suggestions."
+        }
+      }
+    }
+  ],
+  "cost": {
+    "actual_session_input_tokens": null,
+    "actual_session_output_tokens": null,
+    "actual_total_tokens": null,
+    "matched_baseline_total_tokens": null,
+    "measured_token_savings": null,
+    "reason": "Current session metering is unavailable to this replay. No separate model calls were commissioned or made for it. Stored text size and structural reuse are not token savings."
+  }
+}
