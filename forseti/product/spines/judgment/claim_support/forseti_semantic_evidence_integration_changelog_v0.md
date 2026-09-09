@@ -24,6 +24,13 @@ contract or its linked owning source. This history creates no new review step.
 
 ## Changelog
 
+- `v123` / 2026-09-09 — placed actionable instruction-reader usage at the
+  Evidence Consolidation operating entry, including the line-range fallback for
+  a section too large to return and the distinction between navigation and a
+  request error, with explicit gaps for unavailable or unreturnable sources.
+  Incomplete instruction reads remain explicit; reuse does not
+  waive fresh checks. This documentation change does not change runtime
+  interfaces, evidence admission, or consolidation methods.
 - `v122` / 2026-09-08 — reconciled producer prevention with versioned shared
   claim interpretation. Current run v11 binds integration method v13 and
   verifier v12; public normal reconciliation retains authoring v4 without a
