@@ -1,0 +1,733 @@
+{
+  "case": "buying",
+  "initial": [
+    "A01",
+    "A02",
+    "A04",
+    "A05",
+    "A12"
+  ],
+  "additions": [
+    "A11",
+    "A14",
+    "A15",
+    "A16"
+  ],
+  "records": [
+    {
+      "key": "A01",
+      "id": "reddit:1n9da6u:ncm3hhd",
+      "text": "Just took Experiment balm out of my FF cart, but your comment made me put it right back in. My wallet hates you, but my crusty lips thank you",
+      "actor_identity": "boxybrown84",
+      "independence_key": "reddit:author:boxybrown84",
+      "independence_posture": "unavailable",
+      "publication_time": "2025-09-05T19:51:50.755000+0000",
+      "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1n9da6u-projection.json#$.comments[4]",
+      "source_role": "community_post",
+      "container_id": "reddit:1n9da6u",
+      "engagement": {
+        "material_positive": false,
+        "native_score": "13",
+        "posture": "not_interpreted"
+      },
+      "context_refs": [
+        "context_5f002acbf9eb1cd7bfc3",
+        "context_99d43abe0dbe462c3b55"
+      ]
+    },
+    {
+      "key": "A02",
+      "id": "reddit:1n9da6u:ncly8vq",
+      "text": "I have that one too, I cant stand the feeling so I always skip it. I love the baste balm tho",
+      "actor_identity": "PamelaDamnela",
+      "independence_key": "reddit:author:pameladamnela",
+      "independence_posture": "unavailable",
+      "publication_time": "2025-09-05T19:25:41.099000+0000",
+      "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1n9da6u-projection.json#$.comments[1]",
+      "source_role": "community_post",
+      "container_id": "reddit:1n9da6u",
+      "engagement": {
+        "material_positive": false,
+        "native_score": "4",
+        "posture": "not_interpreted"
+      },
+      "context_refs": [
+        "context_ff821dc553240c0290fa",
+        "context_99d43abe0dbe462c3b55"
+      ]
+    },
+    {
+      "key": "A04",
+      "id": "junip:7540631",
+      "text": "Review title: Hydrating, refreshing, fast drying, PERFECT\n\nReview body: My sister introduced me to this brand through the “super saturated” product. I fell in love with it and ordered some for myself. It was so lightweight and refreshing and fast-drying but also super hydrating without making my pores feel clogged. It was the perfect hydration to have pre- makeup application. Anyway, at night I wanted something even more hydrating and repairing because it turns out my skin really needed this… so I bought the buffer jelly! I was worried because it seemed so thick and oily, but OMG I WOKE UP WOTH THE MOST GLOWY AND CLEAN SKIN! And you only need like the tiniest little amount! Obviously I immediately bought the face wash and….. bam… no more breakouts and no more makeup remover needed. One little dollop and my makeup is washed right off AND my skin is hydrated. So when they came out with the mesh moisturizer, I bought it immediately. ALSO, the colors! I love my bathroom counter. It’s so quirky and delightful now. Thank you Experiment lady scientists! You are life changing! I love you and I want to have brunch with you.",
+      "actor_identity": "202931541",
+      "independence_key": "junip:customer:202931541",
+      "independence_posture": "credited",
+      "publication_time": "2025-03-22T05:41:14.060Z",
+      "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:7540631",
+      "source_role": "retailer_review",
+      "container_id": "junip:review:7540631",
+      "engagement": {
+        "up_votes": 0,
+        "down_votes": 0,
+        "observed_at": null
+      },
+      "context_refs": [
+        "context_c2af7db629fb3d188eab",
+        "context_9f8ce97d6af21888fd08"
+      ],
+      "review_updated_at": "2025-03-23T19:29:50.304Z"
+    },
+    {
+      "key": "A05",
+      "id": "junip:1569510",
+      "text": "Review title: Loving the Sustainability and Results!\n\nReview body: I’ve been trying to be more sustainable in my beauty routine, so I haven’t done a sheet mask in a while which breaks my soul (I used to use sheet masks practically every night). When I discovered this reusable sheet mask from a creator on TikTok, I instantly checked out and was so excited to try it. The mask was almost a perfect fit (except for the sides of my cheeks and nose) and I love how easy it was to clean. Having this product in my routine motivates me to use some of my more hydrating/moisturizing products that have been helping to repair my skin barrier. My skin says thank you!!!",
+      "actor_identity": "44968672",
+      "independence_key": "junip:customer:44968672",
+      "independence_posture": "credited",
+      "publication_time": "2022-11-03T23:08:43.403Z",
+      "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:1569510",
+      "source_role": "retailer_review",
+      "container_id": "junip:review:1569510",
+      "engagement": {
+        "up_votes": 0,
+        "down_votes": 0,
+        "observed_at": null
+      },
+      "context_refs": [
+        "context_c6f9d306eb781c59b11e",
+        "context_0541d2895243cbe02f89"
+      ],
+      "review_updated_at": "2022-11-03T23:08:43.499Z"
+    },
+    {
+      "key": "A12",
+      "id": "reddit:1i30kik:m7j6no0",
+      "text": "I recently got their cream 2.0 after going a little too heavy handed with my tret and was looking for a healing moisturizer. Based off of my experience with that one product, I’m going to try more from the line! Really impressed with the formulations, and it sounds like their products are really trying to fill gaps in the market where there isn’t science based formulations.\n\nAlong with the cream 2.0, I also picked up their cleanser to use as well. The cleanser is nice too, but pretty small. At this point, I’m more interested in the serums/moisturizer options!",
+      "actor_identity": "eratch",
+      "independence_key": "reddit:author:eratch",
+      "independence_posture": "unavailable",
+      "publication_time": "2025-01-16T22:43:32.384000+0000",
+      "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1i30kik-projection.json#$.comments[17]",
+      "source_role": "community_post",
+      "container_id": "reddit:1i30kik",
+      "engagement": {
+        "material_positive": false,
+        "native_score": "12",
+        "posture": "not_interpreted"
+      },
+      "context_refs": [
+        "context_66e864c836942282c210"
+      ]
+    },
+    {
+      "key": "A11",
+      "id": "junip:6638709",
+      "text": "Review title: Loved until it gave me dermatitis\n\nReview body: I loved this product for the first few months until it gave me dermatitis. It was recommended by an influencer I follow and it was literally the best lip balm I had used up until then. My only gripe at the time was I would wake up in the morning with tons of dead skin on my lips, which I guess means it's doing its job, but I had to rub/brush the dead skin off every morning. I've seen reviews bashing the consistency which I kind of understand, it's very thick but I actually liked it and the sheen it left. Yes rubbing your lips together had resistance but I just didn't rub my lips together lol. Unfortunately I started getting perioral dermatitis from this product after a few months of use. My lips became so rough with tiny bumps and it got to the point where I had to get a steroid cream prescribed to me. After my lips were back to normal I tried it again hoping the dermatitis was caused by something else but my lips flared up within 24 hours worse than ever, so unfortunately it's confirmed caused by Softwear. I'm devastated because I loved it so much and I now have 3 unopened tubes I stocked up on during the months I loved it, there goes $70 CAD 😭. TL,DR: Definitely give it a try, the price is reasonable. But if you have sensitive lips, beware. I've never had a reaction like this in my life and my lips have never been sensitive so it really is a lottery of whether it'll do the same for you. I envy those who can use it 😭",
+      "actor_identity": "178058824",
+      "independence_key": "junip:customer:178058824",
+      "independence_posture": "credited",
+      "publication_time": "2024-11-25T23:23:20.349Z",
+      "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6638709",
+      "source_role": "retailer_review",
+      "container_id": "junip:review:6638709",
+      "engagement": {
+        "up_votes": 0,
+        "down_votes": 0,
+        "observed_at": null
+      },
+      "context_refs": [
+        "context_f77334c0890cf38096de",
+        "context_a20a02f4a3fcad7a393c"
+      ],
+      "review_updated_at": "2024-11-25T23:23:46.773Z"
+    },
+    {
+      "key": "A14",
+      "id": "junip:8950945",
+      "text": "Review title: Calming, Soothing, Buttery Soft Sorcery\n\nReview body: For 100% transparency, I did receive this product free for an honest review at a later date but I've used it twice and needed to post this review here and now. This stuff is magical! Basically they took a barrier repair serum and a soothing, nourishing face oil and smooshed them together into this little dropper bottle to make a product that feels like someone's grandma crocheted the softest blanket ever just for your face. I really can't properly describe the texture. It does start out as a jelly-like substance that turns into a soft, fluidy oil as soon as it hits the skin. But where most oils seem to have a dryness or a taciness to them that make them feel disgusting while you're massaging them in, Buffer Jelly has a silky slip to it that just feels like heaven. I have rosacea and I've been adding a drop of this to my moisturizer at night and I wake up with super soft skin with no redness, irritation, or clogged pores. I think this will also be perfection for after dermaplaning. I was surprised by how small this bottle is when I first got it but I think it's simply deception due to Experiment using reduced packaging, because this is a full 1oz of product, which for an oil will last a VERY long time. So it's official, I'm an Experiment convert...",
+      "actor_identity": "344086099",
+      "independence_key": "junip:customer:344086099",
+      "independence_posture": "credited",
+      "publication_time": "2025-08-05T19:45:57.174Z",
+      "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:8950945",
+      "source_role": "retailer_review",
+      "container_id": "junip:review:8950945",
+      "engagement": {
+        "up_votes": 0,
+        "down_votes": 0,
+        "observed_at": null
+      },
+      "context_refs": [
+        "context_2856fb9f627c121e5cbd",
+        "context_6aca0285482c6a50e43d"
+      ],
+      "review_updated_at": "2025-08-20T04:38:18.471Z"
+    },
+    {
+      "key": "A15",
+      "id": "junip:6567933",
+      "text": "Review title: Confused\n\nReview body: First, the texture is beautiful, it's so silky and plasma is the perfect descriptor for it! Unfortunately, I could not get a good cleanse out of this product, no matter how I used it. I tried a little bit (a quarter size), lathered in my hands, onto to wet skin; I tried the same on dry skin. I tried lathering on my face instead of in my hands first. I tried using a lot of product (2 quarters size), on wet face, on a dry face, lathering, not lathering... Every way I tried it didn't foam/bubble at all and almost seemed to be absorbing into my skin, it was disappearing. It was like rubbing a cream on my face that became more viscous after coming in contact with the water. That alone would not have been warranting of 2 stars, but this burned my eyes like no other cleanser I've used in a long time. I mean, badly, to the point I considered returning it. I don't really wear eye makeup ever so I just cleanse with my eyes closed, but boy was that a disappointment. Overall, this leaves my face feeling not as clean, and not as moisturized after one wash than my apparent all time fav cleanser(which is also a glycerin based cleanser, which is why I thought this one would be good for me). After two, it's just even drier feeling so I don't find it appropriate for a double cleanse. I'm unsure if I got a defective product somehow, or if I'm using the product wrong because I see so many great experiences from people on social media I'm genuinely confused...",
+      "actor_identity": "210150638",
+      "independence_key": "junip:customer:210150638",
+      "independence_posture": "credited",
+      "publication_time": "2024-11-04T16:36:31.007Z",
+      "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6567933",
+      "source_role": "retailer_review",
+      "container_id": "junip:review:6567933",
+      "engagement": {
+        "up_votes": 0,
+        "down_votes": 0,
+        "observed_at": null
+      },
+      "context_refs": [
+        "context_a1e603f2d330d39599e8",
+        "context_bc1ebb9bd971b58bdaa2"
+      ],
+      "review_updated_at": "2024-11-04T16:36:31.684Z"
+    },
+    {
+      "key": "A16",
+      "id": "junip:13599983",
+      "text": "Review title: Going into my lineup\n\nReview body: Minimal and easy-to-use packaging. Very mild chemical smell to the product when dispensed. Nice light gel-serum texture and goes on with 0 sensitivity. (I actually hollered when I saw that it uses parabens for its preservative system—they’re the best preservatives!! So effective but also so well-tolerated and gentle. I think it speaks to the brand’s science-first approach to formulation and ingredients that they included them.) I currently use azelaic acid and salicylic acid products regularly so I think this product will probably replace both of those, which I like because I enjoy simplicity. My skin lovesssss salicylic acid and after using Continuum at night, I wake up with any active acne looking a bit less red than the night before. I can’t speak to how effective it really is at treating acne or post-acne pigmentation though because it’s hard for me to gauge something like that objectively. Overall I think this is a great product and will definitely be a new staple for me.",
+      "actor_identity": "529373073",
+      "independence_key": "junip:customer:529373073",
+      "independence_posture": "credited",
+      "publication_time": "2026-05-29T08:11:20.784Z",
+      "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:13599983",
+      "source_role": "retailer_review",
+      "container_id": "junip:review:13599983",
+      "engagement": {
+        "up_votes": 0,
+        "down_votes": 0,
+        "observed_at": null
+      },
+      "context_refs": [
+        "context_5e9e3bba19e94cb5d35a",
+        "context_ebc7a83ace08c1112846"
+      ],
+      "review_updated_at": "2026-06-11T21:01:10.039Z"
+    }
+  ],
+  "contexts": [
+    {
+      "bundle_pointer": "/semantic_work_unit_projection/context_registry/126",
+      "text_sha256": "9f607d431f852e6f89a394ad5faa8398a0e16328f23b2e0527ba034131a75493",
+      "context_id": "context_0541d2895243cbe02f89",
+      "context_type": "source_scope",
+      "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_40",
+      "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:1569510:metadata",
+      "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [], \"target_title\": \"Avant Guard - Acid Lime / SMALL 🐸\", \"verified_buyer\": true}"
+    },
+    {
+      "bundle_pointer": "/semantic_work_unit_projection/context_registry/889",
+      "text_sha256": "b23a6c92f2d26808f6713d4eb00ddafdcb83f1e3cb138ea3a966e5079dad7e55",
+      "context_id": "context_2856fb9f627c121e5cbd",
+      "context_type": "product_page",
+      "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_12",
+      "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:8950945",
+      "text": "Buffer Jelly | id=4026185 | remote_id=7476098007232 | remote_handle=buffer-jelly"
+    },
+    {
+      "bundle_pointer": "/semantic_work_unit_projection/context_registry/2081",
+      "text_sha256": "d75d826d80061cf0eb4011b8d4191359b91030d6b71e0b624d7f3e23a1d29927",
+      "context_id": "context_5e9e3bba19e94cb5d35a",
+      "context_type": "product_page",
+      "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_04",
+      "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:13599983",
+      "text": "Continuum | id=16152374 | remote_id=8555927306432 | remote_handle=continuum"
+    },
+    {
+      "bundle_pointer": "/semantic_work_unit_projection/context_registry/2089",
+      "text_sha256": "69f45ea405df6b60bbac92e6347baaecaee5312d70a35a4a6ddab27914e9f9b2",
+      "context_id": "context_5f002acbf9eb1cd7bfc3",
+      "context_type": "parent_text",
+      "source_artifact_id": "local-native-1n9da6u-projection-20260909",
+      "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1n9da6u-projection.json#$.comments[3]",
+      "text": "Experiment Softwear is by far my favorite lip balm ever. I don’t notice the exfoliation other than in how smooth and moisturized my lips are, and I can’t use pretty much any other exfoliant anywhere else on my face because my skin is so sensitive. It is superior to every other lip balm I’ve tried, even the Eadem. I like the Eadem ones okay, and they are also moisturizing, but I hate hate hate their scent/taste. Experiment Softwear is clear and scent free. It is the absolutely BEST. I can’t recommend it enough. I literally have two backups because I love it so much and it used to be harder to get since I’d have to have it shipped from Experiment’s website. So excited it’s at Sephora now!!",
+      "native_identity": {
+        "id": "t1_nclxocd",
+        "author": "cowrunamuck",
+        "score": "21",
+        "created": "2025-09-05T19:22:52.383000+0000"
+      }
+    },
+    {
+      "bundle_pointer": "/semantic_work_unit_projection/context_registry/2241",
+      "text_sha256": "2070ef56d5641eecf7f8884cd75242cb43f03bd517d82674abee1593cec7bcff",
+      "context_id": "context_66e864c836942282c210",
+      "context_type": "post_text",
+      "source_artifact_id": "local-native-1i30kik-projection-20260909",
+      "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1i30kik-projection.json#$.post",
+      "text": "{\"url\":\"https://www.reddit.com/r/SkincareAddictionLux/comments/1i30kik/has_anyone_tried_regimenlab/\",\"title\":\"Has anyone tried regimenlab?\",\"text\":\"It’s been popping out on my insta as advertised, and to be fair some brands that advertise on instagram are not bad at all (Biossance for example does a lot of ad there). I saw their website and looks cool, they advertise a lot a new formulation of soluble Azelaic acid as well.\\n\\nBut I’ve never seen this brand before. So I thought about asking here if anyone has?\"}"
+    },
+    {
+      "bundle_pointer": "/semantic_work_unit_projection/context_registry/2332",
+      "text_sha256": "89f4f0c69eb78336b8cf71f29cf77a49cdc78f68f3dcf66bacbccb2ce3707b2d",
+      "context_id": "context_6aca0285482c6a50e43d",
+      "context_type": "source_scope",
+      "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_12",
+      "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:8950945:metadata",
+      "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [{\"created_at\": \"2025-08-05T19:45:57.296Z\", \"id\": 4955370, \"meta\": {}, \"name\": \"Skin Type\", \"question_id\": 864, \"type\": \"survey_answer\", \"updated_at\": \"2025-08-05T19:45:57.296Z\", \"value\": \"Combo + Acne Prone\", \"value_type\": \"radio\"}], \"target_title\": \"Buffer Jelly\", \"verified_buyer\": false}"
+    },
+    {
+      "bundle_pointer": "/semantic_work_unit_projection/context_registry/3365",
+      "text_sha256": "7afc598f1e91cef6aa901deb90916e366cac58ec3b31f2c5a1bc93a08da840b2",
+      "context_id": "context_99d43abe0dbe462c3b55",
+      "context_type": "post_text",
+      "source_artifact_id": "local-native-1n9da6u-projection-20260909",
+      "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1n9da6u-projection.json#$.post",
+      "text": "{\"url\":\"https://www.reddit.com/r/Sephora/comments/1n9da6u/have_you_tried_an_exfoliating_lip_balmtreatment/\",\"title\":\"Have you tried an exfoliating lip balm/treatment yet?\",\"text\":\"If you have, do you feel like they helped?\"}"
+    },
+    {
+      "bundle_pointer": "/semantic_work_unit_projection/context_registry/3478",
+      "text_sha256": "74fff10697c6675ecb0a60b4c2281254263f7545b024c7266f74fe9374d1095e",
+      "context_id": "context_9f8ce97d6af21888fd08",
+      "context_type": "source_scope",
+      "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_16",
+      "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:7540631:metadata",
+      "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [{\"created_at\": \"2025-03-22T05:41:14.282Z\", \"id\": 4588657, \"meta\": {}, \"name\": \"Skin Type\", \"question_id\": 864, \"type\": \"survey_answer\", \"updated_at\": \"2025-03-22T05:41:14.282Z\", \"value\": \"Combo + Sensitive\", \"value_type\": \"radio\"}], \"target_title\": \"Super Saturated - Refill\", \"verified_buyer\": true}"
+    },
+    {
+      "bundle_pointer": "/semantic_work_unit_projection/context_registry/3517",
+      "text_sha256": "af40b3118925dc419071ef6da2a619a603baf20ac6d5d5a376bdf25379c345e4",
+      "context_id": "context_a1e603f2d330d39599e8",
+      "context_type": "product_page",
+      "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_20",
+      "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6567933",
+      "text": "Plasma Wash | id=8648416 | remote_id=8086723035328 | remote_handle=plasma-wash"
+    },
+    {
+      "bundle_pointer": "/semantic_work_unit_projection/context_registry/3521",
+      "text_sha256": "e1092237964a9d6d8015fe9f203b3ddc1cf46c852fdcd8550b90a325b7102244",
+      "context_id": "context_a20a02f4a3fcad7a393c",
+      "context_type": "source_scope",
+      "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_19",
+      "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6638709:metadata",
+      "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [{\"created_at\": \"2024-11-25T23:23:20.597Z\", \"id\": 4128966, \"meta\": {}, \"name\": \"Skin Type\", \"question_id\": 864, \"type\": \"survey_answer\", \"updated_at\": \"2024-11-25T23:23:20.597Z\", \"value\": \"Combo + Sensitive\", \"value_type\": \"radio\"}], \"target_title\": \"Softwear\", \"verified_buyer\": true}"
+    },
+    {
+      "bundle_pointer": "/semantic_work_unit_projection/context_registry/4058",
+      "text_sha256": "2733888b7eb34fc535d0d51902b8910744c5e3bf1790a7c46d78914dd7898c85",
+      "context_id": "context_bc1ebb9bd971b58bdaa2",
+      "context_type": "source_scope",
+      "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_20",
+      "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6567933:metadata",
+      "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [{\"created_at\": \"2024-11-04T16:36:31.257Z\", \"id\": 4089692, \"meta\": {}, \"name\": \"Skin Type\", \"question_id\": 864, \"type\": \"survey_answer\", \"updated_at\": \"2024-11-04T16:36:31.257Z\", \"value\": \"Combo + Acne Prone\", \"value_type\": \"radio\"}], \"target_title\": \"Plasma Wash\", \"verified_buyer\": true}"
+    },
+    {
+      "bundle_pointer": "/semantic_work_unit_projection/context_registry/4201",
+      "text_sha256": "8ae6ed8f5bd45c918909673c2ce7964c9bc9af1301adf9d3133b52e0a4160902",
+      "context_id": "context_c2af7db629fb3d188eab",
+      "context_type": "product_page",
+      "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_16",
+      "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:7540631",
+      "text": "Super Saturated | id=2682694 | remote_id=7299389030592 | remote_handle=super-saturated"
+    },
+    {
+      "bundle_pointer": "/semantic_work_unit_projection/context_registry/4311",
+      "text_sha256": "f2c873cf7233fc9c036308f503810fa93f7803e7edc97e05c71360dd5f40f8b3",
+      "context_id": "context_c6f9d306eb781c59b11e",
+      "context_type": "product_page",
+      "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_40",
+      "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:1569510",
+      "text": "Avant Guard | id=2516750 | remote_id=5913452937408 | remote_handle=avant-guard"
+    },
+    {
+      "bundle_pointer": "/semantic_work_unit_projection/context_registry/5092",
+      "text_sha256": "952d8f1eb316ac4d105e64f4acae6706fde499d23553756bb564cf4b270338e9",
+      "context_id": "context_ebc7a83ace08c1112846",
+      "context_type": "source_scope",
+      "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_04",
+      "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:13599983:metadata",
+      "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [{\"created_at\": \"2026-05-29T08:11:21.146Z\", \"id\": 6579430, \"meta\": {}, \"name\": \"Skin Type\", \"question_id\": 864, \"type\": \"survey_answer\", \"updated_at\": \"2026-05-29T08:11:21.146Z\", \"value\": \"Combo + Acne Prone\", \"value_type\": \"radio\"}], \"target_title\": \"Continuum - First Time\", \"verified_buyer\": true}"
+    },
+    {
+      "bundle_pointer": "/semantic_work_unit_projection/context_registry/5370",
+      "text_sha256": "db17b1f0302767d01e541fd1354df7196757e958c0dfa4eb31f06f5550b1d423",
+      "context_id": "context_f77334c0890cf38096de",
+      "context_type": "product_page",
+      "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_19",
+      "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6638709",
+      "text": "Softwear | id=6813901 | remote_id=7758608105664 | remote_handle=softwear"
+    },
+    {
+      "bundle_pointer": "/semantic_work_unit_projection/context_registry/5540",
+      "text_sha256": "a74d3d05d1d29c9bca8da41c3b73b9a61d44972125c0de600c9c16fb742ca1d8",
+      "context_id": "context_ff821dc553240c0290fa",
+      "context_type": "parent_text",
+      "source_artifact_id": "local-native-1n9da6u-projection-20260909",
+      "source_ref": "C:/Users/vmon7/Desktop/projects/orca/worktrees/experiment-beauty-evidence-repair-20260905/tmp/experiment-beauty-repair-20260905/material-saturation-completion-20260907/finish-20260908/review-adjudication-20260909/remaining-native-checks/1n9da6u-projection.json#$.comments[0]",
+      "text": "I’ve tried Experiment and Dr. Idriss. Experiment’s Softwear is one of the best lip balms I personally have ever used, and I have a stash of lip balms that’s embarrassing (I have been on a quest). Experiment as a brand knocks it out of the park with every single product. They are small but mighty… not a lot of products, but what they do have they do very well. Love them!\n\nThe Dr. Idriss lip exfoliator is good. It’s tacky/sticky, and she designed it to use via her lip basting method, so layering something over it is needed. You don’t necessarily need to use her Barrier Baste product, any nice thick lip mask/balm will do. But the Barrier Baste is nice as well. I often just use Lansinoh pure lanolin over the Idriss exfoliator, though, or a different lip mask. Wake up to soft lips.",
+      "native_identity": {
+        "id": "t1_ncls0z6",
+        "author": "RowanVC",
+        "score": "42",
+        "created": "2025-09-05T18:54:23.656000+0000"
+      }
+    }
+  ],
+  "answers": [
+    {
+      "name": "buying-incremental-initial",
+      "answer": {
+        "retrieval_requests": [],
+        "report": "Initial stage: Two focal accounts explicitly narrate Experiment acquisition, comprising five product acquisition categories: A04’s Super Saturated, Buffer Jelly, face wash and mesh moisturizer, plus A05’s Avant Guard checkout. These are account-level reports, not verified transactions or five established purchase events. No subsequent-stage evidence was supplied.\n\nA04 describes expansion across the line after favorable experiences: a sister’s introduction preceded ordering Super Saturated; wanting stronger nighttime hydration/repair prompted Buffer Jelly; favorable subsequent experience preceded buying face wash and then the newly launched mesh moisturizer. Reported benefits include lightweight, fast-drying hydration before makeup, glowy skin after Buffer Jelly, and makeup removal, hydration and no more breakouts with the wash. These are sequential, same-person reports involving multiple products, not isolated efficacy tests. Colorful packaging also receives praise, without an explicit acquisition attribution. A05 explicitly links immediate Avant Guard checkout to TikTok discovery in the context of seeking sustainability after already stopping disposable sheet masks. Neither account establishes repurchase of the same product; A04’s refill metadata cannot supply that missing narration.\n\nA01 reports putting Softwear back into an FF cart because of another commenter’s recommendation, not checkout or use. A02’s dislike of an intolerable-feeling product and consequent skipping concerns Dr. Idriss in parent context, alongside approval of its baste balm; it is not Experiment abandonment. A12’s cream 2.0 and cleanser acquisitions, post-tret moisturizer need, favorable formulation assessment and intention to try more concern Regimen Lab, not Experiment.\n\nThe two credited retailer-review origins independently repeat only the broad proposition of completed Experiment acquisition. Their specific products and reported reasons differ; no precise purchase motive is independently repeated or corroborated across source roles. A01 supplies a separate, explicitly self-attributed recommendation-to-cart consequence. No focal stock-up, gifted receipt, contemplated/completed return, or intended/completed routine substitution is narrated. A04’s claim that makeup remover is no longer needed is functional redundancy, not an explicit report of stopping it. A05’s prior sheet-mask discontinuation predates discovering Avant Guard.\n\nMaterial context, excluded from focal counts: cowrunamuck (Reddit t1_nclxocd, 2025-09-05, score 21) reports two Softwear backups because of love for the product and previously difficult website-only acquisition, plus enthusiasm for Sephora availability. They report smooth, moisturized lips despite sensitivity to other facial exfoliants, favor Softwear over Eadem, and dislike Eadem’s scent/taste while acknowledging its moisturizing effect. RowanVC (t1_ncls0z6, same thread/date, score 42) independently praises Softwear and Experiment generally; their unspecified lip-balm stash does not establish Experiment stockpiling. Their Dr. Idriss account describes stickiness, required layering and soft lips with lanolin or another mask. These are distinct contextual actors in one discussion, not focal acquisition testimony. Their Softwear praise cannot corroborate the private buying reasons of focal accounts.\n\nObserved engagement: A01 score 13, A02 score 4, A12 score 12; each is explicitly marked material_positive=false and not_interpreted. A04 and A05 each have 0 upvotes and 0 downvotes, observation time unavailable. Context scores 21 and 42 remain raw; exposure and engagement observation times are unavailable. Likes/scores establish neither additional experiences nor independence, prevalence or purchase effects.\n\nConflict posture: none observed for the bounded narrated acquisition/cart actions; broader experiences contain qualifications. A05’s strong satisfaction coexists with imperfect cheek/nose fit; A04’s thickness/oiliness concern was anticipatory and followed by praise. A02’s discomfort and A12’s small-cleanser complaint belong to other brands and coexist with positive sentiment there. Formula versions are unspecified except A12’s other-brand cream 2.0. Evidence supports individual reported actions and reasons, not market causation, representative demand or verified buying.",
+        "source_index": [
+          {
+            "key": "A01",
+            "findings": "boxybrown84; Reddit 1n9da6u, 2025-09-05; score 13, material_positive=false/not_interpreted, observation time unavailable. Explicitly re-added Experiment balm to FF cart because of a comment; parent identifies Softwear, version unknown. No completed checkout, acquisition, use or stock-up. Parent cowrunamuck’s favorable experience and two backups are separate contextual testimony, not A01’s. Independence posture unavailable; same thread as A02."
+          },
+          {
+            "key": "A02",
+            "findings": "PamelaDamnela; Reddit 1n9da6u, 2025-09-05; score 4, material_positive=false/not_interpreted, observation time unavailable. Owns but always skips an intolerable-feeling item; parent context resolves this to the Dr. Idriss exfoliator, alongside love for its baste balm. SKU/version not fully specified. No Experiment acquisition or adverse-use testimony, return or explicit completed routine substitution. Parent RowanVC’s Experiment praise and layered Dr. Idriss experience remain separate testimony. Independence posture unavailable."
+          },
+          {
+            "key": "A04",
+            "findings": "Junip customer 202931541; review 7540631, published 2025-03-22, updated 2025-03-23; credited origin; 0 up/0 down, observation time unavailable. Four explicit Experiment acquisition categories: Super Saturated after sister introduction and liking it; Buffer Jelly for greater nighttime hydration/repair; face wash after favorable preceding experience; mesh moisturizer immediately upon launch. Wash and moisturizer correspond contextually to Plasma Wash and Molecular Mesh, but body does not give those exact names; versions unknown. Reports pre-makeup lightweight, refreshing, fast-drying hydration without clogged-feeling pores; glowy/clean skin after Jelly despite initial thick/oily concern; makeup removal, hydration and no more breakouts with wash. Multiple-product routine prevents isolated attribution. Loves packaging colors, without explicit buying causation. No same-product repurchase or stock-up established; makeup-remover redundancy is not narrated discontinuation. Metadata separately identifies Super Saturated Refill, verified buyer, unrewarded and Combo + Sensitive skin; refill metadata adds no acquisition category."
+          },
+          {
+            "key": "A05",
+            "findings": "Junip customer 44968672; review 1569510, 2022-11-03, updated same date; credited origin; 0 up/0 down, observation time unavailable. Explicit immediate checkout of reusable Avant Guard after TikTok-creator discovery amid sustainability concerns. Had already stopped formerly near-nightly disposable sheet masks; no explicit completed replacement or future substitution commitment. Uses mask, finds cleaning easy and fit almost perfect except cheeks/nose; motivates use of other hydrating/moisturizing products credited with barrier repair, so mask-alone efficacy is unestablished. One Experiment acquisition category; no gift, repurchase, stockpile or return. Metadata separately identifies Acid Lime/SMALL, verified buyer and unrewarded; formula/version unknown."
+          },
+          {
+            "key": "A12",
+            "findings": "eratch; Reddit 1i30kik, 2025-01-16; score 12, material_positive=false/not_interpreted, observation time unavailable; independence posture unavailable. Thread title resolves brand to Regimen Lab. Reports acquiring cream 2.0 seeking a healing moisturizer after excessive tret use and also picking up cleanser. Favorable cream experience supports intention to try more; cleanser is nice but small, with greater interest in serums/moisturizers. Science/formulation praise is personal assessment. These are other-brand acquisitions and prospective interest, not Experiment buying, proven healing, repurchase or completed routine replacement. Context post supplies brand reference only; its author, date and engagement are unavailable."
+          }
+        ],
+        "counts": [
+          {
+            "name": "experiment_acquisition_focal",
+            "source_accounts": [
+              "A04",
+              "A05"
+            ],
+            "count": 2
+          },
+          {
+            "name": "cart_readdition",
+            "source_accounts": [
+              "A01"
+            ],
+            "count": 1
+          },
+          {
+            "name": "stockup_focal",
+            "source_accounts": [],
+            "count": 0
+          },
+          {
+            "name": "gift_receipt",
+            "source_accounts": [],
+            "count": 0
+          },
+          {
+            "name": "return_considered",
+            "source_accounts": [],
+            "count": 0
+          },
+          {
+            "name": "return_completed",
+            "source_accounts": [],
+            "count": 0
+          },
+          {
+            "name": "routine_replacement_intended",
+            "source_accounts": [],
+            "count": 0
+          },
+          {
+            "name": "routine_replacement_completed",
+            "source_accounts": [],
+            "count": 0
+          }
+        ],
+        "product_action_assertions": 5
+      }
+    },
+    {
+      "name": "buying-incremental-update",
+      "answer": {
+        "retrieval_requests": [],
+        "report": "Initial stage, retained from the supplied prior findings: A04 and A05 explicitly narrated Experiment acquisition, covering five account/product categories: A04’s Super Saturated, Buffer Jelly, face wash and mesh moisturizer, and A05’s Avant Guard checkout. A01 re-added Softwear to a cart following a recommendation; checkout was not established. No focal stock-up, gift, return or routine replacement was narrated. Earlier raw records were not re-retrieved; this assessment retains the supplied findings and their limitations.\n\nUpdated stage: A11 adds explicit Softwear stock-up during months of loving the product, bringing acquisition to three focal accounts and six account/product action categories. Three unopened tubes are units within one stock-up category, not three assertions or established purchase events. A14 adds free Buffer Jelly receipt, A15 a contemplated Plasma Wash return, and A16 intended Continuum substitution for existing azelaic- and salicylic-acid products. None establishes completed return or completed routine replacement. Verified-buyer metadata for A15/A16 does not establish narrated acquisition.\n\nBuying reasons remain product- and actor-specific. A04 describes sister-led discovery and favorable experiences preceding line expansion, with nighttime hydration/repair motivating Buffer Jelly. A05 attributes immediate Avant Guard checkout to TikTok discovery amid sustainability concerns; stopping disposable masks preceded that discovery. A11 expressly connects Softwear stock-up to prior love; influencer recommendation preceded use but is not expressly identified as the purchase cause. A01 attributes cart re-addition to another commenter. A12’s cream 2.0/cleanser purchases and interest in more products concern Regimen Lab; A02’s skipping an intolerable product concerns Dr. Idriss.\n\nThree credited Junip origins independently repeat the broad proposition of completed Experiment acquisition. A04 and A11 also support the broader reported reason that favorable experience motivated additional acquisition, but their behaviors differ: line expansion versus same-product stock-up. Neither the specific hydration motive nor sustainability/TikTok-to-checkout reason is independently repeated. All three acquisition origins are retailer reviewers; no cross-role corroboration or market causation is established. A11 supplies same-product additional stocking, without resolving transaction number or timing. A04’s refill metadata alone cannot establish repurchase.\n\nMaterial context remains separate from focal counts: cowrunamuck (Reddit t1_nclxocd, 2025-09-05, score 21) reports two Softwear backups because of love and previously difficult website-only access, plus enthusiasm for Sephora availability. This distinct contextual actor corroborates A11’s bounded love-associated Softwear stocking across community and retailer-review roles. It cannot establish prevalence or corroborate dermatitis. They report smooth, moisturized lips despite sensitivity to other facial exfoliants, prefer Softwear to Eadem, and dislike Eadem’s scent/taste while acknowledging moisture. RowanVC (t1_ncls0z6, same date/thread, score 42) praises Softwear and Experiment; an unspecified balm stash does not establish Experiment stock-up. Their sticky Dr. Idriss experience involves layering with lanolin/another mask. Both are detailed contextual testimony, not additional focal accounts or bare agreement; A01’s reference to cowrunamuck does not create a second copy of that testimony. A12’s context identifies Regimen Lab only; context-author identity, date and engagement are unavailable.\n\nComplaint and loyalty coexist. A11 reports dermatitis after months of enjoyment, prescribed steroid cream, improvement and a worse flare within 24 hours of retrying. This is detailed individual self-attribution with reported recurrence after reuse, not clinical confirmation or independent corroboration. They lament unused stock and $70 CAD while retaining praise and a qualified recommendation. A15 reports poor cleansing, severe eye burning and greater dryness after two washes despite liking texture; this conflicts with A04’s favorable wash hydration/cleansing account. Versions and relevant conditions are insufficient to explain the split. A14’s rosacea-related improvement follows only two uses with Buffer Jelly mixed into moisturizer; gift receipt and joint use limit attribution. A16 reports less-red active acne after nighttime Continuum use but expressly cannot assess acne or pigmentation efficacy. Prospective substitution and staple language remain intentions.\n\nEngagement remains raw: A01 score 13, A02 score 4 and A12 score 12, each marked material_positive=false/not_interpreted. A04, A05, A11, A14, A15 and A16 each have 0 upvotes and 0 downvotes. Context scores are 21 and 42. Engagement observation times are unavailable; exposure is unavailable, so no additional resonance posture is awarded. Scores do not establish verified experience, independence, prevalence or buying effects.\n\nConflict posture is none_observed for the bounded acquisition/cart reports and mixed for broader product experience, particularly Plasma Wash. Softwear enthusiasm and adverse outcomes must both remain visible. All Experiment formula versions are unknown. Source-account counts are neither origin counts nor transaction counts; dates of reviews and updates do not establish additional actions.",
+        "source_index": [
+          {
+            "key": "A01",
+            "findings": "boxybrown84; Reddit 1n9da6u/ncm3hhd, 2025-09-05; retained from supplied prior findings. Score 13, material_positive=false/not_interpreted; observation time unavailable. Explicitly re-added Experiment balm to FF cart because of another comment; parent identifies Softwear, version unknown. No checkout, acquisition, use or stock-up narrated. Parent cowrunamuck’s two backups and favorable experience are separate contextual testimony. Same thread as A02; independence posture unavailable."
+          },
+          {
+            "key": "A02",
+            "findings": "PamelaDamnela; Reddit 1n9da6u/ncly8vq, 2025-09-05; retained from supplied prior findings. Score 4, material_positive=false/not_interpreted; observation time unavailable. Owns but always skips an intolerable-feeling item; parent resolves it to Dr. Idriss exfoliator, alongside love for its baste balm. Exact SKU/version unknown. No Experiment acquisition/adverse-use report, return or explicit completed routine substitution. RowanVC’s Experiment praise and layered Dr. Idriss experience remain separate context; independence posture unavailable."
+          },
+          {
+            "key": "A04",
+            "findings": "Junip customer 202931541, review 7540631; published 2025-03-22, updated 2025-03-23; credited origin; retained from supplied prior findings. Four explicit Experiment acquisition categories: Super Saturated following sister introduction and liking it; Buffer Jelly for nighttime hydration/repair; face wash after favorable experience; mesh moisturizer immediately at launch. Wash/moisturizer contextually map to Plasma Wash/Molecular Mesh; exact names absent from body, versions unknown. Reports lightweight, fast-drying pre-makeup hydration without clogged-feeling pores, glowy/clean skin after Jelly despite initial thick/oily concern, and wash makeup removal, hydration and no more breakouts. Multiple-product routine limits attribution. Packaging-color praise is not an explicit purchase reason. Makeup-remover redundancy is not narrated discontinuation. No explicit same-product repurchase/stock-up; Super Saturated Refill/verified-buyer metadata adds none. Metadata: unrewarded, Combo + Sensitive. Engagement 0 up/0 down, observation time unavailable."
+          },
+          {
+            "key": "A05",
+            "findings": "Junip customer 44968672, review 1569510; published/updated 2022-11-03; credited origin; retained from supplied prior findings. One acquisition category: immediate Avant Guard checkout after TikTok discovery amid sustainability concerns. Had already stopped formerly near-nightly disposable sheet masks; no explicit completed replacement or prospective substitution commitment. Uses reusable mask, finds cleaning easy and fit nearly perfect except cheeks/nose. It encourages use of hydrating/moisturizing products credited with barrier repair; mask-alone efficacy unestablished. No gift, repurchase, stock-up or return. Metadata: Acid Lime/SMALL, verified buyer, unrewarded; version unknown. Engagement 0 up/0 down, observation time unavailable."
+          },
+          {
+            "key": "A12",
+            "findings": "eratch; Reddit 1i30kik/m7j6no0, 2025-01-16; retained from supplied prior findings. Score 12, material_positive=false/not_interpreted; observation time unavailable; independence posture unavailable. Context identifies Regimen Lab. Acquired cream 2.0 seeking a healing moisturizer after excessive tret use and also picked up cleanser. Favorable cream experience and science/formulation assessment accompany intent to try more; cleanser is nice but small, with greater interest in serums/moisturizers. Other-brand buying and intention, not Experiment acquisition, proven healing, repurchase or completed replacement. Context author/date/engagement unavailable."
+          },
+          {
+            "key": "A11",
+            "findings": "Junip customer 178058824, review 6638709; published 2024-11-25T23:23:20.349Z, updated 23:23:46.773Z; credited origin. Softwear, version unknown. Explicit stock-up during months of loving it, leaving three unopened tubes and a lamented $70 CAD: one product action category, transaction count unknown. Influencer-recommended; initially best-ever balm, liked thick texture/sheen despite resistance when rubbing lips and daily dead-skin removal. Reports later perioral dermatitis, roughness/tiny bumps, prescribed steroid cream, recovery, then worse flare within 24 hours of retrying. Source considers causation confirmed; evidence supports individual self-attribution, not clinical confirmation. Still praises value and conditionally recommends trying it while warning of sensitivity and envying users. Says lips had not previously been sensitive; metadata separately says Combo + Sensitive skin. No explicit return or completed routine substitution. Metadata: verified buyer, unrewarded. Engagement 0 up/0 down, observation time unavailable."
+          },
+          {
+            "key": "A14",
+            "findings": "Junip customer 344086099, review 8950945; published 2025-08-05T19:45:57.174Z, updated 2025-08-20T04:38:18.471Z; credited origin. Explicit free Buffer Jelly receipt for an honest review; two uses, no narrated paid acquisition. With rosacea, adds a drop to nighttime moisturizer and reports soft skin without redness, irritation or clogged pores. Joint use and short exposure preclude isolated efficacy attribution. Praises jelly-to-oil texture/silky slip and declares brand conversion; post-dermaplaning suitability is anticipated. Bottle initially seemed small; source attributes appearance to reduced packaging, calls it 1 oz and expects long duration. No repurchase or stock-up. Metadata says rewarded=false and verified_buyer=false, Combo + Acne Prone; this does not erase disclosed gifting. Version unknown. Engagement 0 up/0 down, observation time unavailable."
+          },
+          {
+            "key": "A15",
+            "findings": "Junip customer 210150638, review 6567933; published 2024-11-04T16:36:31.007Z, updated 16:36:31.684Z; credited origin. Product-page context identifies Plasma Wash, version unknown. Likes silky texture but reports inadequate cleansing across varying amounts, wet/dry skin and lathering methods, little/no foam and apparent absorption. Severe eye burning with eyes closed and usually no eye makeup prompted considering return; no completed return. Reports less-clean/less-moisturized skin than an unnamed favorite glycerin cleanser, and more dryness after two washes. Similar glycerin basis informed expected suitability, not explicit purchase narration. Wonders about defective product or incorrect use amid positive social-media accounts, which are not separately supplied testimony. Opposes A04’s favorable wash experience. Verified-buyer metadata does not count as acquisition; unrewarded, Combo + Acne Prone. Engagement 0 up/0 down, observation time unavailable."
+          },
+          {
+            "key": "A16",
+            "findings": "Junip customer 529373073, review 13599983; published 2026-05-29T08:11:20.784Z, updated 2026-06-11T21:01:10.039Z; credited origin. Continuum, version unknown. Reports easy packaging, mild chemical smell, light gel-serum texture and no sensitivity. Praises parabens and interprets them as science-first formulation; personal assessment, not demonstrated comparative safety. Currently uses azelaic/salicylic-acid products and thinks Continuum will probably replace both for simplicity; prospective replacement/staple intent, no actual discontinuation. Reports less-red active acne after nighttime use but explicitly cannot objectively assess acne or post-acne pigmentation efficacy. No explicit acquisition, repurchase or stock-up. Metadata: Continuum - First Time, verified buyer, unrewarded, Combo + Acne Prone; metadata adds no acquisition narration. Engagement 0 up/0 down, observation time unavailable."
+          }
+        ],
+        "counts": [
+          {
+            "name": "experiment_acquisition_focal",
+            "source_accounts": [
+              "A04",
+              "A05",
+              "A11"
+            ],
+            "count": 3
+          },
+          {
+            "name": "cart_readdition",
+            "source_accounts": [
+              "A01"
+            ],
+            "count": 1
+          },
+          {
+            "name": "stockup_focal",
+            "source_accounts": [
+              "A11"
+            ],
+            "count": 1
+          },
+          {
+            "name": "gift_receipt",
+            "source_accounts": [
+              "A14"
+            ],
+            "count": 1
+          },
+          {
+            "name": "return_considered",
+            "source_accounts": [
+              "A15"
+            ],
+            "count": 1
+          },
+          {
+            "name": "return_completed",
+            "source_accounts": [],
+            "count": 0
+          },
+          {
+            "name": "routine_replacement_intended",
+            "source_accounts": [
+              "A16"
+            ],
+            "count": 1
+          },
+          {
+            "name": "routine_replacement_completed",
+            "source_accounts": [],
+            "count": 0
+          }
+        ],
+        "product_action_assertions": 6
+      }
+    },
+    {
+      "name": "buying-full-initial",
+      "answer": {
+        "retrieval_requests": [],
+        "report": "Initial stage: Two focal accounts explicitly narrate completed Experiment acquisition: A04 names four product categories; A05 describes one checkout. These are two credited retailer-review origins and five product-action assertions, not five verified transactions. The broad proposition that customers report acquiring Experiment products repeats across these accounts; their particular buying reasons do not independently repeat. No cross-role corroboration of completed focal Experiment buying is established.\n\nA04 reports buying Super Saturated after a sister’s introduction and favorable experience; Buffer Jelly for greater nighttime hydration/repair; then face wash and the newly released mesh moisturizer as enthusiasm expanded. Lightweight hydration, pre-makeup suitability, overnight glow, cleansing results and colorful packaging accompany loyalty, but each benefit is not an explicitly isolated purchase cause. A05 explicitly connects immediate Avant Guard checkout to TikTok discovery amid sustainability goals and missing sheet masks. Subsequent barrier improvement involves other hydrating/moisturizing products used with the mask, so it is not attributable to the mask alone.\n\nA01 reports returning Softwear to an FF cart because of a comment, not checkout. A02 skips the Dr. Idriss exfoliator because of its feel while loving the baste balm; this is other-product scope. A12 acquired Regimen Lab cream 2.0 and cleanser, sought a healing moisturizer after excessive tret use, and intends further exploration; none is Experiment acquisition. No focal Experiment stock-up, gift receipt, contemplated or completed return is narrated. A04’s claim that makeup remover is no longer needed establishes functional redundancy, not confirmed discontinuation. A02’s habitual skipping and A05’s reported cessation of sheet masks count as routine discontinuation, both outside an established Experiment-for-other-product substitution.\n\nContext separately: cowrunamuck (Reddit, 2025-09-05, score 21) reports two Softwear backups, attributing them to love of the product and formerly harder access through direct shipping. They praise smoothness/moisture, clear scent-free wear and tolerability despite facial sensitivity, prefer Softwear to Eadem, dislike Eadem’s scent/taste despite finding it moisturizing, and welcome Sephora availability. This supports a context-only stock-up reason, not A01’s purchase or experience. RowanVC (same thread/date, score 42) praises Softwear and Experiment broadly, describes a general lip-balm stash without establishing Experiment stock-up, and reports good results with tacky Dr. Idriss exfoliator layered with lanolin or another mask. This resolves A02’s reference and supplies a contrasting other-product experience, not testimony by A02. The thread prompts ask about exfoliating lip products and Regimen Lab; neither supplies additional purchase testimony. Prompt authors and engagement are unavailable.\n\nFocal engagement: Reddit scores A01=13, A02=4, A12=12, marked not interpreted/material_positive=false; A04 and A05 each have 0 upvotes and 0 downvotes. Engagement observation times are unavailable. No resonance posture is awarded. Scores do not establish experience, independence, prevalence or buying effects. Reddit independence remains unavailable; distinct visible handles and shared-thread context are preserved. Detailed parent testimonials are not focal corroboration, and A01’s response is an explicit cart-action attribution, not agreement based on use.\n\nConflict posture: none observed against the narrow completed Experiment-acquisition reports; broader experience is conditional, with A05’s imperfect fit alongside satisfaction and A12’s small-cleanser complaint alongside other-brand loyalty. Exact formulation versions and transaction timing are generally unknown. Metadata’s verified-buyer status and A04’s refill target do not establish additional acquisition or repurchase. No market-level causal conclusion follows.\n\nSecond stage: No second-stage input was supplied. Its findings, engagement and counts are unavailable; the counts below cover only the supplied initial stage.",
+        "source_index": [
+          {
+            "key": "A01",
+            "findings": "boxybrown84; Reddit 1n9da6u, 2025-09-05; score 13, observation time unavailable, independence unavailable. Explicitly put Experiment balm back in FF cart because of a comment; parent context identifies Softwear, version unknown. No checkout, acquisition, use or repurchase stated. Parent cowrunamuck’s score-21 testimonial and two backups belong to that context-only actor, not A01."
+          },
+          {
+            "key": "A02",
+            "findings": "PamelaDamnela; Reddit 1n9da6u, 2025-09-05; score 4, observation time unavailable, independence unavailable. Owns but always skips an exfoliator because its feel is intolerable; loves the baste balm. RowanVC’s parent resolves these to Dr. Idriss exfoliator and Barrier Baste, not Experiment; precise versions unknown. Habitual skipping supports actual routine non-use/discontinuation, not acquisition or return. RowanVC’s score-42 favorable layered-use account remains separate and does not establish A02 tried layering."
+          },
+          {
+            "key": "A04",
+            "findings": "Junip review 7540631, customer 202931541; credited origin; published 2025-03-22, updated 2025-03-23; 0 up/0 down, observation time unavailable. Explicit acquisition of four Experiment categories: Super Saturated, Buffer Jelly, face wash (consistent with Plasma Wash; exact SKU unstated), and mesh moisturizer (consistent with Molecular Mesh). Sister introduction and positive Super Saturated experience preceded ordering; extra nighttime hydration/repair motivated Buffer Jelly; enthusiasm preceded subsequent purchases. Reports lightweight, fast-drying, non-clogging hydration before makeup, overnight glow with tiny Buffer Jelly amounts, and face-wash makeup removal, hydration and no more breakouts; praises packaging colors. No controlled causal proof. Makeup remover becoming unnecessary is not confirmed routine replacement. Metadata identifies Combo + Sensitive skin, verified buyer, unrewarded native review and Super Saturated–Refill target; it does not narrate another acquisition or repurchase. Formula versions unknown."
+          },
+          {
+            "key": "A05",
+            "findings": "Junip review 1569510, customer 44968672; credited origin; published/updated 2022-11-03; 0 up/0 down, observation time unavailable. Explicit immediate reusable-mask checkout after TikTok creator discovery, in context of sustainability goals and missing formerly near-nightly sheet masks. Context identifies Avant Guard, Acid Lime/SMALL; version unknown. Reports actual prior sheet-mask cessation, subsequent reusable-mask routine use, easy cleaning and imperfect cheek/nose fit. Mask motivates use of other hydrating/moisturizing products reportedly helping the barrier; joint use prevents mask-only attribution. One acquisition category; no explicit gift, stock-up, return or repurchase. Native, unrewarded, verified-buyer metadata adds no acquisition assertion."
+          },
+          {
+            "key": "A12",
+            "findings": "eratch; Reddit 1i30kik, 2025-01-16; score 12, observation time unavailable, independence unavailable. Thread context identifies Regimen Lab, not Experiment. Reports getting cream 2.0 while seeking a healing moisturizer after excessive tret use and also acquiring its cleanser, exact cleanser SKU unknown. Formulation satisfaction prompts intention to try more, particularly serums/moisturizers; cleanser is nice but small. Two other-brand acquisitions and future interest are not Experiment buying, completed expansion or routine replacement. Thread prompt supplies brand reference only."
+          }
+        ],
+        "counts": [
+          {
+            "name": "experiment_acquisition_focal",
+            "source_accounts": [
+              "A04",
+              "A05"
+            ],
+            "count": 2
+          },
+          {
+            "name": "cart_readdition",
+            "source_accounts": [
+              "A01"
+            ],
+            "count": 1
+          },
+          {
+            "name": "stockup_focal",
+            "source_accounts": [],
+            "count": 0
+          },
+          {
+            "name": "gift_receipt",
+            "source_accounts": [],
+            "count": 0
+          },
+          {
+            "name": "return_considered",
+            "source_accounts": [],
+            "count": 0
+          },
+          {
+            "name": "return_completed",
+            "source_accounts": [],
+            "count": 0
+          },
+          {
+            "name": "routine_replacement_intended",
+            "source_accounts": [],
+            "count": 0
+          },
+          {
+            "name": "routine_replacement_completed",
+            "source_accounts": [
+              "A02",
+              "A05"
+            ],
+            "count": 2
+          }
+        ],
+        "product_action_assertions": 5
+      }
+    },
+    {
+      "name": "buying-full-update",
+      "answer": {
+        "retrieval_requests": [],
+        "report": "The supplied updated set contains three focal accounts narrating completed Experiment acquisition, checkout or stock-up: A04, A05 and A11. They contribute six product-action categories: four purchases in A04, one checkout in A05 and one Softwear stock-up category in A11. These are source-account and assertion counts, not transaction or unit counts. No separately labeled initial-stage snapshot or membership is supplied, so an exact initial-versus-updated comparison is unavailable; the findings below cover all nine supplied focal accounts.\n\nThe buying reasons differ. A04 describes sister-led Super Saturated discovery and satisfaction, then buying Buffer Jelly for greater nighttime hydration/repair, followed by face-wash and mesh-moisturizer purchases amid enthusiasm for results and the brand. A05 explicitly connects instant Avant Guard checkout to TikTok discovery in a sustainability-motivated return to masking. A11 explicitly stocked up on Softwear during months of loving it, before reporting dermatitis. Completed Experiment acquisition therefore repeats across three credited retailer-review actors, but their different products and reasons do not establish one repeated precise purchase driver or cross-venue corroboration. A04 and A11 share a narrower reported link between product satisfaction and further Experiment buying; this remains individual self-attribution, not market causation.\n\nA01 explicitly attributes Softwear cart readdition to another comment; checkout, use and repurchase are unreported. A12 acquired Regimen Lab cream 2.0 and cleanser, not Experiment products. A14 received free Buffer Jelly for review and reports two uses, not paid conversion. A16 intends Continuum to replace two routine products; completed substitution and purchase are unreported. A04's statement that makeup remover is no longer needed establishes functional redundancy, not confirmed discontinuation. A02 reports routinely skipping the contextually identified Dr. Idriss exfoliator because of its feel; this is other-product avoidance, without a narrated completed substitution or transition from prior routine use.\n\nBuying and loyalty coexist with adverse outcomes. A11 reports prescribed steroid treatment, recurrence within 24 hours on retry, three unopened stocked-up tubes and a perceived $70 CAD loss, while still expressing affection and recommending a cautious trial. This is strong personal attribution, not medically verified causation. A15 considered returning Plasma Wash after severe eye burning and poor cleansing across several application methods; no completed return is reported. Its drying/cleansing account opposes A04's positive face-wash report, provisionally mapped to Plasma Wash. Formula, batch and comparable use conditions are unknown, so neither account resolves the conflict. Positive Softwear testimony also coexists with A11's later adverse reaction; sensitive-skin labels do not explain who will react.\n\nRaw focal Reddit scores are A01 13, A02 4 and A12 12, supplied as not interpreted/material_positive=false. All six focal Junip reviews show 0 up-votes and 0 down-votes, with engagement observation time unavailable. Reddit score observation times are also unavailable. These signals establish neither verified experiences nor buying effects. The buying evidence rests on narrated actions, not engagement, and no focal buying-reason proposition earns additional resonance credit here.\n\nMaterial context is separate from focal testimony. Cowrunamuck's September 5, 2025 parent comment (context_5f002acbf9eb1cd7bfc3; score 21) identifies A01's balm as Softwear and reports two backups because of love for it and earlier shipping/access difficulty. It describes smooth, moisturized sensitive lips, preference over Eadem's scent/taste, and excitement about Sephora availability. This independently authored context corroborates a satisfaction-linked Softwear backup account alongside A11, but stays outside focal counts; their outcomes differ. RowanVC's same-day parent comment (context_ff821dc553240c0290fa; score 42) praises Softwear and Experiment, describes a general lip-balm stash, and reports Dr. Idriss exfoliator tackiness and successful layering, often with lanolin. The stash is not an explicit Experiment stock-up. It resolves A02's negative reference to Dr. Idriss, and A02 adds its own feeling-based avoidance rather than bare agreement. These are distinct actors within the same Reddit thread, not additional venues. Context scores have unavailable observation times and do not establish independent experience counts. The Regimen Lab thread opener supplies brand reference and advertising curiosity, not Experiment testimony; opener identity and engagement are unavailable.\n\nProduct-page and review metadata resolve review targets and variants without adding acquisition testimony. A04's refill target does not establish an additional refill purchase, and A15/A16 verified-buyer metadata does not qualify them for acquisition counts. A14's explicit free-for-review disclosure remains material despite rewarded=false metadata. Formula versions are generally unknown; A12 alone names another brand's cream 2.0. No supplied repeated record establishes additional purchase events. General prevalence, precise shared purchase causation and subsequent completion of intentions remain unknown.",
+        "source_index": [
+          {
+            "key": "A01",
+            "findings": "boxybrown84, Reddit, 2025-09-05: explicitly removed then readded Experiment balm to an FF cart because of a comment. Parent context identifies Softwear; no checkout, acquisition or use narrated. Score 13, not interpreted, observation time unavailable. Parent cowrunamuck is a separate context-only actor reporting two Softwear backups, not testimony attributable to A01."
+          },
+          {
+            "key": "A02",
+            "findings": "PamelaDamnela, Reddit, 2025-09-05: owns but always skips an intolerably feeling product and loves the baste balm. RowanVC parent context resolves these to Dr. Idriss exfoliator and Barrier Baste, not Experiment. This is substantive feeling-based avoidance, without a narrated purchase or completed routine substitution. Score 4, not interpreted, observation time unavailable; shares A01's thread but is a distinct actor."
+          },
+          {
+            "key": "A04",
+            "findings": "Junip customer 202931541, 2025-03-22, updated 2025-03-23: four explicit Experiment acquisition categories—ordered Super Saturated after sister introduction and enthusiasm; bought Buffer Jelly for nighttime hydration/repair; bought face wash; immediately bought mesh moisturizer. Face wash and mesh likely denote Plasma Wash and Molecular Mesh, but body does not give full names/SKUs. Reports lightweight, fast-drying pre-makeup hydration, overnight glow with a tiny Buffer Jelly amount, and hydrated makeup removal/no more breakouts from face wash; likes packaging colors. Makeup-remover redundancy is not confirmed discontinuation. Metadata targets Super Saturated Refill, verified buyer, combo/sensitive; no extra refill action inferred. Zero up/down votes, observation time unavailable; formula versions unknown."
+          },
+          {
+            "key": "A05",
+            "findings": "Junip customer 44968672, 2022-11-03: explicitly checked out the reusable mask immediately after TikTok creator discovery, against a sustainability motivation and prior cessation of frequent disposable masking. Context identifies Avant Guard, Acid Lime/SMALL. Reports near fit except cheek sides/nose, easy cleaning and motivation to use hydrating products; barrier improvement belongs to that joint routine. One Experiment checkout category; no repurchase stated. Verified-buyer metadata, zero up/down votes, observation time unavailable; version unknown."
+          },
+          {
+            "key": "A12",
+            "findings": "eratch, Reddit, 2025-01-16: context identifies Regimen Lab. Explicitly acquired cream 2.0 after excessive tret use while seeking healing moisturizer, plus cleanser; praises formulations, calls cleanser nice but small, and intends to try more, especially serums/moisturizers. These are other-brand acquisitions and intentions, excluded from Experiment actions. Score 12, not interpreted, observation time unavailable; claimed healing efficacy is not established merely by the purchase motive."
+          },
+          {
+            "key": "A11",
+            "findings": "Junip customer 178058824, 2024-11-25: one explicit Softwear stock-up category, with three unopened tubes and perceived $70 CAD loss. Influencer recommendation preceded use; initial months of love motivated stocking up. Liked thickness/sheen despite resistance and daily dead-skin removal. Reports later perioral dermatitis, prescribed steroid cream, recovery and worse recurrence within 24 hours of retry; personal attribution, not medical confirmation. Still loves the product and recommends a cautious trial, despite adverse outcome. No completed return reported. Metadata combo/sensitive and verified buyer; zero up/down votes, observation time unavailable; formula unknown."
+          },
+          {
+            "key": "A14",
+            "findings": "Junip customer 344086099, 2025-08-05, updated 2025-08-20: explicitly received free Buffer Jelly for a later honest review; two uses prompted early praise. With rosacea, mixed one drop into nighttime moisturizer and reports softness without redness, irritation or clogged pores. Praises jelly-to-oil slip; dermaplaning suitability and long bottle life are expectations. Small-bottle surprise is reconciled by author's 1 oz/reduced-packaging interpretation. Declares brand conversion without purchase. Gift counts separately; rewarded=false metadata does not erase disclosure, verified_buyer=false. Zero up/down votes, observation time unavailable; version unknown."
+          },
+          {
+            "key": "A15",
+            "findings": "Junip customer 210150638, 2024-11-04: context identifies Plasma Wash. Likes silky texture but reports poor cleansing/no foam across wet/dry skin, different quantities and lathering methods, severe eye burning, less hydration than unnamed favored glycerin cleanser and greater dryness after two washes. Considered return; no completed return or explicit acquisition narrated. Wonders about defect or misuse amid positive social-media accounts; neither explanation verified. Opposes A04's positive face-wash experience if product mapping holds. Verified-buyer metadata alone excluded from buying count. Zero up/down votes, observation time unavailable; batch/version unknown."
+          },
+          {
+            "key": "A16",
+            "findings": "Junip customer 529373073, 2026-05-29, updated 2026-06-11: Continuum use with light gel-serum texture, mild chemical smell, no sensitivity and less-red active acne next morning. Praises packaging and paraben preservation as science-oriented. Currently uses azelaic and salicylic acid products and prospectively expects Continuum to replace both for simplicity; planned staple, not completed substitution or narrated acquisition. Explicitly cannot judge acne/pigmentation efficacy objectively. Metadata target First Time/verified buyer adds no counted acquisition. Zero up/down votes, observation time unavailable; formula version unknown."
+          }
+        ],
+        "counts": [
+          {
+            "name": "experiment_acquisition_focal",
+            "source_accounts": [
+              "A04",
+              "A05",
+              "A11"
+            ],
+            "count": 3
+          },
+          {
+            "name": "cart_readdition",
+            "source_accounts": [
+              "A01"
+            ],
+            "count": 1
+          },
+          {
+            "name": "stockup_focal",
+            "source_accounts": [
+              "A11"
+            ],
+            "count": 1
+          },
+          {
+            "name": "gift_receipt",
+            "source_accounts": [
+              "A14"
+            ],
+            "count": 1
+          },
+          {
+            "name": "return_considered",
+            "source_accounts": [
+              "A15"
+            ],
+            "count": 1
+          },
+          {
+            "name": "return_completed",
+            "source_accounts": [],
+            "count": 0
+          },
+          {
+            "name": "routine_replacement_intended",
+            "source_accounts": [
+              "A16"
+            ],
+            "count": 1
+          },
+          {
+            "name": "routine_replacement_completed",
+            "source_accounts": [],
+            "count": 0
+          }
+        ],
+        "product_action_assertions": 6
+      }
+    }
+  ]
+}

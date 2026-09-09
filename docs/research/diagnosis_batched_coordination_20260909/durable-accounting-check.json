@@ -1,0 +1,13 @@
+{
+  "processSuccess": true,
+  "exitCode": 0,
+  "signal": null,
+  "timedOut": false,
+  "interrupted": false,
+  "killed": false,
+  "outputTruncated": false,
+  "error": null,
+  "terminationError": null,
+  "stdout": "{\"frozen\":true,\"cold_calls\":13,\"count_failures\":[{\"case\":\"buying\",\"arm\":\"full\",\"stage\":\"initial\",\"name\":\"routine_replacement_completed\",\"expected\":[],\"observed\":[\"A02\",\"A05\"],\"count\":2,\"pass\":false}],\"durable_totals_reproduced\":true}\n",
+  "stderr": ""
+}

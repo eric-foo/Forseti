@@ -1,0 +1,98 @@
+{
+  "priority": [
+    "diagnostic quality",
+    "total tokens",
+    "latency"
+  ],
+  "batch": "six independent case/arm jobs, each initial then update; existing max two source retrievals per stage; no semantic retries",
+  "freeze": {
+    "frozen_at": "2026-09-09T13:30:21.031Z",
+    "files": [
+      {
+        "name": "sources.json",
+        "sha256": "70be89523d15f3622e8f0103eedde839a76206aa84fd5222788b2db67472db1f"
+      },
+      {
+        "name": "experiment.json",
+        "sha256": "5138e46899ee37181bb47626d5e516e071606291262573bf2f5bb57080d02b16"
+      },
+      {
+        "name": "expected.json",
+        "sha256": "e5122cdb99c5ea2cdc92646a71bdc0d16963665d1ef85456bf5cf83856f2034d"
+      },
+      {
+        "name": "count-definitions.json",
+        "sha256": "d466138ab4106d8b64ee0300b0d806b5b5d0f697e488725592d7b51e768804ea"
+      },
+      {
+        "name": "fixture-errata.json",
+        "sha256": "d6f57b902908e6d68cfbe34e94cd68ecb18556a6ee39f0bd6a0f8968039cb0c5"
+      },
+      {
+        "name": "common.txt",
+        "sha256": "52d6ef24c515e281ae150dab37a0ebda3bf485029ba8ffc023c5a52a1f0db33e"
+      },
+      {
+        "name": "authority-context.txt",
+        "sha256": "4d918de0de55acd8570edcd2d703f3df9c0dfd387296a2f29aa0c089b112c482"
+      },
+      {
+        "name": "response.schema.json",
+        "sha256": "10116811053f00600e9e5f643c0ee3c442673b70a6c2af0985ae625c2c404458"
+      },
+      {
+        "name": "run.mjs",
+        "sha256": "6098acaf3e9ed9f346f1d445cd4159fc24bbb0dea8953c75bd2162050e0b42fc"
+      },
+      {
+        "name": "batch.mjs",
+        "sha256": "bb71af408966ce3eec574ed7c5b003db7de4438ea4396bb297a8c5252748f670"
+      }
+    ]
+  },
+  "measurement": "Native totals include all input plus output; cached input and reasoning are subsets. Coordinator from native session start, including preparation; precall is phase checkpoint only, not reset.",
+  "success": "Fewer coordinator and combined tokens with no new material diagnostic errors; shared failures still block clean adoption. Quality judged from complete accounts and all first-pass answers.",
+  "closeout_sequence": [
+    "measure native usage and coldness",
+    "judge case packs against sources and frozen distinctions",
+    "write report and nearest research index",
+    "run sample checks and diff scope",
+    "commit own branch",
+    "push own branch",
+    "create draft PR and read back state",
+    "save final available coordinator cutoff and expose remaining native counter to parent; no merge"
+  ],
+  "baseline_totals": {
+    "incremental": {
+      "input_tokens": 256697,
+      "cached_input_tokens": 12288,
+      "output_tokens": 17956,
+      "total_tokens": 274653,
+      "wall_ms_sum": 630264.7218,
+      "native_runtime_ms_sum": 597321,
+      "launches": 11,
+      "unmetered_calls": 3
+    },
+    "full": {
+      "input_tokens": 227511,
+      "cached_input_tokens": 0,
+      "output_tokens": 15902,
+      "total_tokens": 243413,
+      "wall_ms_sum": 564808.1934999999,
+      "native_runtime_ms_sum": 536512,
+      "launches": 10,
+      "unmetered_calls": 3
+    }
+  },
+  "baseline_coordinator": {
+    "timestamp": "2026-09-09T13:14:17.484Z",
+    "usage": {
+      "input_tokens": 11156224,
+      "cached_input_tokens": 10932608,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 38355,
+      "reasoning_output_tokens": 8409,
+      "total_tokens": 11194579
+    }
+  }
+}

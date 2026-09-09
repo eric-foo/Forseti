@@ -1,0 +1,23 @@
+{
+  "case": "hydration",
+  "arm": "incremental",
+  "stage": "initial",
+  "round": 1,
+  "started_at": "2026-09-09T13:30:34.973Z",
+  "finished_at": "2026-09-09T13:31:33.358Z",
+  "wall_ms": 58384.3353,
+  "code": 0,
+  "signal": null,
+  "thread_id": "01a0865c-f986-75c1-a5d7-f6afaf72b42f",
+  "usage": {
+    "input_tokens": 32205,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1560,
+    "reasoning_output_tokens": 0
+  },
+  "turn_count": 1,
+  "unexpected_tools": [],
+  "errors": [],
+  "stdin_sha256": "c1ee7a11cf9458ca2dea14fa28bc45b559830a99b00d16c20b28b06de1bd2a0f"
+}

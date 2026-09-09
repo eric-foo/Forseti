@@ -1,0 +1,215 @@
+{
+  "frozen_before_calls": "2026-09-09T12:52:05.987Z",
+  "selection_frame": "Purposive bounded reuse of the existing 18-account sample and the 47 displayed packaging comments plus one retailer account. Not a whole-corpus engagement ranking. Within that frame inspect the highest observed relevant engagement first, then every relevant contextual/contradictory account regardless of engagement. Missing engagement is not zero.",
+  "ordering_evidence": {
+    "packaging": "P00 296 likes; P15 150; P06 12 and every P06 reply 0–12; all relevant packaging praise/questions and buying/loyalty context retained.",
+    "buying": "Parent context RowanVC 42 points and cowrunamuck 21, A01 13; retailer helpful votes observed 0, not ranked below unknown capture engagement.",
+    "hydration": "A18 10, A17 7, A03 6 observed points plus full retailer accounts; complete comparator parent contexts retained."
+  },
+  "cases": {
+    "packaging": {
+      "initial": [
+        "P00",
+        "P01",
+        "P02",
+        "P03",
+        "P04",
+        "P06",
+        "P07",
+        "P15",
+        "P17",
+        "P20",
+        "P21",
+        "P26",
+        "P27",
+        "P29",
+        "P32",
+        "P38",
+        "P39",
+        "P40",
+        "P42"
+      ],
+      "additions": [
+        "P08",
+        "P09",
+        "P10",
+        "P11",
+        "P12",
+        "P13",
+        "R01"
+      ],
+      "question": "Diagnose packaging reception, reported failure modes, their support and limits, and explicit buying, loyalty and remedy consequences. Keep product scope and source ownership precise."
+    },
+    "hydration": {
+      "initial": [
+        "A03",
+        "A04",
+        "A07",
+        "A08",
+        "A09",
+        "A10"
+      ],
+      "additions": [
+        "A13",
+        "A14",
+        "A15",
+        "A17",
+        "A18"
+      ],
+      "question": "Diagnose Super Saturated hydration and texture, including joint-use outcomes and the relevance or non-relevance of other-product evidence. Explain support, conditions, contradictions and explicit behavior consequences."
+    },
+    "buying": {
+      "initial": [
+        "A01",
+        "A02",
+        "A04",
+        "A05",
+        "A12"
+      ],
+      "additions": [
+        "A11",
+        "A14",
+        "A15",
+        "A16"
+      ],
+      "question": "Diagnose actual Experiment buying, checkout and stock-up evidence and its reported reasons. Distinguish cart actions, gifts, intentions, use, other-brand actions, remedies and adverse outcomes that coexist with loyalty."
+    }
+  },
+  "omitted": {
+    "packaging": [
+      {
+        "index": 5,
+        "body": "I might just risk trying this, even though literally every product I’ve ever tried with niacinimide breaks me out… I love the rest of the ingredients so much!",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 14,
+        "body": "best skincare marketing in the game rn",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 16,
+        "body": "why would one use a clarifying treatment?",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 18,
+        "body": "Can you use it with retinol??",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 19,
+        "body": "Where would this go in your routine? With serums or moisturizers?",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 22,
+        "body": "Ugh I love this brand so much you guys are geniuses",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 23,
+        "body": "you guys gifted me this a week ago and i’ve used it 3-4 x and my skin texture is GONE im literally shocked its amazing",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 24,
+        "body": "Broke me out :/",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 25,
+        "body": "Would this come after my toner?",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 28,
+        "body": "I got to be one of the testers a couple of years ago and it was so fun! And now I’m loving the final product. Ty Experiment!!! 🥰",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 30,
+        "body": "I hope y’all make a retinoid cream!",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 31,
+        "body": "i’m obsessed with you all",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 33,
+        "body": "Gaaaawwwdddd I want everything you guys make",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 34,
+        "body": "Ok but do yall have any more of that sticker? 😂",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 35,
+        "body": "Cannot wait to try, love my Experiment products!! 💚",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 36,
+        "body": "i neeeed it 🤩",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 37,
+        "body": "This pills so bad for me what should I do?!",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 41,
+        "body": "No because the way I’m OBSESSED WITH HER",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 43,
+        "body": "This is so cool",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 44,
+        "body": "CUNTINUUM AHAHAHAHA",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 45,
+        "body": "😳😳😳",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      },
+      {
+        "index": 46,
+        "body": "as a girly with a british partner this product js cuntyyy AF",
+        "reason": "Outside packaging/failure/transaction/loyalty neighborhood: skin effects, routine questions, generic enthusiasm/marketing or sticker/name reactions."
+      }
+    ],
+    "hydration": [
+      "A01",
+      "A02",
+      "A05",
+      "A06",
+      "A11",
+      "A12",
+      "A16"
+    ],
+    "buying": [
+      "A03",
+      "A06",
+      "A07",
+      "A08",
+      "A09",
+      "A10",
+      "A13",
+      "A17",
+      "A18"
+    ]
+  },
+  "split": "Experimental arrival order, not source chronology. Complete accounts are indivisible. Context can repeat an account; never count repeated context as a new origin.",
+  "overlap": "Hydration and buying share A04, A14, A15. Parent contexts can overlap focal accounts. Three cases are not independent statistical replications.",
+  "retrieval": "Readers can request earlier account keys or linked context IDs via retrieval_requests. Host injects exact requested frozen records in a separately metered fresh call with only that stage explicit input and its request. At most 2 retrieval rounds per stage; no other file access. Retrieval is not a quality rerun."
+}

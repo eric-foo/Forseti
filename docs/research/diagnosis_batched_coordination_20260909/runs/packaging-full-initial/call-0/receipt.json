@@ -1,0 +1,23 @@
+{
+  "case": "packaging",
+  "arm": "full",
+  "stage": "initial",
+  "round": 0,
+  "started_at": "2026-09-09T13:30:21.151Z",
+  "finished_at": "2026-09-09T13:31:35.852Z",
+  "wall_ms": 74699.45300000001,
+  "code": 0,
+  "signal": null,
+  "thread_id": "01a0865c-c3be-7932-bdf5-4e00b09d83d1",
+  "usage": {
+    "input_tokens": 29803,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2173,
+    "reasoning_output_tokens": 68
+  },
+  "turn_count": 1,
+  "unexpected_tools": [],
+  "errors": [],
+  "stdin_sha256": "8677668a67a4cad17a2082766eff87801ea25f2413dc959804a08819c9182e4b"
+}

@@ -1,0 +1,26 @@
+{
+  "observed_at": "2026-09-09T13:40:02.046Z",
+  "failed_check": {
+    "processSuccess": false,
+    "exitCode": 2,
+    "signal": null,
+    "timedOut": false,
+    "interrupted": false,
+    "killed": false,
+    "outputTruncated": false,
+    "error": {
+      "stack": "Error: Command failed: git diff --cached --check\n\n    at genericNodeError (node:internal/errors:986:15)\n    at wrappedFn (node:internal/errors:540:14)\n    at ChildProcess.exithandler (node:child_process:417:12)\n    at ChildProcess.emit (node:events:514:28)\n    at maybeClose (node:internal/child_process:1141:16)\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)",
+      "message": "Command failed: git diff --cached --check\n",
+      "code": 2,
+      "killed": false,
+      "signal": null,
+      "cmd": "git diff --cached --check",
+      "name": "Error"
+    },
+    "terminationError": null,
+    "stdout": "docs/research/diagnosis_batched_coordination_20260909/validation.json:709: trailing whitespace.\n+  \ndocs/research/diagnosis_batched_coordination_20260909/validation.json:709: new blank line at EOF.\n",
+    "stderr": ""
+  },
+  "cause": "git add overlapped validation.json write; working JSON is complete and parses. Restage after writer completion; preserve failure.",
+  "working_validation_sha256": "065dd9ff56332645d4edefaaeb37be9e0896d014349493b42b5a7ac3fe2b2906"
+}

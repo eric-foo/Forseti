@@ -1,0 +1,343 @@
+{
+  "case": "buying",
+  "question": "Diagnose actual Experiment buying, checkout and stock-up evidence and its reported reasons. Distinguish cart actions, gifts, intentions, use, other-brand actions, remedies and adverse outcomes that coexist with loyalty.",
+  "count_definitions": {
+    "experiment_acquisition_focal": "Focal accounts explicitly narrating completed Experiment acquisition/checkout/stock-up. Exclude context-only accounts, metadata alone, use alone, gifts and other brands.",
+    "cart_readdition": "Focal accounts explicitly returning an item to cart.",
+    "stockup_focal": "Focal accounts explicitly stockpiling Experiment product.",
+    "gift_receipt": "Focal explicit gifted receipt.",
+    "return_considered": "Focal contemplated product return.",
+    "return_completed": "Focal completed product return.",
+    "routine_replacement_intended": "Focal prospective product substitution in routine.",
+    "routine_replacement_completed": "Focal explicit reported actual discontinuation/substitution in a routine. Functional redundancy (for example no more makeup remover needed) is retained separately but does not establish completed behavioral replacement."
+  },
+  "products": [
+    {
+      "id": "experiment-shopify-5913452937408",
+      "name": "Avant Guard"
+    },
+    {
+      "id": "experiment-shopify-7299389030592",
+      "name": "Super Saturated"
+    },
+    {
+      "id": "experiment-shopify-7476098007232",
+      "name": "Buffer Jelly [experiment-shopify-7476098007232]"
+    },
+    {
+      "id": "experiment-shopify-7758608105664",
+      "name": "Softwear"
+    },
+    {
+      "id": "experiment-shopify-8086723035328",
+      "name": "Plasma Wash"
+    },
+    {
+      "id": "experiment-shopify-8193821802688",
+      "name": "Molecular Mesh"
+    },
+    {
+      "id": "experiment-shopify-8555927306432",
+      "name": "Continuum"
+    }
+  ],
+  "stage": "updated",
+  "focal_keys": [
+    "A01",
+    "A02",
+    "A04",
+    "A05",
+    "A12",
+    "A11",
+    "A14",
+    "A15",
+    "A16"
+  ],
+  "method": "Update your own initial findings using additions. Preserve still-supported findings and revise affected conclusions. Earlier sources remain retrievable by key if the prior findings are insufficient.",
+  "prior_findings": {
+    "retrieval_requests": [],
+    "report": "Initial stage: Two focal accounts explicitly narrate Experiment acquisition, comprising five product acquisition categories: A04’s Super Saturated, Buffer Jelly, face wash and mesh moisturizer, plus A05’s Avant Guard checkout. These are account-level reports, not verified transactions or five established purchase events. No subsequent-stage evidence was supplied.\n\nA04 describes expansion across the line after favorable experiences: a sister’s introduction preceded ordering Super Saturated; wanting stronger nighttime hydration/repair prompted Buffer Jelly; favorable subsequent experience preceded buying face wash and then the newly launched mesh moisturizer. Reported benefits include lightweight, fast-drying hydration before makeup, glowy skin after Buffer Jelly, and makeup removal, hydration and no more breakouts with the wash. These are sequential, same-person reports involving multiple products, not isolated efficacy tests. Colorful packaging also receives praise, without an explicit acquisition attribution. A05 explicitly links immediate Avant Guard checkout to TikTok discovery in the context of seeking sustainability after already stopping disposable sheet masks. Neither account establishes repurchase of the same product; A04’s refill metadata cannot supply that missing narration.\n\nA01 reports putting Softwear back into an FF cart because of another commenter’s recommendation, not checkout or use. A02’s dislike of an intolerable-feeling product and consequent skipping concerns Dr. Idriss in parent context, alongside approval of its baste balm; it is not Experiment abandonment. A12’s cream 2.0 and cleanser acquisitions, post-tret moisturizer need, favorable formulation assessment and intention to try more concern Regimen Lab, not Experiment.\n\nThe two credited retailer-review origins independently repeat only the broad proposition of completed Experiment acquisition. Their specific products and reported reasons differ; no precise purchase motive is independently repeated or corroborated across source roles. A01 supplies a separate, explicitly self-attributed recommendation-to-cart consequence. No focal stock-up, gifted receipt, contemplated/completed return, or intended/completed routine substitution is narrated. A04’s claim that makeup remover is no longer needed is functional redundancy, not an explicit report of stopping it. A05’s prior sheet-mask discontinuation predates discovering Avant Guard.\n\nMaterial context, excluded from focal counts: cowrunamuck (Reddit t1_nclxocd, 2025-09-05, score 21) reports two Softwear backups because of love for the product and previously difficult website-only acquisition, plus enthusiasm for Sephora availability. They report smooth, moisturized lips despite sensitivity to other facial exfoliants, favor Softwear over Eadem, and dislike Eadem’s scent/taste while acknowledging its moisturizing effect. RowanVC (t1_ncls0z6, same thread/date, score 42) independently praises Softwear and Experiment generally; their unspecified lip-balm stash does not establish Experiment stockpiling. Their Dr. Idriss account describes stickiness, required layering and soft lips with lanolin or another mask. These are distinct contextual actors in one discussion, not focal acquisition testimony. Their Softwear praise cannot corroborate the private buying reasons of focal accounts.\n\nObserved engagement: A01 score 13, A02 score 4, A12 score 12; each is explicitly marked material_positive=false and not_interpreted. A04 and A05 each have 0 upvotes and 0 downvotes, observation time unavailable. Context scores 21 and 42 remain raw; exposure and engagement observation times are unavailable. Likes/scores establish neither additional experiences nor independence, prevalence or purchase effects.\n\nConflict posture: none observed for the bounded narrated acquisition/cart actions; broader experiences contain qualifications. A05’s strong satisfaction coexists with imperfect cheek/nose fit; A04’s thickness/oiliness concern was anticipatory and followed by praise. A02’s discomfort and A12’s small-cleanser complaint belong to other brands and coexist with positive sentiment there. Formula versions are unspecified except A12’s other-brand cream 2.0. Evidence supports individual reported actions and reasons, not market causation, representative demand or verified buying.",
+    "source_index": [
+      {
+        "key": "A01",
+        "findings": "boxybrown84; Reddit 1n9da6u, 2025-09-05; score 13, material_positive=false/not_interpreted, observation time unavailable. Explicitly re-added Experiment balm to FF cart because of a comment; parent identifies Softwear, version unknown. No completed checkout, acquisition, use or stock-up. Parent cowrunamuck’s favorable experience and two backups are separate contextual testimony, not A01’s. Independence posture unavailable; same thread as A02."
+      },
+      {
+        "key": "A02",
+        "findings": "PamelaDamnela; Reddit 1n9da6u, 2025-09-05; score 4, material_positive=false/not_interpreted, observation time unavailable. Owns but always skips an intolerable-feeling item; parent context resolves this to the Dr. Idriss exfoliator, alongside love for its baste balm. SKU/version not fully specified. No Experiment acquisition or adverse-use testimony, return or explicit completed routine substitution. Parent RowanVC’s Experiment praise and layered Dr. Idriss experience remain separate testimony. Independence posture unavailable."
+      },
+      {
+        "key": "A04",
+        "findings": "Junip customer 202931541; review 7540631, published 2025-03-22, updated 2025-03-23; credited origin; 0 up/0 down, observation time unavailable. Four explicit Experiment acquisition categories: Super Saturated after sister introduction and liking it; Buffer Jelly for greater nighttime hydration/repair; face wash after favorable preceding experience; mesh moisturizer immediately upon launch. Wash and moisturizer correspond contextually to Plasma Wash and Molecular Mesh, but body does not give those exact names; versions unknown. Reports pre-makeup lightweight, refreshing, fast-drying hydration without clogged-feeling pores; glowy/clean skin after Jelly despite initial thick/oily concern; makeup removal, hydration and no more breakouts with wash. Multiple-product routine prevents isolated attribution. Loves packaging colors, without explicit buying causation. No same-product repurchase or stock-up established; makeup-remover redundancy is not narrated discontinuation. Metadata separately identifies Super Saturated Refill, verified buyer, unrewarded and Combo + Sensitive skin; refill metadata adds no acquisition category."
+      },
+      {
+        "key": "A05",
+        "findings": "Junip customer 44968672; review 1569510, 2022-11-03, updated same date; credited origin; 0 up/0 down, observation time unavailable. Explicit immediate checkout of reusable Avant Guard after TikTok-creator discovery amid sustainability concerns. Had already stopped formerly near-nightly disposable sheet masks; no explicit completed replacement or future substitution commitment. Uses mask, finds cleaning easy and fit almost perfect except cheeks/nose; motivates use of other hydrating/moisturizing products credited with barrier repair, so mask-alone efficacy is unestablished. One Experiment acquisition category; no gift, repurchase, stockpile or return. Metadata separately identifies Acid Lime/SMALL, verified buyer and unrewarded; formula/version unknown."
+      },
+      {
+        "key": "A12",
+        "findings": "eratch; Reddit 1i30kik, 2025-01-16; score 12, material_positive=false/not_interpreted, observation time unavailable; independence posture unavailable. Thread title resolves brand to Regimen Lab. Reports acquiring cream 2.0 seeking a healing moisturizer after excessive tret use and also picking up cleanser. Favorable cream experience supports intention to try more; cleanser is nice but small, with greater interest in serums/moisturizers. Science/formulation praise is personal assessment. These are other-brand acquisitions and prospective interest, not Experiment buying, proven healing, repurchase or completed routine replacement. Context post supplies brand reference only; its author, date and engagement are unavailable."
+      }
+    ],
+    "counts": [
+      {
+        "name": "experiment_acquisition_focal",
+        "source_accounts": [
+          "A04",
+          "A05"
+        ],
+        "count": 2
+      },
+      {
+        "name": "cart_readdition",
+        "source_accounts": [
+          "A01"
+        ],
+        "count": 1
+      },
+      {
+        "name": "stockup_focal",
+        "source_accounts": [],
+        "count": 0
+      },
+      {
+        "name": "gift_receipt",
+        "source_accounts": [],
+        "count": 0
+      },
+      {
+        "name": "return_considered",
+        "source_accounts": [],
+        "count": 0
+      },
+      {
+        "name": "return_completed",
+        "source_accounts": [],
+        "count": 0
+      },
+      {
+        "name": "routine_replacement_intended",
+        "source_accounts": [],
+        "count": 0
+      },
+      {
+        "name": "routine_replacement_completed",
+        "source_accounts": [],
+        "count": 0
+      }
+    ],
+    "product_action_assertions": 5
+  },
+  "additions": {
+    "records": [
+      {
+        "key": "A11",
+        "id": "junip:6638709",
+        "text": "Review title: Loved until it gave me dermatitis\n\nReview body: I loved this product for the first few months until it gave me dermatitis. It was recommended by an influencer I follow and it was literally the best lip balm I had used up until then. My only gripe at the time was I would wake up in the morning with tons of dead skin on my lips, which I guess means it's doing its job, but I had to rub/brush the dead skin off every morning. I've seen reviews bashing the consistency which I kind of understand, it's very thick but I actually liked it and the sheen it left. Yes rubbing your lips together had resistance but I just didn't rub my lips together lol. Unfortunately I started getting perioral dermatitis from this product after a few months of use. My lips became so rough with tiny bumps and it got to the point where I had to get a steroid cream prescribed to me. After my lips were back to normal I tried it again hoping the dermatitis was caused by something else but my lips flared up within 24 hours worse than ever, so unfortunately it's confirmed caused by Softwear. I'm devastated because I loved it so much and I now have 3 unopened tubes I stocked up on during the months I loved it, there goes $70 CAD 😭. TL,DR: Definitely give it a try, the price is reasonable. But if you have sensitive lips, beware. I've never had a reaction like this in my life and my lips have never been sensitive so it really is a lottery of whether it'll do the same for you. I envy those who can use it 😭",
+        "actor_identity": "178058824",
+        "independence_key": "junip:customer:178058824",
+        "independence_posture": "credited",
+        "publication_time": "2024-11-25T23:23:20.349Z",
+        "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6638709",
+        "source_role": "retailer_review",
+        "container_id": "junip:review:6638709",
+        "engagement": {
+          "up_votes": 0,
+          "down_votes": 0,
+          "observed_at": null
+        },
+        "context_refs": [
+          "context_f77334c0890cf38096de",
+          "context_a20a02f4a3fcad7a393c"
+        ],
+        "review_updated_at": "2024-11-25T23:23:46.773Z"
+      },
+      {
+        "key": "A14",
+        "id": "junip:8950945",
+        "text": "Review title: Calming, Soothing, Buttery Soft Sorcery\n\nReview body: For 100% transparency, I did receive this product free for an honest review at a later date but I've used it twice and needed to post this review here and now. This stuff is magical! Basically they took a barrier repair serum and a soothing, nourishing face oil and smooshed them together into this little dropper bottle to make a product that feels like someone's grandma crocheted the softest blanket ever just for your face. I really can't properly describe the texture. It does start out as a jelly-like substance that turns into a soft, fluidy oil as soon as it hits the skin. But where most oils seem to have a dryness or a taciness to them that make them feel disgusting while you're massaging them in, Buffer Jelly has a silky slip to it that just feels like heaven. I have rosacea and I've been adding a drop of this to my moisturizer at night and I wake up with super soft skin with no redness, irritation, or clogged pores. I think this will also be perfection for after dermaplaning. I was surprised by how small this bottle is when I first got it but I think it's simply deception due to Experiment using reduced packaging, because this is a full 1oz of product, which for an oil will last a VERY long time. So it's official, I'm an Experiment convert...",
+        "actor_identity": "344086099",
+        "independence_key": "junip:customer:344086099",
+        "independence_posture": "credited",
+        "publication_time": "2025-08-05T19:45:57.174Z",
+        "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:8950945",
+        "source_role": "retailer_review",
+        "container_id": "junip:review:8950945",
+        "engagement": {
+          "up_votes": 0,
+          "down_votes": 0,
+          "observed_at": null
+        },
+        "context_refs": [
+          "context_2856fb9f627c121e5cbd",
+          "context_6aca0285482c6a50e43d"
+        ],
+        "review_updated_at": "2025-08-20T04:38:18.471Z"
+      },
+      {
+        "key": "A15",
+        "id": "junip:6567933",
+        "text": "Review title: Confused\n\nReview body: First, the texture is beautiful, it's so silky and plasma is the perfect descriptor for it! Unfortunately, I could not get a good cleanse out of this product, no matter how I used it. I tried a little bit (a quarter size), lathered in my hands, onto to wet skin; I tried the same on dry skin. I tried lathering on my face instead of in my hands first. I tried using a lot of product (2 quarters size), on wet face, on a dry face, lathering, not lathering... Every way I tried it didn't foam/bubble at all and almost seemed to be absorbing into my skin, it was disappearing. It was like rubbing a cream on my face that became more viscous after coming in contact with the water. That alone would not have been warranting of 2 stars, but this burned my eyes like no other cleanser I've used in a long time. I mean, badly, to the point I considered returning it. I don't really wear eye makeup ever so I just cleanse with my eyes closed, but boy was that a disappointment. Overall, this leaves my face feeling not as clean, and not as moisturized after one wash than my apparent all time fav cleanser(which is also a glycerin based cleanser, which is why I thought this one would be good for me). After two, it's just even drier feeling so I don't find it appropriate for a double cleanse. I'm unsure if I got a defective product somehow, or if I'm using the product wrong because I see so many great experiences from people on social media I'm genuinely confused...",
+        "actor_identity": "210150638",
+        "independence_key": "junip:customer:210150638",
+        "independence_posture": "credited",
+        "publication_time": "2024-11-04T16:36:31.007Z",
+        "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6567933",
+        "source_role": "retailer_review",
+        "container_id": "junip:review:6567933",
+        "engagement": {
+          "up_votes": 0,
+          "down_votes": 0,
+          "observed_at": null
+        },
+        "context_refs": [
+          "context_a1e603f2d330d39599e8",
+          "context_bc1ebb9bd971b58bdaa2"
+        ],
+        "review_updated_at": "2024-11-04T16:36:31.684Z"
+      },
+      {
+        "key": "A16",
+        "id": "junip:13599983",
+        "text": "Review title: Going into my lineup\n\nReview body: Minimal and easy-to-use packaging. Very mild chemical smell to the product when dispensed. Nice light gel-serum texture and goes on with 0 sensitivity. (I actually hollered when I saw that it uses parabens for its preservative system—they’re the best preservatives!! So effective but also so well-tolerated and gentle. I think it speaks to the brand’s science-first approach to formulation and ingredients that they included them.) I currently use azelaic acid and salicylic acid products regularly so I think this product will probably replace both of those, which I like because I enjoy simplicity. My skin lovesssss salicylic acid and after using Continuum at night, I wake up with any active acne looking a bit less red than the night before. I can’t speak to how effective it really is at treating acne or post-acne pigmentation though because it’s hard for me to gauge something like that objectively. Overall I think this is a great product and will definitely be a new staple for me.",
+        "actor_identity": "529373073",
+        "independence_key": "junip:customer:529373073",
+        "independence_posture": "credited",
+        "publication_time": "2026-05-29T08:11:20.784Z",
+        "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:13599983",
+        "source_role": "retailer_review",
+        "container_id": "junip:review:13599983",
+        "engagement": {
+          "up_votes": 0,
+          "down_votes": 0,
+          "observed_at": null
+        },
+        "context_refs": [
+          "context_5e9e3bba19e94cb5d35a",
+          "context_ebc7a83ace08c1112846"
+        ],
+        "review_updated_at": "2026-06-11T21:01:10.039Z"
+      }
+    ],
+    "contexts": [
+      {
+        "bundle_pointer": "/semantic_work_unit_projection/context_registry/889",
+        "text_sha256": "b23a6c92f2d26808f6713d4eb00ddafdcb83f1e3cb138ea3a966e5079dad7e55",
+        "context_id": "context_2856fb9f627c121e5cbd",
+        "context_type": "product_page",
+        "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_12",
+        "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:8950945",
+        "text": "Buffer Jelly | id=4026185 | remote_id=7476098007232 | remote_handle=buffer-jelly"
+      },
+      {
+        "bundle_pointer": "/semantic_work_unit_projection/context_registry/2081",
+        "text_sha256": "d75d826d80061cf0eb4011b8d4191359b91030d6b71e0b624d7f3e23a1d29927",
+        "context_id": "context_5e9e3bba19e94cb5d35a",
+        "context_type": "product_page",
+        "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_04",
+        "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:13599983",
+        "text": "Continuum | id=16152374 | remote_id=8555927306432 | remote_handle=continuum"
+      },
+      {
+        "bundle_pointer": "/semantic_work_unit_projection/context_registry/2332",
+        "text_sha256": "89f4f0c69eb78336b8cf71f29cf77a49cdc78f68f3dcf66bacbccb2ce3707b2d",
+        "context_id": "context_6aca0285482c6a50e43d",
+        "context_type": "source_scope",
+        "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_12",
+        "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:8950945:metadata",
+        "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [{\"created_at\": \"2025-08-05T19:45:57.296Z\", \"id\": 4955370, \"meta\": {}, \"name\": \"Skin Type\", \"question_id\": 864, \"type\": \"survey_answer\", \"updated_at\": \"2025-08-05T19:45:57.296Z\", \"value\": \"Combo + Acne Prone\", \"value_type\": \"radio\"}], \"target_title\": \"Buffer Jelly\", \"verified_buyer\": false}"
+      },
+      {
+        "bundle_pointer": "/semantic_work_unit_projection/context_registry/3517",
+        "text_sha256": "af40b3118925dc419071ef6da2a619a603baf20ac6d5d5a376bdf25379c345e4",
+        "context_id": "context_a1e603f2d330d39599e8",
+        "context_type": "product_page",
+        "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_20",
+        "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6567933",
+        "text": "Plasma Wash | id=8648416 | remote_id=8086723035328 | remote_handle=plasma-wash"
+      },
+      {
+        "bundle_pointer": "/semantic_work_unit_projection/context_registry/3521",
+        "text_sha256": "e1092237964a9d6d8015fe9f203b3ddc1cf46c852fdcd8550b90a325b7102244",
+        "context_id": "context_a20a02f4a3fcad7a393c",
+        "context_type": "source_scope",
+        "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_19",
+        "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6638709:metadata",
+        "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [{\"created_at\": \"2024-11-25T23:23:20.597Z\", \"id\": 4128966, \"meta\": {}, \"name\": \"Skin Type\", \"question_id\": 864, \"type\": \"survey_answer\", \"updated_at\": \"2024-11-25T23:23:20.597Z\", \"value\": \"Combo + Sensitive\", \"value_type\": \"radio\"}], \"target_title\": \"Softwear\", \"verified_buyer\": true}"
+      },
+      {
+        "bundle_pointer": "/semantic_work_unit_projection/context_registry/4058",
+        "text_sha256": "2733888b7eb34fc535d0d51902b8910744c5e3bf1790a7c46d78914dd7898c85",
+        "context_id": "context_bc1ebb9bd971b58bdaa2",
+        "context_type": "source_scope",
+        "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_20",
+        "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6567933:metadata",
+        "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [{\"created_at\": \"2024-11-04T16:36:31.257Z\", \"id\": 4089692, \"meta\": {}, \"name\": \"Skin Type\", \"question_id\": 864, \"type\": \"survey_answer\", \"updated_at\": \"2024-11-04T16:36:31.257Z\", \"value\": \"Combo + Acne Prone\", \"value_type\": \"radio\"}], \"target_title\": \"Plasma Wash\", \"verified_buyer\": true}"
+      },
+      {
+        "bundle_pointer": "/semantic_work_unit_projection/context_registry/5092",
+        "text_sha256": "952d8f1eb316ac4d105e64f4acae6706fde499d23553756bb564cf4b270338e9",
+        "context_id": "context_ebc7a83ace08c1112846",
+        "context_type": "source_scope",
+        "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_04",
+        "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:13599983:metadata",
+        "text": "Native review metadata; these fields do not establish use or independent people: {\"identity_confirmed\": true, \"origin\": \"native\", \"rewarded\": false, \"survey_answers\": [{\"created_at\": \"2026-05-29T08:11:21.146Z\", \"id\": 6579430, \"meta\": {}, \"name\": \"Skin Type\", \"question_id\": 864, \"type\": \"survey_answer\", \"updated_at\": \"2026-05-29T08:11:21.146Z\", \"value\": \"Combo + Acne Prone\", \"value_type\": \"radio\"}], \"target_title\": \"Continuum - First Time\", \"verified_buyer\": true}"
+      },
+      {
+        "bundle_pointer": "/semantic_work_unit_projection/context_registry/5370",
+        "text_sha256": "db17b1f0302767d01e541fd1354df7196757e958c0dfa4eb31f06f5550b1d423",
+        "context_id": "context_f77334c0890cf38096de",
+        "context_type": "product_page",
+        "source_artifact_id": "packet-01M1Q3EKC8D7GSJ7YN7T37T9QX-file_19",
+        "source_ref": "packet:01M1Q3EKC8D7GSJ7YN7T37T9QX:junip:review:6638709",
+        "text": "Softwear | id=6813901 | remote_id=7758608105664 | remote_handle=softwear"
+      }
+    ]
+  },
+  "earlier_source_catalog": [
+    {
+      "key": "A01",
+      "id": "reddit:1n9da6u:ncm3hhd",
+      "actor_identity": "boxybrown84",
+      "context_refs": [
+        "context_5f002acbf9eb1cd7bfc3",
+        "context_99d43abe0dbe462c3b55"
+      ]
+    },
+    {
+      "key": "A02",
+      "id": "reddit:1n9da6u:ncly8vq",
+      "actor_identity": "PamelaDamnela",
+      "context_refs": [
+        "context_ff821dc553240c0290fa",
+        "context_99d43abe0dbe462c3b55"
+      ]
+    },
+    {
+      "key": "A04",
+      "id": "junip:7540631",
+      "actor_identity": "202931541",
+      "context_refs": [
+        "context_c2af7db629fb3d188eab",
+        "context_9f8ce97d6af21888fd08"
+      ]
+    },
+    {
+      "key": "A05",
+      "id": "junip:1569510",
+      "actor_identity": "44968672",
+      "context_refs": [
+        "context_c6f9d306eb781c59b11e",
+        "context_0541d2895243cbe02f89"
+      ]
+    },
+    {
+      "key": "A12",
+      "id": "reddit:1i30kik:m7j6no0",
+      "actor_identity": "eratch",
+      "context_refs": [
+        "context_66e864c836942282c210"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,361 @@
+{
+  "case": "packaging",
+  "question": "Diagnose packaging reception, reported failure modes, their support and limits, and explicit buying, loyalty and remedy consequences. Keep product scope and source ownership precise.",
+  "count_definitions": {
+    "arrival_leak": "Focal TikTok accounts reporting or contextually agreeing to arrival leak, including bare agreements, excluding brand response/retailer.",
+    "explicit_loose_top": "Focal TikTok accounts explicitly describing loose or improperly screwed top.",
+    "bare_arrival_agreement": "Only terse same/same way agreement with no further report.",
+    "replacement_offered": "Brand offer to send service replacement.",
+    "replacement_sent": "Customer explicitly reports replacement sent; not confirmed delivered.",
+    "retailer_leak": "Retailer accounts reporting packaging leakage.",
+    "repurchase_intended": "Explicit future repeat purchase intent."
+  },
+  "products": [
+    {
+      "id": "experiment-shopify-5913452937408",
+      "name": "Avant Guard"
+    },
+    {
+      "id": "experiment-shopify-7299389030592",
+      "name": "Super Saturated"
+    },
+    {
+      "id": "experiment-shopify-7476098007232",
+      "name": "Buffer Jelly [experiment-shopify-7476098007232]"
+    },
+    {
+      "id": "experiment-shopify-7758608105664",
+      "name": "Softwear"
+    },
+    {
+      "id": "experiment-shopify-8086723035328",
+      "name": "Plasma Wash"
+    },
+    {
+      "id": "experiment-shopify-8193821802688",
+      "name": "Molecular Mesh"
+    },
+    {
+      "id": "experiment-shopify-8555927306432",
+      "name": "Continuum"
+    }
+  ],
+  "stage": "initial",
+  "focal_keys": [
+    "P00",
+    "P01",
+    "P02",
+    "P03",
+    "P04",
+    "P06",
+    "P07",
+    "P15",
+    "P17",
+    "P20",
+    "P21",
+    "P26",
+    "P27",
+    "P29",
+    "P32",
+    "P38",
+    "P39",
+    "P40",
+    "P42"
+  ],
+  "sources": {
+    "records": [
+      {
+        "key": "P00",
+        "author_url": "/@randomdude7551",
+        "body": "Metal packaging is sooo chic (and environmentally friendly)",
+        "body_level": "comment-level-1",
+        "observation_index": 0,
+        "text": "randomdude7551\n\nMetal packaging is sooo chic (and environmentally friendly)\n5-15\n\nReply\n\n296",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 296
+        },
+        "parent_key": null
+      },
+      {
+        "key": "P01",
+        "author_url": "/@experimentwrld",
+        "body": "Agree 1000%",
+        "body_level": "comment-level-2",
+        "observation_index": 1,
+        "text": "Experiment Beauty\n\n· Creator\n\nAgree 1000%\n5-15\nReply\n39",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 39
+        },
+        "parent_key": "P00"
+      },
+      {
+        "key": "P02",
+        "author_url": "/@person1234567556987",
+        "body": "is it environmentally friendly though? is it recyclable?",
+        "body_level": "comment-level-2",
+        "observation_index": 2,
+        "text": "person\n\nis it environmentally friendly though? is it recyclable?\n5-15\nReply\n0",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 0
+        },
+        "parent_key": "P00"
+      },
+      {
+        "key": "P03",
+        "author_url": "/@randomdude7551",
+        "body": "Aluminum packaging like this is almost always recyclable, the inner part likely is as well. The pump likely isn’t but it and the outer aluminum shell are reusable",
+        "body_level": "comment-level-2",
+        "observation_index": 3,
+        "text": "randomdude7551\n\nAluminum packaging like this is almost always recyclable, the inner part likely is as well. The pump likely isn’t but it and the outer aluminum shell are reusable\n5-15\nReply\n2",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 2
+        },
+        "parent_key": "P00"
+      },
+      {
+        "key": "P04",
+        "author_url": "/@flamingpanda5",
+        "body": "Pls started selling the refills as bundles as well! 🙏🏽",
+        "body_level": "comment-level-2",
+        "observation_index": 4,
+        "text": "flamingpanda5\n\nPls started selling the refills as bundles as well! 🙏🏽\n5-20\nReply\n0",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 0
+        },
+        "parent_key": "P00"
+      },
+      {
+        "key": "P06",
+        "author_url": "/@jasminesingh1102",
+        "body": "my product came leaked the top part was loose so i had to open it and clean so it was exposed to oxygen. is it not good to use anymore?",
+        "body_level": "comment-level-1",
+        "observation_index": 6,
+        "text": "Jasmine ✨️\n\nmy product came leaked the top part was loose so i had to open it and clean so it was exposed to oxygen. is it not good to use anymore?\n5-15\n\nReply\n\n12",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 12
+        },
+        "parent_key": null
+      },
+      {
+        "key": "P07",
+        "author_url": "/@experimentwrld",
+        "body": "Oh no, we're sorry to hear that! Short term exposure is not an issue, but please reach out to hey@experimentbeauty.com and we’ll happily send a replacement. 🔬",
+        "body_level": "comment-level-2",
+        "observation_index": 7,
+        "text": "Experiment Beauty\n\n· Creator\n\nOh no, we're sorry to hear that! Short term exposure is not an issue, but please reach out to hey@experimentbeauty.com and we’ll happily send a replacement. 🔬\n5-16\nReply\n12",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 12
+        },
+        "parent_key": "P06"
+      },
+      {
+        "key": "P15",
+        "author_url": "/@bmdubs",
+        "body": "Gonna use my empty to hold my lexapro🤭",
+        "body_level": "comment-level-1",
+        "observation_index": 15,
+        "text": "brooke🩵✨🏹\n\nGonna use my empty to hold my lexapro🤭\n5-15\n\nReply\n\n150",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 150
+        },
+        "parent_key": null
+      },
+      {
+        "key": "P17",
+        "author_url": "/@mostlyconceptual",
+        "body": "I'm so obsessed with literally everything from you guys. I've never really been brand loyal but my skincare routine is all experiment rn and continuum is in the mail as we speak 😅😅",
+        "body_level": "comment-level-1",
+        "observation_index": 17,
+        "text": "cb\n\nI'm so obsessed with literally everything from you guys. I've never really been brand loyal but my skincare routine is all experiment rn and continuum is in the mail as we speak 😅😅\n5-16\n\nReply\n\n1",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 1
+        },
+        "parent_key": null
+      },
+      {
+        "key": "P20",
+        "author_url": "/@countryboiiloveyouuuxoxo",
+        "body": "I’m buying everrrrrything from yall!",
+        "body_level": "comment-level-1",
+        "observation_index": 20,
+        "text": "CountryboiiLoveyouuu\n\nI’m buying everrrrrything from yall!\n5-15\n\nReply\n\n7",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 7
+        },
+        "parent_key": null
+      },
+      {
+        "key": "P21",
+        "author_url": "/@beautybought",
+        "body": "Thank you so much for consistently giving us amazing products in packaging we can feel good about",
+        "body_level": "comment-level-1",
+        "observation_index": 21,
+        "text": "Evie | BeautyBought Reviews\n\nThank you so much for consistently giving us amazing products in packaging we can feel good about\n5-17\n\nReply\n\n1",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 1
+        },
+        "parent_key": null
+      },
+      {
+        "key": "P26",
+        "author_url": "/@adam_thomas6",
+        "body": "ok so the packaging is great.. but what does it do for your skin?",
+        "body_level": "comment-level-1",
+        "observation_index": 26,
+        "text": "Adam\n\nok so the packaging is great.. but what does it do for your skin?\n5-21\n\nReply\n\n1",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 1
+        },
+        "parent_key": null
+      },
+      {
+        "key": "P27",
+        "author_url": "/@sofieeee120",
+        "body": "any chance you would bundle a continuum and super saturated refills?",
+        "body_level": "comment-level-1",
+        "observation_index": 27,
+        "text": "Sofieeee120\n\nany chance you would bundle a continuum and super saturated refills?\n5-24\n\nReply\n\n1",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 1
+        },
+        "parent_key": null
+      },
+      {
+        "key": "P29",
+        "author_url": "/@allthegr8namesaretaken",
+        "body": "Wait how do I get the sticker in my refill 😂😭",
+        "body_level": "comment-level-1",
+        "observation_index": 29,
+        "text": "Brooklyn\n\nWait how do I get the sticker in my refill 😂😭\n5-17\n\nReply\n\n2",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 2
+        },
+        "parent_key": null
+      },
+      {
+        "key": "P32",
+        "author_url": "/@josemarbp",
+        "body": "This is genius i might have to save up for that",
+        "body_level": "comment-level-1",
+        "observation_index": 32,
+        "text": "mariobsmh\n\nThis is genius i might have to save up for that\n5-18\n\nReply\n\n3",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 3
+        },
+        "parent_key": null
+      },
+      {
+        "key": "P38",
+        "author_url": "/@taylorelissa",
+        "body": "this is such a cute package can’t wait to try it",
+        "body_level": "comment-level-1",
+        "observation_index": 38,
+        "text": "☁︎⊹ elissa ⊹☁︎\n\nthis is such a cute package can’t wait to try it\n5-16\n\nReply\n\n1",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 1
+        },
+        "parent_key": null
+      },
+      {
+        "key": "P39",
+        "author_url": "/@morco11111",
+        "body": "Love this! Thank you for taking the package just as seriously as your formulas 🥰",
+        "body_level": "comment-level-1",
+        "observation_index": 39,
+        "text": "morco1111\n\nLove this! Thank you for taking the package just as seriously as your formulas 🥰\n5-29\n\nReply\n\n1",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 1
+        },
+        "parent_key": null
+      },
+      {
+        "key": "P40",
+        "author_url": "/@danaisabellaaa",
+        "body": "it’s SOOOO CUTE",
+        "body_level": "comment-level-1",
+        "observation_index": 40,
+        "text": "Dana Patterson✨\n\nit’s SOOOO CUTE\n5-15\n\nReply\n\n1",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 1
+        },
+        "parent_key": null
+      },
+      {
+        "key": "P42",
+        "author_url": "/@__whitneyjade",
+        "body": "Wattttt im so excited about this because I just received mine today and I had no idea it’s refillable like this! 😍",
+        "body_level": "comment-level-1",
+        "observation_index": 42,
+        "text": "whitney | bevs & beauty\n\nWattttt im so excited about this because I just received mine today and I had no idea it’s refillable like this! 😍\n5-20\n\nReply\n\n1",
+        "source_url": "https://www.tiktok.com/@experimentwrld/video/7639858768146222366",
+        "observed_at": "2026-09-09T11:56:25.935Z",
+        "engagement": {
+          "metric": "displayed likes",
+          "value": 1
+        },
+        "parent_key": null
+      }
+    ],
+    "contexts": [],
+    "source_limits": [
+      "47 displayed comment bodies;72 advertised total is not completeness proof.",
+      "Arrival-leak and metal-packaging reply branches expanded; other reply branches remain outside this bounded follow-up.",
+      "No native comment IDs exposed; profile URL plus exact body and observed reply grouping are preserved.",
+      "Displayed month-day lacks year; no inferred complaint SKU, independent-human count, causal mechanism or population rate."
+    ]
+  }
+}

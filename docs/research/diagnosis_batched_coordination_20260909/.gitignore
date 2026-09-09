@@ -1,0 +1,2 @@
+# Complete sample logs are evidence, including empty stderr files.
+!*.log

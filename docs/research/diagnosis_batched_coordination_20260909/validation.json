@@ -1,0 +1,915 @@
+{
+  "checked_at": "2026-09-09T13:42:55.469Z",
+  "source_identity": true,
+  "only_two_predeclared_corrections": true,
+  "changed_timestamp_keys": [
+    "A04",
+    "A05",
+    "A06",
+    "A07",
+    "A08",
+    "A09",
+    "A10",
+    "A11",
+    "A13",
+    "A14",
+    "A15",
+    "A16"
+  ],
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 219
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 74
+    },
+    {
+      "path": "authority-context.txt",
+      "bytes": 16972
+    },
+    {
+      "path": "baseline-comparison.json",
+      "bytes": 43348
+    },
+    {
+      "path": "baseline-native-counters.json",
+      "bytes": 24097
+    },
+    {
+      "path": "batch-buying-full-initial.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "batch-buying-full-initial.stdout.log",
+      "bytes": 323
+    },
+    {
+      "path": "batch-buying-full-update.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "batch-buying-full-update.stdout.log",
+      "bytes": 321
+    },
+    {
+      "path": "batch-buying-incremental-initial.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "batch-buying-incremental-initial.stdout.log",
+      "bytes": 332
+    },
+    {
+      "path": "batch-buying-incremental-update.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "batch-buying-incremental-update.stdout.log",
+      "bytes": 334
+    },
+    {
+      "path": "batch-hydration-full-initial.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "batch-hydration-full-initial.stdout.log",
+      "bytes": 324
+    },
+    {
+      "path": "batch-hydration-full-update.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "batch-hydration-full-update.stdout.log",
+      "bytes": 322
+    },
+    {
+      "path": "batch-hydration-incremental-initial.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "batch-hydration-incremental-initial.stdout.log",
+      "bytes": 674
+    },
+    {
+      "path": "batch-hydration-incremental-update.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "batch-hydration-incremental-update.stdout.log",
+      "bytes": 336
+    },
+    {
+      "path": "batch-packaging-full-initial.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "batch-packaging-full-initial.stdout.log",
+      "bytes": 324
+    },
+    {
+      "path": "batch-packaging-full-update.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "batch-packaging-full-update.stdout.log",
+      "bytes": 322
+    },
+    {
+      "path": "batch-packaging-incremental-initial.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "batch-packaging-incremental-initial.stdout.log",
+      "bytes": 338
+    },
+    {
+      "path": "batch-packaging-incremental-update.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "batch-packaging-incremental-update.stdout.log",
+      "bytes": 336
+    },
+    {
+      "path": "batch-process.json",
+      "bytes": 2467
+    },
+    {
+      "path": "batch-progress.json",
+      "bytes": 2340
+    },
+    {
+      "path": "batch-result.json",
+      "bytes": 2772
+    },
+    {
+      "path": "batch.mjs",
+      "bytes": 1624
+    },
+    {
+      "path": "case-pack-buying.json",
+      "bytes": 75728
+    },
+    {
+      "path": "case-pack-hydration.json",
+      "bytes": 76713
+    },
+    {
+      "path": "case-pack-packaging.json",
+      "bytes": 68073
+    },
+    {
+      "path": "checkpoint-postbatch.json",
+      "bytes": 7751
+    },
+    {
+      "path": "checkpoint-postgrading.json",
+      "bytes": 8353
+    },
+    {
+      "path": "checkpoint-precall.json",
+      "bytes": 3256
+    },
+    {
+      "path": "closeout.mjs",
+      "bytes": 2526
+    },
+    {
+      "path": "common.txt",
+      "bytes": 2189
+    },
+    {
+      "path": "compare.mjs",
+      "bytes": 3130
+    },
+    {
+      "path": "comparison.json",
+      "bytes": 16286
+    },
+    {
+      "path": "count-definitions.json",
+      "bytes": 2110
+    },
+    {
+      "path": "counters.mjs",
+      "bytes": 1320
+    },
+    {
+      "path": "diff-scope.json",
+      "bytes": 23575
+    },
+    {
+      "path": "durable-accounting-check.json",
+      "bytes": 503
+    },
+    {
+      "path": "execution-plan.json",
+      "bytes": 3384
+    },
+    {
+      "path": "expected.json",
+      "bytes": 9272
+    },
+    {
+      "path": "experiment.json",
+      "bytes": 9599
+    },
+    {
+      "path": "fixture-errata.json",
+      "bytes": 3194
+    },
+    {
+      "path": "freeze.json",
+      "bytes": 1350
+    },
+    {
+      "path": "measure.mjs",
+      "bytes": 9419
+    },
+    {
+      "path": "measurement.json",
+      "bytes": 71457
+    },
+    {
+      "path": "pr-body.md",
+      "bytes": 827
+    },
+    {
+      "path": "preflight.json",
+      "bytes": 5792
+    },
+    {
+      "path": "publication-add.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-add.stdout.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-commit.stderr.log",
+      "bytes": 449
+    },
+    {
+      "path": "publication-commit.stdout.log",
+      "bytes": 16615
+    },
+    {
+      "path": "publication-first-failure.json",
+      "bytes": 5214
+    },
+    {
+      "path": "publication-head.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-head.stdout.log",
+      "bytes": 41
+    },
+    {
+      "path": "publication-lint.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-lint.stdout.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-authority-context-txt.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-authority-context-txt.stdout.log",
+      "bytes": 16972
+    },
+    {
+      "path": "publication-pin-batch-mjs.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-batch-mjs.stdout.log",
+      "bytes": 1624
+    },
+    {
+      "path": "publication-pin-common-txt.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-common-txt.stdout.log",
+      "bytes": 2189
+    },
+    {
+      "path": "publication-pin-count-definitions-json.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-count-definitions-json.stdout.log",
+      "bytes": 2110
+    },
+    {
+      "path": "publication-pin-expected-json.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-expected-json.stdout.log",
+      "bytes": 9272
+    },
+    {
+      "path": "publication-pin-experiment-json.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-experiment-json.stdout.log",
+      "bytes": 9599
+    },
+    {
+      "path": "publication-pin-fixture-errata-json.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-fixture-errata-json.stdout.log",
+      "bytes": 3194
+    },
+    {
+      "path": "publication-pin-response-schema-json.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-response-schema-json.stdout.log",
+      "bytes": 1365
+    },
+    {
+      "path": "publication-pin-run-mjs.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-run-mjs.stdout.log",
+      "bytes": 6525
+    },
+    {
+      "path": "publication-pin-sources-json.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-pin-sources-json.stdout.log",
+      "bytes": 71612
+    },
+    {
+      "path": "publication-preflight-failure.json",
+      "bytes": 1528
+    },
+    {
+      "path": "publication-push.stderr.log",
+      "bytes": 439
+    },
+    {
+      "path": "publication-push.stdout.log",
+      "bytes": 127
+    },
+    {
+      "path": "publication-readback.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-readback.stdout.log",
+      "bytes": 8498
+    },
+    {
+      "path": "publication-remote.stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "publication-remote.stdout.log",
+      "bytes": 98
+    },
+    {
+      "path": "publication-sequence.json",
+      "bytes": 4748
+    },
+    {
+      "path": "publication.json",
+      "bytes": 728
+    },
+    {
+      "path": "publish.mjs",
+      "bytes": 2588
+    },
+    {
+      "path": "quality-initial.json",
+      "bytes": 1379
+    },
+    {
+      "path": "quality.json",
+      "bytes": 6217
+    },
+    {
+      "path": "report.md",
+      "bytes": 8498
+    },
+    {
+      "path": "response.schema.json",
+      "bytes": 1365
+    },
+    {
+      "path": "run.mjs",
+      "bytes": 6525
+    },
+    {
+      "path": "runs/buying-full-initial/call-0/events.jsonl",
+      "bytes": 9492
+    },
+    {
+      "path": "runs/buying-full-initial/call-0/invocation.json",
+      "bytes": 1166
+    },
+    {
+      "path": "runs/buying-full-initial/call-0/receipt.json",
+      "bytes": 598
+    },
+    {
+      "path": "runs/buying-full-initial/call-0/response.json",
+      "bytes": 8660
+    },
+    {
+      "path": "runs/buying-full-initial/call-0/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "runs/buying-full-initial/call-0/stdin.txt",
+      "bytes": 34104
+    },
+    {
+      "path": "runs/buying-full-initial/final.json",
+      "bytes": 8724
+    },
+    {
+      "path": "runs/buying-full-initial/input.json",
+      "bytes": 17080
+    },
+    {
+      "path": "runs/buying-full-initial/stage-receipt.json",
+      "bytes": 144
+    },
+    {
+      "path": "runs/buying-full-update/call-0/events.jsonl",
+      "bytes": 12970
+    },
+    {
+      "path": "runs/buying-full-update/call-0/invocation.json",
+      "bytes": 1163
+    },
+    {
+      "path": "runs/buying-full-update/call-0/receipt.json",
+      "bytes": 597
+    },
+    {
+      "path": "runs/buying-full-update/call-0/response.json",
+      "bytes": 12084
+    },
+    {
+      "path": "runs/buying-full-update/call-0/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "runs/buying-full-update/call-0/stdin.txt",
+      "bytes": 47093
+    },
+    {
+      "path": "runs/buying-full-update/final.json",
+      "bytes": 12196
+    },
+    {
+      "path": "runs/buying-full-update/input.json",
+      "bytes": 31645
+    },
+    {
+      "path": "runs/buying-full-update/stage-receipt.json",
+      "bytes": 144
+    },
+    {
+      "path": "runs/buying-incremental-initial/call-0/events.jsonl",
+      "bytes": 10005
+    },
+    {
+      "path": "runs/buying-incremental-initial/call-0/invocation.json",
+      "bytes": 1187
+    },
+    {
+      "path": "runs/buying-incremental-initial/call-0/receipt.json",
+      "bytes": 600
+    },
+    {
+      "path": "runs/buying-incremental-initial/call-0/response.json",
+      "bytes": 9182
+    },
+    {
+      "path": "runs/buying-incremental-initial/call-0/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "runs/buying-incremental-initial/call-0/stdin.txt",
+      "bytes": 34104
+    },
+    {
+      "path": "runs/buying-incremental-initial/final.json",
+      "bytes": 9222
+    },
+    {
+      "path": "runs/buying-incremental-initial/input.json",
+      "bytes": 17080
+    },
+    {
+      "path": "runs/buying-incremental-initial/stage-receipt.json",
+      "bytes": 144
+    },
+    {
+      "path": "runs/buying-incremental-update/call-0/events.jsonl",
+      "bytes": 15022
+    },
+    {
+      "path": "runs/buying-incremental-update/call-0/invocation.json",
+      "bytes": 1184
+    },
+    {
+      "path": "runs/buying-incremental-update/call-0/receipt.json",
+      "bytes": 604
+    },
+    {
+      "path": "runs/buying-incremental-update/call-0/response.json",
+      "bytes": 14135
+    },
+    {
+      "path": "runs/buying-incremental-update/call-0/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "runs/buying-incremental-update/call-0/stdin.txt",
+      "bytes": 43533
+    },
+    {
+      "path": "runs/buying-incremental-update/final.json",
+      "bytes": 14247
+    },
+    {
+      "path": "runs/buying-incremental-update/input.json",
+      "bytes": 27173
+    },
+    {
+      "path": "runs/buying-incremental-update/stage-receipt.json",
+      "bytes": 144
+    },
+    {
+      "path": "runs/hydration-full-initial/call-0/events.jsonl",
+      "bytes": 8142
+    },
+    {
+      "path": "runs/hydration-full-initial/call-0/invocation.json",
+      "bytes": 1175
+    },
+    {
+      "path": "runs/hydration-full-initial/call-0/receipt.json",
+      "bytes": 604
+    },
+    {
+      "path": "runs/hydration-full-initial/call-0/response.json",
+      "bytes": 7355
+    },
+    {
+      "path": "runs/hydration-full-initial/call-0/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "runs/hydration-full-initial/call-0/stdin.txt",
+      "bytes": 34630
+    },
+    {
+      "path": "runs/hydration-full-initial/final.json",
+      "bytes": 7419
+    },
+    {
+      "path": "runs/hydration-full-initial/input.json",
+      "bytes": 18107
+    },
+    {
+      "path": "runs/hydration-full-initial/stage-receipt.json",
+      "bytes": 144
+    },
+    {
+      "path": "runs/hydration-full-update/call-0/events.jsonl",
+      "bytes": 13714
+    },
+    {
+      "path": "runs/hydration-full-update/call-0/invocation.json",
+      "bytes": 1172
+    },
+    {
+      "path": "runs/hydration-full-update/call-0/receipt.json",
+      "bytes": 602
+    },
+    {
+      "path": "runs/hydration-full-update/call-0/response.json",
+      "bytes": 12859
+    },
+    {
+      "path": "runs/hydration-full-update/call-0/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "runs/hydration-full-update/call-0/stdin.txt",
+      "bytes": 50228
+    },
+    {
+      "path": "runs/hydration-full-update/final.json",
+      "bytes": 12955
+    },
+    {
+      "path": "runs/hydration-full-update/input.json",
+      "bytes": 35620
+    },
+    {
+      "path": "runs/hydration-full-update/stage-receipt.json",
+      "bytes": 144
+    },
+    {
+      "path": "runs/hydration-incremental-initial/call-0/events.jsonl",
+      "bytes": 959
+    },
+    {
+      "path": "runs/hydration-incremental-initial/call-0/invocation.json",
+      "bytes": 1196
+    },
+    {
+      "path": "runs/hydration-incremental-initial/call-0/receipt.json",
+      "bytes": 602
+    },
+    {
+      "path": "runs/hydration-incremental-initial/call-0/response.json",
+      "bytes": 325
+    },
+    {
+      "path": "runs/hydration-incremental-initial/call-0/retrieval.json",
+      "bytes": 34
+    },
+    {
+      "path": "runs/hydration-incremental-initial/call-0/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "runs/hydration-incremental-initial/call-0/stdin.txt",
+      "bytes": 34630
+    },
+    {
+      "path": "runs/hydration-incremental-initial/call-1/events.jsonl",
+      "bytes": 7922
+    },
+    {
+      "path": "runs/hydration-incremental-initial/call-1/invocation.json",
+      "bytes": 1196
+    },
+    {
+      "path": "runs/hydration-incremental-initial/call-1/receipt.json",
+      "bytes": 602
+    },
+    {
+      "path": "runs/hydration-incremental-initial/call-1/response.json",
+      "bytes": 7136
+    },
+    {
+      "path": "runs/hydration-incremental-initial/call-1/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "runs/hydration-incremental-initial/call-1/stdin.txt",
+      "bytes": 37071
+    },
+    {
+      "path": "runs/hydration-incremental-initial/final.json",
+      "bytes": 7200
+    },
+    {
+      "path": "runs/hydration-incremental-initial/input.json",
+      "bytes": 18107
+    },
+    {
+      "path": "runs/hydration-incremental-initial/stage-receipt.json",
+      "bytes": 144
+    },
+    {
+      "path": "runs/hydration-incremental-update/call-0/events.jsonl",
+      "bytes": 14674
+    },
+    {
+      "path": "runs/hydration-incremental-update/call-0/invocation.json",
+      "bytes": 1193
+    },
+    {
+      "path": "runs/hydration-incremental-update/call-0/receipt.json",
+      "bytes": 603
+    },
+    {
+      "path": "runs/hydration-incremental-update/call-0/response.json",
+      "bytes": 13821
+    },
+    {
+      "path": "runs/hydration-incremental-update/call-0/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "runs/hydration-incremental-update/call-0/stdin.txt",
+      "bytes": 45102
+    },
+    {
+      "path": "runs/hydration-incremental-update/final.json",
+      "bytes": 13917
+    },
+    {
+      "path": "runs/hydration-incremental-update/input.json",
+      "bytes": 29111
+    },
+    {
+      "path": "runs/hydration-incremental-update/stage-receipt.json",
+      "bytes": 144
+    },
+    {
+      "path": "runs/packaging-full-initial/call-0/events.jsonl",
+      "bytes": 10074
+    },
+    {
+      "path": "runs/packaging-full-initial/call-0/invocation.json",
+      "bytes": 1175
+    },
+    {
+      "path": "runs/packaging-full-initial/call-0/receipt.json",
+      "bytes": 603
+    },
+    {
+      "path": "runs/packaging-full-initial/call-0/response.json",
+      "bytes": 9102
+    },
+    {
+      "path": "runs/packaging-full-initial/call-0/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "runs/packaging-full-initial/call-0/stdin.txt",
+      "bytes": 30861
+    },
+    {
+      "path": "runs/packaging-full-initial/final.json",
+      "bytes": 9150
+    },
+    {
+      "path": "runs/packaging-full-initial/input.json",
+      "bytes": 14863
+    },
+    {
+      "path": "runs/packaging-full-initial/stage-receipt.json",
+      "bytes": 144
+    },
+    {
+      "path": "runs/packaging-full-update/call-0/events.jsonl",
+      "bytes": 13544
+    },
+    {
+      "path": "runs/packaging-full-update/call-0/invocation.json",
+      "bytes": 1172
+    },
+    {
+      "path": "runs/packaging-full-update/call-0/receipt.json",
+      "bytes": 595
+    },
+    {
+      "path": "runs/packaging-full-update/call-0/response.json",
+      "bytes": 12454
+    },
+    {
+      "path": "runs/packaging-full-update/call-0/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "runs/packaging-full-update/call-0/stdin.txt",
+      "bytes": 35740
+    },
+    {
+      "path": "runs/packaging-full-update/final.json",
+      "bytes": 12646
+    },
+    {
+      "path": "runs/packaging-full-update/input.json",
+      "bytes": 21295
+    },
+    {
+      "path": "runs/packaging-full-update/stage-receipt.json",
+      "bytes": 144
+    },
+    {
+      "path": "runs/packaging-incremental-initial/call-0/events.jsonl",
+      "bytes": 11011
+    },
+    {
+      "path": "runs/packaging-incremental-initial/call-0/invocation.json",
+      "bytes": 1196
+    },
+    {
+      "path": "runs/packaging-incremental-initial/call-0/receipt.json",
+      "bytes": 603
+    },
+    {
+      "path": "runs/packaging-incremental-initial/call-0/response.json",
+      "bytes": 10035
+    },
+    {
+      "path": "runs/packaging-incremental-initial/call-0/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "runs/packaging-incremental-initial/call-0/stdin.txt",
+      "bytes": 30861
+    },
+    {
+      "path": "runs/packaging-incremental-initial/final.json",
+      "bytes": 10083
+    },
+    {
+      "path": "runs/packaging-incremental-initial/input.json",
+      "bytes": 14863
+    },
+    {
+      "path": "runs/packaging-incremental-initial/stage-receipt.json",
+      "bytes": 144
+    },
+    {
+      "path": "runs/packaging-incremental-update/call-0/events.jsonl",
+      "bytes": 14974
+    },
+    {
+      "path": "runs/packaging-incremental-update/call-0/invocation.json",
+      "bytes": 1193
+    },
+    {
+      "path": "runs/packaging-incremental-update/call-0/receipt.json",
+      "bytes": 602
+    },
+    {
+      "path": "runs/packaging-incremental-update/call-0/response.json",
+      "bytes": 13884
+    },
+    {
+      "path": "runs/packaging-incremental-update/call-0/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "runs/packaging-incremental-update/call-0/stdin.txt",
+      "bytes": 35770
+    },
+    {
+      "path": "runs/packaging-incremental-update/final.json",
+      "bytes": 14076
+    },
+    {
+      "path": "runs/packaging-incremental-update/input.json",
+      "bytes": 19942
+    },
+    {
+      "path": "runs/packaging-incremental-update/stage-receipt.json",
+      "bytes": 144
+    },
+    {
+      "path": "source-validation.json",
+      "bytes": 4225
+    },
+    {
+      "path": "sources.json",
+      "bytes": 71612
+    },
+    {
+      "path": "staging-race-failure.json",
+      "bytes": 1370
+    },
+    {
+      "path": "validate.mjs",
+      "bytes": 3051
+    },
+    {
+      "path": "validation-process.json",
+      "bytes": 1689
+    },
+    {
+      "path": "validation.json",
+      "bytes": 16727
+    }
+  ],
+  "byte_counts": {
+    "frozen_source_json": 71612,
+    "reader_stdin": 493727,
+    "reader_event_stdout": 142503,
+    "stderr": 0,
+    "coordinator_command_logs": 155015,
+    "final_answers": 131835,
+    "all_artifacts_at_check": 1981127
+  },
+  "bytes_are_not_tokens": true
+}

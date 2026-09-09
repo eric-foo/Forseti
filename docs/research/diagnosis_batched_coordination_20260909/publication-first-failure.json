@@ -1,0 +1,201 @@
+{
+  "status": "failed",
+  "error": "Remote head mismatch",
+  "results": [
+    {
+      "label": "add",
+      "args": [
+        "add",
+        "--",
+        "docs/research/diagnosis_batched_coordination_20260909",
+        "docs/research/README.md"
+      ],
+      "started_at": "2026-09-09T13:40:37.499Z",
+      "finished_at": "2026-09-09T13:40:37.576Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "label": "lint",
+      "args": [
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "started_at": "2026-09-09T13:40:37.578Z",
+      "finished_at": "2026-09-09T13:40:37.658Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "label": "commit",
+      "args": [
+        "commit",
+        "-m",
+        "research: compare batched diagnostic coordination on fixed evidence"
+      ],
+      "started_at": "2026-09-09T13:40:37.660Z",
+      "finished_at": "2026-09-09T13:40:38.446Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "label": "head",
+      "args": [
+        "rev-parse",
+        "HEAD"
+      ],
+      "started_at": "2026-09-09T13:40:38.448Z",
+      "finished_at": "2026-09-09T13:40:38.565Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "label": "readback",
+      "args": [
+        "show",
+        "HEAD:docs/research/diagnosis_batched_coordination_20260909/report.md"
+      ],
+      "started_at": "2026-09-09T13:40:38.567Z",
+      "finished_at": "2026-09-09T13:40:38.628Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "label": "pin-sources-json",
+      "args": [
+        "show",
+        "HEAD:docs/research/diagnosis_batched_coordination_20260909/sources.json"
+      ],
+      "started_at": "2026-09-09T13:40:38.631Z",
+      "finished_at": "2026-09-09T13:40:38.687Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "label": "pin-experiment-json",
+      "args": [
+        "show",
+        "HEAD:docs/research/diagnosis_batched_coordination_20260909/experiment.json"
+      ],
+      "started_at": "2026-09-09T13:40:38.690Z",
+      "finished_at": "2026-09-09T13:40:38.749Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "label": "pin-expected-json",
+      "args": [
+        "show",
+        "HEAD:docs/research/diagnosis_batched_coordination_20260909/expected.json"
+      ],
+      "started_at": "2026-09-09T13:40:38.751Z",
+      "finished_at": "2026-09-09T13:40:38.810Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "label": "pin-count-definitions-json",
+      "args": [
+        "show",
+        "HEAD:docs/research/diagnosis_batched_coordination_20260909/count-definitions.json"
+      ],
+      "started_at": "2026-09-09T13:40:38.813Z",
+      "finished_at": "2026-09-09T13:40:38.883Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "label": "pin-fixture-errata-json",
+      "args": [
+        "show",
+        "HEAD:docs/research/diagnosis_batched_coordination_20260909/fixture-errata.json"
+      ],
+      "started_at": "2026-09-09T13:40:38.886Z",
+      "finished_at": "2026-09-09T13:40:39.022Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "label": "pin-common-txt",
+      "args": [
+        "show",
+        "HEAD:docs/research/diagnosis_batched_coordination_20260909/common.txt"
+      ],
+      "started_at": "2026-09-09T13:40:39.024Z",
+      "finished_at": "2026-09-09T13:40:39.086Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "label": "pin-authority-context-txt",
+      "args": [
+        "show",
+        "HEAD:docs/research/diagnosis_batched_coordination_20260909/authority-context.txt"
+      ],
+      "started_at": "2026-09-09T13:40:39.089Z",
+      "finished_at": "2026-09-09T13:40:39.152Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "label": "pin-response-schema-json",
+      "args": [
+        "show",
+        "HEAD:docs/research/diagnosis_batched_coordination_20260909/response.schema.json"
+      ],
+      "started_at": "2026-09-09T13:40:39.154Z",
+      "finished_at": "2026-09-09T13:40:39.211Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "label": "pin-run-mjs",
+      "args": [
+        "show",
+        "HEAD:docs/research/diagnosis_batched_coordination_20260909/run.mjs"
+      ],
+      "started_at": "2026-09-09T13:40:39.213Z",
+      "finished_at": "2026-09-09T13:40:39.317Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "label": "pin-batch-mjs",
+      "args": [
+        "show",
+        "HEAD:docs/research/diagnosis_batched_coordination_20260909/batch.mjs"
+      ],
+      "started_at": "2026-09-09T13:40:39.318Z",
+      "finished_at": "2026-09-09T13:40:39.389Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "label": "push",
+      "args": [
+        "push",
+        "-u",
+        "origin",
+        "codex/diagnosis-batched-coordination-20260909"
+      ],
+      "started_at": "2026-09-09T13:40:39.391Z",
+      "finished_at": "2026-09-09T13:41:03.851Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "label": "remote",
+      "args": [
+        "ls-remote",
+        "--heads",
+        "origin",
+        "codex/diagnosis-batched-coordination-20260909"
+      ],
+      "started_at": "2026-09-09T13:41:03.853Z",
+      "finished_at": "2026-09-09T13:41:04.549Z",
+      "code": 0,
+      "signal": null
+    }
+  ]
+}

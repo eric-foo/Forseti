@@ -1,0 +1,79 @@
+{
+  "assessed_at": "2026-09-09T13:35:03.787Z",
+  "authority": "Original complete accounts and contexts govern; frozen expected sets are checks, not factual authority. First-pass outputs unchanged, no semantic retries.",
+  "assessment_scope": "All twelve new final-stage responses including full reports and every source_index item read; all 26 packaging records and all hydration/buying accounts plus linked contexts read. Baseline native measurement reproduced; baseline final reports and decisive source-index entries independently inspected.",
+  "adoption": "not_supported",
+  "cases": {
+    "packaging": {
+      "counts": "All initial/update sets match frozen oracle in both arms.",
+      "retained": [
+        "P00/P15 resonance without environmental or reuse verification",
+        "P00/P03 same actor; brand replies not independent customers",
+        "one to seven arrival accounts, two explicit loose tops, four bare agreements",
+        "unknown TikTok SKU and thread concentration",
+        "P07 offer versus P08 sent versus unproven delivery",
+        "R01 known Softwear Void pocket leak distinct from arrival and proposed remedy versus implementation",
+        "buying intent, shipment, receipt and same-actor complaint/loyalty"
+      ],
+      "failure": {
+        "sources": [
+          "R01"
+        ],
+        "baseline": "Both final reports and R01 indexes omit outside-manufacturer belief and resulting reluctance to complain.",
+        "incremental": "Both absent from report and R01 findings.",
+        "full": "Report says manufacturing responsibility is reviewer attribution, but does not preserve outside-manufacturer belief in usable detail or reluctance to complain; R01 index omits both.",
+        "severity": "material shared explanatory-qualifier omission; partial full improvement does not pass the unchanged check"
+      }
+    },
+    "hydration": {
+      "counts": "All four definitions match both stages and arms.",
+      "retained": [
+        "A04/A08 then A13 direct hydration distinct from A09 joint mask/serum result",
+        "A03 relative stickiness and A04 lightweight fast drying; A13 duration, skin, amount/day-night conditions without invented reconciliation",
+        "A07 unavailable even after incremental retrieval",
+        "A17 never tried and no shipping; claimed glycerin composition speculative",
+        "A18 repeated parent counted once; Wave/CREAM/Level not SS testimony",
+        "Buffer Jelly gift/two uses/joint moisturizer/forecast distinguished; Plasma Wash favorable texture and adverse cleansing/burning/dryness/return intent retained",
+        "Correct engagement observation unavailability"
+      ],
+      "material_regression_observed": false
+    },
+    "buying": {
+      "counts": "Both updated outputs match all expected focal sets and six action categories; initial full has one failing set containing A02 and A05.",
+      "retained": [
+        "A04 four acquisitions, A05 checkout, A11 one stock-up category not three unit/events",
+        "A01 cart attribution distinct from checkout; parents own their testimony",
+        "A02 Dr Idriss and A12 Regimen Lab kept outside Experiment acquisition",
+        "A11 dermatitis, steroid treatment, rechallenge, unopened stock and affection with attributed causation",
+        "A14 gift, A15 contemplated return, A16 intended replacement distinct from completed behavior",
+        "A04 functional redundancy retained separately; no completed replacement credited in any new answer"
+      ],
+      "initial_full_failure": {
+        "source": "A02",
+        "evidence": "I have that one too, I cant stand the feeling so I always skip it.",
+        "observed": "Habitual skipping supports actual routine non-use/discontinuation",
+        "judgment": "Non-use/avoidance is supported; an actual transition/discontinuation from prior routine use is not narrated. Promoting this into completed replacement changes action completion and source count. Material first-pass overreach; full update correctly retracts it. Baseline final answers did not make it; no stochastic causal claim."
+      },
+      "initial_full_definition_limit": {
+        "source": "A05",
+        "evidence": "I haven’t done a sheet mask in a while ... I used to use sheet masks practically every night",
+        "judgment": "Actual prior cessation is explicit, before finding the reusable mask. The unchanged empty oracle assumes replacement tied to Experiment; corrected discontinuation/substitution wording does not explicitly scope prior other-product cessation. This membership is a defensible wider reading, not an unsupported behavioral event. Frozen wording/expected sets remain unchanged; experiment cannot claim all definition ambiguity eliminated."
+      },
+      "support_caution": {
+        "source": "A11 + context_5f002acbf9eb1cd7bfc3",
+        "incremental_update": "Calls the contextual actor corroboration of love-associated Softwear stocking across community and retailer roles without a local cross-venue identity/independence caveat.",
+        "judgment": "Content recurrence and reported love-linked stocking are supported; independent cross-role corroboration is not established. Treat unqualified support wording as an unresolved material support-credit concern, not a new verified independent origin. Similar over-credit already existed in baseline full; current incremental moves beyond its own initially cautious posture. Quality adoption remains blocked independently by R01 and the A02 first-pass error."
+      }
+    }
+  },
+  "corrections": {
+    "engagement": "All eight hydration and six buying focal retailer appearances correctly retain observation time unavailable; original review update time is separately preserved.",
+    "replacement": "A04 functional redundancy no longer counted as completion in any new answer; A05 ambiguity remains explicitly disclosed."
+  },
+  "limits": [
+    "Coordinator adjudication, not independent different-vendor review",
+    "Three purposive overlapping cases, one stochastic sample per arm/case",
+    "No global non-inferiority, market coverage, production scalability or causal batching proof",
+    "Known shared omission remains; no adoption regardless of savings"
+  ]
+}

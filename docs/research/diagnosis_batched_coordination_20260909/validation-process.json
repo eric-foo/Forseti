@@ -1,0 +1,28 @@
+{
+  "measurement": {
+    "processSuccess": true,
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "interrupted": false,
+    "killed": false,
+    "outputTruncated": false,
+    "error": null,
+    "terminationError": null,
+    "stdout": "{\"arm_totals\":{\"incremental\":{\"input_tokens\":221067,\"cached_input_tokens\":17664,\"output_tokens\":15413,\"total_tokens\":236480,\"wall_ms_sum\":539637.7406,\"native_runtime_ms_sum\":514785,\"launches\":7,\"unmetered_calls\":0},\"full\":{\"input_tokens\":194068,\"cached_input_tokens\":35456,\"output_tokens\":14369,\"total_tokens\":208437,\"wall_ms_sum\":496598.09420000005,\"native_runtime_ms_sum\":474264,\"launches\":6,\"unmetered_calls\":0}},\"count_failures\":[{\"case\":\"buying\",\"arm\":\"full\",\"stage\":\"initial\",\"name\":\"routine_replacement_completed\",\"expected\":[],\"observed\":[\"A02\",\"A05\"],\"count\":2,\"pass\":false}],\"cold_calls\":13}\n",
+    "stderr": ""
+  },
+  "source_validation": {
+    "processSuccess": true,
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "interrupted": false,
+    "killed": false,
+    "outputTruncated": false,
+    "error": null,
+    "terminationError": null,
+    "stdout": "{\"checked_at\":\"2026-09-09T13:33:47.279Z\",\"source_identity\":true,\"only_two_predeclared_corrections\":true,\"changed_timestamp_keys\":[\"A04\",\"A05\",\"A06\",\"A07\",\"A08\",\"A09\",\"A10\",\"A11\",\"A13\",\"A14\",\"A15\",\"A16\"],\"files\":168,\"byte_counts\":{\"frozen_source_json\":71612,\"reader_stdin\":493727,\"reader_event_stdout\":142503,\"stderr\":0,\"final_answers\":131835,\"all_artifacts_at_check\":1682180},\"bytes_are_not_tokens\":true}\n",
+    "stderr": ""
+  }
+}

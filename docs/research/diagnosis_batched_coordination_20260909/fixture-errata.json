@@ -1,0 +1,89 @@
+{
+  "frozen_before_calls": true,
+  "corrections": [
+    {
+      "definition": "Review update time is not engagement observation time",
+      "fields": [
+        {
+          "key": "A04",
+          "old_observed_at": "2025-03-23T19:29:50.304Z",
+          "new_observed_at": null,
+          "review_updated_at": "2025-03-23T19:29:50.304Z"
+        },
+        {
+          "key": "A05",
+          "old_observed_at": "2022-11-03T23:08:43.499Z",
+          "new_observed_at": null,
+          "review_updated_at": "2022-11-03T23:08:43.499Z"
+        },
+        {
+          "key": "A06",
+          "old_observed_at": "2026-09-04T06:26:00.467Z",
+          "new_observed_at": null,
+          "review_updated_at": "2026-09-04T06:26:00.467Z"
+        },
+        {
+          "key": "A07",
+          "old_observed_at": "2025-01-17T19:38:55.428Z",
+          "new_observed_at": null,
+          "review_updated_at": "2025-01-17T19:38:55.428Z"
+        },
+        {
+          "key": "A08",
+          "old_observed_at": "2024-02-02T16:19:13.795Z",
+          "new_observed_at": null,
+          "review_updated_at": "2024-02-02T16:19:13.795Z"
+        },
+        {
+          "key": "A09",
+          "old_observed_at": "2022-12-09T01:12:27.825Z",
+          "new_observed_at": null,
+          "review_updated_at": "2022-12-09T01:12:27.825Z"
+        },
+        {
+          "key": "A10",
+          "old_observed_at": "2023-07-21T01:56:36.684Z",
+          "new_observed_at": null,
+          "review_updated_at": "2023-07-21T01:56:36.684Z"
+        },
+        {
+          "key": "A11",
+          "old_observed_at": "2024-11-25T23:23:46.773Z",
+          "new_observed_at": null,
+          "review_updated_at": "2024-11-25T23:23:46.773Z"
+        },
+        {
+          "key": "A13",
+          "old_observed_at": "2024-12-06T17:49:20.110Z",
+          "new_observed_at": null,
+          "review_updated_at": "2024-12-06T17:49:20.110Z"
+        },
+        {
+          "key": "A14",
+          "old_observed_at": "2025-08-20T04:38:18.471Z",
+          "new_observed_at": null,
+          "review_updated_at": "2025-08-20T04:38:18.471Z"
+        },
+        {
+          "key": "A15",
+          "old_observed_at": "2024-11-04T16:36:31.684Z",
+          "new_observed_at": null,
+          "review_updated_at": "2024-11-04T16:36:31.684Z"
+        },
+        {
+          "key": "A16",
+          "old_observed_at": "2026-06-11T21:01:10.039Z",
+          "new_observed_at": null,
+          "review_updated_at": "2026-06-11T21:01:10.039Z"
+        }
+      ]
+    },
+    {
+      "definition": "Completed routine replacement requires explicit actual discontinuation/substitution",
+      "old": "Focal completed routine substitution.",
+      "new": "Focal explicit reported actual discontinuation/substitution in a routine. Functional redundancy (for example no more makeup remover needed) is retained separately but does not establish completed behavioral replacement.",
+      "expected_sets_unchanged": true
+    }
+  ],
+  "unchanged_quality_check": "R01 outside-manufacturer belief must remain attributed/unverified; preserve reluctance to complain alongside annoyance, product loss, loyalty and intended repurchase. No answer keys supplied to readers."
+}

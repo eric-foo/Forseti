@@ -1,0 +1,5 @@
+* -text
+# Native stderr is byte-preserved evidence; its terminating blank line is intentional.
+stderr.log whitespace=-blank-at-eof
+# Byte-preserved command output is evidence, not authored whitespace.
+*.log -whitespace

@@ -1,0 +1,116 @@
+{
+  "start": "2026-09-09T13:30:21.088Z",
+  "finish": "2026-09-09T13:33:30.540Z",
+  "results": [
+    {
+      "name": "hydration-full-initial",
+      "started_at": "2026-09-09T13:30:21.106Z",
+      "finished_at": "2026-09-09T13:31:22.663Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "buying-incremental-initial",
+      "started_at": "2026-09-09T13:30:21.113Z",
+      "finished_at": "2026-09-09T13:31:30.369Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "hydration-incremental-initial",
+      "started_at": "2026-09-09T13:30:21.119Z",
+      "finished_at": "2026-09-09T13:31:33.370Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "buying-full-initial",
+      "started_at": "2026-09-09T13:30:21.125Z",
+      "finished_at": "2026-09-09T13:31:34.017Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "packaging-full-initial",
+      "started_at": "2026-09-09T13:30:21.092Z",
+      "finished_at": "2026-09-09T13:31:35.863Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "packaging-incremental-initial",
+      "started_at": "2026-09-09T13:30:21.100Z",
+      "finished_at": "2026-09-09T13:31:41.504Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "hydration-full-update",
+      "started_at": "2026-09-09T13:31:22.664Z",
+      "finished_at": "2026-09-09T13:32:58.969Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "buying-full-update",
+      "started_at": "2026-09-09T13:31:34.019Z",
+      "finished_at": "2026-09-09T13:33:06.301Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "packaging-full-update",
+      "started_at": "2026-09-09T13:31:35.865Z",
+      "finished_at": "2026-09-09T13:33:15.088Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "buying-incremental-update",
+      "started_at": "2026-09-09T13:31:30.371Z",
+      "finished_at": "2026-09-09T13:33:16.373Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "hydration-incremental-update",
+      "started_at": "2026-09-09T13:31:33.372Z",
+      "finished_at": "2026-09-09T13:33:16.475Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "name": "packaging-incremental-update",
+      "started_at": "2026-09-09T13:31:41.506Z",
+      "finished_at": "2026-09-09T13:33:30.540Z",
+      "code": 0,
+      "signal": null
+    }
+  ],
+  "outcomes": [
+    {
+      "status": "fulfilled",
+      "error": null
+    },
+    {
+      "status": "fulfilled",
+      "error": null
+    },
+    {
+      "status": "fulfilled",
+      "error": null
+    },
+    {
+      "status": "fulfilled",
+      "error": null
+    },
+    {
+      "status": "fulfilled",
+      "error": null
+    },
+    {
+      "status": "fulfilled",
+      "error": null
+    }
+  ]
+}

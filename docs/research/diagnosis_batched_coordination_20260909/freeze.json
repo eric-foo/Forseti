@@ -1,0 +1,45 @@
+{
+  "frozen_at": "2026-09-09T13:30:21.031Z",
+  "files": [
+    {
+      "name": "sources.json",
+      "sha256": "70be89523d15f3622e8f0103eedde839a76206aa84fd5222788b2db67472db1f"
+    },
+    {
+      "name": "experiment.json",
+      "sha256": "5138e46899ee37181bb47626d5e516e071606291262573bf2f5bb57080d02b16"
+    },
+    {
+      "name": "expected.json",
+      "sha256": "e5122cdb99c5ea2cdc92646a71bdc0d16963665d1ef85456bf5cf83856f2034d"
+    },
+    {
+      "name": "count-definitions.json",
+      "sha256": "d466138ab4106d8b64ee0300b0d806b5b5d0f697e488725592d7b51e768804ea"
+    },
+    {
+      "name": "fixture-errata.json",
+      "sha256": "d6f57b902908e6d68cfbe34e94cd68ecb18556a6ee39f0bd6a0f8968039cb0c5"
+    },
+    {
+      "name": "common.txt",
+      "sha256": "52d6ef24c515e281ae150dab37a0ebda3bf485029ba8ffc023c5a52a1f0db33e"
+    },
+    {
+      "name": "authority-context.txt",
+      "sha256": "4d918de0de55acd8570edcd2d703f3df9c0dfd387296a2f29aa0c089b112c482"
+    },
+    {
+      "name": "response.schema.json",
+      "sha256": "10116811053f00600e9e5f643c0ee3c442673b70a6c2af0985ae625c2c404458"
+    },
+    {
+      "name": "run.mjs",
+      "sha256": "6098acaf3e9ed9f346f1d445cd4159fc24bbb0dea8953c75bd2162050e0b42fc"
+    },
+    {
+      "name": "batch.mjs",
+      "sha256": "bb71af408966ce3eec574ed7c5b003db7de4438ea4396bb297a8c5252748f670"
+    }
+  ]
+}
